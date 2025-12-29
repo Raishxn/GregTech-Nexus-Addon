@@ -1,7 +1,7 @@
 package com.raishxn.gtna.network.packet;
 
 import com.glodblock.github.glodium.network.packet.IMessage;
-import com.raishxn.gticore.client.renderer.BlockHighlightHandler;
+import com.raishxn.gtna.client.renderer.BlockHighlightHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;

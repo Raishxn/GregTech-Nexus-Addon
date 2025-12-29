@@ -3,22 +3,16 @@ package com.raishxn.gtna;
 import com.gregtechceu.gtceu.api.addon.GTAddon;
 import com.gregtechceu.gtceu.api.addon.IGTAddon;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
-
+import com.lowdragmc.lowdraglib.Platform;
+import com.raishxn.gtna.api.registry.GTNARegistry;
+import com.raishxn.gtna.common.data.GTNABlocks;
+import com.raishxn.gtna.common.data.GTNAItems;
 import net.minecraft.data.recipes.FinishedRecipe;
-
+import net.minecraft.resources.ResourceLocation;
 import java.util.function.Consumer;
 
-@SuppressWarnings("unused")
 @GTAddon
 public class GTNAGTAddon implements IGTAddon {
-
-    @Override
-    public GTRegistrate getRegistrate() {
-        return GTNACORE.EXAMPLE_REGISTRATE;
-    }
-
-    @Override
-    public void initializeAddon() {}
 
     @Override
     public String addonModId() {
@@ -26,31 +20,38 @@ public class GTNAGTAddon implements IGTAddon {
     }
 
     @Override
-    public void registerTagPrefixes() {
-        // CustomTagPrefixes.init();
+    public GTRegistrate getRegistrate() {
+        return GTNARegistry.REGISTRATE;
+    }
+    @Override
+    public boolean requiresHighTier() {
+        return true;
     }
 
     @Override
-    public void addRecipes(Consumer<FinishedRecipe> provider) {
-        // CustomRecipes.init(provider);
+    public void initializeAddon() {
+        GTNAItems.init();
+        //GTNABlocks.init();
     }
 
     @Override
-    public void registerElements() {
-        // CustomElements.init();
-    }
+    public void registerSounds() {}
 
-    // If you have custom ingredient types, uncomment this & change to match your capability.
-    // KubeJS WILL REMOVE YOUR RECIPES IF THESE ARE NOT REGISTERED.
-    /*
-     * public static final ContentJS<Double> PRESSURE_IN = new ContentJS<>(NumberComponent.ANY_DOUBLE,
-     * CustomRecipeCapabilities.PRESSURE, false);
-     * public static final ContentJS<Double> PRESSURE_OUT = new ContentJS<>(NumberComponent.ANY_DOUBLE,
-     * CustomRecipeCapabilities.PRESSURE, true);
-     * 
-     * @Override
-     * public void registerRecipeKeys(KJSRecipeKeyEvent event) {
-     * event.registerKey(CustomRecipeCapabilities.PRESSURE, Pair.of(PRESSURE_IN, PRESSURE_OUT));
-     * }
-     */
+    @Override
+    public void registerCovers() {}
+
+    @Override
+    public void registerElements() {}
+
+    @Override
+    public void registerTagPrefixes() {}
+
+    @Override
+    public void addRecipes(Consumer<FinishedRecipe> provider) {}
+
+    @Override
+    public void removeRecipes(Consumer<ResourceLocation> consumer) {}
+
+    @Override
+    public void registerFluidVeins() {if (!Platform.isDevEnv()) {}}
 }

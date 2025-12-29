@@ -2,6 +2,7 @@ package com.raishxn.gtna;
 
 
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
+import com.raishxn.gtna.client.ClientProxy;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import com.raishxn.gtna.common.CommonProxy;
@@ -19,10 +20,10 @@ public class GTNACORE {
     public static final Logger LOGGER = LogManager.getLogger();
     public static GTRegistrate EXAMPLE_REGISTRATE = GTRegistrate.create(GTNACORE.MOD_ID);
 
-    /*public GTNACORE() {
+    public GTNACORE() {
         DistExecutor.unsafeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
         MinecraftForge.EVENT_BUS.register(this);
-    }*/
+    }
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MOD_ID, path);
     }

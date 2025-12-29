@@ -38,8 +38,8 @@ public class StructureDetectBehavior extends TooltipBehavior implements IToolBeh
     private static final ReentrantLock LOCK = new ReentrantLock();
 
     public static final StructureDetectBehavior INSTANCE = new StructureDetectBehavior(lines -> {
-        lines.add(Component.translatable("item.gtnacore.structure_detect.tooltip.0"));
-        lines.add(Component.translatable("item.gtnacore.structure_detect.tooltip.1"));
+        lines.add(Component.translatable("item.gtna.structure_detect.tooltip.0"));
+        lines.add(Component.translatable("item.gtna.structure_detect.tooltip.1"));
     });
 
     /**

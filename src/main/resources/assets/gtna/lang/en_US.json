@@ -1,0 +1,13 @@
+{
+  "item.gtna.structure_detect": "Structure Detection Tool",
+  "item.gtna.structure_detect.error.0": "Required at %s:\n",
+  "item.gtna.structure_detect.error.1": "Required at %s:",
+  "item.gtna.structure_detect.error.2": "At %s %s",
+  "item.gtna.structure_detect.error.3": "(Mirrored Mode)",
+  "item.gtna.structure_detect.error.4": "(Normal Mode)",
+  "item.gtna.structure_detect.tooltip.0": "Right-click multiblock main block",
+  "item.gtna.structure_detect.tooltip.1": "Shift right-click to switch detection mode",
+  "itemGroup.gtna.creative_tab": "GregTech: Nexus Addon",
+  "structure_writer.export_order": "Export Order: C:%s  S:%s  A:%s",
+  "structure_writer.structural_scale": "Structure Scale: X:%s  Y:%s  Z:%s"
+}
