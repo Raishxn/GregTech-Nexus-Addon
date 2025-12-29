@@ -32,7 +32,14 @@ public class GTNAItems {
                 .tag(net.minecraft.tags.ItemTags.HOES)
                 .tag(com.gregtechceu.gtceu.api.data.tag.TagUtil.createItemTag("tools/wrench"))
                 .tag(com.gregtechceu.gtceu.api.data.tag.TagUtil.createItemTag("tools/wire_cutters"))
-                .tag(com.gregtechceu.gtceu.api.data.tag.TagUtil.createItemTag("tools/wrenches"))
+                .tag(com.gregtechceu.gtceu.api.data.tag.TagUtil.createItemTag("tools/crowbar"))
+                .tag(com.gregtechceu.gtceu.api.data.tag.TagUtil.createItemTag("tools/screwdriver"))
+                .tag(com.gregtechceu.gtceu.api.data.tag.TagUtil.createItemTag("tools/mortar"))  // Essencial para o Mortar
+                .tag(com.gregtechceu.gtceu.api.data.tag.TagUtil.createItemTag("tools/hammer"))
+                .tag(com.gregtechceu.gtceu.api.data.tag.TagUtil.createItemTag("tools/file"))    // Essencial para o File
+                .tag(com.gregtechceu.gtceu.api.data.tag.TagUtil.createItemTag("tools/saw"))
+                .tag(com.gregtechceu.gtceu.api.data.tag.TagUtil.createItemTag("tools/knife"))
+                .tag(com.gregtechceu.gtceu.api.data.tag.TagUtil.createItemTag("tools/mallet"))
                 .register();
 
         DEBUG_STRUCTURE_WRITER = REGISTRATE
