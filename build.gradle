@@ -157,6 +157,12 @@ dependencies {
     // lombok
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    //extendedAE and Glodium
+    modImplementation("curse.maven:glodium-957920:5226922")
+    modImplementation("curse.maven:ex-pattern-provider-892005:7248944")
+    //ae2 and guideme
+    modImplementation("curse.maven:applied-energistics-2-223794:7148487")
+    modImplementation("curse.maven:guideme-1173950:7127447")
 }
 
 // See com.example.examplemod.mixin.DummyMixin for information about mixins
