@@ -1,0 +1,11 @@
+{
+  "block.gtna.wireless_steam_input_hatch": "Wireless Steam Input Hatch",
+  "block.gtna.wireless_steam_input_hatch_steel": "Wireless Steam Input Hatch Steel",
+  "block.gtna.wireless_steam_output_hatch": "Wireless Steam Output Hatch",
+  "block.gtna.wireless_steam_output_hatch_steel": "Wireless Steam Output Hatch Steel",
+  "item.gtceu.tool.vajra": "Vajra",
+  "item.gtna.debug_structure_writer": "Debug Structure Writer",
+  "item.gtna.structure_detect": "Structure Detector",
+  "itemGroup.gtna.creative_tab.core": "GTNA Core Items",
+  "itemGroup.gtna.creative_tab.machines": "GTNA Machines"
+}

@@ -30,21 +30,16 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
-/**
- * @author EasterFG on 2024/10/25
- */
 public class StructureDetectBehavior extends TooltipBehavior implements IToolBehavior, IInteractionItem {
 
     private static final ReentrantLock LOCK = new ReentrantLock();
 
+    // A chave aqui deve bater com o JSON: "structure_detect.tooltip.0"
     public static final StructureDetectBehavior INSTANCE = new StructureDetectBehavior(lines -> {
-        lines.add(Component.translatable("item.gtna.structure_detect.tooltip.0"));
-        lines.add(Component.translatable("item.gtna.structure_detect.tooltip.1"));
+        lines.add(Component.translatable("structure_detect.tooltip.0"));
+        lines.add(Component.translatable("structure_detect.tooltip.1").withStyle(ChatFormatting.GRAY));
     });
 
-    /**
-     * @param tooltips a consumer adding translated tooltips to the tooltip list
-     */
     public StructureDetectBehavior(@NotNull Consumer<List<Component>> tooltips) {
         super(tooltips);
     }
@@ -71,16 +66,21 @@ public class StructureDetectBehavior extends TooltipBehavior implements IToolBeh
                         var pattern = controller.getPattern();
                         LOCK.lock();
                         if (LOCK.tryLock()) {
-                            var result = check(controller, pattern, isFlipped);
-                            for (var patternError : result) showError(player, patternError, isFlipped);
-                            LOCK.unlock();
+                            try {
+                                var result = check(controller, pattern, isFlipped);
+                                for (var patternError : result) showError(player, patternError, isFlipped);
+                            } finally {
+                                LOCK.unlock();
+                            }
                         } else LOCK.unlock();
                     });
                     return InteractionResult.SUCCESS;
                 }
             } else if (player instanceof ServerPlayer serverPlayer) {
-                tag.putBoolean("isFlipped", !tag.getBoolean("isFlipped"));
-                serverPlayer.displayClientMessage(Component.translatable(!tag.getBoolean("isFlipped") ? "message.gtnacore.detection_mode_normal" : "message.gtnacore.detection_mode_mirrored"), true);
+                boolean newFlipped = !tag.getBoolean("isFlipped");
+                tag.putBoolean("isFlipped", newFlipped);
+                serverPlayer.displayClientMessage(Component.translatable(newFlipped ? "message.gtna.detection_mode_mirrored" : "message.gtna.detection_mode_normal"), true);
+                return InteractionResult.SUCCESS;
             }
         }
         return InteractionResult.PASS;
@@ -98,6 +98,7 @@ public class StructureDetectBehavior extends TooltipBehavior implements IToolBeh
                 new Direction[] { Direction.SOUTH, Direction.NORTH, Direction.EAST, Direction.WEST };
         var upwardsFacing = controller.self().getUpwardsFacing();
         var worldState = new MultiblockState(controller.self().getLevel(), controller.self().getPos());
+
         for (var direction : facings) {
             pattern.checkPatternAt(worldState, centerPos, direction, upwardsFacing, isFlipped, false);
             if (worldState.hasError()) errors.add(worldState.error);
@@ -116,10 +117,14 @@ public class StructureDetectBehavior extends TooltipBehavior implements IToolBeh
                 Component.translatable("item.gtna.structure_detect.error.3").withStyle(ChatFormatting.GREEN) :
                 Component.translatable("item.gtna.structure_detect.error.4").withStyle(ChatFormatting.YELLOW));
         var candidates = error.getCandidates();
+
         if (error instanceof SinglePredicateError) {
-            var root = candidates.get(0).get(0).getHoverName();
-            show.add(Component.translatable("item.gtna.structure_detect.error.1", posComponent));
-            show.add(Component.literal(" - ").append(root).append(error.getErrorInfo()));
+            // Fix para evitar crash se a lista estiver vazia
+            if (!candidates.isEmpty() && !candidates.get(0).isEmpty()) {
+                var root = candidates.get(0).get(0).getHoverName();
+                show.add(Component.translatable("item.gtna.structure_detect.error.1", posComponent));
+                show.add(Component.literal(" - ").append(root).append(error.getErrorInfo()));
+            }
         } else {
             show.add(Component.translatable("item.gtna.structure_detect.error.0", posComponent));
             for (var candidate : candidates) {

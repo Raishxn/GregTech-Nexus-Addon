@@ -39,18 +39,8 @@ public class CommonProxy {
 
     public static void init() {
         GTNACreativeModeTabs.init();
-    }
 
-    /*private void commonSetup(final FMLCommonSetupEvent event) {
-        StorageCells.addCellHandler(InfinityCellHandler.INSTANCE);
-        StorageCells.addCellHandler(FastInfinityCellHandler.INSTANCE);
-        StorageCells.addCellGuiHandler(new InfinityCellGuiHandler());
-        event.enqueueWork(this::postRegistrationInitialization).whenComplete((res, err) -> {
-            if (err != null) {
-                AELog.warn(err);
-            }
-        });
-    }*/
+    }
 
     public void postRegistrationInitialization() {
         GTNANetworkHandler.INSTANCE.init();
@@ -75,6 +65,6 @@ public class CommonProxy {
     private void registerRecipeConditions(GTCEuAPI.RegisterEvent<ResourceLocation, RecipeConditionType<?>> event) {}
 
     private void registerMachines(GTCEuAPI.RegisterEvent<ResourceLocation, MachineDefinition> event) {
-
+    GTNAMachines.init();
     }
 }

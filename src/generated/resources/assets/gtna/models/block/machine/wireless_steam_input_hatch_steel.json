@@ -1,0 +1,56 @@
+{
+  "parent": "minecraft:block/block",
+  "loader": "gtceu:machine",
+  "machine": "gtna:wireless_steam_input_hatch_steel",
+  "replaceable_textures": [
+    "bottom",
+    "top",
+    "side"
+  ],
+  "variants": {
+    "is_painted=false,steel=false": {
+      "model": {
+        "parent": "gtceu:block/machine/template/part/hatch_machine",
+        "textures": {
+          "bottom": "gtceu:block/casings/steam/bronze/bottom",
+          "overlay": "gtna:block/overlay/machine/overlay_steam_wireless_in",
+          "side": "gtceu:block/casings/steam/bronze/side",
+          "top": "gtceu:block/casings/steam/bronze/top"
+        }
+      }
+    },
+    "is_painted=false,steel=true": {
+      "model": {
+        "parent": "gtceu:block/machine/template/part/hatch_machine",
+        "textures": {
+          "bottom": "gtceu:block/casings/steam/steel/bottom",
+          "overlay": "gtna:block/overlay/machine/overlay_steam_wireless_in",
+          "side": "gtceu:block/casings/steam/steel/side",
+          "top": "gtceu:block/casings/steam/steel/top"
+        }
+      }
+    },
+    "is_painted=true,steel=false": {
+      "model": {
+        "parent": "gtceu:block/machine/template/part/hatch_machine_color_ring",
+        "textures": {
+          "bottom": "gtceu:block/casings/steam/bronze/bottom",
+          "overlay": "gtna:block/overlay/machine/overlay_steam_wireless_in",
+          "side": "gtceu:block/casings/steam/bronze/side",
+          "top": "gtceu:block/casings/steam/bronze/top"
+        }
+      }
+    },
+    "is_painted=true,steel=true": {
+      "model": {
+        "parent": "gtceu:block/machine/template/part/hatch_machine_color_ring",
+        "textures": {
+          "bottom": "gtceu:block/casings/steam/steel/bottom",
+          "overlay": "gtna:block/overlay/machine/overlay_steam_wireless_in",
+          "side": "gtceu:block/casings/steam/steel/side",
+          "top": "gtceu:block/casings/steam/steel/top"
+        }
+      }
+    }
+  }
+}

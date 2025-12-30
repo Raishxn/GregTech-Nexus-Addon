@@ -5,9 +5,15 @@
   "item.gtna.structure_detect.error.2": "At %s %s",
   "item.gtna.structure_detect.error.3": "(Mirrored Mode)",
   "item.gtna.structure_detect.error.4": "(Normal Mode)",
-  "item.gtna.structure_detect.tooltip.0": "Right-click multiblock main block",
-  "item.gtna.structure_detect.tooltip.1": "Shift right-click to switch detection mode",
+  "structure_detect.tooltip.0": "Right-click multiblock main block",
+  "structure_detect.tooltip.1": "Shift right-click to switch detection mode",
   "itemGroup.gtna.creative_tab": "GregTech: Nexus Addon",
+  "itemGroup.gtna.creative_tab.machines": "GregTech: Nexus Addon",
   "structure_writer.export_order": "Export Order: C:%s  S:%s  A:%s",
-  "structure_writer.structural_scale": "Structure Scale: X:%s  Y:%s  Z:%s"
+  "structure_writer.structural_scale": "Structure Scale: X:%s  Y:%s  Z:%s",
+  "message.gtna.detection_mode_mirrored": "Current detection mode: (Mirrored mode)",
+  "message.gtna.detection_mode_normal": "Current detection mode: (Normal mode)",
+  "message.gtna.structure_formed": "Structure formed",
+  "gtna.machine.wireless_steam_hatch.tooltip": "Receives steam wirelessly from your global network.",
+  "gtna.machine.wireless_steam_output_hatch.tooltip": "Sends steam wirelessly to your global network (Boilers Only)."
 }

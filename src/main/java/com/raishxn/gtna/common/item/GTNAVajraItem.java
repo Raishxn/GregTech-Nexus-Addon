@@ -51,9 +51,6 @@ public class GTNAVajraItem extends GTToolItem {
                                 if (ToolActions.DEFAULT_HOE_ACTIONS.contains(action)) return true;
                                 if (ToolActions.DEFAULT_SWORD_ACTIONS.contains(action)) return true;
                                 if (ToolActions.DEFAULT_SHEARS_ACTIONS.contains(action)) return true;
-
-                                // 2. Ações Específicas do GregTech (Wrench, Crowbar, etc.)
-                                // Usamos os SETS definidos no arquivo GTToolActions
                                 if (GTToolActions.DEFAULT_WRENCH_ACTIONS.contains(action)) return true;
                                 if (GTToolActions.DEFAULT_WIRE_CUTTER_ACTIONS.contains(action)) return true;
                                 if (GTToolActions.DEFAULT_CROWBAR_ACTIONS.contains(action)) return true;
