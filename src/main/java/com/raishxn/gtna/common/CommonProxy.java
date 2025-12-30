@@ -75,6 +75,6 @@ public class CommonProxy {
     private void registerRecipeConditions(GTCEuAPI.RegisterEvent<ResourceLocation, RecipeConditionType<?>> event) {}
 
     private void registerMachines(GTCEuAPI.RegisterEvent<ResourceLocation, MachineDefinition> event) {
-        GTNAMachines.init();
+
     }
 }
