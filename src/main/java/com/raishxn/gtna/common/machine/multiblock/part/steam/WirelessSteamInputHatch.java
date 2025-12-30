@@ -6,6 +6,8 @@ import com.gregtechceu.gtceu.api.gui.UITemplate;
 import com.gregtechceu.gtceu.api.gui.widget.TankWidget;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
+// Import necessário para o CustomFluidTank, caso o compilador exija
+import com.gregtechceu.gtceu.api.transfer.fluid.CustomFluidTank;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.SteamHatchPartMachine;
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
@@ -29,10 +31,19 @@ public class WirelessSteamInputHatch extends SteamHatchPartMachine {
     private final boolean isSteel;
 
     public WirelessSteamInputHatch(IMachineBlockEntity holder, boolean isSteel, Object... args) {
-        super(holder, args); // IO.IN é o padrão, está correto para Input
+        super(holder, args);
         this.isSteel = isSteel;
         this.transferRate = isSteel ? 1_000_000L : 1_000L;
         this.setWorkingEnabled(false);
+
+        // CORREÇÃO: Acessa o tanque interno (CustomFluidTank) para definir a capacidade
+        if (this.isSteel) {
+            // NotifiableFluidTank armazena CustomFluidTanks em um array 'storages'
+            // Precisamos pegar o primeiro (e único) tanque e setar a capacidade nele
+            if (this.tank.getStorages().length > 0) {
+                this.tank.getStorages()[0].setCapacity(Integer.MAX_VALUE);
+            }
+        }
     }
 
     @Override
@@ -45,9 +56,8 @@ public class WirelessSteamInputHatch extends SteamHatchPartMachine {
 
     @Override
     protected NotifiableFluidTank createTank(int initialCapacity, int slots, Object... args) {
-        int capacity = this.isSteel ? Integer.MAX_VALUE : 20000;
-        // IO.IN é herdado/padrão aqui
-        return super.createTank(capacity, slots, args)
+        // Cria com capacidade inicial padrão (será corrigido no construtor via getStorages)
+        return new NotifiableFluidTank(this, 1, initialCapacity, IO.IN)
                 .setFilter(fluidStack -> fluidStack.getFluid().is(GTMaterials.Steam.getFluidTag()));
     }
 
@@ -57,6 +67,7 @@ public class WirelessSteamInputHatch extends SteamHatchPartMachine {
             if (ownerId == null) return;
 
             long currentSteam = tank.getFluidInTank(0).getAmount();
+            // Pega a capacidade do tanque específico
             long capacity = tank.getTankCapacity(0);
             long spaceNeeded = capacity - currentSteam;
 

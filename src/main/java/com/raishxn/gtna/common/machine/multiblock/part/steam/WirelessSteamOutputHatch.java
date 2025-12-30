@@ -6,6 +6,8 @@ import com.gregtechceu.gtceu.api.gui.UITemplate;
 import com.gregtechceu.gtceu.api.gui.widget.TankWidget;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
+// Import necessário
+import com.gregtechceu.gtceu.api.transfer.fluid.CustomFluidTank;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.SteamHatchPartMachine;
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
@@ -31,8 +33,14 @@ public class WirelessSteamOutputHatch extends SteamHatchPartMachine {
         super(holder, args);
         this.isSteel = isSteel;
         this.transferRate = isSteel ? 1_000_000L : 1_000L;
-        // Desativa o Auto-IO (puxar/empurrar vizinhos), pois usamos lógica Wireless
         this.setWorkingEnabled(false);
+
+        // CORREÇÃO: Acessa o tanque interno para definir a capacidade
+        if (this.isSteel) {
+            if (this.tank.getStorages().length > 0) {
+                this.tank.getStorages()[0].setCapacity(Integer.MAX_VALUE);
+            }
+        }
     }
 
     @Override
@@ -45,12 +53,7 @@ public class WirelessSteamOutputHatch extends SteamHatchPartMachine {
 
     @Override
     protected NotifiableFluidTank createTank(int initialCapacity, int slots, Object... args) {
-        // SOBRESCRITA CRÍTICA:
-        // SteamHatchPartMachine cria tanque IO.IN por padrão.
-        // Forçamos IO.OUT para que a Boiler "enxergue" que pode colocar vapor aqui.
-        int capacity = this.isSteel ? Integer.MAX_VALUE : 20000;
-
-        return new NotifiableFluidTank(this, 1, capacity, IO.OUT)
+        return new NotifiableFluidTank(this, 1, initialCapacity, IO.OUT)
                 .setFilter(fluidStack -> fluidStack.getFluid().is(GTMaterials.Steam.getFluidTag()));
     }
 
@@ -64,7 +67,6 @@ public class WirelessSteamOutputHatch extends SteamHatchPartMachine {
             if (currentSteam > 0) {
                 int toPush = (int) Math.min(currentSteam, transferRate);
 
-                // Envia para a rede global
                 boolean success = SteamWirelessNetworkManager.addSteamToGlobalSteamMap(serverLevel, ownerId, toPush);
 
                 if (success) {
@@ -82,7 +84,6 @@ public class WirelessSteamOutputHatch extends SteamHatchPartMachine {
                 .widget(new LabelWidget(11, 20, "gtceu.gui.fluid_amount"))
                 .widget(new LabelWidget(11, 30, () -> tank.getFluidInTank(0).getAmount() + "").setTextColor(-1).setDropShadow(true))
                 .widget(new LabelWidget(6, 6, getBlockState().getBlock().getDescriptionId()))
-                // IO.OUT permite que o Widget mostre que é saída (setas visuais, se houver)
                 .widget(new TankWidget(tank.getStorages()[0], 90, 35, true, true)
                         .setBackground(GuiTextures.FLUID_SLOT))
                 .widget(UITemplate.bindPlayerInventory(entityPlayer.getInventory(),

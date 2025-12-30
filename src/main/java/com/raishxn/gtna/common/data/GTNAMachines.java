@@ -9,6 +9,7 @@ import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamOutput
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
 import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
 
 public class GTNAMachines {
@@ -25,6 +26,7 @@ public class GTNAMachines {
             .abilities(PartAbility.STEAM, PartAbility.IMPORT_FLUIDS)
             .colorOverlaySteamHullModel(OVERLAY_IN)
             .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, false)
+            .modelProperty(IS_FORMED, false)
             .tooltips(
                     Component.translatable("gtna.machine.wireless_steam_hatch.tooltip"),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", 20000)
@@ -38,6 +40,7 @@ public class GTNAMachines {
             .abilities(PartAbility.STEAM, PartAbility.IMPORT_FLUIDS)
             .colorOverlaySteamHullModel(OVERLAY_IN)
             .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, true)
+            .modelProperty(IS_FORMED, false)
             .tooltips(
                     Component.translatable("gtna.machine.wireless_steam_hatch.tooltip"),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", Integer.MAX_VALUE)
@@ -53,6 +56,7 @@ public class GTNAMachines {
             .abilities(PartAbility.STEAM, PartAbility.EXPORT_FLUIDS)
             .colorOverlaySteamHullModel(OVERLAY_OUT)
             .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, false)
+            .modelProperty(IS_FORMED, false)
             .tooltips(
                     Component.translatable("gtna.machine.wireless_steam_output_hatch.tooltip"),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", 20000)
@@ -66,6 +70,7 @@ public class GTNAMachines {
             .abilities(PartAbility.STEAM, PartAbility.EXPORT_FLUIDS)
             .colorOverlaySteamHullModel(OVERLAY_OUT)
             .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, true)
+            .modelProperty(IS_FORMED, false)
             .tooltips(
                     Component.translatable("gtna.machine.wireless_steam_output_hatch.tooltip"),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", Integer.MAX_VALUE)

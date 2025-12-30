@@ -41,10 +41,8 @@ public class GTNAVajraItem extends GTToolItem {
                                 return true;
                             }
 
-                            // AQUI ESTÁ A CORREÇÃO BASEADA NO SEU ARQUIVO GTToolActions
                             @Override
                             public boolean canPerformAction(ItemStack stack, ToolAction action) {
-                                // 1. Ações Vanilla (Picareta, Machado, Pá, Enxada, Espada, Tesoura)
                                 if (ToolActions.DEFAULT_PICKAXE_ACTIONS.contains(action)) return true;
                                 if (ToolActions.DEFAULT_AXE_ACTIONS.contains(action)) return true;
                                 if (ToolActions.DEFAULT_SHOVEL_ACTIONS.contains(action)) return true;
@@ -60,8 +58,6 @@ public class GTNAVajraItem extends GTToolItem {
                                 if (GTToolActions.DEFAULT_SAW_ACTIONS.contains(action)) return true;
                                 if (GTToolActions.DEFAULT_KNIFE_ACTIONS.contains(action)) return true;
 
-                                // Nota: "File" e "Mortar" não possuem ToolActions específicas nesse arquivo.
-                                // Eles funcionam principalmente via Tags de Item e isSuitableForCrafting.
 
                                 return false;
                             }
