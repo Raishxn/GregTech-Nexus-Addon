@@ -26,7 +26,7 @@ public class GTNAMachines {
             .abilities(PartAbility.STEAM, PartAbility.IMPORT_FLUIDS)
             .colorOverlaySteamHullModel(OVERLAY_IN)
             .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, false)
-            .modelProperty(IS_FORMED, false)
+            .modelProperty(IS_FORMED, false) //para o bloco quando formado ficar na mesma textura que o multibloco
             .tooltips(
                     Component.translatable("gtna.machine.wireless_steam_hatch.tooltip"),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", 20000)
