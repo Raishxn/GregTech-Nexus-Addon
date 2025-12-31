@@ -1,8 +1,11 @@
 package com.raishxn.gtna;
 
 
+import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialEvent;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.raishxn.gtna.client.ClientProxy;
+import com.raishxn.gtna.common.data.GTNAElements;
+import com.raishxn.gtna.common.data.GTNAMaterials;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import com.raishxn.gtna.common.CommonProxy;
@@ -27,5 +30,4 @@ public class GTNACORE {
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MOD_ID, path);
     }
-
     }

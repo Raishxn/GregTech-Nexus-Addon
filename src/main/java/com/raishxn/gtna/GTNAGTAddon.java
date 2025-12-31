@@ -5,8 +5,11 @@ import com.gregtechceu.gtceu.api.addon.IGTAddon;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.lowdragmc.lowdraglib.Platform;
 import com.raishxn.gtna.api.registry.GTNARegistry;
-import com.raishxn.gtna.common.data.GTNABlocks;
+import com.raishxn.gtna.common.data.GTNACovers;
+import com.raishxn.gtna.common.data.GTNAElements;
 import com.raishxn.gtna.common.data.GTNAItems;
+// Remova o import de GTNAMaterials daqui, não é mais necessário
+//import com.raishxn.gtna.data.recipe.GTNAMaterialRecipes;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import java.util.function.Consumer;
@@ -23,6 +26,7 @@ public class GTNAGTAddon implements IGTAddon {
     public GTRegistrate getRegistrate() {
         return GTNARegistry.REGISTRATE;
     }
+
     @Override
     public boolean requiresHighTier() {
         return true;
@@ -31,27 +35,35 @@ public class GTNAGTAddon implements IGTAddon {
     @Override
     public void initializeAddon() {
         GTNAItems.init();
-        //GTNABlocks.init();
     }
 
     @Override
     public void registerSounds() {}
 
     @Override
-    public void registerCovers() {}
+    public void registerCovers() {
+        GTNACovers.init();
+    }
 
     @Override
-    public void registerElements() {}
+    public void registerElements() {
+        GTNAElements.init();
+    }
+
 
     @Override
-    public void registerTagPrefixes() {}
-
-    @Override
-    public void addRecipes(Consumer<FinishedRecipe> provider) {}
+    public void addRecipes(Consumer<FinishedRecipe> provider) {
+        //GTNAMaterialRecipes.init(provider);
+    }
 
     @Override
     public void removeRecipes(Consumer<ResourceLocation> consumer) {}
 
     @Override
-    public void registerFluidVeins() {if (!Platform.isDevEnv()) {}}
+    public void registerFluidVeins() {
+        if (!Platform.isDevEnv()) {}
+    }
+
+    @Override
+    public void registerTagPrefixes() {}
 }

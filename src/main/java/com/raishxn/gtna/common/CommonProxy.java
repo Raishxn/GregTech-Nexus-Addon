@@ -55,7 +55,7 @@ public class CommonProxy {
     }
 
     // As well as this.
-    private void addMaterials(MaterialEvent event) {}
+    private void addMaterials(MaterialEvent event) {GTNAMaterials.init();}
 
     // This is optional, though.
     private void modifyMaterials(PostMaterialEvent event) {}

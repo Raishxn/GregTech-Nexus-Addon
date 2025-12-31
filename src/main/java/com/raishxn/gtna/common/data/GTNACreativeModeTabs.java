@@ -1,52 +1,143 @@
 package com.raishxn.gtna.common.data;
 
-import com.gregtechceu.gtceu.api.item.MetaMachineItem;
+import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
+import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.api.item.*;
+import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.raishxn.gtna.GTNACORE;
 import com.tterrag.registrate.util.entry.RegistryEntry;
-import net.minecraft.core.registries.Registries; // Importante para o getAll
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.*;
+import org.jetbrains.annotations.NotNull;
 
 import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
 
+@SuppressWarnings("unused")
 public class GTNACreativeModeTabs {
 
-    // Aba Principal (Core): Contém tudo que NÃO é máquina
-    public static RegistryEntry<CreativeModeTab> GTNA_CORE_ITEMS = REGISTRATE.defaultCreativeTab("gtna_core_items",
-                    builder -> builder.displayItems((itemDisplayParameters, output) -> {
-                                // Itera sobre todos os itens registrados pelo seu Mod
-                                REGISTRATE.getAll(Registries.ITEM).forEach(entry -> {
-                                    Item item = entry.get();
-                                    // Se NÃO for máquina, adiciona aqui
-                                    if (!(item instanceof MetaMachineItem)) {
-                                        output.accept(new ItemStack(item));
-                                    }
-                                });
-                            })
-                            .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.core"), "GTNA Core Items"))
+    // 1. Aba de Items Materiais
+    public static RegistryEntry<CreativeModeTab> MATERIAL_ITEMS = REGISTRATE.defaultCreativeTab("gtna_material_items",
+                    builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("material_items", REGISTRATE))
+                            .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.material_items"), "GTNA Material Items"))
+                            .icon(() -> ChemicalHelper.get(TagPrefix.ingot, GTNAMaterials.Echoite))
+                            .build())
+            .register();
+
+    // 2. Aba de Blocos
+    public static RegistryEntry<CreativeModeTab> MATERIAL_BLOCKS = REGISTRATE.defaultCreativeTab("gtna_material_blocks",
+                    builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("blocks", REGISTRATE))
+                            .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.material_blocks"), "GTNA Blocks"))
+                            .icon(() -> ChemicalHelper.get(TagPrefix.block, GTNAMaterials.Echoite))
+                            .build())
+            .register();
+
+    // 3. Aba de Fluidos
+    public static RegistryEntry<CreativeModeTab> MATERIAL_FLUIDS = REGISTRATE.defaultCreativeTab("gtna_material_fluids",
+                    builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("fluids", REGISTRATE))
+                            .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.material_fluids"), "GTNA Fluids"))
+                            .icon(GTItems.FLUID_CELL_LARGE_TUNGSTEN_STEEL::asStack)
+                            .build())
+            .register();
+
+    // 4. Aba de Tubos e Cabos
+    public static RegistryEntry<CreativeModeTab> MATERIAL_PIPES = REGISTRATE.defaultCreativeTab("gtna_material_pipes",
+                    builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("pipes", REGISTRATE))
+                            .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.material_pipes"), "GTNA Pipes & Wires"))
+                            .icon(() -> ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Echoite))
+                            .build())
+            .register();
+
+    // 5. Aba de Itens Diversos
+    public static RegistryEntry<CreativeModeTab> ITEMS = REGISTRATE.defaultCreativeTab("gtna_items",
+                    builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("items", REGISTRATE))
+                            .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.items"), "GTNA Items"))
                             .icon(GTItems.BATTERY_ZPM_NAQUADRIA::asStack)
                             .build())
             .register();
 
-    // Aba de Máquinas: Contém apenas MetaMachineItems
-    public static RegistryEntry<CreativeModeTab> GTNA_MACHINES = REGISTRATE.defaultCreativeTab("gtna_machines",
-                    builder -> builder.displayItems((itemDisplayParameters, output) -> {
-                                // Itera sobre todos os itens registrados pelo seu Mod
-                                REGISTRATE.getAll(Registries.ITEM).forEach(entry -> {
-                                    Item item = entry.get();
-                                    // Se FOR máquina, adiciona aqui
-                                    if (item instanceof MetaMachineItem) {
-                                        output.accept(new ItemStack(item));
-                                    }
-                                });
-                            })
+    // 6. Aba de Máquinas
+    public static RegistryEntry<CreativeModeTab> MACHINES = REGISTRATE.defaultCreativeTab("gtna_machines",
+                    builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("machines", REGISTRATE))
                             .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.machines"), "GTNA Machines"))
                             .icon(GTNAMachines.WIRELESS_STEAM_INPUT_HATCH::asStack)
                             .build())
             .register();
 
     public static void init() {
+    }
+    public static class RegistrateDisplayItemsGenerator implements CreativeModeTab.DisplayItemsGenerator {
+        public final String tabType;
+        public final GTRegistrate registrate;
+        public RegistrateDisplayItemsGenerator(String tabType, GTRegistrate registrate) {
+            this.tabType = tabType;
+            this.registrate = registrate;
+        }
+        @Override
+        public void accept(@NotNull CreativeModeTab.ItemDisplayParameters itemDisplayParameters,
+                           @NotNull CreativeModeTab.Output output) {
+
+            registrate.getAll(Registries.ITEM).forEach(entry -> {
+                Item item = entry.get();
+
+                if (shouldInclude(item)) {
+                    // CORREÇÃO: Passamos null como Tab. Na 1.20.1 o parameters não tem a aba,
+                    // e a maioria dos itens do GT apenas populam a lista quando a aba é null ou corresponde.
+                    if (item instanceof IComponentItem componentItem) {
+                        NonNullList<ItemStack> list = NonNullList.create();
+                        componentItem.fillItemCategory(null, list);
+                        list.forEach(output::accept);
+                    } else if (item instanceof IGTTool tool) {
+                        NonNullList<ItemStack> list = NonNullList.create();
+                        tool.definition$fillItemCategory(null, list);
+                        list.forEach(output::accept);
+                    } else {
+                        output.accept(item);
+                    }
+                }
+            });
+        }
+
+        private boolean shouldInclude(Item item) {
+            return switch (tabType) {
+                case "material_items" -> isMaterialItem(item);
+                case "blocks" -> isBlockItem(item);
+                case "fluids" -> isFluidItem(item);
+                case "pipes" -> isPipeItem(item);
+                case "items" -> isMiscItem(item);
+                case "machines" -> item instanceof MetaMachineItem;
+                default -> false;
+            };
+        }
+        private TagPrefix getTagPrefix(Item item) {
+            if (item instanceof TagPrefixItem tagPrefixItem) return tagPrefixItem.tagPrefix;
+            if (item instanceof MaterialBlockItem materialBlockItem) return materialBlockItem.tagPrefix;
+            return null;
+        }
+        private boolean isPipeItem(Item item) {
+            TagPrefix prefix = getTagPrefix(item);
+            return prefix != null && (prefix.name().contains("pipe") || prefix.name().contains("wire") || prefix.name().contains("cable"));
+        }
+        private boolean isFluidItem(Item item) {
+            if (item instanceof BucketItem) return true;
+            TagPrefix prefix = getTagPrefix(item);
+            return prefix != null && (prefix.name().contains("cell") || prefix.name().contains("bucket"));
+        }
+        private boolean isBlockItem(Item item) {
+            if (item instanceof MetaMachineItem) return false;
+            if (isPipeItem(item)) return false;
+            if (item instanceof BlockItem && getTagPrefix(item) == null) return true;
+            TagPrefix prefix = getTagPrefix(item);
+            return prefix != null && (prefix.name().contains("block") || prefix.name().contains("ore") || prefix.name().contains("frame") || prefix.name().contains("planks") || prefix.name().contains("log"));
+        }
+        private boolean isMaterialItem(Item item) {
+            if (item instanceof MetaMachineItem || isBlockItem(item) || isPipeItem(item) || isFluidItem(item)) return false;
+            return getTagPrefix(item) != null;
+        }
+        private boolean isMiscItem(Item item) {
+            if (item instanceof MetaMachineItem) return false;
+            return getTagPrefix(item) == null && !(item instanceof BlockItem) && !(item instanceof BucketItem);
+        }
     }
 }
