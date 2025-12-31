@@ -7,6 +7,7 @@ import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.raishxn.gtna.GTNACORE;
 import com.tterrag.registrate.util.entry.RegistryEntry;
+import com.gregtechceu.gtceu.api.item.PipeBlockItem;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.*;
@@ -67,13 +68,16 @@ public class GTNACreativeModeTabs {
 
     public static void init() {
     }
+
     public static class RegistrateDisplayItemsGenerator implements CreativeModeTab.DisplayItemsGenerator {
         public final String tabType;
         public final GTRegistrate registrate;
+
         public RegistrateDisplayItemsGenerator(String tabType, GTRegistrate registrate) {
             this.tabType = tabType;
             this.registrate = registrate;
         }
+
         @Override
         public void accept(@NotNull CreativeModeTab.ItemDisplayParameters itemDisplayParameters,
                            @NotNull CreativeModeTab.Output output) {
@@ -82,8 +86,6 @@ public class GTNACreativeModeTabs {
                 Item item = entry.get();
 
                 if (shouldInclude(item)) {
-                    // CORREÇÃO: Passamos null como Tab. Na 1.20.1 o parameters não tem a aba,
-                    // e a maioria dos itens do GT apenas populam a lista quando a aba é null ou corresponde.
                     if (item instanceof IComponentItem componentItem) {
                         NonNullList<ItemStack> list = NonNullList.create();
                         componentItem.fillItemCategory(null, list);
@@ -110,33 +112,52 @@ public class GTNACreativeModeTabs {
                 default -> false;
             };
         }
+
         private TagPrefix getTagPrefix(Item item) {
             if (item instanceof TagPrefixItem tagPrefixItem) return tagPrefixItem.tagPrefix;
             if (item instanceof MaterialBlockItem materialBlockItem) return materialBlockItem.tagPrefix;
+            // Removido PipeBlockItem daqui pois ele não tem o campo tagPrefix acessível
             return null;
         }
+
         private boolean isPipeItem(Item item) {
+            // CORREÇÃO: Verificação direta da classe. Se for PipeBlockItem, é 100% um tubo ou cabo.
+            if (item instanceof PipeBlockItem) return true;
+
             TagPrefix prefix = getTagPrefix(item);
             return prefix != null && (prefix.name().contains("pipe") || prefix.name().contains("wire") || prefix.name().contains("cable"));
         }
+
         private boolean isFluidItem(Item item) {
             if (item instanceof BucketItem) return true;
             TagPrefix prefix = getTagPrefix(item);
             return prefix != null && (prefix.name().contains("cell") || prefix.name().contains("bucket"));
         }
+
         private boolean isBlockItem(Item item) {
             if (item instanceof MetaMachineItem) return false;
+
+            // CORREÇÃO: Exclui PipeBlockItem explicitamente para ele não cair aqui como bloco genérico
+            if (item instanceof PipeBlockItem) return false;
+
             if (isPipeItem(item)) return false;
+
             if (item instanceof BlockItem && getTagPrefix(item) == null) return true;
             TagPrefix prefix = getTagPrefix(item);
             return prefix != null && (prefix.name().contains("block") || prefix.name().contains("ore") || prefix.name().contains("frame") || prefix.name().contains("planks") || prefix.name().contains("log"));
         }
+
         private boolean isMaterialItem(Item item) {
             if (item instanceof MetaMachineItem || isBlockItem(item) || isPipeItem(item) || isFluidItem(item)) return false;
             return getTagPrefix(item) != null;
         }
+
         private boolean isMiscItem(Item item) {
             if (item instanceof MetaMachineItem) return false;
+            // PipeBlockItem é BlockItem, então precisamos garantir que ele não entre aqui também,
+            // mas como ele tem lógica própria acima, o filtro "isBlockItem" e "isPipeItem" já cuidam disso nas outras abas.
+            if (item instanceof PipeBlockItem) return false;
+
             return getTagPrefix(item) == null && !(item instanceof BlockItem) && !(item instanceof BucketItem);
         }
     }

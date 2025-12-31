@@ -16,6 +16,7 @@ import static com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIcon
 import static com.gregtechceu.gtceu.api.data.chemical.material.properties.BlastProperty.GasTier.HIGHER;
 import static com.gregtechceu.gtceu.api.data.chemical.material.properties.BlastProperty.GasTier.LOW;
 import static com.gregtechceu.gtceu.common.data.GTMaterials.*;
+import static com.raishxn.gtna.api.data.info.GTNAMaterialFlags.*;
 import static com.raishxn.gtna.common.data.GTNAMaterials.*;
 
 public class MaterialBuilder {
@@ -30,6 +31,7 @@ public class MaterialBuilder {
                             GENERATE_FRAME, GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_RING,
                             GENERATE_ROUND, GENERATE_SPRING, GENERATE_SPRING_SMALL,
                             GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_ROTOR, GENERATE_DENSE)
+                    .fluidPipeProperties(1123,1000,true,true,true,true)
                     .buildAndRegister().setFormula("(SnCu3)(Fe50C)2");
 
             Breel = new Material.Builder(GTNACORE.id("breel"))
@@ -41,7 +43,7 @@ public class MaterialBuilder {
                             GENERATE_FRAME, GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_RING,
                             GENERATE_ROUND, GENERATE_SPRING, GENERATE_SPRING_SMALL,
                             GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_ROTOR, GENERATE_DENSE)
-
+                    .fluidPipeProperties(1123,1000,true,true,true,true)
                     .buildAndRegister().setFormula("(Fe50C)(SnCu3)2");
 
 
@@ -53,6 +55,8 @@ public class MaterialBuilder {
                     .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW,
                             GENERATE_FRAME, GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_RING,
                             GENERATE_ROUND)
+                    .fluidPipeProperties(167,1000,false,false,true,false)
+
                     .buildAndRegister().setFormula("?(NA2LiAl2Si2O7(H2O)2)(SiO2)");
 
             Echoite = new Material.Builder(GTNACORE.id("echoite"))
@@ -62,10 +66,14 @@ public class MaterialBuilder {
                     .iconSet(METALLIC)
                     .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW,
                             GENERATE_FRAME, GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_RING,
-                            GENERATE_ROUND, GENERATE_ROTOR)
+                            GENERATE_ROUND, GENERATE_ROTOR,GENERATE_SINGULARITY,GENERATE_DOUBLE_INGOT,GENERATE_TRIPLE_INGOT,GENERATE_QUADRUPLE_INGOT,GENERATE_QUINTUPLE_INGOT
+                    ,GENERATE_DOUBLE_PLATE,GENERATE_TRIPLE_PLATE,GENERATE_QUADRUPLE_PLATE,GENERATE_QUINTUPLE_PLATE,GENERATE_DENSE,GENERATE_SUPERDENSE)
+
                     .cableProperties(GTValues.V[GTValues.MV], 32, 0, true)
                     .toolStats(ToolProperty.Builder.of(8.0F, 100.0F, 64, 6, GTNAToolType.VAJRA).magnetic()
                             .unbreakable().build())
+                    .fluidPipeProperties(2000,1000,true,true,true,true)
+
                     .buildAndRegister().setFormula("Ec");
 
             // --- LINGOTE ESPECIAL (Compressed Steam) ---
@@ -73,7 +81,9 @@ public class MaterialBuilder {
             CompressedSteam = new Material.Builder(GTNACORE.id("compressed_steam"))
                     .ingot()
                     .color(0xCCCCCC).iconSet(MaterialIconSet.SHINY)
-                    .flags(NO_SMELTING, GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME,GENERATE_GEAR,GENERATE_PLATE,GENERATE_DENSE)
+                    .flags(NO_SMELTING, GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME,GENERATE_GEAR,GENERATE_PLATE,GENERATE_DENSE,GENERATE_SUPERDENSE,
+                            GENERATE_DOUBLE_PLATE,GENERATE_TRIPLE_PLATE,GENERATE_QUADRUPLE_PLATE,GENERATE_QUINTUPLE_PLATE)
+                    .fluidPipeProperties(500,500,false,false,false,false)
                     .buildAndRegister().setFormula("H2O");
 
             // --- FLUIDOS (Vapores) ---

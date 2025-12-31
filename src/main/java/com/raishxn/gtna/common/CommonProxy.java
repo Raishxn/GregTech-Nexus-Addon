@@ -10,7 +10,10 @@ import com.gregtechceu.gtceu.api.data.chemical.material.event.PostMaterialEvent;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.condition.RecipeConditionType;
-
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
+import net.minecraftforge.data.event.GatherDataEvent;
+import com.raishxn.gtna.data.GTNALangProvider;
 import com.raishxn.gtna.network.GTNANetworkHandler;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -27,7 +30,6 @@ public class CommonProxy {
         CommonProxy.init();
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         REGISTRATE.registerEventListeners(eventBus);
-        //eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::clientSetup);
         eventBus.addListener(this::addMaterialRegistries);
         eventBus.addListener(this::addMaterials);
@@ -35,11 +37,18 @@ public class CommonProxy {
         eventBus.addGenericListener(RecipeConditionType.class, this::registerRecipeConditions);
         eventBus.addGenericListener(GTRecipeType.class, this::registerRecipeTypes);
         eventBus.addGenericListener(MachineDefinition.class, this::registerMachines);
+        eventBus.addListener(this::gatherData);
     }
 
     public static void init() {
         GTNACreativeModeTabs.init();
 
+    }
+
+    public void gatherData(GatherDataEvent event) {
+        DataGenerator generator = event.getGenerator();
+        PackOutput packOutput = generator.getPackOutput();
+        generator.addProvider(event.includeClient(), new GTNALangProvider(packOutput));
     }
 
     public void postRegistrationInitialization() {

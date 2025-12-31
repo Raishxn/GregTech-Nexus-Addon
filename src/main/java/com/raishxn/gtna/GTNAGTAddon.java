@@ -4,6 +4,8 @@ import com.gregtechceu.gtceu.api.addon.GTAddon;
 import com.gregtechceu.gtceu.api.addon.IGTAddon;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.lowdragmc.lowdraglib.Platform;
+import com.raishxn.gtna.api.data.info.GTNAMaterialFlags;
+import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.api.registry.GTNARegistry;
 import com.raishxn.gtna.common.data.GTNACovers;
 import com.raishxn.gtna.common.data.GTNAElements;
@@ -65,5 +67,8 @@ public class GTNAGTAddon implements IGTAddon {
     }
 
     @Override
-    public void registerTagPrefixes() {}
+    public void registerTagPrefixes() {
+        GTNAMaterialFlags.register();
+        GTNATagPrefix.register();
+    }
 }
