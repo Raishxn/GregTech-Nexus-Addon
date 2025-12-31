@@ -12,6 +12,10 @@ import com.raishxn.gtna.common.data.GTNAElements;
 import com.raishxn.gtna.common.data.GTNAItems;
 // Remova o import de GTNAMaterials daqui, não é mais necessário
 //import com.raishxn.gtna.data.recipe.GTNAMaterialRecipes;
+import com.raishxn.gtna.common.data.GTNAMachines;
+import com.raishxn.gtna.data.recipe.GTNAItemRecipes;
+import com.raishxn.gtna.data.recipe.GTNAMachineRecipes;
+import com.raishxn.gtna.data.recipe.GTNAMaterialRecipes;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import java.util.function.Consumer;
@@ -37,6 +41,7 @@ public class GTNAGTAddon implements IGTAddon {
     @Override
     public void initializeAddon() {
         GTNAItems.init();
+        GTNAMachines.init();
     }
 
     @Override
@@ -55,7 +60,9 @@ public class GTNAGTAddon implements IGTAddon {
 
     @Override
     public void addRecipes(Consumer<FinishedRecipe> provider) {
-        //GTNAMaterialRecipes.init(provider);
+        GTNAMaterialRecipes.init(provider);
+        GTNAMachineRecipes.init(provider);
+        GTNAItemRecipes.init(provider);
     }
 
     @Override

@@ -32,18 +32,11 @@ public class GTNAItems {
     public static ItemEntry<ComponentItem> HYDRAULIC_VAPOR_GENERATOR;
     public static ItemEntry<ComponentItem> HYDRAULIC_STEAM_JET_SPEWER;
     public static ItemEntry<ComponentItem> HYDRAULIC_STEAM_RECEIVER;
+    public static ItemEntry<ComponentItem> PRECISION_STEAM_COMPONENT;
 
     public static void init() {
 
         // --- Items Originais ---
-
-        /*DEBUG_STRUCTURE_WRITER = REGISTRATE
-                .item("debug_structure_writer", ComponentItem::create)
-                .lang("Debug Structure Writer")
-                .onRegister(attach(StructureWriteBehavior.INSTANCE))
-                .model(NonNullBiConsumer.noop())
-                .register();*/
-
         STRUCTURE_DETECT = REGISTRATE
                 .item("structure_detect", ComponentItem::create)
                 .lang("Structure Detector")
@@ -57,39 +50,44 @@ public class GTNAItems {
         // --- Registros dos Novos Componentes ---
 
         HYDRAULIC_MOTOR = REGISTRATE.item("hydraulic_motor", ComponentItem::create)
+                .properties(stack -> stack.stacksTo(64))
                 .lang("Hydraulic Motor")
                 .register();
-
         HYDRAULIC_PISTON = REGISTRATE.item("hydraulic_piston", ComponentItem::create)
                 .lang("Hydraulic Piston")
+                .properties(stack -> stack.stacksTo(64))
                 .register();
-
         HYDRAULIC_PUMP = REGISTRATE.item("hydraulic_pump", ComponentItem::create)
-                .lang("Hydraulic Pump") // (podendo trasferir 1000000L)
+                .lang("Hydraulic Pump")
+                .properties(stack -> stack.stacksTo(64))
                 .register();
-
         HYDRAULIC_ARM = REGISTRATE.item("hydraulic_arm", ComponentItem::create)
                 .lang("Hydraulic Arm")
+                .properties(stack -> stack.stacksTo(64))
                 .register();
-
         HYDRAULIC_CONVEYOR = REGISTRATE.item("hydraulic_conveyor", ComponentItem::create)
-                .lang("Hydraulic Conveyor") // (podendo transferir 16 stacks)
+                .lang("Hydraulic Conveyor")
+                .properties(stack -> stack.stacksTo(64))
                 .register();
-
         HYDRAULIC_REGULATOR = REGISTRATE.item("hydraulic_regulator", ComponentItem::create)
-                .lang("Hydraulic Regulator") // (transferindo 20000000L)
+                .lang("Hydraulic Regulator")
+                .properties(stack -> stack.stacksTo(64))
                 .register();
-
         HYDRAULIC_VAPOR_GENERATOR = REGISTRATE.item("hydraulic_vapor_generator", ComponentItem::create)
                 .lang("Hydraulic Vapor Generator")
+                .properties(stack -> stack.stacksTo(64))
                 .register();
-
         HYDRAULIC_STEAM_JET_SPEWER = REGISTRATE.item("hydraulic_steam_jet_spewer", ComponentItem::create)
                 .lang("Hydraulic Steam Jet Spewer")
+                .properties(stack -> stack.stacksTo(64))
                 .register();
-
         HYDRAULIC_STEAM_RECEIVER = REGISTRATE.item("hydraulic_steam_receiver", ComponentItem::create)
                 .lang("Hydraulic Steam Receiver")
+                .properties(stack -> stack.stacksTo(64))
+                .register();
+        PRECISION_STEAM_COMPONENT = REGISTRATE.item("precision_steam_component", ComponentItem::create)
+                .lang("Precision Steam Component")
+                .properties(stack -> stack.stacksTo(64))
                 .register();
     }
 }

@@ -15,5 +15,11 @@
   "message.gtna.detection_mode_normal": "Current detection mode: (Normal mode)",
   "message.gtna.structure_formed": "Structure formed",
   "gtna.machine.wireless_steam_hatch.tooltip": "Receives steam wirelessly from your global network.",
-  "gtna.machine.wireless_steam_output_hatch.tooltip": "Sends steam wirelessly to your global network (Boilers Only)."
+  "gtna.machine.wireless_steam_output_hatch.tooltip": "Sends steam wirelessly to your global network (Boilers Only).",
+  "block.gtna.large_steam_crusher": "Large Steam Crusher",
+  "item.gtna.precision_steam_component": "Precision Steam Component",
+  "gtna.tooltip.large_steam_crusher.speed": "Speed: 900% faster than singleblock",
+  "gtna.tooltip.large_steam_crusher.steam": "Steam Consumption: 80% of original",
+  "gtna.tooltip.large_steam_crusher.parallel": "Process up to 128 items at once",
+  "gtna.registry.add": "Added by GregTech Nexus Addon"
 }

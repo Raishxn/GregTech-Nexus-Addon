@@ -1,4 +1,5 @@
 {
+  "block.gtna.large_steam_crusher": "ɹǝɥsnɹƆ ɯɐǝʇS ǝbɹɐꞀ",
   "block.gtna.wireless_steam_input_hatch": "ɥɔʇɐH ʇnduI ɯɐǝʇS ssǝןǝɹıM",
   "block.gtna.wireless_steam_input_hatch_steel": "ןǝǝʇS ɥɔʇɐH ʇnduI ɯɐǝʇS ssǝןǝɹıM",
   "block.gtna.wireless_steam_output_hatch": "ɥɔʇɐH ʇndʇnO ɯɐǝʇS ssǝןǝɹıM",
@@ -12,6 +13,7 @@
   "item.gtna.hydraulic_steam_jet_spewer": "ɹǝʍǝdS ʇǝſ ɯɐǝʇS ɔıןnɐɹpʎH",
   "item.gtna.hydraulic_steam_receiver": "ɹǝʌıǝɔǝᴚ ɯɐǝʇS ɔıןnɐɹpʎH",
   "item.gtna.hydraulic_vapor_generator": "ɹoʇɐɹǝuǝ⅁ ɹodɐΛ ɔıןnɐɹpʎH",
+  "item.gtna.precision_steam_component": "ʇuǝuodɯoƆ ɯɐǝʇS uoısıɔǝɹԀ",
   "item.gtna.structure_detect": "ɹoʇɔǝʇǝᗡ ǝɹnʇɔnɹʇS",
   "itemGroup.gtna.creative_tab.items": "sɯǝʇI ⱯN⟘⅁",
   "itemGroup.gtna.creative_tab.machines": "sǝuıɥɔɐW ⱯN⟘⅁",

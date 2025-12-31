@@ -1,4 +1,4 @@
-/*package com.raishxn.gtna.data.recipe;
+package com.raishxn.gtna.data.recipe;
 
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
@@ -44,13 +44,20 @@ public class GTNAMaterialRecipes {
                 .save(provider);
 
         // --- Compressed Steam Ingot (Compressor) ---
-        // Dense Supercritical Steam + Steam -> Ingot
+        // Dense Supercritical Steam or Steam -> Ingot
         GTRecipeTypes.COMPRESSOR_RECIPES.recipeBuilder("compressed_steam_ingot")
                 .inputFluids(GTNAMaterials.DenseSupercriticalSteam.getFluid(1000))
-                .inputFluids(GTMaterials.Steam.getFluid(1000))
                 .outputItems(TagPrefix.ingot, GTNAMaterials.CompressedSteam, 1)
                 .duration(300)
                 .EUt(GTValues.HV)
                 .save(provider);
+
+        GTRecipeTypes.FLUID_SOLIDFICATION_RECIPES.recipeBuilder("compressed_steam_ingot")
+                .inputFluids(GTMaterials.Steam.getFluid(10000))
+                .outputItems(TagPrefix.ingot, GTNAMaterials.CompressedSteam, 1)
+                .duration(900)
+                .EUt(GTValues.ULV)
+                .save(provider);
     }
-}*/
+
+}

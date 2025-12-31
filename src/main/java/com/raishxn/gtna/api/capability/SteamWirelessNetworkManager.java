@@ -2,6 +2,9 @@ package com.raishxn.gtna.api.capability;
 
 import com.raishxn.gtna.common.data.SteamNetworkData;
 import net.minecraft.server.level.ServerLevel;
+import com.raishxn.gtna.common.data.SteamNetworkData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
@@ -33,18 +36,21 @@ public class SteamWirelessNetworkManager {
         SteamNetworkData.get(level).setSteam(userUuid, steamAmount);
     }
 
-    // --- MÉTODO ADICIONADO AQUI ---
-    /**
-     * Tenta consumir uma quantidade de vapor da rede global do jogador.
-     * @return true se o consumo foi bem-sucedido (havia vapor suficiente), false caso contrário.
-     */
     public static boolean consumeSteamFromGlobalMap(ServerLevel level, UUID userUuid, long amount) {
         if (level == null || userUuid == null || amount <= 0) return false;
-
-        // Obtém os dados salvos do mundo
         SteamNetworkData data = SteamNetworkData.get(level);
-
-        // Chama o método de consumo na classe de dados (SteamNetworkData)
         return data.consumeSteam(userUuid, amount);
+    }
+    public static boolean extractSteam(Level level, UUID userUuid, long amount, boolean simulate) {
+        if (!(level instanceof ServerLevel serverLevel) || userUuid == null || amount <= 0) return false;
+        SteamNetworkData data = SteamNetworkData.get(serverLevel);
+        long current = data.getSteam(userUuid);
+        if (current >= amount) {
+            if (!simulate) {
+                data.setSteam(userUuid, current - amount);
+            }
+            return true;
+        }
+        return false;
     }
 }
