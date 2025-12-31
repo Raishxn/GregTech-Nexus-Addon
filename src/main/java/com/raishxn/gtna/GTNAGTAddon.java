@@ -60,9 +60,9 @@ public class GTNAGTAddon implements IGTAddon {
 
     @Override
     public void addRecipes(Consumer<FinishedRecipe> provider) {
-        GTNAMaterialRecipes.init(provider);
-        GTNAMachineRecipes.init(provider);
-        GTNAItemRecipes.init(provider);
+        GTNAMaterialRecipes.register(provider);
+        GTNAItemRecipes.register(provider);
+        GTNAMachineRecipes.register(provider);
     }
 
     @Override

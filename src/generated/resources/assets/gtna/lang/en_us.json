@@ -55,5 +55,11 @@
   "tagprefix.singularity": "Singularity",
   "tagprefix.superdense_plate": "Superdense Plate",
   "tagprefix.triple_ingot": "Triple Ingot",
-  "tagprefix.triple_plate": "Triple Plate"
+  "tagprefix.triple_plate": "Triple Plate",
+  "block.gtna.large_steam_crusher": "Large Steam Crusher",
+  "item.gtna.precision_steam_component": "Precision Steam Component",
+  "gtna.tooltip.large_steam_crusher.speed": "Speed: 900% faster than singleblock",
+  "gtna.tooltip.large_steam_crusher.steam": "Steam Consumption: 80% of original",
+  "gtna.tooltip.large_steam_crusher.parallel":"Process up to 128 items at once",
+  "gtna.registry.add": "Added by GregTech Nexus Addon"
 }

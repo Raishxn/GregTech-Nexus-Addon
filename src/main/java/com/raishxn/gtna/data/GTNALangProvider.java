@@ -110,5 +110,11 @@ public class GTNALangProvider extends LanguageProvider {
         add("message.gtna.detection_mode_mirrored", "Current detection mode: (Mirrored mode)");
         add("message.gtna.detection_mode_normal", "Current detection mode: (Normal mode)");
         add("message.gtnacore.structure_formed", "Structure formed");
+        add("block.gtna.large_steam_crusher", "Large Steam Crusher");
+        add("item.gtna.precision_steam_component", "Precision Steam Component");
+        add("gtna.tooltip.large_steam_crusher.speed", "Speed: 900% faster than singleblock");
+        add("gtna.tooltip.large_steam_crusher.steam", "Steam Consumption: 80% of original");
+        add("gtna.tooltip.large_steam_crusher.parallel","Process up to 128 items at once");
+        add("gtna.registry.add", "Added by GregTech Nexus Addon");
     }
 }

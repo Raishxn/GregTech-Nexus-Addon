@@ -13,12 +13,10 @@ import com.gregtechceu.gtceu.api.recipe.condition.RecipeConditionType;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.data.event.GatherDataEvent;
-import com.raishxn.gtna.data.GTNALangProvider;
 import com.raishxn.gtna.network.GTNANetworkHandler;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 
@@ -48,7 +46,7 @@ public class CommonProxy {
     public void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
-        generator.addProvider(event.includeClient(), new GTNALangProvider(packOutput));
+
     }
 
     public void postRegistrationInitialization() {

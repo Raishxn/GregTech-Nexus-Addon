@@ -13,18 +13,28 @@ import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamInputHatch;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamOutputHatch;
 import com.raishxn.gtna.common.machine.multiblock.steam.LargeSteamCrusher;
+import net.minecraft.ChatFormatting; // <--- Importante
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack; // <--- Importante
+
+import java.util.List;
+import java.util.function.BiConsumer;
 
 import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
 import static com.gregtechceu.gtceu.api.pattern.Predicates.blocks;
 import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
-import static com.raishxn.gtna.common.machine.multiblock.steam.LargeSteamCrusher.GTNA_ADD;
+// REMOVA A IMPORTAÇÃO ESTÁTICA DO LargeSteamCrusher.GTNA_ADD
 
 public class GTNAMachines {
 
     private static final ResourceLocation OVERLAY_IN = new ResourceLocation("gtna", "block/overlay/machine/overlay_steam_wireless_in");
     private static final ResourceLocation OVERLAY_OUT = new ResourceLocation("gtna", "block/overlay/machine/overlay_steam_wireless_out");
+
+    // DEFINA O GTNA_ADD AQUI (Seguro para DataGen)
+    public static final BiConsumer<ItemStack, List<Component>> GTNA_ADD = (stack, components) -> components
+            .add(Component.translatable("gtna.registry.add")
+                    .withStyle(ChatFormatting.LIGHT_PURPLE));
 
     // --- INPUT HATCHES ---
 
@@ -35,12 +45,12 @@ public class GTNAMachines {
             .abilities(PartAbility.STEAM, PartAbility.IMPORT_FLUIDS)
             .colorOverlaySteamHullModel(OVERLAY_IN)
             .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, false)
-            .modelProperty(IS_FORMED, false) //para o bloco quando formado ficar na mesma textura que o multibloco
+            .modelProperty(IS_FORMED, false)
             .tooltips(
                     Component.translatable("gtna.machine.wireless_steam_hatch.tooltip"),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", 20000)
             )
-            .tooltipBuilder(GTNA_ADD)
+            .tooltipBuilder(GTNA_ADD) // Usa a variável local definida acima
             .register();
 
     public static final MachineDefinition WIRELESS_STEAM_INPUT_HATCH_STEEL = REGISTRATE
@@ -105,15 +115,14 @@ public class GTNAMachines {
                     .where('S', Predicates.controller(blocks(definition.get())))
                     .where('X', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
                             .or(Predicates.autoAbilities(definition.getRecipeTypes()))
-                            .or(Predicates.abilities(PartAbility.STEAM).setExactLimit(1)) // Permite hatch de vapor
-                            .or(Predicates.abilities(PartAbility.IMPORT_FLUIDS)) // Permite seus wireless hatches
-                            .or(Predicates.abilities(PartAbility.EXPORT_FLUIDS))
-                    )
-                    .where('#', Predicates.air()) // Ar no meio (estrutura oca)
+                            .or(Predicates.abilities(PartAbility.STEAM).setExactLimit(1))
+                            .or(Predicates.abilities(PartAbility.IMPORT_FLUIDS))
+                            .or(Predicates.abilities(PartAbility.EXPORT_FLUIDS)))
+                    .where('#', Predicates.air())
                     .build())
             .workableCasingModel(
                     GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
-                    GTCEu.id("block/multiblock/large_steam_crusher")) // Textura do overlay da face
+                    GTCEu.id("block/multiblock/large_steam_crusher"))
             .tooltipBuilder(GTNA_ADD)
             .register();
 
