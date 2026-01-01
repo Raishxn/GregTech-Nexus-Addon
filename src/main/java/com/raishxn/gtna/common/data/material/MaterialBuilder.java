@@ -82,9 +82,10 @@ public class MaterialBuilder {
             CompressedSteam = new Material.Builder(GTNACORE.id("compressed_steam"))
                     .ingot()
                     .color(0xCCCCCC).iconSet(MaterialIconSet.SHINY)
-                    .flags(NO_SMELTING, GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME,GENERATE_GEAR,GENERATE_PLATE,GENERATE_DENSE,GENERATE_SUPERDENSE,
-                            GENERATE_DOUBLE_PLATE,GENERATE_TRIPLE_PLATE,GENERATE_QUADRUPLE_PLATE,GENERATE_QUINTUPLE_PLATE)
-                    .fluidPipeProperties(500,500,false,false,false,false)
+                    .flags(NO_SMELTING, GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME, GENERATE_GEAR,
+                            GENERATE_DENSE, GENERATE_SUPERDENSE, GENERATE_DOUBLE_PLATE,
+                            GENERATE_TRIPLE_PLATE, GENERATE_QUADRUPLE_PLATE, GENERATE_QUINTUPLE_PLATE)
+                    .fluidPipeProperties(500, 500, false, false, false, false)
                     .buildAndRegister().setFormula("H2O");
 
             // --- FLUIDOS (Vapores) ---

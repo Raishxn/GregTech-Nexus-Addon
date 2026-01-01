@@ -44,7 +44,7 @@ public class GTNAMachines {
             .add(Component.translatable("gtna.registry.add")
                     .withStyle(ChatFormatting.LIGHT_PURPLE));
 
-    // --- INPUT HATCHES ---
+    // --- INPUT HATCHES (Recebe Vapor) ---
 
     public static final MachineDefinition WIRELESS_STEAM_INPUT_HATCH = REGISTRATE
             .machine("wireless_steam_input_hatch", holder -> new WirelessSteamInputHatch(holder, false))
@@ -55,7 +55,8 @@ public class GTNAMachines {
             .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, false)
             .modelProperty(IS_FORMED, false)
             .tooltips(
-                    Component.translatable("gtna.machine.wireless_steam_hatch.tooltip"),
+                    Component.translatable("gtna.machine.wireless_steam_input.tooltip_desc")
+                            .withStyle(ChatFormatting.GRAY),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", 20000)
             )
             .tooltipBuilder(GTNA_ADD)
@@ -70,13 +71,14 @@ public class GTNAMachines {
             .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, true)
             .modelProperty(IS_FORMED, false)
             .tooltips(
-                    Component.translatable("gtna.machine.wireless_steam_hatch.tooltip"),
+                    Component.translatable("gtna.machine.wireless_steam_input.tooltip_desc")
+                            .withStyle(ChatFormatting.GRAY),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", Integer.MAX_VALUE)
             )
             .tooltipBuilder(GTNA_ADD)
             .register();
 
-    // --- OUTPUT HATCHES ---
+    // --- OUTPUT HATCHES (Envia Vapor) ---
 
     public static final MachineDefinition WIRELESS_STEAM_OUTPUT_HATCH = REGISTRATE
             .machine("wireless_steam_output_hatch", holder -> new WirelessSteamOutputHatch(holder, false))
@@ -87,7 +89,10 @@ public class GTNAMachines {
             .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, false)
             .modelProperty(IS_FORMED, false)
             .tooltips(
-                    Component.translatable("gtna.machine.wireless_steam_output_hatch.tooltip"),
+                    Component.translatable("gtna.machine.wireless_steam_output.tooltip_desc")
+                            .withStyle(ChatFormatting.GRAY),
+                    Component.translatable("gtna.machine.wireless_steam_output.tooltip_usage")
+                            .withStyle(ChatFormatting.GOLD),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", 20000)
             )
             .tooltipBuilder(GTNA_ADD)
@@ -102,7 +107,10 @@ public class GTNAMachines {
             .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, true)
             .modelProperty(IS_FORMED, false)
             .tooltips(
-                    Component.translatable("gtna.machine.wireless_steam_output_hatch.tooltip"),
+                    Component.translatable("gtna.machine.wireless_steam_output.tooltip_desc")
+                            .withStyle(ChatFormatting.GRAY),
+                    Component.translatable("gtna.machine.wireless_steam_output.tooltip_usage")
+                            .withStyle(ChatFormatting.GOLD),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", Integer.MAX_VALUE)
             )
             .tooltipBuilder(GTNA_ADD)
@@ -276,18 +284,18 @@ public class GTNAMachines {
                     .where('A', blocks(GTNABlocks.HYPER_PRESSURE_BREEL_CASING.get())
                             .or(abilities(IMPORT_FLUIDS))
                             .or(abilities(EXPORT_FLUIDS)))
-                    .where('B', blocks(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get()))
+                    .where('B', blocks(GTNABlocks.SOLAR_BOILING_CELL.get()))
                     .build())
             .shapeInfos(definition -> {
                 var minShape = MultiblockShapeInfo.builder()
                         .aisle("AAA", "BBB", "BBB", "BBB", "A~A")
                         .where('~', definition, Direction.NORTH)
                         .where('A', GTNABlocks.HYPER_PRESSURE_BREEL_CASING.get())
-                        .where('B', GTNABlocks.STEAM_COMPACT_PIPE_CASING.get())
+                        .where('B', GTNABlocks.SOLAR_BOILING_CELL.get())
                         .build();
                 return List.of(minShape);
             })
-            .workableCasingModel(GTNACORE.id("block/casings/hyper_pressure_breel_casing"), GTNACORE.id("block/multiblock/mega_solar_boiler"))
+            .workableCasingModel(GTNACORE.id("block/casings/mega_pressure_solar_boiler_casing"), GTNACORE.id("block/overlay/machine/solarboiler"))
             .tooltips(
                     Component.translatable("gtna.tooltip.mega_solar.desc", "A massive solar thermal power plant.")
                             .withStyle(ChatFormatting.GRAY),

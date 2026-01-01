@@ -7,18 +7,19 @@ import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.raishxn.gtna.GTNACORE;
 import com.tterrag.registrate.util.entry.RegistryEntry;
-import com.gregtechceu.gtceu.api.item.PipeBlockItem;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.*;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
 
 @SuppressWarnings("unused")
 public class GTNACreativeModeTabs {
 
-    // 1. Aba de Items Materiais
+    // 1. Aba de Items Materiais (Lingotes, Pó, etc.)
     public static RegistryEntry<CreativeModeTab> MATERIAL_ITEMS = REGISTRATE.defaultCreativeTab("gtna_material_items",
                     builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("material_items", REGISTRATE))
                             .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.material_items"), "GTNA Material Items"))
@@ -26,9 +27,9 @@ public class GTNACreativeModeTabs {
                             .build())
             .register();
 
-    // 2. Aba de Blocos de Materiais
+    // 2. Aba de Blocos de Materiais (Minérios, Blocos de Metal, etc.)
     public static RegistryEntry<CreativeModeTab> MATERIAL_BLOCKS = REGISTRATE.defaultCreativeTab("gtna_material_blocks",
-                    builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("blocks", REGISTRATE))
+                    builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("material_blocks", REGISTRATE))
                             .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.material_blocks"), "GTNA Material Blocks"))
                             .icon(() -> ChemicalHelper.get(TagPrefix.block, GTNAMaterials.Echoite))
                             .build())
@@ -58,9 +59,9 @@ public class GTNACreativeModeTabs {
                             .build())
             .register();
 
-    // 6. Aba de Blocos Gerais (CORRIGIDO)
+    // 6. Aba de Blocos Gerais (Seus blocos customizados do GTNABlocks)
     public static RegistryEntry<CreativeModeTab> BLOCKS = REGISTRATE.defaultCreativeTab("gtna_blocks",
-                    builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("nonmaterialblocks", REGISTRATE))
+                    builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("custom_blocks", REGISTRATE))
                             .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.blocks"), "GTNA Blocks"))
                             .icon(GTNABlocks.HYPER_PRESSURE_BREEL_CASING::asStack)
                             .build())
@@ -80,6 +81,16 @@ public class GTNACreativeModeTabs {
     public static class RegistrateDisplayItemsGenerator implements CreativeModeTab.DisplayItemsGenerator {
         public final String tabType;
         public final GTRegistrate registrate;
+
+        // Lista estática dos blocos exclusivos do GTNABlocks
+        private static final Set<Item> CUSTOM_BLOCKS = Set.of(
+                GTNABlocks.BREEL_PIPE_CASING.get().asItem(),
+                GTNABlocks.HYPER_PRESSURE_BREEL_CASING.get().asItem(),
+                GTNABlocks.STEAM_COMPACT_PIPE_CASING.get().asItem(),
+                GTNABlocks.VIBRATION_SAFE_CASING.get().asItem(),
+                GTNABlocks.BRONZE_REINFORCED_WOOD.get().asItem(),
+                GTNABlocks.SOLAR_BOILING_CELL.get().asItem()
+        );
 
         public RegistrateDisplayItemsGenerator(String tabType, GTRegistrate registrate) {
             this.tabType = tabType;
@@ -112,12 +123,12 @@ public class GTNACreativeModeTabs {
         private boolean shouldInclude(Item item) {
             return switch (tabType) {
                 case "material_items" -> isMaterialItem(item);
-                case "blocks" -> isBlockItem(item);
+                case "material_blocks" -> isMaterialBlockItem(item); // Nome alterado para clareza
                 case "fluids" -> isFluidItem(item);
                 case "pipes" -> isPipeItem(item);
                 case "items" -> isMiscItem(item);
                 case "machines" -> item instanceof MetaMachineItem;
-                case "nonmaterialblocks" -> isBlockItem(item);
+                case "custom_blocks" -> isCustomBlockItem(item); // Nova categoria
                 default -> false;
             };
         }
@@ -140,24 +151,39 @@ public class GTNACreativeModeTabs {
             return prefix != null && (prefix.name().contains("cell") || prefix.name().contains("bucket"));
         }
 
-        private boolean isBlockItem(Item item) {
+        // Verifica se é um bloco gerado automaticamente (Minério, Bloco de Material)
+        private boolean isMaterialBlockItem(Item item) {
+            // Se estiver na lista customizada, retorna FALSO para não aparecer na aba de materiais
+            if (isCustomBlockItem(item)) return false;
+
             if (item instanceof MetaMachineItem) return false;
             if (item instanceof PipeBlockItem) return false;
             if (isPipeItem(item)) return false;
 
+            // Se for um bloco genérico sem TagPrefix, pode cair aqui, mas queremos evitar isso se for um bloco custom
             if (item instanceof BlockItem && getTagPrefix(item) == null) return true;
+
             TagPrefix prefix = getTagPrefix(item);
             return prefix != null && (prefix.name().contains("block") || prefix.name().contains("ore") || prefix.name().contains("frame") || prefix.name().contains("planks") || prefix.name().contains("log"));
         }
 
+        // Verifica se é um dos seus blocos customizados
+        private boolean isCustomBlockItem(Item item) {
+            return CUSTOM_BLOCKS.contains(item);
+        }
+
         private boolean isMaterialItem(Item item) {
-            if (item instanceof MetaMachineItem || isBlockItem(item) || isPipeItem(item) || isFluidItem(item)) return false;
+            // Exclui blocos customizados, máquinas, tubos, etc.
+            if (item instanceof MetaMachineItem || isMaterialBlockItem(item) || isCustomBlockItem(item) || isPipeItem(item) || isFluidItem(item)) return false;
             return getTagPrefix(item) != null;
         }
 
         private boolean isMiscItem(Item item) {
             if (item instanceof MetaMachineItem) return false;
             if (item instanceof PipeBlockItem) return false;
+            // Exclui se for um bloco customizado
+            if (isCustomBlockItem(item)) return false;
+
             return getTagPrefix(item) == null && !(item instanceof BlockItem) && !(item instanceof BucketItem);
         }
     }

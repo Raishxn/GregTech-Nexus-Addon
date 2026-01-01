@@ -71,7 +71,7 @@ public class MegaSolarBoilerMachine extends WorkableMultiblockMachine implements
         BlockPos.MutableBlockPos pos = start.mutable();
         for (int i = 1; i <= max; i++) {
             pos.move(dir);
-            if (world.getBlockState(pos).is(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get())) dist = i;
+            if (world.getBlockState(pos).is(GTNABlocks.SOLAR_BOILING_CELL.get())) dist = i;
             else break;
         }
         return dist;
@@ -99,7 +99,7 @@ public class MegaSolarBoilerMachine extends WorkableMultiblockMachine implements
                 .where('A', Predicates.blocks(GTNABlocks.HYPER_PRESSURE_BREEL_CASING.get())
                         .or(Predicates.abilities(IMPORT_FLUIDS).setPreviewCount(1))
                         .or(Predicates.abilities(EXPORT_FLUIDS).setPreviewCount(1)))
-                .where('B', Predicates.blocks(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get()))
+                .where('B', Predicates.blocks(GTNABlocks.SOLAR_BOILING_CELL.get()))
                 .build();
     }
     @Override

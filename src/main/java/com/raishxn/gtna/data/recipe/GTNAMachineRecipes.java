@@ -57,7 +57,7 @@ public class GTNAMachineRecipes {
                 .pattern("DED")
                 .define('A', GTNABlocks.SOLAR_BOILING_CELL.get())
                 .define('B', GTNAItems.HYDRAULIC_PUMP.get())
-                .define('C', GTMachines.HULL[GTValues.LV].asStack().getItem())
+                .define('C', GTBlocks.CASING_STEEL_SOLID.get())
                 .define('D', GTBlocks.CASING_BRONZE_BRICKS.get())
                 .define('E', GTBlocks.CASING_STEEL_SOLID.get())
                 .unlockedBy("has_solar_boiling_cell", InventoryChangeTrigger.TriggerInstance.hasItems(GTNABlocks.SOLAR_BOILING_CELL.get().asItem()))

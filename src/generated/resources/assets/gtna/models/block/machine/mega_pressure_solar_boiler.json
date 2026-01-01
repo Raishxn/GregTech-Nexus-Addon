@@ -3,14 +3,15 @@
   "loader": "gtceu:machine",
   "machine": "gtna:mega_pressure_solar_boiler",
   "texture_overrides": {
-    "all": "gtna:block/casings/hyper_pressure_breel_casing"
+    "all": "gtna:block/casings/mega_pressure_solar_boiler_casing"
   },
   "variants": {
     "is_formed=false,recipe_logic_status=idle": {
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/hyper_pressure_breel_casing"
+          "all": "gtna:block/casings/mega_pressure_solar_boiler_casing",
+          "overlay_front": "gtna:block/overlay/machine/solarboiler/overlay_front"
         }
       }
     },
@@ -18,7 +19,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/hyper_pressure_breel_casing"
+          "all": "gtna:block/casings/mega_pressure_solar_boiler_casing",
+          "overlay_front": "gtna:block/overlay/machine/solarboiler/overlay_front"
         }
       }
     },
@@ -26,7 +28,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/hyper_pressure_breel_casing"
+          "all": "gtna:block/casings/mega_pressure_solar_boiler_casing",
+          "overlay_front": "gtna:block/overlay/machine/solarboiler/overlay_front"
         }
       }
     },
@@ -34,7 +37,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/hyper_pressure_breel_casing"
+          "all": "gtna:block/casings/mega_pressure_solar_boiler_casing",
+          "overlay_front": "gtna:block/overlay/machine/solarboiler/overlay_front"
         }
       }
     },
@@ -42,7 +46,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/hyper_pressure_breel_casing"
+          "all": "gtna:block/casings/mega_pressure_solar_boiler_casing",
+          "overlay_front": "gtna:block/overlay/machine/solarboiler/overlay_front"
         }
       }
     },
@@ -50,7 +55,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/hyper_pressure_breel_casing"
+          "all": "gtna:block/casings/mega_pressure_solar_boiler_casing",
+          "overlay_front": "gtna:block/overlay/machine/solarboiler/overlay_front"
         }
       }
     },
@@ -58,7 +64,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/hyper_pressure_breel_casing"
+          "all": "gtna:block/casings/mega_pressure_solar_boiler_casing",
+          "overlay_front": "gtna:block/overlay/machine/solarboiler/overlay_front"
         }
       }
     },
@@ -66,7 +73,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/hyper_pressure_breel_casing"
+          "all": "gtna:block/casings/mega_pressure_solar_boiler_casing",
+          "overlay_front": "gtna:block/overlay/machine/solarboiler/overlay_front"
         }
       }
     }

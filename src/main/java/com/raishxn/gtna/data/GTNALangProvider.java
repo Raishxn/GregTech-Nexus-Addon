@@ -96,7 +96,6 @@ public class GTNALangProvider extends LanguageProvider {
         add("item.gtna.hydraulic_vapor_generator", "Hydraulic Vapor Generator");
         add("item.gtna.hydraulic_steam_jet_spewer", "Hydraulic Steam Jet Spewer");
         add("item.gtna.hydraulic_steam_receiver", "Hydraulic Steam Receiver");
-
         add("item.gtna.structure_detect.tooltip.0", "§aRight click§7 block to select Multiblock Controller.");
         add("item.gtna.structure_detect.tooltip.1", "§aShift Right click§7 to change mode.");
         add("item.gtna.structure_detect.tooltip.2", "§aMode: §f%s");
@@ -107,7 +106,6 @@ public class GTNALangProvider extends LanguageProvider {
         add("item.gtna.structure_detect.error.4", "(Normal Mode)");
         add("structure_detect.tooltip.0", "Right-click multiblock main block");
         add("structure_detect.tooltip.1", "Shift right-click to switch detection mode");
-
         add("itemGroup.gtna.creative_tab", "GregTech: Nexus Addon");
         add("itemGroup.gtna.creative_tab.machines", "GregTech: Nexus Addon Machines");
         add("itemGroup.gtna.creative_tab.items", "GregTech: Nexus Addon Items");
@@ -116,7 +114,6 @@ public class GTNALangProvider extends LanguageProvider {
         add("itemGroup.gtna.creative_tab.material_items", "GregTech: Nexus Addon Material Items");
         add("itemGroup.gtna.creative_tab.material_pipes", "GregTech: Nexus Addon Material Pipes & Wires");
         add("itemGroup.gtna.creative_tab.blocks", "GregTech: Nexus Addon Blocks");
-
         add("structure_writer.export_order", "Export Order: C:%s  S:%s  A:%s");
         add("structure_writer.structural_scale", "Structure Scale: X:%s  Y:%s  Z:%s");
         add("message.gtna.detection_mode_mirrored", "Current detection mode: (Mirrored mode)");
@@ -137,6 +134,20 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.mega_solar.sunlight", "REQUIREMENT: Every Solar Pipe casing must have direct access to the sky.");
         add("gtna.tooltip.mega_solar.production", "Production: 10,000 L/s of Steam per active Pipe Block.");
         add("gtna.tooltip.mega_solar.max_size", "Max Size: 33 Wide x 32 Deep.");
+        add("gtna.machine.mega_solar.size", "Structure Size: %s x %s");
+        add("gtna.machine.mega_solar.sunlit", "Sunlit Cells: %s");
+        add("gtna.machine.mega_solar.production", "Steam Production: %s L/t");
+        add("gtna.machine.wireless_steam_hatch.tooltip", "Steam Production: %s L/t");
+        add("block.gtna.mega_pressure_solar_boiler", "Mega Pressure Solar Boiler");
+        add("block.gtna.breel_pipe_casing", "Breel Pipe Casing");
+        add("block.gtna.hyper_pressure_breel_casing", "Hyper Pressure Breel Casing");
+        add("block.gtna.steam_compact_pipe_casing", "Steam Compact Pipe Casing");
+        add("block.gtna.vibration_safe_casing", "Vibration Safe Casing");
+        add("block.gtna.bronze_reinforced_wood", "Bronze Reinforced Wood");
+        add("block.gtna.solar_boiling_cell", "Solar Boiling Cell");
+        add("gtna.machine.wireless_steam_output.tooltip_desc", "Sends Steam wirelessly to your Global Network.");
+        add("gtna.machine.wireless_steam_output.tooltip_usage", "Usage: Place on Boilers to export Steam.");
+        add("gtna.machine.wireless_steam_input.tooltip_desc", "Receives Steam wirelessly from your Global Network.");
 
     }
 }

@@ -70,9 +70,9 @@ public class GTNABlockRecipes {
 
         // Receita de Máquina (GTCEu) - Esta não precisa de unlockedBy pois usa builder próprio
         GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_compact_pipe_casing")
-                .inputItems(ChemicalHelper.getTag(TagPrefix.pipeNormalFluid, GTNAMaterials.Breel), 1)
-                .inputItems(ChemicalHelper.getTag(TagPrefix.pipeTinyFluid, GTNAMaterials.CompressedSteam), 2)
-                .inputItems(ChemicalHelper.getTag(TagPrefix.plate, GTNAMaterials.CompressedSteam), 6)
+                .inputItems(ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Breel).getItem(), 1)
+                .inputItems(ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.CompressedSteam).getItem(), 2)
+                .inputItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.CompressedSteam).getItem(), 6)
                 .outputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 1)
                 .duration(120)
                 .EUt(24)
