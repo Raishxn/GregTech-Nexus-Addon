@@ -10,6 +10,8 @@ import com.gregtechceu.gtceu.api.data.chemical.material.event.PostMaterialEvent;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.condition.RecipeConditionType;
+import com.raishxn.gtna.data.GTNALangProvider;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.data.event.GatherDataEvent;
@@ -19,6 +21,8 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+
+import java.util.concurrent.CompletableFuture;
 
 import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
 
@@ -46,7 +50,11 @@ public class CommonProxy {
     public void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
+        boolean server = event.includeServer();
+        boolean client = event.includeClient();
+        generator.addProvider(client, new GTNALangProvider(packOutput));
     }
 
     public void postRegistrationInitialization() {
@@ -67,7 +75,9 @@ public class CommonProxy {
     // This is optional, though.
     private void modifyMaterials(PostMaterialEvent event) {}
 
-    private void registerRecipeTypes(GTCEuAPI.RegisterEvent<ResourceLocation, GTRecipeType> event) {}
+    private void registerRecipeTypes(GTCEuAPI.RegisterEvent<ResourceLocation, GTRecipeType> event) {
+        GTNARecipeType.init();
+    }
 
     private void registerRecipeConditions(GTCEuAPI.RegisterEvent<ResourceLocation, RecipeConditionType<?>> event) {}
 

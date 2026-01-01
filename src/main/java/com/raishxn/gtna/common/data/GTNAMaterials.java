@@ -1,6 +1,7 @@
 package com.raishxn.gtna.common.data;
 
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
+import com.raishxn.gtna.common.data.material.MaterialAdd;
 import com.raishxn.gtna.common.data.material.MaterialBuilder;
 
 import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
@@ -18,5 +19,6 @@ public class GTNAMaterials {
 
     public static void init(){
         MaterialBuilder.init();
+        MaterialAdd.init();
     }
 }

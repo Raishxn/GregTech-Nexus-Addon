@@ -32,6 +32,7 @@ public class MaterialBuilder {
                             GENERATE_ROUND, GENERATE_SPRING, GENERATE_SPRING_SMALL,
                             GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_ROTOR, GENERATE_DENSE)
                     .fluidPipeProperties(1123,1000,true,true,true,true)
+                    .appendFlags(EXT2_METAL)
                     .buildAndRegister().setFormula("(SnCu3)(Fe50C)2");
 
             Breel = new Material.Builder(GTNACORE.id("breel"))

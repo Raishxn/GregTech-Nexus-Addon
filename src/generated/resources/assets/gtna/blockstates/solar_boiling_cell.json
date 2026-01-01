@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "gtna:block/solar_boiling_cell"
+    }
+  }
+}

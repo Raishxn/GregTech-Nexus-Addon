@@ -42,7 +42,7 @@ public class GTNAMaterialRecipes {
                 .save(provider);
 
         // --- Compressed Steam Ingot (Compressor) ---
-        GTRecipeTypes.COMPRESSOR_RECIPES.recipeBuilder("compressed_steam_ingot")
+        GTRecipeTypes.ALLOY_SMELTER_RECIPES.recipeBuilder("compressed_steam_ingot")
                 .inputFluids(GTNAMaterials.DenseSupercriticalSteam.getFluid(1000))
                 .outputItems(TagPrefix.ingot, GTNAMaterials.CompressedSteam, 1)
                 .duration(300)

@@ -33,13 +33,9 @@ public class WirelessSteamInputHatch extends SteamHatchPartMachine {
     public WirelessSteamInputHatch(IMachineBlockEntity holder, boolean isSteel, Object... args) {
         super(holder, args);
         this.isSteel = isSteel;
-        this.transferRate = isSteel ? 1_000_000L : 1_000L;
+        this.transferRate = isSteel ? 1_000_000L : 1_0000L;
         this.setWorkingEnabled(false);
-
-        // CORREÇÃO: Acessa o tanque interno (CustomFluidTank) para definir a capacidade
         if (this.isSteel) {
-            // NotifiableFluidTank armazena CustomFluidTanks em um array 'storages'
-            // Precisamos pegar o primeiro (e único) tanque e setar a capacidade nele
             if (this.tank.getStorages().length > 0) {
                 this.tank.getStorages()[0].setCapacity(Integer.MAX_VALUE);
             }
@@ -56,7 +52,6 @@ public class WirelessSteamInputHatch extends SteamHatchPartMachine {
 
     @Override
     protected NotifiableFluidTank createTank(int initialCapacity, int slots, Object... args) {
-        // Cria com capacidade inicial padrão (será corrigido no construtor via getStorages)
         return new NotifiableFluidTank(this, 1, initialCapacity, IO.IN)
                 .setFilter(fluidStack -> fluidStack.getFluid().is(GTMaterials.Steam.getFluidTag()));
     }
@@ -65,9 +60,7 @@ public class WirelessSteamInputHatch extends SteamHatchPartMachine {
         if (getLevel() instanceof ServerLevel serverLevel) {
             UUID ownerId = getOwnerUUID();
             if (ownerId == null) return;
-
             long currentSteam = tank.getFluidInTank(0).getAmount();
-            // Pega a capacidade do tanque específico
             long capacity = tank.getTankCapacity(0);
             long spaceNeeded = capacity - currentSteam;
 
@@ -81,7 +74,6 @@ public class WirelessSteamInputHatch extends SteamHatchPartMachine {
             }
         }
     }
-
     @Override
     public ModularUI createUI(Player entityPlayer) {
         return new ModularUI(176, 166, this, entityPlayer)

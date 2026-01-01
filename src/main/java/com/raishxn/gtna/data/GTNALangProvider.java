@@ -81,10 +81,21 @@ public class GTNALangProvider extends LanguageProvider {
 
     private void addStaticTranslations() {
         add("block.gtna.wireless_steam_input_hatch", "Wireless Steam Input Hatch");
+        add("block.gtna.wireless_steam_input_hatch_steel", "Wireless Steam Input Hatch Steel");
         add("block.gtna.wireless_steam_output_hatch", "Wireless Steam Output Hatch");
+        add("block.gtna.wireless_steam_output_hatch_steel", "Wireless Steam Output Hatch Steel");
         add("item.gtna.structure_detect", "Structure Writer");
         add("item.gtna.debug_structure_writer", "Debug Structure Writer");
         add("item.gtna.vajra", "Vajra");
+        add("item.gtna.hydraulic_motor", "Hydraulic Motor");
+        add("item.gtna.hydraulic_piston", "Hydraulic Piston");
+        add("item.gtna.hydraulic_pump", "Hydraulic Pump");
+        add("item.gtna.hydraulic_arm", "Hydraulic Arm");
+        add("item.gtna.hydraulic_conveyor", "Hydraulic Conveyor");
+        add("item.gtna.hydraulic_regulator", "Hydraulic Regulator");
+        add("item.gtna.hydraulic_vapor_generator", "Hydraulic Vapor Generator");
+        add("item.gtna.hydraulic_steam_jet_spewer", "Hydraulic Steam Jet Spewer");
+        add("item.gtna.hydraulic_steam_receiver", "Hydraulic Steam Receiver");
 
         add("item.gtna.structure_detect.tooltip.0", "§aRight click§7 block to select Multiblock Controller.");
         add("item.gtna.structure_detect.tooltip.1", "§aShift Right click§7 to change mode.");
@@ -104,6 +115,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("itemGroup.gtna.creative_tab.material_fluids", "GregTech: Nexus Addon Material Fluids");
         add("itemGroup.gtna.creative_tab.material_items", "GregTech: Nexus Addon Material Items");
         add("itemGroup.gtna.creative_tab.material_pipes", "GregTech: Nexus Addon Material Pipes & Wires");
+        add("itemGroup.gtna.creative_tab.blocks", "GregTech: Nexus Addon Blocks");
 
         add("structure_writer.export_order", "Export Order: C:%s  S:%s  A:%s");
         add("structure_writer.structural_scale", "Structure Scale: X:%s  Y:%s  Z:%s");
@@ -116,5 +128,15 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.large_steam_crusher.steam", "Steam Consumption: 80% of original");
         add("gtna.tooltip.large_steam_crusher.parallel","Process up to 128 items at once");
         add("gtna.registry.add", "Added by GregTech Nexus Addon");
+        add("gtna.multiblock.parallel_amount", "Parallels: %s");
+        add("block.gtna.huge_steam_input_bus", "Huge Steam Input Bus");
+        add("block.gtna.huge_steam_output_bus", "Huge Steam Output Bus");
+        add("gtna.tooltip.huge_steam_bus","Input Bus with a lot of items capacity. around 3654 itens.");
+        add("gtna.tooltip.mega_solar.desc", "A massive solar thermal power plant.");
+        add("gtna.tooltip.mega_solar.expansion", "Structure is expandable! Add Solar Pipes behind and to the sides.");
+        add("gtna.tooltip.mega_solar.sunlight", "REQUIREMENT: Every Solar Pipe casing must have direct access to the sky.");
+        add("gtna.tooltip.mega_solar.production", "Production: 10,000 L/s of Steam per active Pipe Block.");
+        add("gtna.tooltip.mega_solar.max_size", "Max Size: 33 Wide x 32 Deep.");
+
     }
 }

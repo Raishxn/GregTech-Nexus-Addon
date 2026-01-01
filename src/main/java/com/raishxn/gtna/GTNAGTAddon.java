@@ -13,6 +13,7 @@ import com.raishxn.gtna.common.data.GTNAItems;
 // Remova o import de GTNAMaterials daqui, não é mais necessário
 //import com.raishxn.gtna.data.recipe.GTNAMaterialRecipes;
 import com.raishxn.gtna.common.data.GTNAMachines;
+import com.raishxn.gtna.data.recipe.GTNABlockRecipes;
 import com.raishxn.gtna.data.recipe.GTNAItemRecipes;
 import com.raishxn.gtna.data.recipe.GTNAMachineRecipes;
 import com.raishxn.gtna.data.recipe.GTNAMaterialRecipes;
@@ -63,6 +64,7 @@ public class GTNAGTAddon implements IGTAddon {
         GTNAMaterialRecipes.register(provider);
         GTNAItemRecipes.register(provider);
         GTNAMachineRecipes.register(provider);
+        GTNABlockRecipes.register(provider);
     }
 
     @Override

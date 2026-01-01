@@ -32,17 +32,14 @@ public class WirelessSteamOutputHatch extends SteamHatchPartMachine {
     public WirelessSteamOutputHatch(IMachineBlockEntity holder, boolean isSteel, Object... args) {
         super(holder, args);
         this.isSteel = isSteel;
-        this.transferRate = isSteel ? 1_000_000L : 1_000L;
+        this.transferRate = isSteel ? 1_000_000L : 1_0000L;
         this.setWorkingEnabled(false);
-
-        // CORREÇÃO: Acessa o tanque interno para definir a capacidade
         if (this.isSteel) {
             if (this.tank.getStorages().length > 0) {
                 this.tank.getStorages()[0].setCapacity(Integer.MAX_VALUE);
             }
         }
     }
-
     @Override
     public void onLoad() {
         super.onLoad();
@@ -50,13 +47,11 @@ public class WirelessSteamOutputHatch extends SteamHatchPartMachine {
             this.subscribeServerTick(this::updateWireless);
         }
     }
-
     @Override
     protected NotifiableFluidTank createTank(int initialCapacity, int slots, Object... args) {
         return new NotifiableFluidTank(this, 1, initialCapacity, IO.OUT)
                 .setFilter(fluidStack -> fluidStack.getFluid().is(GTMaterials.Steam.getFluidTag()));
     }
-
     private void updateWireless() {
         if (getLevel() instanceof ServerLevel serverLevel) {
             UUID ownerId = getOwnerUUID();

@@ -33,8 +33,6 @@ import java.util.function.Consumer;
 public class StructureDetectBehavior extends TooltipBehavior implements IToolBehavior, IInteractionItem {
 
     private static final ReentrantLock LOCK = new ReentrantLock();
-
-    // A chave aqui deve bater com o JSON: "structure_detect.tooltip.0"
     public static final StructureDetectBehavior INSTANCE = new StructureDetectBehavior(lines -> {
         lines.add(Component.translatable("structure_detect.tooltip.0"));
         lines.add(Component.translatable("structure_detect.tooltip.1").withStyle(ChatFormatting.GRAY));
@@ -119,7 +117,6 @@ public class StructureDetectBehavior extends TooltipBehavior implements IToolBeh
         var candidates = error.getCandidates();
 
         if (error instanceof SinglePredicateError) {
-            // Fix para evitar crash se a lista estiver vazia
             if (!candidates.isEmpty() && !candidates.get(0).isEmpty()) {
                 var root = candidates.get(0).get(0).getHoverName();
                 show.add(Component.translatable("item.gtna.structure_detect.error.1", posComponent));

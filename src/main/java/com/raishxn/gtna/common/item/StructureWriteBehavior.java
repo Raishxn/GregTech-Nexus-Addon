@@ -35,7 +35,6 @@ public class StructureWriteBehavior implements IItemUIFactory {
     public static final StructureWriteBehavior INSTANCE = new StructureWriteBehavior();
 
     protected StructureWriteBehavior() {
-        /**/
     }
 
     @Override
@@ -123,9 +122,7 @@ public class StructureWriteBehavior implements IItemUIFactory {
             builder.append(".where(\"~\", Predicates.controller(Predicates.blocks(definition.get())))\n");
             blockPattern.legend.forEach((b, c) -> {
                 if (c.equals(' ')) return;
-                // Obtém o ResourceLocation (ex: minecraft:stone) e converte para String
                 String blockId = BuiltInRegistries.BLOCK.getKey(b).toString();
-
                 builder.append(".where(\"").append(c).append("\", Predicates.blocks(Registries.getBlock(\"")
                         .append(blockId).append("\")))\n");
             });

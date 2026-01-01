@@ -35,7 +35,6 @@ public class GTNAVajraItem extends GTToolItem {
                         List<IToolBehavior> behaviors = new ArrayList<>();
 
                         behaviors.add(new IToolBehavior() {
-                            // Behavior BRUTE: Desativa escudos
                             @Override
                             public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
                                 return true;
@@ -64,48 +63,38 @@ public class GTNAVajraItem extends GTToolItem {
                         });
                         return behaviors;
                     }
-
                     @Override
                     public boolean isToolEffective(BlockState state) {
                         return true;
                     }
-
                     @Override
                     public int getDamagePerAction(ItemStack stack) {
                         return 1;
                     }
-
                     @Override
                     public int getDamagePerCraftingAction(ItemStack stack) {
                         return 1;
                     }
-
                     @Override
                     public boolean isSuitableForBlockBreak(ItemStack stack) {
                         return true;
                     }
-
                     @Override
                     public boolean isSuitableForAttacking(ItemStack stack) {
                         return true;
                     }
-
-                    // IMPORTANTE: Isso permite que a Vajra seja usada como Martelo/File/Mortar no Crafting Grid
                     @Override
                     public boolean isSuitableForCrafting(ItemStack stack) {
                         return true;
                     }
-
                     @Override
                     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
                         return true;
                     }
-
                     @Override
                     public @NotNull Object2IntMap<Enchantment> getDefaultEnchantments(ItemStack stack) {
                         return Object2IntMaps.emptyMap();
                     }
-
                     @Override
                     public boolean doesSneakBypassUse() {
                         return true;

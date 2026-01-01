@@ -16,8 +16,8 @@ public class GTNACovers {
 
     // --- HYDRAULIC PUMP (1.000.000 L/t) ---
     public static final CoverDefinition HYDRAULIC_PUMP = GTCovers.register(
-            GTNACORE.id("hydraulic_pump"), // ID interno
-            (def, coverable, side) -> new PumpCover(def, coverable, side, GTValues.VC_LP_STEAM), // Pump geralmente escala bem sozinho, mas pode precisar de override se estiver lento
+            GTNACORE.id("hydraulic_pump"),
+            (def, coverable, side) -> new PumpCover(def, coverable, side, GTValues.VC_LP_STEAM),
             () -> () -> IOCoverRenderer.PUMP_LIKE_COVER_RENDERER);
 
     // --- HYDRAULIC CONVEYOR (16 Stacks/t) ---

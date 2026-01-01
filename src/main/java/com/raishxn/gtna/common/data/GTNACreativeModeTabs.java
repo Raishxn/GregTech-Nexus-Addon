@@ -26,10 +26,10 @@ public class GTNACreativeModeTabs {
                             .build())
             .register();
 
-    // 2. Aba de Blocos
+    // 2. Aba de Blocos de Materiais
     public static RegistryEntry<CreativeModeTab> MATERIAL_BLOCKS = REGISTRATE.defaultCreativeTab("gtna_material_blocks",
                     builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("blocks", REGISTRATE))
-                            .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.material_blocks"), "GTNA Blocks"))
+                            .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.material_blocks"), "GTNA Material Blocks"))
                             .icon(() -> ChemicalHelper.get(TagPrefix.block, GTNAMaterials.Echoite))
                             .build())
             .register();
@@ -58,7 +58,15 @@ public class GTNACreativeModeTabs {
                             .build())
             .register();
 
-    // 6. Aba de Máquinas
+    // 6. Aba de Blocos Gerais (CORRIGIDO)
+    public static RegistryEntry<CreativeModeTab> BLOCKS = REGISTRATE.defaultCreativeTab("gtna_blocks",
+                    builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("nonmaterialblocks", REGISTRATE))
+                            .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.blocks"), "GTNA Blocks"))
+                            .icon(GTNABlocks.HYPER_PRESSURE_BREEL_CASING::asStack)
+                            .build())
+            .register();
+
+    // 7. Aba de Máquinas
     public static RegistryEntry<CreativeModeTab> MACHINES = REGISTRATE.defaultCreativeTab("gtna_machines",
                     builder -> builder.displayItems(new RegistrateDisplayItemsGenerator("machines", REGISTRATE))
                             .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.machines"), "GTNA Machines"))
@@ -109,6 +117,7 @@ public class GTNACreativeModeTabs {
                 case "pipes" -> isPipeItem(item);
                 case "items" -> isMiscItem(item);
                 case "machines" -> item instanceof MetaMachineItem;
+                case "nonmaterialblocks" -> isBlockItem(item);
                 default -> false;
             };
         }
@@ -116,14 +125,11 @@ public class GTNACreativeModeTabs {
         private TagPrefix getTagPrefix(Item item) {
             if (item instanceof TagPrefixItem tagPrefixItem) return tagPrefixItem.tagPrefix;
             if (item instanceof MaterialBlockItem materialBlockItem) return materialBlockItem.tagPrefix;
-            // Removido PipeBlockItem daqui pois ele não tem o campo tagPrefix acessível
             return null;
         }
 
         private boolean isPipeItem(Item item) {
-            // CORREÇÃO: Verificação direta da classe. Se for PipeBlockItem, é 100% um tubo ou cabo.
             if (item instanceof PipeBlockItem) return true;
-
             TagPrefix prefix = getTagPrefix(item);
             return prefix != null && (prefix.name().contains("pipe") || prefix.name().contains("wire") || prefix.name().contains("cable"));
         }
@@ -136,10 +142,7 @@ public class GTNACreativeModeTabs {
 
         private boolean isBlockItem(Item item) {
             if (item instanceof MetaMachineItem) return false;
-
-            // CORREÇÃO: Exclui PipeBlockItem explicitamente para ele não cair aqui como bloco genérico
             if (item instanceof PipeBlockItem) return false;
-
             if (isPipeItem(item)) return false;
 
             if (item instanceof BlockItem && getTagPrefix(item) == null) return true;
@@ -154,10 +157,7 @@ public class GTNACreativeModeTabs {
 
         private boolean isMiscItem(Item item) {
             if (item instanceof MetaMachineItem) return false;
-            // PipeBlockItem é BlockItem, então precisamos garantir que ele não entre aqui também,
-            // mas como ele tem lógica própria acima, o filtro "isBlockItem" e "isPipeItem" já cuidam disso nas outras abas.
             if (item instanceof PipeBlockItem) return false;
-
             return getTagPrefix(item) == null && !(item instanceof BlockItem) && !(item instanceof BucketItem);
         }
     }
