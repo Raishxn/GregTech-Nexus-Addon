@@ -16,8 +16,8 @@
       <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License">
     </a>
     <br>
-    <a href="#">
-      <img src="https://img.shields.io/[discord/d3qHufwRxb](https://discord.gg/d3qHufwRxb)?color=5865F2&label=Discord&style=for-the-badge&logo=discord&logoColor=white" alt="Discord">
+    <a href="https://discord.gg/d3qHufwRxb">
+      <img src="https://img.shields.io/badge/Discord-Join_Us-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord">
     </a>
   </p>
 
