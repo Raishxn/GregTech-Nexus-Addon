@@ -121,7 +121,16 @@ Forget pipes. GTNA introduces a cutting-edge **Wireless Steam Network**:
 
 * **Author**: raishxn
 * **Textures & Assets**: Based on GTCEu and Community Assets.
-* **Inspiration**: GT: Not Leisure, GTNH, and the GregTech Community.
+* **Inspiration**: GT Odyssey, GTNH, and the GregTech Community,.
+
+* 
+| Project                 | Author                                                          | License                                                               |
+|:------------------------|:----------------------------------------------------------------|:----------------------------------------------------------------------|
+| **GT Not Leisure Code** | [ABKQPO](https://github.com/ABKQPO/GT-Not-Leisure)              | [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)                    |
+| **GTO Code**            | [GTO TEAM](https://github.com/GregTech-Odyssey/GTOCore)         | [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)                    |
+| **GTNH Multiblock Port**| [GTNewHorizons](https://github.com/GTNewHorizons)               | [Attribution-NonCommercial-ShareAlike 4.0 International]              |
+| **CMM Additions**       | [CrystalGaming](https://github.com/CristalGaming/cmme-additions)| [Attribution-NonCommercial-ShareAlike 4.0 International]              |
+
 
 ---
 
