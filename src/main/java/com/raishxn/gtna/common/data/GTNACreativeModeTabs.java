@@ -89,7 +89,11 @@ public class GTNACreativeModeTabs {
                 GTNABlocks.STEAM_COMPACT_PIPE_CASING.get().asItem(),
                 GTNABlocks.VIBRATION_SAFE_CASING.get().asItem(),
                 GTNABlocks.BRONZE_REINFORCED_WOOD.get().asItem(),
-                GTNABlocks.SOLAR_BOILING_CELL.get().asItem()
+                GTNABlocks.SOLAR_BOILING_CELL.get().asItem(),
+                GTNABlocks.STRONZE_WRAPPED_CASING.get().asItem(),
+                GTNABlocks.HYDRAULIC_ASSEMBLER_CASING.get().asItem(),
+                GTNABlocks.BREEL_PLATED_CASING.get().asItem(),
+                GTNABlocks.BOROSILICATE_GLASS_BLOCK.get().asItem()
         );
 
         public RegistrateDisplayItemsGenerator(String tabType, GTRegistrate registrate) {

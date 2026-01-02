@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.content.ContentModifier;
 import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
+import com.gregtechceu.gtceu.api.recipe.modifier.ParallelLogic;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
 import com.lowdragmc.lowdraglib.gui.util.ClickData; // Importante
@@ -40,12 +41,12 @@ public class LargeSteamCrusher extends SteamMultiMachineBase {
         if (recipe.getType() != GTRecipeTypes.MACERATOR_RECIPES) {
             return ModifierFunction.NULL;
         }
-        int parallels = steamMachine.targetParallel;
+        int maxParallel = steamMachine.targetParallel;
+        int parallels = ParallelLogic.getParallelAmount(machine, recipe, maxParallel);
+        if (parallels == 0) return ModifierFunction.NULL;
         double durationMultiplier = 0.5;
-
         return ModifierFunction.builder()
-                .inputModifier(ContentModifier.multiplier(parallels))
-                .outputModifier(ContentModifier.multiplier(parallels))
+                .modifyAllContents(ContentModifier.multiplier(parallels))
                 .durationMultiplier(durationMultiplier)
                 .parallels(parallels)
                 .build();
@@ -53,7 +54,7 @@ public class LargeSteamCrusher extends SteamMultiMachineBase {
 
     @Override
     public void addDisplayText(List<Component> textList) {
-        super.addDisplayText(textList); // Chama o base para mostrar Steam e Progresso
+        super.addDisplayText(textList);
 
         if (this.isFormed()) {
             textList.add(Component.translatable("gtna.multiblock.parallel_amount", this.targetParallel)

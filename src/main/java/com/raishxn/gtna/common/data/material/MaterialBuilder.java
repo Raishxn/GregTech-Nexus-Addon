@@ -91,20 +91,20 @@ public class MaterialBuilder {
             // --- FLUIDOS (Vapores) ---
 
             DenseSupercriticalSteam = new Material.Builder(GTNACORE.id("dense_supercritical_steam"))
-                    .gas(295000)
+                    .gas(295000).fluid()
                     .color(0xA0A0A0)
                     .iconSet(SHINY)
                     .buildAndRegister();
 
             SuperHeatedSteam = new Material.Builder(GTNACORE.id("super_heated_steam"))
-                    .gas(600000)
+                    .gas(600000).fluid()
                     .color(0xC0C0C0)
                     .iconSet(BRIGHT)
                     .flags(DISABLE_DECOMPOSITION)
                     .buildAndRegister();
 
             InsanelySupercriticalSteam = new Material.Builder(GTNACORE .id("insanely_supercritical_steam"))
-                    .gas(1000000)
+                    .gas(1000000).fluid()
                     .color(0xFFFFFF)
                     .iconSet(RADIOACTIVE)
                     .flags(DISABLE_DECOMPOSITION)

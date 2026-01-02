@@ -2,6 +2,7 @@ package com.raishxn.gtna.data.recipe;
 
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.raishxn.gtna.common.data.GTNAMaterials;
@@ -42,11 +43,19 @@ public class GTNAMaterialRecipes {
                 .save(provider);
 
         // --- Compressed Steam Ingot (Compressor) ---
-        GTRecipeTypes.ALLOY_SMELTER_RECIPES.recipeBuilder("compressed_steam_ingot")
+        GTRecipeTypes.FLUID_SOLIDFICATION_RECIPES.recipeBuilder("compressed_steam_ingot")
+                .notConsumable(GTItems.SHAPE_MOLD_INGOT)
                 .inputFluids(GTNAMaterials.DenseSupercriticalSteam.getFluid(1000))
                 .outputItems(TagPrefix.ingot, GTNAMaterials.CompressedSteam, 1)
                 .duration(300)
                 .EUt(GTValues.HV)
+                .save(provider);
+        GTRecipeTypes.FLUID_SOLIDFICATION_RECIPES.recipeBuilder("compressed_steam_ingot_2")
+                .notConsumable(GTItems.SHAPE_MOLD_INGOT)
+                .inputFluids(GTMaterials.Steam.getFluid(15000))
+                .outputItems(TagPrefix.ingot, GTNAMaterials.CompressedSteam, 1)
+                .duration(900)
+                .EUt(GTValues.ULV)
                 .save(provider);
     }
 }

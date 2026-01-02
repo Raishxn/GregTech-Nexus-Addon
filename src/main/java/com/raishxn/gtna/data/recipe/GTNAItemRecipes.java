@@ -19,11 +19,11 @@ public class GTNAItemRecipes {
                 .pattern("ABA")
                 .pattern("CDC")
                 .pattern("EBE")
-                .define('A', ChemicalHelper.getTag(TagPrefix.rod, GTMaterials.Bronze))
-                .define('B', ChemicalHelper.getTag(TagPrefix.gearSmall, GTMaterials.Bronze))
-                .define('C', ChemicalHelper.getTag(TagPrefix.springSmall, GTMaterials.Bronze))
-                .define('D', ChemicalHelper.getTag(TagPrefix.springSmall, GTMaterials.Steel))
-                .define('E', ChemicalHelper.getTag(TagPrefix.gear, GTMaterials.Bronze))
+                .define('A', ChemicalHelper.get(TagPrefix.rod, GTMaterials.Bronze).getItem())
+                .define('B', ChemicalHelper.get(TagPrefix.gearSmall, GTMaterials.Bronze).getItem())
+                .define('C', ChemicalHelper.get(TagPrefix.springSmall, GTMaterials.Bronze).getItem())
+                .define('D', ChemicalHelper.get(TagPrefix.springSmall, GTMaterials.Steel).getItem())
+                .define('E', ChemicalHelper.get(TagPrefix.gear, GTMaterials.Bronze).getItem())
                 .unlockedBy("has_bronze_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(ChemicalHelper.get(TagPrefix.ingot, GTMaterials.Bronze).getItem()))
                 .save(provider);
 
@@ -31,6 +31,28 @@ public class GTNAItemRecipes {
                 .requires(Items.BOOK, 8)
                 .requires(GTItems.TERMINAL.get())
                 .unlockedBy("has_books", InventoryChangeTrigger.TriggerInstance.hasItems(Items.BOOK))
+                .save(provider);
+        // Hydraulic Motor
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAItems.HYDRAULIC_MOTOR.get())
+                .pattern("ABC")
+                .pattern("BDB")
+                .pattern("CBA")
+                .define('A', ChemicalHelper.get(TagPrefix.gear, GTMaterials.Bronze).getItem())
+                .define('B', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTMaterials.Bronze).getItem())
+                .define('C', ChemicalHelper.get(TagPrefix.rod, GTMaterials.Iron).getItem())
+                .define('D', ChemicalHelper.get(TagPrefix.rotor, GTMaterials.Iron).getItem())
+                .unlockedBy("has_bronze_gear", InventoryChangeTrigger.TriggerInstance.hasItems(ChemicalHelper.get(TagPrefix.gear, GTMaterials.Bronze).getItem()))
+                .save(provider);
+
+        // Hydraulic Conveyor
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAItems.HYDRAULIC_CONVEYOR.get())
+                .pattern("AAA")
+                .pattern("BCB")
+                .pattern("AAA")
+                .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Rubber).getItem())
+                .define('B', GTNAItems.HYDRAULIC_MOTOR.get())
+                .define('C', ChemicalHelper.get(TagPrefix.gear, GTMaterials.Clay).getItem())
+                .unlockedBy("has_hydraulic_motor", InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_MOTOR.get()))
                 .save(provider);
     }
 }

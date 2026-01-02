@@ -148,6 +148,38 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.wireless_steam_output.tooltip_desc", "Sends Steam wirelessly to your Global Network.");
         add("gtna.machine.wireless_steam_output.tooltip_usage", "Usage: Place on Boilers to export Steam.");
         add("gtna.machine.wireless_steam_input.tooltip_desc", "Receives Steam wirelessly from your Global Network.");
+        add("block.gtna.large_steam_furnace", "Large Steam Furnace");
+        add("gtna.tooltip.large_steam_furnace.desc", "An industrial-grade steam smelting facility.");
+        add("gtna.tooltip.large_steam_furnace.speed", "Speed: 900% faster than a standard Steam Furnace.");
+        add("gtna.tooltip.large_steam_furnace.efficiency", "Efficiency: Consumes only 50% of the required Steam.");
+        add("gtna.tooltip.large_steam_furnace.parallel", "Parallelism: Processes up to 128 items simultaneously.");
+        add("gtna.tooltip.large_steam_furnace.structure", "Structure: 9x5x9 (Hollow Center). check JEI for details.");
+        add("block.gtna.large_steam_alloy_smelter", "Large Steam Alloy Smelter");
+        add("gtna.tooltip.large_steam_alloy.desc", "High-pressure steam alloying.");
+        add("gtna.tooltip.large_steam_alloy.speed", "Speed: 43% faster than Singleblock.");
+        add("gtna.tooltip.large_steam_alloy.parallel", "Parallel: Processes up to 64 items.");
+        add("gtna.tooltip.large_steam_alloy.structure", "Structure: 3x3x3 Cube (Hollow).");
+        add("block.gtna.steam_cobbler", "Steam Cobbler");
+        add("gtna.tooltip.steam_cobbler.desc", "Advanced Steam Rock Generator.");
+        add("gtna.tooltip.steam_cobbler.modes", "Generates various stones based on Programmed Circuits.");
+        add("gtna.tooltip.steam_cobbler.consumption", "Steam Consumption: 1200 L/s (60 L/t)");
+        add("gtna.tooltip.steam_cobbler.parallel", "Max Parallel: 16 operations.");
+        add("gtna.tooltip.steam_cobbler.structure", "Structure: 3x3x3 Cube with Bronze Pipe center.");
+        add("block.gtna.stone_superheater", "Stone SuperHeater");
+        add("block.gtna.steam_manufacturer", "Steam Manufacturer");
+        add("block.gtna.stronze_wrapped_casing", "Stronze-Wrapped Casing");
+        add("block.gtna.hydraulic_assembler_casing", "Hydraulic Assembler Casing");
+        add("block.gtna.borosilicate_glass", "Borosilicate Glass");
+        add("block.gtna.breel_plated_casing", "Breel-Plated Casing");
+        add("gtna.tooltip.stone_superheater.desc", "Extreme heat stone melting.");
+        add("gtna.tooltip.stone_superheater.parallel", "Max Parallel: 32");
+        add("gtna.tooltip.stone_superheater.steam", "Steam Cost: 640 L/s per active recipe.");
+        add("gtna.super_heater", "Super Heating");
+        add("gtna.hydraulic_manufacturing", "Hydraulic Manufacturing");
+        add("item.gtceu.tool.vajra", "Vajra Omnitool");
+        add("gtna.tooltip.steam_manufacturer.desc", "Advanced Hydraulic Assembly Line.");
+        add("gtna.tooltip.steam_manufacturer.parallel", "Max Parallel: 16");
+        add("gtna.tooltip.steam_manufacturer.type", "Recipe Type: Hydraulic Manufacturing");
 
     }
 }

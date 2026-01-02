@@ -1,0 +1,82 @@
+{
+  "parent": "minecraft:block/block",
+  "loader": "gtceu:machine",
+  "machine": "gtna:steam_manufacturer",
+  "texture_overrides": {
+    "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel"
+  },
+  "variants": {
+    "is_formed=false,recipe_logic_status=idle": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front"
+        }
+      }
+    },
+    "is_formed=false,recipe_logic_status=suspend": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front"
+        }
+      }
+    },
+    "is_formed=false,recipe_logic_status=waiting": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front_active"
+        }
+      }
+    },
+    "is_formed=false,recipe_logic_status=working": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front_active"
+        }
+      }
+    },
+    "is_formed=true,recipe_logic_status=idle": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front"
+        }
+      }
+    },
+    "is_formed=true,recipe_logic_status=suspend": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front"
+        }
+      }
+    },
+    "is_formed=true,recipe_logic_status=waiting": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front_active"
+        }
+      }
+    },
+    "is_formed=true,recipe_logic_status=working": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front_active"
+        }
+      }
+    }
+  }
+}

@@ -5,6 +5,10 @@
     "gtna:steam_compact_pipe_casing",
     "gtna:vibration_safe_casing",
     "gtna:bronze_reinforced_wood",
-    "gtna:solar_boiling_cell"
+    "gtna:solar_boiling_cell",
+    "gtna:stronze_wrapped_casing",
+    "gtna:hydraulic_assembler_casing",
+    "gtna:breel_plated_casing",
+    "gtna:borosilicate_glass"
   ]
 }

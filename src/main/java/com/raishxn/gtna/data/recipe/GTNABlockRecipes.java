@@ -5,17 +5,24 @@ import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTMachines;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
+import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.raishxn.gtna.common.data.GTNABlocks;
+import com.raishxn.gtna.common.data.GTNAItems;
 import com.raishxn.gtna.common.data.GTNAMaterials;
 import com.raishxn.gtna.common.data.GTNARecipeType;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluid;
 
 import java.util.function.Consumer;
+
+import static com.gregtechceu.gtceu.common.data.GTMaterials.Lava;
+import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.ROCK_BREAKER_RECIPES;
 
 public class GTNABlockRecipes {
 
@@ -87,6 +94,124 @@ public class GTNABlockRecipes {
                 .define('B', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Stronze).getItem())
                 .define('C', GTMachines.STEAM_SOLAR_BOILER.right().asStack().getItem())                // ADICIONADO: unlockedBy
                 .unlockedBy("has_glass", InventoryChangeTrigger.TriggerInstance.hasItems(Blocks.GLASS))
+                .save(provider);
+
+        GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_cobble_gen")
+                .circuitMeta(1)
+                .outputItems(Items.COBBLESTONE) // CORRIGIDO: output -> outputItems
+                .duration(40)
+                .EUt(30)
+                .save(provider);
+
+        // Circuito 2: Stone
+        GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_stone_gen")
+                .circuitMeta(2)
+                .outputItems(Items.STONE) // CORRIGIDO: output -> outputItems
+                .duration(40)
+                .EUt(30)
+                .save(provider);
+
+        // Circuito 3: Obsidian (com Redstone)
+        GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_obsidian_gen")
+                .circuitMeta(3)
+                .inputItems(Items.REDSTONE)
+                .outputItems(Items.OBSIDIAN) // CORRIGIDO: output -> outputItems
+                .duration(240)
+                .EUt(30)
+                .save(provider);
+
+        // Circuito 4: Basalt (com Blue Ice - Não Consumido)
+        GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_basalt_gen")
+                .circuitMeta(4)
+                // CORRIGIDO: notConsumed -> chancedInput(item, 0, 0)
+                // O primeiro 0 significa 0% de chance de consumir o item.
+                .chancedInput(Items.BLUE_ICE.getDefaultInstance(), 0, 0)
+                .outputItems(Items.BASALT) // CORRIGIDO: output -> outputItems
+                .duration(40)
+                .EUt(30)
+                .save(provider);
+
+        // Circuito 5: Cobbled Deepslate (com Magma Block - Não Consumido)
+        GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_deepslate_gen")
+                .circuitMeta(5)
+                // CORRIGIDO: notConsumed -> chancedInput
+                .chancedInput(Items.MAGMA_BLOCK.getDefaultInstance(), 0, 0)
+                .outputItems(Items.COBBLED_DEEPSLATE) // CORRIGIDO: output -> outputItems
+                .duration(40)
+                .EUt(30)
+                .save(provider);
+
+        // Circuito 6: Netherrack (com Glowstone Dust)
+        GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_netherrack_gen")
+                .circuitMeta(6)
+                .inputItems(Items.GLOWSTONE_DUST)
+                .outputItems(Items.NETHERRACK) // CORRIGIDO: output -> outputItems
+                .duration(40)
+                .EUt(30)
+                .save(provider);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.STRONZE_WRAPPED_CASING.get())
+                .pattern("ABA")
+                .pattern("BCB")
+                .pattern("ABA")
+                .define('A', ChemicalHelper.get(TagPrefix.frameGt, GTNAMaterials.ClayCompound).getItem())
+                .define('B', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Stronze).getItem())
+                .define('C', ChemicalHelper.get(TagPrefix.gear, GTNAMaterials.Stronze).getItem())
+                .unlockedBy("has_stronze", InventoryChangeTrigger.TriggerInstance.hasItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Stronze).getItem()))
+                .save(provider);
+
+// 2. Hydraulic Assembler Casing
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.HYDRAULIC_ASSEMBLER_CASING.get())
+                .pattern("ABA")
+                .pattern("CCC")
+                .pattern("ABA")
+                .define('A', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Stronze).getItem())
+                .define('B', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Breel).getItem())
+                .define('C', GTNAItems.HYDRAULIC_ARM.get())
+                .unlockedBy("has_breel", InventoryChangeTrigger.TriggerInstance.hasItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Breel).getItem()))
+                .save(provider);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.BREEL_PLATED_CASING.get())
+                .pattern("AAA")
+                .pattern("BCB")
+                .pattern("AAA")
+                .define('A', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
+                .define('B', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Breel).getItem())
+                .define('C', ChemicalHelper.get(TagPrefix.frameGt, GTNAMaterials.ClayCompound).getItem())
+                .unlockedBy("has_breel", InventoryChangeTrigger.TriggerInstance.hasItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Breel).getItem()))
+                .save(provider);
+
+
+
+        GTNARecipeType.SUPERHEATER_RECIPES.recipeBuilder("superheat_stone")
+                .inputItems(Items.STONE)
+                .outputFluids(Lava.getFluid(1000))
+                .duration(40) // 2s
+                .EUt(32) // Isso consumirá ~640L de steam por segundo na máquina a vapor
+                .save(provider);
+
+        // Cobblestone
+        GTNARecipeType.SUPERHEATER_RECIPES.recipeBuilder("superheat_cobble")
+                .inputItems(Items.COBBLESTONE)
+                .outputFluids(Lava.getFluid(1000))
+                .duration(40)
+                .EUt(32)
+                .save(provider);
+
+        // Granite
+        GTNARecipeType.SUPERHEATER_RECIPES.recipeBuilder("superheat_granite")
+                .inputItems(Items.GRANITE)
+                .outputFluids(Lava.getFluid(1000))
+                .duration(40)
+                .EUt(32)
+                .save(provider);
+
+        // Diorite
+        GTNARecipeType.SUPERHEATER_RECIPES.recipeBuilder("superheat_diorite")
+                .inputItems(Items.DIORITE)
+                .outputFluids(Lava.getFluid(1000))
+                .duration(40)
+                .EUt(32)
                 .save(provider);
     }
 }
