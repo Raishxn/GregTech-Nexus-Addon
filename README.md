@@ -15,7 +15,7 @@
     </a>
     <br>
     <a href="#">
-      <img src="https://img.shields.io/discord/SEU_ID_DISCORD?color=5865F2&label=Discord&style=for-the-badge&logo=discord&logoColor=white" alt="Discord">
+      <img src="https://img.shields.io/discord/d3qHufwRxb?color=5865F2&label=Discord&style=for-the-badge&logo=discord&logoColor=white" alt="Discord">
     </a>
   </p>
 
