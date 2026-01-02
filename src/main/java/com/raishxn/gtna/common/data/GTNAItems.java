@@ -1,6 +1,9 @@
 package com.raishxn.gtna.common.data;
 
+import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
+import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.item.ComponentItem;
+import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.raishxn.gtna.common.item.GTNAVajraItem;
 import com.raishxn.gtna.common.item.StructureDetectBehavior;
 import com.raishxn.gtna.common.item.StructureWriteBehavior;
@@ -9,6 +12,7 @@ import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import net.minecraft.resources.ResourceLocation;
 
 import static com.gregtechceu.gtceu.common.data.GTItems.attach;
+import static com.ibm.icu.impl.CurrencyData.provider;
 import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
 
 public class GTNAItems {
@@ -89,5 +93,6 @@ public class GTNAItems {
                 .lang("Precision Steam Component")
                 .properties(stack -> stack.stacksTo(64))
                 .register();
+
     }
 }

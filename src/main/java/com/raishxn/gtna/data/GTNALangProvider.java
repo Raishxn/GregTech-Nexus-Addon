@@ -144,6 +144,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.steam_compact_pipe_casing", "Steam Compact Pipe Casing");
         add("block.gtna.vibration_safe_casing", "Vibration Safe Casing");
         add("block.gtna.bronze_reinforced_wood", "Bronze Reinforced Wood");
+        add("block.gtna.steel_reinforced_wood", "Steel Reinforced Wood");
+        add("block.gtna.iron_reinforced_wood", "Iron Reinforced Wood");
         add("block.gtna.solar_boiling_cell", "Solar Boiling Cell");
         add("gtna.machine.wireless_steam_output.tooltip_desc", "Sends Steam wirelessly to your Global Network.");
         add("gtna.machine.wireless_steam_output.tooltip_usage", "Usage: Place on Boilers to export Steam.");
@@ -180,6 +182,13 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.steam_manufacturer.desc", "Advanced Hydraulic Assembly Line.");
         add("gtna.tooltip.steam_manufacturer.parallel", "Max Parallel: 16");
         add("gtna.tooltip.steam_manufacturer.type", "Recipe Type: Hydraulic Manufacturing");
+        add("block.gtna.steam_woodcutter", "Steam Woodcutter");
+        add("gtna.woodcutter", "Woodcutter");
+        add("gtna.tooltip.steam_woodcutter.desc", "Industrial Tree Processor.");
+        add("gtna.tooltip.steam_woodcutter.parallel", "Max Parallel: 64");
+        add("gtna.tooltip.steam_woodcutter.steam", "Steam Consumption: 1200 L/s");
+        add("gtna.tooltip.steam_woodcutter.info", "Processes saplings consuming Only Steam.");
+        add("gtna.recipe.hydraulic_manufacturing", "Hydraulic Manufacturing");
 
     }
 }

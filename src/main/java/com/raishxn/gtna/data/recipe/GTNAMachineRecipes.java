@@ -117,6 +117,17 @@ public class GTNAMachineRecipes {
                 .define('E', GTNAItems.HYDRAULIC_CONVEYOR.get())
                 .unlockedBy("has_hydraulic_casing", InventoryChangeTrigger.TriggerInstance.hasItems(GTNABlocks.HYDRAULIC_ASSEMBLER_CASING.get()))
                 .save(provider);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.STEAM_WOODCUTTER.asStack().getItem())
+                .pattern("AAA")
+                .pattern("BCB")
+                .pattern("DED")
+                .define('A', GTNABlocks.BRONZE_REINFORCED_WOOD.get())
+                .define('B', Items.GLASS)
+                .define('C', Items.DIRT)
+                .define('D', ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Wood).getItem())
+                .define('E', GTNAItems.HYDRAULIC_PUMP.get())
+                .unlockedBy("has_hydraulic_pump", InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_PUMP.get()))
+                .save(provider);
 
     }
 }

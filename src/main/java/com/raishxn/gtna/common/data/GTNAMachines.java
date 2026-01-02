@@ -753,6 +753,97 @@ public class GTNAMachines {
                     Component.translatable("gtna.tooltip.steam_manufacturer.type", "Recipe Type: Hydraulic Manufacturing").withStyle(ChatFormatting.GOLD)
             )
             .register();
+    public static final MultiblockMachineDefinition STEAM_WOODCUTTER = REGISTRATE
+            .multiblock("steam_woodcutter", SteamWoodcutter::new)
+            .rotationState(RotationState.NON_Y_AXIS)
+            .recipeType(GTNARecipeType.WOODCUTTER_RECIPES)
+            .recipeModifier(SteamWoodcutter::recipeModifier)
+            .appearanceBlock(GTNABlocks.BRONZE_REINFORCED_WOOD) // Usa a madeira reforçada como bloco principal
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle(
+                            "  BBB  ",
+                            "       ",
+                            "       ",
+                            "       ",
+                            "       ",
+                            "       ",
+                            "  BBB  "
+                    )
+                    .aisle(
+                            " BBABB ",
+                            "  DDD  ",
+                            "  DDD  ",
+                            "  DDD  ",
+                            "  DDD  ",
+                            "  DDD  ",
+                            " BBABB "
+                    )
+                    .aisle(
+                            "BBEEEBB",
+                            " D   D ",
+                            " D   D ",
+                            " D   D ",
+                            " D   D ",
+                            " D   D ",
+                            "BBACABB"
+                    )
+                    .aisle(
+                            "BAEEEAB",
+                            " D   D ",
+                            " D   D ",
+                            " D   D ",
+                            " D   D ",
+                            " D   D ",
+                            "BACCCAB"
+                    )
+                    .aisle(
+                            "BBEEEBB",
+                            " D   D ",
+                            " D   D ",
+                            " D   D ",
+                            " D   D ",
+                            " D   D ",
+                            "BBACABB"
+                    )
+                    .aisle(
+                            " BBABB ",
+                            "  DDD  ",
+                            "  DDD  ",
+                            "  DDD  ",
+                            "  DDD  ",
+                            "  DDD  ",
+                            " BBABB "
+                    )
+                    .aisle(
+                            "  B~B  ",
+                            "       ",
+                            "       ",
+                            "       ",
+                            "       ",
+                            "       ",
+                            "  BBB  "
+                    )
+                    .where('~', controller(blocks(definition.get())))
+                    .where('A', blocks(GTNABlocks.IRON_REINFORCED_WOOD.get()))// Firebox na base
+                    .where('B', blocks(GTNABlocks.BRONZE_REINFORCED_WOOD.get()) // Paredes de Madeira Reforçada
+                            .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1))
+                            .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1))
+                            .or(abilities(PartAbility.STEAM).setExactLimit(1)))
+                    .where('C', blocks(GTNABlocks.STEEL_REINFORCED_WOOD.get()))
+                    .where('D', blocks(Blocks.GLASS))
+                    .where('E', blocks(Blocks.DIRT))
+                    .where(' ', any())
+                    .build())
+            .workableCasingModel(
+                    GTNACORE.id("block/casings/bronze_reinforced_wood"), // Certifique-se que essa textura existe
+                    GTNACORE.id("block/overlay/machine/steamwoodcutter"))
+            .tooltips(
+                    Component.translatable("gtna.tooltip.steam_woodcutter.desc", "Industrial Tree Processor.").withStyle(ChatFormatting.GRAY),
+                    Component.translatable("gtna.tooltip.steam_woodcutter.parallel", "Max Parallel: 64").withStyle(ChatFormatting.BLUE),
+                    Component.translatable("gtna.tooltip.steam_woodcutter.steam", "Base Steam: 1200 L/s").withStyle(ChatFormatting.RED),
+                    Component.translatable("gtna.tooltip.steam_woodcutter.info", "Processes saplings into huge amounts of resources without consuming them.").withStyle(ChatFormatting.GOLD)
+            )
+            .register();
 
     public static void init() {
     }

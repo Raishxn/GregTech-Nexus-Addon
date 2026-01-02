@@ -2,10 +2,7 @@ package com.raishxn.gtna.data.recipe;
 
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
-import com.gregtechceu.gtceu.common.data.GTBlocks;
-import com.gregtechceu.gtceu.common.data.GTMachines;
-import com.gregtechceu.gtceu.common.data.GTMaterials;
-import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
+import com.gregtechceu.gtceu.common.data.*;
 import com.raishxn.gtna.common.data.GTNABlocks;
 import com.raishxn.gtna.common.data.GTNAItems;
 import com.raishxn.gtna.common.data.GTNAMaterials;
@@ -36,7 +33,6 @@ public class GTNABlockRecipes {
                 .define('A', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.ClayCompound).getItem())
                 .define('B', ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Breel).getItem())
                 .define('C', ChemicalHelper.get(TagPrefix.frameGt, GTNAMaterials.ClayCompound).getItem())
-                // ADICIONADO: unlockedBy
                 .unlockedBy("has_clay_compound_plate", InventoryChangeTrigger.TriggerInstance.hasItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.ClayCompound).getItem()))
                 .save(provider);
 
@@ -48,7 +44,6 @@ public class GTNABlockRecipes {
                 .define('A', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Breel).getItem())
                 .define('B', ChemicalHelper.get(TagPrefix.rod, GTMaterials.Beryllium).getItem())
                 .define('C', ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Beryllium).getItem())
-                // ADICIONADO: unlockedBy
                 .unlockedBy("has_breel_plate", InventoryChangeTrigger.TriggerInstance.hasItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Breel).getItem()))
                 .save(provider);
 
@@ -60,7 +55,6 @@ public class GTNABlockRecipes {
                 .define('A', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.ClayCompound).getItem())
                 .define('B', ChemicalHelper.get(TagPrefix.plateDouble, GTNAMaterials.Breel).getItem())
                 .define('C', GTBlocks.CASING_STEEL_SOLID.get())
-                // ADICIONADO: unlockedBy
                 .unlockedBy("has_clay_compound_plate", InventoryChangeTrigger.TriggerInstance.hasItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.ClayCompound).getItem()))
                 .save(provider);
 
@@ -71,8 +65,23 @@ public class GTNABlockRecipes {
                 .pattern("AAA")
                 .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
                 .define('B', ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Wood).getItem())
-                // ADICIONADO: unlockedBy
                 .unlockedBy("has_bronze_plate", InventoryChangeTrigger.TriggerInstance.hasItems(ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem()))
+                .save(provider);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.STEEL_REINFORCED_WOOD.get())
+                .pattern("AAA")
+                .pattern("ABA")
+                .pattern("AAA")
+                .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Steel).getItem())
+                .define('B', ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Wood).getItem())
+                .unlockedBy("has_steel_plate", InventoryChangeTrigger.TriggerInstance.hasItems(ChemicalHelper.get(TagPrefix.plate, GTMaterials.Steel).getItem()))
+                .save(provider);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.IRON_REINFORCED_WOOD.get())
+                .pattern("AAA")
+                .pattern("ABA")
+                .pattern("AAA")
+                .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Iron).getItem())
+                .define('B', ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Wood).getItem())
+                .unlockedBy("has_iron_plate", InventoryChangeTrigger.TriggerInstance.hasItems(ChemicalHelper.get(TagPrefix.plate, GTMaterials.Iron).getItem()))
                 .save(provider);
 
         // Receita de Máquina (GTCEu) - Esta não precisa de unlockedBy pois usa builder próprio
@@ -86,7 +95,6 @@ public class GTNABlockRecipes {
                 .save(provider);
 
         // 5. Solar Boiling Cell
-        // Atenção: Use .getItem() para o Stronze Pipe para evitar crash se o pipe não existir
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.SOLAR_BOILING_CELL.get())
                 .pattern("AAA")
                 .pattern("BCB")
@@ -98,7 +106,7 @@ public class GTNABlockRecipes {
 
         GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_cobble_gen")
                 .circuitMeta(1)
-                .outputItems(Items.COBBLESTONE) // CORRIGIDO: output -> outputItems
+                .outputItems(Items.COBBLESTONE)
                 .duration(40)
                 .EUt(30)
                 .save(provider);
@@ -106,7 +114,7 @@ public class GTNABlockRecipes {
         // Circuito 2: Stone
         GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_stone_gen")
                 .circuitMeta(2)
-                .outputItems(Items.STONE) // CORRIGIDO: output -> outputItems
+                .outputItems(Items.STONE)
                 .duration(40)
                 .EUt(30)
                 .save(provider);
@@ -115,7 +123,7 @@ public class GTNABlockRecipes {
         GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_obsidian_gen")
                 .circuitMeta(3)
                 .inputItems(Items.REDSTONE)
-                .outputItems(Items.OBSIDIAN) // CORRIGIDO: output -> outputItems
+                .outputItems(Items.OBSIDIAN)
                 .duration(240)
                 .EUt(30)
                 .save(provider);
@@ -123,10 +131,8 @@ public class GTNABlockRecipes {
         // Circuito 4: Basalt (com Blue Ice - Não Consumido)
         GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_basalt_gen")
                 .circuitMeta(4)
-                // CORRIGIDO: notConsumed -> chancedInput(item, 0, 0)
-                // O primeiro 0 significa 0% de chance de consumir o item.
                 .chancedInput(Items.BLUE_ICE.getDefaultInstance(), 0, 0)
-                .outputItems(Items.BASALT) // CORRIGIDO: output -> outputItems
+                .outputItems(Items.BASALT)
                 .duration(40)
                 .EUt(30)
                 .save(provider);
@@ -134,9 +140,8 @@ public class GTNABlockRecipes {
         // Circuito 5: Cobbled Deepslate (com Magma Block - Não Consumido)
         GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_deepslate_gen")
                 .circuitMeta(5)
-                // CORRIGIDO: notConsumed -> chancedInput
                 .chancedInput(Items.MAGMA_BLOCK.getDefaultInstance(), 0, 0)
-                .outputItems(Items.COBBLED_DEEPSLATE) // CORRIGIDO: output -> outputItems
+                .outputItems(Items.COBBLED_DEEPSLATE)
                 .duration(40)
                 .EUt(30)
                 .save(provider);
@@ -145,7 +150,7 @@ public class GTNABlockRecipes {
         GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_netherrack_gen")
                 .circuitMeta(6)
                 .inputItems(Items.GLOWSTONE_DUST)
-                .outputItems(Items.NETHERRACK) // CORRIGIDO: output -> outputItems
+                .outputItems(Items.NETHERRACK)
                 .duration(40)
                 .EUt(30)
                 .save(provider);
@@ -186,8 +191,8 @@ public class GTNABlockRecipes {
         GTNARecipeType.SUPERHEATER_RECIPES.recipeBuilder("superheat_stone")
                 .inputItems(Items.STONE)
                 .outputFluids(Lava.getFluid(1000))
-                .duration(40) // 2s
-                .EUt(32) // Isso consumirá ~640L de steam por segundo na máquina a vapor
+                .duration(40)
+                .EUt(32)
                 .save(provider);
 
         // Cobblestone
@@ -213,5 +218,13 @@ public class GTNABlockRecipes {
                 .duration(40)
                 .EUt(32)
                 .save(provider);
+
+        GTRecipeTypes.EXTRUDER_RECIPES.recipeBuilder("borosilicate_glass")
+                .notConsumable(GTItems.SHAPE_EXTRUDER_BLOCK)
+                .outputItems(GTNABlocks.BOROSILICATE_GLASS_BLOCK.get())
+                .duration(100)
+                .EUt(120)
+                .save(provider);
+
     }
 }

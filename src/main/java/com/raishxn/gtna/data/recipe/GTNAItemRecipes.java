@@ -5,6 +5,8 @@ import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.raishxn.gtna.common.data.GTNAItems;
+import com.raishxn.gtna.common.data.GTNAMaterials;
+import com.raishxn.gtna.common.data.GTNARecipeType;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -13,6 +15,9 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.Items;
 
 import java.util.function.Consumer;
+
+import static com.ibm.icu.impl.CurrencyData.provider;
+
 public class GTNAItemRecipes {
     public static void register(Consumer<FinishedRecipe> provider) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAItems.PRECISION_STEAM_COMPONENT.get())
@@ -53,6 +58,16 @@ public class GTNAItemRecipes {
                 .define('B', GTNAItems.HYDRAULIC_MOTOR.get())
                 .define('C', ChemicalHelper.get(TagPrefix.gear, GTMaterials.Clay).getItem())
                 .unlockedBy("has_hydraulic_motor", InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_MOTOR.get()))
+                .save(provider);
+        GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("hydraulic_pump")
+                .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 2)
+                .inputItems(ChemicalHelper.get(TagPrefix.ring, GTMaterials.Rubber), 2)
+                .inputItems(ChemicalHelper.get(TagPrefix.bolt, GTNAMaterials.ClayCompound), 1) // Assumindo ClayCompound material
+                .inputItems(ChemicalHelper.get(TagPrefix.pipeLargeFluid, GTMaterials.Bronze), 1)
+                .inputItems(ChemicalHelper.get(TagPrefix.rotor, GTMaterials.Bronze), 1)
+                .outputItems(GTNAItems.HYDRAULIC_PUMP.get())
+                .duration(120)
+                .EUt(32)
                 .save(provider);
     }
 }
