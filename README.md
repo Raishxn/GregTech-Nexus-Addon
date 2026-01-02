@@ -1,4 +1,6 @@
 <div align="center">
+  <img src="./src/main/resources/assets/gtna/textures/logo.png" width="225" height="225" alt="GregTech Nexus Addon Logo">
+  
   <h1>GregTech Nexus Addon</h1>
   <h2><em>The Nexus of Steam & Steel</em></h2>
 
