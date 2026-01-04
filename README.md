@@ -9,11 +9,11 @@
   </p>
 
   <p>
-    <a href="#">
+    <a href="https://github.com/raishxn/GregTech-Nexus-Addon/releases">
       <img src="https://img.shields.io/github/v/release/raishxn/GregTech-Nexus-Addon?style=for-the-badge&color=orange" alt="Latest Version">
     </a>
-    <a href="#">
-      <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License">
+    <a href="./LICENSE">
+      <img src="https://img.shields.io/badge/License-LGPL_v3.0-blue?style=for-the-badge" alt="License">
     </a>
     <br>
     <a href="https://discord.gg/d3qHufwRxb">
@@ -32,23 +32,51 @@
 
 ## 📑 Table of Contents
 - [📑 Table of Contents](#-table-of-contents)
-- [✨ Key Mechanics](#-key-mechanics)
+- [✨ Key Features](#-key-features)
+- [🔮 Planned Features](#-planned-features)
 - [🏭 Machinery Showcase](#-machinery-showcase)
-- [📡 Wireless Steam Technology](#-wireless-steam-technology)
-- [🛠️ Quality of Life](#️-quality-of-life)
 - [📥 Downloads & Dependencies](#-downloads--dependencies)
 - [📜 Credits](#-credits)
 
 <hr>
 
-## ✨ Key Mechanics
+## ✨ Key Features
 
-GTNA fundamentally changes how you approach energy and processing:
+GTNA fundamentally changes how you approach energy and processing with cutting-edge mechanics:
 
-* **Hydraulic Systems**: specialized components like *Hydraulic Pistons*, *Arms*, and *Pumps* to build high-efficiency steam machinery that rivals early electric counterparts.
-* **Structure Visualization**: Built-in tools like the *Structure Writer* and *Holo-Projector* to visualize multiblock placement directly in-world.
-* **Material Expansion**: Introduction of **Borosilicate Glass**, **Bronze Reinforced Wood**, and **Stronze** alloys for advanced casing crafting.
-* **Massive Scaling**: From the *Huge Steam Buses* to the *Mega Solar Boiler*, size matters.
+### 📡 Wireless Steam Network
+Say goodbye to pipe spaghetti! Transmit steam efficiently through an advanced wireless network.
+* **Wireless Steam Hatches**: Connect your machines to the network without physical pipes.
+* **Network Manager**: Monitor pressure and configure channels globally.
+* **Steel Variants**: Upgraded hatches for higher steam throughput.
+
+### 🌊 Hydraulic Systems
+A new era of kinetic power. Use specialized components like *Hydraulic Pistons*, *Arms*, and *Pumps* to build high-efficiency machinery that rivals early electric counterparts.
+
+### 🏗️ Advanced Multiblocks
+Scale up your industry with massive structures designed for bulk processing.
+* **Large Steam Alloy Smelter**: Alloy smelting at an industrial scale without electricity.
+* **Mega Solar Boiler**: Harness the sun with *Solar Boiling Cells* and *Hyper Pressure Casings* for infinite steam.
+* **Stone Superheater**: Extreme fuel efficiency for early-game setups.
+
+### 🛠️ Quality of Life & Tools
+* **The Vajra**: The legendary universal tool returns — instantly breaks blocks and processes them efficiently.
+* **Structure Tools**: Built-in visualization for placing multiblocks effortlessly.
+
+<hr>
+
+## 🔮 Planned Features (Roadmap)
+
+We are constantly expanding the Nexus. Here is what is currently in development:
+
+* 🔀 **ME Dual Output Bus**: Enhanced integration for Applied Energistics 2, allowing smarter item routing.
+* 🚀 **Advanced Parallel Hatches**: Pushing machine processing limits to new heights.
+* 🧵 **Thread Hatches**: A revolutionary hatch capable of processing **different recipes** simultaneously within the same multiblock.
+* 💾 **Advanced Pattern Buffer**: 
+    * Customizable slot sizes.
+    * Independent configuration for **Circuits**, **Items**, and **Fluids** for each slot.
+* 🏗️ **New Multiblocks**: Expanding the tech tree with specialized processing units.
+* ✨ **QoL Improvements**: Smoothing out gameplay and interface interactions.
 
 <hr>
 
@@ -58,12 +86,11 @@ GTNA fundamentally changes how you approach energy and processing:
 <summary><strong>🚂 The Steam Revolution (Click to expand)</strong></summary>
 <br>
 
-Don't just survive the steam age; dominate it with massive multiblocks.
+Don't just survive the steam age; dominate it.
 
 * **Large Steam Alloy Smelter**: Process alloys efficiently without touching a single watt of EU.
-* **Mega Solar Boiler**: The ultimate renewable steam source. Utilizes *Solar Boiling Cells* and *Hyper Pressure Casings* to generate titanic amounts of steam.
 * **Steam Manufacturer**: A dedicated factory for assembling components using purely steam pressure.
-* **Stone Superheater**: Push your early game fuel efficiency to the limit.
+* **Steam Woodcutter**: Automate your timber processing with high efficiency.
 </details>
 
 <details>
@@ -72,34 +99,8 @@ Don't just survive the steam age; dominate it with massive multiblocks.
 
 Push beyond the limits of standard GregTech.
 
-* **WORK IN PROGRESS**
+* **Work In Progress**
 </details>
-
-<details>
-<summary><strong>⛏️ Advanced Processing (Click to expand)</strong></summary>
-<br>
-
-Scale up your production lines.
-
-* **WORK IN PROGRESS**
-</details>
-
-<hr>
-
-## 📡 Wireless Steam Technology
-
-Forget pipes. GTNA introduces a cutting-edge **Wireless Steam Network**:
-
-* **Wireless Steam Input/Output Hatches**: Transmit steam instantly across your base.
-* **Steam Wireless Network Manager**: Configure channels and monitor pressure across your entire network.
-* **Pressure Tiers**: Supports standard Steam, High Pressure, and new custom tiers.
-
-<hr>
-
-## 🛠️ Quality of Life
-
-* **The Vajra**: The legendary tool returns. Instantly breaks blocks and processes them efficiently.
-* **Debug Tools**: *Structure Detect* and *Writer* items allow map makers and players to debug multiblock patterns easily.
 
 <hr>
 
@@ -121,17 +122,15 @@ Forget pipes. GTNA introduces a cutting-edge **Wireless Steam Network**:
 
 * **Author**: raishxn
 * **Textures & Assets**: Based on GTCEu and Community Assets.
-* **Inspiration**: GT Odyssey, GTNH, and the GregTech Community,.
+* **Inspiration**: GT Odyssey, GTNH, and the GregTech Community.
 
-* 
 | Project                 | Author                                                          | License                                                               |
 |:------------------------|:----------------------------------------------------------------|:----------------------------------------------------------------------|
 | **GT Not Leisure Code** | [ABKQPO](https://github.com/ABKQPO/GT-Not-Leisure)              | [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)                    |
-| **GTO Code**            | [GTO TEAM](https://github.com/GregTech-Odyssey/GTOCore)         | [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)                    |
+| **GTO Code** | [GTO TEAM](https://github.com/GregTech-Odyssey/GTOCore)         | [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)                    |
 | **GTNH Multiblock Port**| [GTNewHorizons](https://github.com/GTNewHorizons)               | [Attribution-NonCommercial-ShareAlike 4.0 International]              |
-| **CMM Additions**       | [CrystalGaming](https://github.com/CristalGaming/cmme-additions)| [Attribution-NonCommercial-ShareAlike 4.0 International]              |
-
+| **CMM Additions** | [CrystalGaming](https://github.com/CristalGaming/cmme-additions)| [Attribution-NonCommercial-ShareAlike 4.0 International]              |
 
 ---
 
-<p align="center">Made with ❤️ for the GregTech Community. Licensed under <strong>MIT</strong>.</p>
+<p align="center">Made with ❤️ for the GregTech Community. Licensed under <a href="./LICENSE">LGPL v3.0</a>.</p>
