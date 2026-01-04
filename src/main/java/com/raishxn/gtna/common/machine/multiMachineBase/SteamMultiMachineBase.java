@@ -4,6 +4,7 @@ import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.UITemplate;
+import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDisplayUIMachine;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDisplayUIMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
@@ -90,7 +91,7 @@ public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine im
         screen.addWidget(new LabelWidget(4, 5, self().getBlockState().getBlock().getDescriptionId()));
         screen.addWidget(new ComponentPanelWidget(4, 17, this::addDisplayText)
                 .setMaxWidthLimit(150)
-                .clickHandler(this::handleDisplayClick)); // Conecta o clique
+                .clickHandler(this::handleDisplayClick));
 
         return new ModularUI(176, 216, this, entityPlayer)
                 .background(GuiTextures.BACKGROUND_STEAM.get(isSteel))

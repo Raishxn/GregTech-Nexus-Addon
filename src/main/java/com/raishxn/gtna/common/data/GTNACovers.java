@@ -14,13 +14,11 @@ import net.minecraft.resources.ResourceLocation;
 
 public class GTNACovers {
 
-    // --- HYDRAULIC PUMP (1.000.000 L/t) ---
     public static final CoverDefinition HYDRAULIC_PUMP = GTCovers.register(
             GTNACORE.id("hydraulic_pump"),
             (def, coverable, side) -> new PumpCover(def, coverable, side, GTValues.VC_LP_STEAM),
             () -> () -> IOCoverRenderer.PUMP_LIKE_COVER_RENDERER);
 
-    // --- HYDRAULIC CONVEYOR (16 Stacks/t) ---
     public static final CoverDefinition HYDRAULIC_CONVEYOR = GTCovers.register(
             GTNACORE.id("hydraulic_conveyor"),
             (def, coverable, side) -> new ConveyorCover(def, coverable, side, GTValues.VC_LP_STEAM) {
@@ -35,7 +33,6 @@ public class GTNACovers {
                     GTCEu.id("block/cover/conveyor_emissive"),
                     GTCEu.id("block/cover/conveyor_inverted_emissive")));
 
-    // --- HYDRAULIC REGULATOR (20.000.000 L/t) ---
     public static final CoverDefinition HYDRAULIC_REGULATOR = GTCovers.register(
             GTNACORE.id("hydraulic_regulator"),
             (def, coverable, side) -> new FluidRegulatorCover(def, coverable, side, GTValues.VC_LP_STEAM),

@@ -1,6 +1,7 @@
 package com.raishxn.gtna.data.recipe;
 
 import com.gregtechceu.gtceu.api.GTValues;
+import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
@@ -56,6 +57,17 @@ public class GTNAMaterialRecipes {
                 .outputItems(TagPrefix.ingot, GTNAMaterials.CompressedSteam, 1)
                 .duration(900)
                 .EUt(GTValues.ULV)
+                .save(provider);
+
+        GTRecipeTypes.BLAST_RECIPES.recipeBuilder("echoite_alloy_smelting")
+                .inputItems(ChemicalHelper.get(TagPrefix.dust, GTMaterials.Steel), 4)
+                .inputItems(ChemicalHelper.get(TagPrefix.dust, GTMaterials.EnderPearl), 2)
+                .inputItems(ChemicalHelper.get(TagPrefix.dust, GTMaterials.Obsidian), 2)
+                .inputFluids(GTNAMaterials.SuperHeatedSteam.getFluid(1000))
+                .outputItems(ChemicalHelper.get(TagPrefix.ingot, GTNAMaterials.Echoite), 4)
+                .blastFurnaceTemp(1730)
+                .duration(1200)
+                .EUt(120)
                 .save(provider);
     }
 }

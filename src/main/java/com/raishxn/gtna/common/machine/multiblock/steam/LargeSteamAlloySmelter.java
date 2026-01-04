@@ -24,7 +24,7 @@ public class LargeSteamAlloySmelter extends SteamMultiMachineBase {
             LargeSteamAlloySmelter.class, SteamMultiMachineBase.MANAGED_FIELD_HOLDER);
 
     @Persisted
-    private int targetParallel = 64; // Padrão conforme pedido
+    private int targetParallel = 64;
 
     public LargeSteamAlloySmelter(IMachineBlockEntity holder, Object... args) {
         super(holder, false, args);
@@ -45,12 +45,10 @@ public class LargeSteamAlloySmelter extends SteamMultiMachineBase {
         }
 
         int maxParallel = steamMachine.targetParallel;
-        // Lógica corrigida para calcular o paralelo baseado nos itens disponíveis
         int parallels = ParallelLogic.getParallelAmount(machine, recipe, maxParallel);
 
         if (parallels == 0) return ModifierFunction.NULL;
 
-        // 43% mais rápido = 57% da duração original (0.57)
         double durationMultiplier = 0.57;
 
         return ModifierFunction.builder()
@@ -78,7 +76,7 @@ public class LargeSteamAlloySmelter extends SteamMultiMachineBase {
             if (componentData.equals("parallelSub")) {
                 this.targetParallel = Math.max(1, this.targetParallel / 2);
             } else if (componentData.equals("parallelAdd")) {
-                this.targetParallel = Math.min(64, this.targetParallel * 2); // Limite de 64 conforme pedido
+                this.targetParallel = Math.min(64, this.targetParallel * 2);
             }
         }
     }

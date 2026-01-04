@@ -51,6 +51,7 @@ public class GTNAMaterialFlags {
     public static final MaterialFlag GENERATE_SINGULARITY = new MaterialFlag.Builder("generate_singularity")
             .build();
 
+
     public static void register() {
     }
 }

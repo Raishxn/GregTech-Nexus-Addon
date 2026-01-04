@@ -14,6 +14,7 @@ public class MaterialAdd {
     public static void init() {
 
         Bronze.addFlags(GENERATE_SPRING_SMALL,GENERATE_SPRING);
+        Beryllium.addFlags(GENERATE_ROD,GENERATE_FRAME);
 
 
 

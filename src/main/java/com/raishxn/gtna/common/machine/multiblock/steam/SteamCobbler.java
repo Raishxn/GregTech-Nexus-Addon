@@ -24,7 +24,7 @@ public class SteamCobbler extends SteamMultiMachineBase {
             SteamCobbler.class, SteamMultiMachineBase.MANAGED_FIELD_HOLDER);
 
     @Persisted
-    private int targetParallel = 16; // Limite de 16 conforme pedido
+    private int targetParallel = 16;
 
     public SteamCobbler(IMachineBlockEntity holder, Object... args) {
         super(holder, false, args);
@@ -40,13 +40,11 @@ public class SteamCobbler extends SteamMultiMachineBase {
         if (!(machine instanceof SteamCobbler steamMachine)) {
             return ModifierFunction.NULL;
         }
-        // Aceita ROCK_BREAKER_RECIPES (onde vamos registrar as receitas)
         if (recipe.getType() != GTRecipeTypes.ROCK_BREAKER_RECIPES) {
             return ModifierFunction.NULL;
         }
 
         int maxParallel = steamMachine.targetParallel;
-        // Calcula paralelos baseado em input (ex: Redstone/Glowstone) ou limita pelo maxParallel
         int parallels = ParallelLogic.getParallelAmount(machine, recipe, maxParallel);
 
         if (parallels == 0) return ModifierFunction.NULL;

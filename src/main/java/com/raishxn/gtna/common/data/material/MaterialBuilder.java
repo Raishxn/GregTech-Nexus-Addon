@@ -73,8 +73,7 @@ public class MaterialBuilder {
                     .cableProperties(GTValues.V[GTValues.MV], 32, 0, true)
                     .toolStats(ToolProperty.Builder.of(8.0F, 100.0F, 64, 6, GTNAToolType.VAJRA).magnetic()
                             .unbreakable().build())
-                    .fluidPipeProperties(2000,1000,true,true,true,true)
-
+                    .fluidPipeProperties(2000000,100000,true,true,true,true)
                     .buildAndRegister().setFormula("Ec");
 
             // --- LINGOTE ESPECIAL (Compressed Steam) ---
@@ -85,7 +84,7 @@ public class MaterialBuilder {
                     .flags(NO_SMELTING, GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME, GENERATE_GEAR,
                             GENERATE_DENSE, GENERATE_SUPERDENSE, GENERATE_DOUBLE_PLATE,
                             GENERATE_TRIPLE_PLATE, GENERATE_QUADRUPLE_PLATE, GENERATE_QUINTUPLE_PLATE,GENERATE_ROTOR)
-                    .fluidPipeProperties(500, 500, false, false, false, false)
+                    .fluidPipeProperties(500, 500, true, true, true, false)
                     .buildAndRegister().setFormula("H2O");
 
             // --- FLUIDOS (Vapores) ---

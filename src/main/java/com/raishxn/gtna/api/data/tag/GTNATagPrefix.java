@@ -2,6 +2,7 @@ package com.raishxn.gtna.api.data.tag;
 
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconType;
+import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.raishxn.gtna.api.data.info.GTNAMaterialFlags;
 

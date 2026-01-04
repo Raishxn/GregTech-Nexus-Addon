@@ -3,6 +3,7 @@ package com.raishxn.gtna.data.recipe;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.common.data.*;
+import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.common.data.GTNABlocks;
 import com.raishxn.gtna.common.data.GTNAItems;
 import com.raishxn.gtna.common.data.GTNAMaterials;
@@ -84,23 +85,13 @@ public class GTNABlockRecipes {
                 .unlockedBy("has_iron_plate", InventoryChangeTrigger.TriggerInstance.hasItems(ChemicalHelper.get(TagPrefix.plate, GTMaterials.Iron).getItem()))
                 .save(provider);
 
-        // Receita de Máquina (GTCEu) - Esta não precisa de unlockedBy pois usa builder próprio
-        GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_compact_pipe_casing")
-                .inputItems(ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Breel).getItem(), 1)
-                .inputItems(ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.CompressedSteam).getItem(), 2)
-                .inputItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.CompressedSteam).getItem(), 6)
-                .outputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 1)
-                .duration(120)
-                .EUt(24)
-                .save(provider);
-
         // 5. Solar Boiling Cell
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.SOLAR_BOILING_CELL.get())
                 .pattern("AAA")
                 .pattern("BCB")
                 .define('A', Blocks.GLASS)
                 .define('B', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Stronze).getItem())
-                .define('C', GTMachines.STEAM_SOLAR_BOILER.right().asStack().getItem())                // ADICIONADO: unlockedBy
+                .define('C', GTMachines.STEAM_SOLAR_BOILER.right().asStack().getItem())
                 .unlockedBy("has_glass", InventoryChangeTrigger.TriggerInstance.hasItems(Blocks.GLASS))
                 .save(provider);
 
@@ -219,11 +210,37 @@ public class GTNABlockRecipes {
                 .EUt(32)
                 .save(provider);
 
-        GTRecipeTypes.EXTRUDER_RECIPES.recipeBuilder("borosilicate_glass")
-                .notConsumable(GTItems.SHAPE_EXTRUDER_BLOCK)
-                .outputItems(GTNABlocks.BOROSILICATE_GLASS_BLOCK.get())
+        GTRecipeTypes.ALLOY_SMELTER_RECIPES.recipeBuilder("borosilicate_gtna_glass_block_v2")
+                .inputItems(ChemicalHelper.get(TagPrefix.block, GTMaterials.BorosilicateGlass))
+                .inputItems(Blocks.GLASS)
+                .outputItems(GTNABlocks.BOROSILICATE_GLASS_BLOCK.get().asItem())
                 .duration(100)
                 .EUt(120)
+                .save(provider);
+        GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("hyper_pressure_breel_casing")
+                .inputItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Breel).getItem(), 6)
+                .inputItems(ChemicalHelper.get(TagPrefix.rod, GTMaterials.Beryllium).getItem(), 2)
+                .inputItems(ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Beryllium).getItem(), 1)
+                .outputItems(GTNABlocks.HYPER_PRESSURE_BREEL_CASING.get())
+                .duration(40)
+                .EUt(16)
+                .save(provider);
+        GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_compact_pipe_casing_v2")
+                .inputItems(GTNABlocks.BREEL_PIPE_CASING.get(), 1)
+                .inputItems(ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.CompressedSteam).getItem(), 2)
+                .inputItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.CompressedSteam).getItem(), 6)
+                .outputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get())
+                .duration(120)
+                .EUt(24)
+                .save(provider);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.STEAM_COMPACT_PIPE_CASING.get())
+                .pattern("PPP")
+                .pattern("TCT")
+                .pattern("PPP")
+                .define('P', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.CompressedSteam).getItem())
+                .define('T', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.CompressedSteam).getItem())
+                .define('C', GTNABlocks.BREEL_PIPE_CASING.get())
+                .unlockedBy("has_breel_casing", InventoryChangeTrigger.TriggerInstance.hasItems(GTNABlocks.BREEL_PIPE_CASING.get()))
                 .save(provider);
 
     }

@@ -26,10 +26,10 @@ public class StoneSuperHeater extends SteamMultiMachineBase {
             StoneSuperHeater.class, SteamMultiMachineBase.MANAGED_FIELD_HOLDER);
 
     @Persisted
-    private int targetParallel = 32; // Default max parallel
+    private int targetParallel = 32;
 
     public StoneSuperHeater(IMachineBlockEntity holder, Object... args) {
-        super(holder, false, args); // false = Bronze/Basic UI textures usually
+        super(holder, false, args);
     }
 
     @Override
@@ -47,13 +47,7 @@ public class StoneSuperHeater extends SteamMultiMachineBase {
         if (recipe.getType() != GTNARecipeType.SUPERHEATER_RECIPES) {
             return ModifierFunction.NULL;
         }
-
-        // Lógica de Paralelo baseada na disponibilidade de Vapor e Configuração do usuário
-        // O custo da receita base é calculado em EU (Steam L/t = EU/t para máquinas a vapor simples, ou regra de conversão)
-        // 640 L/s = 32 L/t.
-
         int maxParallel = heater.targetParallel;
-        // O ParallelLogic padrão verifica os inputs de itens, precisamos garantir que verifique o vapor também
         int parallels = ParallelLogic.getParallelAmount(machine, recipe, maxParallel);
 
         if (parallels == 0) return ModifierFunction.NULL;
@@ -82,7 +76,7 @@ public class StoneSuperHeater extends SteamMultiMachineBase {
             if (componentData.equals("parallelSub")) {
                 this.targetParallel = Math.max(1, this.targetParallel / 2);
             } else if (componentData.equals("parallelAdd")) {
-                this.targetParallel = Math.min(32, this.targetParallel * 2); // Cap em 32
+                this.targetParallel = Math.min(32, this.targetParallel * 2);
             }
         }
     }

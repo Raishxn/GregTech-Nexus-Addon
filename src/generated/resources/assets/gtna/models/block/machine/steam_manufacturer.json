@@ -3,14 +3,14 @@
   "loader": "gtceu:machine",
   "machine": "gtna:steam_manufacturer",
   "texture_overrides": {
-    "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel"
+    "all": "gtna:block/casings/breel_plated_casing"
   },
   "variants": {
     "is_formed=false,recipe_logic_status=idle": {
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "all": "gtna:block/casings/breel_plated_casing",
           "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front"
         }
       }
@@ -19,7 +19,7 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "all": "gtna:block/casings/breel_plated_casing",
           "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front"
         }
       }
@@ -28,7 +28,7 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "all": "gtna:block/casings/breel_plated_casing",
           "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front_active"
         }
       }
@@ -37,7 +37,7 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "all": "gtna:block/casings/breel_plated_casing",
           "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front_active"
         }
       }
@@ -46,7 +46,7 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "all": "gtna:block/casings/breel_plated_casing",
           "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front"
         }
       }
@@ -55,7 +55,7 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "all": "gtna:block/casings/breel_plated_casing",
           "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front"
         }
       }
@@ -64,7 +64,7 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "all": "gtna:block/casings/breel_plated_casing",
           "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front_active"
         }
       }
@@ -73,7 +73,7 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/gearbox/machine_casing_gearbox_steel",
+          "all": "gtna:block/casings/breel_plated_casing",
           "overlay_front": "gtna:block/overlay/machine/steammanufacturer/overlay_front_active"
         }
       }

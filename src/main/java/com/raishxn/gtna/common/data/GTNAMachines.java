@@ -13,10 +13,13 @@ import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
 import com.gregtechceu.gtceu.api.pattern.MultiblockShapeInfo;
 import com.gregtechceu.gtceu.api.pattern.Predicates;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
-import com.gregtechceu.gtceu.common.data.GTMaterialBlocks;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhouse;
+import com.raishxn.gtna.common.machine.multiblock.noenergy.HyperPressureReactor;
+import com.raishxn.gtna.common.machine.multiblock.noenergy.InfernalCokeOven;
+import com.raishxn.gtna.common.machine.multiblock.noenergy.LeapForwardBlastFurnace;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.HugeSteamInputBus;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.HugeSteamOutputBus;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamInputHatch;
@@ -32,11 +35,13 @@ import net.minecraft.world.level.block.Blocks;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import static com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.EXPORT_FLUIDS;
-import static com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.IMPORT_FLUIDS;
+import static com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.*;
+import static com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.EXPORT_ITEMS;
 import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
 import static com.gregtechceu.gtceu.api.pattern.Predicates.*;
+import static com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.*;
 import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
+import static com.raishxn.gtna.common.data.GTNARecipeType.HIGH_PRESSURE_REACTOR_RECIPES;
 import static com.raishxn.gtna.common.data.GTNARecipeType.SUPERHEATER_RECIPES;
 
 public class GTNAMachines {
@@ -262,7 +267,7 @@ public class GTNAMachines {
                             "C     C",
                             "C     C",
                             "C     C",
-                            "CCCCCCC") // Topo (Y=7)
+                            "CCCCCCC")
                     .where('~', controller(blocks(definition.get())))
                     .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
                             .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1))
@@ -396,10 +401,10 @@ public class GTNAMachines {
                             "FGGGGGGGF"
                     )
                     .aisle(
-                            "FFFFFFFFF", // Frente
+                            "FFFFFFFFF",
                             "DAAAAAAAD",
                             "DAAAAAAAD",
-                            "DAAASAAAD", // S = Controller
+                            "DAAASAAAD",
                             "DAAAAAAAD",
                             "DAAAAAAAD",
                             "DAAAAAAAD",
@@ -450,24 +455,22 @@ public class GTNAMachines {
             .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle(
-                            "BBB",  // Nível 0 - Fireboxes
-                            "AAA",  // Nível 1 - Parede Sólida
-                            "AAA",  // Nível 2 - Parede Sólida
-                            " A "   // Nível 3 - Teto (Ponta da cruz)
+                            "BBB",
+                            "AAA",
+                            "AAA",
+                            " A "
                     )
-                    // Fatia 2: MEIO (Oco por dentro)
                     .aisle(
-                            "BBB",  // Nível 0
-                            "A A",  // Nível 1 - Oco
-                            "A A",  // Nível 2 - Oco
-                            "AAA"   // Nível 3 - Teto (Barra central)
+                            "BBB",
+                            "A A",
+                            "A A",
+                            "AAA"
                     )
-                    // Fatia 3: FRENTE (Controller e Acesso)
                     .aisle(
-                            "BBB",  // Nível 0
-                            "A~A",  // Nível 1 - Controller no centro
-                            "AAA",  // Nível 2 - Parede frontal sólida
-                            " A "   // Nível 3 - Teto (Ponta da cruz)
+                            "BBB",
+                            "A~A",
+                            "AAA",
+                            " A "
                     )
                     .where('~', controller(blocks(definition.get())))
                     .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
@@ -602,7 +605,7 @@ public class GTNAMachines {
                     .build())
             .workableCasingModel(
                     GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
-                    GTNACORE.id("block/overlay/machine/steamcobbler")) // Você precisará criar essa textura ou usar uma existente
+                    GTNACORE.id("block/overlay/machine/steamcobbler"))
             .tooltips(
                     Component.translatable("gtna.tooltip.steam_cobbler.desc", "Advanced Steam Rock Generator.")
                             .withStyle(ChatFormatting.GRAY),
@@ -652,8 +655,8 @@ public class GTNAMachines {
                             .or(abilities(PartAbility.IMPORT_ITEMS).setPreviewCount(1))
                             .or(abilities(PartAbility.EXPORT_FLUIDS).setPreviewCount(1))
                             .or(abilities(PartAbility.STEAM).setExactLimit(1)))
-                    .where('B', blocks(GTNABlocks.BOROSILICATE_GLASS_BLOCK.get()))// Borosilicate Glass
-                    .where('C', blocks(Blocks.MAGMA_BLOCK)) // Magma Block
+                    .where('B', blocks(GTNABlocks.BOROSILICATE_GLASS_BLOCK.get()))
+                    .where('C', blocks(Blocks.MAGMA_BLOCK))
                     .build())
             .workableCasingModel(
                     GTNACORE.id("block/casings/stronze_wrapped_casing"),
@@ -734,18 +737,18 @@ public class GTNAMachines {
                             "         "
                     )
                     .where('~', controller(blocks(definition.get())))
-                    .where('A', blocks(GTNABlocks.BREEL_PIPE_CASING.get())) // Breel Pipe Casing
-                    .where('B', blocks(GTNABlocks.HYDRAULIC_ASSEMBLER_CASING.get())) // Hydraulic Assembler Casing
-                    .where('C', blocks(GTNABlocks.BREEL_PLATED_CASING.get())// Breel-plated casing
+                    .where('A', blocks(GTNABlocks.BREEL_PIPE_CASING.get()))
+                    .where('B', blocks(GTNABlocks.HYDRAULIC_ASSEMBLER_CASING.get()))
+                    .where('C', blocks(GTNABlocks.BREEL_PLATED_CASING.get())
                             .or(abilities(PartAbility.IMPORT_ITEMS).setPreviewCount(1))
-                            .or(abilities(PartAbility.EXPORT_FLUIDS).setPreviewCount(1))
+                            .or(abilities(EXPORT_ITEMS).setPreviewCount(1))
                             .or(abilities(PartAbility.STEAM).setExactLimit(1)))
-                    .where('D', blocks(GTBlocks.CASING_STEEL_GEARBOX.get())) // Steel Gearbox
-                    .where('E', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Steel))) // Steel Frame (preenchimento estrutural)
+                    .where('D', blocks(GTBlocks.CASING_STEEL_GEARBOX.get()))
+                    .where('E', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Steel)))
                     .where(' ', any())
                     .build())
             .workableCasingModel(
-                    GTCEu.id("block/casings/gearbox/machine_casing_gearbox_steel"),
+                    GTNACORE.id("block/casings/breel_plated_casing"),
                     GTNACORE.id("block/overlay/machine/steammanufacturer"))
             .tooltips(
                     Component.translatable("gtna.tooltip.steam_manufacturer.desc", "Advanced Hydraulic Assembly Line.").withStyle(ChatFormatting.GRAY),
@@ -758,7 +761,7 @@ public class GTNAMachines {
             .rotationState(RotationState.NON_Y_AXIS)
             .recipeType(GTNARecipeType.WOODCUTTER_RECIPES)
             .recipeModifier(SteamWoodcutter::recipeModifier)
-            .appearanceBlock(GTNABlocks.BRONZE_REINFORCED_WOOD) // Usa a madeira reforçada como bloco principal
+            .appearanceBlock(GTNABlocks.BRONZE_REINFORCED_WOOD)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle(
                             "  BBB  ",
@@ -824,8 +827,8 @@ public class GTNAMachines {
                             "  BBB  "
                     )
                     .where('~', controller(blocks(definition.get())))
-                    .where('A', blocks(GTNABlocks.IRON_REINFORCED_WOOD.get()))// Firebox na base
-                    .where('B', blocks(GTNABlocks.BRONZE_REINFORCED_WOOD.get()) // Paredes de Madeira Reforçada
+                    .where('A', blocks(GTNABlocks.IRON_REINFORCED_WOOD.get()))
+                    .where('B', blocks(GTNABlocks.BRONZE_REINFORCED_WOOD.get())
                             .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1))
                             .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1))
                             .or(abilities(PartAbility.STEAM).setExactLimit(1)))
@@ -835,13 +838,780 @@ public class GTNAMachines {
                     .where(' ', any())
                     .build())
             .workableCasingModel(
-                    GTNACORE.id("block/casings/bronze_reinforced_wood"), // Certifique-se que essa textura existe
+                    GTNACORE.id("block/casings/bronze_reinforced_wood"),
                     GTNACORE.id("block/overlay/machine/steamwoodcutter"))
             .tooltips(
                     Component.translatable("gtna.tooltip.steam_woodcutter.desc", "Industrial Tree Processor.").withStyle(ChatFormatting.GRAY),
                     Component.translatable("gtna.tooltip.steam_woodcutter.parallel", "Max Parallel: 64").withStyle(ChatFormatting.BLUE),
                     Component.translatable("gtna.tooltip.steam_woodcutter.steam", "Base Steam: 1200 L/s").withStyle(ChatFormatting.RED),
                     Component.translatable("gtna.tooltip.steam_woodcutter.info", "Processes saplings into huge amounts of resources without consuming them.").withStyle(ChatFormatting.GOLD)
+            )
+            .register();
+
+    public static final MultiblockMachineDefinition LEAP_FORWARD_ONE_BLAST_FURNACE = REGISTRATE
+            .multiblock("leap_forward_one_blast_furnace", LeapForwardBlastFurnace::new)
+            .rotationState(RotationState.NON_Y_AXIS)
+            .recipeType(GTRecipeTypes.PRIMITIVE_BLAST_FURNACE_RECIPES)
+            .recipeModifier(LeapForwardBlastFurnace::recipeModifier)
+            .appearanceBlock(GTBlocks.CASING_PRIMITIVE_BRICKS)
+            .pattern(definition -> FactoryBlockPattern.start( BACK, RIGHT, UP)
+                    .aisle("     AAAAA     ", "  DDDDDDDDDDD  ", " DDDDDDDDDDDDD ", " DDDDDDDDDDDDD ", " DDDDDDDDDDDDD ", "ADDDDDDDDDDDDDA", "ADDDDDDDDDDDDDA", "ADDDDDDDDDDDDDA", "ADDDDDDDDDDDDDA", "ADDDDDDDDDDDDDA", " DDDDDDDDDDDDD ", " DDDDDDDDDDDDD ", " DDDDDDDDDDDDD ", "  DDDDDDDDDDD  ", "     AAAAA     ")
+                    .aisle("     AAAAA     ", "    DEEEEED    ", "   DE     ED   ", "  DE       ED  ", " DE         ED ", "AE           EA", "AE           EA", "GE           EA", "AE           EA", "AE           EA", " DE         ED ", "  DE       ED  ", "   DE     ED   ", "    DEEEEED    ", "     AAAAA     ")
+                    .aisle("     BCCCB     ", "    D     D    ", "   D       D   ", "  D         D  ", " D           D ", "B             B", "C             C", "C             C", "C             C", "B             B", " D           D ", "  D         D  ", "   D       D   ", "    D     D    ", "     BCCCB     ")
+                    .aisle("     BCCCB     ", "    D     D    ", "   D       D   ", "  D         D  ", " D           D ", "B             B", "C             C", "C             C", "C             C", "B             B", " D           D ", "  D         D  ", "   D       D   ", "    D     D    ", "     BCCCB     ")
+                    .aisle("     DDDDD     ", "    DEEEEED    ", "   DE     ED   ", "  DE       ED  ", " DE         ED ", "DE           ED", "DE           ED", "DE           ED", "DE           ED", "DE           ED", " DE         ED ", "  DE       ED  ", "   DE     ED   ", "    DEEEEED    ", "     DDDDD     ")
+                    .aisle("               ", "     DDDDD     ", "    DDEEEDD    ", "   DEDFFFDED   ", "  DEEDFFFDEED  ", " DDDDDDDDDDDDDD", " DEFFDE EDFFEDF", " DEFFD   DFFEDF", " DEFFDE EDFFEDF", " DDDDDDDDDDDDDD", "  DEEDFFFDEED  ", "   DEDFFFDED   ", "    DDEEEDD    ", "     DDDDD     ", "               ")
+                    .aisle("               ", "       D       ", "      EDE      ", "    EE   EE    ", "   EE     EE   ", "   E       E   ", "  E    E    E F", " DD   E E   DD ", "  E    E    E F", "   E       E   ", "   EE     EE   ", "    EE   EE    ", "      EDE      ", "       D       ", "               ")
+                    .aisle("               ", "               ", "      EDE      ", "     E   E     ", "    E     E    ", "   E       E   ", "  E    E    E F", "  D   E E   D  ", "  E    E    E H", "   E       E   ", "    E     E    ", "     E   E     ", "      EDE      ", "               ", "               ").setRepeatable(2, 16)
+                    .aisle("               ", "               ", "      DDD      ", "     DEEED     ", "    D     D    ", "   D       D   ", "  DE   E   ED F", "  DE  E E  ED  ", "  DE   E   ED F", "   D       D   ", "    D     D    ", "     DEEED     ", "      DDD      ", "               ", "               ")
+                    .aisle("               ", "               ", "     FFFFF     ", "    FDEDEDF    ", "   FDEE EEDF   ", "  FDEE   EEDF  ", "  FEE  E  EEFFF", "  FD  E E  DF F", "  FEE  E  EEFFF", "  FDEE   EEDF  ", "   FDEE EEDF   ", "    FDEDEDF    ", "     FFFFF     ", "               ", "               ")
+                    .aisle("               ", "               ", "               ", "      EDE      ", "     EEEEE     ", "    EEEEEEE    ", "   EEEEEEEEE   ", "   DEEE EEED   ", "   EEEEEEEEE   ", "    EEEEEEE    ", "     EEEEE     ", "      EDE      ", "               ", "               ", "               ")
+                    .aisle("               ", "               ", "               ", "      EEE      ", "     E   E     ", "    E     E    ", "   E       E   ", "   E       E   ", "   E       E   ", "    E     E    ", "     E   E     ", "      EEE      ", "               ", "               ", "               ")
+                    .where('A', blocks(GTBlocks.CASING_PRIMITIVE_BRICKS.get())
+                            .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(4, 1))
+                            .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(2, 1)))
+                    .where('B', blocks(GTBlocks.STEEL_HULL.get()))
+                    .where('C', blocks(GTBlocks.FIREBOX_STEEL.get()))
+                    .where('D', blocks(Blocks.STONE_BRICKS))
+                    .where('E', blocks(GTBlocks.CASING_PRIMITIVE_BRICKS.get()))
+                    .where('F', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Steel)))
+                    .where('G', controller(blocks(definition.get())))
+                    .where('H', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Steel)))
+                    .where(' ', any())
+                    .build())
+            .workableCasingModel(
+                    GTCEu.id("block/casings/solid/machine_primitive_bricks"),
+                    GTCEu.id("block/multiblock/primitive_blast_furnace"))
+            .tooltips(
+                    Component.translatable("gtna.tooltip.leap_pbf.desc", "A Leap Forward in Primitive Technology."),
+                    Component.translatable("gtna.tooltip.leap_pbf.speed", "Duration: Starts at 20s (+20s per layer).").withStyle(ChatFormatting.RED),
+                    Component.translatable("gtna.tooltip.leap_pbf.parallel", "Parallel: Doubles every layer (Starts at 8x).").withStyle(ChatFormatting.GOLD),
+                    Component.translatable("gtna.tooltip.leap_pbf.max", "Max Parallel: 32,000.").withStyle(ChatFormatting.BLUE),
+                    Component.translatable("gtna.tooltip.leap_pbf.note", "Trade-off: Taller structure = More items but slower cycle.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+            )
+            .register();
+
+    public static final MultiblockMachineDefinition INFERNAL_COKE_OVEN = REGISTRATE
+            .multiblock("infernal_coke_oven", InfernalCokeOven::new)
+            .rotationState(RotationState.NON_Y_AXIS)
+            .recipeType(GTNARecipeType.INFERNAL_COKE_RECIPES)
+            .recipeModifier(InfernalCokeOven::recipeModifier)
+            .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle(
+                            "CCCCC",
+                            "AAAAA",
+                            "BBBBB",
+                            "AAAAA",
+                            "CCCCC"
+                    )
+                    .aisle(
+                            "CCCCC",
+                            "A   A",
+                            "B   B",
+                            "A   A",
+                            "CCCCC"
+                    )
+                    .aisle(
+                            "CCCCC",
+                            "A   A",
+                            "B   B",
+                            "A   A",
+                            "CCCCC"
+                    )
+                    .aisle(
+                            "CCCCC",
+                            "A   A",
+                            "B   B",
+                            "A   A",
+                            "CCCCC"
+                    )
+                    .aisle(
+                            "CCCCC",
+                            "AA~AA",
+                            "BBBBB",
+                            "AAAAA",
+                            "CCCCC"
+                    )
+                    .where('~', controller(blocks(definition.get())))
+                    .where('A', blocks(Blocks.NETHER_BRICKS)
+                            .or(abilities(PartAbility.IMPORT_ITEMS).setPreviewCount(1))
+                            .or(abilities(PartAbility.EXPORT_ITEMS).setPreviewCount(1))
+                            .or(abilities(PartAbility.IMPORT_FLUIDS).setPreviewCount(1))
+                            .or(abilities(PartAbility.STEAM).setPreviewCount(1))
+                            .or(abilities(PartAbility.EXPORT_FLUIDS).setPreviewCount(1)))
+                    .where('B', blocks(GTNABlocks.BREEL_PLATED_CASING.get()))
+                    .where('C', blocks(GTNABlocks.STRONZE_WRAPPED_CASING.get()))
+                    .where(' ', any())
+                    .build())
+            .workableCasingModel(
+                    new ResourceLocation("minecraft", "block/nether_bricks"),
+                    GTNACORE.id("block/overlay/machine/steaminfernalcokeoven")
+            )
+            .tooltips(
+                    Component.translatable("gtna.tooltip.infernal_coke.desc").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+                    Component.translatable("gtna.tooltip.infernal_coke.speed_bonus").withStyle(ChatFormatting.GOLD),
+                    Component.translatable("gtna.tooltip.infernal_coke.max_speed").withStyle(ChatFormatting.RED),
+                    Component.translatable("gtna.tooltip.infernal_coke.parallel").withStyle(ChatFormatting.BLUE),
+                    Component.translatable("gtna.tooltip.infernal_coke.steam").withStyle(ChatFormatting.GRAY),
+                    Component.translatable("gtna.tooltip.infernal_coke.structure").withStyle(ChatFormatting.DARK_GRAY)
+            )
+            .register();
+
+    public static final MultiblockMachineDefinition HYPER_PRESSURE_REACTOR = REGISTRATE
+            .multiblock("hyper_pressure_reactor", HyperPressureReactor::new)
+            .rotationState(RotationState.NON_Y_AXIS)
+            .recipeType(HIGH_PRESSURE_REACTOR_RECIPES)
+            .recipeModifier(HyperPressureReactor::recipeModifier)
+            .appearanceBlock(GTNABlocks.HYPER_PRESSURE_BREEL_CASING)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle(
+                            "               ",
+                            "      CCC      ",
+                            "               "
+                    )
+                    .aisle(
+                            "      BBB      ",
+                            "    CCAAACC    ",
+                            "      BBB      "
+                    )
+                    .aisle(
+                            "    BB   BB    ",
+                            "   DAAB~BAAD   ",
+                            "    BB   BB    "
+                    )
+                    .aisle(
+                            "   B       B   ",
+                            "  DADC   CDAD  ",
+                            "   B       B   "
+                    )
+                    .aisle(
+                            "  B         B  ",
+                            " CAD       DAC ",
+                            "  B         B  "
+                    )
+                    .aisle(
+                            "  B         B  ",
+                            " CAC       CAC ",
+                            "  B         B  "
+                    )
+                    .aisle(
+                            " B           B ",
+                            "CAC         CAC",
+                            " B           B "
+                    )
+                    .aisle(
+                            " B           B ",
+                            "CAC         CAC",
+                            " B           B "
+                    )
+                    .aisle(
+                            " B           B ",
+                            "CAC         CAC",
+                            " B           B "
+                    )
+                    .aisle(
+                            "  B         B  ",
+                            " CAC       CAC ",
+                            "  B         B  "
+                    )
+                    .aisle(
+                            "  B         B  ",
+                            " CAD       DAC ",
+                            "  B         B  "
+                    )
+                    .aisle(
+                            "   B       B   ",
+                            "  DADC   CDAD  ",
+                            "   B       B   "
+                    )
+                    .aisle(
+                            "    BB   BB    ",
+                            "   DAACCCAAD   ",
+                            "    BB   BB    "
+                    )
+                    .aisle(
+                            "      BBB      ",
+                            "    CCAAACC    ",
+                            "      BBB      "
+                    )
+                    .aisle(
+                            "               ",
+                            "      CCC      ",
+                            "               "
+                    )
+                    .where('~', controller(blocks(definition.get())))
+                    .where('A', blocks(GTNABlocks.BREEL_PIPE_CASING.get()))
+                    .where('B', blocks(GTNABlocks.HYPER_PRESSURE_BREEL_CASING.get())
+                            .or(abilities(PartAbility.IMPORT_FLUIDS).setPreviewCount(1))
+                            .or(abilities(PartAbility.EXPORT_FLUIDS).setPreviewCount(1)))
+                    .where('C', blocks(GTNABlocks.BOROSILICATE_GLASS_BLOCK.get()))
+                    .where('D', blocks(GTNABlocks.HYPER_PRESSURE_BREEL_CASING.get())
+                            .or(abilities(PartAbility.IMPORT_FLUIDS).setPreviewCount(1))
+                            .or(abilities(PartAbility.EXPORT_FLUIDS).setPreviewCount(1)))
+                    .build())
+            .workableCasingModel(
+                    GTNACORE.id("block/casings/hyper_pressure_breel_casing"),
+                    GTCEu.id("block/multiblock/steam_grinder"))
+            .tooltips(
+                    Component.translatable("gtna.tooltip.hyper_pressure.desc", "Pressure-based fluid reaction chamber.")
+                            .withStyle(ChatFormatting.GRAY),
+                    Component.translatable("gtna.tooltip.hyper_pressure.no_energy", "Requires NO Energy or Steam to operate.")
+                            .withStyle(ChatFormatting.GREEN),
+                    Component.translatable("gtna.tooltip.hyper_pressure.parallel", "Max Parallel: 1")
+                            .withStyle(ChatFormatting.BLUE)
+            )
+            .register();
+
+    public static final MultiblockMachineDefinition COMPACT_HYPER_PRESSURE_REACTOR = REGISTRATE
+            .multiblock("compact_hyper_pressure_reactor", HyperPressureReactor::new)
+            .rotationState(RotationState.NON_Y_AXIS)
+            .recipeType(HIGH_PRESSURE_REACTOR_RECIPES)
+            .recipeModifier(HyperPressureReactor::recipeModifier)
+            .appearanceBlock(GTNABlocks.VIBRATION_SAFE_CASING)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle(
+                            "                                               ",
+                            "                                               ",
+                            "                    DBBBBBD                    ",
+                            "                    DBCCCBD                    ",
+                            "                    DBBBBBD                    ",
+                            "                                               ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "                    DBCCCBD                    ",
+                            "                   BB     BB                   ",
+                            "                   BB     BB                   ",
+                            "                   BB     BB                   ",
+                            "                    DBCCCBD                    ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                    DBBBBBD                    ",
+                            "                   BB     BB                   ",
+                            "                BBBBB     BBBBB                ",
+                            "                BBBAAAAAAAAABBB                ",
+                            "                BBBBB     BBBBB                ",
+                            "                   BB     BB                   ",
+                            "                    DBBBBBD                    "
+                    )
+                    .aisle(
+                            "                    DBCCCBD                    ",
+                            "                BBBBB     BBBBB                ",
+                            "              BBBBBAAAAAAAAABBBBB              ",
+                            "              BBAAAAAAAAAAAAAAABB              ",
+                            "              BBBBBAAAAAAAAABBBBB              ",
+                            "                BBBBB     BBBBB                ",
+                            "                    DBCCCBD                    "
+                    )
+                    .aisle(
+                            "                    DBBBBBD                    ",
+                            "              BBBBBBB     BBBBBBB              ",
+                            "            BBBBAAABB     BBAAABBBB            ",
+                            "            BBAAAAAAAAAAAAAAAAAAABB            ",
+                            "            BBBBAAABB     BBAAABBBB            ",
+                            "              BBBBBBB     BBBBBBB              ",
+                            "                    DBBBBBD                    "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "            BBBBBBB DBCCCBD BBBBBBB            ",
+                            "           BBBAABBBBB     BBBBBAABBB           ",
+                            "           BAAAAAAABB     BBAAAAAAAB           ",
+                            "           BBBAABBBBB     BBBBBAABBB           ",
+                            "            BBBBBBB DBCCCBD BBBBBBB            ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "           BBBBB               BBBBB           ",
+                            "          BBAABBBBB DBBBBBD BBBBBAABB          ",
+                            "          BAAAAABBB DBE~EBD BBBAAAAAB          ",
+                            "          BBAABBBBB DBBBBBD BBBBBAABB          ",
+                            "           BBBBB               BBBBB           ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "          BBBB                   BBBB          ",
+                            "         BBABBBB               BBBBABB         ",
+                            "         BAAAABB               BBAAAAB         ",
+                            "         BBABBBB               BBBBABB         ",
+                            "          BBBB                   BBBB          ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "         BBB                       BBB         ",
+                            "        BBABBB                   BBBABB        ",
+                            "        BAAABB                   BBAAAB        ",
+                            "        BBABBB                   BBBABB        ",
+                            "         BBB                       BBB         ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "        BBB                         BBB        ",
+                            "       BBABB                       BBABB       ",
+                            "       BAAAB                       BAAAB       ",
+                            "       BBABB                       BBABB       ",
+                            "        BBB                         BBB        ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "       BBB                           BBB       ",
+                            "      BBABB                         BBABB      ",
+                            "      BAAAB                         BAAAB      ",
+                            "      BBABB                         BBABB      ",
+                            "       BBB                           BBB       ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "      BBB                             BBB      ",
+                            "     BBABB                           BBABB     ",
+                            "     BAAAB                           BAAAB     ",
+                            "     BBABB                           BBABB     ",
+                            "      BBB                             BBB      ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "     BBB                               BBB     ",
+                            "    BBABB                             BBABB    ",
+                            "    BAAAB                             BAAAB    ",
+                            "    BBABB                             BBABB    ",
+                            "     BBB                               BBB     ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "     BBB                               BBB     ",
+                            "    BBABB                             BBABB    ",
+                            "    BAAAB                             BAAAB    ",
+                            "    BBABB                             BBABB    ",
+                            "     BBB                               BBB     ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "    BBB                                 BBB    ",
+                            "   BBABB                               BBABB   ",
+                            "   BAAAB                               BAAAB   ",
+                            "   BBABB                               BBABB   ",
+                            "    BBB                                 BBB    ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "    BBB                                 BBB    ",
+                            "   BBABB                               BBABB   ",
+                            "   BAAAB                               BAAAB   ",
+                            "   BBABB                               BBABB   ",
+                            "    BBB                                 BBB    ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "   BBB                                   BBB   ",
+                            "  BBABB                                 BBABB  ",
+                            "  BAAAB                                 BAAAB  ",
+                            "  BBABB                                 BBABB  ",
+                            "   BBB                                   BBB   ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "   BBB                                   BBB   ",
+                            "  BBABB                                 BBABB  ",
+                            "  BAAAB                                 BAAAB  ",
+                            "  BBABB                                 BBABB  ",
+                            "   BBB                                   BBB   ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "   BBB                                   BBB   ",
+                            "  BBABB                                 BBABB  ",
+                            "  BAAAB                                 BAAAB  ",
+                            "  BBABB                                 BBABB  ",
+                            "   BBB                                   BBB   ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "  BBB                                     BBB  ",
+                            " BBABB                                   BBABB ",
+                            " BAAAB                                   BAAAB ",
+                            " BBABB                                   BBABB ",
+                            "  BBB                                     BBB  ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "  DDD                                     DDD  ",
+                            " DBBBD                                   DBBBD ",
+                            "DBBABBD                                 DBBABBD",
+                            "DBAAABD                                 DBAAABD",
+                            "DBBABBD                                 DBBABBD",
+                            " DBBBD                                   DBBBD ",
+                            "  DDD                                     DDD  "
+                    )
+                    .aisle(
+                            "  BBB                                     BBB  ",
+                            " B   B                                   B   B ",
+                            "B  A  B                                 B  A  B",
+                            "B AAA B                                 B AAA B",
+                            "B  A  B                                 B  A  B",
+                            " B   B                                   B   B ",
+                            "  BBB                                     BBB  "
+                    )
+                    .aisle(
+                            "  BCB                                     BCB  ",
+                            " C   C                                   C   C ",
+                            "B  A  B                                 B  A  B",
+                            "C AAA E                                 E AAA C",
+                            "B  A  B                                 B  A  B",
+                            " C   C                                   C   C ",
+                            "  BCB                                     BCB  "
+                    )
+                    .aisle(
+                            "  BCB                                     BCB  ",
+                            " C   C                                   C   C ",
+                            "B  A  B                                 B  A  B",
+                            "C AAA C                                 C AAA C",
+                            "B  A  B                                 B  A  B",
+                            " C   C                                   C   C ",
+                            "  BCB                                     BCB  "
+                    )
+                    .aisle(
+                            "  BCB                                     BCB  ",
+                            " C   C                                   C   C ",
+                            "B  A  B                                 B  A  B",
+                            "C AAA E                                 E AAA C",
+                            "B  A  B                                 B  A  B",
+                            " C   C                                   C   C ",
+                            "  BCB                                     BCB  "
+                    )
+                    .aisle(
+                            "  BBB                                     BBB  ",
+                            " B   B                                   B   B ",
+                            "B  A  B                                 B  A  B",
+                            "B AAA B                                 B AAA B",
+                            "B  A  B                                 B  A  B",
+                            " B   B                                   B   B ",
+                            "  BBB                                     BBB  "
+                    )
+                    .aisle(
+                            "  DDD                                     DDD  ",
+                            " DBBBD                                   DBBBD ",
+                            "DBBABBD                                 DBBABBD",
+                            "DBAAABD                                 DBAAABD",
+                            "DBBABBD                                 DBBABBD",
+                            " DBBBD                                   DBBBD ",
+                            "  DDD                                     DDD  "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "  BBB                                     BBB  ",
+                            " BBABB                                   BBABB ",
+                            " BAAAB                                   BAAAB ",
+                            " BBABB                                   BBABB ",
+                            "  BBB                                     BBB  ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "   BBB                                   BBB   ",
+                            "  BBABB                                 BBABB  ",
+                            "  BAAAB                                 BAAAB  ",
+                            "  BBABB                                 BBABB  ",
+                            "   BBB                                   BBB   ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "   BBB                                   BBB   ",
+                            "  BBABB                                 BBABB  ",
+                            "  BAAAB                                 BAAAB  ",
+                            "  BBABB                                 BBABB  ",
+                            "   BBB                                   BBB   ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "   BBB                                   BBB   ",
+                            "  BBABB                                 BBABB  ",
+                            "  BAAAB                                 BAAAB  ",
+                            "  BBABB                                 BBABB  ",
+                            "   BBB                                   BBB   ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "    BBB                                 BBB    ",
+                            "   BBABB                               BBABB   ",
+                            "   BAAAB                               BAAAB   ",
+                            "   BBABB                               BBABB   ",
+                            "    BBB                                 BBB    ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "    BBB                                 BBB    ",
+                            "   BBABB                               BBABB   ",
+                            "   BAAAB                               BAAAB   ",
+                            "   BBABB                               BBABB   ",
+                            "    BBB                                 BBB    ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "     BBB                               BBB     ",
+                            "    BBABB                             BBABB    ",
+                            "    BAAAB                             BAAAB    ",
+                            "    BBABB                             BBABB    ",
+                            "     BBB                               BBB     ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "     BBB                               BBB     ",
+                            "    BBABB                             BBABB    ",
+                            "    BAAAB                             BAAAB    ",
+                            "    BBABB                             BBABB    ",
+                            "     BBB                               BBB     ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "      BBB                             BBB      ",
+                            "     BBABB                           BBABB     ",
+                            "     BAAAB                           BAAAB     ",
+                            "     BBABB                           BBABB     ",
+                            "      BBB                             BBB      ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "       BBB                           BBB       ",
+                            "      BBABB                         BBABB      ",
+                            "      BAAAB                         BAAAB      ",
+                            "      BBABB                         BBABB      ",
+                            "       BBB                           BBB       ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "        BBB                         BBB        ",
+                            "       BBABB                       BBABB       ",
+                            "       BAAAB                       BAAAB       ",
+                            "       BBABB                       BBABB       ",
+                            "        BBB                         BBB        ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "         BBB                       BBB         ",
+                            "        BBABBB                   BBBABB        ",
+                            "        BAAABB                   BBAAAB        ",
+                            "        BBABBB                   BBBABB        ",
+                            "         BBB                       BBB         ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "          BBBB                   BBBB          ",
+                            "         BBABBBB               BBBBABB         ",
+                            "         BAAAABB               BBAAAAB         ",
+                            "         BBABBBB               BBBBABB         ",
+                            "          BBBB                   BBBB          ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "           BBBBB               BBBBB           ",
+                            "          BBAABBBBB DBBBBBD BBBBBAABB          ",
+                            "          BAAAAABBB DBECEBD BBBAAAAAB          ",
+                            "          BBAABBBBB DBBBBBD BBBBBAABB          ",
+                            "           BBBBB               BBBBB           ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "            BBBBBBB DBCCCBD BBBBBBB            ",
+                            "           BBBAABBBBB     BBBBBAABBB           ",
+                            "           BAAAAAAABB     BBAAAAAAAB           ",
+                            "           BBBAABBBBB     BBBBBAABBB           ",
+                            "            BBBBBBB DBCCCBD BBBBBBB            ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                    DBBBBBD                    ",
+                            "              BBBBBBB     BBBBBBB              ",
+                            "            BBBBAAABB     BBAAABBBB            ",
+                            "            BBAAAAAAAAAAAAAAAAAAABB            ",
+                            "            BBBBAAABB     BBAAABBBB            ",
+                            "              BBBBBBB     BBBBBBB              ",
+                            "                    DBBBBBD                    "
+                    )
+                    .aisle(
+                            "                    DBCCCBD                    ",
+                            "                BBBBB     BBBBB                ",
+                            "              BBBBBAAAAAAAAABBBBB              ",
+                            "              BBAAAAAAAAAAAAAAABB              ",
+                            "              BBBBBAAAAAAAAABBBBB              ",
+                            "                BBBBB     BBBBB                ",
+                            "                    DBCCCBD                    "
+                    )
+                    .aisle(
+                            "                    DBBBBBD                    ",
+                            "                   BB     BB                   ",
+                            "                BBBBB     BBBBB                ",
+                            "                BBBAAAAAAAAABBB                ",
+                            "                BBBBB     BBBBB                ",
+                            "                   BB     BB                   ",
+                            "                    DBBBBBD                    "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "                    DBCCCBD                    ",
+                            "                   BB     BB                   ",
+                            "                   BB     BB                   ",
+                            "                   BB     BB                   ",
+                            "                    DBCCCBD                    ",
+                            "                                               "
+                    )
+                    .aisle(
+                            "                                               ",
+                            "                                               ",
+                            "                    DBBBBBD                    ",
+                            "                    DBCCCBD                    ",
+                            "                    DBBBBBD                    ",
+                            "                                               ",
+                            "                                               "
+                    )
+                    .where('~', controller(blocks(definition.get())))
+                    .where('A', blocks(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get()))
+                    .where('B', blocks(GTNABlocks.VIBRATION_SAFE_CASING.get())
+                            .or(abilities(PartAbility.IMPORT_FLUIDS).setPreviewCount(1))
+                            .or(abilities(PartAbility.EXPORT_FLUIDS).setPreviewCount(1))
+                    )
+                    .where('C', blocks(GTNABlocks.BOROSILICATE_GLASS_BLOCK.get()))
+                    .where('D', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Steel)))
+                    .where('E',blocks(GTNABlocks.VIBRATION_SAFE_CASING.get())
+                            .or(abilities(PartAbility.IMPORT_FLUIDS).setPreviewCount(1))
+                            .or(abilities(PartAbility.EXPORT_FLUIDS).setPreviewCount(1))
+                    )
+                    .build())
+            .workableCasingModel(
+                    GTNACORE.id("block/casings/vibration_safe_casing"),
+                    GTCEu.id("block/multiblock/steam_grinder"))
+            .tooltips(
+                    Component.translatable("gtna.tooltip.compact_hyper_pressure.desc", "Extreme density fluid processor.")
+                            .withStyle(ChatFormatting.DARK_PURPLE),
+                    Component.translatable("gtna.tooltip.hyper_pressure.no_energy", "Requires NO Energy or Steam to operate.")
+                            .withStyle(ChatFormatting.GREEN),
+                    Component.translatable("gtna.tooltip.compact_hyper_pressure.special", "Can process Dense Supercritical Steam from basic resources.")
+                            .withStyle(ChatFormatting.GOLD),
+                    Component.translatable("gtna.tooltip.compact_hyper_pressure.parallel", "Max Parallel: 512")
+                            .withStyle(ChatFormatting.RED, ChatFormatting.BOLD)
+            )
+            .register();
+
+    public static final MultiblockMachineDefinition VOID_MINER_STEAM_GATE_AGED = REGISTRATE
+            .multiblock("void_miner_steam_gate_aged", VoidMinerSteamGateAged::new)
+            .rotationState(RotationState.NON_Y_AXIS)
+            .recipeType(GTRecipeTypes.DUMMY_RECIPES)
+            .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
+            .recipeModifier(VoidMinerSteamGateAged::recipeModifier)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle("BBBBBBBBB", "BBBBBBBBB", "B       B", "B       B", "B       B", "BBBBBBBBB", "BCCCCCCCB", "BCCCCCCCB", "B       B", "B       B")
+                    .aisle("B       B", "B       B", "         ", "         ", "         ", "B   D   B", "C  DDD  C", "C  DDD  C", "   DDD   ", "         ")
+                    .aisle("B       B", "B       B", "         ", "    D    ", "   DDD   ", "B  DDD  B", "C DD DD C", "C D   D C", "  D   D  ", "         ")
+                    .aisle("B   D   B", "B   D   B", "   DDD   ", "   D D   ", "  DD DD  ", "B D   D B", "C D   D C", "C     D C", " D     D ", "         ")
+                    .aisle("B   D   B", "B   D   B", "   D D   ", "  D   D  ", "  D   D  ", "B D   D B", "C     D C", "C     D C", " D     D ", "         ")
+                    .aisle("B   D   B", "B   D   B", "   DDD   ", "   D D   ", "  DD DD  ", "B D   D B", "C D   D C", "C     D C", " D     D ", "         ")
+                    .aisle("B       B", "B       B", "         ", "    D    ", "   DDD   ", "B  DDD  B", "C DD DD C", "C D   D C", "  D   D  ", "         ")
+                    .aisle("B       B", "B       B", "         ", "         ", "         ", "B   D   B", "C  DDD  C", "C  DDD  C", "   DDD   ", "         ")
+                    .aisle("BBBBBBBBB", "BBBBEBBBB", "B       B", "B       B", "B       B", "BBBBBBBBB", "BCCCCCCCB", "BCCCCCCCB", "B       B", "B       B")
+                    .where(' ', any())
+                    .where('B', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .or(abilities(PartAbility.EXPORT_ITEMS).setPreviewCount(1))
+                            .or(abilities(PartAbility.IMPORT_FLUIDS).setPreviewCount(1))
+                            .or(abilities(PartAbility.EXPORT_FLUIDS).setPreviewCount(1))
+                            .or(abilities(PartAbility.STEAM).setPreviewCount(1)))
+                    .where('C', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Steel)))
+                    .where('D', blocks(GTNABlocks.BREEL_PLATED_CASING.get()))
+                    .where('E', controller(blocks(definition.get())))
+                    .build())
+            .workableCasingModel(
+                    GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
+                    GTNACORE.id("block/overlay/machine/voidminersteamgateaged"))
+            .tooltips(
+                    Component.translatable("gtna.tooltip.void_miner.desc")
+                            .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+                    Component.translatable("gtna.tooltip.void_miner.fluid_req")
+                            .withStyle(ChatFormatting.GRAY),
+                    Component.empty(),
+                    Component.translatable("gtna.tooltip.void_miner.catalyst_info")
+                            .withStyle(ChatFormatting.YELLOW),
+                    Component.literal("- ")
+                            .append(Component.translatable("gtna.tooltip.void_miner.tier_dense"))
+                            .withStyle(ChatFormatting.GRAY),
+                    Component.literal("- ")
+                            .append(Component.translatable("gtna.tooltip.void_miner.tier_super"))
+                            .withStyle(ChatFormatting.GRAY),
+                    Component.literal("- ")
+                            .append(Component.translatable("gtna.tooltip.void_miner.tier_insane"))
+                            .withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD),
+                    Component.empty(),
+                    Component.translatable("gtna.tooltip.void_miner.outputs")
+                            .withStyle(ChatFormatting.BLUE)
+            )
+            .register();
+
+    // ... imports
+
+    public static final MultiblockMachineDefinition INDUSTRIAL_SLAUGHTERHOUSE = REGISTRATE
+            .multiblock("industrial_slaughterhouse", IndustrialSlaughterhouse::new)
+            .rotationState(RotationState.NON_Y_AXIS)
+            .recipeType(GTNARecipeType.SLAUGHTERHOUSE_RECIPES) // *Importante: Crie este RecipeType em GTNARecipeType*
+            .recipeModifier(IndustrialSlaughterhouse::recipeModifier)
+            .appearanceBlock(GTBlocks.CASING_STEEL_SOLID)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle("AAAAAAA", "AAAAAAA", "ABBBBBA", "ABBBBBA", "ABBBBBA", "ABBBBBA", "ABBBBBA", "ABBBBBA", "ABBBBBA", "AAAAAAA")
+                    .aisle("AAAAAAA", "ACCCCCA", "BDDDDDB", "BDDDDDB", "BDDDDDB", "BDDDDDB", "BDDDDDB", "BDDDDDB", "BEEEEEB", "AAAAAAA")
+                    .aisle("AAAAAAA", "ACCCCCA", "BD   DB", "BD   DB", "BD   DB", "BD   DB", "BD   DB", "BD   DB", "BEEEEEB", "AAAAAAA")
+                    .aisle("AAAAAAA", "ACCCCCA", "BD   DB", "BD   DB", "BD   DB", "BD   DB", "BD   DB", "BD   DB", "BEEEEEB", "AAAAAAA")
+                    .aisle("AAAAAAA", "ACCCCCA", "BD   DB", "BD   DB", "BD   DB", "BD   DB", "BD   DB", "BD   DB", "BEEEEEB", "AAAAAAA")
+                    .aisle("AAAAAAA", "ACCCCCA", "BDDDDDB", "BDDDDDB", "BDDDDDB", "BDDDDDB", "BDDDDDB", "BDDDDDB", "BEEEEEB", "AAAAAAA")
+                    .aisle("AAAAAAA", "AAA~AAA", "ABBBBBA", "ABBBBBA", "ABBBBBA", "ABBBBBA", "ABBBBBA", "ABBBBBA", "ABBBBBA", "AAAAAAA")
+                    .where("~", Predicates.controller(Predicates.blocks(definition.get())))
+                    .where("A", Predicates.blocks(GTBlocks.CASING_STEEL_SOLID.get())
+                            .or(Predicates.abilities(PartAbility.INPUT_ENERGY).setMaxGlobalLimited(2))
+                            .or(Predicates.abilities(PartAbility.EXPORT_ITEMS).setMaxGlobalLimited(4))
+                            .or(Predicates.abilities(PartAbility.IMPORT_ITEMS).setMaxGlobalLimited(1))
+                            .or(Predicates.abilities(PARALLEL_HATCH).setMaxGlobalLimited(1))
+                            .or(Predicates.abilities(PartAbility.MAINTENANCE).setExactLimit(1)))
+                    .where("B", Predicates.blocks(GTBlocks.CASING_TEMPERED_GLASS.get()))
+                    .where("C", Predicates.blocks(GTBlocks.CASING_STEEL_GEARBOX.get()))
+                    .where("D", Predicates.blocks(Blocks.IRON_BARS))
+                    .where("E", Predicates.blocks(GTBlocks.FIREBOX_STEEL.get()))
+                    .where(" ", Predicates.air())
+                    .build())
+            .workableCasingModel(
+                    GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
+                    GTCEu.id("block/multiblock/implosion_compressor"))
+            .tooltips(
+                    Component.translatable("gtna.machine.slaughterhouse.desc"),
+                    Component.translatable("gtna.machine.slaughterhouse.mechanics").withStyle(ChatFormatting.GOLD),
+                    Component.translatable("gtna.machine.slaughterhouse.circuit1").withStyle(ChatFormatting.GREEN),
+                    Component.translatable("gtna.machine.slaughterhouse.circuit2").withStyle(ChatFormatting.RED),
+                    Component.translatable("gtna.machine.slaughterhouse.circuit3").withStyle(ChatFormatting.DARK_PURPLE),
+                    Component.translatable("gtna.machine.slaughterhouse.circuit4").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
             )
             .register();
 

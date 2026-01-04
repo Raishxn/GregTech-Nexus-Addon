@@ -20,9 +20,6 @@ import static com.raishxn.gtna.api.data.info.GTNAMaterialFlags.*;
 import static com.raishxn.gtna.api.data.tag.GTNATagPrefix.*;
 
 public class GTNAGeneratesRecipes {
-
-    // Método REGISTER: É este método que o GTNAGTAddon chama.
-    // Ele percorre a lista de todos os materiais do jogo.
     public static void register(Consumer<FinishedRecipe> provider) {
         GTCEuAPI.materialManager.getRegisteredMaterials().forEach(material -> run(provider, material));
     }

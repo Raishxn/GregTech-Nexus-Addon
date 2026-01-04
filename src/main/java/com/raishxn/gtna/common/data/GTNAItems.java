@@ -1,18 +1,11 @@
 package com.raishxn.gtna.common.data;
 
-import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
-import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.item.ComponentItem;
-import com.gregtechceu.gtceu.common.data.GTMaterials;
-import com.raishxn.gtna.common.item.GTNAVajraItem;
 import com.raishxn.gtna.common.item.StructureDetectBehavior;
-import com.raishxn.gtna.common.item.StructureWriteBehavior;
 import com.tterrag.registrate.util.entry.ItemEntry;
-import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import net.minecraft.resources.ResourceLocation;
 
 import static com.gregtechceu.gtceu.common.data.GTItems.attach;
-import static com.ibm.icu.impl.CurrencyData.provider;
 import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
 
 public class GTNAItems {
@@ -22,7 +15,6 @@ public class GTNAItems {
     }
 
     // Ferramentas e Itens de Debug Existentes
-    public static ItemEntry<GTNAVajraItem> VAJRA;
     public static ItemEntry<ComponentItem> DEBUG_STRUCTURE_WRITER;
     public static ItemEntry<ComponentItem> STRUCTURE_DETECT;
 
@@ -40,7 +32,6 @@ public class GTNAItems {
 
     public static void init() {
 
-        // --- Items Originais ---
         STRUCTURE_DETECT = REGISTRATE
                 .item("structure_detect", ComponentItem::create)
                 .lang("Structure Detector")
@@ -50,8 +41,6 @@ public class GTNAItems {
                     provider.generated(ctx, new ResourceLocation("gtceu", "item/portable_scanner"));
                 })
                 .register();
-
-        // --- Registros dos Novos Componentes ---
 
         HYDRAULIC_MOTOR = REGISTRATE.item("hydraulic_motor", ComponentItem::create)
                 .properties(stack -> stack.stacksTo(64))
