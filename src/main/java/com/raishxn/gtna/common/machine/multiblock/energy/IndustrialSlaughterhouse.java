@@ -1,7 +1,5 @@
 package com.raishxn.gtna.common.machine.multiblock.energy;
 
-import com.raishxn.gtna.common.data.GTNARecipeType;
-
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
@@ -14,24 +12,22 @@ import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDisplayUIMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockDisplayText;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
+import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
 import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 import com.gregtechceu.gtceu.utils.GTUtil;
-
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
 import com.lowdragmc.lowdraglib.gui.widget.*;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
-
-import com.raishxn.gtna.utils.MachineIO;
+import com.raishxn.gtna.common.data.GTNARecipeType;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos; // IMPORT ADICIONADO
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.item.ItemEntity; // IMPORT ADICIONADO
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -39,7 +35,6 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraftforge.items.IItemHandler;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -98,6 +93,8 @@ public class IndustrialSlaughterhouse extends WorkableElectricMultiblockMachine 
         int multiplier = (int) Math.pow(multiplierBase, (tier - baseTier));
         int loops = Math.max(1, (tier - 2) * 8);
 
+        List<ItemStack> allGeneratedDrops = new ArrayList<>();
+
         for (int i = 0; i < loops; i++) {
             List<ItemStack> drops = new ArrayList<>();
             if (circuit == 4) {
@@ -112,18 +109,25 @@ public class IndustrialSlaughterhouse extends WorkableElectricMultiblockMachine 
 
             for (ItemStack stack : drops) {
                 if (!stack.isEmpty()) {
-                    stack.setCount((int) Math.min(stack.getMaxStackSize(), (long) stack.getCount() * multiplier));
-
-                    if (lastDrops.size() >= 5) lastDrops.remove(0);
-                    lastDrops.add(stack.copy());
-
-                    MachineIO.outputItem(this, stack);
-
-                    // --- DEBUG START ---
-                    dropItemInWorld(stack);
-                    // --- DEBUG END ---
+                    ItemStack outputStack = stack.copy();
+                    outputStack.setCount((int) Math.min(outputStack.getMaxStackSize(), (long) stack.getCount() * multiplier));
+                    allGeneratedDrops.add(outputStack);
                 }
             }
+        }
+
+        if (!allGeneratedDrops.isEmpty()) {
+            for (ItemStack stack : allGeneratedDrops) {
+                if (lastDrops.size() >= 5) lastDrops.remove(0);
+                lastDrops.add(stack.copy());
+            }
+            var builder = GTRecipeBuilder.ofRaw();
+            builder.recipeType(GTNARecipeType.SLAUGHTERHOUSE_RECIPES);
+            for (ItemStack stack : allGeneratedDrops) {
+                builder.outputItems(stack);
+            }
+            GTRecipe tempRecipe = builder.buildRawRecipe();
+            RecipeHelper.handleRecipeIO(this, tempRecipe, IO.OUT, this.recipeLogic.getChanceCaches());
         }
     }
 
@@ -220,14 +224,5 @@ public class IndustrialSlaughterhouse extends WorkableElectricMultiblockMachine 
                         }
                     }
                 });
-    }
-    private void dropItemInWorld(ItemStack stack) {
-        if (getLevel() != null && !stack.isEmpty()) {
-            BlockPos pos = this.getPos().above();
-
-            ItemEntity entity = new ItemEntity(getLevel(), pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, stack.copy());
-            entity.setDeltaMovement(0, 0.1, 0);
-            getLevel().addFreshEntity(entity);
-        }
     }
 }

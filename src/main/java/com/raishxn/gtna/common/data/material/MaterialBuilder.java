@@ -49,7 +49,7 @@ public class MaterialBuilder {
 
 
             ClayCompound = new Material.Builder(GTNACORE.id("clay_compound"))
-                    .dust().ingot()
+                    .dust().ingot().fluid()
                     .color(0xAA8866).iconSet(MaterialIconSet.DULL)
                     .components(Flint, 1, Clay, 1, Stone, 1)
 
@@ -79,7 +79,7 @@ public class MaterialBuilder {
             // --- LINGOTE ESPECIAL (Compressed Steam) ---
 
             CompressedSteam = new Material.Builder(GTNACORE.id("compressed_steam"))
-                    .ingot()
+                    .ingot().fluid().dust()
                     .color(0xCCCCCC).iconSet(MaterialIconSet.SHINY)
                     .flags(NO_SMELTING, GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME, GENERATE_GEAR,
                             GENERATE_DENSE, GENERATE_SUPERDENSE, GENERATE_DOUBLE_PLATE,

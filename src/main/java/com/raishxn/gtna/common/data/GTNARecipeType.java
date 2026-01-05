@@ -53,7 +53,7 @@ public class GTNARecipeType {
     public static final String SLAUGTHERHOUSE = "slaugterhouse";
     public static final GTRecipeType SLAUGHTERHOUSE_RECIPES = register("slaughterhouse", SLAUGTHERHOUSE)
             .setEUIO(IO.IN)
-            .setMaxIOSize(1, 1, 0, 0)
+            .setMaxIOSize(1, 64, 0, 0)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.MACERATOR);
 

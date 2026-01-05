@@ -245,5 +245,6 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.slaughterhouse.mode.unknown", "Unknown/Idle");
         add("gtna.recipe.slaughterhouse", "Industrial Slaughter");
         add("gtna.slaughterhouse", "Industrial Slaughter");
+        add("gtna.multiblock.leap_pbf.layers_hud", "Extra Layers: %s");
     }
 }

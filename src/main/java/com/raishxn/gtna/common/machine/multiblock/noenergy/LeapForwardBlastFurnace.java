@@ -24,8 +24,10 @@ import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,6 +46,9 @@ public class LeapForwardBlastFurnace extends PrimitiveBlastFurnaceMachine implem
     @Persisted @DescSynced
     private int targetDuration = 400;
 
+    @Persisted @DescSynced
+    private int extraLayers = 0;
+
     private static final int MAX_PARALLEL_CAP = 32000;
     private static final int TICKS_PER_LAYER = 400;
 
@@ -59,26 +64,54 @@ public class LeapForwardBlastFurnace extends PrimitiveBlastFurnaceMachine implem
     @Override
     public void onStructureFormed() {
         super.onStructureFormed();
-        int minY = Integer.MAX_VALUE;
-        int maxY = Integer.MIN_VALUE;
 
-        for (IMultiPart part : this.getParts()) {
-            int y = part.self().getPos().getY();
-            if (y < minY) minY = y;
-            if (y > maxY) maxY = y;
+        Level level = this.getLevel();
+        BlockPos centerPos = this.getPos();
+
+        // CORREÇÃO: Fixar a Base.
+        // O Pattern define o Controller na segunda camada (índice 1).
+        // Logo, a base física da máquina é SEMPRE (Y - 1).
+        // Isso impede que o scanner leia a terra/chão abaixo da máquina.
+        int structMinY = centerPos.getY() - 1;
+
+        // Assumimos inicialmente que o topo é onde o controller está
+        int structMaxY = centerPos.getY();
+
+        if (level != null) {
+            // Escaneamos APENAS para CIMA (de +1 até +50)
+            for (int yRel = 1; yRel <= 50; yRel++) {
+
+                boolean hasBlockInLayer = false;
+
+                // Varredura Radial na camada
+                for (int xRel = -4; xRel <= 4; xRel++) {
+                    for (int zRel = -4; zRel <= 4; zRel++) {
+                        BlockPos checkPos = centerPos.offset(xRel, yRel, zRel);
+                        if (!level.getBlockState(checkPos).isAir()) {
+                            hasBlockInLayer = true;
+                            break;
+                        }
+                    }
+                    if (hasBlockInLayer) break;
+                }
+
+                if (hasBlockInLayer) {
+                    structMaxY = centerPos.getY() + yRel;
+                } else {
+                    // Se encontrou uma camada de ar acima do controller, a máquina acabou.
+                    break;
+                }
+            }
         }
-        if (minY == Integer.MAX_VALUE) {
-            minY = 0; maxY = 0;
-        }
 
-        int height = maxY - minY + 1;
+        int totalHeight = structMaxY - structMinY + 1;
 
-        int extraLayers = Math.max(0, height - 3);
+        // Com a base fixada em (Y-1), a altura 13 agora será lida corretamente como 13.
+        this.extraLayers = Math.max(0, totalHeight - 13);
 
-        this.targetDuration = 400 + (extraLayers * TICKS_PER_LAYER);
+        this.targetDuration = 400 + (this.extraLayers * TICKS_PER_LAYER);
 
-        long calcParallel = 8L * (long) Math.pow(2, extraLayers);
-
+        long calcParallel = 8L * (long) Math.pow(2, this.extraLayers);
         this.currentParallel = (int) Math.min(calcParallel, MAX_PARALLEL_CAP);
     }
 
@@ -143,6 +176,10 @@ public class LeapForwardBlastFurnace extends PrimitiveBlastFurnaceMachine implem
         if (isFormed()) {
             textList.add(Component.translatable("gtna.multiblock.leap_pbf.parallel_hud",
                     Component.literal(String.valueOf(currentParallel)).withStyle(ChatFormatting.GOLD)));
+
+            textList.add(Component.translatable("gtna.multiblock.leap_pbf.layers_hud",
+                    Component.literal(String.valueOf(extraLayers)).withStyle(ChatFormatting.AQUA)));
+
             textList.add(Component.translatable("gtna.multiblock.leap_pbf.duration_hud",
                     Component.literal(String.valueOf(targetDuration / 20)).withStyle(ChatFormatting.RED)));
         }

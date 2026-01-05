@@ -129,7 +129,7 @@ legacyForge {
 }
 jar {
     manifest.attributes([
-            "MixinConfigs": "examplemod.mixins.json"
+            "MixinConfigs": "gtna.mixins.json"
     ])
 }
 
@@ -160,6 +160,8 @@ dependencies {
     //extendedAE and Glodium
     modImplementation("curse.maven:glodium-957920:5226922")
     modImplementation("curse.maven:ex-pattern-provider-892005:7248944")
+    //gtmthings version 1.3.5.b
+    modImplementation ("curse.maven:gtmthings-1104310:6843500")
     //ae2 and guideme
     modImplementation("curse.maven:applied-energistics-2-223794:7148487")
     modImplementation("curse.maven:guideme-1173950:7127447")
