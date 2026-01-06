@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gtna:block/machine/parallel_hatch_uxv",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "gtna:block/machine/parallel_hatch_uxv",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtna:block/machine/parallel_hatch_uxv"
+    },
+    "facing=south": {
+      "model": "gtna:block/machine/parallel_hatch_uxv",
+      "y": 180
+    },
+    "facing=up": {
+      "gtceu:z": 180,
+      "model": "gtna:block/machine/parallel_hatch_uxv",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "gtna:block/machine/parallel_hatch_uxv",
+      "y": 270
+    }
+  }
+}

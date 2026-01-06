@@ -258,5 +258,13 @@ public class GTNAMachineRecipes {
                 .duration(40)
                 .EUt(120000)
                 .save(provider);
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("test")
+                .inputItems(Items.NETHER_STAR,1)
+                .outputItems(ChemicalHelper.get(TagPrefix.block, GTMaterials.NetherStar).getItem(), 9)
+                .duration(6000)
+                .EUt(10)
+                .save(provider);
+
+
     }
 }

@@ -86,5 +86,6 @@ public class CommonProxy {
 
     private void registerMachines(GTCEuAPI.RegisterEvent<ResourceLocation, MachineDefinition> event) {
     GTNAMachines.init();
+    GTNAMachines2.init();
     }
 }

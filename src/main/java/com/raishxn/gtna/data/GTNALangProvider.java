@@ -1,6 +1,7 @@
 package com.raishxn.gtna.data;
 
 import com.gregtechceu.gtceu.api.GTCEuAPI;
+import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.raishxn.gtna.GTNACORE;
@@ -246,5 +247,47 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.recipe.slaughterhouse", "Industrial Slaughter");
         add("gtna.slaughterhouse", "Industrial Slaughter");
         add("gtna.multiblock.leap_pbf.layers_hud", "Extra Layers: %s");
-    }
+        add("block.gtna.parallel_hatch_uhv", "UHV Parallel Control Hatch");
+        add("block.gtna.parallel_hatch_uev", "UEV Parallel Control Hatch");
+        add("block.gtna.parallel_hatch_uiv", "UIV Parallel Control Hatch");
+        add("block.gtna.parallel_hatch_uxv", "UXV Parallel Control Hatch");
+        add("block.gtna.parallel_hatch_opv", "OpV Parallel Control Hatch");
+        add("block.gtna.parallel_hatch_max", "MAX Parallel Control Hatch");
+        add("block.gtna.parallel_hatch_max", "MAX Parallel Control Hatch");
+        add("gtna.machine.parallel_hatch.tooltip", "Enables huge parallel processing for multiblocks");
+        add("gtna.machine.parallel_hatch.tier", "Max Parallel: %s");
+        add("gtna.machine.accelerate_hatch.tooltip", "Reduces recipe duration in Multiblocks");
+        add("gtna.machine.accelerate_hatch.desc", "Passive duration modifier");
+        add("gtna.machine.accelerate_hatch.amount", "Target Duration: %s");
+        for (int tier = GTValues.LV; tier <= GTValues.MAX; tier++) {
+            String tierName = GTValues.VN[tier];
+            String tierNameLower = tierName.toLowerCase();
+            add("block.gtna.accelerate_hatch_" + tierNameLower, tierName + " Accelerate Hatch");
+
+            add("block.gtna.duration_tester", "Duration Test Processor");}
+        add("gtna.machine.extra_process_hatch.tooltip", "Increases processing output");
+        add("gtna.machine.extra_process_hatch.tier.lv", "Chance: 20% | Multiplier: 1.5x");
+        add("gtna.machine.extra_process_hatch.tier.mv", "Chance: 40% | Multiplier: 1.5x");
+        add("gtna.machine.extra_process_hatch.tier.hv", "Chance: 60% | Multiplier: 1.5x");
+        add("gtna.machine.extra_process_hatch.tier.ev", "Chance: 80% | Multiplier: 1.5x");
+        add("gtna.machine.extra_process_hatch.tier.iv", "Chance: 100% | Multiplier: 1.5x");
+        add("gtna.machine.extra_process_hatch.tier.luv", "Output: 2x | Energy: +70%");
+        add("gtna.machine.extra_process_hatch.tier.zpm", "Output: 2.5x | Energy: 2x");
+        add("gtna.machine.extra_process_hatch.tier.uv", "Output: 3x | Energy: 2.5x");
+        add("gtna.machine.extra_process_hatch.tier.uhv", "Output: 4x | Energy: 3x");
+        add("gtna.machine.extra_process_hatch.tier.uev", "Output: 5x | Energy: 4.5x");
+        add("gtna.machine.extra_process_hatch.tier.uiv", "Output: 6x | Energy: 6x");
+        add("gtna.machine.extra_process_hatch.tier.uxv", "Output: 7x | Energy: 8x");
+        add("gtna.machine.extra_process_hatch.tier.opv", "Output: 8x | Energy: 10x");
+        add("gtna.machine.extra_process_hatch.tier.max", "Output: 10x | Energy: 15x");
+        for (int tier = GTValues.LV; tier <= GTValues.MAX; tier++) {
+            String tierName = GTValues.VN[tier];
+            add("block.gtna.extra_process_hatch_" + tierName.toLowerCase(), tierName + " Extra Process Hatch");}
+        add("gtna.machine.thread_hatch.tooltip", "Enables Simultaneous Recipe Processing");
+        add("gtna.machine.thread_hatch.amount", "Max Threads: %s distinct recipes");
+        for (int tier = GTValues.UV; tier <= GTValues.MAX; tier++) {
+            String tierName = GTValues.VN[tier];
+            add("block.gtna.thread_hatch_" + tierName.toLowerCase(), tierName + " Thread Hatch");
+        }
+}
 }
