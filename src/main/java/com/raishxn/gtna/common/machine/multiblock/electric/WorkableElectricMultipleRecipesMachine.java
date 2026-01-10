@@ -40,4 +40,5 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
     public void setThreadPartMachine(@Nullable ThreadPartMachine threadModifierPart) {
         this.threadModifierPart = threadModifierPart;
     }
+
 }

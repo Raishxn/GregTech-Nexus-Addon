@@ -50,10 +50,11 @@ public class ThreadPartMachine extends TieredIOPartMachine {
 
     @Override
     public Widget createUIWidget() {
-        // Mostra na GUI quantos threads este hatch adiciona
         var group = new WidgetGroup(0, 0, 100, 20);
         group.addWidget(new LabelWidget(5, 5, () ->
-                String.valueOf(Component.literal("Threads: +" + getThreadCount()).withStyle(ChatFormatting.AQUA))));
+                // Use §b para cor Aqua e concatene a string diretamente
+                "Threads: §b+" + this.getThreadCount()
+        ));
         return group;
     }
 }
