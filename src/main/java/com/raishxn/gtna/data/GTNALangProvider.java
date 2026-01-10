@@ -259,12 +259,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.accelerate_hatch.tooltip", "Reduces recipe duration in Multiblocks");
         add("gtna.machine.accelerate_hatch.desc", "Passive duration modifier");
         add("gtna.machine.accelerate_hatch.amount", "Target Duration: %s");
-        for (int tier = GTValues.LV; tier <= GTValues.MAX; tier++) {
-            String tierName = GTValues.VN[tier];
-            String tierNameLower = tierName.toLowerCase();
-            add("block.gtna.accelerate_hatch_" + tierNameLower, tierName + " Accelerate Hatch");
 
-            add("block.gtna.duration_tester", "Duration Test Processor");}
+
         add("gtna.machine.extra_process_hatch.tooltip", "Increases processing output");
         add("gtna.machine.extra_process_hatch.tier.lv", "Chance: 20% | Multiplier: 1.5x");
         add("gtna.machine.extra_process_hatch.tier.mv", "Chance: 40% | Multiplier: 1.5x");
@@ -280,14 +276,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.extra_process_hatch.tier.uxv", "Output: 7x | Energy: 8x");
         add("gtna.machine.extra_process_hatch.tier.opv", "Output: 8x | Energy: 10x");
         add("gtna.machine.extra_process_hatch.tier.max", "Output: 10x | Energy: 15x");
-        for (int tier = GTValues.LV; tier <= GTValues.MAX; tier++) {
-            String tierName = GTValues.VN[tier];
-            add("block.gtna.extra_process_hatch_" + tierName.toLowerCase(), tierName + " Extra Process Hatch");}
         add("gtna.machine.thread_hatch.tooltip", "Enables Simultaneous Recipe Processing");
         add("gtna.machine.thread_hatch.amount", "Max Threads: %s distinct recipes");
-        for (int tier = GTValues.UV; tier <= GTValues.MAX; tier++) {
-            String tierName = GTValues.VN[tier];
-            add("block.gtna.thread_hatch_" + tierName.toLowerCase(), tierName + " Thread Hatch");
-        }
 }
 }

@@ -14,13 +14,16 @@ import com.gregtechceu.gtceu.api.pattern.Predicates;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AdvancedParallelHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
 import net.minecraft.network.chat.Component;
 
 import java.util.Locale;
 
 import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
+import static com.gregtechceu.gtceu.api.pattern.Predicates.*;
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.createWorkableTieredHullMachineModel;
 import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
 
@@ -28,12 +31,14 @@ public class GTNAMachines2 {
 
     public static final MachineDefinition[] ADVANCED_PARALLEL_HATCH = new MachineDefinition[GTValues.MAX + 1];
     public static final MachineDefinition[] ACCELERATE_HATCHES = new MachineDefinition[GTValues.MAX + 1];
+    public static final MachineDefinition[] THREAD_HATCHES = new MachineDefinition[GTValues.MAX + 1];
     public static void init() {
         registerParallelHatch(GTValues.UHV, 1024);
         registerParallelHatch(GTValues.UEV, 4096);
         registerParallelHatch(GTValues.UIV, 16384);
         registerParallelHatch(GTValues.UXV, 65536);
         registerParallelHatch(GTValues.OpV, 262144);
+        registerThreadHatches();
         registerParallelHatch(GTValues.MAX, Integer.MAX_VALUE);
         for (int tier = GTValues.LV; tier <= GTValues.MAX; tier++) {
             registerAccelerateHatch(tier);
@@ -48,11 +53,12 @@ public class GTNAMachines2 {
                     .aisle("CCC", "CCC", "CCC")
                     .aisle("CCC", "C#C", "CCC")
                     .aisle("CCC", "CSC", "CCC")
-                    .where('S', Predicates.controller(Predicates.blocks(definition.get())))
-                    .where('C', Predicates.blocks(GTBlocks.CASING_STEEL_SOLID.get())
-                            .or(Predicates.autoAbilities(definition.getRecipeTypes()))
+                    .where('S', controller(blocks(definition.get())))
+                    .where('C', blocks(GTBlocks.CASING_STEEL_SOLID.get())
+                            .or(autoAbilities(definition.getRecipeTypes()))
                             .or(Predicates.abilities(PartAbility.MAINTENANCE).setExactLimit(1))
                             .or(Predicates.abilities(PartAbility.PARALLEL_HATCH).setMaxGlobalLimited(1))
+                            .or(Predicates.abilities(GTNAPartAbility.THREAD_HATCH).setMaxGlobalLimited(1))
                             .or(Predicates.abilities(PartAbility.MUFFLER).setMaxGlobalLimited(1))
                     )
                     .where('#', Predicates.air())
@@ -108,4 +114,38 @@ public class GTNAMachines2 {
                 )
                 .register();
     }
+    private static void registerThreadHatches() {
+        int[] tiers = {
+                GTValues.UV, GTValues.UHV, GTValues.UEV,
+                GTValues.UIV, GTValues.UXV, GTValues.OpV, GTValues.MAX
+        };
+        for (int i = 0; i < tiers.length; i++) {
+            int tier = tiers[i];
+            int mkLevel = i + 1;
+
+            String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
+            String regName = "thread_hatch_" + tierName;
+            var texturePath = GTNACORE.id("block/machines/thread_hatch/thread_hatch_mk" + mkLevel + "/overlay_front");
+
+            THREAD_HATCHES[tier] = REGISTRATE
+                    .machine(regName, holder -> new ThreadPartMachine(holder, tier))
+                    .tier(tier)
+                    .rotationState(RotationState.ALL)
+                    .abilities(GTNAPartAbility.THREAD_HATCH)
+                    .modelProperty(IS_FORMED, false)
+                    .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
+                    .model(createWorkableTieredHullMachineModel(texturePath)
+                            .andThen((ctx, prov, model) -> {
+                                model.addReplaceableTextures("bottom", "top", "side");
+                            }))
+                    .tooltips(
+                            Component.translatable("gtna.machine.thread_hatch.tooltip"),
+                            Component.translatable("gtna.machine.thread_hatch.desc"),
+                            Component.translatable("gtna.machine.thread_hatch.count", (tier + 1)),
+                            Component.translatable("gtceu.gui.part_sharing.disabled")
+                    )
+                    .register();
+        }
+    }
+
 }

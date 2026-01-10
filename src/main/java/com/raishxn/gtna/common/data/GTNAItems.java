@@ -83,5 +83,6 @@ public class GTNAItems {
                 .properties(stack -> stack.stacksTo(64))
                 .register();
 
+
     }
 }

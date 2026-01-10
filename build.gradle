@@ -60,9 +60,9 @@ repositories {
     }
     maven {
         // EMI
-		name = "TerraformersMC"
-		url = "https://maven.terraformersmc.com/"
-	}
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
+    }
     maven {
         url = "https://thedarkcolour.github.io/KotlinForForge/"
     }
