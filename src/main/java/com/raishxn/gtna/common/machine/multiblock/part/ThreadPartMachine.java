@@ -31,9 +31,10 @@ public class ThreadPartMachine extends TieredIOPartMachine {
     @Override
     public void addedToController(IMultiController controller) {
         super.addedToController(controller);
-        // Se o controlador suportar Threads, registra este hatch nele
         if (controller instanceof IThreadModifierMachine threadMachine) {
             threadMachine.setThreadPartMachine(this);
+            // O GTLAdditions faz isso, mas nós não precisamos se nossa Logic
+            // sempre verificar 'getMaxThreads()' no tick.
         }
     }
 

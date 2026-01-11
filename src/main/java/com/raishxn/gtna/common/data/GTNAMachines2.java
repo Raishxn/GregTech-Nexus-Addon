@@ -15,6 +15,7 @@ import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
+import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AdvancedParallelHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
@@ -45,7 +46,7 @@ public class GTNAMachines2 {
         }
     }
     public static final MultiblockMachineDefinition DURATION_TESTER = REGISTRATE
-            .multiblock("duration_tester", WorkableElectricMultiblockMachine::new)
+            .multiblock("duration_tester", WorkableElectricMultipleRecipesMachine ::new)
             .rotationState(RotationState.NON_Y_AXIS)
             .recipeType(GTRecipeTypes.ASSEMBLER_RECIPES)
             .appearanceBlock(GTBlocks.CASING_STEEL_SOLID)

@@ -259,24 +259,9 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.accelerate_hatch.tooltip", "Reduces recipe duration in Multiblocks");
         add("gtna.machine.accelerate_hatch.desc", "Passive duration modifier");
         add("gtna.machine.accelerate_hatch.amount", "Target Duration: %s");
-
-
-        add("gtna.machine.extra_process_hatch.tooltip", "Increases processing output");
-        add("gtna.machine.extra_process_hatch.tier.lv", "Chance: 20% | Multiplier: 1.5x");
-        add("gtna.machine.extra_process_hatch.tier.mv", "Chance: 40% | Multiplier: 1.5x");
-        add("gtna.machine.extra_process_hatch.tier.hv", "Chance: 60% | Multiplier: 1.5x");
-        add("gtna.machine.extra_process_hatch.tier.ev", "Chance: 80% | Multiplier: 1.5x");
-        add("gtna.machine.extra_process_hatch.tier.iv", "Chance: 100% | Multiplier: 1.5x");
-        add("gtna.machine.extra_process_hatch.tier.luv", "Output: 2x | Energy: +70%");
-        add("gtna.machine.extra_process_hatch.tier.zpm", "Output: 2.5x | Energy: 2x");
-        add("gtna.machine.extra_process_hatch.tier.uv", "Output: 3x | Energy: 2.5x");
-        add("gtna.machine.extra_process_hatch.tier.uhv", "Output: 4x | Energy: 3x");
-        add("gtna.machine.extra_process_hatch.tier.uev", "Output: 5x | Energy: 4.5x");
-        add("gtna.machine.extra_process_hatch.tier.uiv", "Output: 6x | Energy: 6x");
-        add("gtna.machine.extra_process_hatch.tier.uxv", "Output: 7x | Energy: 8x");
-        add("gtna.machine.extra_process_hatch.tier.opv", "Output: 8x | Energy: 10x");
-        add("gtna.machine.extra_process_hatch.tier.max", "Output: 10x | Energy: 15x");
-        add("gtna.machine.thread_hatch.tooltip", "Enables Simultaneous Recipe Processing");
-        add("gtna.machine.thread_hatch.amount", "Max Threads: %s distinct recipes");
+        add("gtna.multiblock.max_threads", "Max Threads: %s");
+        add("gtna.machine.thread_hatch.tooltip", "Multiblock Logic Expansion");
+        add("gtna.machine.thread_hatch.desc", "Allows the multiblock to process multiple distinct recipes simultaneously.");
+        add("gtna.machine.thread_hatch.count", "Threads: +%s");
 }
 }
