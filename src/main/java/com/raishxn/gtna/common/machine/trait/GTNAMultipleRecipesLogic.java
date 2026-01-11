@@ -6,6 +6,8 @@ import com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.HoverEvent;
 import com.gregtechceu.gtceu.api.machine.feature.IRecipeLogicMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
@@ -13,6 +15,7 @@ import com.gregtechceu.gtceu.api.recipe.ActionResult;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
+import com.gregtechceu.gtceu.api.recipe.ingredient.SizedIngredient;
 import com.raishxn.gtna.api.machine.IThreadModifierMachine;
 import com.raishxn.gtna.api.machine.multiblock.ParallelMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
@@ -209,7 +212,22 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
                     if (inner instanceof ItemStack stack) {
                         outputName = stack.getHoverName().getString();
                         totalCount = stack.getCount();
+                    } else if (inner instanceof SizedIngredient sized) {
+                        // Extrai o item de dentro do SizedIngredient
+                        ItemStack[] stacks = sized.getItems();
+                        if (stacks.length > 0) {
+                            outputName = stacks[0].getHoverName().getString();
+                        }
+                        totalCount = sized.getAmount();
+                    } else if (inner instanceof Ingredient ing) {
+                        // Fallback caso seja um Ingredient vanilla normal
+                        ItemStack[] stacks = ing.getItems();
+                        if (stacks.length > 0) {
+                            outputName = stacks[0].getHoverName().getString();
+                        }
+                        totalCount = 1;
                     } else {
+                        // Último recurso
                         outputName = inner.toString();
                         totalCount = 1;
                     }
@@ -218,8 +236,26 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
 
             double timePerItem = (maxSec > 0 && totalCount > 0) ? (maxSec / totalCount) : maxSec;
 
-            MutableComponent line2 = Component.literal(outputName + " x " + totalCount + " ")
-                    .withStyle(ChatFormatting.LIGHT_PURPLE)
+            // Lógica de encurtamento do nome
+            String displayName = outputName;
+            int maxLength = 15; // Defina aqui o tamanho máximo de caracteres
+
+            if (displayName.length() > maxLength) {
+                displayName = displayName.substring(0, maxLength) + "...";
+            }
+
+// Criação do componente com Hover
+            MutableComponent nameComponent = Component.literal(displayName)
+                    .withStyle(Style.EMPTY
+                            .withColor(ChatFormatting.LIGHT_PURPLE)
+                            // Adiciona o evento de hover mostrando o nome completo (outputName)
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(outputName)))
+                    );
+
+// Montagem da linha final
+            MutableComponent line2 = nameComponent
+                    .append(Component.literal(" x " + totalCount + " ")
+                            .withStyle(ChatFormatting.LIGHT_PURPLE))
                     .append(Component.literal(String.format(Locale.US, "(%.2fs/ea)", timePerItem))
                             .withStyle(ChatFormatting.GRAY));
 

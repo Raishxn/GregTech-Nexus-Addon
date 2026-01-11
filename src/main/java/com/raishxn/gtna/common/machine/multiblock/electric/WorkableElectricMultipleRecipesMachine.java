@@ -6,6 +6,7 @@ import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
 import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockDisplayText; // Importação do Builder
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
+import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
 import com.gregtechceu.gtceu.api.recipe.modifier.RecipeModifier;
 import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
 import com.gregtechceu.gtceu.api.recipe.modifier.ParallelLogic;
@@ -39,22 +40,24 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
     @Override
     public RecipeModifier getRecipeModifier() {
         return (machine, recipe) -> {
-            int parallelLimit = getParallelLimit();
-            ModifierFunction parallelModifier = ModifierFunction.IDENTITY;
+            // 1. Tenta aplicar o Parallel Hatch primeiro
+            // O GTRecipeModifiers.hatchParallel usa ParallelLogic.getParallelAmount
+            // que verifica o parallel hatch e se os inputs são suficientes.
+            var parallelModifier = GTRecipeModifiers.hatchParallel(machine, recipe);
 
-            if (parallelLimit > 1) {
-                int actualParallel = ParallelLogic.getParallelAmount(machine, recipe, parallelLimit);
-                if (actualParallel == 0) return ModifierFunction.NULL;
+            // 2. Aplicamos a modificação para ver como a receita ficaria (EU/t aumenta aqui)
+            var parallelRecipe = parallelModifier.apply(recipe);
 
-                if (actualParallel > 1) {
-                    parallelModifier = ModifierFunction.builder()
-                            .modifyAllContents(ContentModifier.multiplier(actualParallel))
-                            .eutMultiplier(actualParallel)
-                            .parallels(actualParallel)
-                            .build();
-                }
-            }
-            ModifierFunction overclockModifier = GTRecipeModifiers.OC_NON_PERFECT.getModifier(machine, recipe);
+            // Se falhar a paralelização, tenta rodar normal (1x) ou falha
+            if (parallelRecipe == null) return ModifierFunction.IDENTITY;
+
+            // 3. Aplica o Overclock NA receita JÁ paralelizada
+            // IMPORTANTE: O OverclockingLogic.NON_PERFECT_OVERCLOCK vai verificar
+            // se a máquina aguenta a voltagem da receita MULTIPLICADA.
+            var overclockModifier = GTRecipeModifiers.ELECTRIC_OVERCLOCK.apply(OverclockingLogic.NON_PERFECT_OVERCLOCK)
+                    .getModifier(machine, parallelRecipe);
+
+            // 4. Combina: Primeiro multiplica (Hatch), depois Overclocka
             return parallelModifier.andThen(overclockModifier);
         };
     }
