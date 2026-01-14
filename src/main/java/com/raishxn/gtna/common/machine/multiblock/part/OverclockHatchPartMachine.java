@@ -11,7 +11,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class OverclockHatchPartMachine extends MultiblockPartMachine implements ITieredMachine {
-
     private final int tier;
 
     public OverclockHatchPartMachine(IMachineBlockEntity holder, int tier, Object... args) {
@@ -24,45 +23,16 @@ public class OverclockHatchPartMachine extends MultiblockPartMachine implements 
         return this.tier;
     }
 
-    /**
-     * Calcula o multiplicador de duração baseado no tier da máquina controladora.
-     * @param controllerTier O tier da voltagem atual da máquina (ex: UV, UHV...)
-     * @return Um multiplicador entre 0.5 (UV) e 0.125 (MAX).
-     */
-    public double getOverclockMultiplier(int controllerTier) {
-        int minTier = GTValues.UV;  // Tier inicial (UV)
-        int maxTier = GTValues.MAX; // Tier final (MAX/OpV)
-
-        // Multiplicadores
-        double startMult = 0.5;   // 50%
-        double endMult = 0.125;   // 12.5%
-
-        // 1. Se for menor que UV, retorna o base (ou lida conforme sua preferência, aqui travo em 0.5)
-        if (controllerTier <= minTier) {
-            return startMult;
-        }
-
-        // 2. Se for maior ou igual ao MAX, retorna o limite máximo de velocidade
-        if (controllerTier >= maxTier) {
-            return endMult;
-        }
-        // Calcula onde estamos na escala (0.0 = UV, 1.0 = MAX)
-        double progress = (double) (controllerTier - minTier) / (maxTier - minTier);
-
-        // Fórmula: Inicio - (Progresso * (Diferença))
-        // Ex: Se progresso for 0.5 (metade), vai reduzir metade da diferença entre 0.5 e 0.125
-        return startMult - (progress * (startMult - endMult));
+    public double getOverclockMultiplier() {
+        return switch (this.tier) {
+            case GTValues.UV -> 0.55;       // 55%
+            case GTValues.UHV -> 0.3333;    // 33.33%
+            case GTValues.UEV -> 0.25;      // 25%
+            case GTValues.UIV -> 0.20;      // 20%
+            case GTValues.UXV -> 0.1667;    // 16.67%
+            case GTValues.OpV -> 0.1429;    // 14.29%
+            case GTValues.MAX -> 0.125;     // 12.5%
+            default -> 1.0;
+        };
     }
-    /*// Dentro do seu RecipeLogic ou checkRecipe
-var overclockHatch = machine.getParts().stream()
-    .filter(p -> p instanceof OverclockHatchPartMachine)
-    .findFirst();
-double durationMult = 0.55; // Padrão "Nerfado" sem o hatch
-if (overclockHatch.isPresent()) {
-    // Se o hatch existe, pegamos a lógica dele
-    int currentVoltageTier = GTValues.getTier(machine.getAvailableVoltage());
-    durationMult = ((OverclockHatchPartMachine) overclockHatch.get()).getOverclockMultiplier(currentVoltageTier);
-}
-// Aplica o multiplicador
-recipeDuration = (int) (recipeDuration * durationMult);*/
 }

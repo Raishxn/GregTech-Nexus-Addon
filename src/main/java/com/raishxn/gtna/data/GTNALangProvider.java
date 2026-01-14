@@ -1,7 +1,6 @@
 package com.raishxn.gtna.data;
 
 import com.gregtechceu.gtceu.api.GTCEuAPI;
-import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.raishxn.gtna.GTNACORE;
@@ -32,6 +31,7 @@ public class GTNALangProvider extends LanguageProvider {
     public GTNALangProvider(PackOutput output) {
         super(output, GTNACORE.MOD_ID, "en_us");
     }
+
     @Override
     public void add(String key, String value) {
         if (addedKeys.contains(key)) {
@@ -40,6 +40,7 @@ public class GTNALangProvider extends LanguageProvider {
         addedKeys.add(key);
         super.add(key, value);
     }
+
     @Override
     protected void addTranslations() {
         addStaticTranslations();
@@ -81,6 +82,33 @@ public class GTNALangProvider extends LanguageProvider {
     }
 
     private void addStaticTranslations() {
+        // --- Hatches Translations (UPDATED) ---
+
+        // Accelerate Hatch
+        add("gtna.machine.accelerate_hatch.main_function", "Main Function: Unconditionally accelerates machine operation speed");
+        add("gtna.machine.accelerate_hatch.range", "Operation Duration adjustment Range: %s - 100%%");
+        add("gtna.machine.accelerate_hatch.weakness", "The Acceleration effect is weakened by 20% per level when the level of accelerate hatch is lower than the machine tier.");
+
+        // Thread Hatch
+        add("gtna.machine.thread_hatch.tooltip", "Can Provide +%s thread parallel processing for the machine.");
+
+        // Overclock Hatch
+        add("gtna.machine.overclock_hatch.main_function", "Main function: Overclock machine");
+        add("gtna.machine.overclock_hatch.not_installed", "When this hatch is not installed, for every 4 times power used machine duration x 55%");
+        add("gtna.machine.overclock_hatch.installed", "After installing this hatch, the overclock effect is increased to a maximum of every 4 times power used, machine duration x %s");
+        add("gtna.machine.overclock_hatch.desc", "- More aggressive overclocking strategies, more powerful machine performance and more extreme processing speeds!");
+
+        // Parallel Hatch
+        add("block.gtna.parallel_hatch_uhv", "UHV Parallel Control Hatch");
+        add("block.gtna.parallel_hatch_uev", "UEV Parallel Control Hatch");
+        add("block.gtna.parallel_hatch_uiv", "UIV Parallel Control Hatch");
+        add("block.gtna.parallel_hatch_uxv", "UXV Parallel Control Hatch");
+        add("block.gtna.parallel_hatch_opv", "OpV Parallel Control Hatch");
+        add("block.gtna.parallel_hatch_max", "MAX Parallel Control Hatch");
+        add("gtna.machine.parallel_hatch.tooltip", "Enables huge parallel processing for multiblocks");
+        add("gtna.machine.parallel_hatch.tier", "Max Parallel: %s");
+
+        // --- Other Machines & Items ---
         add("block.gtna.wireless_steam_input_hatch", "Wireless Steam Input Hatch");
         add("block.gtna.wireless_steam_input_hatch_steel", "Wireless Steam Input Hatch Steel");
         add("block.gtna.wireless_steam_output_hatch", "Wireless Steam Output Hatch");
@@ -124,12 +152,12 @@ public class GTNALangProvider extends LanguageProvider {
         add("item.gtna.precision_steam_component", "Precision Steam Component");
         add("gtna.tooltip.large_steam_crusher.speed", "Speed: 900% faster than singleblock");
         add("gtna.tooltip.large_steam_crusher.steam", "Steam Consumption: 80% of original");
-        add("gtna.tooltip.large_steam_crusher.parallel","Process up to 128 items at once");
+        add("gtna.tooltip.large_steam_crusher.parallel", "Process up to 128 items at once");
         add("gtna.registry.add", "Added by GregTech Nexus Addon");
         add("gtna.multiblock.parallel_amount", "Parallels: %s");
         add("block.gtna.huge_steam_input_bus", "Huge Steam Input Bus");
         add("block.gtna.huge_steam_output_bus", "Huge Steam Output Bus");
-        add("gtna.tooltip.huge_steam_bus","Input Bus with a lot of items capacity. around 3654 itens.");
+        add("gtna.tooltip.huge_steam_bus", "Input Bus with a lot of items capacity. around 3654 itens.");
         add("gtna.tooltip.mega_solar.desc", "A massive solar thermal power plant.");
         add("gtna.tooltip.mega_solar.expansion", "Structure is expandable! Add Solar Pipes behind and to the sides.");
         add("gtna.tooltip.mega_solar.sunlight", "REQUIREMENT: Every Solar Pipe casing must have direct access to the sky.");
@@ -208,8 +236,6 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.multiblock.infernal_coke.speed", "Current Speed: %s");
         add("gtna.multiblock.infernal_coke.uptime", "Uptime: %ss");
         add("gtna.recipe.infernal_coke", "Infernal Coke Processing");
-        add("gtna.multiblock.infernal_coke.speed", "Current Speed: %s");
-        add("gtna.multiblock.infernal_coke.uptime", "Uptime: %ss");
         add("gtna.infernal_coke", "Infernal Coke Processing");
         add("block.gtna.hyper_pressure_reactor", "Hyper Pressure Reactor");
         add("gtna.high_pressure_reactor", "Hyper Pressure Reactor");
@@ -220,8 +246,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.compact_hyper_pressure.desc", "Extreme density fluid processor.");
         add("gtna.tooltip.compact_hyper_pressure.special", "Can process Dense Supercritical Steam from basic resources.");
         add("gtna.recipe.high_pressure_reactor", "High Pressure Reaction");
-        add("gtna.tooltip.compact_hyper_pressure.parallel","Max Parallel: 512");
-        add("gtna.recipe.condition.compact_only","Requires: CHPR\nCompact HyperPressure Reactor");
+        add("gtna.tooltip.compact_hyper_pressure.parallel", "Max Parallel: 512");
+        add("gtna.recipe.condition.compact_only", "Requires: CHPR\nCompact HyperPressure Reactor");
         add("block.gtna.void_miner_steam_gate_aged", "Void Miner SteamGate Aged");
         add("gtna.tooltip.void_miner.desc", "Harvesting raw resources from the Steam Dimensions.");
         add("gtna.tooltip.void_miner.fluid_req", "Requires: 10,000L of Drilling Fluid per operation.");
@@ -247,22 +273,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.recipe.slaughterhouse", "Industrial Slaughter");
         add("gtna.slaughterhouse", "Industrial Slaughter");
         add("gtna.multiblock.leap_pbf.layers_hud", "Extra Layers: %s");
-        add("block.gtna.parallel_hatch_uhv", "UHV Parallel Control Hatch");
-        add("block.gtna.parallel_hatch_uev", "UEV Parallel Control Hatch");
-        add("block.gtna.parallel_hatch_uiv", "UIV Parallel Control Hatch");
-        add("block.gtna.parallel_hatch_uxv", "UXV Parallel Control Hatch");
-        add("block.gtna.parallel_hatch_opv", "OpV Parallel Control Hatch");
-        add("block.gtna.parallel_hatch_max", "MAX Parallel Control Hatch");
-        add("block.gtna.parallel_hatch_max", "MAX Parallel Control Hatch");
-        add("gtna.machine.parallel_hatch.tooltip", "Enables huge parallel processing for multiblocks");
-        add("gtna.machine.parallel_hatch.tier", "Max Parallel: %s");
-        add("gtna.machine.accelerate_hatch.tooltip", "Reduces recipe duration in Multiblocks");
-        add("gtna.machine.accelerate_hatch.desc", "Passive duration modifier");
-        add("gtna.machine.accelerate_hatch.amount", "Target Duration: %s");
         add("gtna.multiblock.max_threads", "Max Threads: %s");
-        add("gtna.machine.thread_hatch.tooltip", "Multiblock Logic Expansion");
-        add("gtna.machine.thread_hatch.desc", "Allows the multiblock to process multiple distinct recipes simultaneously.");
-        add("gtna.machine.thread_hatch.count", "Threads: +%s");
+
         // --- Configurações (GUI) ---
         // Drift
         add("config.gtna.option.disableDrift", "Disable Drift");
@@ -291,5 +303,6 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.voidMinerInsanelyOutputMult", "Void Miner (Insanely) Output");
         add("config.gtna.option.voidMinerInsanelySpeedMult", "Void Miner (Insanely) Speed");
         add("config.gtna.option.voidMinerInsanelyEnergyMult", "Void Miner (Insanely) Energy");
-}
+        add("config.jade.plugin_gtna.multiple_recipes_provider", "Multiple Recipes Machine Info");
+    }
 }

@@ -7,12 +7,9 @@ import com.lowdragmc.lowdraglib.Platform;
 import com.raishxn.gtna.api.data.info.GTNAMaterialFlags;
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.api.registry.GTNARegistry;
-import com.raishxn.gtna.common.data.GTNACovers;
-import com.raishxn.gtna.common.data.GTNAElements;
-import com.raishxn.gtna.common.data.GTNAItems;
+import com.raishxn.gtna.common.data.*;
 // Remova o import de GTNAMaterials daqui, não é mais necessário
 //import com.raishxn.gtna.data.recipe.GTNAMaterialRecipes;
-import com.raishxn.gtna.common.data.GTNAMachines;
 import com.raishxn.gtna.data.recipe.*;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
@@ -61,6 +58,7 @@ public class GTNAGTAddon implements IGTAddon {
         GTNAMaterialRecipes.register(provider);
         GTNAItemRecipes.register(provider);
         GTNAMachineRecipes.register(provider);
+        GTNAHatchesRecipes.register(provider);
         GTNABlockRecipes.register(provider);
         GTNAGeneratesRecipes.register(provider);
         GTNAWoodCutterRecipes.register(provider);

@@ -35,6 +35,7 @@ public class GTNAMachines2 {
     public static final MachineDefinition[] ACCELERATE_HATCHES = new MachineDefinition[GTValues.MAX + 1];
     public static final MachineDefinition[] THREAD_HATCHES = new MachineDefinition[GTValues.MAX + 1];
     public static final MachineDefinition[] OVERCLOCK_HATCHES = new MachineDefinition[GTValues.MAX + 1];
+
     public static void init() {
         registerParallelHatch(GTValues.UHV, 1024);
         registerParallelHatch(GTValues.UEV, 4096);
@@ -43,9 +44,8 @@ public class GTNAMachines2 {
         registerParallelHatch(GTValues.OpV, 262144);
         registerOverclockHatches();
         registerThreadHatches();
-        registerParallelHatch(GTValues.MAX, Integer.MAX_VALUE);
-        for (int tier = GTValues.LV; tier <= GTValues.MAX; tier++) {
-            registerAccelerateHatch(tier);
+        for (int i = GTValues.LV; i <= GTValues.MAX; i++) {
+            registerAccelerateHatch(i);
         }
     }
     public static final MultiblockMachineDefinition DURATION_TESTER = REGISTRATE
@@ -63,16 +63,19 @@ public class GTNAMachines2 {
                             .or(Predicates.abilities(PartAbility.MAINTENANCE).setExactLimit(1))
                             .or(Predicates.abilities(PartAbility.PARALLEL_HATCH).setMaxGlobalLimited(1))
                             .or(Predicates.abilities(GTNAPartAbility.THREAD_HATCH).setMaxGlobalLimited(1))
+                            .or(Predicates.abilities(GTNAPartAbility.OVERCLOCK_HATCH).setMaxGlobalLimited(1))
+                            .or(Predicates.abilities(GTNAPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1))
                             .or(Predicates.abilities(PartAbility.MUFFLER).setMaxGlobalLimited(1))
                     )
                     .where('#', Predicates.air())
                     .build())
             .workableCasingModel(
                     GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
-                    GTCEu.id("block/multiblock/assembler"))
+                    GTCEu.id("block/multiblock/implosion_compressor"))
             .tooltips(Component.literal("§6Machine for testing Duration & Accelerate Hatches"))
             .register();
     private static void registerParallelHatch(int tier, int parallelAmount) {
+        GTNACORE.LOGGER.info("TENTANDO REGISTRAR PARALLEL HATCH: " + tier);
         String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
         int mkLevel = tier - 8;
         var texturePath = GTNACORE.id("block/machines/parallel_hatch/parallel_hatch_mk" + mkLevel + "/overlay_front");
@@ -97,8 +100,7 @@ public class GTNAMachines2 {
         String regName = "accelerate_hatch_" + tierName;
         int mkLevel = tier;
         var texturePath = GTNACORE.id("block/machines/accelerate_hatch/accelerate_hatch_mk" + mkLevel + "/overlay_front");
-        int percentage = 52 - (2 * tier);
-        if (percentage < 1) percentage = 1;
+        int minPercentage = Math.max(1, 50 - (2 * (tier - 1)));
         ACCELERATE_HATCHES[tier] = REGISTRATE
                 .machine(regName, holder -> new AccelerateHatchPartMachine(holder, tier))
                 .tier(tier)
@@ -111,28 +113,25 @@ public class GTNAMachines2 {
                             model.addReplaceableTextures("bottom", "top", "side");
                         }))
                 .tooltips(
-                        Component.translatable("gtna.machine.accelerate_hatch.tooltip"),
-                        Component.translatable("gtna.machine.accelerate_hatch.desc"),
-                        Component.translatable("gtna.machine.accelerate_hatch.amount", percentage + "%"),
-                        Component.translatable("gtceu.part_sharing.disabled")
-                )
-                .register();
+                        Component.translatable("gtna.machine.accelerate_hatch.main_function"),
+                        Component.translatable("gtna.machine.accelerate_hatch.range", minPercentage + "%"),
+                        Component.translatable("gtna.machine.accelerate_hatch.weakness"),
+                        Component.translatable("gtceu.part_sharing.disabled")).register();
     }
     private static void registerThreadHatches() {
         int[] tiers = {
+                GTValues.ZPM,
                 GTValues.UV, GTValues.UHV, GTValues.UEV,
                 GTValues.UIV, GTValues.UXV, GTValues.OpV, GTValues.MAX
         };
         for (int i = 0; i < tiers.length; i++) {
             int tier = tiers[i];
             int mkLevel = i + 1;
-
             String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
             String regName = "thread_hatch_" + tierName;
             var texturePath = GTNACORE.id("block/machines/thread_hatch/thread_hatch_mk" + mkLevel + "/overlay_front");
-// --- ADICIONE ESTAS LINHAS AQUI ---
-            GTNACORE.LOGGER.info("GTNA DEBUG [Thread Hatch]: Tier " + tierName + " | MK: " + mkLevel);
-            GTNACORE.LOGGER.info("GTNA DEBUG [Texture Path]: " + texturePath.toString());
+            int threads = (1 << (tier - 6)) - 1;
+
             THREAD_HATCHES[tier] = REGISTRATE
                     .machine(regName, holder -> new ThreadPartMachine(holder, tier))
                     .tier(tier)
@@ -145,12 +144,8 @@ public class GTNAMachines2 {
                                 model.addReplaceableTextures("bottom", "top", "side");
                             }))
                     .tooltips(
-                            Component.translatable("gtna.machine.thread_hatch.tooltip"),
-                            Component.translatable("gtna.machine.thread_hatch.desc"),
-                            Component.translatable("gtna.machine.thread_hatch.count", (tier + 1)),
-                            Component.translatable("gtceu.gui.part_sharing.disabled")
-                    )
-                    .register();
+                            Component.translatable("gtna.machine.thread_hatch.tooltip", threads),
+                            Component.translatable("gtceu.part_sharing.disabled")).register();
         }
     }
     private static void registerOverclockHatches() {
@@ -164,6 +159,16 @@ public class GTNAMachines2 {
             String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
             String regName = "overclock_hatch_" + tierName;
             var texturePath = GTNACORE.id("block/machines/overclock_hatch/overclock_hatch_mk" + mkLevel + "/overlay_front");
+            double mult = switch (tier) {
+                case GTValues.UV -> 55.0;
+                case GTValues.UHV -> 33.33;
+                case GTValues.UEV -> 25.0;
+                case GTValues.UIV -> 20.0;
+                case GTValues.UXV -> 16.67;
+                case GTValues.OpV -> 14.29;
+                case GTValues.MAX -> 12.5;
+                default -> 100.0;
+            };
             OVERCLOCK_HATCHES[tier] = REGISTRATE
                     .machine(regName, holder -> new OverclockHatchPartMachine(holder, tier))
                     .tier(tier)
@@ -176,13 +181,11 @@ public class GTNAMachines2 {
                                 model.addReplaceableTextures("bottom", "top", "side");
                             }))
                     .tooltips(
-                            Component.translatable("gtna.machine.overclock_hatch.tooltip"),
-                            Component.translatable("gtna.machine.overclock_hatch.desc.1"), // "Enables Aggressive Overclocking"
-                            Component.translatable("gtna.machine.overclock_hatch.desc.2"), // "Scales from 50% down to 12.5% duration"
-                            Component.translatable("gtceu.gui.part_sharing.disabled")
-                    )
-                    .register();
+                            Component.translatable("gtna.machine.overclock_hatch.main_function"),
+                            Component.translatable("gtna.machine.overclock_hatch.not_installed"),
+                            Component.translatable("gtna.machine.overclock_hatch.installed", mult + "%"),
+                            Component.translatable("gtna.machine.overclock_hatch.desc"),
+                            Component.translatable("gtceu.part_sharing.disabled")).register();
         }
     }
-
 }

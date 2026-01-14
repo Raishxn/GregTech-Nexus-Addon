@@ -8,12 +8,15 @@ import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockDisplayText;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
-import com.gregtechceu.gtceu.api.recipe.modifier.RecipeModifier;
+import com.gregtechceu.gtceu.api.recipe.content.ContentModifier; // Importante
 import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
 import com.gregtechceu.gtceu.api.recipe.modifier.ParallelLogic;
+import com.gregtechceu.gtceu.api.recipe.modifier.RecipeModifier;
 import com.gregtechceu.gtceu.common.data.GTRecipeModifiers;
 import com.raishxn.gtna.api.machine.IThreadModifierMachine;
+import com.raishxn.gtna.api.machine.multiblock.ParallelMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
 import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
 import net.minecraft.ChatFormatting;
@@ -24,72 +27,54 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMultiblockMachine
-        implements IThreadModifierMachine {
+        implements IThreadModifierMachine, ParallelMachine {
 
     @Nullable
     private ThreadPartMachine threadModifierPart;
+    // Listas essenciais para o Logic calcular o tempo
     private final List<AccelerateHatchPartMachine> accelerateHatches = new ArrayList<>();
+    private final List<OverclockHatchPartMachine> overclockHatches = new ArrayList<>();
 
     public WorkableElectricMultipleRecipesMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, args);
-        // DEBUG: Se isso não aparecer no console ao carregar o jogo/colocar a máquina,
-        // você registrou a classe errada no MachineDefinition!
-        System.out.println(">>> DEBUG: CONSTRUTOR DE WorkableElectricMultipleRecipesMachine CHAMADO <<<");
     }
 
+    // Mantemos o getRecipeModifier simples e funcional para compatibilidade
     @Override
     public RecipeModifier getRecipeModifier() {
         return (machine, recipe) -> {
-            // DEBUG: Verificando inputs iniciais
-            int hatchParallel = getParallelLimit();
+            // 1. Calcula Paralelo
+            int parallel = ParallelLogic.getParallelAmount(machine, recipe, getMaxParallel());
 
-            // Print para saber se estamos chegando aqui
-            System.out.println("[DEBUG MODIFIER] Receita ID: " + recipe.getId());
-            System.out.println("[DEBUG MODIFIER] Limite do Hatch: " + hatchParallel);
+            // 2. Constrói o modificador manualmente (já que não existe getModifier no ParallelLogic)
+            var modifier = parallel > 1 ?
+                    ModifierFunction.builder()
+                            .modifyAllContents(ContentModifier.multiplier(parallel))
+                            .eutMultiplier(parallel)
+                            .parallels(parallel)
+                            .build()
+                    : ModifierFunction.IDENTITY;
 
-            // Se o hatch for 1, retornamos identidade, mas avisamos no log
-            if (hatchParallel <= 1) {
-                // System.out.println("[DEBUG MODIFIER] Hatch <= 1, abortando paralelo.");
-                return ModifierFunction.IDENTITY;
-            }
-
-            // Tenta calcular o paralelo real usando a lógica do GregTech
-            int feasibleParallel = ParallelLogic.getParallelAmount(machine, recipe, hatchParallel);
-            System.out.println("[DEBUG MODIFIER] ParallelLogic calculou: " + feasibleParallel);
-
-            if (feasibleParallel <= 1) {
-                // System.out.println("[DEBUG MODIFIER] Itens insuficientes para paralelo > 1.");
-                return ModifierFunction.IDENTITY;
-            }
-
-            // Aplica o modificador
-            System.out.println("[DEBUG MODIFIER] APLICANDO PARALELO x" + feasibleParallel);
-
-            var parallelModifier = ModifierFunction.builder()
-                    .modifyAllContents(com.gregtechceu.gtceu.api.recipe.content.ContentModifier.multiplier(feasibleParallel))
-                    .eutMultiplier(feasibleParallel)
-                    .parallels(feasibleParallel)
-                    .build();
-
-            GTRecipe parallelRecipe = parallelModifier.apply(recipe);
-
-            var overclockModifier = GTRecipeModifiers.ELECTRIC_OVERCLOCK.apply(OverclockingLogic.NON_PERFECT_OVERCLOCK)
-                    .getModifier(machine, parallelRecipe);
-
-            return parallelModifier.andThen(overclockModifier);
+            // 3. Aplica o modificador e depois o Overclock Padrão
+            return (ModifierFunction) GTRecipeModifiers.ELECTRIC_OVERCLOCK.apply(OverclockingLogic.NON_PERFECT_OVERCLOCK)
+                    .applyModifier(machine, modifier.apply(recipe));
         };
     }
 
+    @Override
+    public int getMaxParallel() {
+        return getParallelLimit();
+    }
+
     protected int getParallelLimit() {
-        // Logica robusta para achar o hatch
+        int superParallel = getParallelHatch().map(IParallelHatch::getCurrentParallel).orElse(1);
+        if (superParallel > 1) return superParallel;
         int maxParallel = 1;
         for (IMultiPart part : getParts()) {
             if (part instanceof IParallelHatch hatch) {
                 int current = hatch.getCurrentParallel();
-                // Pega o maior valor encontrado (caso tenha múltiplos hatches, o que é raro)
                 if (current > maxParallel) {
                     maxParallel = current;
                 }
@@ -98,27 +83,31 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
         return maxParallel;
     }
 
-    // --- MÉTODOS OBRIGATÓRIOS (BOILERPLATE) ---
-
+    // ESSENCIAL: Preenche as listas quando a estrutura forma
     @Override
     public void onStructureFormed() {
         super.onStructureFormed();
         this.accelerateHatches.clear();
+        this.overclockHatches.clear();
+
         for (IMultiPart part : getParts()) {
             if (part instanceof AccelerateHatchPartMachine accelerateHatch) {
                 accelerateHatches.add(accelerateHatch);
+            }
+            if (part instanceof OverclockHatchPartMachine overclockHatch) {
+                overclockHatches.add(overclockHatch);
             }
         }
         if (this.energyContainer == null) {
             this.energyContainer = getEnergyContainer();
         }
-        System.out.println(">>> DEBUG: Estrutura Formada. Hatches encontrados: " + accelerateHatches.size());
     }
 
     @Override
     public void onStructureInvalid() {
         super.onStructureInvalid();
         this.accelerateHatches.clear();
+        this.overclockHatches.clear();
     }
 
     @Override
@@ -131,13 +120,22 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
         return (GTNAMultipleRecipesLogic) super.getRecipeLogic();
     }
 
+    // Métodos usados pelo GTNAMultipleRecipesLogic para calcular a velocidade final
     public double getDurationMultiplier() {
         double multiplier = 1.0;
         for (AccelerateHatchPartMachine hatch : accelerateHatches) {
             double percentage = hatch.calcDurationPercentage(this.getTier()) / 100.0;
             multiplier *= percentage;
         }
-        return Math.max(0.1, multiplier);
+        return Math.max(0.01, multiplier);
+    }
+
+    public double getOverclockHatchMultiplier() {
+        double multiplier = 1.0;
+        for (OverclockHatchPartMachine hatch : overclockHatches) {
+            multiplier *= hatch.getOverclockMultiplier();
+        }
+        return multiplier;
     }
 
     @Override
@@ -158,10 +156,23 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
                             .append(Component.literal(String.format(Locale.US, "%,d", storedEnergy)).withStyle(ChatFormatting.WHITE))
                             .append(Component.literal(" (" + tierName + ")").withStyle(ChatFormatting.GOLD)));
 
-                    int parallel = getParallelLimit();
+                    int parallel = getMaxParallel();
                     if (parallel > 1) {
                         text.add(Component.literal("Parallels: ").withStyle(ChatFormatting.GRAY)
                                 .append(Component.literal(String.valueOf(parallel)).withStyle(ChatFormatting.GREEN)));
+                    }
+
+                    // Informações de UI dos Hatches
+                    double ocMultiplier = getOverclockHatchMultiplier();
+                    if (ocMultiplier < 1.0) {
+                        text.add(Component.literal("Overclock Hatch: ").withStyle(ChatFormatting.GRAY)
+                                .append(Component.literal(String.format("%.2fx Duration", ocMultiplier)).withStyle(ChatFormatting.LIGHT_PURPLE)));
+                    }
+
+                    double accMultiplier = getDurationMultiplier();
+                    if (accMultiplier < 1.0) {
+                        text.add(Component.literal("Accelerate Hatch: ").withStyle(ChatFormatting.GRAY)
+                                .append(Component.literal(String.format("%.2fx Duration", accMultiplier)).withStyle(ChatFormatting.LIGHT_PURPLE)));
                     }
 
                     text.add(Component.literal("Active Threads: ").withStyle(ChatFormatting.GRAY)

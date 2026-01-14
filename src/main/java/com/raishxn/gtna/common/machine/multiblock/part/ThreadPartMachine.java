@@ -17,11 +17,13 @@ public class ThreadPartMachine extends TieredIOPartMachine {
     private final int threadCount;
 
     public ThreadPartMachine(IMachineBlockEntity holder, int tier, Object... args) {
-        // IO.NONE pois o hatch não transporta itens, apenas lógica
         super(holder, tier, IO.NONE);
-        // Exemplo: Tier 1 (LV) = +1 thread, Tier 2 (MV) = +2 threads, etc.
-        // Você pode ajustar essa fórmula conforme o balanceamento desejado.
-        this.threadCount = (tier + 1);
+        // Lógica Exponencial: 2^(Tier - 6) - 1
+        // ZPM (Tier 7): 2^(1) - 1 = 1
+        // UV (Tier 8):  2^(2) - 1 = 3
+        // ...
+        // MAX (Tier 14): 2^(8) - 1 = 255
+        this.threadCount = (1 << (tier - 6)) - 1;
     }
 
     public int getThreadCount() {
@@ -33,15 +35,12 @@ public class ThreadPartMachine extends TieredIOPartMachine {
         super.addedToController(controller);
         if (controller instanceof IThreadModifierMachine threadMachine) {
             threadMachine.setThreadPartMachine(this);
-            // O GTLAdditions faz isso, mas nós não precisamos se nossa Logic
-            // sempre verificar 'getMaxThreads()' no tick.
         }
     }
 
     @Override
     public void removedFromController(IMultiController controller) {
         super.removedFromController(controller);
-        // Remove a referência ao quebrar o hatch
         if (controller instanceof IThreadModifierMachine threadMachine) {
             if (threadMachine.getThreadPartMachine() == this) {
                 threadMachine.setThreadPartMachine(null);
@@ -53,7 +52,6 @@ public class ThreadPartMachine extends TieredIOPartMachine {
     public Widget createUIWidget() {
         var group = new WidgetGroup(0, 0, 100, 20);
         group.addWidget(new LabelWidget(5, 5, () ->
-                // Use §b para cor Aqua e concatene a string diretamente
                 "Threads: §b+" + this.getThreadCount()
         ));
         return group;
