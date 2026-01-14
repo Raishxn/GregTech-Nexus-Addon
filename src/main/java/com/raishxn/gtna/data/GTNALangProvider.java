@@ -1,15 +1,20 @@
 package com.raishxn.gtna.data;
 
 import com.gregtechceu.gtceu.api.GTCEuAPI;
+import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
+import com.raishxn.gtna.common.data.GTNAMachines2;
+import com.raishxn.gtna.utils.TextUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 public class GTNALangProvider extends LanguageProvider {
@@ -63,6 +68,7 @@ public class GTNALangProvider extends LanguageProvider {
                 }
             }
         }
+        
     }
 
     private String formatMaterialName(String name) {
@@ -304,5 +310,49 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.voidMinerInsanelySpeedMult", "Void Miner (Insanely) Speed");
         add("config.gtna.option.voidMinerInsanelyEnergyMult", "Void Miner (Insanely) Energy");
         add("config.jade.plugin_gtna.multiple_recipes_provider", "Multiple Recipes Machine Info");
+
+        for (int i = 0; i < GTValues.V.length; i++) {
+            String tierName = GTValues.VN[i];
+            String tierLower = tierName.toLowerCase(Locale.ROOT);
+            ChatFormatting color = (i < TextUtil.GTI_CORE$VC.length) ? TextUtil.GTI_CORE$VC[i] : ChatFormatting.WHITE;
+            String colorCode = getColorCode(color);
+            String coloredTierName = colorCode + tierName + "§r";
+            if (i < GTNAMachines2.THREAD_HATCHES.length && GTNAMachines2.THREAD_HATCHES[i] != null) {
+                add("block.gtna.thread_hatch_" + tierLower, coloredTierName + " Thread Hatch");
+            }
+            if (i < GTNAMachines2.ACCELERATE_HATCHES.length && GTNAMachines2.ACCELERATE_HATCHES[i] != null) {
+                add("block.gtna.accelerate_hatch_" + tierLower, coloredTierName + " Accelerate Hatch");
+            }
+            if (i < GTNAMachines2.OVERCLOCK_HATCHES.length && GTNAMachines2.OVERCLOCK_HATCHES[i] != null) {
+                add("block.gtna.overclock_hatch_" + tierLower, coloredTierName + " Overclock Hatch");
+            }
+        }
+    }
+    private String getColorCode(ChatFormatting formatting) {
+        if (formatting == null) return "§f";
+        return switch (formatting) {
+            case BLACK -> "§0";
+            case DARK_BLUE -> "§1";
+            case DARK_GREEN -> "§2";
+            case DARK_AQUA -> "§3";
+            case DARK_RED -> "§4";
+            case DARK_PURPLE -> "§5";
+            case GOLD -> "§6";
+            case GRAY -> "§7";
+            case DARK_GRAY -> "§8";
+            case BLUE -> "§9";
+            case GREEN -> "§a";
+            case AQUA -> "§b";
+            case RED -> "§c";
+            case LIGHT_PURPLE -> "§d";
+            case YELLOW -> "§e";
+            case WHITE -> "§f";
+            case OBFUSCATED -> "§k";
+            case BOLD -> "§l";
+            case STRIKETHROUGH -> "§m";
+            case UNDERLINE -> "§n";
+            case ITALIC -> "§o";
+            case RESET -> "§r";
+        };
     }
 }
