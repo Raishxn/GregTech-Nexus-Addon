@@ -4,13 +4,13 @@ import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.capability.IParallelHatch;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
-import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockDisplayText; // Importação do Builder
+import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockDisplayText;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
+import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
 import com.gregtechceu.gtceu.api.recipe.modifier.RecipeModifier;
 import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
 import com.gregtechceu.gtceu.api.recipe.modifier.ParallelLogic;
-import com.gregtechceu.gtceu.api.recipe.content.ContentModifier;
 import com.gregtechceu.gtceu.common.data.GTRecipeModifiers;
 import com.raishxn.gtna.api.machine.IThreadModifierMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
@@ -35,41 +35,70 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
 
     public WorkableElectricMultipleRecipesMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, args);
+        // DEBUG: Se isso não aparecer no console ao carregar o jogo/colocar a máquina,
+        // você registrou a classe errada no MachineDefinition!
+        System.out.println(">>> DEBUG: CONSTRUTOR DE WorkableElectricMultipleRecipesMachine CHAMADO <<<");
     }
 
     @Override
     public RecipeModifier getRecipeModifier() {
         return (machine, recipe) -> {
-            // 1. Tenta aplicar o Parallel Hatch primeiro
-            // O GTRecipeModifiers.hatchParallel usa ParallelLogic.getParallelAmount
-            // que verifica o parallel hatch e se os inputs são suficientes.
-            var parallelModifier = GTRecipeModifiers.hatchParallel(machine, recipe);
+            // DEBUG: Verificando inputs iniciais
+            int hatchParallel = getParallelLimit();
 
-            // 2. Aplicamos a modificação para ver como a receita ficaria (EU/t aumenta aqui)
-            var parallelRecipe = parallelModifier.apply(recipe);
+            // Print para saber se estamos chegando aqui
+            System.out.println("[DEBUG MODIFIER] Receita ID: " + recipe.getId());
+            System.out.println("[DEBUG MODIFIER] Limite do Hatch: " + hatchParallel);
 
-            // Se falhar a paralelização, tenta rodar normal (1x) ou falha
-            if (parallelRecipe == null) return ModifierFunction.IDENTITY;
+            // Se o hatch for 1, retornamos identidade, mas avisamos no log
+            if (hatchParallel <= 1) {
+                // System.out.println("[DEBUG MODIFIER] Hatch <= 1, abortando paralelo.");
+                return ModifierFunction.IDENTITY;
+            }
 
-            // 3. Aplica o Overclock NA receita JÁ paralelizada
-            // IMPORTANTE: O OverclockingLogic.NON_PERFECT_OVERCLOCK vai verificar
-            // se a máquina aguenta a voltagem da receita MULTIPLICADA.
+            // Tenta calcular o paralelo real usando a lógica do GregTech
+            int feasibleParallel = ParallelLogic.getParallelAmount(machine, recipe, hatchParallel);
+            System.out.println("[DEBUG MODIFIER] ParallelLogic calculou: " + feasibleParallel);
+
+            if (feasibleParallel <= 1) {
+                // System.out.println("[DEBUG MODIFIER] Itens insuficientes para paralelo > 1.");
+                return ModifierFunction.IDENTITY;
+            }
+
+            // Aplica o modificador
+            System.out.println("[DEBUG MODIFIER] APLICANDO PARALELO x" + feasibleParallel);
+
+            var parallelModifier = ModifierFunction.builder()
+                    .modifyAllContents(com.gregtechceu.gtceu.api.recipe.content.ContentModifier.multiplier(feasibleParallel))
+                    .eutMultiplier(feasibleParallel)
+                    .parallels(feasibleParallel)
+                    .build();
+
+            GTRecipe parallelRecipe = parallelModifier.apply(recipe);
+
             var overclockModifier = GTRecipeModifiers.ELECTRIC_OVERCLOCK.apply(OverclockingLogic.NON_PERFECT_OVERCLOCK)
                     .getModifier(machine, parallelRecipe);
 
-            // 4. Combina: Primeiro multiplica (Hatch), depois Overclocka
             return parallelModifier.andThen(overclockModifier);
         };
     }
 
     protected int getParallelLimit() {
-        Optional<IParallelHatch> hatch = getParts().stream()
-                .filter(IParallelHatch.class::isInstance)
-                .map(IParallelHatch.class::cast)
-                .findFirst();
-
-        return hatch.map(IParallelHatch::getCurrentParallel).orElse(1);
+        // Logica robusta para achar o hatch
+        int maxParallel = 1;
+        for (IMultiPart part : getParts()) {
+            if (part instanceof IParallelHatch hatch) {
+                int current = hatch.getCurrentParallel();
+                // Pega o maior valor encontrado (caso tenha múltiplos hatches, o que é raro)
+                if (current > maxParallel) {
+                    maxParallel = current;
+                }
+            }
+        }
+        return maxParallel;
     }
+
+    // --- MÉTODOS OBRIGATÓRIOS (BOILERPLATE) ---
 
     @Override
     public void onStructureFormed() {
@@ -80,10 +109,10 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
                 accelerateHatches.add(accelerateHatch);
             }
         }
-        // Garante a inicialização do container de energia para exibição correta
         if (this.energyContainer == null) {
             this.energyContainer = getEnergyContainer();
         }
+        System.out.println(">>> DEBUG: Estrutura Formada. Hatches encontrados: " + accelerateHatches.size());
     }
 
     @Override
@@ -113,75 +142,35 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
 
     @Override
     public void addDisplayText(List<Component> textList) {
-        // Usando o Builder MultiblockDisplayText, igual ao IndustrialSlaughterhouse
         MultiblockDisplayText.builder(textList, isFormed())
                 .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
                 .addCustom(text -> {
                     GTNAMultipleRecipesLogic logic = getRecipeLogic();
-
-                    // 1. Dados de Energia e Tier
                     long storedEnergy = 0;
                     if (this.energyContainer != null) {
                         storedEnergy = this.energyContainer.getEnergyStored();
                     } else if (getEnergyContainer() != null) {
                         storedEnergy = getEnergyContainer().getEnergyStored();
                     }
-
                     int tier = getTier();
                     String tierName = GTValues.VN[tier];
+                    text.add(Component.literal("Max EU/t: ").withStyle(ChatFormatting.GRAY)
+                            .append(Component.literal(String.format(Locale.US, "%,d", storedEnergy)).withStyle(ChatFormatting.WHITE))
+                            .append(Component.literal(" (" + tierName + ")").withStyle(ChatFormatting.GOLD)));
 
-                    // --- FORMATO SOLICITADO ---
-                    // "Max EU/t: energia armazenada ( tier)"
-                    // Exemplo visual: "Max EU/t: 50,000 (HV)"
-                    text.add(Component.literal("Max EU/t: ")
-                            .withStyle(ChatFormatting.GRAY)
-                            .append(Component.literal(String.format(Locale.US, "%,d", storedEnergy))
-                                    .withStyle(ChatFormatting.WHITE))
-                            .append(Component.literal(" (" + tierName + ")")
-                                    .withStyle(ChatFormatting.GOLD)));
-                    // --------------------------
-
-                    // 2. Max Recipe Tier
-                    text.add(Component.literal("Max Recipe Tier: ")
-                            .withStyle(ChatFormatting.GRAY)
-                            .append(Component.literal(tierName)
-                                    .withStyle(ChatFormatting.YELLOW)));
-
-                    // 3. Parallels
                     int parallel = getParallelLimit();
                     if (parallel > 1) {
-                        text.add(Component.literal("Parallels: ")
-                                .withStyle(ChatFormatting.GRAY)
-                                .append(Component.literal(String.valueOf(parallel))
-                                        .withStyle(ChatFormatting.GREEN)));
+                        text.add(Component.literal("Parallels: ").withStyle(ChatFormatting.GRAY)
+                                .append(Component.literal(String.valueOf(parallel)).withStyle(ChatFormatting.GREEN)));
                     }
 
-                    // 4. Speed Boost
-                    double speedMult = getDurationMultiplier();
-                    if (speedMult < 1.0) {
-                        int speedBonus = (int)((1.0 - speedMult) * 100);
-                        text.add(Component.literal("Speed Boost: ")
-                                .withStyle(ChatFormatting.GRAY)
-                                .append(Component.literal("+" + speedBonus + "%")
-                                        .withStyle(ChatFormatting.LIGHT_PURPLE)));
-                    }
-
-                    // 5. Active Threads
-                    text.add(Component.literal("Active Threads: ")
-                            .withStyle(ChatFormatting.GRAY)
-                            .append(Component.literal(logic.getActiveRecipeCount() + " / " + logic.getMaxThreads())
-                                    .withStyle(ChatFormatting.AQUA)));
+                    text.add(Component.literal("Active Threads: ").withStyle(ChatFormatting.GRAY)
+                            .append(Component.literal(logic.getActiveRecipeCount() + " / " + logic.getMaxThreads()).withStyle(ChatFormatting.AQUA)));
 
                     text.add(Component.empty());
-
-                    // 6. Recipe Details
                     List<Component> activeThreadsInfo = logic.getRecipeDisplayInfo();
-                    if (!activeThreadsInfo.isEmpty()) {
-                        text.addAll(activeThreadsInfo);
-                    } else {
-                        text.add(Component.literal("Idle - Waiting for inputs...")
-                                .withStyle(ChatFormatting.DARK_GRAY));
-                    }
+                    if (!activeThreadsInfo.isEmpty()) text.addAll(activeThreadsInfo);
+                    else text.add(Component.literal("Idle - Waiting for inputs...").withStyle(ChatFormatting.DARK_GRAY));
                 });
     }
 

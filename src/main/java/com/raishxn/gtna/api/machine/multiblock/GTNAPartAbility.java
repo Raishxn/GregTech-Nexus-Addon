@@ -5,5 +5,7 @@ import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 public class GTNAPartAbility {
 
     public static final PartAbility THREAD_HATCH = new PartAbility("thread_hatch");
+    public static final PartAbility OVERCLOCK_HATCH = new PartAbility("overclock_hatch");
+    public static final PartAbility ACCELERATE_HATCH = new PartAbility("accelerate_hatch");
 
 }

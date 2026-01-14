@@ -263,5 +263,33 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.thread_hatch.tooltip", "Multiblock Logic Expansion");
         add("gtna.machine.thread_hatch.desc", "Allows the multiblock to process multiple distinct recipes simultaneously.");
         add("gtna.machine.thread_hatch.count", "Threads: +%s");
+        // --- Configurações (GUI) ---
+        // Drift
+        add("config.gtna.option.disableDrift", "Disable Drift");
+
+        // Accelerate Hatch
+        add("config.gtna.option.accelerateHatchMultiplier", "Accelerate Hatch Speed");
+        add("config.gtna.option.accelerateHatchEnergyCost", "Accelerate Hatch Energy Cost");
+
+        // Wireless Steam
+        add("config.gtna.option.wirelessSteamTransferRate", "Wireless Steam Transfer Rate");
+
+        // Mega Solar Boiler
+        add("config.gtna.option.megaSolarSteamPerBlock", "Solar Steam Per Block");
+
+        // Void Miner - Tier 1 (Dense)
+        add("config.gtna.option.voidMinerDenseOutputMult", "Void Miner (Dense) Output");
+        add("config.gtna.option.voidMinerDenseSpeedMult", "Void Miner (Dense) Speed");
+        add("config.gtna.option.voidMinerDenseEnergyMult", "Void Miner (Dense) Energy");
+
+        // Void Miner - Tier 2 (SuperHeated)
+        add("config.gtna.option.voidMinerSuperHeatedOutputMult", "Void Miner (SuperHeated) Output");
+        add("config.gtna.option.voidMinerSuperHeatedSpeedMult", "Void Miner (SuperHeated) Speed");
+        add("config.gtna.option.voidMinerSuperHeatedEnergyMult", "Void Miner (SuperHeated) Energy");
+
+        // Void Miner - Tier 3 (Insanely)
+        add("config.gtna.option.voidMinerInsanelyOutputMult", "Void Miner (Insanely) Output");
+        add("config.gtna.option.voidMinerInsanelySpeedMult", "Void Miner (Insanely) Speed");
+        add("config.gtna.option.voidMinerInsanelyEnergyMult", "Void Miner (Insanely) Energy");
 }
 }

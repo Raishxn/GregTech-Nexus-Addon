@@ -18,6 +18,7 @@ import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AdvancedParallelHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
 import net.minecraft.network.chat.Component;
 
@@ -33,12 +34,14 @@ public class GTNAMachines2 {
     public static final MachineDefinition[] ADVANCED_PARALLEL_HATCH = new MachineDefinition[GTValues.MAX + 1];
     public static final MachineDefinition[] ACCELERATE_HATCHES = new MachineDefinition[GTValues.MAX + 1];
     public static final MachineDefinition[] THREAD_HATCHES = new MachineDefinition[GTValues.MAX + 1];
+    public static final MachineDefinition[] OVERCLOCK_HATCHES = new MachineDefinition[GTValues.MAX + 1];
     public static void init() {
         registerParallelHatch(GTValues.UHV, 1024);
         registerParallelHatch(GTValues.UEV, 4096);
         registerParallelHatch(GTValues.UIV, 16384);
         registerParallelHatch(GTValues.UXV, 65536);
         registerParallelHatch(GTValues.OpV, 262144);
+        registerOverclockHatches();
         registerThreadHatches();
         registerParallelHatch(GTValues.MAX, Integer.MAX_VALUE);
         for (int tier = GTValues.LV; tier <= GTValues.MAX; tier++) {
@@ -46,7 +49,7 @@ public class GTNAMachines2 {
         }
     }
     public static final MultiblockMachineDefinition DURATION_TESTER = REGISTRATE
-            .multiblock("duration_tester", WorkableElectricMultipleRecipesMachine ::new)
+            .multiblock("duration_tester", WorkableElectricMultipleRecipesMachine::new)
             .rotationState(RotationState.NON_Y_AXIS)
             .recipeType(GTRecipeTypes.ASSEMBLER_RECIPES)
             .appearanceBlock(GTBlocks.CASING_STEEL_SOLID)
@@ -100,7 +103,7 @@ public class GTNAMachines2 {
                 .machine(regName, holder -> new AccelerateHatchPartMachine(holder, tier))
                 .tier(tier)
                 .rotationState(RotationState.ALL)
-                .abilities(PartAbility.IMPORT_ITEMS)
+                .abilities(GTNAPartAbility.ACCELERATE_HATCH)
                 .modelProperty(IS_FORMED, false)
                 .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
                 .model(createWorkableTieredHullMachineModel(texturePath)
@@ -127,7 +130,9 @@ public class GTNAMachines2 {
             String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
             String regName = "thread_hatch_" + tierName;
             var texturePath = GTNACORE.id("block/machines/thread_hatch/thread_hatch_mk" + mkLevel + "/overlay_front");
-
+// --- ADICIONE ESTAS LINHAS AQUI ---
+            GTNACORE.LOGGER.info("GTNA DEBUG [Thread Hatch]: Tier " + tierName + " | MK: " + mkLevel);
+            GTNACORE.LOGGER.info("GTNA DEBUG [Texture Path]: " + texturePath.toString());
             THREAD_HATCHES[tier] = REGISTRATE
                     .machine(regName, holder -> new ThreadPartMachine(holder, tier))
                     .tier(tier)
@@ -143,6 +148,37 @@ public class GTNAMachines2 {
                             Component.translatable("gtna.machine.thread_hatch.tooltip"),
                             Component.translatable("gtna.machine.thread_hatch.desc"),
                             Component.translatable("gtna.machine.thread_hatch.count", (tier + 1)),
+                            Component.translatable("gtceu.gui.part_sharing.disabled")
+                    )
+                    .register();
+        }
+    }
+    private static void registerOverclockHatches() {
+        int[] tiers = {
+                GTValues.UV, GTValues.UHV, GTValues.UEV,
+                GTValues.UIV, GTValues.UXV, GTValues.OpV, GTValues.MAX
+        };
+        for (int i = 0; i < tiers.length; i++) {
+            int tier = tiers[i];
+            int mkLevel = i + 1;
+            String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
+            String regName = "overclock_hatch_" + tierName;
+            var texturePath = GTNACORE.id("block/machines/overclock_hatch/overclock_hatch_mk" + mkLevel + "/overlay_front");
+            OVERCLOCK_HATCHES[tier] = REGISTRATE
+                    .machine(regName, holder -> new OverclockHatchPartMachine(holder, tier))
+                    .tier(tier)
+                    .rotationState(RotationState.ALL)
+                    .abilities(GTNAPartAbility.OVERCLOCK_HATCH)
+                    .modelProperty(IS_FORMED, false)
+                    .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
+                    .model(createWorkableTieredHullMachineModel(texturePath)
+                            .andThen((ctx, prov, model) -> {
+                                model.addReplaceableTextures("bottom", "top", "side");
+                            }))
+                    .tooltips(
+                            Component.translatable("gtna.machine.overclock_hatch.tooltip"),
+                            Component.translatable("gtna.machine.overclock_hatch.desc.1"), // "Enables Aggressive Overclocking"
+                            Component.translatable("gtna.machine.overclock_hatch.desc.2"), // "Scales from 50% down to 12.5% duration"
                             Component.translatable("gtceu.gui.part_sharing.disabled")
                     )
                     .register();

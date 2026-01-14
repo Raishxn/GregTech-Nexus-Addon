@@ -6,8 +6,6 @@ import com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.HoverEvent;
 import com.gregtechceu.gtceu.api.machine.feature.IRecipeLogicMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
@@ -18,13 +16,14 @@ import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.ingredient.SizedIngredient;
 import com.raishxn.gtna.api.machine.IThreadModifierMachine;
 import com.raishxn.gtna.api.machine.multiblock.ParallelMachine;
-import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.utils.GTNARecipeUtils;
 import com.raishxn.gtna.utils.ThreadMultiplierStrategy;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
@@ -48,9 +47,11 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
 
     public int getMaxThreads() {
         int threads = 1;
+        // Verifica se a máquina implementa a interface de Thread Modifier (Thread Hatch)
         if (machine instanceof IThreadModifierMachine modifierMachine) {
             threads += modifierMachine.getAdditionalThread();
         }
+        // Verifica modificadores definidos na definição da Multiblock (Hardcoded)
         if (machine instanceof MetaMachine metaMachine &&
                 metaMachine.getDefinition() instanceof MultiblockMachineDefinition mbDefinition) {
             threads *= ThreadMultiplierStrategy.getAdditionalMultiplier(mbDefinition);
@@ -77,10 +78,11 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
 
         boolean visualChanged = false;
 
+        // 1. Atualiza e remove receitas concluídas
         Iterator<GTNARecipeUtils.ActiveRecipe> iterator = activeRecipes.iterator();
         while (iterator.hasNext()) {
             GTNARecipeUtils.ActiveRecipe active = iterator.next();
-
+            // active.update() retorna true se a receita terminou
             if (active.update()) {
                 completeRecipe(active);
                 iterator.remove();
@@ -88,6 +90,7 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
             }
         }
 
+        // 2. Verifica se a máquina está ligada (Soft Mallet / Controller)
         boolean isMachineEnabled = true;
         if (machine instanceof WorkableElectricMultiblockMachine workable) {
             isMachineEnabled = workable.isWorkingEnabled();
@@ -95,88 +98,99 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
 
         if (isMachineEnabled) {
             int maxThreads = getMaxThreads();
-            boolean limitThreadsByRecipe = getMaxParallel() > 1;
 
+            // Só procura novas receitas se houver espaço nas threads
             if (activeRecipes.size() < maxThreads) {
                 List<GTRecipe> possibleRecipes = new ArrayList<>();
+
+                // Busca receitas compatíveis com os inputs atuais
                 var recipeIterator = machine.getRecipeType().searchRecipe((IRecipeCapabilityHolder) machine, recipe -> true);
 
+                // Limite de segurança para não travar o server iterando milhares de receitas
                 int searchLimit = 30;
                 while (recipeIterator.hasNext() && possibleRecipes.size() < searchLimit) {
                     GTRecipe r = recipeIterator.next();
                     if (r != null) possibleRecipes.add(r);
                 }
 
+                // Tenta iniciar receitas encontradas
                 for (GTRecipe validRecipe : possibleRecipes) {
-                    while (activeRecipes.size() < maxThreads) {
-                        if (limitThreadsByRecipe && isRecipeAlreadyActive(validRecipe)) break;
-                        if (!tryStartRecipe(validRecipe)) break;
-
-                        visualChanged = true;
-                        if (limitThreadsByRecipe) break;
-                    }
+                    // Se já atingiu o limite de threads, para de procurar
                     if (activeRecipes.size() >= maxThreads) break;
+
+                    // LÓGICA DE UNICIDADE:
+                    // Impede que a mesma receita rode em duas threads diferentes.
+                    // O Parallel Hatch deve cuidar da quantidade (x4, x16, etc).
+                    // As Threads devem cuidar da variedade (Receita A + Receita B).
+                    if (isRecipeAlreadyActive(validRecipe)) continue;
+
+                    if (tryStartRecipe(validRecipe)) {
+                        visualChanged = true;
+                        // Nota: Não damos 'break' aqui pois queremos ver se cabem mais receitas de OUTROS tipos
+                        // nas threads restantes.
+                    }
                 }
             }
         }
-
-        if (!activeRecipes.isEmpty()) {
-            this.setStatus(Status.WORKING);
-        } else {
-            this.setStatus(Status.IDLE);
-        }
-
-        if (visualChanged) {
-            metaMachine.getHolder().scheduleRenderUpdate();
-        }
-    }
-
-    private boolean isRecipeAlreadyActive(GTRecipe candidate) {
-        for (GTNARecipeUtils.ActiveRecipe active : activeRecipes) {
-            if (active.recipe.getId() != null && candidate.getId() != null) {
-                if (active.recipe.getId().equals(candidate.getId())) return true;
-            } else {
-                if (!active.recipe.outputs.isEmpty() && !candidate.outputs.isEmpty()) {
-                    if (active.recipe.outputs.equals(candidate.outputs)) return true;
-                }
-            }
-        }
-        return false;
     }
 
     private boolean tryStartRecipe(GTRecipe recipe) {
-        if (recipe == null) return false;
-        IRecipeLogicMachine recipeLogicMachine = (IRecipeLogicMachine) machine;
-        GTRecipe modifiedRecipe = recipeLogicMachine.fullModifyRecipe(recipe.copy());
+        // Cast seguro pois RecipeLogic sempre está atrelado a uma IRecipeLogicMachine
+        var logicMachine = (IRecipeLogicMachine) machine;
+
+        // 1. Modifica a receita (Paralelo + Overclock)
+        // Isso chama o getRecipeModifier da WorkableElectricMultipleRecipesMachine.
+        // Graças à correção anterior, o 'modifiedRecipe' terá o paralelo ajustado à quantidade de itens reais.
+        GTRecipe modifiedRecipe = logicMachine.fullModifyRecipe(recipe.copy());
+
+        // Se falhou em modificar (ex: voltagem insuficiente), cancela.
         if (modifiedRecipe == null) return false;
 
-        if (modifiedRecipe.duration < 1) modifiedRecipe.duration = 1;
-
-        if (machine instanceof WorkableElectricMultipleRecipesMachine multiMachine) {
-            double durationMult = multiMachine.getDurationMultiplier();
-            if (durationMult < 1.0) {
-                int newDuration = (int) (modifiedRecipe.duration * durationMult);
-                modifiedRecipe.duration = Math.max(1, newDuration);
-            }
-        }
-
+        // 2. Valida se existem itens para a receita MODIFICADA
+        // Ex: Se o modificador aplicou x4, o matchContents verificará se existem 4x inputs.
         if (!RecipeHelper.matchContents((IRecipeCapabilityHolder) machine, modifiedRecipe).isSuccess()) {
             return false;
         }
 
+        // 3. Consome inputs e inicia
         ActionResult result = RecipeHelper.handleRecipeIO((IRecipeCapabilityHolder) machine, modifiedRecipe, IO.IN, this.getChanceCaches());
 
         if (result.isSuccess()) {
-            GTNARecipeUtils.ActiveRecipe newActive = new GTNARecipeUtils.ActiveRecipe(
+            // Cria a instância da receita ativa
+            GTNARecipeUtils.ActiveRecipe active = new GTNARecipeUtils.ActiveRecipe(
                     modifiedRecipe,
                     modifiedRecipe.duration,
                     this.getChanceCaches()
             );
-            activeRecipes.add(newActive);
+            this.activeRecipes.add(active);
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Verifica se uma receita do mesmo tipo já está rodando em alguma thread.
+     */
+    private boolean isRecipeAlreadyActive(GTRecipe recipe) {
+        if (recipe.id == null) return false; // Segurança para receitas dinâmicas sem ID
+
+        for (GTNARecipeUtils.ActiveRecipe active : activeRecipes) {
+            if (active.recipe.id != null && active.recipe.id.equals(recipe.id)) {
+                return true;
+            }
         }
         return false;
     }
+
+    private void completeRecipe(GTNARecipeUtils.ActiveRecipe active) {
+        if (active != null && active.recipe != null) {
+            // Entrega os outputs
+            RecipeHelper.handleRecipeIO((IRecipeCapabilityHolder) machine, active.recipe, IO.OUT, active.chanceCaches);
+        }
+    }
+
+    // --- Métodos de Display (Visualização no WAILA/TOP/Holo) ---
 
     public List<Component> getRecipeDisplayInfo() {
         List<Component> infoList = new ArrayList<>();
@@ -192,15 +206,16 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
 
             ChatFormatting percentColor = percentage < 33 ? ChatFormatting.RED : (percentage < 66 ? ChatFormatting.YELLOW : ChatFormatting.GREEN);
 
-            MutableComponent line1 = Component.literal("T" + (i + 1) + ": ")
+            MutableComponent line1 = Component.literal("Thread " + (i + 1) + ": ")
                     .withStyle(ChatFormatting.GOLD)
-                    .append(Component.literal(String.format(Locale.US, "%.1fs/%.1fs ", currentSec, maxSec))
+                    .append(Component.literal(String.format(Locale.US, "%.1fs / %.1fs ", currentSec, maxSec))
                             .withStyle(ChatFormatting.WHITE))
                     .append(Component.literal(String.format("(%d%%)", percentage))
                             .withStyle(percentColor));
 
             infoList.add(line1);
 
+            // Lógica para pegar o nome do Output principal para exibição
             String outputName = "Unknown";
             int totalCount = 1;
 
@@ -209,54 +224,37 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
                 if (itemOutputs != null && !itemOutputs.isEmpty()) {
                     Content content = itemOutputs.get(0);
                     Object inner = content.getContent();
+
                     if (inner instanceof ItemStack stack) {
                         outputName = stack.getHoverName().getString();
                         totalCount = stack.getCount();
                     } else if (inner instanceof SizedIngredient sized) {
-                        // Extrai o item de dentro do SizedIngredient
                         ItemStack[] stacks = sized.getItems();
-                        if (stacks.length > 0) {
-                            outputName = stacks[0].getHoverName().getString();
-                        }
+                        if (stacks.length > 0) outputName = stacks[0].getHoverName().getString();
                         totalCount = sized.getAmount();
                     } else if (inner instanceof Ingredient ing) {
-                        // Fallback caso seja um Ingredient vanilla normal
                         ItemStack[] stacks = ing.getItems();
-                        if (stacks.length > 0) {
-                            outputName = stacks[0].getHoverName().getString();
-                        }
-                        totalCount = 1;
-                    } else {
-                        // Último recurso
-                        outputName = inner.toString();
-                        totalCount = 1;
+                        if (stacks.length > 0) outputName = stacks[0].getHoverName().getString();
                     }
                 }
             }
 
+            // Calcula o tempo por item (para mostrar eficiência do paralelo)
             double timePerItem = (maxSec > 0 && totalCount > 0) ? (maxSec / totalCount) : maxSec;
 
-            // Lógica de encurtamento do nome
             String displayName = outputName;
-            int maxLength = 15; // Defina aqui o tamanho máximo de caracteres
-
+            int maxLength = 20; // Aumentei um pouco para caber nomes maiores
             if (displayName.length() > maxLength) {
                 displayName = displayName.substring(0, maxLength) + "...";
             }
 
-// Criação do componente com Hover
-            MutableComponent nameComponent = Component.literal(displayName)
-                    .withStyle(Style.EMPTY
-                            .withColor(ChatFormatting.LIGHT_PURPLE)
-                            // Adiciona o evento de hover mostrando o nome completo (outputName)
-                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(outputName)))
-                    );
-
-// Montagem da linha final
-            MutableComponent line2 = nameComponent
-                    .append(Component.literal(" x " + totalCount + " ")
-                            .withStyle(ChatFormatting.LIGHT_PURPLE))
-                    .append(Component.literal(String.format(Locale.US, "(%.2fs/ea)", timePerItem))
+            MutableComponent line2 = Component.literal(" -> ")
+                    .withStyle(ChatFormatting.DARK_GRAY)
+                    .append(Component.literal(displayName)
+                            .withStyle(Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(outputName)))))
+                    .append(Component.literal(" x" + totalCount)
+                            .withStyle(ChatFormatting.AQUA))
+                    .append(Component.literal(String.format(Locale.US, " (%.2fs/item)", timePerItem))
                             .withStyle(ChatFormatting.GRAY));
 
             infoList.add(line2);
@@ -267,6 +265,9 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
     @Override
     public void saveCustomPersistedData(@NotNull CompoundTag tag, boolean forDrop) {
         super.saveCustomPersistedData(tag, forDrop);
+        // Salva progresso visual apenas.
+        // Nota: Restaurar receitas completas em GTCEu requer serialização complexa.
+        // Em reload, as receitas ativas serão perdidas (mas inputs consumidos).
         tag.putInt("ActiveRecipeCount", activeRecipes.size());
         for (int i = 0; i < activeRecipes.size(); i++) {
             GTNARecipeUtils.ActiveRecipe recipe = activeRecipes.get(i);
@@ -278,12 +279,8 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
     @Override
     public void loadCustomPersistedData(@NotNull CompoundTag tag) {
         super.loadCustomPersistedData(tag);
+        // Limpa receitas ao carregar para evitar inconsistência.
+        // A máquina precisará pegar os inputs e começar de novo.
         activeRecipes.clear();
-    }
-
-    private void completeRecipe(GTNARecipeUtils.ActiveRecipe active) {
-        if (active != null && active.recipe != null) {
-            RecipeHelper.handleRecipeIO((IRecipeCapabilityHolder) machine, active.recipe, IO.OUT, active.chanceCaches);
-        }
     }
 }

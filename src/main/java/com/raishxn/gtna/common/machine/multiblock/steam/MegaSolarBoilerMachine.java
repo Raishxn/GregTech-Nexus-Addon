@@ -142,7 +142,8 @@ public class MegaSolarBoilerMachine extends WorkableMultiblockMachine implements
         return count;
     }
     private GTRecipe createSolarRecipe() {
-        long steamOutLong = (long) sunlit * 500;
+        int steamMultiplier = com.raishxn.gtna.config.ConfigHolder.INSTANCE.megaSolarSteamPerBlock;
+        long steamOutLong = (long) sunlit * steamMultiplier;
         int steamOut = (int) steamOutLong;
         int waterIn = (int) Math.ceil((double) steamOut / ConfigHolder.INSTANCE.machines.largeBoilers.steamPerWater);
         lastSteamOutput = steamOutLong * 20;

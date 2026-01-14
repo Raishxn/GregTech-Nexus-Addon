@@ -165,6 +165,8 @@ dependencies {
     //ae2 and guideme
     modImplementation("curse.maven:applied-energistics-2-223794:7148487")
     modImplementation("curse.maven:guideme-1173950:7127447")
+
+    modImplementation("curse.maven:configuration-444699:5840405")
 }
 
 // See com.example.examplemod.mixin.DummyMixin for information about mixins
