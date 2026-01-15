@@ -6,7 +6,6 @@ import com.gregtechceu.gtceu.api.data.RotationState;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
-import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
@@ -21,12 +20,12 @@ import com.raishxn.gtna.common.machine.multiblock.part.AdvancedParallelHatchPart
 import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Locale;
 
 import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
 import static com.gregtechceu.gtceu.api.pattern.Predicates.*;
-import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.createWorkableTieredHullMachineModel;
 import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
 
 public class GTNAMachines2 {
@@ -48,6 +47,7 @@ public class GTNAMachines2 {
             registerAccelerateHatch(i);
         }
     }
+
     public static final MultiblockMachineDefinition DURATION_TESTER = REGISTRATE
             .multiblock("duration_tester", WorkableElectricMultipleRecipesMachine::new)
             .rotationState(RotationState.NON_Y_AXIS)
@@ -74,11 +74,18 @@ public class GTNAMachines2 {
                     GTCEu.id("block/multiblock/implosion_compressor"))
             .tooltips(Component.literal("§6Machine for testing Duration & Accelerate Hatches"))
             .register();
+
     private static void registerParallelHatch(int tier, int parallelAmount) {
         GTNACORE.LOGGER.info("TENTANDO REGISTRAR PARALLEL HATCH: " + tier);
         String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
         int mkLevel = tier - 8;
         var texturePath = GTNACORE.id("block/machines/parallel_hatch/parallel_hatch_mk" + mkLevel + "/overlay_front");
+
+        // Define as texturas padrão do GTCEu para este tier
+        ResourceLocation hullSide = GTCEu.id("block/casings/voltage/" + tierName + "/side");
+        ResourceLocation hullTop = GTCEu.id("block/casings/voltage/" + tierName + "/top");
+        ResourceLocation hullBottom = GTCEu.id("block/casings/voltage/" + tierName + "/bottom");
+
         ADVANCED_PARALLEL_HATCH[tier] = REGISTRATE
                 .machine("parallel_hatch_" + tierName, holder -> new AdvancedParallelHatchPartMachine(holder, tier, parallelAmount))
                 .tier(tier)
@@ -86,20 +93,33 @@ public class GTNAMachines2 {
                 .abilities(PartAbility.PARALLEL_HATCH)
                 .modelProperty(IS_FORMED, false)
                 .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
-                .model(createWorkableTieredHullMachineModel(texturePath)
-                        .andThen((ctx, prov, model) -> {
-                            model.addReplaceableTextures("bottom", "top", "side");
-                        }))
+                .model((ctx, prov, builder) -> {
+                    String modelName = "block/machines/parallel_hatch/parallel_hatch_" + tierName;
+                    var model = prov.models().withExistingParent(modelName, GTCEu.id("block/machine/template/part/hatch_machine"))
+                            .texture("overlay", texturePath)
+                            // CORREÇÃO: Definir todas as faces e particle
+                            .texture("side", hullSide)
+                            .texture("top", hullTop)
+                            .texture("bottom", hullBottom)
+                            .texture("particle", hullSide);
+                    builder.partialState().setModel(model);
+                })
                 .tooltips(
                         Component.translatable("gtna.machine.parallel_hatch.tooltip"),
                         Component.translatable("gtna.machine.parallel_hatch.tier", parallelAmount == Integer.MAX_VALUE ? "Infinite" : parallelAmount),
                         Component.translatable("gtceu.part_sharing.disabled")).register();
     }
+
     private static void registerAccelerateHatch(int tier) {
         String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
         String regName = "accelerate_hatch_" + tierName;
         int mkLevel = tier;
         var texturePath = GTNACORE.id("block/machines/accelerate_hatch/accelerate_hatch_mk" + mkLevel + "/overlay_front");
+
+        ResourceLocation hullSide = GTCEu.id("block/casings/voltage/" + tierName + "/side");
+        ResourceLocation hullTop = GTCEu.id("block/casings/voltage/" + tierName + "/top");
+        ResourceLocation hullBottom = GTCEu.id("block/casings/voltage/" + tierName + "/bottom");
+
         int minPercentage = Math.max(1, 50 - (2 * (tier - 1)));
         ACCELERATE_HATCHES[tier] = REGISTRATE
                 .machine(regName, holder -> new AccelerateHatchPartMachine(holder, tier))
@@ -108,16 +128,24 @@ public class GTNAMachines2 {
                 .abilities(GTNAPartAbility.ACCELERATE_HATCH)
                 .modelProperty(IS_FORMED, false)
                 .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
-                .model(createWorkableTieredHullMachineModel(texturePath)
-                        .andThen((ctx, prov, model) -> {
-                            model.addReplaceableTextures("bottom", "top", "side");
-                        }))
+                .model((ctx, prov, builder) -> {
+                    String modelName = "block/machines/accelerate_hatch/accelerate_hatch_" + tierName;
+                    var model = prov.models().withExistingParent(modelName, GTCEu.id("block/machine/template/part/hatch_machine"))
+                            .texture("overlay", texturePath)
+                            // CORREÇÃO
+                            .texture("side", hullSide)
+                            .texture("top", hullTop)
+                            .texture("bottom", hullBottom)
+                            .texture("particle", hullSide);
+                    builder.partialState().setModel(model);
+                })
                 .tooltips(
                         Component.translatable("gtna.machine.accelerate_hatch.main_function"),
                         Component.translatable("gtna.machine.accelerate_hatch.range", minPercentage + "%"),
                         Component.translatable("gtna.machine.accelerate_hatch.weakness"),
                         Component.translatable("gtceu.part_sharing.disabled")).register();
     }
+
     private static void registerThreadHatches() {
         int[] tiers = {
                 GTValues.ZPM,
@@ -130,6 +158,11 @@ public class GTNAMachines2 {
             String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
             String regName = "thread_hatch_" + tierName;
             var texturePath = GTNACORE.id("block/machines/thread_hatch/thread_hatch_mk" + mkLevel + "/overlay_front");
+
+            ResourceLocation hullSide = GTCEu.id("block/casings/voltage/" + tierName + "/side");
+            ResourceLocation hullTop = GTCEu.id("block/casings/voltage/" + tierName + "/top");
+            ResourceLocation hullBottom = GTCEu.id("block/casings/voltage/" + tierName + "/bottom");
+
             int threads = (1 << (tier - 6)) - 1;
 
             THREAD_HATCHES[tier] = REGISTRATE
@@ -139,15 +172,23 @@ public class GTNAMachines2 {
                     .abilities(GTNAPartAbility.THREAD_HATCH)
                     .modelProperty(IS_FORMED, false)
                     .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
-                    .model(createWorkableTieredHullMachineModel(texturePath)
-                            .andThen((ctx, prov, model) -> {
-                                model.addReplaceableTextures("bottom", "top", "side");
-                            }))
+                    .model((ctx, prov, builder) -> {
+                        String modelName = "block/machines/thread_hatch/thread_hatch_" + tierName;
+                        var model = prov.models().withExistingParent(modelName, GTCEu.id("block/machine/template/part/hatch_machine"))
+                                .texture("overlay", texturePath)
+                                // CORREÇÃO
+                                .texture("side", hullSide)
+                                .texture("top", hullTop)
+                                .texture("bottom", hullBottom)
+                                .texture("particle", hullSide);
+                        builder.partialState().setModel(model);
+                    })
                     .tooltips(
                             Component.translatable("gtna.machine.thread_hatch.tooltip", threads),
                             Component.translatable("gtceu.part_sharing.disabled")).register();
         }
     }
+
     private static void registerOverclockHatches() {
         int[] tiers = {
                 GTValues.UV, GTValues.UHV, GTValues.UEV,
@@ -159,6 +200,11 @@ public class GTNAMachines2 {
             String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
             String regName = "overclock_hatch_" + tierName;
             var texturePath = GTNACORE.id("block/machines/overclock_hatch/overclock_hatch_mk" + mkLevel + "/overlay_front");
+
+            ResourceLocation hullSide = GTCEu.id("block/casings/voltage/" + tierName + "/side");
+            ResourceLocation hullTop = GTCEu.id("block/casings/voltage/" + tierName + "/top");
+            ResourceLocation hullBottom = GTCEu.id("block/casings/voltage/" + tierName + "/bottom");
+
             double mult = switch (tier) {
                 case GTValues.UV -> 55.0;
                 case GTValues.UHV -> 33.33;
@@ -176,10 +222,17 @@ public class GTNAMachines2 {
                     .abilities(GTNAPartAbility.OVERCLOCK_HATCH)
                     .modelProperty(IS_FORMED, false)
                     .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
-                    .model(createWorkableTieredHullMachineModel(texturePath)
-                            .andThen((ctx, prov, model) -> {
-                                model.addReplaceableTextures("bottom", "top", "side");
-                            }))
+                    .model((ctx, prov, builder) -> {
+                        String modelName = "block/machines/overclock_hatch/overclock_hatch_" + tierName;
+                        var model = prov.models().withExistingParent(modelName, GTCEu.id("block/machine/template/part/hatch_machine"))
+                                .texture("overlay", texturePath)
+                                // CORREÇÃO
+                                .texture("side", hullSide)
+                                .texture("top", hullTop)
+                                .texture("bottom", hullBottom)
+                                .texture("particle", hullSide);
+                        builder.partialState().setModel(model);
+                    })
                     .tooltips(
                             Component.translatable("gtna.machine.overclock_hatch.main_function"),
                             Component.translatable("gtna.machine.overclock_hatch.not_installed"),
