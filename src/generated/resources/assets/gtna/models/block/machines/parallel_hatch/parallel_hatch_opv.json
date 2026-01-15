@@ -1,0 +1,10 @@
+{
+  "parent": "gtceu:block/machine/template/part/hatch_machine",
+  "textures": {
+    "bottom": "gtceu:block/casings/voltage/opv/bottom",
+    "overlay": "gtna:block/machines/parallel_hatch/parallel_hatch_mk5/overlay_front",
+    "particle": "gtceu:block/casings/voltage/opv/side",
+    "side": "gtceu:block/casings/voltage/opv/side",
+    "top": "gtceu:block/casings/voltage/opv/top"
+  }
+}

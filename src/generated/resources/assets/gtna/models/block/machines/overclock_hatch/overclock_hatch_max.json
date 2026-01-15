@@ -1,0 +1,10 @@
+{
+  "parent": "gtceu:block/machine/template/part/hatch_machine",
+  "textures": {
+    "bottom": "gtceu:block/casings/voltage/max/bottom",
+    "overlay": "gtna:block/machines/overclock_hatch/overclock_hatch_mk7/overlay_front",
+    "particle": "gtceu:block/casings/voltage/max/side",
+    "side": "gtceu:block/casings/voltage/max/side",
+    "top": "gtceu:block/casings/voltage/max/top"
+  }
+}
