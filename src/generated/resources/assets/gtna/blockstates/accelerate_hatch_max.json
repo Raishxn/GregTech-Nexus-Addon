@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gtna:block/machine/accelerate_hatch_max",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "gtna:block/machine/accelerate_hatch_max",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtna:block/machine/accelerate_hatch_max"
+    },
+    "facing=south": {
+      "model": "gtna:block/machine/accelerate_hatch_max",
+      "y": 180
+    },
+    "facing=up": {
+      "gtceu:z": 180,
+      "model": "gtna:block/machine/accelerate_hatch_max",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "gtna:block/machine/accelerate_hatch_max",
+      "y": 270
+    }
+  }
+}

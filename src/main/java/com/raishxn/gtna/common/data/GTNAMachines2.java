@@ -1,0 +1,257 @@
+package com.raishxn.gtna.common.data;
+
+import com.gregtechceu.gtceu.GTCEu;
+import com.gregtechceu.gtceu.api.GTValues;
+import com.gregtechceu.gtceu.api.data.RotationState;
+import com.gregtechceu.gtceu.api.machine.MachineDefinition;
+import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
+import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
+import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
+import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
+import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
+import com.gregtechceu.gtceu.api.pattern.Predicates;
+import com.gregtechceu.gtceu.common.data.GTBlocks;
+import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+
+import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
+import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.AdvancedParallelHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
+
+import java.util.Locale;
+
+import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
+import static com.gregtechceu.gtceu.api.pattern.Predicates.*;
+import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
+
+public class GTNAMachines2 {
+
+    public static final MachineDefinition[] ADVANCED_PARALLEL_HATCH = new MachineDefinition[GTValues.MAX + 1];
+    public static final MachineDefinition[] ACCELERATE_HATCHES = new MachineDefinition[GTValues.MAX + 1];
+    public static final MachineDefinition[] THREAD_HATCHES = new MachineDefinition[GTValues.MAX + 1];
+    public static final MachineDefinition[] OVERCLOCK_HATCHES = new MachineDefinition[GTValues.MAX + 1];
+
+    public static void init() {
+        registerParallelHatch(GTValues.UHV, 1024);
+        registerParallelHatch(GTValues.UEV, 4096);
+        registerParallelHatch(GTValues.UIV, 16384);
+        registerParallelHatch(GTValues.UXV, 65536);
+        registerParallelHatch(GTValues.OpV, 262144);
+        registerOverclockHatches();
+        registerThreadHatches();
+        for (int i = GTValues.LV; i <= GTValues.MAX; i++) {
+            registerAccelerateHatch(i);
+        }
+    }
+
+    public static final MultiblockMachineDefinition DURATION_TESTER = REGISTRATE
+            .multiblock("duration_tester", WorkableElectricMultipleRecipesMachine::new)
+            .rotationState(RotationState.NON_Y_AXIS)
+            .recipeType(GTRecipeTypes.ASSEMBLER_RECIPES)
+            .appearanceBlock(GTBlocks.CASING_STEEL_SOLID)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle("CCC", "CCC", "CCC")
+                    .aisle("CCC", "C#C", "CCC")
+                    .aisle("CCC", "CSC", "CCC")
+                    .where('S', controller(blocks(definition.get())))
+                    .where('C', blocks(GTBlocks.CASING_STEEL_SOLID.get())
+                            .or(autoAbilities(definition.getRecipeTypes()))
+                            .or(Predicates.abilities(PartAbility.MAINTENANCE).setExactLimit(1))
+                            .or(Predicates.abilities(PartAbility.PARALLEL_HATCH).setMaxGlobalLimited(1))
+                            .or(Predicates.abilities(GTNAPartAbility.THREAD_HATCH).setMaxGlobalLimited(1))
+                            .or(Predicates.abilities(GTNAPartAbility.OVERCLOCK_HATCH).setMaxGlobalLimited(1))
+                            .or(Predicates.abilities(GTNAPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1))
+                            .or(Predicates.abilities(PartAbility.MUFFLER).setMaxGlobalLimited(1)))
+                    .where('#', Predicates.air())
+                    .build())
+            .workableCasingModel(
+                    GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
+                    GTCEu.id("block/multiblock/implosion_compressor"))
+            .tooltips(Component.literal("§6Machine for testing Duration & Accelerate Hatches"))
+            .register();
+
+    private static void registerParallelHatch(int tier, int parallelAmount) {
+        GTNACORE.LOGGER.info("TENTANDO REGISTRAR PARALLEL HATCH: " + tier);
+        String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
+        int mkLevel = tier - 8;
+        var texturePath = GTNACORE.id("block/machines/parallel_hatch/parallel_hatch_mk" + mkLevel + "/overlay_front");
+
+        // Define as texturas padrão do GTCEu para este tier
+        ResourceLocation hullSide = GTCEu.id("block/casings/voltage/" + tierName + "/side");
+        ResourceLocation hullTop = GTCEu.id("block/casings/voltage/" + tierName + "/top");
+        ResourceLocation hullBottom = GTCEu.id("block/casings/voltage/" + tierName + "/bottom");
+
+        ADVANCED_PARALLEL_HATCH[tier] = REGISTRATE
+                .machine("parallel_hatch_" + tierName,
+                        holder -> new AdvancedParallelHatchPartMachine(holder, tier, parallelAmount))
+                .tier(tier)
+                .rotationState(RotationState.ALL)
+                .abilities(PartAbility.PARALLEL_HATCH)
+                .modelProperty(IS_FORMED, false)
+                .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
+                .model((ctx, prov, builder) -> {
+                    String modelName = "block/machines/parallel_hatch/parallel_hatch_" + tierName;
+                    var model = prov.models()
+                            .withExistingParent(modelName, GTCEu.id("block/machine/template/part/hatch_machine"))
+                            .texture("overlay", texturePath)
+                            // CORREÇÃO: Definir todas as faces e particle
+                            .texture("side", hullSide)
+                            .texture("top", hullTop)
+                            .texture("bottom", hullBottom)
+                            .texture("particle", hullSide);
+                    builder.partialState().setModel(model);
+                })
+                .tooltips(
+                        Component.translatable("gtna.machine.parallel_hatch.tooltip"),
+                        Component.translatable("gtna.machine.parallel_hatch.tier",
+                                parallelAmount == Integer.MAX_VALUE ? "Infinite" : parallelAmount),
+                        Component.translatable("gtceu.part_sharing.disabled"))
+                .register();
+    }
+
+    private static void registerAccelerateHatch(int tier) {
+        String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
+        String regName = "accelerate_hatch_" + tierName;
+        int mkLevel = tier;
+        var texturePath = GTNACORE
+                .id("block/machines/accelerate_hatch/accelerate_hatch_mk" + mkLevel + "/overlay_front");
+
+        ResourceLocation hullSide = GTCEu.id("block/casings/voltage/" + tierName + "/side");
+        ResourceLocation hullTop = GTCEu.id("block/casings/voltage/" + tierName + "/top");
+        ResourceLocation hullBottom = GTCEu.id("block/casings/voltage/" + tierName + "/bottom");
+
+        int minPercentage = Math.max(1, 50 - (2 * (tier - 1)));
+        ACCELERATE_HATCHES[tier] = REGISTRATE
+                .machine(regName, holder -> new AccelerateHatchPartMachine(holder, tier))
+                .tier(tier)
+                .rotationState(RotationState.ALL)
+                .abilities(GTNAPartAbility.ACCELERATE_HATCH)
+                .modelProperty(IS_FORMED, false)
+                .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
+                .model((ctx, prov, builder) -> {
+                    String modelName = "block/machines/accelerate_hatch/accelerate_hatch_" + tierName;
+                    var model = prov.models()
+                            .withExistingParent(modelName, GTCEu.id("block/machine/template/part/hatch_machine"))
+                            .texture("overlay", texturePath)
+                            // CORREÇÃO
+                            .texture("side", hullSide)
+                            .texture("top", hullTop)
+                            .texture("bottom", hullBottom)
+                            .texture("particle", hullSide);
+                    builder.partialState().setModel(model);
+                })
+                .tooltips(
+                        Component.translatable("gtna.machine.accelerate_hatch.main_function"),
+                        Component.translatable("gtna.machine.accelerate_hatch.range", minPercentage + "%"),
+                        Component.translatable("gtna.machine.accelerate_hatch.weakness"),
+                        Component.translatable("gtceu.part_sharing.disabled"))
+                .register();
+    }
+
+    private static void registerThreadHatches() {
+        int[] tiers = {
+                GTValues.ZPM,
+                GTValues.UV, GTValues.UHV, GTValues.UEV,
+                GTValues.UIV, GTValues.UXV, GTValues.OpV, GTValues.MAX
+        };
+        for (int i = 0; i < tiers.length; i++) {
+            int tier = tiers[i];
+            int mkLevel = i + 1;
+            String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
+            String regName = "thread_hatch_" + tierName;
+            var texturePath = GTNACORE.id("block/machines/thread_hatch/thread_hatch_mk" + mkLevel + "/overlay_front");
+
+            ResourceLocation hullSide = GTCEu.id("block/casings/voltage/" + tierName + "/side");
+            ResourceLocation hullTop = GTCEu.id("block/casings/voltage/" + tierName + "/top");
+            ResourceLocation hullBottom = GTCEu.id("block/casings/voltage/" + tierName + "/bottom");
+
+            int threads = (1 << (tier - 6)) - 1;
+
+            THREAD_HATCHES[tier] = REGISTRATE
+                    .machine(regName, holder -> new ThreadPartMachine(holder, tier))
+                    .tier(tier)
+                    .rotationState(RotationState.ALL)
+                    .abilities(GTNAPartAbility.THREAD_HATCH)
+                    .modelProperty(IS_FORMED, false)
+                    .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
+                    .model((ctx, prov, builder) -> {
+                        String modelName = "block/machines/thread_hatch/thread_hatch_" + tierName;
+                        var model = prov.models()
+                                .withExistingParent(modelName, GTCEu.id("block/machine/template/part/hatch_machine"))
+                                .texture("overlay", texturePath)
+                                // CORREÇÃO
+                                .texture("side", hullSide)
+                                .texture("top", hullTop)
+                                .texture("bottom", hullBottom)
+                                .texture("particle", hullSide);
+                        builder.partialState().setModel(model);
+                    })
+                    .tooltips(
+                            Component.translatable("gtna.machine.thread_hatch.tooltip", threads),
+                            Component.translatable("gtceu.part_sharing.disabled"))
+                    .register();
+        }
+    }
+
+    private static void registerOverclockHatches() {
+        int[] tiers = {
+                GTValues.UV, GTValues.UHV, GTValues.UEV,
+                GTValues.UIV, GTValues.UXV, GTValues.OpV, GTValues.MAX
+        };
+        for (int i = 0; i < tiers.length; i++) {
+            int tier = tiers[i];
+            int mkLevel = i + 1;
+            String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
+            String regName = "overclock_hatch_" + tierName;
+            var texturePath = GTNACORE
+                    .id("block/machines/overclock_hatch/overclock_hatch_mk" + mkLevel + "/overlay_front");
+
+            ResourceLocation hullSide = GTCEu.id("block/casings/voltage/" + tierName + "/side");
+            ResourceLocation hullTop = GTCEu.id("block/casings/voltage/" + tierName + "/top");
+            ResourceLocation hullBottom = GTCEu.id("block/casings/voltage/" + tierName + "/bottom");
+
+            double mult = switch (tier) {
+                case GTValues.UV -> 55.0;
+                case GTValues.UHV -> 33.33;
+                case GTValues.UEV -> 25.0;
+                case GTValues.UIV -> 20.0;
+                case GTValues.UXV -> 16.67;
+                case GTValues.OpV -> 14.29;
+                case GTValues.MAX -> 12.5;
+                default -> 100.0;
+            };
+            OVERCLOCK_HATCHES[tier] = REGISTRATE
+                    .machine(regName, holder -> new OverclockHatchPartMachine(holder, tier))
+                    .tier(tier)
+                    .rotationState(RotationState.ALL)
+                    .abilities(GTNAPartAbility.OVERCLOCK_HATCH)
+                    .modelProperty(IS_FORMED, false)
+                    .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
+                    .model((ctx, prov, builder) -> {
+                        String modelName = "block/machines/overclock_hatch/overclock_hatch_" + tierName;
+                        var model = prov.models()
+                                .withExistingParent(modelName, GTCEu.id("block/machine/template/part/hatch_machine"))
+                                .texture("overlay", texturePath)
+                                // CORREÇÃO
+                                .texture("side", hullSide)
+                                .texture("top", hullTop)
+                                .texture("bottom", hullBottom)
+                                .texture("particle", hullSide);
+                        builder.partialState().setModel(model);
+                    })
+                    .tooltips(
+                            Component.translatable("gtna.machine.overclock_hatch.main_function"),
+                            Component.translatable("gtna.machine.overclock_hatch.not_installed"),
+                            Component.translatable("gtna.machine.overclock_hatch.installed", mult + "%"),
+                            Component.translatable("gtna.machine.overclock_hatch.desc"),
+                            Component.translatable("gtceu.part_sharing.disabled"))
+                    .register();
+        }
+    }
+}

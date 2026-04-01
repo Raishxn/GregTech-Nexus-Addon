@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gtna:block/machine/thread_hatch_uiv",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "gtna:block/machine/thread_hatch_uiv",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtna:block/machine/thread_hatch_uiv"
+    },
+    "facing=south": {
+      "model": "gtna:block/machine/thread_hatch_uiv",
+      "y": 180
+    },
+    "facing=up": {
+      "gtceu:z": 180,
+      "model": "gtna:block/machine/thread_hatch_uiv",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "gtna:block/machine/thread_hatch_uiv",
+      "y": 270
+    }
+  }
+}

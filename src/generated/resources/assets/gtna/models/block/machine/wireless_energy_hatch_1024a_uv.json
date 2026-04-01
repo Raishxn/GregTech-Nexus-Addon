@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:block/block",
+  "loader": "gtceu:machine",
+  "machine": "gtna:wireless_energy_hatch_1024a_uv",
+  "variants": {
+    "": {
+      "model": "gtna:block/wireless_energy_hatch_1024a_uv"
+    }
+  }
+}

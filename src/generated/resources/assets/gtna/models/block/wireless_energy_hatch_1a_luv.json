@@ -1,0 +1,10 @@
+{
+  "parent": "gtceu:block/machine/template/part/hatch_machine",
+  "textures": {
+    "bottom": "gtceu:block/casings/voltage/luv/bottom",
+    "overlay": "gtna:block/overlay/machine/overlay_steam_wireless_out",
+    "particle": "gtceu:block/casings/voltage/luv/side",
+    "side": "gtceu:block/casings/voltage/luv/side",
+    "top": "gtceu:block/casings/voltage/luv/top"
+  }
+}

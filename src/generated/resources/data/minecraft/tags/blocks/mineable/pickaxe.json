@@ -1,0 +1,30 @@
+{
+  "values": [
+    "gtna:breel_pipe_casing",
+    "gtna:hyper_pressure_breel_casing",
+    "gtna:steam_compact_pipe_casing",
+    "gtna:vibration_safe_casing",
+    "gtna:bronze_reinforced_wood",
+    "gtna:steel_reinforced_wood",
+    "gtna:iron_reinforced_wood",
+    "gtna:solar_boiling_cell",
+    "gtna:stronze_wrapped_casing",
+    "gtna:hydraulic_assembler_casing",
+    "gtna:breel_plated_casing",
+    "gtna:borosilicate_glass",
+    "gtna:nexus_capacitor_lv",
+    "gtna:nexus_capacitor_mv",
+    "gtna:nexus_capacitor_hv",
+    "gtna:nexus_capacitor_ev",
+    "gtna:nexus_capacitor_iv",
+    "gtna:nexus_capacitor_luv",
+    "gtna:nexus_capacitor_zpm",
+    "gtna:nexus_capacitor_uv",
+    "gtna:nexus_capacitor_uhv",
+    "gtna:nexus_capacitor_uev",
+    "gtna:nexus_capacitor_uiv",
+    "gtna:nexus_capacitor_uxv",
+    "gtna:nexus_capacitor_opv",
+    "gtna:nexus_capacitor_max"
+  ]
+}

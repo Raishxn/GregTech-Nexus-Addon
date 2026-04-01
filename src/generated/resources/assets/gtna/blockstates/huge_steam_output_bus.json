@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gtna:block/machine/huge_steam_output_bus",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "gtna:block/machine/huge_steam_output_bus",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtna:block/machine/huge_steam_output_bus"
+    },
+    "facing=south": {
+      "model": "gtna:block/machine/huge_steam_output_bus",
+      "y": 180
+    },
+    "facing=up": {
+      "gtceu:z": 180,
+      "model": "gtna:block/machine/huge_steam_output_bus",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "gtna:block/machine/huge_steam_output_bus",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,206 @@
+site_name: GregTech Nexus Addon
+site_url: https://raishxn.github.io/GregTech-Nexus-Addon/
+site_description: "The Nexus of Steam & Steel — Documentation for GregTech Nexus Addon"
+site_author: Raishxn
+repo_url: https://github.com/Raishxn/GregTech-Nexus-Addon
+repo_name: Raishxn/GregTech-Nexus-Addon
+copyright: "Copyright &copy; 2024-2026 Raishxn — Licensed under LGPLv3"
+
+theme:
+  name: material
+  language: pt
+  palette:
+    - scheme: slate
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.expand
+    - navigation.indexes
+    - navigation.footer
+    - search.highlight
+    - search.suggest
+    - search.share
+    - content.code.copy
+    - content.tabs.link
+    - toc.follow
+    - announce.dismiss
+  icon:
+    repo: fontawesome/brands/github
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+
+plugins:
+  - search
+  - tags
+  - i18n:
+      docs_structure: suffix
+      default_language: pt
+      languages:
+        - locale: pt
+          default: true
+          name: Português
+          build: true
+        - locale: en
+          name: English
+          build: true
+          nav_translations:
+            🏠 Início: 🏠 Home
+            🎮 Gameplay: 🎮 Gameplay
+            🔧 Desenvolvimento: 🔧 Development
+            📋 Roadmap: 📋 Roadmap
+            Eras: Eras
+            Máquinas: Machines
+            "Hatches & Partes": "Hatches & Parts"
+            Materiais: Materials
+            Sistemas: Systems
+            Dicas: Tips
+            "Era Vapor & Aço": "Steam & Steel Era"
+            "Multiblocos Elétricos": "Electric Multiblocks"
+            "Sem Eletricidade": "No Electricity"
+            "Void Miner": "Void Miner"
+        - locale: es
+          name: Español
+          build: true
+          nav_translations:
+            🏠 Início: 🏠 Inicio
+            🎮 Gameplay: 🎮 Jugabilidad
+            🔧 Desenvolvimento: 🔧 Desarrollo
+            📋 Roadmap: 📋 Hoja de Ruta
+            Eras: Eras
+            Máquinas: Máquinas
+            "Hatches & Partes": "Hatches y Partes"
+            Materiais: Materiales
+            Sistemas: Sistemas
+            Dicas: Consejos
+            "Era Vapor & Aço": "Era Vapor y Acero"
+            "Multiblocos Elétricos": "Multibloques Eléctricos"
+            "Sem Eletricidade": "Sin Electricidad"
+            "Void Miner": "Void Miner"
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - def_list
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Raishxn/GregTech-Nexus-Addon
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/d3qHufwRxb
+  alternate:
+    - name: Português
+      link: /
+      lang: pt
+    - name: English
+      link: /en/
+      lang: en
+    - name: Español
+      link: /es/
+      lang: es
+  status:
+    new: Recém-adicionado
+    wip: Em desenvolvimento
+
+extra_css:
+  - assets/css/custom.css
+
+nav:
+  - 🏠 Início:
+    - index.md
+    - getting-started/installation.md
+    - getting-started/first-steps.md
+    - getting-started/faq.md
+  - 🎮 Gameplay:
+    - gameplay/index.md
+    - Eras:
+      - gameplay/eras/overview.md
+      - gameplay/eras/steam-and-steel.md
+    - Máquinas:
+      - gameplay/machines/index.md
+      - "Era Vapor & Aço":
+        - gameplay/machines/steam/large-steam-furnace.md
+        - gameplay/machines/steam/large-steam-crusher.md
+        - gameplay/machines/steam/large-steam-alloy-smelter.md
+        - gameplay/machines/steam/mega-solar-boiler.md
+        - gameplay/machines/steam/steam-cobbler.md
+        - gameplay/machines/steam/stone-superheater.md
+        - gameplay/machines/steam/steam-manufacturer.md
+        - gameplay/machines/steam/steam-woodcutter.md
+      - "Multiblocos Elétricos":
+        - gameplay/machines/electric/industrial-slaughterhouse.md
+      - "Sem Eletricidade":
+        - gameplay/machines/noenergy/infernal-coke-oven.md
+        - gameplay/machines/noenergy/hyper-pressure-reactor.md
+        - gameplay/machines/noenergy/leap-forward-blast-furnace.md
+      - "Void Miner":
+        - gameplay/machines/steam/void-miner.md
+    - Hatches & Partes:
+      - gameplay/parts/index.md
+      - gameplay/parts/wireless-steam-hatches.md
+      - gameplay/parts/thread-hatch.md
+      - gameplay/parts/accelerate-hatch.md
+      - gameplay/parts/overclock-hatch.md
+      - gameplay/parts/advanced-parallel-hatch.md
+      - gameplay/parts/huge-steam-bus.md
+    - Materiais:
+      - gameplay/materials/index.md
+      - gameplay/materials/alloys.md
+      - gameplay/materials/elements.md
+      - gameplay/materials/fluids.md
+    - Sistemas:
+      - gameplay/systems/wireless-steam-network.md
+      - gameplay/systems/nexus-flux-matrix.md
+      - gameplay/systems/hydraulic-system.md
+    - Dicas:
+      - gameplay/tips/optimization.md
+      - gameplay/tips/ae2-integration.md
+  - 🔧 Desenvolvimento:
+    - development/index.md
+    - development/setup.md
+    - development/architecture.md
+    - API:
+      - development/api/overview.md
+      - development/api/kubejs.md
+      - development/api/machines.md
+      - development/api/materials.md
+    - development/contributing.md
+  - 📋 Roadmap:
+    - roadmap/index.md
