@@ -34,6 +34,7 @@ public class GTNAItems {
 
     public static ItemEntry<com.raishxn.gtna.common.item.NexusLinkerItem> NEXUS_LINKER;
     public static ItemEntry<ComponentItem> QUANTUM_NETWORK_TERMINAL;
+    public static ItemEntry<ComponentItem> NEXUS_STRUCTURE_TERMINAL;
 
     public static void init() {
         STRUCTURE_DETECT = REGISTRATE
@@ -96,6 +97,12 @@ public class GTNAItems {
                 .lang("Quantum Network Terminal")
                 .properties(stack -> stack.stacksTo(1))
                 .onRegister(attach(com.raishxn.gtna.common.item.QuantumNetworkTerminalBehavior.INSTANCE))
+                .register();
+
+        NEXUS_STRUCTURE_TERMINAL = REGISTRATE.item("nexus_structure_terminal", ComponentItem::create)
+                .lang("Nexus Structure Terminal")
+                .properties(stack -> stack.stacksTo(1))
+                .onRegister(attach(com.raishxn.gtna.common.item.terminal.NexusTerminalBehavior.INSTANCE))
                 .register();
     }
 }

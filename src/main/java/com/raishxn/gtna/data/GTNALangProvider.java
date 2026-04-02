@@ -158,6 +158,70 @@ public class GTNALangProvider extends LanguageProvider {
         add("item.gtna.quantum_network_terminal", "Quantum Network Terminal");
         add("gtna.terminal.locate.message", "§a[GTNA Terminal] §fLocated at §eX: %s Y: %s Z: %s §7(%s)");
 
+        // Nexus Structure Terminal
+        add("item.gtna.nexus_structure_terminal", "Nexus Structure Terminal");
+        add("gtna.terminal.nexus.title", "§l§5Nexus Terminal");
+
+        // Toggle settings
+        add("gtna.terminal.nexus.no_hatch", "No Hatch Mode");
+        add("gtna.terminal.nexus.no_hatch.tooltip",
+                "When enabled, skips placing hatches\n(buses, energy I/O, etc.) during auto-build.");
+        add("gtna.terminal.nexus.no_hatch.hint", "§7Bypass hatch placement");
+
+        add("gtna.terminal.nexus.replace_mode", "Replace Mode");
+        add("gtna.terminal.nexus.replace_mode.tooltip",
+                "When enabled, replaces existing tier blocks\n(e.g. coils) with the configured selection.");
+        add("gtna.terminal.nexus.replace_mode.hint", "§7Swap existing blocks with configured tier");
+
+        add("gtna.terminal.nexus.demolition_mode", "Demolition Mode");
+        add("gtna.terminal.nexus.demolition_mode.tooltip",
+                "When enabled, removes blocks that don't\nbelong to the multiblock pattern.");
+        add("gtna.terminal.nexus.demolition_mode.hint", "§7Remove blocks outside the pattern");
+
+        add("gtna.terminal.nexus.use_ae", "Use AE Items");
+        add("gtna.terminal.nexus.use_ae.tooltip",
+                "When enabled, extracts required blocks from\nyour AE2 network via Wireless Terminal.");
+        add("gtna.terminal.nexus.use_ae.hint", "§7Pull materials from ME network");
+
+        add("gtna.terminal.nexus.mirror_build", "Mirror Build");
+        add("gtna.terminal.nexus.mirror_build.tooltip",
+                "When enabled, builds the structure in\nmirrored orientation.");
+        add("gtna.terminal.nexus.mirror_build.hint", "§7Build mirrored structure");
+
+        // Numeric settings
+        add("gtna.terminal.nexus.repetitions", "Repetitions");
+        add("gtna.terminal.nexus.repetitions.tooltip",
+                "Number of structure layer repetitions (0-1000).\nUsed for expandable multiblocks like Distillation Tower.");
+        add("gtna.terminal.nexus.repetitions.hint", "§7Scroll wheel or type (0-1000)");
+
+        add("gtna.terminal.nexus.module_build", "Module Build");
+        add("gtna.terminal.nexus.module_build.tooltip",
+                "Module build count (0-100).\nSets how many module layers to construct.");
+        add("gtna.terminal.nexus.module_build.hint", "§7Scroll wheel or type (0-100)");
+
+        // Nexus Structure Terminal Tooltips
+        add("item.gtna.nexus_structure_terminal.tooltip.use", "§dRight Click§7: Open Settings");
+        add("item.gtna.nexus_structure_terminal.tooltip.shift_use",
+                "§dShift + Right Click§7 on Controller: Build Structure");
+        add("item.gtna.nexus_structure_terminal.tooltip.replace_mode_active", "§5⚠ Replace Mode Active");
+        add("item.gtna.nexus_structure_terminal.tooltip.config", "Open block selection configuration");
+
+        // Block Config tab — category labels with purple accent
+        add("gtna.terminal.config.title", "Block Configuration");
+        add("gtna.terminal.config.coils", "§dCoils");
+        add("gtna.terminal.config.machine_casing", "§dMachine Casings");
+        add("gtna.terminal.config.muffler", "§dMuffler Hatches");
+        add("gtna.terminal.config.rotor_holder", "§dRotor Holders");
+        add("gtna.terminal.config.wireless_capacitor", "§dWireless Capacitors");
+
+        // AE2 Network linking
+        add("gtna.terminal.nexus.ae2.linked", "§a[GTNA] §fLinked to ME Wireless Access Point!");
+        add("gtna.terminal.nexus.ae2.tooltip.linked", "§a⚡ ME Network linked at [%s, %s, %s]");
+        add("gtna.terminal.nexus.ae2.tooltip.not_linked", "§c✖ ME Network: Not connected");
+        add("gtna.terminal.nexus.ae2.tooltip.how_to_link", "§8Right-click a Wireless Access Point to link");
+        add("gtna.terminal.nexus.ae2.tooltip.in_range", "§a✔ Wireless: In Range");
+        add("gtna.terminal.nexus.ae2.tooltip.out_of_range", "§c✖ Wireless: Out of Range");
+
         // Nexus Flux Matrix
         add("block.gtna.nexus_flux_matrix", "Nexus Flux Matrix");
         add("gtna.machine.nexus_flux_matrix.tooltip_1", "Central hub for the Nexus Energy Network");

@@ -42,13 +42,67 @@ Preenche o interior do multibloco. Cada bloco adiciona capacidade:
 | OpV | 250P EU | Omniscient |
 | MAX | 5E EU | Omni |
 
+### Fórmulas de Cálculo
+
+#### Capacidade Total
+```
+totalCapacity = Σ (capacitorCapacity[tier] × count) / 2
+```
+
+A escalabilidade é **quadrática**: quanto mais blocos de capacitor, maior o bônus. A divisão por 2 impede crescimento excessivo.
+
+#### Eficiência por Tier
+```
+efficiency = 0.85 + (tier × 0.01071)
+```
+
+| Tier | Eficiência |
+|------|:---:|
+| LV | 85% |
+| MV | 86.1% |
+| HV | 87.1% |
+| EV | 88.2% |
+| IV | 89.3% |
+| LuV | 90.4% |
+| ZPM | 91.4% |
+| UV | 92.5% |
+| UHV | 93.6% |
+| UEV | 94.6% |
+| UIV | 95.7% |
+| UXV | 96.8% |
+| OpV | 97.9% |
+| MAX | 100% |
+
+#### Limite de Transferência
+O limite de transferência por tick é:
+```
+transferLimit = min(totalCapacity / 20, MAX_TRANSFER)
+MAX_TRANSFER = 500 ZEU/t (Zetta EU por tick)
+```
+
 ### Wireless Energy Hatch
 
-Alimenta multiblocos sacando da rede wireless. 11 variantes de amperagem (1A→1048576A).
+Alimenta multiblocos sacando da rede wireless. 11 variantes de amperagem:
+
+| Variante | Amperagem |
+|:---:|:---:|
+| 1A | 1 |
+| 4A | 4 |
+| 16A | 16 |
+| 64A | 64 |
+| 256A | 256 |
+| 1,024A | 1,024 |
+| 4,096A | 4,096 |
+| 16,384A | 16,384 |
+| 65,536A | 65,536 |
+| 262,144A | 262,144 |
+| 1,048,576A | 1,048,576 |
+
+Cada variante está disponível em todos os tiers (LV → MAX).
 
 ### Wireless Dynamo Hatch
 
-Recebe de geradores e deposita na rede wireless.
+Recebe de geradores e deposita na rede wireless. Mesmas variantes de amperagem e tier.
 
 ### Wireless Covers (Singleblocks)
 
@@ -61,7 +115,12 @@ Vincula componentes à rede via Shift+Click no Controller → Click no Hatch.
 
 ### Quantum Network Terminal (GUI)
 
-Monitor portátil com energia atual, taxa de I/O, lista de conexões e tempo restante.
+Monitor portátil com:
+- Energia atual armazenada
+- Taxa de Input/Output (EU/t)
+- Lista de conexões ativas
+- Tempo restante estimado
+- Botão "Localizar" para cada conexão
 
 ## Sistema de Segurança
 
@@ -72,6 +131,30 @@ Monitor portátil com energia atual, taxa de I/O, lista de conexões e tempo res
 | ≤25% | ⚠️ Aviso urgente |
 | ≤10% | ⛔ **Safe Mode**: corta output, continua aceitando input |
 | ≥25% | 🔋 Safe Mode desativado, output restaurado |
+
+## Fluxo de Energia
+
+```mermaid
+graph TD
+    A[Gerador / Solar] -->|EU| B(Wireless Dynamo Hatch)
+    B -->|Deposita| C{Nexus Flux Matrix}
+    C -->|Distribui| D(Wireless Energy Hatch)
+    D -->|EU| E[Máquinas Elétricas]
+    F[Nexus Linker] -.->|Vincula| B
+    F -.->|Vincula| D
+    G[Quantum Terminal] -.->|Monitora| C
+```
+
+## Exemplo Prático
+
+1. Construa o **Nexus Flux Matrix** (3×7×7 mínimo)
+2. Preencha o interior com **Nexus Capacitors** do tier desejado
+3. Use o **Nexus Linker**: Shift+Click no Controller
+4. Coloque **Wireless Dynamo Hatches** nos seus geradores
+5. Use o Linker para vincular cada Dynamo ao Controller
+6. Coloque **Wireless Energy Hatches** nas máquinas consumidoras
+7. Use o Linker para vincular cada Energy Hatch
+8. Monitore via **Quantum Network Terminal**
 
 ## PRD Completo
 
