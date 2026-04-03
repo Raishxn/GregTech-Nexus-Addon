@@ -1,0 +1,1227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/development/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/development/architecture/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/architecture/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/development/contributing/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/contributing/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/contributing/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/contributing/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/development/setup/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/setup/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/setup/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/setup/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/development/api/kubejs/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/api/kubejs/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/kubejs/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/kubejs/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/development/api/machines/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/api/machines/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/machines/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/machines/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/development/api/materials/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/api/materials/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/materials/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/materials/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/development/api/overview/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/api/overview/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/overview/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/overview/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/eras/overview/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/eras/overview/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/eras/overview/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/eras/overview/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/eras/steam-and-steel/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/eras/steam-and-steel/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/eras/steam-and-steel/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/eras/steam-and-steel/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/electric/industrial-slaughterhouse/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/electric/industrial-slaughterhouse/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/electric/industrial-slaughterhouse/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/electric/industrial-slaughterhouse/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/noenergy/hyper-pressure-reactor/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/noenergy/hyper-pressure-reactor/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/noenergy/hyper-pressure-reactor/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/noenergy/hyper-pressure-reactor/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/noenergy/infernal-coke-oven/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/noenergy/infernal-coke-oven/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/noenergy/infernal-coke-oven/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/noenergy/infernal-coke-oven/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/noenergy/leap-forward-blast-furnace/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/noenergy/leap-forward-blast-furnace/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/noenergy/leap-forward-blast-furnace/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/noenergy/leap-forward-blast-furnace/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/large-steam-alloy-smelter/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/large-steam-alloy-smelter/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/large-steam-alloy-smelter/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/large-steam-alloy-smelter/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/large-steam-crusher/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/large-steam-crusher/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/large-steam-crusher/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/large-steam-crusher/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/large-steam-furnace/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/large-steam-furnace/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/large-steam-furnace/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/large-steam-furnace/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/mega-solar-boiler/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/mega-solar-boiler/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/mega-solar-boiler/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/mega-solar-boiler/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/steam-cobbler/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/steam-cobbler/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/steam-cobbler/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/steam-cobbler/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/steam-manufacturer/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/steam-manufacturer/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/steam-manufacturer/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/steam-manufacturer/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/steam-woodcutter/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/steam-woodcutter/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/steam-woodcutter/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/steam-woodcutter/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/stone-superheater/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/stone-superheater/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/stone-superheater/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/stone-superheater/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/void-miner/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/void-miner/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/void-miner/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/void-miner/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/alloys/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/alloys/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/alloys/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/alloys/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/elements/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/elements/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/elements/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/elements/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/fluids/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/fluids/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/fluids/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/fluids/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/accelerate-hatch/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/accelerate-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/accelerate-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/accelerate-hatch/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/advanced-parallel-hatch/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/advanced-parallel-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/advanced-parallel-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/advanced-parallel-hatch/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/huge-steam-bus/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/huge-steam-bus/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/huge-steam-bus/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/huge-steam-bus/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/overclock-hatch/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/overclock-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/overclock-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/overclock-hatch/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/thread-hatch/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/thread-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/thread-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/thread-hatch/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/wireless-steam-hatches/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/wireless-steam-hatches/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/wireless-steam-hatches/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/wireless-steam-hatches/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/systems/hydraulic-system/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/systems/hydraulic-system/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/systems/hydraulic-system/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/systems/hydraulic-system/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/systems/nexus-flux-matrix/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/systems/nexus-flux-matrix/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/systems/nexus-flux-matrix/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/systems/nexus-flux-matrix/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/systems/wireless-steam-network/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/systems/wireless-steam-network/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/systems/wireless-steam-network/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/systems/wireless-steam-network/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/tips/ae2-integration/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/tips/ae2-integration/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/tips/ae2-integration/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/tips/ae2-integration/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/tips/optimization/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/tips/optimization/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/tips/optimization/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/tips/optimization/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/getting-started/faq/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/getting-started/faq/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/getting-started/faq/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/getting-started/faq/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/getting-started/first-steps/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/getting-started/first-steps/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/getting-started/first-steps/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/getting-started/first-steps/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/getting-started/installation/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/getting-started/installation/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/getting-started/installation/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/getting-started/installation/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_01_game_design/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_01_game_design/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_01_game_design/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_01_game_design/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_02_developer/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_02_developer/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_02_developer/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_02_developer/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_03_wiki_site/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_03_wiki_site/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_03_wiki_site/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_03_wiki_site/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_04_kubejs_compat/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_04_kubejs_compat/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_04_kubejs_compat/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_04_kubejs_compat/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_05_nexus_flux_matrix/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_05_nexus_flux_matrix/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_05_nexus_flux_matrix/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_05_nexus_flux_matrix/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/roadmap/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/roadmap/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/roadmap/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/roadmap/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/development/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/development/architecture/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/architecture/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/development/contributing/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/contributing/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/contributing/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/contributing/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/development/setup/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/setup/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/setup/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/setup/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/kubejs/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/kubejs/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/kubejs/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/api/kubejs/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/machines/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/machines/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/machines/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/api/machines/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/materials/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/materials/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/materials/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/api/materials/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/overview/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/overview/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/overview/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/api/overview/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/eras/overview/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/eras/overview/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/eras/overview/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/eras/overview/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/eras/steam-and-steel/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/eras/steam-and-steel/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/eras/steam-and-steel/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/eras/steam-and-steel/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/electric/industrial-slaughterhouse/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/electric/industrial-slaughterhouse/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/electric/industrial-slaughterhouse/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/electric/industrial-slaughterhouse/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/noenergy/hyper-pressure-reactor/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/noenergy/hyper-pressure-reactor/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/noenergy/hyper-pressure-reactor/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/noenergy/hyper-pressure-reactor/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/noenergy/infernal-coke-oven/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/noenergy/infernal-coke-oven/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/noenergy/infernal-coke-oven/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/noenergy/infernal-coke-oven/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/noenergy/leap-forward-blast-furnace/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/noenergy/leap-forward-blast-furnace/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/noenergy/leap-forward-blast-furnace/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/noenergy/leap-forward-blast-furnace/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/large-steam-alloy-smelter/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/large-steam-alloy-smelter/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/large-steam-alloy-smelter/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/large-steam-alloy-smelter/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/large-steam-crusher/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/large-steam-crusher/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/large-steam-crusher/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/large-steam-crusher/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/large-steam-furnace/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/large-steam-furnace/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/large-steam-furnace/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/large-steam-furnace/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/mega-solar-boiler/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/mega-solar-boiler/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/mega-solar-boiler/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/mega-solar-boiler/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/steam-cobbler/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/steam-cobbler/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/steam-cobbler/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/steam-cobbler/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/steam-manufacturer/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/steam-manufacturer/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/steam-manufacturer/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/steam-manufacturer/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/steam-woodcutter/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/steam-woodcutter/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/steam-woodcutter/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/steam-woodcutter/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/stone-superheater/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/stone-superheater/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/stone-superheater/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/stone-superheater/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/void-miner/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/void-miner/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/void-miner/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/void-miner/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/alloys/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/alloys/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/alloys/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/alloys/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/elements/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/elements/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/elements/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/elements/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/fluids/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/fluids/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/fluids/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/fluids/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/accelerate-hatch/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/accelerate-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/accelerate-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/accelerate-hatch/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/advanced-parallel-hatch/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/advanced-parallel-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/advanced-parallel-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/advanced-parallel-hatch/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/huge-steam-bus/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/huge-steam-bus/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/huge-steam-bus/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/huge-steam-bus/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/overclock-hatch/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/overclock-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/overclock-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/overclock-hatch/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/thread-hatch/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/thread-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/thread-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/thread-hatch/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/wireless-steam-hatches/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/wireless-steam-hatches/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/wireless-steam-hatches/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/wireless-steam-hatches/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/systems/hydraulic-system/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/systems/hydraulic-system/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/systems/hydraulic-system/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/systems/hydraulic-system/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/systems/nexus-flux-matrix/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/systems/nexus-flux-matrix/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/systems/nexus-flux-matrix/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/systems/nexus-flux-matrix/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/systems/wireless-steam-network/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/systems/wireless-steam-network/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/systems/wireless-steam-network/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/systems/wireless-steam-network/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/tips/ae2-integration/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/tips/ae2-integration/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/tips/ae2-integration/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/tips/ae2-integration/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/tips/optimization/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/tips/optimization/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/tips/optimization/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/tips/optimization/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/getting-started/faq/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/getting-started/faq/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/getting-started/faq/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/getting-started/faq/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/getting-started/first-steps/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/getting-started/first-steps/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/getting-started/first-steps/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/getting-started/first-steps/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/getting-started/installation/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/getting-started/installation/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/getting-started/installation/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/getting-started/installation/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_01_game_design/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_01_game_design/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_01_game_design/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_01_game_design/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_02_developer/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_02_developer/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_02_developer/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_02_developer/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_03_wiki_site/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_03_wiki_site/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_03_wiki_site/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_03_wiki_site/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_04_kubejs_compat/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_04_kubejs_compat/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_04_kubejs_compat/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_04_kubejs_compat/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_05_nexus_flux_matrix/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_05_nexus_flux_matrix/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_05_nexus_flux_matrix/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_05_nexus_flux_matrix/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/en/roadmap/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/roadmap/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/roadmap/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/roadmap/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/development/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/development/architecture/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/architecture/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/development/contributing/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/contributing/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/contributing/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/contributing/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/development/setup/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/setup/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/setup/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/setup/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/kubejs/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/kubejs/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/kubejs/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/api/kubejs/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/machines/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/machines/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/machines/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/api/machines/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/materials/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/materials/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/materials/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/api/materials/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/overview/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/development/api/overview/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/development/api/overview/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/development/api/overview/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/eras/overview/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/eras/overview/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/eras/overview/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/eras/overview/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/eras/steam-and-steel/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/eras/steam-and-steel/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/eras/steam-and-steel/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/eras/steam-and-steel/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/electric/industrial-slaughterhouse/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/electric/industrial-slaughterhouse/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/electric/industrial-slaughterhouse/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/electric/industrial-slaughterhouse/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/noenergy/hyper-pressure-reactor/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/noenergy/hyper-pressure-reactor/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/noenergy/hyper-pressure-reactor/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/noenergy/hyper-pressure-reactor/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/noenergy/infernal-coke-oven/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/noenergy/infernal-coke-oven/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/noenergy/infernal-coke-oven/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/noenergy/infernal-coke-oven/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/noenergy/leap-forward-blast-furnace/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/noenergy/leap-forward-blast-furnace/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/noenergy/leap-forward-blast-furnace/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/noenergy/leap-forward-blast-furnace/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/large-steam-alloy-smelter/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/large-steam-alloy-smelter/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/large-steam-alloy-smelter/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/large-steam-alloy-smelter/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/large-steam-crusher/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/large-steam-crusher/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/large-steam-crusher/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/large-steam-crusher/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/large-steam-furnace/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/large-steam-furnace/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/large-steam-furnace/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/large-steam-furnace/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/mega-solar-boiler/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/mega-solar-boiler/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/mega-solar-boiler/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/mega-solar-boiler/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/steam-cobbler/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/steam-cobbler/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/steam-cobbler/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/steam-cobbler/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/steam-manufacturer/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/steam-manufacturer/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/steam-manufacturer/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/steam-manufacturer/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/steam-woodcutter/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/steam-woodcutter/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/steam-woodcutter/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/steam-woodcutter/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/stone-superheater/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/stone-superheater/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/stone-superheater/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/stone-superheater/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/void-miner/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/machines/steam/void-miner/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/machines/steam/void-miner/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/machines/steam/void-miner/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/alloys/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/alloys/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/alloys/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/alloys/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/elements/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/elements/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/elements/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/elements/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/fluids/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/materials/fluids/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/materials/fluids/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/materials/fluids/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/accelerate-hatch/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/accelerate-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/accelerate-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/accelerate-hatch/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/advanced-parallel-hatch/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/advanced-parallel-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/advanced-parallel-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/advanced-parallel-hatch/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/huge-steam-bus/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/huge-steam-bus/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/huge-steam-bus/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/huge-steam-bus/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/overclock-hatch/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/overclock-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/overclock-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/overclock-hatch/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/thread-hatch/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/thread-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/thread-hatch/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/thread-hatch/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/wireless-steam-hatches/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/parts/wireless-steam-hatches/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/parts/wireless-steam-hatches/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/parts/wireless-steam-hatches/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/systems/hydraulic-system/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/systems/hydraulic-system/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/systems/hydraulic-system/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/systems/hydraulic-system/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/systems/nexus-flux-matrix/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/systems/nexus-flux-matrix/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/systems/nexus-flux-matrix/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/systems/nexus-flux-matrix/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/systems/wireless-steam-network/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/systems/wireless-steam-network/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/systems/wireless-steam-network/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/systems/wireless-steam-network/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/tips/ae2-integration/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/tips/ae2-integration/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/tips/ae2-integration/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/tips/ae2-integration/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/tips/optimization/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/gameplay/tips/optimization/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/gameplay/tips/optimization/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/gameplay/tips/optimization/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/getting-started/faq/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/getting-started/faq/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/getting-started/faq/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/getting-started/faq/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/getting-started/first-steps/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/getting-started/first-steps/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/getting-started/first-steps/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/getting-started/first-steps/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/getting-started/installation/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/getting-started/installation/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/getting-started/installation/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/getting-started/installation/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_01_game_design/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_01_game_design/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_01_game_design/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_01_game_design/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_02_developer/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_02_developer/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_02_developer/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_02_developer/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_03_wiki_site/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_03_wiki_site/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_03_wiki_site/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_03_wiki_site/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_04_kubejs_compat/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_04_kubejs_compat/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_04_kubejs_compat/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_04_kubejs_compat/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_05_nexus_flux_matrix/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/prd/prd_05_nexus_flux_matrix/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/prd/prd_05_nexus_flux_matrix/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/prd/prd_05_nexus_flux_matrix/"/>
+    </url>
+    <url>
+        <loc>https://raishxn.github.io/GregTech-Nexus-Addon/es/roadmap/</loc>
+        <lastmod>2026-04-03</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/roadmap/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/roadmap/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://raishxn.github.io/GregTech-Nexus-Addon/roadmap/"/>
+    </url>
+</urlset>
