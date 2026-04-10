@@ -123,9 +123,13 @@ public final class DiscordNitroArmorHandler {
         }
     }
 
-    private static boolean isWearingFullSet(Player player) {
+    public static boolean isWearingFullSet(Player player) {
         return isWearingHelmet(player) && isWearingChestplate(player) && isWearingLeggings(player) &&
                 isWearingBoots(player);
+    }
+
+    public static boolean shouldRenderWings(Player player) {
+        return isWearingFullSet(player) && (player.getAbilities().flying || player.isFallFlying());
     }
 
     private static boolean isWearingHelmet(Player player) {
