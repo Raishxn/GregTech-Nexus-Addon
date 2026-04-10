@@ -19,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AdvancedParallelHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
@@ -36,8 +37,13 @@ public class GTNAMachines2 {
     public static final MachineDefinition[] ACCELERATE_HATCHES = new MachineDefinition[GTValues.MAX + 1];
     public static final MachineDefinition[] THREAD_HATCHES = new MachineDefinition[GTValues.MAX + 1];
     public static final MachineDefinition[] OVERCLOCK_HATCHES = new MachineDefinition[GTValues.MAX + 1];
+    public static MachineDefinition ME_MINI_PATTERN_BUFFER;
+    public static MachineDefinition ME_PATTERN_BUFFER;
+    public static MachineDefinition ME_ADVANCED_PATTERN_BUFFER;
+    public static MachineDefinition ME_ULTIMATE_PATTERN_BUFFER;
 
     public static void init() {
+        registerPatternBuffers();
         registerParallelHatch(GTValues.UHV, 1024);
         registerParallelHatch(GTValues.UEV, 4096);
         registerParallelHatch(GTValues.UIV, 16384);
@@ -75,6 +81,31 @@ public class GTNAMachines2 {
                     GTCEu.id("block/multiblock/implosion_compressor"))
             .tooltips(Component.literal("§6Machine for testing Duration & Accelerate Hatches"))
             .register();
+
+    private static void registerPatternBuffers() {
+        ME_MINI_PATTERN_BUFFER = registerPatternBuffer("me_mini_pattern_buffer", GTValues.LuV, 9);
+        ME_PATTERN_BUFFER = registerPatternBuffer("me_pattern_buffer", GTValues.ZPM, 21);
+        ME_ADVANCED_PATTERN_BUFFER = registerPatternBuffer("me_advanced_pattern_buffer", GTValues.UV, 32);
+        ME_ULTIMATE_PATTERN_BUFFER = registerPatternBuffer("me_ultimate_pattern_buffer", GTValues.UHV, 72);
+    }
+
+    private static MachineDefinition registerPatternBuffer(String id, int tier, int slotCount) {
+        return REGISTRATE.machine(id, holder -> new GTNAMEPatternBufferPartMachine(holder, slotCount))
+                .tier(tier)
+                .rotationState(RotationState.ALL)
+                .abilities(
+                        PartAbility.IMPORT_ITEMS,
+                        PartAbility.IMPORT_FLUIDS,
+                        PartAbility.EXPORT_FLUIDS,
+                        PartAbility.EXPORT_ITEMS)
+                .colorOverlayTieredHullModel(GTCEu.id("block/overlay/appeng/me_buffer_hatch"))
+                .tooltips(
+                        Component.translatable("gtna.machine.pattern_buffer.tooltip"),
+                        Component.translatable("gtna.machine.pattern_buffer.slots", slotCount),
+                        Component.translatable("gtna.machine.pattern_buffer.break_persist"),
+                        Component.translatable("gtna.machine.pattern_buffer.specialization_pending"))
+                .register();
+    }
 
     private static void registerParallelHatch(int tier, int parallelAmount) {
         GTNACORE.LOGGER.info("TENTANDO REGISTRAR PARALLEL HATCH: " + tier);

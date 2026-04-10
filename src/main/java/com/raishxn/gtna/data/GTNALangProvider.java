@@ -119,6 +119,15 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.parallel_hatch_max", "MAX Parallel Control Hatch");
         add("gtna.machine.parallel_hatch.tooltip", "Enables huge parallel processing for multiblocks");
         add("gtna.machine.parallel_hatch.tier", "Max Parallel: %s");
+        add("block.gtna.me_mini_pattern_buffer", "ME Mini Pattern Buffer");
+        add("block.gtna.me_pattern_buffer", "ME Pattern Buffer");
+        add("block.gtna.me_advanced_pattern_buffer", "ME Advanced Pattern Buffer");
+        add("block.gtna.me_ultimate_pattern_buffer", "ME Ultimate Pattern Buffer");
+        add("gtna.machine.pattern_buffer.tooltip", "AE2 pattern buffer with GTNA per-slot specialization scaffolding");
+        add("gtna.machine.pattern_buffer.slots", "Pattern Slots: %s");
+        add("gtna.machine.pattern_buffer.break_persist", "Stored patterns and slot data are preserved on block drop");
+        add("gtna.machine.pattern_buffer.specialization_pending",
+                "Slot specialization UI and mode-switch automation are planned in later phases");
 
         // --- Wireless Energy/Dynamo Hatches ---
         add("gtna.machine.wireless_energy_hatch.tooltip", "Pulls energy wirelessly from the Nexus Network");
