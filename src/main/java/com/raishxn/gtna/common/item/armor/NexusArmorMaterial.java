@@ -11,11 +11,11 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 import com.raishxn.gtna.common.data.GTNAMaterials;
 
-public final class DiscordNitroArmorMaterial implements ArmorMaterial {
+public final class NexusArmorMaterial implements ArmorMaterial {
 
-    public static final DiscordNitroArmorMaterial INSTANCE = new DiscordNitroArmorMaterial();
+    public static final NexusArmorMaterial INSTANCE = new NexusArmorMaterial();
 
-    private DiscordNitroArmorMaterial() {}
+    private NexusArmorMaterial() {}
 
     @Override
     public int getDurabilityForType(ArmorItem.Type type) {
@@ -54,7 +54,7 @@ public final class DiscordNitroArmorMaterial implements ArmorMaterial {
 
     @Override
     public String getName() {
-        return "discord_nitro";
+        return "nexus";
     }
 
     @Override

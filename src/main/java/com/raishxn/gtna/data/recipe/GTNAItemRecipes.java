@@ -312,45 +312,45 @@ public class GTNAItemRecipes {
                 .EUt(7680)
                 .save(provider);
 
-        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("discord_nitro_helmet")
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("nexus_helmet")
                 .inputItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Echoite), 5)
                 .inputItems(GTItems.SENSOR_IV.get())
                 .inputItems(GTItems.FIELD_GENERATOR_IV.get())
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(144))
-                .outputItems(GTNAItems.DISCORD_NITRO_HELMET.get())
+                .outputItems(GTNAItems.NEXUS_HELMET.get())
                 .duration(300)
                 .EUt(1920)
                 .save(provider);
 
-        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("discord_nitro_chestplate")
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("nexus_chestplate")
                 .inputItems(ChemicalHelper.get(TagPrefix.plateDouble, GTNAMaterials.Echoite), 4)
                 .inputItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Echoite), 4)
                 .inputItems(GTItems.FIELD_GENERATOR_LuV.get(), 2)
                 .inputItems(GTItems.EMITTER_LuV.get(), 2)
                 .inputItems(GTItems.ENERGY_LAPOTRONIC_ORB_CLUSTER.get())
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(288))
-                .outputItems(GTNAItems.DISCORD_NITRO_CHESTPLATE.get())
+                .outputItems(GTNAItems.NEXUS_CHESTPLATE.get())
                 .duration(500)
                 .EUt(7680)
                 .save(provider);
 
-        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("discord_nitro_leggings")
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("nexus_leggings")
                 .inputItems(ChemicalHelper.get(TagPrefix.plateDouble, GTNAMaterials.Echoite), 3)
                 .inputItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Echoite), 4)
                 .inputItems(GTItems.ELECTRIC_MOTOR_LuV.get(), 2)
                 .inputItems(GTItems.CONVEYOR_MODULE_LuV.get(), 2)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(216))
-                .outputItems(GTNAItems.DISCORD_NITRO_LEGGINGS.get())
+                .outputItems(GTNAItems.NEXUS_LEGGINGS.get())
                 .duration(420)
                 .EUt(7680)
                 .save(provider);
 
-        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("discord_nitro_boots")
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("nexus_boots")
                 .inputItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Echoite), 4)
                 .inputItems(GTItems.ELECTRIC_PISTON_IV.get(), 2)
                 .inputItems(GTItems.ELECTRIC_MOTOR_IV.get(), 2)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(144))
-                .outputItems(GTNAItems.DISCORD_NITRO_BOOTS.get())
+                .outputItems(GTNAItems.NEXUS_BOOTS.get())
                 .duration(300)
                 .EUt(1920)
                 .save(provider);

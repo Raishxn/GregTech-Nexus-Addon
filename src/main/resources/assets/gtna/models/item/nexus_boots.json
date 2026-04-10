@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gtna:item/discord_nitro_boots"
+    "layer0": "gtna:item/nexus_boots"
   }
 }

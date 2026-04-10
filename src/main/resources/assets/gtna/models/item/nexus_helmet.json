@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gtna:item/discord_nitro_helmet"
+    "layer0": "gtna:item/nexus_helmet"
   }
 }

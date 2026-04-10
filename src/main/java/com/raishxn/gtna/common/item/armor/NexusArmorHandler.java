@@ -17,13 +17,13 @@ import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.data.GTNAItems;
 
 @Mod.EventBusSubscriber(modid = GTNACORE.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public final class DiscordNitroArmorHandler {
+public final class NexusArmorHandler {
 
-    private static final String SHIELD_COOLDOWN_TAG = "gtnaDiscordNitroShieldCooldown";
+    private static final String SHIELD_COOLDOWN_TAG = "gtnaNexusArmorShieldCooldown";
     private static final float MAX_SHIELD = 16.0F;
     private static final int SHIELD_REGEN_DELAY = 100;
 
-    private DiscordNitroArmorHandler() {}
+    private NexusArmorHandler() {}
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -133,18 +133,18 @@ public final class DiscordNitroArmorHandler {
     }
 
     private static boolean isWearingHelmet(Player player) {
-        return player.getItemBySlot(EquipmentSlot.HEAD).is(GTNAItems.DISCORD_NITRO_HELMET.get());
+        return player.getItemBySlot(EquipmentSlot.HEAD).is(GTNAItems.NEXUS_HELMET.get());
     }
 
     private static boolean isWearingChestplate(Player player) {
-        return player.getItemBySlot(EquipmentSlot.CHEST).is(GTNAItems.DISCORD_NITRO_CHESTPLATE.get());
+        return player.getItemBySlot(EquipmentSlot.CHEST).is(GTNAItems.NEXUS_CHESTPLATE.get());
     }
 
     private static boolean isWearingLeggings(Player player) {
-        return player.getItemBySlot(EquipmentSlot.LEGS).is(GTNAItems.DISCORD_NITRO_LEGGINGS.get());
+        return player.getItemBySlot(EquipmentSlot.LEGS).is(GTNAItems.NEXUS_LEGGINGS.get());
     }
 
     private static boolean isWearingBoots(Player player) {
-        return player.getItemBySlot(EquipmentSlot.FEET).is(GTNAItems.DISCORD_NITRO_BOOTS.get());
+        return player.getItemBySlot(EquipmentSlot.FEET).is(GTNAItems.NEXUS_BOOTS.get());
     }
 }

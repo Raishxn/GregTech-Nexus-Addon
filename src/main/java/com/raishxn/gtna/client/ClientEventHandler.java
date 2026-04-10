@@ -1,32 +1,21 @@
 package com.raishxn.gtna.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ElytraModel;
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import com.raishxn.gtna.GTNACORE;
-import com.raishxn.gtna.common.item.armor.DiscordNitroArmorHandler;
+import com.raishxn.gtna.client.model.NexusWingsModel;
+import com.raishxn.gtna.client.renderer.layer.NexusWingsLayer;
 import com.raishxn.gtna.config.ConfigHolder;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = GTNACORE.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ClientEventHandler {
-
-    private static final ResourceLocation DISCORD_NITRO_WINGS = GTNACORE.id("textures/entity/discord_nitro_wings.png");
-    private static ElytraModel<AbstractClientPlayer> nitroWingsModel;
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -42,37 +31,23 @@ public class ClientEventHandler {
         }
     }
 
-    @SubscribeEvent
-    public static void onRenderPlayer(RenderPlayerEvent.Post event) {
-        if (!(event.getEntity() instanceof AbstractClientPlayer player) ||
-                !DiscordNitroArmorHandler.shouldRenderWings(player)) {
-            return;
+    @Mod.EventBusSubscriber(modid = GTNACORE.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class ModClientEvents {
+
+        @SubscribeEvent
+        public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            event.registerLayerDefinition(NexusWingsModel.LAYER_LOCATION, NexusWingsModel::createBodyLayer);
         }
 
-        if (nitroWingsModel == null) {
-            nitroWingsModel = new ElytraModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.ELYTRA));
+        @SubscribeEvent
+        public static void addLayers(EntityRenderersEvent.AddLayers event) {
+            for (String skin : event.getSkins()) {
+                PlayerRenderer renderer = event.getPlayerSkin(skin);
+                if (renderer != null) {
+                    renderer.addLayer(new NexusWingsLayer(renderer,
+                            new NexusWingsModel(event.getEntityModels().bakeLayer(NexusWingsModel.LAYER_LOCATION))));
+                }
+            }
         }
-
-        PoseStack poseStack = event.getPoseStack();
-        poseStack.pushPose();
-
-        PlayerModel<AbstractClientPlayer> playerModel = event.getRenderer().getModel();
-        playerModel.body.translateAndRotate(poseStack);
-        poseStack.translate(0.0D, 0.0D, 0.125D);
-
-        nitroWingsModel.young = false;
-        nitroWingsModel.setupAnim(player, 0.0F, 0.0F, event.getPartialTick(), 0.0F, 0.0F);
-        nitroWingsModel.renderToBuffer(
-                poseStack,
-                ItemRenderer.getArmorFoilBuffer(
-                        event.getMultiBufferSource(),
-                        RenderType.armorCutoutNoCull(DISCORD_NITRO_WINGS),
-                        false,
-                        false),
-                event.getPackedLight(),
-                OverlayTexture.NO_OVERLAY,
-                1.0F, 1.0F, 1.0F, 1.0F);
-
-        poseStack.popPose();
     }
 }
