@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.item.PatternBufferUpgraderBehavior;
 import com.raishxn.gtna.common.item.StructureDetectBehavior;
+import com.raishxn.gtna.common.item.armor.DiscordNitroArmorItem;
 import com.tterrag.registrate.util.entry.ItemEntry;
 
 import static com.gregtechceu.gtceu.common.data.GTItems.attach;
@@ -35,6 +36,10 @@ public class GTNAItems {
     public static ItemEntry<ComponentItem> PRECISION_STEAM_COMPONENT;
 
     public static ItemEntry<com.raishxn.gtna.common.item.NexusLinkerItem> NEXUS_LINKER;
+    public static ItemEntry<DiscordNitroArmorItem> DISCORD_NITRO_HELMET;
+    public static ItemEntry<DiscordNitroArmorItem> DISCORD_NITRO_CHESTPLATE;
+    public static ItemEntry<DiscordNitroArmorItem> DISCORD_NITRO_LEGGINGS;
+    public static ItemEntry<DiscordNitroArmorItem> DISCORD_NITRO_BOOTS;
     public static ItemEntry<ComponentItem> QUANTUM_NETWORK_TERMINAL;
     public static ItemEntry<ComponentItem> NEXUS_STRUCTURE_TERMINAL;
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_21;
@@ -95,6 +100,30 @@ public class GTNAItems {
 
         NEXUS_LINKER = REGISTRATE.item("nexus_linker", com.raishxn.gtna.common.item.NexusLinkerItem::new)
                 .lang("Nexus Linker")
+                .properties(stack -> stack.stacksTo(1))
+                .register();
+
+        DISCORD_NITRO_HELMET = REGISTRATE.item("discord_nitro_helmet",
+                props -> new DiscordNitroArmorItem(net.minecraft.world.item.ArmorItem.Type.HELMET, props))
+                .lang("Discord Nitro Helmet")
+                .properties(stack -> stack.stacksTo(1))
+                .register();
+
+        DISCORD_NITRO_CHESTPLATE = REGISTRATE.item("discord_nitro_chestplate",
+                props -> new DiscordNitroArmorItem(net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, props))
+                .lang("Discord Nitro Chestplate")
+                .properties(stack -> stack.stacksTo(1))
+                .register();
+
+        DISCORD_NITRO_LEGGINGS = REGISTRATE.item("discord_nitro_leggings",
+                props -> new DiscordNitroArmorItem(net.minecraft.world.item.ArmorItem.Type.LEGGINGS, props))
+                .lang("Discord Nitro Leggings")
+                .properties(stack -> stack.stacksTo(1))
+                .register();
+
+        DISCORD_NITRO_BOOTS = REGISTRATE.item("discord_nitro_boots",
+                props -> new DiscordNitroArmorItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, props))
+                .lang("Discord Nitro Boots")
                 .properties(stack -> stack.stacksTo(1))
                 .register();
 
