@@ -304,7 +304,7 @@ public class GTNAItemRecipes {
                 .inputItems(GTItems.ROBOT_ARM_UV.get())
                 .inputItems(GTItems.CONVEYOR_MODULE_UV.get())
                 .inputItems(GTItems.ELECTRIC_PUMP_UV.get())
-                .inputItems(GTItems.WIRELESS.get(), 2)
+                .inputItems(GTItems.COVER_WIRELESS_TRANSMITTER.get(), 2)
                 .inputItems(GTItems.TOOL_DATA_ORB.get())
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
                 .outputItems(GTNAItems.PATTERN_BUFFER_UPGRADE_72.get())
