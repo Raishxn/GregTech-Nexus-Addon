@@ -139,7 +139,7 @@ public final class GTNAPatternBufferRecipeHandler {
 
         private final GTNAPatternBufferSlotConfig config;
         private final int priority;
-        private final int size = 2;
+        private final int size = 10;
         private final RecipeCapability<Ingredient> capability = ItemRecipeCapability.CAP;
         private final IO handlerIO = IO.IN;
         private final boolean isDistinct = true;
@@ -235,7 +235,7 @@ public final class GTNAPatternBufferRecipeHandler {
 
         private final GTNAPatternBufferSlotConfig config;
         private final int priority;
-        private final int size = 1;
+        private final int size = 9;
         private final RecipeCapability<FluidIngredient> capability = FluidRecipeCapability.CAP;
         private final IO handlerIO = IO.IN;
         private final boolean isDistinct = true;
@@ -252,12 +252,8 @@ public final class GTNAPatternBufferRecipeHandler {
         @Override
         public List<FluidIngredient> handleRecipeInner(IO io, GTRecipe recipe, List<FluidIngredient> left,
                                                        boolean simulate) {
-            if (io != IO.IN || left == null || left.isEmpty() || !config.hasSpecialFluid()) {
-                return left;
-            }
-
-            FluidStack configuredFluid = config.getSpecialFluidStack().orElse(FluidStack.EMPTY);
-            if (configuredFluid.isEmpty()) {
+            List<FluidStack> configuredFluids = config.getVirtualFluidStacks();
+            if (io != IO.IN || left == null || left.isEmpty() || configuredFluids.isEmpty()) {
                 return left;
             }
 
@@ -269,8 +265,14 @@ public final class GTNAPatternBufferRecipeHandler {
                 }
 
                 int amountLeft = ingredient.getAmount();
-                if (ingredient.test(configuredFluid)) {
+                for (FluidStack configuredFluid : configuredFluids) {
+                    if (configuredFluid.isEmpty() || !ingredient.test(configuredFluid)) {
+                        continue;
+                    }
                     amountLeft -= configuredFluid.getAmount();
+                    if (amountLeft <= 0) {
+                        break;
+                    }
                 }
 
                 if (amountLeft <= 0) {
@@ -285,14 +287,12 @@ public final class GTNAPatternBufferRecipeHandler {
 
         @Override
         public @NotNull List<Object> getContents() {
-            List<Object> contents = new ArrayList<>(1);
-            config.getSpecialFluidStack().ifPresent(contents::add);
-            return contents;
+            return new ArrayList<>(config.getVirtualFluidStacks());
         }
 
         @Override
         public double getTotalContentAmount() {
-            return config.getSpecialFluidStack().map(FluidStack::getAmount).orElse(0);
+            return config.getVirtualFluidStacks().stream().mapToLong(FluidStack::getAmount).sum();
         }
     }
 }

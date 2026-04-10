@@ -1,78 +1,75 @@
 package com.raishxn.gtna.common.machine.multiblock.part.ae;
 
+import com.lowdragmc.lowdraglib.misc.FluidStorage;
+import com.lowdragmc.lowdraglib.misc.ItemStackTransfer;
+import com.lowdragmc.lowdraglib.side.fluid.FluidStack;
 import com.lowdragmc.lowdraglib.syncdata.IContentChangeAware;
 import com.lowdragmc.lowdraglib.syncdata.ITagSerializable;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag>, IContentChangeAware {
+
+    private static final int GHOST_GRID_SIZE = 9;
+    private static final String SPECIAL_ITEMS_TAG = "specialItems";
+    private static final String SPECIAL_FLUIDS_TAG = "specialFluids";
 
     private Runnable onContentsChanged = () -> {};
 
-    public Runnable getOnContentsChanged() {
-        return onContentsChanged;
-    }
+    private final ItemStackTransfer specialItems = new ItemStackTransfer(GHOST_GRID_SIZE);
+    private final FluidStorage[] specialFluids = new FluidStorage[GHOST_GRID_SIZE];
 
-    private String specialItemId = "";
-    private int specialItemCount = 1;
-    private String specialFluidId = "";
-    private int specialFluidAmount = 1000;
     private int circuitConfig = -1;
     private String preferredModeId = "";
     private String derivedModeId = "";
     private String cachedRecipeId = "";
 
+    public GTNAPatternBufferSlotConfig() {
+        specialItems.setOnContentsChanged(this::onContentsChanged);
+        for (int i = 0; i < GHOST_GRID_SIZE; i++) {
+            specialFluids[i] = new FluidStorage(Integer.MAX_VALUE);
+            specialFluids[i].setOnContentsChanged(this::onContentsChanged);
+        }
+    }
+
+    public Runnable getOnContentsChanged() {
+        return onContentsChanged;
+    }
+
     public void setOnContentsChanged(Runnable onContentsChanged) {
-        this.onContentsChanged = onContentsChanged == null ? () -> {} : onContentsChanged;
+        if (onContentsChanged == null) {
+            return;
+        }
+        Runnable previous = this.onContentsChanged;
+        this.onContentsChanged = () -> {
+            previous.run();
+            onContentsChanged.run();
+        };
     }
 
     public void onContentsChanged() {
         onContentsChanged.run();
     }
 
-    public String getSpecialItemId() {
-        return specialItemId;
+    public ItemStackTransfer getSpecialItems() {
+        return specialItems;
     }
 
-    public void setSpecialItemId(String specialItemId) {
-        this.specialItemId = specialItemId == null ? "" : specialItemId.trim();
-        onContentsChanged();
-    }
-
-    public int getSpecialItemCount() {
-        return specialItemCount;
-    }
-
-    public void setSpecialItemCount(int specialItemCount) {
-        this.specialItemCount = Math.max(1, specialItemCount);
-        onContentsChanged();
-    }
-
-    public String getSpecialFluidId() {
-        return specialFluidId;
-    }
-
-    public void setSpecialFluidId(String specialFluidId) {
-        this.specialFluidId = specialFluidId == null ? "" : specialFluidId.trim();
-        onContentsChanged();
-    }
-
-    public int getSpecialFluidAmount() {
-        return specialFluidAmount;
-    }
-
-    public void setSpecialFluidAmount(int specialFluidAmount) {
-        this.specialFluidAmount = Math.max(1, specialFluidAmount);
-        onContentsChanged();
+    public FluidStorage[] getSpecialFluids() {
+        return specialFluids;
     }
 
     public int getCircuitConfig() {
@@ -118,10 +115,12 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
     }
 
     public void clearSpecialization() {
-        this.specialItemId = "";
-        this.specialItemCount = 1;
-        this.specialFluidId = "";
-        this.specialFluidAmount = 1000;
+        for (int i = 0; i < specialItems.getSlots(); i++) {
+            specialItems.setStackInSlot(i, ItemStack.EMPTY);
+        }
+        for (FluidStorage specialFluid : specialFluids) {
+            specialFluid.setFluid(FluidStack.empty());
+        }
         this.circuitConfig = -1;
         this.preferredModeId = "";
         this.derivedModeId = "";
@@ -130,54 +129,39 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
     }
 
     public boolean hasSpecialItem() {
-        return !specialItemId.isBlank() && getSpecialItem().isPresent();
+        for (int i = 0; i < specialItems.getSlots(); i++) {
+            if (!specialItems.getStackInSlot(i).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean hasSpecialFluid() {
-        return !specialFluidId.isBlank() && getSpecialFluidStack().isPresent();
+        for (FluidStorage specialFluid : specialFluids) {
+            if (!specialFluid.getFluid().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean hasCircuit() {
         return circuitConfig >= 0;
     }
 
-    public LazyOptional<ItemStack> getSpecialItem() {
-        if (specialItemId.isBlank()) {
-            return LazyOptional.empty();
-        }
-        ResourceLocation id = ResourceLocation.tryParse(specialItemId);
-        if (id == null) {
-            return LazyOptional.empty();
-        }
-        Item item = ForgeRegistries.ITEMS.getValue(id);
-        if (item == null) {
-            return LazyOptional.empty();
-        }
-        return LazyOptional.of(() -> new ItemStack(item, specialItemCount));
-    }
-
-    public LazyOptional<net.minecraftforge.fluids.FluidStack> getSpecialFluidStack() {
-        if (specialFluidId.isBlank()) {
-            return LazyOptional.empty();
-        }
-        ResourceLocation id = ResourceLocation.tryParse(specialFluidId);
-        if (id == null) {
-            return LazyOptional.empty();
-        }
-        Fluid fluid = ForgeRegistries.FLUIDS.getValue(id);
-        if (fluid == null) {
-            return LazyOptional.empty();
-        }
-        return LazyOptional.of(() -> new net.minecraftforge.fluids.FluidStack(fluid, specialFluidAmount));
-    }
-
     public @Nullable ItemStack getCircuitStack() {
         return hasCircuit() ? IntCircuitBehaviour.stack(circuitConfig) : null;
     }
 
-    public java.util.List<ItemStack> getVirtualItemStacks() {
-        java.util.List<ItemStack> stacks = new java.util.ArrayList<>(2);
-        getSpecialItem().ifPresent(stacks::add);
+    public List<ItemStack> getVirtualItemStacks() {
+        List<ItemStack> stacks = new ArrayList<>(specialItems.getSlots() + 1);
+        for (int i = 0; i < specialItems.getSlots(); i++) {
+            ItemStack stack = specialItems.getStackInSlot(i);
+            if (!stack.isEmpty()) {
+                stacks.add(stack.copy());
+            }
+        }
         ItemStack circuitStack = getCircuitStack();
         if (circuitStack != null && !circuitStack.isEmpty()) {
             stacks.add(circuitStack);
@@ -185,17 +169,28 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
         return stacks;
     }
 
+    public List<net.minecraftforge.fluids.FluidStack> getVirtualFluidStacks() {
+        List<net.minecraftforge.fluids.FluidStack> stacks = new ArrayList<>(specialFluids.length);
+        for (FluidStorage specialFluid : specialFluids) {
+            FluidStack fluidStack = specialFluid.getFluid();
+            if (!fluidStack.isEmpty()) {
+                stacks.add(toForgeFluid(fluidStack));
+            }
+        }
+        return stacks;
+    }
+
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
-        if (!specialItemId.isBlank()) {
-            tag.putString("specialItemId", specialItemId);
+        tag.put(SPECIAL_ITEMS_TAG, specialItems.serializeNBT());
+        ListTag fluidTag = new ListTag();
+        for (int i = 0; i < specialFluids.length; i++) {
+            CompoundTag entry = specialFluids[i].serializeNBT();
+            entry.putInt("slot", i);
+            fluidTag.add(entry);
         }
-        tag.putInt("specialItemCount", specialItemCount);
-        if (!specialFluidId.isBlank()) {
-            tag.putString("specialFluidId", specialFluidId);
-        }
-        tag.putInt("specialFluidAmount", specialFluidAmount);
+        tag.put(SPECIAL_FLUIDS_TAG, fluidTag);
         tag.putInt("circuitConfig", circuitConfig);
         if (!preferredModeId.isBlank()) {
             tag.putString("preferredModeId", preferredModeId);
@@ -211,13 +206,72 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
 
     @Override
     public void deserializeNBT(CompoundTag tag) {
-        this.specialItemId = tag.getString("specialItemId");
-        this.specialItemCount = Math.max(1, tag.getInt("specialItemCount"));
-        this.specialFluidId = tag.getString("specialFluidId");
-        this.specialFluidAmount = Math.max(1, tag.getInt("specialFluidAmount"));
+        if (tag.contains(SPECIAL_ITEMS_TAG, Tag.TAG_COMPOUND)) {
+            specialItems.deserializeNBT(tag.getCompound(SPECIAL_ITEMS_TAG));
+        } else {
+            specialItems.deserializeNBT(new CompoundTag());
+            migrateLegacySingleItem(tag);
+        }
+
+        for (FluidStorage specialFluid : specialFluids) {
+            specialFluid.deserializeNBT(new CompoundTag());
+        }
+        if (tag.contains(SPECIAL_FLUIDS_TAG, Tag.TAG_LIST)) {
+            ListTag fluidTag = tag.getList(SPECIAL_FLUIDS_TAG, Tag.TAG_COMPOUND);
+            for (Tag entry : fluidTag) {
+                if (entry instanceof CompoundTag compoundTag) {
+                    int slot = compoundTag.getInt("slot");
+                    if (slot >= 0 && slot < specialFluids.length) {
+                        specialFluids[slot].deserializeNBT(compoundTag);
+                    }
+                }
+            }
+        } else {
+            migrateLegacySingleFluid(tag);
+        }
+
         this.circuitConfig = tag.contains("circuitConfig") ? tag.getInt("circuitConfig") : -1;
         this.preferredModeId = tag.getString("preferredModeId");
         this.derivedModeId = tag.getString("derivedModeId");
         this.cachedRecipeId = tag.getString("cachedRecipeId");
+    }
+
+    private void migrateLegacySingleItem(CompoundTag tag) {
+        String specialItemId = tag.getString("specialItemId");
+        if (specialItemId.isBlank()) {
+            return;
+        }
+        ResourceLocation id = ResourceLocation.tryParse(specialItemId);
+        if (id == null) {
+            return;
+        }
+        Item item = ForgeRegistries.ITEMS.getValue(id);
+        if (item == null) {
+            return;
+        }
+        int count = Math.max(1, tag.getInt("specialItemCount"));
+        specialItems.setStackInSlot(0, new ItemStack(item, count));
+    }
+
+    private void migrateLegacySingleFluid(CompoundTag tag) {
+        String specialFluidId = tag.getString("specialFluidId");
+        if (specialFluidId.isBlank()) {
+            return;
+        }
+        ResourceLocation id = ResourceLocation.tryParse(specialFluidId);
+        if (id == null) {
+            return;
+        }
+        Fluid fluid = ForgeRegistries.FLUIDS.getValue(id);
+        if (fluid == null) {
+            return;
+        }
+        int amount = Math.max(1, tag.getInt("specialFluidAmount"));
+        specialFluids[0].setFluid(FluidStack.create(fluid, amount));
+    }
+
+    private static net.minecraftforge.fluids.FluidStack toForgeFluid(FluidStack stack) {
+        return new net.minecraftforge.fluids.FluidStack(stack.getFluid(), (int) Math.min(Integer.MAX_VALUE,
+                stack.getAmount()), stack.hasTag() ? stack.getTag().copy() : null);
     }
 }

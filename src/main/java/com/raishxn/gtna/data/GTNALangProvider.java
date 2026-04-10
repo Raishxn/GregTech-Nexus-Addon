@@ -133,12 +133,14 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.pattern_buffer.no_slot_selected", "No slot selected");
         add("gtna.machine.pattern_buffer.cached_recipe_short", "Recipe Cache: %s");
         add("gtna.machine.pattern_buffer.derived_mode_short", "Derived Mode: %s");
-        add("gtna.machine.pattern_buffer.item_field", "Special Item ID");
+        add("gtna.machine.pattern_buffer.item_field", "Ghost Items");
         add("gtna.machine.pattern_buffer.item_count_field", "Special Item Count");
-        add("gtna.machine.pattern_buffer.fluid_field", "Special Fluid ID");
+        add("gtna.machine.pattern_buffer.fluid_field", "Ghost Fluids");
         add("gtna.machine.pattern_buffer.fluid_amount_field", "Special Fluid Amount (mB)");
-        add("gtna.machine.pattern_buffer.circuit_field", "Integrated Circuit");
+        add("gtna.machine.pattern_buffer.fluid_amount_hint", "Drag a fluid here. Right-click clears the slot.");
+        add("gtna.machine.pattern_buffer.circuit_field", "Circuit");
         add("gtna.machine.pattern_buffer.mode_field", "Preferred Mode ID");
+        add("gtna.machine.pattern_buffer.no_circuit", "No configured circuit");
         add("gtna.machine.pattern_buffer.clear_specialization", "Clear Spec");
         add("gtna.machine.pattern_buffer.clear_cache", "Clear Cache");
         add("gtna.machine.pattern_buffer.refund_slot", "Refund");
