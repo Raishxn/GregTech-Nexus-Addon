@@ -4,6 +4,7 @@ import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
+import com.gregtechceu.gtceu.api.gui.fancy.ConfiguratorPanel;
 import com.gregtechceu.gtceu.api.gui.widget.IntInputWidget;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
@@ -19,6 +20,7 @@ import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import com.gregtechceu.gtceu.api.recipe.ingredient.SizedIngredient;
 import com.gregtechceu.gtceu.api.transfer.item.CustomItemStackHandler;
+import com.gregtechceu.gtceu.api.machine.fancyconfigurator.ButtonConfigurator;
 import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 import com.gregtechceu.gtceu.integration.ae2.gui.widget.AETextInputButtonWidget;
 import com.gregtechceu.gtceu.integration.ae2.gui.widget.slot.AEPatternViewSlotWidget;
@@ -90,6 +92,7 @@ import com.lowdragmc.lowdraglib.misc.ItemStackTransfer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -105,7 +108,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     private static final String SLOT_CONFIGS_TAG = "gtnaPatternConfigs";
     private static final String INTERNAL_SLOTS_TAG = "gtnaPatternInternalSlots";
     private static final int PANEL_WIDTH = 108;
-    private static final int PANEL_HEIGHT = 228;
+    private static final int PANEL_HEIGHT = 250;
 
     @Getter
     private final int maxPatternCount;
@@ -382,6 +385,22 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         needPatternSync = true;
     }
 
+    private void refundAll(com.lowdragmc.lowdraglib.gui.util.ClickData clickData) {
+        if (!clickData.isRemote) {
+            for (InternalSlot internalSlot : internalInventory) {
+                internalSlot.refund();
+            }
+        }
+    }
+
+    @Override
+    public void attachConfigurators(ConfiguratorPanel configuratorPanel) {
+        super.attachConfigurators(configuratorPanel);
+        configuratorPanel.attachConfigurators(new ButtonConfigurator(
+                new GuiTextureGroup(GuiTextures.BUTTON, GuiTextures.REFUND_OVERLAY), this::refundAll)
+                .setTooltips(List.of(Component.translatable("gui.gtceu.refund_all.desc"))));
+    }
+
     @Override
     public Widget createUIWidget() {
         int rows = Math.max(1, (int) Math.ceil(maxPatternCount / 9.0));
@@ -393,19 +412,23 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < 9 && index < maxPatternCount; x++) {
                 int finalIndex = index;
-                group.addWidget(new PatternSlotWidget(patternInventory, index++, 8 + x * 18, 14 + y * 18, finalIndex)
-                        .setItemHook(stack -> {
-                            if (!stack.isEmpty() && stack.getItem() instanceof EncodedPatternItem encodedPatternItem) {
-                                ItemStack output = encodedPatternItem.getOutput(stack);
-                                if (!output.isEmpty()) {
-                                    return output;
-                                }
-                            }
-                            return stack;
-                        })
-                        .setChangeListener(() -> onPatternChange(finalIndex))
-                        .setOnAddedTooltips((widget, tooltips) ->
-                                tooltips.add(Component.translatable("gtna.machine.pattern_buffer.middle_click_hint"))));
+                PatternSlotWidget slotWidget = new PatternSlotWidget(patternInventory, index++, 8 + x * 18,
+                        14 + y * 18, finalIndex);
+                slotWidget.setOccupiedTexture(GuiTextures.SLOT);
+                slotWidget.setItemHook(stack -> {
+                    if (!stack.isEmpty() && stack.getItem() instanceof EncodedPatternItem encodedPatternItem) {
+                        ItemStack output = encodedPatternItem.getOutput(stack);
+                        if (!output.isEmpty()) {
+                            return output;
+                        }
+                    }
+                    return stack;
+                });
+                slotWidget.setChangeListener(() -> onPatternChange(finalIndex));
+                slotWidget.setBackground(GuiTextures.SLOT, GuiTextures.PATTERN_OVERLAY);
+                slotWidget.setOnAddedTooltips((widget, tooltips) ->
+                        tooltips.add(Component.translatable("gtna.machine.pattern_buffer.middle_click_hint")));
+                group.addWidget(slotWidget);
             }
         }
         group.addWidget(new LabelWidget(
@@ -447,7 +470,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                         compactDisplay(getSelectedConfig() == null ? "" : getSelectedConfig().getDerivedModeId(), 12))
                         .getString()));
 
-        y += 16;
+        y += 14;
         configPanel.addWidget(new LabelWidget(innerX, y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.circuit_field").getString()));
         y += 10;
@@ -468,17 +491,17 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                         tooltips.add(Component.translatable("gtna.machine.pattern_buffer.no_circuit"));
                     }
                 }));
-        y += 22;
+        y += 20;
         configPanel.addWidget(new LabelWidget(innerX, y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.item_field").getString()));
         y += 10;
         addItemGhostGrid(configPanel, innerX, y);
-        y += 66;
+        y += 68;
         configPanel.addWidget(new LabelWidget(innerX, y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.fluid_field").getString()));
         y += 10;
         addFluidGhostGrid(configPanel, innerX, y);
-        y += 66;
+        y += 68;
         configPanel.addWidget(new LabelWidget(innerX, y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.mode_field").getString()));
         y += 10;
@@ -490,21 +513,16 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                 })
                 .setResourceLocationOnly());
 
-        int buttonY = y + 22;
+        int buttonY = y + 24;
         configPanel.addWidget(makeIconButton(innerX, buttonY, GuiTextures.BUTTON_CLEAR_GRID,
                 "gtna.machine.pattern_buffer.clear_specialization",
                 clickData -> {
                     if (!clickData.isRemote) clearSelectedSpecialization();
                 }));
-        configPanel.addWidget(makeIconButton(innerX + 22, buttonY, GuiTextures.ICON_REMOVE,
+        configPanel.addWidget(makeIconButton(innerX + 22, buttonY, GuiTextures.BUTTON_LIST,
                 "gtna.machine.pattern_buffer.clear_cache",
                 clickData -> {
                     if (!clickData.isRemote) clearSelectedRecipeCache();
-                }));
-        configPanel.addWidget(makeIconButton(innerX + 44, buttonY, GuiTextures.BUTTON_LEFT,
-                "gtna.machine.pattern_buffer.refund_slot",
-                clickData -> {
-                    if (!clickData.isRemote) refundSelectedSlot();
                 }));
     }
 
@@ -567,10 +585,6 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         return selectedSlot >= 0 && selectedSlot < slotConfigs.length ? slotConfigs[selectedSlot] : null;
     }
 
-    private @Nullable InternalSlot getSelectedInternalSlot() {
-        return selectedSlot >= 0 && selectedSlot < internalInventory.length ? internalInventory[selectedSlot] : null;
-    }
-
     private void clearSelectedSpecialization() {
         GTNAPatternBufferSlotConfig config = getSelectedConfig();
         if (config != null) {
@@ -587,13 +601,6 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                 refreshSelectedConfigPreview();
                 markDirty();
             }
-        }
-    }
-
-    private void refundSelectedSlot() {
-        InternalSlot internalSlot = getSelectedInternalSlot();
-        if (internalSlot != null) {
-            internalSlot.refund();
         }
     }
 
@@ -631,6 +638,17 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         return null;
     }
 
+    private static boolean matchesPreferredMode(GTNAPatternBufferSlotConfig config, GTRecipe recipe) {
+        if (config.getPreferredModeId().isBlank() || recipe.getType() == null || recipe.getType().registryName == null) {
+            return false;
+        }
+        String requested = config.getPreferredModeId().trim().toLowerCase(Locale.ROOT);
+        String fullId = recipe.getType().registryName.toString().toLowerCase(Locale.ROOT);
+        String path = recipe.getType().registryName.getPath().toLowerCase(Locale.ROOT);
+        return requested.equals(fullId) || requested.equals(path) ||
+                path.endsWith("_" + requested) || path.endsWith("/" + requested);
+    }
+
     private @Nullable SlotMatch findMatchingSlot(GTRecipe recipe) {
         String recipeId = recipe.id == null ? "" : recipe.id.toString();
         for (int i = 0; i < maxPatternCount; i++) {
@@ -640,6 +658,10 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             }
         }
         for (int i = 0; i < maxPatternCount; i++) {
+            GTNAPatternBufferSlotConfig config = slotConfigs[i];
+            if (!config.getPreferredModeId().isBlank() && !matchesPreferredMode(config, recipe)) {
+                continue;
+            }
             if (matchesSlot(i, recipe)) {
                 return new SlotMatch(i);
             }

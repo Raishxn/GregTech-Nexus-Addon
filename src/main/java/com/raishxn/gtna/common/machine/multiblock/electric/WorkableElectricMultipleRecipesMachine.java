@@ -218,7 +218,7 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
             return false;
         }
         for (int i = 0; i < getRecipeTypes().length; i++) {
-            if (modeId.equals(getRecipeTypes()[i].registryName.toString())) {
+            if (gtna$matchesModeId(modeId, getRecipeTypes()[i])) {
                 if (getActiveRecipeType() != i) {
                     setActiveRecipeType(i);
                 }
