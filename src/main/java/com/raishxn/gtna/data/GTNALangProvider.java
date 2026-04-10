@@ -139,12 +139,23 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.pattern_buffer.fluid_amount_field", "Special Fluid Amount (mB)");
         add("gtna.machine.pattern_buffer.fluid_amount_hint", "Drag a fluid here. Right-click clears the slot.");
         add("gtna.machine.pattern_buffer.circuit_field", "Circuit");
-        add("gtna.machine.pattern_buffer.mode_field", "Preferred Mode ID");
+        add("gtna.machine.pattern_buffer.mode_field", "Preferred Mode");
+        add("gtna.machine.pattern_buffer.mode.auto", "Auto");
+        add("gtna.machine.pattern_buffer.mode.none", "No Mode");
+        add("gtna.machine.pattern_buffer.mode.legacy", "Custom: %s");
+        add("gtna.machine.pattern_buffer.mode_button.tooltip",
+                "Click to cycle the preferred multiblock mode for this slot");
+        add("gtna.machine.pattern_buffer.mode_button.current", "Selected Mode: %s");
+        add("gtna.machine.pattern_buffer.mode_button.derived", "Detected Mode: %s");
         add("gtna.machine.pattern_buffer.no_circuit", "No configured circuit");
         add("gtna.machine.pattern_buffer.clear_specialization", "Clear Spec");
         add("gtna.machine.pattern_buffer.clear_cache", "Clear Cache");
         add("gtna.machine.pattern_buffer.refund_slot", "Refund");
-        add("item.gtna.pattern_buffer_upgrader.tooltip.use", "Right-click a lower tier GTNA Pattern Buffer to upgrade it");
+        add("item.gtna.pattern_buffer_upgrade_21", "Pattern Buffer Expansion Card");
+        add("item.gtna.pattern_buffer_upgrade_32", "Pattern Buffer Precision Card");
+        add("item.gtna.pattern_buffer_upgrade_72", "Pattern Buffer Ascension Card");
+        add("item.gtna.pattern_buffer_upgrader.tooltip.use",
+                "Right-click a lower tier GTNA Pattern Buffer to upgrade it");
         add("item.gtna.pattern_buffer_upgrader.tooltip.keep_data",
                 "Preserves encoded patterns, internal slot data, and slot specialization");
 

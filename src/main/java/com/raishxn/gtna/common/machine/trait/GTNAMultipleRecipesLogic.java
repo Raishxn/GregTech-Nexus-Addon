@@ -144,8 +144,7 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
                 int found = 0;
                 var recipeIterator = recipeType.searchRecipe(
                         (IRecipeCapabilityHolder) machine, recipe -> true);
-                while (recipeIterator.hasNext() && found < perTypeLimit
-                        && possibleRecipes.size() < searchLimit) {
+                while (recipeIterator.hasNext() && found < perTypeLimit && possibleRecipes.size() < searchLimit) {
                     GTRecipe recipe = recipeIterator.next();
                     if (recipe == null || containsRecipe(possibleRecipes, recipe)) continue;
                     possibleRecipes.add(recipe);
@@ -306,8 +305,12 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
             String requested = modeId.trim().toLowerCase(Locale.ROOT);
             String fullId = recipeType.registryName.toString().toLowerCase(Locale.ROOT);
             String path = recipeType.registryName.getPath().toLowerCase(Locale.ROOT);
+            String requestedNormalized = requested.replace('_', '/');
+            String pathNormalized = path.replace('_', '/');
             if (requested.equals(fullId) || requested.equals(path) ||
+                    requestedNormalized.equals(fullId) || requestedNormalized.equals(pathNormalized) ||
                     path.endsWith("_" + requested) || path.endsWith("/" + requested) ||
+                    pathNormalized.endsWith("/" + requestedNormalized) ||
                     (("saw".equals(requested) || "cutting_saw".equals(requested)) &&
                             (path.contains("cutter") || path.contains("saw")))) {
                 if (machine.getActiveRecipeType() != i) {

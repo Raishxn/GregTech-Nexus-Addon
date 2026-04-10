@@ -1,5 +1,7 @@
 package com.raishxn.gtna.common.machine.multiblock.part.ae;
 
+import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
+
 import com.lowdragmc.lowdraglib.misc.FluidStorage;
 import com.lowdragmc.lowdraglib.misc.ItemStackTransfer;
 import com.lowdragmc.lowdraglib.side.fluid.FluidStack;
@@ -15,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;

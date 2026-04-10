@@ -27,7 +27,6 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.player.Player;
 
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
-
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
