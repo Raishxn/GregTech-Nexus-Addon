@@ -696,6 +696,45 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         GTRecipe resolved = findResolvedRecipeForSlot(slot, holder, recipeTypes);
         if (resolved != null) {
             cacheResolvedRecipe(slot, resolved);
+            notifyControllerModeChange(slot, resolved);
+        }
+    }
+
+    /**
+     * Notifica o controller do multibloco para trocar o activeRecipeType
+     * imediatamente quando um pattern é inserido e a receita é resolvida.
+     * Isso garante que o multibloco já esteja no modo correto ANTES da receita executar.
+     */
+    private void notifyControllerModeChange(int slot, GTRecipe recipe) {
+        if (!isFormed() || getControllers().isEmpty()) return;
+        IMultiController controller = getControllers().first();
+
+        GTNAPatternBufferSlotConfig config = slotConfigs[slot];
+        String modeId = !config.getPreferredModeId().isBlank()
+                ? config.getPreferredModeId()
+                : config.getDerivedModeId();
+
+        if (modeId == null || modeId.isBlank()) return;
+
+        if (controller instanceof IPatternBufferModeHost host) {
+            host.gtna$applyPatternBufferMode(modeId, recipe);
+        } else if (controller instanceof IRecipeLogicMachine recipeMachine) {
+            var recipeTypes = recipeMachine.getRecipeTypes();
+            if (recipeTypes != null && recipeTypes.length > 1) {
+                for (int i = 0; i < recipeTypes.length; i++) {
+                    if (recipeTypes[i] != null && recipeTypes[i].registryName != null) {
+                        String requested = modeId.trim().toLowerCase(Locale.ROOT);
+                        String fullId = recipeTypes[i].registryName.toString().toLowerCase(Locale.ROOT);
+                        String path = recipeTypes[i].registryName.getPath().toLowerCase(Locale.ROOT);
+                        if (requested.equals(fullId) || requested.equals(path)) {
+                            if (recipeMachine.getActiveRecipeType() != i) {
+                                recipeMachine.setActiveRecipeType(i);
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
         }
     }
 
