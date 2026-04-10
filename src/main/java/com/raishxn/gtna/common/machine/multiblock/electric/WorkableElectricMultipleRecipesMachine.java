@@ -17,6 +17,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
 import com.raishxn.gtna.api.machine.IThreadModifierMachine;
+import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
 import com.raishxn.gtna.api.machine.multiblock.ParallelMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
@@ -30,7 +31,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMultiblockMachine
-                                                    implements IThreadModifierMachine, ParallelMachine {
+                                                    implements IThreadModifierMachine, ParallelMachine,
+                                                    IPatternBufferModeHost {
 
     @Nullable
     private ThreadPartMachine threadModifierPart;
@@ -200,5 +202,29 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
     @Override
     public void setThreadPartMachine(@Nullable ThreadPartMachine threadModifierPart) {
         this.threadModifierPart = threadModifierPart;
+    }
+
+    @Override
+    public @Nullable String gtna$resolvePatternBufferMode(com.gregtechceu.gtceu.api.recipe.GTRecipe recipe) {
+        if (getRecipeTypes().length <= 1) {
+            return null;
+        }
+        return recipe.getType().registryName.toString();
+    }
+
+    @Override
+    public boolean gtna$applyPatternBufferMode(String modeId, com.gregtechceu.gtceu.api.recipe.GTRecipe recipe) {
+        if (modeId == null || modeId.isBlank()) {
+            return false;
+        }
+        for (int i = 0; i < getRecipeTypes().length; i++) {
+            if (modeId.equals(getRecipeTypes()[i].registryName.toString())) {
+                if (getActiveRecipeType() != i) {
+                    setActiveRecipeType(i);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 }

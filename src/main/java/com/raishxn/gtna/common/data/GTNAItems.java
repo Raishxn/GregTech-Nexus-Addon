@@ -4,6 +4,8 @@ import com.gregtechceu.gtceu.api.item.ComponentItem;
 
 import net.minecraft.resources.ResourceLocation;
 
+import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.common.item.PatternBufferUpgraderBehavior;
 import com.raishxn.gtna.common.item.StructureDetectBehavior;
 import com.tterrag.registrate.util.entry.ItemEntry;
 
@@ -35,6 +37,9 @@ public class GTNAItems {
     public static ItemEntry<com.raishxn.gtna.common.item.NexusLinkerItem> NEXUS_LINKER;
     public static ItemEntry<ComponentItem> QUANTUM_NETWORK_TERMINAL;
     public static ItemEntry<ComponentItem> NEXUS_STRUCTURE_TERMINAL;
+    public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_21;
+    public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_32;
+    public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_72;
 
     public static void init() {
         STRUCTURE_DETECT = REGISTRATE
@@ -103,6 +108,27 @@ public class GTNAItems {
                 .lang("Nexus Structure Terminal")
                 .properties(stack -> stack.stacksTo(1))
                 .onRegister(attach(com.raishxn.gtna.common.item.terminal.NexusTerminalBehavior.INSTANCE))
+                .register();
+
+        PATTERN_BUFFER_UPGRADE_21 = REGISTRATE.item("pattern_buffer_upgrade_21", ComponentItem::create)
+                .lang("Pattern Buffer Expansion Card")
+                .properties(stack -> stack.stacksTo(16))
+                .onRegister(attach(new PatternBufferUpgraderBehavior(() -> GTNAMachines2.ME_PATTERN_BUFFER)))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/pattern_buffer_upgrader")))
+                .register();
+
+        PATTERN_BUFFER_UPGRADE_32 = REGISTRATE.item("pattern_buffer_upgrade_32", ComponentItem::create)
+                .lang("Pattern Buffer Precision Card")
+                .properties(stack -> stack.stacksTo(16))
+                .onRegister(attach(new PatternBufferUpgraderBehavior(() -> GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER)))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/ex_pattern_buffer_upgrader")))
+                .register();
+
+        PATTERN_BUFFER_UPGRADE_72 = REGISTRATE.item("pattern_buffer_upgrade_72", ComponentItem::create)
+                .lang("Pattern Buffer Ascension Card")
+                .properties(stack -> stack.stacksTo(16))
+                .onRegister(attach(new PatternBufferUpgraderBehavior(() -> GTNAMachines2.ME_ULTIMATE_PATTERN_BUFFER)))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/ex_pattern_buffer_ultra_upgrader")))
                 .register();
     }
 }

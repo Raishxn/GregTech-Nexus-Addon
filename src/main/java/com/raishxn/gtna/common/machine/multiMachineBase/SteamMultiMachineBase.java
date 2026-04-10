@@ -26,11 +26,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.player.Player;
 
+import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine implements IDisplayUIMachine {
+public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine
+                                            implements IDisplayUIMachine, IPatternBufferModeHost {
 
     public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
             SteamMultiMachineBase.class, WorkableMultiblockMachine.MANAGED_FIELD_HOLDER);
@@ -105,6 +108,30 @@ public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine im
     }
 
     public void handleDisplayClick(String componentData, ClickData clickData) {}
+
+    @Override
+    public @Nullable String gtna$resolvePatternBufferMode(com.gregtechceu.gtceu.api.recipe.GTRecipe recipe) {
+        if (getRecipeTypes().length <= 1) {
+            return null;
+        }
+        return recipe.getType().registryName.toString();
+    }
+
+    @Override
+    public boolean gtna$applyPatternBufferMode(String modeId, com.gregtechceu.gtceu.api.recipe.GTRecipe recipe) {
+        if (modeId == null || modeId.isBlank()) {
+            return false;
+        }
+        for (int i = 0; i < getRecipeTypes().length; i++) {
+            if (modeId.equals(getRecipeTypes()[i].registryName.toString())) {
+                if (getActiveRecipeType() != i) {
+                    setActiveRecipeType(i);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public void addDisplayText(List<Component> textList) {

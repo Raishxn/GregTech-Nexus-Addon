@@ -207,13 +207,7 @@ public final class GTNAPatternBufferRecipeHandler {
         }
 
         private List<ItemStack> getVirtualStacks() {
-            List<ItemStack> stacks = new ArrayList<>(2);
-            config.getSpecialItem().ifPresent(stacks::add);
-            @Nullable ItemStack circuit = config.getCircuitStack();
-            if (circuit != null && !circuit.isEmpty()) {
-                stacks.add(circuit);
-            }
-            return stacks;
+            return new ArrayList<>(config.getVirtualItemStacks());
         }
 
         private static int extractAmount(Ingredient ingredient) {

@@ -7,6 +7,8 @@ import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.feature.IRecipeLogicMachine;
+import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
+import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.recipe.ActionResult;
@@ -30,6 +32,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import com.raishxn.gtna.api.machine.IThreadModifierMachine;
+import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
+import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
 import com.raishxn.gtna.api.machine.multiblock.ParallelMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.utils.GTNARecipeUtils;
@@ -169,6 +173,8 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
 
         // --- FIM DA LÓGICA MANUAL ---
 
+        applyPatternBufferMode(recipeToRun);
+
         if (!RecipeHelper.matchContents((IRecipeCapabilityHolder) machine, recipeToRun).isSuccess()) {
             return false;
         }
@@ -181,12 +187,50 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
                     recipeToRun.duration,
                     this.getChanceCaches());
             this.activeRecipes.add(active);
+            notifyPatternBufferProviders(recipeToRun);
             return true;
         }
         return false;
     }
 
     // ... (Métodos isRecipeAlreadyActive, completeRecipe, getRecipeDisplayInfo, save/load mantidos iguais) ...
+    private void applyPatternBufferMode(GTRecipe recipe) {
+        if (!(machine instanceof IPatternBufferModeHost host)) {
+            return;
+        }
+        String requestedMode = null;
+        for (IPatternBufferModeProvider provider : getPatternBufferProviders()) {
+            requestedMode = provider.gtna$getPreferredModeForRecipe(recipe);
+            if (requestedMode != null && !requestedMode.isBlank()) {
+                break;
+            }
+        }
+        if (requestedMode == null || requestedMode.isBlank()) {
+            requestedMode = host.gtna$resolvePatternBufferMode(recipe);
+        }
+        if (requestedMode != null && !requestedMode.isBlank()) {
+            host.gtna$applyPatternBufferMode(requestedMode, recipe);
+        }
+    }
+
+    private void notifyPatternBufferProviders(GTRecipe recipe) {
+        for (IPatternBufferModeProvider provider : getPatternBufferProviders()) {
+            provider.gtna$onRecipeStarted(recipe);
+        }
+    }
+
+    private List<IPatternBufferModeProvider> getPatternBufferProviders() {
+        List<IPatternBufferModeProvider> providers = new ArrayList<>();
+        if (machine instanceof IMultiController multiController) {
+            for (IMultiPart part : multiController.getParts()) {
+                if (part instanceof IPatternBufferModeProvider provider) {
+                    providers.add(provider);
+                }
+            }
+        }
+        return providers;
+    }
+
     private boolean isRecipeAlreadyActive(GTRecipe recipe) {
         if (recipe.id == null) return false;
         for (GTNARecipeUtils.ActiveRecipe active : activeRecipes) {

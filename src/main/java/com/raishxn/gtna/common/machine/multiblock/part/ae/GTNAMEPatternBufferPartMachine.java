@@ -1,6 +1,8 @@
 package com.raishxn.gtna.common.machine.multiblock.part.ae;
 
+import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
+import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.TickableSubscription;
@@ -11,6 +13,7 @@ import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeHandlerList;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import com.gregtechceu.gtceu.api.recipe.ingredient.SizedIngredient;
 import com.gregtechceu.gtceu.api.transfer.item.CustomItemStackHandler;
@@ -21,7 +24,10 @@ import com.gregtechceu.gtceu.integration.ae2.machine.MEBusPartMachine;
 import com.gregtechceu.gtceu.utils.GTMath;
 import com.gregtechceu.gtceu.utils.ItemStackHashStrategy;
 
+import com.lowdragmc.lowdraglib.gui.texture.ColorRectTexture;
+import com.lowdragmc.lowdraglib.gui.widget.ButtonWidget;
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
+import com.lowdragmc.lowdraglib.gui.widget.TextFieldWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
 import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.lowdragmc.lowdraglib.syncdata.IContentChangeAware;
@@ -34,6 +40,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
@@ -71,6 +78,9 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
+import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -82,12 +92,16 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                                             implements ICraftingProvider, PatternContainer, IDataStickInteractable,
-                                            IDropSaveMachine {
+                                            IDropSaveMachine, IPatternBufferModeProvider {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
             GTNAMEPatternBufferPartMachine.class, MEBusPartMachine.MANAGED_FIELD_HOLDER);
     private static final String SLOT_CONFIGS_TAG = "gtnaPatternConfigs";
     private static final String INTERNAL_SLOTS_TAG = "gtnaPatternInternalSlots";
+    private static final int PANEL_WIDTH = 170;
+    private static final int COLOR_PANEL = 0xAA1F1F1F;
+    private static final int COLOR_BUTTON = 0xFF3D3D3D;
+    private static final int COLOR_BUTTON_HOVER = 0xFF5A5A5A;
 
     @Getter
     private final int maxPatternCount;
@@ -142,6 +156,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     private String customName = "";
 
     private boolean needPatternSync;
+    private int selectedSlot = -1;
 
     @Nullable
     protected TickableSubscription updateSubs;
@@ -283,27 +298,37 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
 
     public void invalidateSlotCache(int slot) {
         if (slot >= 0 && slot < slotConfigs.length) {
-            slotConfigs[slot].setCachedRecipeId("");
+            slotConfigs[slot].clearRecipeCache();
         }
     }
 
-    public @Nullable String getPreferredModeForRecipe(GTRecipe recipe) {
-        String recipeId = recipe.id == null ? "" : recipe.id.toString();
-        for (GTNAPatternBufferSlotConfig slotConfig : slotConfigs) {
-            if (!recipeId.isBlank() && recipeId.equals(slotConfig.getCachedRecipeId()) &&
-                    !slotConfig.getPreferredModeId().isBlank()) {
-                return slotConfig.getPreferredModeId();
-            }
+    @Override
+    public @Nullable String gtna$getPreferredModeForRecipe(GTRecipe recipe) {
+        SlotMatch match = findMatchingSlot(recipe);
+        if (match == null) {
+            return null;
         }
-        return null;
+        GTNAPatternBufferSlotConfig config = slotConfigs[match.slot()];
+        if (!config.getPreferredModeId().isBlank()) {
+            return config.getPreferredModeId();
+        }
+        return config.getDerivedModeId().isBlank() ? null : config.getDerivedModeId();
     }
 
-    public void onRecipeStarted(GTRecipe recipe) {
-        if (recipe.id == null) return;
-        String recipeId = recipe.id.toString();
-        for (GTNAPatternBufferSlotConfig slotConfig : slotConfigs) {
-            if (recipeId.equals(slotConfig.getCachedRecipeId())) {
-                return;
+    @Override
+    public void gtna$onRecipeStarted(GTRecipe recipe) {
+        SlotMatch match = findMatchingSlot(recipe);
+        if (match == null) {
+            return;
+        }
+        GTNAPatternBufferSlotConfig config = slotConfigs[match.slot()];
+        if (recipe.id != null) {
+            config.setCachedRecipeId(recipe.id.toString());
+        }
+        if (config.getPreferredModeId().isBlank()) {
+            String resolved = resolveDerivedMode(recipe);
+            if (resolved != null && !resolved.isBlank()) {
+                config.setDerivedModeId(resolved);
             }
         }
     }
@@ -340,7 +365,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         } else {
             detailsSlotMap.forcePut(newPatternDetails, internalSlot);
         }
-        slotConfigs[index].setCachedRecipeId("");
+        invalidateSlotCache(index);
         needPatternSync = true;
     }
 
@@ -348,12 +373,14 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     public Widget createUIWidget() {
         int rows = Math.max(1, (int) Math.ceil(maxPatternCount / 9.0));
         int columns = Math.min(9, maxPatternCount);
-        WidgetGroup group = new WidgetGroup(0, 0, 18 * columns + 16, 18 * rows + 28);
+        int gridWidth = 18 * columns + 16;
+        int gridHeight = 18 * rows + 16;
+        WidgetGroup group = new WidgetGroup(0, 0, gridWidth + PANEL_WIDTH, Math.max(gridHeight + 18, 172));
         int index = 0;
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < 9 && index < maxPatternCount; x++) {
                 int finalIndex = index;
-                group.addWidget(new AEPatternViewSlotWidget(patternInventory, index++, 8 + x * 18, 14 + y * 18)
+                group.addWidget(new PatternSlotWidget(patternInventory, index++, 8 + x * 18, 14 + y * 18, finalIndex)
                         .setItemHook(stack -> {
                             if (!stack.isEmpty() && stack.getItem() instanceof EncodedPatternItem encodedPatternItem) {
                                 ItemStack output = encodedPatternItem.getOutput(stack);
@@ -363,18 +390,364 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                             }
                             return stack;
                         })
-                        .setChangeListener(() -> onPatternChange(finalIndex)));
+                        .setChangeListener(() -> onPatternChange(finalIndex))
+                        .setOnAddedTooltips((widget, tooltips) ->
+                                tooltips.add(Component.translatable("gtna.machine.pattern_buffer.middle_click_hint"))));
             }
         }
         group.addWidget(new LabelWidget(
                 8,
                 2,
                 () -> this.isOnline ? "gtceu.gui.me_network.online" : "gtceu.gui.me_network.offline"));
-        group.addWidget(new AETextInputButtonWidget(Math.max(8, 18 * columns + 8 - 70), 2, 70, 10)
+        group.addWidget(new AETextInputButtonWidget(Math.max(8, gridWidth - 70), 2, 70, 10)
                 .setText(customName)
                 .setOnConfirm(this::setCustomName)
                 .setButtonTooltips(Component.translatable("gui.gtceu.rename.desc")));
+        addConfigPanel(group, gridWidth);
         return group;
+    }
+
+    private void addConfigPanel(WidgetGroup group, int gridWidth) {
+        int panelX = gridWidth + 4;
+        int fieldX = panelX + 4;
+        int fieldW = PANEL_WIDTH - 20;
+        int labelWidth = 54;
+        int valueX = fieldX + labelWidth;
+        int valueW = fieldW - labelWidth;
+        int y = 46;
+
+        group.addWidget(new WidgetGroup(panelX, 4, PANEL_WIDTH - 8, 164)
+                .setBackground(new ColorRectTexture(COLOR_PANEL)));
+        group.addWidget(new LabelWidget(panelX + 4, 8,
+                () -> selectedSlot >= 0 ?
+                        Component.translatable("gtna.machine.pattern_buffer.selected_slot", selectedSlot + 1)
+                                .getString() :
+                        Component.translatable("gtna.machine.pattern_buffer.no_slot_selected").getString()));
+        group.addWidget(new LabelWidget(panelX + 4, 20,
+                () -> Component.translatable("gtna.machine.pattern_buffer.cached_recipe_short",
+                        getSelectedConfig() == null || getSelectedConfig().getCachedRecipeId().isBlank() ?
+                                "-" :
+                                getSelectedConfig().getCachedRecipeId()).getString()));
+        group.addWidget(new LabelWidget(panelX + 4, 32,
+                () -> Component.translatable("gtna.machine.pattern_buffer.derived_mode_short",
+                        getSelectedConfig() == null || getSelectedConfig().getDerivedModeId().isBlank() ?
+                                "-" :
+                                getSelectedConfig().getDerivedModeId()).getString()));
+
+        group.addWidget(new LabelWidget(fieldX, y + 4,
+                () -> Component.translatable("gtna.machine.pattern_buffer.item_field").getString()));
+        group.addWidget(new TextFieldWidget(valueX, y, valueW, 14,
+                () -> getSelectedConfig() == null ? "" : getSelectedConfig().getSpecialItemId(),
+                value -> {
+                    GTNAPatternBufferSlotConfig config = getSelectedConfig();
+                    if (config != null) config.setSpecialItemId(value);
+                })
+                .setResourceLocationOnly());
+        y += 16;
+        group.addWidget(new LabelWidget(fieldX, y + 4,
+                () -> Component.translatable("gtna.machine.pattern_buffer.item_count_field").getString()));
+        group.addWidget(new TextFieldWidget(valueX, y, valueW, 14,
+                () -> getSelectedConfig() == null ? "1" : Integer.toString(getSelectedConfig().getSpecialItemCount()),
+                value -> {
+                    GTNAPatternBufferSlotConfig config = getSelectedConfig();
+                    if (config != null && !value.isBlank()) config.setSpecialItemCount(Integer.parseInt(value));
+                })
+                .setNumbersOnly(1, 999999));
+        y += 16;
+        group.addWidget(new LabelWidget(fieldX, y + 4,
+                () -> Component.translatable("gtna.machine.pattern_buffer.fluid_field").getString()));
+        group.addWidget(new TextFieldWidget(valueX, y, valueW, 14,
+                () -> getSelectedConfig() == null ? "" : getSelectedConfig().getSpecialFluidId(),
+                value -> {
+                    GTNAPatternBufferSlotConfig config = getSelectedConfig();
+                    if (config != null) config.setSpecialFluidId(value);
+                })
+                .setResourceLocationOnly());
+        y += 16;
+        group.addWidget(new LabelWidget(fieldX, y + 4,
+                () -> Component.translatable("gtna.machine.pattern_buffer.fluid_amount_field").getString()));
+        group.addWidget(new TextFieldWidget(valueX, y, valueW, 14,
+                () -> getSelectedConfig() == null ? "1000" :
+                        Integer.toString(getSelectedConfig().getSpecialFluidAmount()),
+                value -> {
+                    GTNAPatternBufferSlotConfig config = getSelectedConfig();
+                    if (config != null && !value.isBlank()) config.setSpecialFluidAmount(Integer.parseInt(value));
+                })
+                .setNumbersOnly(1, Integer.MAX_VALUE));
+        y += 16;
+        group.addWidget(new LabelWidget(fieldX, y + 4,
+                () -> Component.translatable("gtna.machine.pattern_buffer.circuit_field").getString()));
+        group.addWidget(new TextFieldWidget(valueX, y, valueW, 14,
+                () -> getSelectedConfig() == null ? "-1" : Integer.toString(getSelectedConfig().getCircuitConfig()),
+                value -> {
+                    GTNAPatternBufferSlotConfig config = getSelectedConfig();
+                    if (config != null && !value.isBlank()) config.setCircuitConfig(Integer.parseInt(value));
+                })
+                .setNumbersOnly(-1, 32));
+        y += 16;
+        group.addWidget(new LabelWidget(fieldX, y + 4,
+                () -> Component.translatable("gtna.machine.pattern_buffer.mode_field").getString()));
+        group.addWidget(new TextFieldWidget(valueX, y, valueW, 14,
+                () -> getSelectedConfig() == null ? "" : getSelectedConfig().getPreferredModeId(),
+                value -> {
+                    GTNAPatternBufferSlotConfig config = getSelectedConfig();
+                    if (config != null) config.setPreferredModeId(value);
+                })
+                .setResourceLocationOnly());
+
+        int buttonY = 142;
+        group.addWidget(makeButton(fieldX, buttonY, 50, 14, "gtna.machine.pattern_buffer.clear_specialization",
+                clickData -> {
+                    if (!clickData.isRemote) clearSelectedSpecialization();
+                }));
+        group.addWidget(makeButton(fieldX + 54, buttonY, 46, 14, "gtna.machine.pattern_buffer.clear_cache",
+                clickData -> {
+                    if (!clickData.isRemote) clearSelectedRecipeCache();
+                }));
+        group.addWidget(makeButton(fieldX + 104, buttonY, 50, 14, "gtna.machine.pattern_buffer.refund_slot",
+                clickData -> {
+                    if (!clickData.isRemote) refundSelectedSlot();
+                }));
+        group.addWidget(new LabelWidget(fieldX + 3, buttonY + 4,
+                () -> Component.translatable("gtna.machine.pattern_buffer.clear_specialization").getString()));
+        group.addWidget(new LabelWidget(fieldX + 58, buttonY + 4,
+                () -> Component.translatable("gtna.machine.pattern_buffer.clear_cache").getString()));
+        group.addWidget(new LabelWidget(fieldX + 113, buttonY + 4,
+                () -> Component.translatable("gtna.machine.pattern_buffer.refund_slot").getString()));
+    }
+
+    private ButtonWidget makeButton(int x, int y, int w, int h, String key,
+                                    java.util.function.Consumer<com.lowdragmc.lowdraglib.gui.util.ClickData> onPress) {
+        ButtonWidget button = new ButtonWidget(x, y, w, h, new ColorRectTexture(COLOR_BUTTON), onPress);
+        button.setHoverTexture(new ColorRectTexture(COLOR_BUTTON_HOVER));
+        button.setHoverTooltips(Component.translatable(key));
+        return button;
+    }
+
+    private void selectSlot(int slot) {
+        this.selectedSlot = slot >= 0 && slot < maxPatternCount ? slot : -1;
+    }
+
+    private @Nullable GTNAPatternBufferSlotConfig getSelectedConfig() {
+        return selectedSlot >= 0 && selectedSlot < slotConfigs.length ? slotConfigs[selectedSlot] : null;
+    }
+
+    private @Nullable InternalSlot getSelectedInternalSlot() {
+        return selectedSlot >= 0 && selectedSlot < internalInventory.length ? internalInventory[selectedSlot] : null;
+    }
+
+    private void clearSelectedSpecialization() {
+        GTNAPatternBufferSlotConfig config = getSelectedConfig();
+        if (config != null) {
+            config.clearSpecialization();
+        }
+    }
+
+    private void clearSelectedRecipeCache() {
+        GTNAPatternBufferSlotConfig config = getSelectedConfig();
+        if (config != null) {
+            config.clearRecipeCache();
+        }
+    }
+
+    private void refundSelectedSlot() {
+        InternalSlot internalSlot = getSelectedInternalSlot();
+        if (internalSlot != null) {
+            internalSlot.refund();
+        }
+    }
+
+    private @Nullable String resolveDerivedMode(GTRecipe recipe) {
+        if (!isFormed() || getControllers().isEmpty()) {
+            return null;
+        }
+        IMultiController controller = getControllers().first();
+        if (controller instanceof IPatternBufferModeHost host) {
+            return host.gtna$resolvePatternBufferMode(recipe);
+        }
+        return null;
+    }
+
+    private @Nullable SlotMatch findMatchingSlot(GTRecipe recipe) {
+        String recipeId = recipe.id == null ? "" : recipe.id.toString();
+        for (int i = 0; i < maxPatternCount; i++) {
+            GTNAPatternBufferSlotConfig config = slotConfigs[i];
+            if (!recipeId.isBlank() && recipeId.equals(config.getCachedRecipeId())) {
+                return new SlotMatch(i);
+            }
+        }
+        for (int i = 0; i < maxPatternCount; i++) {
+            if (matchesSlot(i, recipe)) {
+                return new SlotMatch(i);
+            }
+        }
+        return null;
+    }
+
+    private boolean matchesSlot(int slotIndex, GTRecipe recipe) {
+        List<Ingredient> itemInputs = copyItemInputs(recipe);
+        List<FluidIngredient> fluidInputs = copyFluidInputs(recipe);
+        itemInputs = consumeCircuitInventory(itemInputs);
+        itemInputs = consumeVirtualItems(slotConfigs[slotIndex], itemInputs);
+        fluidInputs = consumeVirtualFluids(slotConfigs[slotIndex], fluidInputs);
+        itemInputs = internalInventory[slotIndex].handleItemInternal(itemInputs, true);
+        fluidInputs = internalInventory[slotIndex].handleFluidInternal(fluidInputs, true);
+        boolean itemsMatched = itemInputs == null || itemInputs.isEmpty();
+        boolean fluidsMatched = fluidInputs == null || fluidInputs.isEmpty();
+        return itemsMatched && fluidsMatched;
+    }
+
+    private List<Ingredient> copyItemInputs(GTRecipe recipe) {
+        List<Ingredient> copied = new ArrayList<>();
+        for (Content content : recipe.getInputContents(ItemRecipeCapability.CAP)) {
+            Object inner = content.getContent();
+            if (inner instanceof Ingredient ingredient) {
+                copied.add(SizedIngredient.copy(ingredient));
+            } else if (inner instanceof ItemStack stack && !stack.isEmpty()) {
+                copied.add(SizedIngredient.create(stack.copy()));
+            }
+        }
+        return copied;
+    }
+
+    private List<FluidIngredient> copyFluidInputs(GTRecipe recipe) {
+        List<FluidIngredient> copied = new ArrayList<>();
+        for (Content content : recipe.getInputContents(FluidRecipeCapability.CAP)) {
+            Object inner = content.getContent();
+            if (inner instanceof FluidIngredient ingredient) {
+                copied.add(ingredient.copy());
+            } else if (inner instanceof FluidStack stack && !stack.isEmpty()) {
+                copied.add(FluidIngredient.of(stack.copy()));
+            }
+        }
+        return copied;
+    }
+
+    private List<Ingredient> consumeCircuitInventory(List<Ingredient> left) {
+        if (left == null || left.isEmpty() || !isHasCircuitSlot()) {
+            return left;
+        }
+        ItemStack circuitStack = circuitInventory.storage.getStackInSlot(0);
+        if (circuitStack.isEmpty()) {
+            return left;
+        }
+        return consumeVirtualItemList(List.of(circuitStack), left);
+    }
+
+    private List<Ingredient> consumeVirtualItems(GTNAPatternBufferSlotConfig config, List<Ingredient> left) {
+        if (left == null || left.isEmpty()) {
+            return left;
+        }
+        return consumeVirtualItemList(config.getVirtualItemStacks(), left);
+    }
+
+    private List<Ingredient> consumeVirtualItemList(List<ItemStack> virtualStacks, List<Ingredient> left) {
+        if (virtualStacks.isEmpty()) {
+            return left;
+        }
+        for (var it = left.listIterator(); it.hasNext();) {
+            Ingredient ingredient = it.next();
+            if (ingredient == null || ingredient.isEmpty()) {
+                it.remove();
+                continue;
+            }
+            int amountLeft = extractAmount(ingredient);
+            if (amountLeft <= 0) {
+                it.remove();
+                continue;
+            }
+            for (ItemStack stack : virtualStacks) {
+                if (stack.isEmpty() || !ingredient.test(stack)) {
+                    continue;
+                }
+                amountLeft -= stack.getCount();
+                if (amountLeft <= 0) {
+                    it.remove();
+                    break;
+                }
+            }
+            if (amountLeft > 0) {
+                applyAmount(ingredient, amountLeft);
+            }
+        }
+        return left.isEmpty() ? null : left;
+    }
+
+    private List<FluidIngredient> consumeVirtualFluids(GTNAPatternBufferSlotConfig config, List<FluidIngredient> left) {
+        if (left == null || left.isEmpty() || !config.hasSpecialFluid()) {
+            return left;
+        }
+        FluidStack configuredFluid = config.getSpecialFluidStack().orElse(FluidStack.EMPTY);
+        if (configuredFluid.isEmpty()) {
+            return left;
+        }
+        for (var it = left.listIterator(); it.hasNext();) {
+            FluidIngredient ingredient = it.next();
+            if (ingredient == null || ingredient.isEmpty()) {
+                it.remove();
+                continue;
+            }
+            int amountLeft = ingredient.getAmount();
+            if (ingredient.test(configuredFluid)) {
+                amountLeft -= configuredFluid.getAmount();
+            }
+            if (amountLeft <= 0) {
+                it.remove();
+            } else {
+                ingredient.setAmount(amountLeft);
+            }
+        }
+        return left.isEmpty() ? null : left;
+    }
+
+    private static int extractAmount(Ingredient ingredient) {
+        if (ingredient instanceof SizedIngredient sizedIngredient) {
+            return sizedIngredient.getAmount();
+        }
+        ItemStack[] items = ingredient.getItems();
+        return items.length > 0 ? items[0].getCount() : 0;
+    }
+
+    private static void applyAmount(Ingredient ingredient, int amount) {
+        if (ingredient instanceof SizedIngredient sizedIngredient) {
+            sizedIngredient.setAmount(amount);
+            return;
+        }
+        ItemStack[] items = ingredient.getItems();
+        if (items.length > 0) {
+            items[0].setCount(amount);
+        }
+    }
+
+    private record SlotMatch(int slot) {}
+
+    private final class PatternSlotWidget extends AEPatternViewSlotWidget {
+
+        private final int logicalSlot;
+
+        private PatternSlotWidget(CustomItemStackHandler itemHandler, int slotIndex, int xPosition, int yPosition,
+                                  int logicalSlot) {
+            super(itemHandler, slotIndex, xPosition, yPosition);
+            this.logicalSlot = logicalSlot;
+        }
+
+        @Override
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            if (isMouseOverElement(mouseX, mouseY) && button == 2) {
+                selectSlot(logicalSlot);
+                writeClientAction(200, buffer -> buffer.writeVarInt(logicalSlot));
+                return true;
+            }
+            return super.mouseClicked(mouseX, mouseY, button);
+        }
+
+        @Override
+        public void handleClientAction(int id, FriendlyByteBuf buffer) {
+            super.handleClientAction(id, buffer);
+            if (id == 200) {
+                selectSlot(buffer.readVarInt());
+            }
+        }
     }
 
     @Override

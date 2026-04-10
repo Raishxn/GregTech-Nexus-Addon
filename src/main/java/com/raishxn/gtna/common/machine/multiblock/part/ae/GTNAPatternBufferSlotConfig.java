@@ -28,6 +28,7 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
     private int specialFluidAmount = 1000;
     private int circuitConfig = -1;
     private String preferredModeId = "";
+    private String derivedModeId = "";
     private String cachedRecipeId = "";
 
     public void setOnContentsChanged(Runnable onContentsChanged) {
@@ -101,6 +102,21 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
         onContentsChanged();
     }
 
+    public String getDerivedModeId() {
+        return derivedModeId;
+    }
+
+    public void setDerivedModeId(String derivedModeId) {
+        this.derivedModeId = derivedModeId == null ? "" : derivedModeId.trim();
+        onContentsChanged();
+    }
+
+    public void clearRecipeCache() {
+        this.cachedRecipeId = "";
+        this.derivedModeId = "";
+        onContentsChanged();
+    }
+
     public void clearSpecialization() {
         this.specialItemId = "";
         this.specialItemCount = 1;
@@ -108,6 +124,7 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
         this.specialFluidAmount = 1000;
         this.circuitConfig = -1;
         this.preferredModeId = "";
+        this.derivedModeId = "";
         this.cachedRecipeId = "";
         onContentsChanged();
     }
@@ -158,6 +175,16 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
         return hasCircuit() ? IntCircuitBehaviour.stack(circuitConfig) : null;
     }
 
+    public java.util.List<ItemStack> getVirtualItemStacks() {
+        java.util.List<ItemStack> stacks = new java.util.ArrayList<>(2);
+        getSpecialItem().ifPresent(stacks::add);
+        ItemStack circuitStack = getCircuitStack();
+        if (circuitStack != null && !circuitStack.isEmpty()) {
+            stacks.add(circuitStack);
+        }
+        return stacks;
+    }
+
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
@@ -173,6 +200,9 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
         if (!preferredModeId.isBlank()) {
             tag.putString("preferredModeId", preferredModeId);
         }
+        if (!derivedModeId.isBlank()) {
+            tag.putString("derivedModeId", derivedModeId);
+        }
         if (!cachedRecipeId.isBlank()) {
             tag.putString("cachedRecipeId", cachedRecipeId);
         }
@@ -187,6 +217,7 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
         this.specialFluidAmount = Math.max(1, tag.getInt("specialFluidAmount"));
         this.circuitConfig = tag.contains("circuitConfig") ? tag.getInt("circuitConfig") : -1;
         this.preferredModeId = tag.getString("preferredModeId");
+        this.derivedModeId = tag.getString("derivedModeId");
         this.cachedRecipeId = tag.getString("cachedRecipeId");
     }
 }

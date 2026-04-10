@@ -123,11 +123,28 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.me_pattern_buffer", "ME Pattern Buffer");
         add("block.gtna.me_advanced_pattern_buffer", "ME Advanced Pattern Buffer");
         add("block.gtna.me_ultimate_pattern_buffer", "ME Ultimate Pattern Buffer");
-        add("gtna.machine.pattern_buffer.tooltip", "AE2 pattern buffer with GTNA per-slot specialization scaffolding");
+        add("gtna.machine.pattern_buffer.tooltip", "AE2 pattern buffer with per-slot GTNA specialization");
         add("gtna.machine.pattern_buffer.slots", "Pattern Slots: %s");
         add("gtna.machine.pattern_buffer.break_persist", "Stored patterns and slot data are preserved on block drop");
         add("gtna.machine.pattern_buffer.specialization_pending",
-                "Slot specialization UI and mode-switch automation are planned in later phases");
+                "Middle-click a pattern slot to edit item, fluid, circuit, and mode specialization");
+        add("gtna.machine.pattern_buffer.middle_click_hint", "Middle-click to configure this pattern slot");
+        add("gtna.machine.pattern_buffer.selected_slot", "Editing Slot %s");
+        add("gtna.machine.pattern_buffer.no_slot_selected", "No slot selected");
+        add("gtna.machine.pattern_buffer.cached_recipe_short", "Recipe Cache: %s");
+        add("gtna.machine.pattern_buffer.derived_mode_short", "Derived Mode: %s");
+        add("gtna.machine.pattern_buffer.item_field", "Special Item ID");
+        add("gtna.machine.pattern_buffer.item_count_field", "Special Item Count");
+        add("gtna.machine.pattern_buffer.fluid_field", "Special Fluid ID");
+        add("gtna.machine.pattern_buffer.fluid_amount_field", "Special Fluid Amount (mB)");
+        add("gtna.machine.pattern_buffer.circuit_field", "Integrated Circuit");
+        add("gtna.machine.pattern_buffer.mode_field", "Preferred Mode ID");
+        add("gtna.machine.pattern_buffer.clear_specialization", "Clear Spec");
+        add("gtna.machine.pattern_buffer.clear_cache", "Clear Cache");
+        add("gtna.machine.pattern_buffer.refund_slot", "Refund");
+        add("item.gtna.pattern_buffer_upgrader.tooltip.use", "Right-click a lower tier GTNA Pattern Buffer to upgrade it");
+        add("item.gtna.pattern_buffer_upgrader.tooltip.keep_data",
+                "Preserves encoded patterns, internal slot data, and slot specialization");
 
         // --- Wireless Energy/Dynamo Hatches ---
         add("gtna.machine.wireless_energy_hatch.tooltip", "Pulls energy wirelessly from the Nexus Network");

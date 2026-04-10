@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
+import com.gregtechceu.gtceu.common.data.machines.GTAEMachines;
 
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -17,6 +18,7 @@ import net.minecraft.world.item.Items;
 
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.common.data.GTNAItems;
+import com.raishxn.gtna.common.data.GTNAMachines2;
 import com.raishxn.gtna.common.data.GTNAMaterials;
 import com.raishxn.gtna.common.data.GTNARecipeType;
 
@@ -260,6 +262,54 @@ public class GTNAItemRecipes {
                 .outputItems(BuiltInRegistries.ITEM.get(new ResourceLocation("gtna", "echoite_vajra")))
                 .duration(600)
                 .EUt(120)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_me_mini_pattern_buffer")
+                .inputItems(GTAEMachines.ME_PATTERN_BUFFER.asStack())
+                .inputItems(GTItems.TERMINAL.get())
+                .inputItems(GTItems.TOOL_DATA_STICK.get())
+                .inputItems(GTItems.INTEGRATED_CIRCUIT_HV.get(), 2)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(288))
+                .outputItems(GTNAMachines2.ME_MINI_PATTERN_BUFFER.asStack())
+                .duration(400)
+                .EUt(480)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("pattern_buffer_upgrade_21")
+                .inputItems(GTItems.SENSOR_LuV.get())
+                .inputItems(GTItems.ROBOT_ARM_LuV.get())
+                .inputItems(GTItems.CONVEYOR_MODULE_LuV.get())
+                .inputItems(GTItems.ELECTRIC_PUMP_LuV.get())
+                .inputItems(GTItems.TOOL_DATA_STICK.get())
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(144))
+                .outputItems(GTNAItems.PATTERN_BUFFER_UPGRADE_21.get())
+                .duration(200)
+                .EUt(480)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("pattern_buffer_upgrade_32")
+                .inputItems(GTItems.SENSOR_ZPM.get())
+                .inputItems(GTItems.ROBOT_ARM_ZPM.get())
+                .inputItems(GTItems.CONVEYOR_MODULE_ZPM.get())
+                .inputItems(GTItems.ELECTRIC_PUMP_ZPM.get())
+                .inputItems(GTItems.TOOL_DATA_ORB.get())
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(288))
+                .outputItems(GTNAItems.PATTERN_BUFFER_UPGRADE_32.get())
+                .duration(300)
+                .EUt(1920)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("pattern_buffer_upgrade_72")
+                .inputItems(GTItems.SENSOR_UV.get())
+                .inputItems(GTItems.ROBOT_ARM_UV.get())
+                .inputItems(GTItems.CONVEYOR_MODULE_UV.get())
+                .inputItems(GTItems.ELECTRIC_PUMP_UV.get())
+                .inputItems(GTItems.WIRELESS.get(), 2)
+                .inputItems(GTItems.TOOL_DATA_ORB.get())
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                .outputItems(GTNAItems.PATTERN_BUFFER_UPGRADE_72.get())
+                .duration(400)
+                .EUt(7680)
                 .save(provider);
     }
 }
