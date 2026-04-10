@@ -96,7 +96,6 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
 
     public void setCachedRecipeId(String cachedRecipeId) {
         this.cachedRecipeId = cachedRecipeId == null ? "" : cachedRecipeId.trim();
-        onContentsChanged();
     }
 
     public String getDerivedModeId() {
@@ -105,13 +104,15 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
 
     public void setDerivedModeId(String derivedModeId) {
         this.derivedModeId = derivedModeId == null ? "" : derivedModeId.trim();
-        onContentsChanged();
     }
 
     public void clearRecipeCache() {
+        clearRecipeCacheSilently();
+    }
+
+    public void clearRecipeCacheSilently() {
         this.cachedRecipeId = "";
         this.derivedModeId = "";
-        onContentsChanged();
     }
 
     public void clearSpecialization() {

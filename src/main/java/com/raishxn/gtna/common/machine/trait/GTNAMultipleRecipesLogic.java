@@ -107,14 +107,8 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
             boolean limitUniqueRecipe = currentParallel > 1;
 
             if (activeRecipes.size() < maxThreads) {
-                List<GTRecipe> possibleRecipes = new ArrayList<>();
-                var recipeIterator = machine.getRecipeType().searchRecipe((IRecipeCapabilityHolder) machine,
-                        recipe -> true);
                 int searchLimit = 30;
-                while (recipeIterator.hasNext() && possibleRecipes.size() < searchLimit) {
-                    GTRecipe r = recipeIterator.next();
-                    if (r != null) possibleRecipes.add(r);
-                }
+                List<GTRecipe> possibleRecipes = collectPossibleRecipes(searchLimit);
                 for (GTRecipe validRecipe : possibleRecipes) {
                     if (activeRecipes.size() >= maxThreads) break;
                     if (limitUniqueRecipe && isRecipeAlreadyActive(validRecipe)) continue;
@@ -124,6 +118,43 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
                 }
             }
         }
+    }
+
+    private List<GTRecipe> collectPossibleRecipes(int searchLimit) {
+        List<GTRecipe> possibleRecipes = new ArrayList<>(searchLimit);
+        var recipeTypes = machine.getRecipeTypes();
+        if (recipeTypes == null || recipeTypes.length == 0) {
+            recipeTypes = new com.gregtechceu.gtceu.api.recipe.GTRecipeType[] { machine.getRecipeType() };
+        }
+        for (var recipeType : recipeTypes) {
+            if (recipeType == null) {
+                continue;
+            }
+            var recipeIterator = recipeType.searchRecipe((IRecipeCapabilityHolder) machine, recipe -> true);
+            while (recipeIterator.hasNext() && possibleRecipes.size() < searchLimit) {
+                GTRecipe recipe = recipeIterator.next();
+                if (recipe == null || containsRecipe(possibleRecipes, recipe)) {
+                    continue;
+                }
+                possibleRecipes.add(recipe);
+            }
+            if (possibleRecipes.size() >= searchLimit) {
+                break;
+            }
+        }
+        return possibleRecipes;
+    }
+
+    private static boolean containsRecipe(List<GTRecipe> possibleRecipes, GTRecipe candidate) {
+        for (GTRecipe existing : possibleRecipes) {
+            if (existing == candidate) {
+                return true;
+            }
+            if (existing != null && candidate != null && existing.id != null && existing.id.equals(candidate.id)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean tryStartRecipe(GTRecipe recipe) {

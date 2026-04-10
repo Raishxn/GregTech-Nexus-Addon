@@ -1,6 +1,6 @@
 # GTNA Pattern Buffer Task Manager
 
-Status: `IN PROGRESS`
+Status: `COMPLETE`
 Branch: `codex/pattern-buffer`
 
 ## Goal
@@ -164,3 +164,9 @@ Implement a GTNA-native `ME Pattern Buffer` system inspired by GTO/GTL with:
 - If GTNA lacks a clean generic mode-switch API, introduce a small GTNA-side interface instead of hardcoding per-machine logic
 - If middle-click is awkward in LDLib slot widgets, fallback can be `Shift + Middle Click` or a dedicated config button while preserving the intended workflow
 - In-game manual smoke testing is still recommended because the repository currently has no UI/integration test harness
+
+## Post-Implementation Fixes
+
+- [x] Fix recursive cache invalidation crash caused by slot config callbacks
+- [x] Search recipes across all supported machine modes before attempting auto mode switching
+- [x] Refit the slot configurator into a compact GTL-style docked side panel to remove empty UI space
