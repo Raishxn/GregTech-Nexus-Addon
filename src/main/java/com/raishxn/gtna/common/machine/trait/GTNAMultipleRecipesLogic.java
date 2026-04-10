@@ -13,6 +13,7 @@ import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMa
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.recipe.ActionResult;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
 import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
@@ -28,14 +29,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeManager;
 
 import com.raishxn.gtna.api.machine.IThreadModifierMachine;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
 import com.raishxn.gtna.api.machine.multiblock.ParallelMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
 import com.raishxn.gtna.utils.GTNARecipeUtils;
 import com.raishxn.gtna.utils.ThreadMultiplierStrategy;
 import org.jetbrains.annotations.NotNull;
@@ -124,25 +128,67 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
         List<GTRecipe> possibleRecipes = new ArrayList<>(searchLimit);
         var recipeTypes = machine.getRecipeTypes();
         if (recipeTypes == null || recipeTypes.length == 0) {
-            recipeTypes = new com.gregtechceu.gtceu.api.recipe.GTRecipeType[] { machine.getRecipeType() };
+            recipeTypes = new GTRecipeType[] { machine.getRecipeType() };
         }
-        for (var recipeType : recipeTypes) {
-            if (recipeType == null) {
-                continue;
-            }
-            var recipeIterator = recipeType.searchRecipe((IRecipeCapabilityHolder) machine, recipe -> true);
-            while (recipeIterator.hasNext() && possibleRecipes.size() < searchLimit) {
-                GTRecipe recipe = recipeIterator.next();
-                if (recipe == null || containsRecipe(possibleRecipes, recipe)) {
-                    continue;
+
+        // === FAST-PATH: receitas cacheadas direto do pattern buffer ===
+        collectCachedBufferRecipes(possibleRecipes, recipeTypes);
+
+        // === FALLBACK: busca com distribuição justa entre tipos ===
+        if (possibleRecipes.size() < searchLimit) {
+            int remaining = searchLimit - possibleRecipes.size();
+            int perTypeLimit = Math.max(4, remaining / Math.max(1, recipeTypes.length));
+
+            for (var recipeType : recipeTypes) {
+                if (recipeType == null) continue;
+                int found = 0;
+                var recipeIterator = recipeType.searchRecipe(
+                        (IRecipeCapabilityHolder) machine, recipe -> true);
+                while (recipeIterator.hasNext() && found < perTypeLimit
+                        && possibleRecipes.size() < searchLimit) {
+                    GTRecipe recipe = recipeIterator.next();
+                    if (recipe == null || containsRecipe(possibleRecipes, recipe)) continue;
+                    possibleRecipes.add(recipe);
+                    found++;
                 }
-                possibleRecipes.add(recipe);
-            }
-            if (possibleRecipes.size() >= searchLimit) {
-                break;
             }
         }
         return possibleRecipes;
+    }
+
+    /**
+     * Fast-path: percorre os slots do pattern buffer que têm itens pendentes.
+     * Se o slot já tem um cachedRecipeId, faz lookup direto por ID → O(1).
+     * Isso evita o searchRecipe() cego que é O(n) por recipe type.
+     */
+    private void collectCachedBufferRecipes(List<GTRecipe> target, GTRecipeType[] recipeTypes) {
+        if (!(machine instanceof IMultiController multiController)) return;
+        MetaMachine metaMachine = (MetaMachine) machine;
+        if (metaMachine.getLevel() == null) return;
+        RecipeManager recipeManager = metaMachine.getLevel().getRecipeManager();
+
+        for (IMultiPart part : multiController.getParts()) {
+            if (!(part instanceof GTNAMEPatternBufferPartMachine buffer)) continue;
+            for (int i = 0; i < buffer.getMaxPatternCount(); i++) {
+                var slot = buffer.getInternalInventory()[i];
+                if (slot.isItemEmpty() && slot.isFluidEmpty()) continue;
+
+                var config = buffer.getSlotConfigs()[i];
+                String cachedId = config.getCachedRecipeId();
+                if (cachedId.isBlank()) continue;
+
+                ResourceLocation recipeRL = ResourceLocation.tryParse(cachedId);
+                if (recipeRL == null) continue;
+
+                // Lookup direto por ID via RecipeManager → O(1)
+                var optional = recipeManager.byKey(recipeRL);
+                if (optional.isPresent() && optional.get() instanceof GTRecipe gtRecipe) {
+                    if (!containsRecipe(target, gtRecipe)) {
+                        target.add(gtRecipe);
+                    }
+                }
+            }
+        }
     }
 
     private static boolean containsRecipe(List<GTRecipe> possibleRecipes, GTRecipe candidate) {
