@@ -27,6 +27,10 @@ public interface IPatternBufferModeHost {
         if (requested.equals(fullId) || requested.equals(path)) {
             return true;
         }
-        return path.endsWith("_" + requested) || path.endsWith("/" + requested);
+        if (path.endsWith("_" + requested) || path.endsWith("/" + requested)) {
+            return true;
+        }
+        return ("saw".equals(requested) || "cutting_saw".equals(requested)) &&
+                (path.contains("cutter") || path.contains("saw"));
     }
 }

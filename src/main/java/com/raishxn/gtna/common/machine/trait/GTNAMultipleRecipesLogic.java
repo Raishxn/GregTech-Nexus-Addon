@@ -226,9 +226,6 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
 
     // ... (Métodos isRecipeAlreadyActive, completeRecipe, getRecipeDisplayInfo, save/load mantidos iguais) ...
     private void applyPatternBufferMode(GTRecipe recipe) {
-        if (!(machine instanceof IPatternBufferModeHost host)) {
-            return;
-        }
         String requestedMode = null;
         for (IPatternBufferModeProvider provider : getPatternBufferProviders()) {
             requestedMode = provider.gtna$getPreferredModeForRecipe(recipe);
@@ -236,11 +233,42 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
                 break;
             }
         }
-        if (requestedMode == null || requestedMode.isBlank()) {
+        if ((requestedMode == null || requestedMode.isBlank()) && machine instanceof IPatternBufferModeHost host) {
             requestedMode = host.gtna$resolvePatternBufferMode(recipe);
         }
         if (requestedMode != null && !requestedMode.isBlank()) {
-            host.gtna$applyPatternBufferMode(requestedMode, recipe);
+            applyRequestedMode(requestedMode, recipe);
+        }
+    }
+
+    private void applyRequestedMode(String modeId, GTRecipe recipe) {
+        if (modeId == null || modeId.isBlank()) {
+            return;
+        }
+        if (machine instanceof IPatternBufferModeHost host && host.gtna$applyPatternBufferMode(modeId, recipe)) {
+            return;
+        }
+        var recipeTypes = machine.getRecipeTypes();
+        if (recipeTypes == null || recipeTypes.length <= 1) {
+            return;
+        }
+        for (int i = 0; i < recipeTypes.length; i++) {
+            var recipeType = recipeTypes[i];
+            if (recipeType == null || recipeType.registryName == null) {
+                continue;
+            }
+            String requested = modeId.trim().toLowerCase(Locale.ROOT);
+            String fullId = recipeType.registryName.toString().toLowerCase(Locale.ROOT);
+            String path = recipeType.registryName.getPath().toLowerCase(Locale.ROOT);
+            if (requested.equals(fullId) || requested.equals(path) ||
+                    path.endsWith("_" + requested) || path.endsWith("/" + requested) ||
+                    (("saw".equals(requested) || "cutting_saw".equals(requested)) &&
+                            (path.contains("cutter") || path.contains("saw")))) {
+                if (machine.getActiveRecipeType() != i) {
+                    machine.setActiveRecipeType(i);
+                }
+                return;
+            }
         }
     }
 

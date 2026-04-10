@@ -11,11 +11,13 @@ import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.feature.IDataStickInteractable;
 import com.gregtechceu.gtceu.api.machine.feature.IDropSaveMachine;
+import com.gregtechceu.gtceu.api.machine.feature.IRecipeLogicMachine;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeHandlerList;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import com.gregtechceu.gtceu.api.recipe.ingredient.SizedIngredient;
@@ -107,6 +109,8 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             GTNAMEPatternBufferPartMachine.class, MEBusPartMachine.MANAGED_FIELD_HOLDER);
     private static final String SLOT_CONFIGS_TAG = "gtnaPatternConfigs";
     private static final String INTERNAL_SLOTS_TAG = "gtnaPatternInternalSlots";
+    private static final String PATTERN_RECIPE_ID_TAG = "gtnaPatternRecipeId";
+    private static final String PATTERN_MODE_ID_TAG = "gtnaPatternModeId";
     private static final int PANEL_WIDTH = 108;
     private static final int PANEL_HEIGHT = 250;
 
@@ -308,6 +312,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     public void invalidateSlotCache(int slot) {
         if (slot >= 0 && slot < slotConfigs.length) {
             slotConfigs[slot].clearRecipeCacheSilently();
+            clearPatternRecipeMetadata(slot);
         }
     }
 
@@ -330,16 +335,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         if (match == null) {
             return;
         }
-        GTNAPatternBufferSlotConfig config = slotConfigs[match.slot()];
-        if (recipe.id != null) {
-            config.setCachedRecipeId(recipe.id.toString());
-        }
-        if (config.getPreferredModeId().isBlank()) {
-            String resolved = resolveDerivedMode(recipe);
-            if (resolved != null && !resolved.isBlank()) {
-                config.setDerivedModeId(resolved);
-            }
-        }
+        cacheResolvedRecipe(match.slot(), recipe);
         if (match.slot() == selectedSlot) {
             refreshSelectedConfigPreview();
         }
@@ -354,12 +350,14 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             if (details != null) {
                 detailsSlotMap.forcePut(details, internalInventory[i]);
             }
+            loadPatternRecipeMetadata(i, pattern);
         }
         needPatternSync = true;
     }
 
     private void onSlotConfigurationChanged(int slot) {
         invalidateSlotCache(slot);
+        resolveAndCacheSlotRecipe(slot);
         needPatternSync = true;
         if (slot == selectedSlot) {
             refreshSelectedConfigPreview();
@@ -382,6 +380,8 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             detailsSlotMap.forcePut(newPatternDetails, internalSlot);
         }
         invalidateSlotCache(index);
+        loadPatternRecipeMetadata(index, newPattern);
+        resolveAndCacheSlotRecipe(index);
         needPatternSync = true;
     }
 
@@ -596,6 +596,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         GTNAPatternBufferSlotConfig config = getSelectedConfig();
         if (config != null) {
             config.clearRecipeCache();
+            clearPatternRecipeMetadata(selectedSlot);
             if (selectedSlot >= 0) {
                 needPatternSync = true;
                 refreshSelectedConfigPreview();
@@ -614,6 +615,114 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             }
         }
         circuitPreviewInventory.setStackInSlot(0, stack);
+    }
+
+    private void loadPatternRecipeMetadata(int slot, ItemStack pattern) {
+        if (slot < 0 || slot >= slotConfigs.length || pattern.isEmpty() || !pattern.hasTag()) {
+            return;
+        }
+        CompoundTag tag = pattern.getTag();
+        if (tag == null) {
+            return;
+        }
+        GTNAPatternBufferSlotConfig config = slotConfigs[slot];
+        if (tag.contains(PATTERN_RECIPE_ID_TAG, Tag.TAG_STRING)) {
+            config.setCachedRecipeId(tag.getString(PATTERN_RECIPE_ID_TAG));
+        }
+        if (config.getPreferredModeId().isBlank() && tag.contains(PATTERN_MODE_ID_TAG, Tag.TAG_STRING)) {
+            config.setDerivedModeId(tag.getString(PATTERN_MODE_ID_TAG));
+        }
+    }
+
+    private void clearPatternRecipeMetadata(int slot) {
+        if (slot < 0 || slot >= patternInventory.getSlots()) {
+            return;
+        }
+        ItemStack pattern = patternInventory.getStackInSlot(slot);
+        if (pattern.isEmpty() || !pattern.hasTag()) {
+            return;
+        }
+        CompoundTag tag = pattern.getOrCreateTag();
+        tag.remove(PATTERN_RECIPE_ID_TAG);
+        tag.remove(PATTERN_MODE_ID_TAG);
+    }
+
+    private void cacheResolvedRecipe(int slot, GTRecipe recipe) {
+        if (slot < 0 || slot >= slotConfigs.length || recipe.id == null) {
+            return;
+        }
+        GTNAPatternBufferSlotConfig config = slotConfigs[slot];
+        config.setCachedRecipeId(recipe.id.toString());
+        String resolvedMode = config.getPreferredModeId().isBlank() ? resolveDerivedMode(recipe) : config.getPreferredModeId();
+        if (config.getPreferredModeId().isBlank()) {
+            config.setDerivedModeId(resolvedMode == null ? "" : resolvedMode);
+        }
+        persistPatternRecipeMetadata(slot, recipe, resolvedMode);
+    }
+
+    private void persistPatternRecipeMetadata(int slot, GTRecipe recipe, @Nullable String modeId) {
+        if (slot < 0 || slot >= patternInventory.getSlots() || recipe.id == null) {
+            return;
+        }
+        ItemStack pattern = patternInventory.getStackInSlot(slot);
+        if (pattern.isEmpty()) {
+            return;
+        }
+        CompoundTag tag = pattern.getOrCreateTag();
+        tag.putString(PATTERN_RECIPE_ID_TAG, recipe.id.toString());
+        if (modeId == null || modeId.isBlank()) {
+            tag.remove(PATTERN_MODE_ID_TAG);
+        } else {
+            tag.putString(PATTERN_MODE_ID_TAG, modeId);
+        }
+    }
+
+    private void resolveAndCacheSlotRecipe(int slot) {
+        if (slot < 0 || slot >= maxPatternCount || isRemote()) {
+            return;
+        }
+        ItemStack pattern = patternInventory.getStackInSlot(slot);
+        if (pattern.isEmpty() || !isFormed() || getControllers().isEmpty()) {
+            return;
+        }
+        IMultiController controller = getControllers().first();
+        if (!(controller instanceof IRecipeLogicMachine recipeMachine) || !(controller instanceof com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder holder)) {
+            return;
+        }
+        GTRecipeType[] recipeTypes = recipeMachine.getRecipeTypes();
+        if (recipeTypes == null || recipeTypes.length == 0) {
+            recipeTypes = new GTRecipeType[] { recipeMachine.getRecipeType() };
+        }
+        GTRecipe resolved = findResolvedRecipeForSlot(slot, holder, recipeTypes);
+        if (resolved != null) {
+            cacheResolvedRecipe(slot, resolved);
+        }
+    }
+
+    private @Nullable GTRecipe findResolvedRecipeForSlot(int slot, com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder holder,
+                                                         GTRecipeType[] recipeTypes) {
+        String cachedRecipeId = slotConfigs[slot].getCachedRecipeId();
+        GTRecipe fallback = null;
+        for (GTRecipeType recipeType : recipeTypes) {
+            if (recipeType == null) {
+                continue;
+            }
+            var iterator = recipeType.searchRecipe(holder, recipe -> true);
+            int searchLimit = 256;
+            while (iterator.hasNext() && searchLimit-- > 0) {
+                GTRecipe recipe = iterator.next();
+                if (recipe == null || !matchesSlot(slot, recipe)) {
+                    continue;
+                }
+                if (recipe.id != null && recipe.id.toString().equals(cachedRecipeId)) {
+                    return recipe;
+                }
+                if (fallback == null) {
+                    fallback = recipe;
+                }
+            }
+        }
+        return fallback;
     }
 
     private void onSelectedConfigWidgetChanged() {
@@ -635,18 +744,37 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         if (controller instanceof IPatternBufferModeHost host) {
             return host.gtna$resolvePatternBufferMode(recipe);
         }
+        if (controller instanceof IRecipeLogicMachine recipeMachine &&
+                recipeMachine.getRecipeTypes() != null &&
+                recipeMachine.getRecipeTypes().length > 1 &&
+                recipe.getType() != null &&
+                recipe.getType().registryName != null) {
+            return recipe.getType().registryName.toString();
+        }
         return null;
     }
 
     private static boolean matchesPreferredMode(GTNAPatternBufferSlotConfig config, GTRecipe recipe) {
-        if (config.getPreferredModeId().isBlank() || recipe.getType() == null || recipe.getType().registryName == null) {
+        return matchesModeId(config.getPreferredModeId(), recipe);
+    }
+
+    private static boolean matchesDerivedMode(GTNAPatternBufferSlotConfig config, GTRecipe recipe) {
+        return matchesModeId(config.getDerivedModeId(), recipe);
+    }
+
+    private static boolean matchesModeId(String modeId, GTRecipe recipe) {
+        if (modeId == null || modeId.isBlank() || recipe.getType() == null || recipe.getType().registryName == null) {
             return false;
         }
-        String requested = config.getPreferredModeId().trim().toLowerCase(Locale.ROOT);
+        String requested = modeId.trim().toLowerCase(Locale.ROOT);
         String fullId = recipe.getType().registryName.toString().toLowerCase(Locale.ROOT);
         String path = recipe.getType().registryName.getPath().toLowerCase(Locale.ROOT);
-        return requested.equals(fullId) || requested.equals(path) ||
-                path.endsWith("_" + requested) || path.endsWith("/" + requested);
+        if (requested.equals(fullId) || requested.equals(path) ||
+                path.endsWith("_" + requested) || path.endsWith("/" + requested)) {
+            return true;
+        }
+        return ("saw".equals(requested) || "cutting_saw".equals(requested)) &&
+                (path.contains("cutter") || path.contains("saw"));
     }
 
     private @Nullable SlotMatch findMatchingSlot(GTRecipe recipe) {
@@ -660,6 +788,10 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         for (int i = 0; i < maxPatternCount; i++) {
             GTNAPatternBufferSlotConfig config = slotConfigs[i];
             if (!config.getPreferredModeId().isBlank() && !matchesPreferredMode(config, recipe)) {
+                continue;
+            }
+            if (config.getPreferredModeId().isBlank() && !config.getDerivedModeId().isBlank() &&
+                    !matchesDerivedMode(config, recipe)) {
                 continue;
             }
             if (matchesSlot(i, recipe)) {
