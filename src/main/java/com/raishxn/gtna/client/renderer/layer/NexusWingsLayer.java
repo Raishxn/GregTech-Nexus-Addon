@@ -30,7 +30,7 @@ public class NexusWingsLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
 
         poseStack.pushPose();
         getParentModel().body.translateAndRotate(poseStack);
-        poseStack.translate(0.0D, player.isCrouching() ? 0.18D : 0.05D, 0.2D);
+        poseStack.translate(0.0D, player.isCrouching() ? 0.32D : 0.2D, 0.2D);
         poseStack.scale(1.0F, -1.0F, -1.0F);
 
         ItemStack wingsStack = new ItemStack(GTNAItems.NEXUS_WINGS.get());
