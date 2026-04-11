@@ -10,7 +10,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import com.raishxn.gtna.GTNACORE;
-import com.raishxn.gtna.client.model.NexusWingsModel;
 import com.raishxn.gtna.client.renderer.layer.NexusWingsLayer;
 import com.raishxn.gtna.config.ConfigHolder;
 
@@ -35,17 +34,11 @@ public class ClientEventHandler {
     public static class ModClientEvents {
 
         @SubscribeEvent
-        public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            event.registerLayerDefinition(NexusWingsModel.LAYER_LOCATION, NexusWingsModel::createBodyLayer);
-        }
-
-        @SubscribeEvent
         public static void addLayers(EntityRenderersEvent.AddLayers event) {
             for (String skin : event.getSkins()) {
                 PlayerRenderer renderer = event.getPlayerSkin(skin);
                 if (renderer != null) {
-                    renderer.addLayer(new NexusWingsLayer(renderer,
-                            new NexusWingsModel(event.getEntityModels().bakeLayer(NexusWingsModel.LAYER_LOCATION))));
+                    renderer.addLayer(new NexusWingsLayer(renderer));
                 }
             }
         }

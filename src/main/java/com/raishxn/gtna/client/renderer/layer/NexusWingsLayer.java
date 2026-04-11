@@ -2,28 +2,22 @@ package com.raishxn.gtna.client.renderer.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 
-import com.raishxn.gtna.GTNACORE;
-import com.raishxn.gtna.client.model.NexusWingsModel;
+import com.raishxn.gtna.common.data.GTNAItems;
 import com.raishxn.gtna.common.item.armor.NexusArmorHandler;
 
 public class NexusWingsLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
 
-    private static final ResourceLocation TEXTURE = GTNACORE.id("textures/entity/nexus_wings.png");
-    private final NexusWingsModel wingsModel;
-
-    public NexusWingsLayer(RenderLayerParent<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> parent,
-                           NexusWingsModel wingsModel) {
+    public NexusWingsLayer(RenderLayerParent<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> parent) {
         super(parent);
-        this.wingsModel = wingsModel;
     }
 
     @Override
@@ -36,11 +30,13 @@ public class NexusWingsLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
 
         poseStack.pushPose();
         getParentModel().body.translateAndRotate(poseStack);
-        poseStack.translate(0.0D, player.isCrouching() ? 0.18D : 0.0D, 0.125D);
+        poseStack.translate(0.0D, player.isCrouching() ? 0.22D : 0.0D, 0.16D);
+        poseStack.scale(1.0F, -1.0F, -1.0F);
 
-        wingsModel.setupAnim(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        wingsModel.renderToBuffer(poseStack, buffer.getBuffer(RenderType.entityCutoutNoCull(TEXTURE)), packedLight,
-                OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        ItemStack wingsStack = new ItemStack(GTNAItems.NEXUS_WINGS.get());
+        Minecraft.getInstance().getItemRenderer().renderStatic(player, wingsStack, ItemDisplayContext.HEAD, false,
+                poseStack, buffer, player.level(), packedLight,
+                net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, player.getId());
         poseStack.popPose();
     }
 }

@@ -40,6 +40,7 @@ public class GTNAItems {
     public static ItemEntry<NexusArmorItem> NEXUS_CHESTPLATE;
     public static ItemEntry<NexusArmorItem> NEXUS_LEGGINGS;
     public static ItemEntry<NexusArmorItem> NEXUS_BOOTS;
+    public static ItemEntry<ComponentItem> NEXUS_WINGS;
     public static ItemEntry<ComponentItem> QUANTUM_NETWORK_TERMINAL;
     public static ItemEntry<ComponentItem> NEXUS_STRUCTURE_TERMINAL;
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_21;
@@ -124,6 +125,11 @@ public class GTNAItems {
         NEXUS_BOOTS = REGISTRATE.item("nexus_boots",
                 props -> new NexusArmorItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, props))
                 .lang("Nexus Boots")
+                .properties(stack -> stack.stacksTo(1))
+                .register();
+
+        NEXUS_WINGS = REGISTRATE.item("nexus_wings", ComponentItem::create)
+                .lang("Nexus Wings")
                 .properties(stack -> stack.stacksTo(1))
                 .register();
 
