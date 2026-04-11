@@ -30,11 +30,11 @@ public class NexusWingsLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
 
         poseStack.pushPose();
         getParentModel().body.translateAndRotate(poseStack);
-        poseStack.translate(0.0D, player.isCrouching() ? 0.22D : 0.0D, 0.16D);
+        poseStack.translate(0.0D, player.isCrouching() ? -0.48D : -0.72D, 0.2D);
         poseStack.scale(1.0F, -1.0F, -1.0F);
 
         ItemStack wingsStack = new ItemStack(GTNAItems.NEXUS_WINGS.get());
-        Minecraft.getInstance().getItemRenderer().renderStatic(player, wingsStack, ItemDisplayContext.HEAD, false,
+        Minecraft.getInstance().getItemRenderer().renderStatic(player, wingsStack, ItemDisplayContext.FIXED, false,
                 poseStack, buffer, player.level(), packedLight,
                 net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, player.getId());
         poseStack.popPose();
