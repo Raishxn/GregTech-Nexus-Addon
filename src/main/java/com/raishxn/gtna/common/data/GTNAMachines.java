@@ -30,6 +30,7 @@ import com.raishxn.gtna.client.renderer.machine.EyeOfHarmonyRenderer;
 import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyAisles;
 import com.raishxn.gtna.common.machine.multiblock.energy.ArtificialStarMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhouse;
+import com.raishxn.gtna.common.machine.multiblock.energy.NexusMolecularForgeMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.EyeOfHarmonyMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.HyperPressureReactor;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.InfernalCokeOven;
@@ -1656,6 +1657,28 @@ public class GTNAMachines {
                             .andThen(builder -> builder.addDynamicRenderer(EyeOfHarmonyRenderer::new)))
             .register();
 
+    public static final MultiblockMachineDefinition NEXUS_MOLECULAR_FORGE = REGISTRATE
+            .multiblock("nexus_molecular_forge", NexusMolecularForgeMachine::new)
+            .langValue("Nexus Molecular Forge")
+            .rotationState(RotationState.NON_Y_AXIS)
+            .allowExtendedFacing(false)
+            .recipeType(GTRecipeTypes.DUMMY_RECIPES)
+            .appearanceBlock(GTNABlocks.HYDRAULIC_ASSEMBLER_CASING)
+            .pattern(GTNAMachines::createNexusMolecularForgePattern)
+            .workableCasingModel(
+                    GTNACORE.id("block/casings/hydraulic_assembler_casing"),
+                    GTCEu.id("block/multiblock/fusion_reactor"))
+            .tooltips(
+                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.0"),
+                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.1"),
+                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.2"),
+                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.3"),
+                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.4"),
+                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.5"),
+                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.6"))
+            .tooltipBuilder(GTNA_ADD)
+            .register();
+
     private static BlockPattern createArtificialStarPattern(MultiblockMachineDefinition definition) {
         var pattern = FactoryBlockPattern.start();
         for (int index = 1; index <= 109; index++) {
@@ -1698,6 +1721,32 @@ public class GTNAMachines {
                 .where('E', blocks(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.get()))
                 .where('F', blocks(GTNABlocks.SPACETIME_COMPRESSION_FIELD_GENERATOR.get()))
                 .where('G', blocks(GTNABlocks.DIMENSIONAL_STABILITY_CASING.get()))
+                .where(' ', any())
+                .build();
+    }
+
+    private static BlockPattern createNexusMolecularForgePattern(MultiblockMachineDefinition definition) {
+        return FactoryBlockPattern.start(BACK, RIGHT, UP)
+                .aisle("AAAAAAA", "ABBBBBA", "ABCCCBA", "ABC~CBA", "ABCCCBA", "ABBBBBA", "AAAAAAA")
+                .aisle("AAAAAAA", "BDDDDDB", "DCGGGCD", "DGEEEGD", "DCGGGCD", "BDDDDDB", "AAAAAAA")
+                .aisle("ABBBBBA", "DDFFFDD", "GF   FG", "GE   EG", "GF   FG", "DDFFFDD", "ABBBBBA")
+                .aisle("ABCCCBA", "DGFFFGD", "F  H  F", "F  H  F", "F  H  F", "DGFFFGD", "ABCCCBA")
+                .aisle("ABBBBBA", "DDFFFDD", "GF   FG", "GE   EG", "GF   FG", "DDFFFDD", "ABBBBBA")
+                .aisle("AAAAAAA", "BDDDDDB", "DCGGGCD", "DGEEEGD", "DCGGGCD", "BDDDDDB", "AAAAAAA")
+                .aisle("AAAAAAA", "ABBBBBA", "ABCCCBA", "ABCCCBA", "ABCCCBA", "ABBBBBA", "AAAAAAA")
+                .where('~', controller(blocks(definition.get())))
+                .where('A', blocks(GTNABlocks.HYDRAULIC_ASSEMBLER_CASING.get())
+                        .or(abilities(INPUT_ENERGY).setMaxGlobalLimited(2))
+                        .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(4))
+                        .or(abilities(MAINTENANCE).setExactLimit(1)))
+                .where('B', blocks(GTNABlocks.BOROSILICATE_GLASS_BLOCK.get()))
+                .where('C', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTNAMaterials.Breel)))
+                .where('D', blocks(GTNABlocks.BREEL_PLATED_CASING.get()))
+                .where('E', blocks(GTBlocks.CASING_ASSEMBLY_LINE.get()))
+                .where('F', blocks(GTBlocks.HIGH_POWER_CASING.get()))
+                .where('G', blocks(GTNABlocks.STRONZE_WRAPPED_CASING.get())
+                        .or(blocks(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.getBlock())))
+                .where('H', blocks(GTNABlocks.VIBRATION_SAFE_CASING.get()))
                 .where(' ', any())
                 .build();
     }

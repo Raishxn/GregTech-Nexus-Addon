@@ -377,9 +377,17 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.solar_boiling_cell", "Solar Boiling Cell");
         add("block.gtna.annihilate_generator", "Artificial Star");
         add("block.gtna.eye_of_harmony", "Eye of Harmony");
+        add("block.gtna.nexus_molecular_forge", "Nexus Molecular Forge");
         add("gtceu.annihilate_generator", "Annihilation Generator");
         add("gtna.cosmos_simulation", "Cosmos Simulation");
         add("gtna.machine.artificial_star.output", "Supports Laser or Wireless Dynamo output.");
+        add("gtna.machine.nexus_molecular_forge.tooltip.0", "ZPM-tier AE mass crafting multiblock for GregTech Nexus Addon.");
+        add("gtna.machine.nexus_molecular_forge.tooltip.1", "Install Nexus Craft Pattern Hatches to load encoded crafting patterns.");
+        add("gtna.machine.nexus_molecular_forge.tooltip.2", "Each operation materializes every queued craft output at once.");
+        add("gtna.machine.nexus_molecular_forge.tooltip.3", "Cheat Mode: queued crafts do not consume physical ingredients.");
+        add("gtna.machine.nexus_molecular_forge.tooltip.4", "Power Cost: exactly 1 EU per crafted item, compressed into batch EU/t.");
+        add("gtna.machine.nexus_molecular_forge.tooltip.5", "Supports up to 2 Energy Hatches, 4 Export Buses, and multiple Pattern Hatches.");
+        add("gtna.machine.nexus_molecular_forge.tooltip.6", "HUD shows loaded patterns, queued outputs, active batch size, and live cost.");
         add("gtna.machine.eye_of_harmony.tooltip.0", "Creates a miniature universe and extracts its resources.");
         add("gtna.machine.eye_of_harmony.tooltip.1", "Startup power comes directly from the GTNA wireless network.");
         add("gtna.machine.eye_of_harmony.tooltip.2", "Bind with a Data Stick to swap the network owner.");
