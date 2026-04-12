@@ -127,7 +127,29 @@ public class MachineUtil {
     }
 
     public static boolean inputFluid(WorkableMultiblockMachine machine, FluidStack fluid) {
-        return false;
+        if (fluid.isEmpty()) return true;
+
+        var ioMap = machine.getCapabilitiesFlat().get(IO.IN);
+        if (ioMap == null) return false;
+
+        var handlers = ioMap.get(FluidRecipeCapability.CAP);
+        if (handlers == null) return false;
+
+        long needed = fluid.getAmount();
+
+        for (Object handlerObj : handlers) {
+            if (handlerObj instanceof com.lowdragmc.lowdraglib.side.fluid.IFluidStorage handler) {
+                FluidStack request = fluid.copy();
+                request.setAmount(needed);
+                FluidStack drained = handler.drain(request, true);
+                if (!drained.isEmpty()) {
+                    needed -= drained.getAmount();
+                    if (needed <= 0) return true;
+                }
+            }
+        }
+
+        return needed <= 0;
     }
 
     public static boolean inputEU(WorkableMultiblockMachine machine, long eu) {

@@ -66,6 +66,12 @@ public class GTNARecipeType {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.ARC);
 
+    public static final String COSMOS_SIMULATION = "cosmos_simulation";
+    public static final GTRecipeType COSMOS_SIMULATION_RECIPES = register("cosmos_simulation", COSMOS_SIMULATION)
+            .setMaxIOSize(1, 120, 1, 18)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.SCIENCE);
+
     public static GTRecipeType register(String name, String group, RecipeType<?>... proxyRecipes) {
         GTRecipeType recipeType = new GTRecipeType(GTNACORE.id(name), group, proxyRecipes);
         GTRegistries.register(BuiltInRegistries.RECIPE_TYPE, recipeType.registryName, recipeType);

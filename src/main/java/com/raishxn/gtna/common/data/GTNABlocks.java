@@ -70,6 +70,19 @@ public class GTNABlocks {
             "antimatter_containment_casing",
             GTNACORE.id("block/casings/antimatter_containment_casing"),
             () -> RenderType::cutoutMipped);
+    public static final BlockEntry<Block> DIMENSIONALLY_TRANSCENDENT_CASING = createCasingBlock(
+            "dimensionally_transcendent_casing");
+    public static final BlockEntry<Block> DIMENSION_INJECTION_CASING = createCasingBlock(
+            "dimension_injection_casing");
+    public static final BlockEntry<Block> DIMENSIONAL_BRIDGE_CASING = createCasingBlock(
+            "dimensional_bridge_casing",
+            GTNACORE.id("block/dimensional_bridge_casing"));
+    public static final BlockEntry<Block> DIMENSIONAL_STABILITY_CASING = createCasingBlock(
+            "dimensional_stability_casing",
+            GTNACORE.id("block/dimensional_stability_casing"));
+    public static final BlockEntry<Block> SPACETIME_COMPRESSION_FIELD_GENERATOR = createCasingBlock(
+            "spacetime_compression_field_generator",
+            GTNACORE.id("block/spacetime_compression_field_generator"));
 
     public static final BlockEntry<NexusCapacitorBlock> NEXUS_CAPACITOR_LV = createCapacitorBlock("nexus_capacitor_lv",
             1, 160_000L);

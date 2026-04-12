@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gtna:block/machine/eye_of_harmony",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtna:block/machine/eye_of_harmony"
+    },
+    "facing=south": {
+      "model": "gtna:block/machine/eye_of_harmony",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gtna:block/machine/eye_of_harmony",
+      "y": 270
+    }
+  }
+}

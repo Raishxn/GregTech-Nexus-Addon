@@ -26,8 +26,10 @@ import net.minecraft.world.level.block.Blocks;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.client.renderer.machine.AnnihilateGeneratorRenderer;
+import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyAisles;
 import com.raishxn.gtna.common.machine.multiblock.energy.ArtificialStarMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhouse;
+import com.raishxn.gtna.common.machine.multiblock.noenergy.EyeOfHarmonyMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.HyperPressureReactor;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.InfernalCokeOven;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.LeapForwardBlastFurnace;
@@ -1627,6 +1629,31 @@ public class GTNAMachines {
                             .andThen(builder -> builder.addDynamicRenderer(AnnihilateGeneratorRenderer::new)))
             .register();
 
+    public static final MultiblockMachineDefinition EYE_OF_HARMONY = REGISTRATE
+            .multiblock("eye_of_harmony", EyeOfHarmonyMachine::new)
+            .rotationState(RotationState.NON_Y_AXIS)
+            .allowExtendedFacing(false)
+            .recipeType(GTNARecipeType.COSMOS_SIMULATION_RECIPES)
+            .tooltips(
+                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.0"),
+                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.1"),
+                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.2"),
+                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.3"),
+                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.4"),
+                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.5"),
+                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.6"),
+                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.7"),
+                    Component.translatable("gtceu.machine.available_recipe_map_1.tooltip",
+                            Component.translatable("gtna.cosmos_simulation")))
+            .tooltipBuilder(GTNA_ADD)
+            .recipeModifier(EyeOfHarmonyMachine::recipeModifier)
+            .appearanceBlock(GTBlocks.HIGH_POWER_CASING)
+            .pattern(GTNAMachines::createEyeOfHarmonyPattern)
+            .workableCasingModel(
+                    GTNACORE.id("block/casings/dimensionally_transcendent_casing"),
+                    GTCEu.id("block/multiblock/fluid_drilling_rig"))
+            .register();
+
     private static BlockPattern createArtificialStarPattern(MultiblockMachineDefinition definition) {
         var pattern = FactoryBlockPattern.start();
         for (int index = 1; index <= 109; index++) {
@@ -1649,6 +1676,26 @@ public class GTNAMachines {
                         .or(abilities(EXPORT_ITEMS)))
                 .where('T', blocks(GTNABlocks.DEGENERATE_RHENIUM_CONSTRAINED_CASING.get()))
                 .where('R', blocks(GTNABlocks.DYSON_RECEIVER_CASING.get()))
+                .where(' ', any())
+                .build();
+    }
+
+    private static BlockPattern createEyeOfHarmonyPattern(MultiblockMachineDefinition definition) {
+        var pattern = FactoryBlockPattern.start();
+        for (String[] aisle : EyeOfHarmonyAisles.AISLES) {
+            pattern.aisle(aisle);
+        }
+        return pattern.where('~', controller(blocks(definition.get())))
+                .where('A', blocks(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get()))
+                .where('B', blocks(GTBlocks.HIGH_POWER_CASING.get())
+                        .or(abilities(EXPORT_ITEMS).setPreviewCount(1))
+                        .or(abilities(IMPORT_ITEMS).setPreviewCount(1))
+                        .or(abilities(EXPORT_FLUIDS).setPreviewCount(1))
+                        .or(abilities(IMPORT_FLUIDS).setPreviewCount(1)))
+                .where('D', blocks(GTNABlocks.DIMENSION_INJECTION_CASING.get()))
+                .where('E', blocks(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.get()))
+                .where('F', blocks(GTNABlocks.SPACETIME_COMPRESSION_FIELD_GENERATOR.get()))
+                .where('G', blocks(GTNABlocks.DIMENSIONAL_STABILITY_CASING.get()))
                 .where(' ', any())
                 .build();
     }
