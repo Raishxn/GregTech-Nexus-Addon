@@ -9,6 +9,7 @@ import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
+import com.gregtechceu.gtceu.api.pattern.BlockPattern;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
 import com.gregtechceu.gtceu.api.pattern.MultiblockShapeInfo;
 import com.gregtechceu.gtceu.api.pattern.Predicates;
@@ -24,6 +25,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.client.renderer.machine.AnnihilateGeneratorRenderer;
+import com.raishxn.gtna.common.machine.multiblock.energy.ArtificialStarMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhouse;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.HyperPressureReactor;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.InfernalCokeOven;
@@ -34,6 +37,7 @@ import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamInputH
 import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamOutputHatch;
 import com.raishxn.gtna.common.machine.multiblock.steam.*;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -42,6 +46,7 @@ import static com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.EXPORT_IT
 import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
 import static com.gregtechceu.gtceu.api.pattern.Predicates.*;
 import static com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.*;
+import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.createWorkableCasingMachineModel;
 import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
 import static com.raishxn.gtna.common.data.GTNARecipeType.HIGH_PRESSURE_REACTOR_RECIPES;
 import static com.raishxn.gtna.common.data.GTNARecipeType.SUPERHEATER_RECIPES;
@@ -1599,6 +1604,64 @@ public class GTNAMachines {
                     Component.translatable("gtna.machine.slaughterhouse.circuit4").withStyle(ChatFormatting.DARK_RED,
                             ChatFormatting.BOLD))
             .register();
+
+    public static final MultiblockMachineDefinition ARTIFICIAL_STAR = REGISTRATE
+            .multiblock("annihilate_generator", ArtificialStarMachine::new)
+            .langValue("Artificial Star")
+            .rotationState(RotationState.ALL)
+            .recipeType(GTNARecipeType.ARTIFICIAL_STAR_RECIPES)
+            .tooltips(
+                    Component.translatable("gtceu.machine.perfect_oc"),
+                    Component.translatable("gtna.machine.artificial_star.output"),
+                    Component.translatable("gtceu.machine.available_recipe_map_1.tooltip",
+                            Component.translatable("gtceu.annihilate_generator")),
+                    Component.literal("Artificial Star"))
+            .tooltipBuilder(GTNA_ADD)
+            .generator(true)
+            .recipeModifier(ArtificialStarMachine::recipeModifier)
+            .appearanceBlock(GTBlocks.HIGH_POWER_CASING)
+            .pattern(GTNAMachines::createArtificialStarPattern)
+            .model(createWorkableCasingMachineModel(
+                    GTCEu.id("block/casings/hpca/high_power_casing"),
+                    GTCEu.id("block/multiblock/fusion_reactor"))
+                            .andThen(builder -> builder.addDynamicRenderer(AnnihilateGeneratorRenderer::new)))
+            .register();
+
+    private static BlockPattern createArtificialStarPattern(MultiblockMachineDefinition definition) {
+        var pattern = FactoryBlockPattern.start();
+        for (int index = 1; index <= 109; index++) {
+            pattern.aisle(getArtificialStarAisle(index));
+        }
+        return pattern.where('~', controller(blocks(definition.get())))
+                .where('A', blocks(GTNABlocks.GRAVITON_FIELD_CONSTRAINT_CASING.get()))
+                .where('B', blocks(GTNABlocks.ANNIHILATE_CORE.get()))
+                .where('C', blocks(GTNABlocks.HYPER_MECHANICAL_CASING.get()))
+                .where('D', blocks(GTNABlocks.HOLLOW_CASING.get()))
+                .where('E', blocks(GTNABlocks.NAQUADAH_ALLOY_CASING.get()))
+                .where('F', blocks(GTBlocks.FUSION_GLASS.get()))
+                .where('G', blocks(GTNABlocks.DYSON_CONTROL_TOROID.get()))
+                .where('H', blocks(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.get()))
+                .where('P', blocks(GTNABlocks.DYSON_CONTROL_CASING.get()))
+                .where('S', blocks(GTBlocks.HIGH_POWER_CASING.get())
+                        .or(abilities(OUTPUT_ENERGY).setMaxGlobalLimited(1))
+                        .or(abilities(OUTPUT_LASER))
+                        .or(abilities(IMPORT_ITEMS))
+                        .or(abilities(EXPORT_ITEMS)))
+                .where('T', blocks(GTNABlocks.DEGENERATE_RHENIUM_CONSTRAINED_CASING.get()))
+                .where('R', blocks(GTNABlocks.DYSON_RECEIVER_CASING.get()))
+                .where(' ', any())
+                .build();
+    }
+
+    private static String[] getArtificialStarAisle(int index) {
+        try {
+            Class<?> holder = index <= 53 ? AnnihilateGeneratorB.class : AnnihilateGeneratorA.class;
+            Field field = holder.getField("A_" + index);
+            return (String[]) field.get(null);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Failed to load Artificial Star aisle " + index, exception);
+        }
+    }
 
     public static void init() {}
 }

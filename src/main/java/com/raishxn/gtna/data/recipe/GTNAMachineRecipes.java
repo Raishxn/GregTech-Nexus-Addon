@@ -258,6 +258,54 @@ public class GTNAMachineRecipes {
                 .EUt(30)
                 .save(provider);
 
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("artificial_star")
+                .inputItems(GTNABlocks.GRAVITON_FIELD_CONSTRAINT_CASING.get(), 4)
+                .inputItems(GTNABlocks.ANNIHILATE_CORE.get())
+                .inputItems(GTItems.EMITTER_UXV, 4)
+                .inputItems(GTItems.SENSOR_UXV, 4)
+                .inputItems(CustomTags.OpV_CIRCUITS, 4)
+                .inputItems(GTItems.FIELD_GENERATOR_UXV, 16)
+                .inputItems(ChemicalHelper.get(TagPrefix.plateDouble, GTMaterials.Neutronium).getItem(), 8)
+                .inputItems(ChemicalHelper.get(TagPrefix.plateDouble, GTMaterials.NaquadahAlloy).getItem(), 8)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(4000))
+                .inputFluids(GTMaterials.Europium.getFluid(8192))
+                .inputFluids(GTMaterials.Naquadria.getFluid(4000))
+                .outputItems(GTNAMachines.ARTIFICIAL_STAR.asStack())
+                .duration(1800)
+                .EUt(125829120)
+                .stationResearch(b -> b.researchStack(GTNABlocks.ANNIHILATE_CORE.asStack())
+                        .CWUt(4096)
+                        .EUt(125829120))
+                .save(provider);
+
+        GTNARecipeType.ARTIFICIAL_STAR_RECIPES.recipeBuilder("neutronium_antimatter_fuel_rod")
+                .inputItems(GTNAItems.NEUTRONIUM_ANTIMATTER_FUEL_ROD.get())
+                .chancedOutput(GTNAItems.ANNIHILATION_CONSTRAINER.asStack(), 9000, 0)
+                .EUt(-549755813888L)
+                .duration(200)
+                .save(provider);
+
+        GTNARecipeType.ARTIFICIAL_STAR_RECIPES.recipeBuilder("draconium_antimatter_fuel_rod")
+                .inputItems(GTNAItems.DRACONIUM_ANTIMATTER_FUEL_ROD.get())
+                .chancedOutput(GTNAItems.ANNIHILATION_CONSTRAINER.asStack(), 8000, 0)
+                .EUt(-8796093022208L)
+                .duration(200)
+                .save(provider);
+
+        GTNARecipeType.ARTIFICIAL_STAR_RECIPES.recipeBuilder("cosmic_neutronium_antimatter_fuel_rod")
+                .inputItems(GTNAItems.COSMIC_NEUTRONIUM_ANTIMATTER_FUEL_ROD.get())
+                .chancedOutput(GTNAItems.ANNIHILATION_CONSTRAINER.asStack(), 7000, 0)
+                .EUt(-140737488355328L)
+                .duration(200)
+                .save(provider);
+
+        GTNARecipeType.ARTIFICIAL_STAR_RECIPES.recipeBuilder("infinity_antimatter_fuel_rod")
+                .inputItems(GTNAItems.INFINITY_ANTIMATTER_FUEL_ROD.get())
+                .chancedOutput(GTNAItems.ANNIHILATION_CONSTRAINER.asStack(), 6000, 0)
+                .EUt(-2251799813685248L)
+                .duration(200)
+                .save(provider);
+
         GTNARecipeType.SLAUGHTERHOUSE_RECIPES.recipeBuilder("slaughterhouse_passive")
                 .notConsumable(IntCircuitIngredient.of(1))
                 .duration(40)

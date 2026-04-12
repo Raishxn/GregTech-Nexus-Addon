@@ -59,6 +59,13 @@ public class GTNARecipeType {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.MACERATOR);
 
+    public static final String ARTIFICIAL_STAR = "annihilate_generator";
+    public static final GTRecipeType ARTIFICIAL_STAR_RECIPES = register("annihilate_generator", ARTIFICIAL_STAR)
+            .setMaxIOSize(1, 1, 0, 0)
+            .setEUIO(IO.OUT)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.ARC);
+
     public static GTRecipeType register(String name, String group, RecipeType<?>... proxyRecipes) {
         GTRecipeType recipeType = new GTRecipeType(GTNACORE.id(name), group, proxyRecipes);
         GTRegistries.register(BuiltInRegistries.RECIPE_TYPE, recipeType.registryName, recipeType);

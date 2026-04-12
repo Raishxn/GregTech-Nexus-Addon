@@ -47,6 +47,29 @@ public class GTNABlocks {
     public static final BlockEntry<Block> BREEL_PLATED_CASING = createCasingBlock("breel_plated_casing");
     public static final BlockEntry<Block> BOROSILICATE_GLASS_BLOCK = createGlassCasingBlock(
             "borosilicate_glass", GTNACORE.id("block/casings/borosilicate_glass"), () -> RenderType::cutoutMipped);
+    public static final BlockEntry<Block> GRAVITON_FIELD_CONSTRAINT_CASING = createCasingBlock(
+            "graviton_field_constraint_casing");
+    public static final BlockEntry<Block> ANNIHILATE_CORE = createCasingBlock("annihilate_core",
+            GTNACORE.id("block/annihilate_core"));
+    public static final BlockEntry<Block> HYPER_MECHANICAL_CASING = createCasingBlock("hyper_mechanical_casing");
+    public static final BlockEntry<Block> HOLLOW_CASING = createCasingBlock("hollow_casing",
+            GTNACORE.id("block/hollow_casing"));
+    public static final BlockEntry<Block> NAQUADAH_ALLOY_CASING = createCasingBlock("naquadah_alloy_casing",
+            GTNACORE.id("block/casings/naquadah_reinforced_plant_casing"));
+    public static final BlockEntry<Block> DYSON_CONTROL_TOROID = createCasingBlock("dyson_control_toroid");
+    public static final BlockEntry<Block> DYSON_CONTROL_CASING = createCasingBlock("dyson_control_casing");
+    public static final BlockEntry<Block> DEGENERATE_RHENIUM_CONSTRAINED_CASING = createCasingBlock(
+            "degenerate_rhenium_constrained_casing");
+    public static final BlockEntry<Block> DYSON_RECEIVER_CASING = createCasingBlock("dyson_receiver_casing",
+            GTNACORE.id("block/casings/cosmic_detection_receiver_material_ray_absorbing_array"));
+    public static final BlockEntry<Block> RHENIUM_REINFORCED_ENERGY_GLASS = createGlassCasingBlock(
+            "rhenium_reinforced_energy_glass",
+            GTNACORE.id("block/casings/rhenium_reinforced_energy_glass"),
+            () -> RenderType::cutoutMipped);
+    public static final BlockEntry<Block> ANTIMATTER_CONTAINMENT_CASING = createGlassCasingBlock(
+            "antimatter_containment_casing",
+            GTNACORE.id("block/casings/antimatter_containment_casing"),
+            () -> RenderType::cutoutMipped);
 
     public static final BlockEntry<NexusCapacitorBlock> NEXUS_CAPACITOR_LV = createCapacitorBlock("nexus_capacitor_lv",
             1, 160_000L);
@@ -80,6 +103,10 @@ public class GTNABlocks {
     public static BlockEntry<Block> createCasingBlock(String name) {
         return createCasingBlock(name, Block::new, GTNACORE.id("block/casings/" + name), () -> Blocks.IRON_BLOCK,
                 () -> RenderType::solid);
+    }
+
+    public static BlockEntry<Block> createCasingBlock(String name, ResourceLocation texture) {
+        return createCasingBlock(name, Block::new, texture, () -> Blocks.IRON_BLOCK, () -> RenderType::solid);
     }
 
     @SuppressWarnings("all")

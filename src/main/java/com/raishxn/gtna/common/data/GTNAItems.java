@@ -46,6 +46,11 @@ public class GTNAItems {
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_21;
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_32;
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_72;
+    public static ItemEntry<ComponentItem> ANNIHILATION_CONSTRAINER;
+    public static ItemEntry<ComponentItem> NEUTRONIUM_ANTIMATTER_FUEL_ROD;
+    public static ItemEntry<ComponentItem> DRACONIUM_ANTIMATTER_FUEL_ROD;
+    public static ItemEntry<ComponentItem> COSMIC_NEUTRONIUM_ANTIMATTER_FUEL_ROD;
+    public static ItemEntry<ComponentItem> INFINITY_ANTIMATTER_FUEL_ROD;
 
     public static void init() {
         STRUCTURE_DETECT = REGISTRATE
@@ -164,6 +169,32 @@ public class GTNAItems {
                 .properties(stack -> stack.stacksTo(16))
                 .onRegister(attach(new PatternBufferUpgraderBehavior(() -> GTNAMachines2.ME_ULTIMATE_PATTERN_BUFFER)))
                 .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/ex_pattern_buffer_ultra_upgrader")))
+                .register();
+
+        ANNIHILATION_CONSTRAINER = REGISTRATE.item("annihilation_constrainer", ComponentItem::create)
+                .lang("Annihilation Constrainer")
+                .properties(stack -> stack.stacksTo(64))
+                .register();
+
+        NEUTRONIUM_ANTIMATTER_FUEL_ROD = REGISTRATE.item("neutronium_antimatter_fuel_rod", ComponentItem::create)
+                .lang("Neutronium Antimatter Fuel Rod")
+                .properties(stack -> stack.stacksTo(64))
+                .register();
+
+        DRACONIUM_ANTIMATTER_FUEL_ROD = REGISTRATE.item("draconium_antimatter_fuel_rod", ComponentItem::create)
+                .lang("Draconium Antimatter Fuel Rod")
+                .properties(stack -> stack.stacksTo(64))
+                .register();
+
+        COSMIC_NEUTRONIUM_ANTIMATTER_FUEL_ROD = REGISTRATE
+                .item("cosmic_neutronium_antimatter_fuel_rod", ComponentItem::create)
+                .lang("Cosmic Neutronium Antimatter Fuel Rod")
+                .properties(stack -> stack.stacksTo(64))
+                .register();
+
+        INFINITY_ANTIMATTER_FUEL_ROD = REGISTRATE.item("infinity_antimatter_fuel_rod", ComponentItem::create)
+                .lang("Infinity Antimatter Fuel Rod")
+                .properties(stack -> stack.stacksTo(64))
                 .register();
     }
 }
