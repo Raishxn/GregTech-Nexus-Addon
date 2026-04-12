@@ -16,6 +16,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
 import com.raishxn.gtna.common.data.*;
+import appeng.core.definitions.AEBlocks;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -302,6 +303,28 @@ public class GTNAMachineRecipes {
                 .stationResearch(b -> b.researchStack(GTNABlocks.SPACETIME_COMPRESSION_FIELD_GENERATOR.asStack())
                         .CWUt(16384)
                         .EUt(8053063680L))
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("nexus_molecular_forge")
+                .inputItems(GTMachines.ASSEMBLER[GTValues.ZPM].asStack().getItem())
+                .inputItems(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.asStack().getItem(), 4)
+                .inputItems("expatternprovider:assembler_matrix_crafter", 16)
+                .inputItems("expatternprovider:assembler_matrix_speed", 16)
+                .inputItems(GTItems.ROBOT_ARM_ZPM.asStack().getItem(), 4)
+                .inputItems(GTItems.EMITTER_ZPM.asStack().getItem(), 8)
+                .inputItems(CustomTags.ZPM_CIRCUITS, 8)
+                .inputItems(GTNABlocks.HYDRAULIC_ASSEMBLER_CASING.get(), 16)
+                .inputItems(GTNABlocks.BREEL_PLATED_CASING.get(), 16)
+                .inputItems(TagPrefix.wireFine, GTMaterials.Tritanium, 64)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.NaquadahAlloy, 8)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
+                .inputFluids(GTMaterials.Polybenzimidazole.getFluid(2304))
+                .outputItems(GTNAMachines.NEXUS_MOLECULAR_FORGE.asStack())
+                .duration(600)
+                .EUt(GTValues.VA[GTValues.ZPM])
+                .stationResearch(b -> b.researchStack(AEBlocks.MOLECULAR_ASSEMBLER.stack(1))
+                        .CWUt(64)
+                        .EUt(GTValues.VA[GTValues.ZPM]))
                 .save(provider);
 
         GTNARecipeType.ARTIFICIAL_STAR_RECIPES.recipeBuilder("neutronium_antimatter_fuel_rod")
