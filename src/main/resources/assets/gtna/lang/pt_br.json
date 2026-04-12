@@ -113,7 +113,7 @@
   "gtna.registry.add": "GregTech Nexus Addon",
   "gtna.machine.craft_pattern_hatch.tooltip": "Hatch dedicada de craft AE2 para a Nexus Molecular Forge",
   "gtna.machine.craft_pattern_hatch.slots": "Slots de Pattern: %s",
-  "gtna.machine.craft_pattern_hatch.patterns": "Aceita apenas patterns codificados de crafting",
+  "gtna.machine.craft_pattern_hatch.patterns": "Aceita apenas patterns codificados de crafting e registra eles na rede AE2",
   "gtna.machine.craft_pattern_hatch.cheat": "Enfileira as saídas craftadas para o controlador materializar",
   "gtceu.annihilate_generator": "Gerador de Aniquilação",
   "gtna.cosmos_simulation": "Simulação Cósmica",

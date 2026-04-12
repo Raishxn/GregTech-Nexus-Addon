@@ -1663,10 +1663,10 @@ public class GTNAMachines {
             .rotationState(RotationState.NON_Y_AXIS)
             .allowExtendedFacing(false)
             .recipeType(GTRecipeTypes.DUMMY_RECIPES)
-            .appearanceBlock(GTNABlocks.HYDRAULIC_ASSEMBLER_CASING)
+            .appearanceBlock(GTBlocks.HIGH_POWER_CASING)
             .pattern(GTNAMachines::createNexusMolecularForgePattern)
             .workableCasingModel(
-                    GTNACORE.id("block/casings/hydraulic_assembler_casing"),
+                    GTCEu.id("block/casings/hpca/high_power_casing"),
                     GTCEu.id("block/multiblock/fusion_reactor"))
             .tooltips(
                     Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.0"),
@@ -1726,27 +1726,42 @@ public class GTNAMachines {
     }
 
     private static BlockPattern createNexusMolecularForgePattern(MultiblockMachineDefinition definition) {
-        return FactoryBlockPattern.start(BACK, RIGHT, UP)
-                .aisle("AAAAAAA", "ABBBBBA", "ABCCCBA", "ABC~CBA", "ABCCCBA", "ABBBBBA", "AAAAAAA")
-                .aisle("AAAAAAA", "BDDDDDB", "DCGGGCD", "DGEEEGD", "DCGGGCD", "BDDDDDB", "AAAAAAA")
-                .aisle("ABBBBBA", "DDFFFDD", "GF   FG", "GE   EG", "GF   FG", "DDFFFDD", "ABBBBBA")
-                .aisle("ABCCCBA", "DGFFFGD", "F  H  F", "F  H  F", "F  H  F", "DGFFFGD", "ABCCCBA")
-                .aisle("ABBBBBA", "DDFFFDD", "GF   FG", "GE   EG", "GF   FG", "DDFFFDD", "ABBBBBA")
-                .aisle("AAAAAAA", "BDDDDDB", "DCGGGCD", "DGEEEGD", "DCGGGCD", "BDDDDDB", "AAAAAAA")
-                .aisle("AAAAAAA", "ABBBBBA", "ABCCCBA", "ABCCCBA", "ABCCCBA", "ABBBBBA", "AAAAAAA")
+        return FactoryBlockPattern.start(RIGHT, UP, BACK)
+                .aisle("BBBBBBBBB", "BBBDBBBBB", "BBBDBBBBB", "BBBDBBBBB", "BBBABBBBB", "BBAA~AABB", "BBBABBBBB",
+                        "BBBDBBBBB", "BBBDBBBBB", "BBBDBBBBB", "BBBBBBBBB")
+                .aisle("BBBBDBBBB", "BBB A BBB", "BB  A  BB", "BBC A CBB", "BBC G CBB", "BAC G CAB", "BBC G CBB",
+                        "BBC A CBB", "BB  A  BB", "BBB A BBB", "BBBBDBBBB")
+                .aisle("BBBBDBBBB", "BB KJK BB", "B EEEEE B", "BCBBGBBCB", "BCBBBBBCB", "ACBBBBBCA", "BCBBBBBCB",
+                        "BCBBGBBCB", "B EEEEE B", "BB KJK BB", "BBBBDBBBB")
+                .aisle("BBBBDBBBB", "B KKJKK B", "B EFFFE B", "B BBHBB B", "B BBBBB B", "A BBBBB A", "B BBBBB B",
+                        "B BBHBB B", "B EFFFE B", "B KKJKK B", "BBBBDBBBB")
+                .aisle("BDDDDDDDB", "DAJJJJJAD", "DAEFFFEAD", "DAGHIHGAD", "AGBBIBBGA",
+                        "AGBBIBBGA", "AGBBIBBGA", "DAGHIHGAD", "DAEFFFEAD", "DAJJJJJAD",
+                        "BDDDDDDDB")
+                .aisle("BBBBDBBBB", "B KKJKK B", "B EFFFE B", "B BBHBB B", "B BBBBB B", "A BBBBB A", "B BBBBB B",
+                        "B BBHBB B", "B EFFFE B", "B KKJKK B", "BBBBDBBBB")
+                .aisle("BBBBDBBBB", "BB KJK BB", "B EEEEE B", "BCBBGBBCB", "BCBBBBBCB", "ACBBBBBCA", "BCBBBBBCB",
+                        "BCBBGBBCB", "B EEEEE B", "BB KJK BB", "BBBBDBBBB")
+                .aisle("BBBBDBBBB", "BBB A BBB", "BB  A  BB", "BBC A CBB", "BBC G CBB", "BAC G CAB", "BBC G CBB",
+                        "BBC A CBB", "BB  A  BB", "BBB A BBB", "BBBBDBBBB")
+                .aisle("BBBBBBBBB", "BBBDBBBBB", "BBBDBBBBB", "BBBDBBBBB", "BBBABBBBB", "BBAAAAABB", "BBBABBBBB",
+                        "BBBDBBBBB", "BBBDBBBBB", "BBBDBBBBB", "BBBBBBBBB")
                 .where('~', controller(blocks(definition.get())))
-                .where('A', blocks(GTNABlocks.HYDRAULIC_ASSEMBLER_CASING.get())
+                .where('A', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.NaquadahAlloy)))
+                .where('B', blocks(GTBlocks.HIGH_POWER_CASING.get()))
+                .where('C', blocks(GTBlocks.CASING_ASSEMBLY_LINE.get())
+                        .or(blocks(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.getBlock()))
                         .or(abilities(INPUT_ENERGY).setMaxGlobalLimited(2))
                         .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(4))
                         .or(abilities(MAINTENANCE).setExactLimit(1)))
-                .where('B', blocks(GTNABlocks.BOROSILICATE_GLASS_BLOCK.get()))
-                .where('C', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTNAMaterials.Breel)))
-                .where('D', blocks(GTNABlocks.BREEL_PLATED_CASING.get()))
-                .where('E', blocks(GTBlocks.CASING_ASSEMBLY_LINE.get()))
-                .where('F', blocks(GTBlocks.HIGH_POWER_CASING.get()))
-                .where('G', blocks(GTNABlocks.STRONZE_WRAPPED_CASING.get())
-                        .or(blocks(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.getBlock())))
-                .where('H', blocks(GTNABlocks.VIBRATION_SAFE_CASING.get()))
+                .where('D', blocks(GTBlocks.FUSION_GLASS.get()))
+                .where('E', blocks(GTBlocks.COMPUTER_CASING.get()))
+                .where('F', blocks(GTBlocks.ADVANCED_COMPUTER_CASING.get()))
+                .where('G', blocks(GTBlocks.CASING_ASSEMBLY_LINE.get()))
+                .where('H', blocks(GTBlocks.CASING_PALLADIUM_SUBSTATION.get()))
+                .where('I', blocks(GTBlocks.CASING_TUNGSTENSTEEL_ROBUST.get()))
+                .where('J', blocks(GTBlocks.CASING_EXTREME_ENGINE_INTAKE.get()))
+                .where('K', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Europium)))
                 .where(' ', any())
                 .build();
     }
