@@ -44,6 +44,18 @@ public class GTNAMaterialRecipes {
                 .EUt(GTValues.LV)
                 .save(provider);
 
+        GTRecipeTypes.MIXER_RECIPES.recipeBuilder("hastelloy_n_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Iridium, 2)
+                .inputItems(TagPrefix.dust, GTMaterials.Molybdenum, 4)
+                .inputItems(TagPrefix.dust, GTMaterials.Chromium, 2)
+                .inputItems(TagPrefix.dust, GTMaterials.Titanium, 2)
+                .inputItems(TagPrefix.dust, GTMaterials.Nickel, 15)
+                .circuitMeta(5)
+                .outputItems(TagPrefix.dust, GTNAMaterials.HastelloyN, 25)
+                .EUt(1920)
+                .duration(1000)
+                .save(provider);
+
         // --- Compressed Steam Ingot (Compressor) ---
         GTRecipeTypes.FLUID_SOLIDFICATION_RECIPES.recipeBuilder("compressed_steam_ingot")
                 .notConsumable(GTItems.SHAPE_MOLD_INGOT)

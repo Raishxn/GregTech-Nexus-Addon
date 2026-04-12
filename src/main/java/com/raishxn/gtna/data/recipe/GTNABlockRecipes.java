@@ -233,6 +233,16 @@ public class GTNABlockRecipes {
                 .duration(100)
                 .EUt(120)
                 .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("oxidation_resistant_hastelloy_n_mechanical_casing")
+                .inputItems(TagPrefix.frameGt, GTNAMaterials.HastelloyN)
+                .inputItems(TagPrefix.plate, GTNAMaterials.HastelloyN, 6)
+                .circuitMeta(6)
+                .outputItems(GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.get())
+                .EUt(16)
+                .duration(50)
+                .save(provider);
+
         GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("hyper_pressure_breel_casing")
                 .inputItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Breel).getItem(), 6)
                 .inputItems(ChemicalHelper.get(TagPrefix.rod, GTMaterials.Beryllium).getItem(), 2)
