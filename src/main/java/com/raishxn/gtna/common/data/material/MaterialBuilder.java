@@ -44,6 +44,15 @@ public class MaterialBuilder {
                 .fluidPipeProperties(1123, 1000, true, true, true, true)
                 .buildAndRegister().setFormula("(Fe50C)(SnCu3)2");
 
+        HastelloyN = new Material.Builder(GTNACORE.id("hastelloy_n"))
+                .ingot().fluid()
+                .blastTemp(4350, BlastProperty.GasTier.HIGHER, 1920)
+                .components(Iridium, 2, Molybdenum, 4, Chromium, 2, Titanium, 2, Nickel, 15)
+                .color(0xAAAAAA)
+                .iconSet(METALLIC)
+                .flags(GENERATE_PLATE, GENERATE_FRAME, DISABLE_DECOMPOSITION)
+                .buildAndRegister().setFormula("Ir2Mo4Cr2Ti2Ni15");
+
         ClayCompound = new Material.Builder(GTNACORE.id("clay_compound"))
                 .dust().ingot().fluid()
                 .color(0xAA8866).iconSet(MaterialIconSet.DULL)

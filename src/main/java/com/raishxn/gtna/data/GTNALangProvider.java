@@ -152,7 +152,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.pattern_buffer.clear_specialization", "Clear Spec");
         add("gtna.machine.pattern_buffer.clear_cache", "Clear Cache");
         add("gtna.machine.pattern_buffer.refund_slot", "Refund");
-        add("gtna.machine.craft_pattern_hatch.tooltip", "Dedicated AE2 crafting hatch for the Nexus Molecular Forge");
+        add("gtna.machine.craft_pattern_hatch.tooltip", "Dedicated AE2 crafting hatch for the Nexus Assembly Forge");
         add("gtna.machine.craft_pattern_hatch.slots", "Pattern Slots: %s");
         add("gtna.machine.craft_pattern_hatch.patterns",
                 "Accepts encoded crafting patterns only and registers them to the AE2 network");
@@ -376,22 +376,32 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.steel_reinforced_wood", "Steel Reinforced Wood");
         add("block.gtna.iron_reinforced_wood", "Iron Reinforced Wood");
         add("block.gtna.solar_boiling_cell", "Solar Boiling Cell");
+        add("block.gtna.oxidation_resistant_hastelloy_n_mechanical_casing",
+                "Oxidation Resistant Hastelloy N Mechanical Casing");
+        add("block.gtna.zirconia_ceramic_high_strength_bending_resistance_mechanical_block",
+                "Zirconia Ceramic High Strength Bending Resistance Mechanical Block");
+        add("block.gtna.naquadah_borosilicate_glass", "Naquadah Borosilicate Glass");
+        add("block.gtna.magtech_casing", "Magtech Casing");
+        add("block.gtna.process_machine_casing", "Process Machine Casing");
+        add("block.gtna.compressor_controller_casing", "Compressor Controller Casing");
+        add("block.gtna.extreme_density_casing", "Extreme Density Casing");
         add("block.gtna.annihilate_generator", "Artificial Star");
         add("block.gtna.eye_of_harmony", "Eye of Harmony");
-        add("block.gtna.nexus_molecular_forge", "Nexus Molecular Forge");
+        add("block.gtna.nexus_molecular_forge", "Nexus Assembly Forge");
         add("gtceu.annihilate_generator", "Annihilation Generator");
         add("gtna.cosmos_simulation", "Cosmos Simulation");
         add("gtna.machine.artificial_star.output", "Supports Laser or Wireless Dynamo output.");
-        add("gtna.machine.nexus_molecular_forge.tooltip.0", "ZPM-tier AE mass crafting multiblock for GregTech Nexus Addon.");
+        add("gtna.machine.nexus_molecular_forge.tooltip.0",
+                "ZPM-tier AE mass crafting multiblock based directly on the GTOCore Super Molecular Assembler.");
         add("gtna.machine.nexus_molecular_forge.tooltip.1",
-                "Uses the exact 9x11x9 footprint of the Super Molecular Assembler, rebuilt with high-tier GTCEu casings.");
+                "Uses the exact 9x11x9 structure and block layout of the Super Molecular Assembler.");
         add("gtna.machine.nexus_molecular_forge.tooltip.2",
-                "Install Nexus Craft Pattern Hatches on the assembly-line casing positions to publish encoded crafting patterns to AE2.");
+                "Requires Hastelloy N frames, Oxidation Resistant Hastelloy N Casings, Zirconia Mechanical Blocks, Naquadah Borosilicate Glass, Magtech Casings, Process Machine Casings, Compressor Controller Casings, Extreme Density Casings, Assembly Line Casings, and High Power Casings.");
         add("gtna.machine.nexus_molecular_forge.tooltip.3", "Each operation materializes every queued craft output at once.");
         add("gtna.machine.nexus_molecular_forge.tooltip.4", "Cheat Mode: queued crafts do not consume physical ingredients.");
         add("gtna.machine.nexus_molecular_forge.tooltip.5", "Power Cost: exactly 1 EU per crafted item, compressed into batch EU/t.");
         add("gtna.machine.nexus_molecular_forge.tooltip.6",
-                "Supports up to 2 Energy Hatches, 4 Export Buses, 1 Maintenance Hatch, and multiple Pattern Hatches. The HUD shows hatches, patterns, queue, active batch, and forge ceiling.");
+                "Install Nexus Craft Pattern Hatches on the zirconia block positions. The HUD shows hatches, patterns, queue, active batch, and forge ceiling.");
         add("gtna.machine.eye_of_harmony.tooltip.0", "Creates a miniature universe and extracts its resources.");
         add("gtna.machine.eye_of_harmony.tooltip.1", "Startup power comes directly from the GTNA wireless network.");
         add("gtna.machine.eye_of_harmony.tooltip.2", "Bind with a Data Stick to swap the network owner.");

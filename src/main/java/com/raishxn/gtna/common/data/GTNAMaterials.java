@@ -9,6 +9,7 @@ public class GTNAMaterials {
 
     public static Material Stronze;
     public static Material Breel;
+    public static Material HastelloyN;
     public static Material ClayCompound;
     public static Material Echoite;
     public static Material DenseSupercriticalSteam;

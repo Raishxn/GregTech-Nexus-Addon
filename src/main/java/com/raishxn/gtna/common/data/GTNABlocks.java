@@ -47,6 +47,29 @@ public class GTNABlocks {
     public static final BlockEntry<Block> BREEL_PLATED_CASING = createCasingBlock("breel_plated_casing");
     public static final BlockEntry<Block> BOROSILICATE_GLASS_BLOCK = createGlassCasingBlock(
             "borosilicate_glass", GTNACORE.id("block/casings/borosilicate_glass"), () -> RenderType::cutoutMipped);
+    public static final BlockEntry<Block> OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING = createCasingBlock(
+            "oxidation_resistant_hastelloy_n_mechanical_casing",
+            GTNACORE.id("block/casings/oxidation_resistant_hastelloy_n_mechanical_casing"));
+    public static final BlockEntry<Block> ZIRCONIA_CERAMIC_HIGH_STRENGTH_BENDING_RESISTANCE_MECHANICAL_BLOCK =
+            createCasingBlock(
+                    "zirconia_ceramic_high_strength_bending_resistance_mechanical_block",
+                    GTNACORE.id("block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block"));
+    public static final BlockEntry<Block> NAQUADAH_BOROSILICATE_GLASS = createGlassCasingBlock(
+            "naquadah_borosilicate_glass",
+            GTNACORE.id("block/casings/naquadah_borosilicate_glass"),
+            () -> RenderType::cutoutMipped);
+    public static final BlockEntry<Block> MAGTECH_CASING = createCasingBlock(
+            "magtech_casing",
+            GTNACORE.id("block/casings/magtech_casing"));
+    public static final BlockEntry<Block> PROCESS_MACHINE_CASING = createCasingBlock(
+            "process_machine_casing",
+            GTNACORE.id("block/casings/process_machine_casing"));
+    public static final BlockEntry<Block> COMPRESSOR_CONTROLLER_CASING = createCasingBlock(
+            "compressor_controller_casing",
+            GTNACORE.id("block/casings/compressor_controller_casing"));
+    public static final BlockEntry<Block> EXTREME_DENSITY_CASING = createCasingBlock(
+            "extreme_density_casing",
+            GTNACORE.id("block/extreme_density_casing"));
     public static final BlockEntry<Block> GRAVITON_FIELD_CONSTRAINT_CASING = createCasingBlock(
             "graviton_field_constraint_casing");
     public static final BlockEntry<Block> ANNIHILATE_CORE = createCasingBlock("annihilate_core",
