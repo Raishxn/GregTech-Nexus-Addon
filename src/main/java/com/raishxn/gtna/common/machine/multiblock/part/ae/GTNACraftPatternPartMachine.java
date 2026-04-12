@@ -3,7 +3,9 @@ package com.raishxn.gtna.common.machine.multiblock.part.ae;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
+import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
+import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.transfer.item.CustomItemStackHandler;
 import com.gregtechceu.gtceu.integration.ae2.gui.widget.AETextInputButtonWidget;
 import com.gregtechceu.gtceu.integration.ae2.gui.widget.slot.AEPatternViewSlotWidget;
@@ -49,6 +51,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Collections;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -77,6 +80,11 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
     private final BiMap<IPatternDetails, InternalSlot> detailsSlotMap;
 
     private Runnable onContentsChanged = () -> {};
+
+    private boolean needPatternSync;
+
+    @Nullable
+    private TickableSubscription updateSubs;
 
     private final InternalInventory internalPatternInventory = new InternalInventory() {
 
@@ -115,6 +123,7 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
     @Override
     public void onLoad() {
         super.onLoad();
+        updateSubscription();
         if (getLevel() instanceof ServerLevel serverLevel) {
             serverLevel.getServer().tell(new TickTask(1, this::rebuildPatternMap));
         }
@@ -135,7 +144,24 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
     @Override
     public void onMainNodeStateChanged(IGridNodeListener.State reason) {
         super.onMainNodeStateChanged(reason);
+        updateSubscription();
         notifyController();
+    }
+
+    private void updateSubscription() {
+        if (getMainNode().isOnline()) {
+            updateSubs = subscribeServerTick(updateSubs, this::update);
+        } else if (updateSubs != null) {
+            updateSubs.unsubscribe();
+            updateSubs = null;
+        }
+    }
+
+    private void update() {
+        if (needPatternSync) {
+            ICraftingProvider.requestUpdate(getMainNode());
+            needPatternSync = false;
+        }
     }
 
     public void setOnContentsChanged(Runnable onContentsChanged) {
@@ -151,6 +177,7 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
                 detailsSlotMap.forcePut(details, internalInventory[i]);
             }
         }
+        needPatternSync = true;
         notifyController();
     }
 
@@ -170,6 +197,7 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
         } else {
             detailsSlotMap.forcePut(newPatternDetails, slot);
         }
+        needPatternSync = true;
         notifyController();
     }
 
@@ -289,9 +317,22 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
 
     @Override
     public PatternContainerGroup getTerminalGroup() {
+        if (isFormed() && !getControllers().isEmpty()) {
+            IMultiController controller = getControllers().first();
+            MultiblockMachineDefinition controllerDefinition = controller.self().getDefinition();
+            Component groupName = customName.isEmpty() ?
+                    Component.translatable(controllerDefinition.getDescriptionId()) :
+                    Component.literal(customName);
+            return new PatternContainerGroup(
+                    AEItemKey.of(controllerDefinition.asStack()),
+                    groupName,
+                    Collections.emptyList());
+        }
         return new PatternContainerGroup(
                 AEItemKey.of(getDefinition().asStack()),
-                Component.translatable(getBlockState().getBlock().getDescriptionId()),
+                customName.isEmpty() ?
+                        Component.translatable(getBlockState().getBlock().getDescriptionId()) :
+                        Component.literal(customName),
                 java.util.List.of(
                         Component.translatable("gtna.machine.craft_pattern_hatch.slots", maxPatternCount),
                         Component.translatable("gtna.machine.craft_pattern_hatch.patterns")));
