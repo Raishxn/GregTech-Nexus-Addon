@@ -6,6 +6,7 @@ import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.common.data.machines.GTAEMachines;
+import com.gregtechceu.gtceu.data.recipe.CustomTags;
 
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.Items;
 
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.common.data.GTNAItems;
+import com.raishxn.gtna.common.data.GTNABlocks;
 import com.raishxn.gtna.common.data.GTNAMachines2;
 import com.raishxn.gtna.common.data.GTNAMaterials;
 import com.raishxn.gtna.common.data.GTNARecipeType;
@@ -353,6 +355,71 @@ public class GTNAItemRecipes {
                 .outputItems(GTNAItems.NEXUS_BOOTS.get())
                 .duration(300)
                 .EUt(1920)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_annihilation_constrainer")
+                .inputItems(GTItems.GRAVI_STAR.get())
+                .inputItems(GTItems.FIELD_GENERATOR_UHV.get(), 2)
+                .inputItems(GTItems.EMITTER_UHV.get(), 2)
+                .inputItems(GTItems.SENSOR_UHV.get(), 2)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 4)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                .outputItems(GTNAItems.ANNIHILATION_CONSTRAINER.get())
+                .duration(400)
+                .EUt(1966080)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_neutronium_antimatter_fuel_rod")
+                .inputItems(GTNAItems.ANNIHILATION_CONSTRAINER.get())
+                .inputItems(TagPrefix.rodLong, GTMaterials.Neutronium, 2)
+                .inputItems(GTNABlocks.ANTIMATTER_CONTAINMENT_CASING.get())
+                .inputItems(GTItems.QUANTUM_STAR.get())
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(288))
+                .outputItems(GTNAItems.NEUTRONIUM_ANTIMATTER_FUEL_ROD.get())
+                .duration(300)
+                .EUt(491520)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_draconium_antimatter_fuel_rod")
+                .inputItems(GTNAItems.NEUTRONIUM_ANTIMATTER_FUEL_ROD.get())
+                .inputItems(GTItems.FIELD_GENERATOR_UHV.get(), 2)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Naquadria, 4)
+                .inputItems(CustomTags.UEV_CIRCUITS, 2)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(288))
+                .outputItems(GTNAItems.DRACONIUM_ANTIMATTER_FUEL_ROD.get())
+                .duration(400)
+                .EUt(1966080)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_cosmic_neutronium_antimatter_fuel_rod")
+                .inputItems(GTNAItems.DRACONIUM_ANTIMATTER_FUEL_ROD.get())
+                .inputItems(GTItems.FIELD_GENERATOR_UEV.get(), 2)
+                .inputItems(GTItems.GRAVI_STAR.get(), 2)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 8)
+                .inputItems(CustomTags.UIV_CIRCUITS, 2)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                .outputItems(GTNAItems.COSMIC_NEUTRONIUM_ANTIMATTER_FUEL_ROD.get())
+                .duration(500)
+                .EUt(7864320)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_infinity_antimatter_fuel_rod")
+                .inputItems(GTNAItems.COSMIC_NEUTRONIUM_ANTIMATTER_FUEL_ROD.get())
+                .inputItems(GTNAItems.ANNIHILATION_CONSTRAINER.get(), 2)
+                .inputItems(GTItems.FIELD_GENERATOR_UIV.get(), 2)
+                .inputItems(GTItems.EMITTER_UIV.get(), 2)
+                .inputItems(GTItems.SENSOR_UIV.get(), 2)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 8)
+                .inputItems(CustomTags.UXV_CIRCUITS, 2)
+                .inputFluids(GTMaterials.Europium.getFluid(1152))
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(1152))
+                .outputItems(GTNAItems.INFINITY_ANTIMATTER_FUEL_ROD.get())
+                .duration(600)
+                .EUt(31457280)
+                .stationResearch(b -> b
+                        .researchStack(GTNAItems.COSMIC_NEUTRONIUM_ANTIMATTER_FUEL_ROD.asStack())
+                        .CWUt(256)
+                        .EUt(7864320))
                 .save(provider);
     }
 }

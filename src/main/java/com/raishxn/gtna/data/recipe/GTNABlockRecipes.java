@@ -3,6 +3,7 @@ package com.raishxn.gtna.data.recipe;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.common.data.*;
+import com.gregtechceu.gtceu.data.recipe.CustomTags;
 
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -256,6 +257,136 @@ public class GTNABlockRecipes {
                 .define('C', GTNABlocks.BREEL_PIPE_CASING.get())
                 .unlockedBy("has_breel_casing",
                         InventoryChangeTrigger.TriggerInstance.hasItems(GTNABlocks.BREEL_PIPE_CASING.get()))
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_naquadah_alloy_casing")
+                .inputItems(TagPrefix.frameGt, GTMaterials.NaquadahAlloy)
+                .inputItems(TagPrefix.plate, GTMaterials.NaquadahAlloy, 6)
+                .circuitMeta(6)
+                .outputItems(GTNABlocks.NAQUADAH_ALLOY_CASING.get())
+                .EUt(16)
+                .duration(50)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_hyper_mechanical_casing")
+                .inputItems(TagPrefix.frameGt, GTMaterials.NaquadahAlloy)
+                .inputItems(TagPrefix.plate, GTMaterials.Naquadria, 6)
+                .circuitMeta(6)
+                .outputItems(GTNABlocks.HYPER_MECHANICAL_CASING.get())
+                .EUt(16)
+                .duration(50)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_rhenium_reinforced_energy_glass")
+                .inputItems(GTBlocks.FUSION_GLASS.asItem(), 2)
+                .inputItems(TagPrefix.plate, GTMaterials.Rhenium, 6)
+                .outputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.get())
+                .EUt(491520)
+                .duration(1200)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_degenerate_rhenium_constrained_casing")
+                .circuitMeta(6)
+                .inputItems(TagPrefix.frameGt, GTMaterials.Rhenium)
+                .inputItems(TagPrefix.plate, GTMaterials.Rhenium, 6)
+                .outputItems(GTNABlocks.DEGENERATE_RHENIUM_CONSTRAINED_CASING.get())
+                .EUt(491520)
+                .duration(1200)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_graviton_field_constraint_casing")
+                .inputItems(GTBlocks.HIGH_POWER_CASING.asItem())
+                .inputItems(GTItems.FIELD_GENERATOR_UEV, 2)
+                .inputItems(GTItems.SENSOR_UEV, 2)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Naquadria, 4)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                .outputItems(GTNABlocks.GRAVITON_FIELD_CONSTRAINT_CASING.get())
+                .EUt(7864320)
+                .duration(400)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_dyson_control_casing")
+                .inputItems(GTNABlocks.NAQUADAH_ALLOY_CASING.get())
+                .inputItems(GTItems.EMITTER_ZPM, 2)
+                .inputItems(GTItems.SENSOR_ZPM, 2)
+                .inputItems(CustomTags.UV_CIRCUITS, 2)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                .outputItems(GTNABlocks.DYSON_CONTROL_CASING.get())
+                .EUt(491520)
+                .duration(300)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_dyson_receiver_casing")
+                .inputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.get(), 2)
+                .inputItems(GTNABlocks.NAQUADAH_ALLOY_CASING.get(), 2)
+                .inputItems(GTItems.EMITTER_UV, 2)
+                .inputItems(GTItems.SENSOR_UV, 2)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                .outputItems(GTNABlocks.DYSON_RECEIVER_CASING.get())
+                .EUt(1966080)
+                .duration(400)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_antimatter_containment_casing")
+                .inputItems(GTNABlocks.HYPER_MECHANICAL_CASING.get())
+                .inputItems(GTItems.FIELD_GENERATOR_UHV, 2)
+                .inputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.get(), 2)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 4)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                .outputItems(GTNABlocks.ANTIMATTER_CONTAINMENT_CASING.get())
+                .EUt(1966080)
+                .duration(400)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_hollow_casing")
+                .inputItems(GTBlocks.HIGH_POWER_CASING.asItem(), 2)
+                .inputItems(GTNABlocks.NAQUADAH_ALLOY_CASING.get(), 2)
+                .inputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.get(), 2)
+                .inputItems(GTItems.FIELD_GENERATOR_UV, 4)
+                .inputItems(CustomTags.UV_CIRCUITS, 2)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 4)
+                .inputFluids(GTMaterials.Europium.getFluid(2304))
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
+                .outputItems(GTNABlocks.HOLLOW_CASING.get(), 2)
+                .EUt(491520)
+                .duration(400)
+                .stationResearch(b -> b
+                        .researchStack(GTNABlocks.NAQUADAH_ALLOY_CASING.asStack())
+                        .CWUt(128)
+                        .EUt(491520))
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_dyson_control_toroid")
+                .inputItems(TagPrefix.frameGt, GTMaterials.Neutronium)
+                .inputItems(GTItems.EMITTER_UIV, 4)
+                .inputItems(GTItems.ELECTRIC_PUMP_UIV, 2)
+                .inputItems(CustomTags.UIV_CIRCUITS, 2)
+                .inputItems(GTNABlocks.DYSON_CONTROL_CASING.get(), 2)
+                .inputItems(TagPrefix.foil, GTMaterials.Neutronium, 24)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(2000))
+                .inputFluids(GTMaterials.Naquadria.getFluid(1296))
+                .inputFluids(GTMaterials.Europium.getFluid(1296))
+                .outputItems(GTNABlocks.DYSON_CONTROL_TOROID.get())
+                .EUt(31457280)
+                .duration(800)
+                .stationResearch(b -> b
+                        .researchStack(GTNABlocks.DYSON_CONTROL_CASING.asStack())
+                        .CWUt(512)
+                        .EUt(31457280))
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_annihilate_core")
+                .inputItems(TagPrefix.frameGt, GTMaterials.Neutronium)
+                .inputItems(GTItems.GRAVI_STAR)
+                .inputItems(GTItems.FIELD_GENERATOR_UXV)
+                .inputItems(GTItems.EMITTER_UXV)
+                .inputItems(GTItems.SENSOR_UXV)
+                .inputItems(CustomTags.UXV_CIRCUITS, 2)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 4)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(1296))
+                .outputItems(GTNABlocks.ANNIHILATE_CORE.get())
+                .EUt(125829120)
+                .duration(400)
                 .save(provider);
     }
 }
