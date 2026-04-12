@@ -1727,41 +1727,41 @@ public class GTNAMachines {
 
     private static BlockPattern createNexusMolecularForgePattern(MultiblockMachineDefinition definition) {
         return FactoryBlockPattern.start(RIGHT, UP, BACK)
-                .aisle("BBBBBBBBB", "BBBDBBBBB", "BBBDBBBBB", "BBBDBBBBB", "BBBABBBBB", "BBAALLABB", "BBBABBBBB",
-                        "BBBDBBBBB", "BBBDBBBBB", "BBBDBBBBB", "BBBBBBBBB")
-                .aisle("BBBDBBBBB", "BBB A BBB", "BB  A  BB", "BBC A CBB", "BBC G CBB", "BAC G CAB", "BBC G CBB",
-                        "BBC A CBB", "BB  A  BB", "BBB A BBB", "BBBDBBBBB")
-                .aisle("BBBDBBBBB", "BB KJK BB", "B EEEEE B", "BCBBGBBCB", "BCBBBBBCB", "ACBBBBBCA", "BCBBBBBCB",
-                        "BCBBGBBCB", "B EEEEE B", "BB KJK BB", "BBBDBBBBB")
-                .aisle("BBBDBBBBB", "B KKJKK B", "B EFFFE B", "B BBHBB B", "B BBBBB B", "A BBBBB A", "B BBBBB B",
-                        "B BBHBB B", "B EFFFE B", "B KKJKK B", "BBBDBBBBB")
-                .aisle("BDDDDDDDB", "DAJJJJJAD", "DAEFFFEAD", "DAGHIHGAD", "AGBBIBBGA",
-                        "AGBBIBBGA", "AGBBIBBGA", "DAGHIHGAD", "DAEFFFEAD", "DAJJJJJAD", "BDDDDDDDB")
-                .aisle("BBBDBBBBB", "B KKJKK B", "B EFFFE B", "B BBHBB B", "B BBBBB B", "A BBBBB A", "B BBBBB B",
-                        "B BBHBB B", "B EFFFE B", "B KKJKK B", "BBBDBBBBB")
-                .aisle("BBBDBBBBB", "BB KJK BB", "B EEEEE B", "BCBBGBBCB", "BCBBBBBCB", "ACBBBBBCA", "BCBBBBBCB",
-                        "BCBBGBBCB", "B EEEEE B", "BB KJK BB", "BBBDBBBBB")
-                .aisle("BBBDBBBBB", "BBB A BBB", "BB  A  BB", "BBC A CBB", "BBC G CBB", "BAC G CAB", "BBC G CBB",
-                        "BBC A CBB", "BB  A  BB", "BBB A BBB", "BBBDBBBBB")
-                .aisle("BBBBBBBBB", "BBBDBBBBB", "BBBDBBBBB", "BBBDBBBBB", "BBBABBBBB", "BBAAAAABB", "BBBABBBBB",
-                        "BBBDBBBBB", "BBBDBBBBB", "BBBDBBBBB", "BBBBBBBBB")
-                .where('L', controller(blocks(definition.get())))
-                .where('A', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTNAMaterials.HastelloyN)))
-                .where('B', blocks(GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.get()))
-                .where('C', blocks(GTNABlocks.ZIRCONIA_CERAMIC_HIGH_STRENGTH_BENDING_RESISTANCE_MECHANICAL_BLOCK.get())
+                .aisle("AAAAAAAAA", "AAAABAAAA", "AAAABAAAA", "AAAABAAAA", "AAAACAAAA", "AACCCCCAA", "AAAACAAAA",
+                        "AAAABAAAA", "AAAABAAAA", "AAAABAAAA", "AAAAAAAAA")
+                .aisle("AAAABAAAA", "AAADCDAAA", "AADDCDDAA", "AAEDCDEAA", "AAEDFDEAA", "ACEDFDECA", "AAEDFDEAA",
+                        "AAEDCDEAA", "AADDCDDAA", "AAADCDAAA", "AAAABAAAA")
+                .aisle("AAAABAAAA", "AADGHGDAA", "ADIIIIIDA", "AEAAFAAEA", "AEAAAAAEA", "CEAAAAAEC", "AEAAAAAEA",
+                        "AEAAFAAEA", "ADIIIIIDA", "AADGHGDAA", "AAAABAAAA")
+                .aisle("AAAABAAAA", "ADGGHGGDA", "ADIJJJIDA", "ADAAKAADA", "ADAAAAADA", "CDAAAAADC", "ADAAAAADA",
+                        "ADAAKAADA", "ADIJJJIDA", "ADGGHGGDA", "AAAABAAAA")
+                .aisle("ABBBBBBBA", "BCHHHHHCB", "BCIJJJICB", "BCFKLKFCB", "CFAALAAFC", "CFAALAAFM", "CFAALAAFC",
+                        "BCFKLKFCB", "BCIJJJICB", "BCHHHHHCB", "ABBBBBBBA")
+                .aisle("AAAABAAAA", "ADGGHGGDA", "ADIJJJIDA", "ADAAKAADA", "ADAAAAADA", "CDAAAAADC", "ADAAAAADA",
+                        "ADAAKAADA", "ADIJJJIDA", "ADGGHGGDA", "AAAABAAAA")
+                .aisle("AAAABAAAA", "AADGHGDAA", "ADIIIIIDA", "AEAAFAAEA", "AEAAAAAEA", "CEAAAAAEC", "AEAAAAAEA",
+                        "AEAAFAAEA", "ADIIIIIDA", "AADGHGDAA", "AAAABAAAA")
+                .aisle("AAAABAAAA", "AAADCDAAA", "AADDCDDAA", "AAEDCDEAA", "AAEDFDEAA", "ACEDFDECA", "AAEDFDEAA",
+                        "AAEDCDEAA", "AADDCDDAA", "AAADCDAAA", "AAAABAAAA")
+                .aisle("AAAAAAAAA", "AAAABAAAA", "AAAABAAAA", "AAAABAAAA", "AAAACAAAA", "AACCCCCAA", "AAAACAAAA",
+                        "AAAABAAAA", "AAAABAAAA", "AAAABAAAA", "AAAAAAAAA")
+                .where('A', Predicates.air())
+                .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTNAMaterials.HastelloyN)))
+                .where('C', blocks(GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.get()))
+                .where('D', blocks(GTNABlocks.ZIRCONIA_CERAMIC_HIGH_STRENGTH_BENDING_RESISTANCE_MECHANICAL_BLOCK.get())
                         .setMinGlobalLimited(20)
                         .or(blocks(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.getBlock()))
                         .or(abilities(INPUT_ENERGY).setMaxGlobalLimited(2))
                         .or(abilities(EXPORT_ITEMS)))
-                .where('D', blocks(GTNABlocks.NAQUADAH_BOROSILICATE_GLASS.get()))
-                .where('E', blocks(GTNABlocks.MAGTECH_CASING.get()))
-                .where('F', blocks(GTNABlocks.PROCESS_MACHINE_CASING.get()))
-                .where('G', blocks(GTBlocks.CASING_ASSEMBLY_LINE.get()))
-                .where('H', blocks(GTBlocks.HIGH_POWER_CASING.get()))
-                .where('I', blocks(GTNABlocks.COMPRESSOR_CONTROLLER_CASING.get()))
-                .where('J', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Europium)))
-                .where('K', blocks(GTNABlocks.EXTREME_DENSITY_CASING.get()))
-                .where(' ', any())
+                .where('E', blocks(GTNABlocks.NAQUADAH_BOROSILICATE_GLASS.get()))
+                .where('F', blocks(GTNABlocks.MAGTECH_CASING.get()))
+                .where('G', blocks(GTNABlocks.PROCESS_MACHINE_CASING.get()))
+                .where('H', blocks(GTBlocks.CASING_ASSEMBLY_LINE.get()))
+                .where('I', blocks(GTBlocks.HIGH_POWER_CASING.get()))
+                .where('J', blocks(GTNABlocks.COMPRESSOR_CONTROLLER_CASING.get()))
+                .where('K', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Europium)))
+                .where('L', blocks(GTNABlocks.EXTREME_DENSITY_CASING.get()))
+                .where('M', controller(blocks(definition.get())))
                 .build();
     }
 
