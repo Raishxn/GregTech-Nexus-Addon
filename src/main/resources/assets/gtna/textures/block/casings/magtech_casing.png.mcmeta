@@ -1,5 +1,5 @@
 {
     "ldlib": {
-        "connection": "gtocore:block/casings/magtech_casing_ctm"
+        "connection": "gtna:block/casings/magtech_casing_ctm"
     }
 }

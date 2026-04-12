@@ -1,5 +1,5 @@
 {
     "ldlib": {
-        "connection": "gtlcore:block/casings/dimensionally_transcendent_casing_ctm"
+        "connection": "gtna:block/casings/dimensionally_transcendent_casing_ctm"
     }
 }
