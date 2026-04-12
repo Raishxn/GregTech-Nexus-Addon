@@ -1743,9 +1743,9 @@ public class GTNAMachines {
                         "AEAAFAAEA", "ADIIIIIDA", "AADGHGDAA", "AAAABAAAA")
                 .aisle("AAAABAAAA", "AAADCDAAA", "AADDCDDAA", "AAEDCDEAA", "AAEDFDEAA", "ACEDFDECA", "AAEDFDEAA",
                         "AAEDCDEAA", "AADDCDDAA", "AAADCDAAA", "AAAABAAAA")
-                .aisle("AAAAAAAAA", "AAAABAAAA", "AAAABAAAA", "AAAABAAAA", "AAAACAAAA", "AACCCCCAA", "AAAACAAAA",
+                .aisle("AAAAAAAAA", "AAAABAAAA", "AAAABAAAA", "AAAABAAAA", "AAAACAAAA", "AACCMCCAA", "AAAACAAAA",
                         "AAAABAAAA", "AAAABAAAA", "AAAABAAAA", "AAAAAAAAA")
-                .where('A', Predicates.air())
+                .where('A', any())
                 .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTNAMaterials.HastelloyN)))
                 .where('C', blocks(GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.get()))
                 .where('D', blocks(GTNABlocks.ZIRCONIA_CERAMIC_HIGH_STRENGTH_BENDING_RESISTANCE_MECHANICAL_BLOCK.get())
