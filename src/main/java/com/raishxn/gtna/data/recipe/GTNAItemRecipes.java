@@ -277,6 +277,19 @@ public class GTNAItemRecipes {
                 .EUt(480)
                 .save(provider);
 
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_me_craft_pattern_hatch")
+                .inputItems(GTNAMachines2.ME_PATTERN_BUFFER.asStack())
+                .inputItems(GTItems.ROBOT_ARM_ZPM.get())
+                .inputItems(GTItems.SENSOR_ZPM.get())
+                .inputItems(GTItems.TOOL_DATA_ORB.get())
+                .inputItems("expatternprovider:assembler_matrix_crafter", 2)
+                .inputItems("expatternprovider:assembler_matrix_speed", 2)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                .outputItems(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.asStack())
+                .duration(400)
+                .EUt(1920)
+                .save(provider);
+
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("pattern_buffer_upgrade_21")
                 .inputItems(GTItems.SENSOR_LuV.get())
                 .inputItems(GTItems.ROBOT_ARM_LuV.get())

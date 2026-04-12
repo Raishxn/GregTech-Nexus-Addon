@@ -23,6 +23,7 @@ import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachin
 import com.raishxn.gtna.common.machine.multiblock.part.AdvancedParallelHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftPatternPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
 
 import java.util.Locale;
@@ -41,6 +42,7 @@ public class GTNAMachines2 {
     public static MachineDefinition ME_PATTERN_BUFFER;
     public static MachineDefinition ME_ADVANCED_PATTERN_BUFFER;
     public static MachineDefinition ME_ULTIMATE_PATTERN_BUFFER;
+    public static MachineDefinition ME_CRAFT_PATTERN_HATCH;
 
     public static void init() {
         registerPatternBuffers();
@@ -87,6 +89,7 @@ public class GTNAMachines2 {
         ME_PATTERN_BUFFER = registerPatternBuffer("me_pattern_buffer", GTValues.ZPM, 21);
         ME_ADVANCED_PATTERN_BUFFER = registerPatternBuffer("me_advanced_pattern_buffer", GTValues.UV, 32);
         ME_ULTIMATE_PATTERN_BUFFER = registerPatternBuffer("me_ultimate_pattern_buffer", GTValues.UHV, 72);
+        ME_CRAFT_PATTERN_HATCH = registerCraftPatternHatch();
     }
 
     private static MachineDefinition registerPatternBuffer(String id, int tier, int slotCount) {
@@ -104,6 +107,24 @@ public class GTNAMachines2 {
                         Component.translatable("gtna.machine.pattern_buffer.slots", slotCount),
                         Component.translatable("gtna.machine.pattern_buffer.break_persist"),
                         Component.translatable("gtna.machine.pattern_buffer.specialization_pending"))
+                .register();
+    }
+
+    private static MachineDefinition registerCraftPatternHatch() {
+        return REGISTRATE.machine("me_craft_pattern_hatch", holder -> new GTNACraftPatternPartMachine(holder, 72))
+                .tier(GTValues.ZPM)
+                .rotationState(RotationState.ALL)
+                .abilities(
+                        PartAbility.IMPORT_ITEMS,
+                        PartAbility.IMPORT_FLUIDS,
+                        PartAbility.EXPORT_FLUIDS,
+                        PartAbility.EXPORT_ITEMS)
+                .colorOverlayTieredHullModel(GTCEu.id("block/overlay/appeng/me_buffer_hatch"))
+                .tooltips(
+                        Component.translatable("gtna.machine.craft_pattern_hatch.tooltip"),
+                        Component.translatable("gtna.machine.craft_pattern_hatch.slots", 72),
+                        Component.translatable("gtna.machine.craft_pattern_hatch.patterns"),
+                        Component.translatable("gtna.machine.craft_pattern_hatch.cheat"))
                 .register();
     }
 

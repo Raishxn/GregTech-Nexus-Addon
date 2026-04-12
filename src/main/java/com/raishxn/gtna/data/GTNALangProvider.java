@@ -123,6 +123,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.me_pattern_buffer", "ME Pattern Buffer");
         add("block.gtna.me_advanced_pattern_buffer", "ME Advanced Pattern Buffer");
         add("block.gtna.me_ultimate_pattern_buffer", "ME Ultimate Pattern Buffer");
+        add("block.gtna.me_craft_pattern_hatch", "Nexus Craft Pattern Hatch");
         add("gtna.machine.pattern_buffer.tooltip", "AE2 pattern buffer with per-slot GTNA specialization");
         add("gtna.machine.pattern_buffer.slots", "Pattern Slots: %s");
         add("gtna.machine.pattern_buffer.break_persist", "Stored patterns and slot data are preserved on block drop");
@@ -151,6 +152,11 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.pattern_buffer.clear_specialization", "Clear Spec");
         add("gtna.machine.pattern_buffer.clear_cache", "Clear Cache");
         add("gtna.machine.pattern_buffer.refund_slot", "Refund");
+        add("gtna.machine.craft_pattern_hatch.tooltip", "Dedicated AE2 crafting hatch for the Nexus Molecular Forge");
+        add("gtna.machine.craft_pattern_hatch.slots", "Pattern Slots: %s");
+        add("gtna.machine.craft_pattern_hatch.patterns", "Accepts encoded crafting patterns only");
+        add("gtna.machine.craft_pattern_hatch.cheat",
+                "Queues crafted outputs directly for the controller to materialize");
         add("item.gtna.pattern_buffer_upgrade_21", "Pattern Buffer Expansion Card");
         add("item.gtna.pattern_buffer_upgrade_32", "Pattern Buffer Precision Card");
         add("item.gtna.pattern_buffer_upgrade_72", "Pattern Buffer Ascension Card");

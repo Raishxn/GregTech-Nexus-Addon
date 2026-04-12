@@ -77,6 +77,7 @@
   "block.gtna.stronze_wrapped_casing": "Stronze Wrapped Casing",
   "block.gtna.hydraulic_assembler_casing": "Hydraulic Assembler Casing",
   "block.gtna.breel_plated_casing": "Breel Plated Casing",
+  "block.gtna.me_craft_pattern_hatch": "Hatch de Pattern de Craft Nexus",
 
   "item.gtna.nexus_linker": "Nexus Linker",
   "item.gtna.nexus_linker.tooltip": "§7Shift+Right Click on Nexus Flux Matrix to bind.\n§7Right Click on Wireless Hatch/Dynamo to link.",
@@ -109,6 +110,10 @@
   "item.gtna.precision_steam_component": "Precision Steam Component",
 
   "gtna.registry.add": "GregTech Nexus Addon",
+  "gtna.machine.craft_pattern_hatch.tooltip": "Hatch dedicada de craft AE2 para a Nexus Molecular Forge",
+  "gtna.machine.craft_pattern_hatch.slots": "Slots de Pattern: %s",
+  "gtna.machine.craft_pattern_hatch.patterns": "Aceita apenas patterns codificados de crafting",
+  "gtna.machine.craft_pattern_hatch.cheat": "Enfileira as saídas craftadas para o controlador materializar",
   "gtceu.annihilate_generator": "Gerador de Aniquilação",
   "gtna.cosmos_simulation": "Simulação Cósmica",
   "gtna.machine.artificial_star.output": "Suporta saída por Laser ou Dínamo Wireless.",
