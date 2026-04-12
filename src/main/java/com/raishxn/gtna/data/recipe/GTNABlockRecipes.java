@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 
 import com.raishxn.gtna.common.data.GTNABlocks;
 import com.raishxn.gtna.common.data.GTNAItems;
+import com.raishxn.gtna.common.data.GTNAMachines;
 import com.raishxn.gtna.common.data.GTNAMaterials;
 import com.raishxn.gtna.common.data.GTNARecipeType;
 
@@ -387,6 +388,107 @@ public class GTNABlockRecipes {
                 .outputItems(GTNABlocks.ANNIHILATE_CORE.get())
                 .EUt(125829120)
                 .duration(400)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_dimensionally_transcendent_casing")
+                .inputItems(GTBlocks.HIGH_POWER_CASING.asItem(), 4)
+                .inputItems(GTNABlocks.HOLLOW_CASING.get(), 4)
+                .inputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.get(), 4)
+                .inputItems(GTItems.FIELD_GENERATOR_UHV, 4)
+                .inputItems(GTItems.SENSOR_UHV, 4)
+                .inputItems(CustomTags.UHV_CIRCUITS, 4)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 8)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
+                .inputFluids(GTMaterials.Europium.getFluid(2304))
+                .inputFluids(GTMaterials.Naquadria.getFluid(2304))
+                .outputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get(), 2)
+                .EUt(31457280)
+                .duration(800)
+                .stationResearch(b -> b
+                        .researchStack(GTNABlocks.HOLLOW_CASING.asStack())
+                        .CWUt(512)
+                        .EUt(31457280))
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_dimension_injection_casing")
+                .inputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get(), 2)
+                .inputItems(GTNABlocks.DYSON_RECEIVER_CASING.get(), 2)
+                .inputItems(GTItems.FIELD_GENERATOR_UEV, 2)
+                .inputItems(GTItems.SENSOR_UEV, 2)
+                .inputItems(CustomTags.UEV_CIRCUITS, 2)
+                .inputItems(TagPrefix.foil, GTMaterials.Rhenium, 16)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Naquadria, 8)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
+                .inputFluids(GTMaterials.Europium.getFluid(1152))
+                .inputFluids(GTMaterials.Neutronium.getFluid(1152))
+                .outputItems(GTNABlocks.DIMENSION_INJECTION_CASING.get(), 2)
+                .EUt(125829120)
+                .duration(600)
+                .stationResearch(b -> b
+                        .researchStack(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.asStack())
+                        .CWUt(1024)
+                        .EUt(125829120))
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_dimensional_bridge_casing")
+                .inputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get())
+                .inputItems(GTNABlocks.DIMENSION_INJECTION_CASING.get(), 2)
+                .inputItems(GTItems.FIELD_GENERATOR_UIV, 2)
+                .inputItems(GTItems.EMITTER_UIV, 2)
+                .inputItems(CustomTags.UIV_CIRCUITS, 2)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 8)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.NaquadahAlloy, 8)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
+                .inputFluids(GTMaterials.Europium.getFluid(2304))
+                .inputFluids(GTMaterials.Naquadria.getFluid(2304))
+                .outputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.get())
+                .EUt(503316480)
+                .duration(800)
+                .stationResearch(b -> b
+                        .researchStack(GTNABlocks.DIMENSION_INJECTION_CASING.asStack())
+                        .CWUt(2048)
+                        .EUt(503316480))
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_dimensional_stability_casing")
+                .inputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.get())
+                .inputItems(GTNABlocks.DYSON_CONTROL_CASING.get(), 2)
+                .inputItems(GTNABlocks.DYSON_CONTROL_TOROID.get(), 2)
+                .inputItems(GTItems.FIELD_GENERATOR_UXV, 2)
+                .inputItems(GTItems.ELECTRIC_PUMP_UXV, 2)
+                .inputItems(CustomTags.UXV_CIRCUITS, 2)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 8)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
+                .inputFluids(GTMaterials.Europium.getFluid(2304))
+                .inputFluids(GTMaterials.Neutronium.getFluid(2304))
+                .outputItems(GTNABlocks.DIMENSIONAL_STABILITY_CASING.get())
+                .EUt(2013265920)
+                .duration(1000)
+                .stationResearch(b -> b
+                        .researchStack(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.asStack())
+                        .CWUt(4096)
+                        .EUt(2013265920))
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_spacetime_compression_field_generator")
+                .inputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get())
+                .inputItems(GTNABlocks.DIMENSIONAL_STABILITY_CASING.get())
+                .inputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.get())
+                .inputItems(GTNABlocks.ANNIHILATE_CORE.get())
+                .inputItems(GTNAMachines.ARTIFICIAL_STAR.asStack().getItem())
+                .inputItems(GTItems.FIELD_GENERATOR_OpV, 2)
+                .inputItems(CustomTags.OpV_CIRCUITS, 2)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 8)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(4608))
+                .inputFluids(GTMaterials.Europium.getFluid(4608))
+                .inputFluids(GTMaterials.Naquadria.getFluid(4608))
+                .outputItems(GTNABlocks.SPACETIME_COMPRESSION_FIELD_GENERATOR.get())
+                .EUt(8053063680L)
+                .duration(1200)
+                .stationResearch(b -> b
+                        .researchStack(GTNABlocks.DIMENSIONAL_STABILITY_CASING.asStack())
+                        .CWUt(8192)
+                        .EUt(8053063680L))
                 .save(provider);
     }
 }

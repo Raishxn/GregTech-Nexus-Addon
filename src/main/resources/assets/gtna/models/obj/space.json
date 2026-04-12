@@ -1,0 +1,9 @@
+{
+  "loader": "forge:obj",
+  "flip_v": true,
+  "model": "gtna:models/obj/space.obj",
+  "textures": {
+    "texture0": "gtna:block/obj/space_layer",
+    "particle": "gtna:block/obj/space_layer"
+  }
+}

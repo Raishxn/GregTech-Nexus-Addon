@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.Blocks;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.client.renderer.machine.AnnihilateGeneratorRenderer;
+import com.raishxn.gtna.client.renderer.machine.EyeOfHarmonyRenderer;
 import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyAisles;
 import com.raishxn.gtna.common.machine.multiblock.energy.ArtificialStarMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhouse;
@@ -1649,9 +1650,10 @@ public class GTNAMachines {
             .recipeModifier(EyeOfHarmonyMachine::recipeModifier)
             .appearanceBlock(GTBlocks.HIGH_POWER_CASING)
             .pattern(GTNAMachines::createEyeOfHarmonyPattern)
-            .workableCasingModel(
+            .model(createWorkableCasingMachineModel(
                     GTNACORE.id("block/casings/dimensionally_transcendent_casing"),
                     GTCEu.id("block/multiblock/fluid_drilling_rig"))
+                            .andThen(builder -> builder.addDynamicRenderer(EyeOfHarmonyRenderer::new)))
             .register();
 
     private static BlockPattern createArtificialStarPattern(MultiblockMachineDefinition definition) {
