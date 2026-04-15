@@ -132,6 +132,13 @@ Monitor portátil com:
 | ≤10% | ⛔ **Safe Mode**: corta output, continua aceitando input |
 | ≥25% | 🔋 Safe Mode desativado, output restaurado |
 
+## ConfiguraÃ§Ã£o
+
+- `machines.nexusFluxMatrix.useHighestTierForEfficiency` vem desativado por padrÃ£o.
+- Desativado: a eficiÃªncia usa a mÃ©dia dos tiers dos capacitores instalados.
+- Ativado: a eficiÃªncia usa apenas o maior tier presente na estrutura.
+- Essa opÃ§Ã£o existia descrita sÃ³ no PRD; agora ela tambÃ©m faz parte da wiki para consulta dos jogadores e pack devs.
+
 ## Fluxo de Energia
 
 ```mermaid

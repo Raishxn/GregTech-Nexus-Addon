@@ -113,7 +113,7 @@ public class ConfigHolder {
         public int alertCooldownTicks = 1200;
 
         @Configurable
-        @Comment("If false, the system balances power using PRD arithmetic mean. If true, takes the highest tier.")
+        @Comment("If false, efficiency uses the average capacitor tier. If true, it uses the highest installed tier.")
         public boolean useHighestTierForEfficiency = false;
     }
 

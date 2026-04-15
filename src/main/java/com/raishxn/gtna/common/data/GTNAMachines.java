@@ -1885,6 +1885,7 @@ public class GTNAMachines {
                         .or(abilities(INPUT_ENERGY).setMaxGlobalLimited(2))
                         .or(abilities(MAINTENANCE).setExactLimit(1))
                         .or(abilities(PARALLEL_HATCH).setMaxGlobalLimited(1))
+                        .or(abilities(GTNAPartAbility.OUTPUT_BOOST_HATCH).setMaxGlobalLimited(1))
                         .or(abilities(GTNAPartAbility.THREAD_HATCH).setMaxGlobalLimited(1))
                         .or(blocks(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.getBlock()).setMaxGlobalLimited(1))
                         .or(blocks(GTNAMachines2.ME_PATTERN_BUFFER.getBlock()).setMaxGlobalLimited(1))

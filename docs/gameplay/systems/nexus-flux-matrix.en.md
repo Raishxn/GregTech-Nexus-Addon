@@ -132,6 +132,13 @@ Portable monitor showing:
 | ≤10% | ⛔ **Safe Mode**: cuts output, continues accepting input |
 | ≥25% | 🔋 Safe Mode deactivated, output restored |
 
+## Configuration
+
+- `machines.nexusFluxMatrix.useHighestTierForEfficiency` is disabled by default.
+- Disabled: efficiency uses the average tier of the installed capacitors.
+- Enabled: efficiency uses only the highest tier present in the structure.
+- This option used to be documented only in the PRD; now it is also in the player-facing wiki.
+
 ## Energy Flow
 
 ```mermaid

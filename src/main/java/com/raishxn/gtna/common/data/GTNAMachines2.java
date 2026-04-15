@@ -87,6 +87,7 @@ public class GTNAMachines2 {
                             .or(autoAbilities(definition.getRecipeTypes()))
                             .or(Predicates.abilities(PartAbility.MAINTENANCE).setExactLimit(1))
                             .or(Predicates.abilities(PartAbility.PARALLEL_HATCH).setMaxGlobalLimited(1))
+                            .or(Predicates.abilities(GTNAPartAbility.OUTPUT_BOOST_HATCH).setMaxGlobalLimited(1))
                             .or(Predicates.abilities(GTNAPartAbility.THREAD_HATCH).setMaxGlobalLimited(1))
                             .or(Predicates.abilities(GTNAPartAbility.OVERCLOCK_HATCH).setMaxGlobalLimited(1))
                             .or(Predicates.abilities(GTNAPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1))
@@ -280,7 +281,7 @@ public class GTNAMachines2 {
                 .machine(regName, holder -> new OutputBoostHatchPartMachine(holder, tier))
                 .tier(tier)
                 .rotationState(RotationState.ALL)
-                .abilities(PartAbility.PARALLEL_HATCH)
+                .abilities(GTNAPartAbility.OUTPUT_BOOST_HATCH)
                 .modelProperty(IS_FORMED, false)
                 .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
                 .model((ctx, prov, builder) -> {

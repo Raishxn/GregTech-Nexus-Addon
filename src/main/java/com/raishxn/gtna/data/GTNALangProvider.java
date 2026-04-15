@@ -572,7 +572,13 @@ public class GTNALangProvider extends LanguageProvider {
 
         // --- Configurações (GUI) ---
         // Drift
-        add("config.gtna.option.disableDrift", "Disable Drift");
+        add("config.gtna.option.gameplay", "Gameplay");
+        add("config.gtna.option.client", "Client");
+        add("config.gtna.option.machines", "Machines");
+        add("config.gtna.option.nexusFluxMatrix", "Nexus Flux Matrix");
+        add("config.gtna.option.modDifficulty", "Mod Difficulty");
+        add("config.gtna.option.selfRestraint", "Self Restraint");
+        add("config.gtna.option.disableFlyInertia", "Disable Fly Inertia");
 
         // Accelerate Hatch
         add("config.gtna.option.accelerateHatchMultiplier", "Accelerate Hatch Speed");
@@ -598,6 +604,12 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.voidMinerInsanelyOutputMult", "Void Miner (Insanely) Output");
         add("config.gtna.option.voidMinerInsanelySpeedMult", "Void Miner (Insanely) Speed");
         add("config.gtna.option.voidMinerInsanelyEnergyMult", "Void Miner (Insanely) Energy");
+        add("config.gtna.option.baseLossPercent", "Base Loss Percent");
+        add("config.gtna.option.maxTransferTierMAX", "MAX Tier Transfer Limit");
+        add("config.gtna.option.safeModeThreshold", "Safe Mode Threshold");
+        add("config.gtna.option.safeModeRecovery", "Safe Mode Recovery");
+        add("config.gtna.option.alertCooldownTicks", "Alert Cooldown");
+        add("config.gtna.option.useHighestTierForEfficiency", "Use Highest Tier For Efficiency");
         add("config.jade.plugin_gtna.multiple_recipes_provider", "Multiple Recipes Machine Info");
 
         for (int i = 0; i < GTValues.V.length; i++) {
