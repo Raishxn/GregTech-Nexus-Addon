@@ -154,6 +154,8 @@
   "gtna.tooltip.steam_manufacturer.parallel": "Max Parallel: 16",
   "gtna.tooltip.steam_manufacturer.type": "Recipe Type: Hydraulic Manufacturing",
   "gtna.tooltip.huge_steam_bus": "Huge Steam Item Bus: Stores 54 slots.",
+  "item.gtna.infinite_steam_singleblock_cover.tooltip": "Steam singleblock cheat cover: infinite steam, no input consumption, 5x speed, 10x outputs.",
+  "item.gtna.infinite_electric_singleblock_cover.tooltip": "Electric singleblock cheat cover: infinite power, no input consumption, 5x speed, 10x outputs.",
 
   "config.jade.plugin_gtna.multiple_recipes_provider": "Multiple Recipes Machine Info"
 }

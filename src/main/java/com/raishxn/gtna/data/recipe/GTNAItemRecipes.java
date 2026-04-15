@@ -391,5 +391,56 @@ public class GTNAItemRecipes {
                         .CWUt(256)
                         .EUt(7864320))
                 .save(provider);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAItems.INFINITE_STEAM_SINGLEBLOCK_COVER.get())
+                .pattern("ABA")
+                .pattern("CDC")
+                .pattern("AEA")
+                .define('A', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.CompressedSteam).getItem())
+                .define('B', GTNAItems.HYDRAULIC_STEAM_RECEIVER.get())
+                .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                .define('D', GTNAItems.HYDRAULIC_PUMP.get())
+                .define('E', GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get())
+                .unlockedBy("has_hydraulic_vapor_generator",
+                        InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get()))
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_infinite_steam_singleblock_cover")
+                .inputItems(GTNAItems.HYDRAULIC_STEAM_RECEIVER.get(), 2)
+                .inputItems(GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get(), 2)
+                .inputItems(GTNAItems.PRECISION_STEAM_COMPONENT.get(), 4)
+                .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 2)
+                .inputItems(TagPrefix.plateDouble, GTNAMaterials.CompressedSteam, 4)
+                .inputFluids(GTNAMaterials.CompressedSteam.getFluid(576))
+                .outputItems(GTNAItems.INFINITE_STEAM_SINGLEBLOCK_COVER.get())
+                .duration(200)
+                .EUt(120)
+                .save(provider);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAItems.INFINITE_ELECTRIC_SINGLEBLOCK_COVER.get())
+                .pattern("ABA")
+                .pattern("CDC")
+                .pattern("AEA")
+                .define('A', GTItems.FIELD_GENERATOR_EV.get())
+                .define('B', GTItems.ELECTRIC_PUMP_IV.get())
+                .define('C', GTItems.CONVEYOR_MODULE_IV.get())
+                .define('D', GTItems.ROBOT_ARM_IV.get())
+                .define('E', GTItems.SENSOR_EV.get())
+                .unlockedBy("has_electric_pump_iv",
+                        InventoryChangeTrigger.TriggerInstance.hasItems(GTItems.ELECTRIC_PUMP_IV.get()))
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_infinite_electric_singleblock_cover")
+                .inputItems(GTItems.ELECTRIC_PUMP_IV.get(), 2)
+                .inputItems(GTItems.CONVEYOR_MODULE_IV.get(), 2)
+                .inputItems(GTItems.ROBOT_ARM_IV.get(), 2)
+                .inputItems(GTItems.FIELD_GENERATOR_EV.get(), 2)
+                .inputItems(GTItems.SENSOR_EV.get(), 2)
+                .inputItems(GTItems.COVER_WIRELESS_TRANSMITTER.get())
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                .outputItems(GTNAItems.INFINITE_ELECTRIC_SINGLEBLOCK_COVER.get())
+                .duration(200)
+                .EUt(1920)
+                .save(provider);
     }
 }

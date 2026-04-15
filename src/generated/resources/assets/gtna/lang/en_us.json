@@ -743,6 +743,8 @@
   "item.gtna.hydraulic_steam_jet_spewer": "Hydraulic Steam Jet Spewer",
   "item.gtna.hydraulic_steam_receiver": "Hydraulic Steam Receiver",
   "item.gtna.hydraulic_vapor_generator": "Hydraulic Vapor Generator",
+  "item.gtna.infinite_electric_singleblock_cover.tooltip": "Electric singleblock cheat cover: infinite power, no input consumption, 5x speed, 10x outputs.",
+  "item.gtna.infinite_steam_singleblock_cover.tooltip": "Steam singleblock cheat cover: infinite steam, no input consumption, 5x speed, 10x outputs.",
   "item.gtna.infinity_antimatter_fuel_rod": "Infinity Antimatter Fuel Rod",
   "item.gtna.neutronium_antimatter_fuel_rod": "Neutronium Antimatter Fuel Rod",
   "item.gtna.nexus_linker": "Nexus Linker",

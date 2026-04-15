@@ -1,6 +1,7 @@
 package com.raishxn.gtna.mixin.gtceu;
 
 import com.gregtechceu.gtceu.api.capability.recipe.EURecipeCapability;
+import com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.feature.IRecipeLogicMachine;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMufflerMachine;
@@ -13,6 +14,7 @@ import com.gregtechceu.gtceu.api.recipe.content.ContentModifier;
 import com.gregtechceu.gtceu.api.machine.multiblock.part.TieredPartMachine;
 
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
+import com.raishxn.gtna.utils.GTNASpecialPartUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,6 +39,11 @@ public abstract class GTRecipeLogicMixin {
 
     @ModifyVariable(method = "setupRecipe", at = @At("HEAD"), argsOnly = true, remap = false)
     private GTRecipe gtna$applyMufflerEfficiencyBonus(GTRecipe recipe) {
+        IRecipeCapabilityHolder holder = (IRecipeCapabilityHolder) this.machine;
+        GTRecipe adjustedForCover = GTNASpecialPartUtil.adjustRecipeForSingleblockCover(holder, recipe);
+        if (adjustedForCover != null) {
+            recipe = adjustedForCover;
+        }
         if (!(this.machine instanceof MetaMachine metaMachine) ||
                 !(metaMachine instanceof WorkableMultiblockMachine multiMachine)) {
             return recipe;

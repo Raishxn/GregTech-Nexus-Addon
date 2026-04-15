@@ -11,6 +11,8 @@ import com.gregtechceu.gtceu.common.cover.RobotArmCover;
 import com.gregtechceu.gtceu.common.data.GTCovers;
 
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.common.cover.InfiniteElectricSingleblockCover;
+import com.raishxn.gtna.common.cover.InfiniteSteamSingleblockCover;
 
 public class GTNACovers {
 
@@ -48,6 +50,20 @@ public class GTNACovers {
                     return 64;
                 }
             },
+            () -> () -> new IOCoverRenderer(
+                    GTCEu.id("block/cover/arm"),
+                    null,
+                    GTCEu.id("block/cover/arm_emissive"),
+                    GTCEu.id("block/cover/arm_inverted_emissive")));
+
+    public static final CoverDefinition INFINITE_STEAM_SINGLEBLOCK_COVER = GTCovers.register(
+            GTNACORE.id("infinite_steam_singleblock_cover"),
+            InfiniteSteamSingleblockCover::new,
+            () -> () -> IOCoverRenderer.PUMP_LIKE_COVER_RENDERER);
+
+    public static final CoverDefinition INFINITE_ELECTRIC_SINGLEBLOCK_COVER = GTCovers.register(
+            GTNACORE.id("infinite_electric_singleblock_cover"),
+            InfiniteElectricSingleblockCover::new,
             () -> () -> new IOCoverRenderer(
                     GTCEu.id("block/cover/arm"),
                     null,

@@ -52,6 +52,8 @@ public class GTNAItems {
     public static ItemEntry<ComponentItem> COSMIC_NEUTRONIUM_ANTIMATTER_FUEL_ROD;
     public static ItemEntry<ComponentItem> INFINITY_ANTIMATTER_FUEL_ROD;
     public static ItemEntry<RealityRipperSwordItem> REALITY_RIPPER_SWORD;
+    public static ItemEntry<ComponentItem> INFINITE_STEAM_SINGLEBLOCK_COVER;
+    public static ItemEntry<ComponentItem> INFINITE_ELECTRIC_SINGLEBLOCK_COVER;
 
     public static void init() {
         STRUCTURE_DETECT = REGISTRATE
@@ -201,6 +203,21 @@ public class GTNAItems {
                 .lang("Reality Ripper")
                 .properties(stack -> stack.stacksTo(1))
                 .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + ctx.getName())))
+                .register();
+
+        INFINITE_STEAM_SINGLEBLOCK_COVER = REGISTRATE.item("infinite_steam_singleblock_cover", ComponentItem::create)
+                .lang("Singleblock Steam Infinity Cover")
+                .properties(stack -> stack.stacksTo(1))
+                .model((ctx, provider) -> provider.generated(ctx,
+                        GTNACORE.id("item/quantum_cosmic_nexus_helmet")))
+                .register();
+
+        INFINITE_ELECTRIC_SINGLEBLOCK_COVER = REGISTRATE.item("infinite_electric_singleblock_cover",
+                ComponentItem::create)
+                .lang("Singleblock Electric Infinity Cover")
+                .properties(stack -> stack.stacksTo(1))
+                .model((ctx, provider) -> provider.generated(ctx,
+                        GTNACORE.id("item/reality_ripper_sword")))
                 .register();
     }
 }
