@@ -10,6 +10,7 @@ import com.lowdragmc.lowdraglib.gui.widget.Widget;
 import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 
 import com.raishxn.gtna.api.machine.IThreadModifierMachine;
+import com.raishxn.gtna.config.GTNABalance;
 
 public class ThreadPartMachine extends TieredIOPartMachine {
 
@@ -22,7 +23,7 @@ public class ThreadPartMachine extends TieredIOPartMachine {
         // UV (Tier 8): 2^(2) - 1 = 3
         // ...
         // MAX (Tier 14): 2^(8) - 1 = 255
-        this.threadCount = (1 << (tier - 6)) - 1;
+        this.threadCount = GTNABalance.getThreadCount(tier);
     }
 
     public int getThreadCount() {

@@ -19,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
+import com.raishxn.gtna.config.ConfigHolder;
 
 import java.util.UUID;
 
@@ -34,30 +35,38 @@ public class WirelessSteamOutputHatch extends SteamHatchPartMachine {
     public WirelessSteamOutputHatch(IMachineBlockEntity holder, boolean isSteel, Object... args) {
         super(holder, args);
         this.isSteel = isSteel;
-        this.transferRate = isSteel ? 1_000_000L : 1_0000L;
+        this.transferRate = isSteel ? ConfigHolder.INSTANCE.wirelessSteam.steelTransferRate :
+                ConfigHolder.INSTANCE.wirelessSteam.bronzeTransferRate;
         this.setWorkingEnabled(false);
         if (this.isSteel) {
             if (this.tank.getStorages().length > 0) {
-                this.tank.getStorages()[0].setCapacity(Integer.MAX_VALUE);
+                this.tank.getStorages()[0].setCapacity(ConfigHolder.INSTANCE.wirelessSteam.steelBuffer);
             }
-        }
-    }
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-        if (!getLevel().isClientSide) {
-            this.subscribeServerTick(this::updateWireless);
+        } else if (this.tank.getStorages().length > 0) {
+            this.tank.getStorages()[0].setCapacity(ConfigHolder.INSTANCE.wirelessSteam.bronzeBuffer);
         }
     }
 
     @Override
     protected NotifiableFluidTank createTank(int initialCapacity, int slots, Object... args) {
-        return new NotifiableFluidTank(this, 1, initialCapacity, IO.OUT)
+        int configuredCapacity = isSteel ? ConfigHolder.INSTANCE.wirelessSteam.steelBuffer :
+                ConfigHolder.INSTANCE.wirelessSteam.bronzeBuffer;
+        return new NotifiableFluidTank(this, 1, configuredCapacity, IO.OUT)
                 .setFilter(fluidStack -> fluidStack.getFluid().is(GTMaterials.Steam.getFluidTag()));
     }
 
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (getLevel() != null && !getLevel().isClientSide) {
+            this.subscribeServerTick(this::updateWireless);
+        }
+    }
+
     private void updateWireless() {
+        if (!ConfigHolder.INSTANCE.wirelessSteam.enabled) {
+            return;
+        }
         if (getLevel() instanceof ServerLevel serverLevel) {
             UUID ownerId = getOwnerUUID();
             if (ownerId == null) return;

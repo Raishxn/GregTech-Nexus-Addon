@@ -4,6 +4,8 @@ import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.feature.ITieredMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.part.MultiblockPartMachine;
 
+import com.raishxn.gtna.config.GTNABalance;
+
 import net.minecraft.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -25,15 +27,16 @@ public class AccelerateHatchPartMachine extends MultiblockPartMachine implements
     }
 
     public int getMinDurationPercentage() {
-        return Math.max(1, 50 - (2 * (this.getTier() - 1)));
+        return GTNABalance.getAccelerateBaseMinPercent(this.getTier());
     }
 
     public int calcDurationPercentage(int machineTier) {
         int basePercentage = getMinDurationPercentage();
         int tierDiff = machineTier - this.getTier();
         if (tierDiff > 0) {
-            basePercentage += (tierDiff * 20);
+            basePercentage += (tierDiff * GTNABalance.getAcceleratePenaltyPerTierBelowMachine());
         }
-        return Math.min(100, Math.max(1, basePercentage));
+        return Math.min(GTNABalance.getAccelerateMaximumFinalPercent(),
+                Math.max(GTNABalance.getAccelerateMinimumFinalPercent(), basePercentage));
     }
 }

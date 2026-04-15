@@ -13,7 +13,9 @@ public class SteamWirelessNetworkManager {
     private SteamWirelessNetworkManager() {}
 
     public static boolean addSteamToGlobalSteamMap(ServerLevel level, UUID userUuid, long steamAmount) {
-        if (level == null || userUuid == null || steamAmount <= 0) return false;
+        if (level == null || userUuid == null || steamAmount <= 0 || !ConfigHolder.INSTANCE.wirelessSteam.enabled) {
+            return false;
+        }
 
         SteamNetworkData data = SteamNetworkData.get(level);
         data.addSteam(userUuid, steamAmount);
@@ -38,7 +40,7 @@ public class SteamWirelessNetworkManager {
 
     public static boolean consumeSteamFromGlobalMap(ServerLevel level, UUID userUuid, long amount) {
         if (level == null || userUuid == null || amount <= 0) return false;
-        if (amount > ConfigHolder.INSTANCE.wirelessSteamTransferRate) {
+        if (!ConfigHolder.INSTANCE.wirelessSteam.enabled || amount > ConfigHolder.INSTANCE.machines.wirelessSteamTransferRate) {
             return false;
         }
 
@@ -48,7 +50,8 @@ public class SteamWirelessNetworkManager {
 
     public static boolean extractSteam(Level level, UUID userUuid, long amount, boolean simulate) {
         if (!(level instanceof ServerLevel serverLevel) || userUuid == null || amount <= 0) return false;
-        if (amount > ConfigHolder.INSTANCE.wirelessSteamTransferRate) {
+        if (!ConfigHolder.INSTANCE.wirelessSteam.enabled ||
+                amount > ConfigHolder.INSTANCE.machines.wirelessSteamTransferRate) {
             return false;
         }
         SteamNetworkData data = SteamNetworkData.get(serverLevel);

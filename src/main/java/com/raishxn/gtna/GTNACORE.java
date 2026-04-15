@@ -11,7 +11,8 @@ import net.minecraftforge.fml.common.Mod;
 
 import com.raishxn.gtna.client.ClientProxy;
 import com.raishxn.gtna.common.CommonProxy;
-import com.raishxn.gtna.config.ConfigHolder;
+import com.raishxn.gtna.common.data.condition.RestrictedItemsEnabledForgeCondition;
+import com.raishxn.gtna.config.GTNAConfigBootstrap;
 import dev.toma.configuration.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +26,8 @@ public class GTNACORE {
     public static GTRegistrate EXAMPLE_REGISTRATE = GTRegistrate.create(GTNACORE.MOD_ID);
 
     public GTNACORE() {
-        ConfigHolder.init();
+        GTNAConfigBootstrap.init();
+        RestrictedItemsEnabledForgeCondition.register();
         ModLoadingContext.get().registerExtensionPoint(
                 ConfigScreenHandler.ConfigScreenFactory.class,
                 () -> new ConfigScreenHandler.ConfigScreenFactory(

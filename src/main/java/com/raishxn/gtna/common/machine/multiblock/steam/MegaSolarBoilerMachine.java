@@ -22,6 +22,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.raishxn.gtna.common.data.GTNABlocks;
+import com.raishxn.gtna.config.GTNABalance;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -30,10 +31,6 @@ import static com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.EXPORT_FL
 import static com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.IMPORT_FLUIDS;
 
 public class MegaSolarBoilerMachine extends WorkableMultiblockMachine implements IDisplayUIMachine {
-
-    private static final int MAX_LR_DIST = 16;
-    private static final int MAX_B_DIST = 32;
-    private static final int TICK_INTERVAL = 20;
 
     private int lDist, rDist, bDist, sunlit;
     private long lastSteamOutput;
@@ -60,9 +57,9 @@ public class MegaSolarBoilerMachine extends WorkableMultiblockMachine implements
         Direction left = front.getCounterClockWise();
         Direction right = left.getOpposite();
 
-        this.bDist = calculateDistance(world, getPos(), back, MAX_B_DIST);
-        this.lDist = calculateDistance(world, getPos().relative(back), left, MAX_LR_DIST);
-        this.rDist = calculateDistance(world, getPos().relative(back), right, MAX_LR_DIST);
+        this.bDist = calculateDistance(world, getPos(), back, GTNABalance.getMegaSolarMaxBackDistance());
+        this.lDist = calculateDistance(world, getPos().relative(back), left, GTNABalance.getMegaSolarMaxSideDistance());
+        this.rDist = calculateDistance(world, getPos().relative(back), right, GTNABalance.getMegaSolarMaxSideDistance());
 
         this.formed = bDist >= 3 && lDist >= 1 && rDist >= 1;
     }
@@ -111,7 +108,7 @@ public class MegaSolarBoilerMachine extends WorkableMultiblockMachine implements
 
     private void updateSolarLogic() {
         if (formed && isWorkingEnabled() && !this.recipeLogic.isWorking()) {
-            if (getOffsetTimer() % 20 == 0) {
+            if (getOffsetTimer() % GTNABalance.getMegaSolarTickInterval() == 0) {
                 if (isDaytime()) {
                     sunlit = calculateSunlitArea();
                     if (sunlit > 0) {
@@ -140,15 +137,23 @@ public class MegaSolarBoilerMachine extends WorkableMultiblockMachine implements
         Direction right = left.getOpposite();
         for (int b = 1; b <= bDist; b++) {
             BlockPos rowPos = pos.relative(back, b);
-            if (level.canSeeSky(rowPos.above())) count++;
-            for (int l = 1; l <= lDist; l++) if (level.canSeeSky(rowPos.relative(left, l).above())) count++;
-            for (int r = 1; r <= rDist; r++) if (level.canSeeSky(rowPos.relative(right, r).above())) count++;
+            if (!GTNABalance.isMegaSolarClearSkyRequired() || level.canSeeSky(rowPos.above())) count++;
+            for (int l = 1; l <= lDist; l++) {
+                if (!GTNABalance.isMegaSolarClearSkyRequired() || level.canSeeSky(rowPos.relative(left, l).above())) {
+                    count++;
+                }
+            }
+            for (int r = 1; r <= rDist; r++) {
+                if (!GTNABalance.isMegaSolarClearSkyRequired() || level.canSeeSky(rowPos.relative(right, r).above())) {
+                    count++;
+                }
+            }
         }
         return count;
     }
 
     private GTRecipe createSolarRecipe() {
-        int steamMultiplier = com.raishxn.gtna.config.ConfigHolder.INSTANCE.megaSolarSteamPerBlock;
+        int steamMultiplier = (int) GTNABalance.getMegaSolarSteamPerBlock();
         long steamOutLong = (long) sunlit * steamMultiplier;
         int steamOut = (int) steamOutLong;
         int waterIn = (int) Math.ceil((double) steamOut / ConfigHolder.INSTANCE.machines.largeBoilers.steamPerWater);
@@ -156,7 +161,7 @@ public class MegaSolarBoilerMachine extends WorkableMultiblockMachine implements
         return GTRecipeBuilder.of(GTCEu.id("mega_solar_gen"), getRecipeType())
                 .inputFluids(new FluidStack(Fluids.WATER, waterIn))
                 .outputFluids(GTMaterials.Steam.getFluid(steamOut))
-                .duration(TICK_INTERVAL)
+                .duration(GTNABalance.getMegaSolarTickInterval())
                 .buildRawRecipe();
     }
 

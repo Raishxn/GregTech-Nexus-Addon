@@ -18,11 +18,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
+import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.data.GTNAItems;
 import com.raishxn.gtna.common.data.GTNABlocks;
 import com.raishxn.gtna.common.data.GTNAMachines2;
 import com.raishxn.gtna.common.data.GTNAMaterials;
 import com.raishxn.gtna.common.data.GTNARecipeType;
+import com.raishxn.gtna.common.data.condition.RestrictedItemsEnabledCondition;
 
 import java.util.function.Consumer;
 
@@ -392,20 +394,23 @@ public class GTNAItemRecipes {
                         .EUt(7864320))
                 .save(provider);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAItems.INFINITE_STEAM_SINGLEBLOCK_COVER.get())
-                .pattern("ABA")
-                .pattern("CDC")
-                .pattern("AEA")
-                .define('A', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.CompressedSteam).getItem())
-                .define('B', GTNAItems.HYDRAULIC_STEAM_RECEIVER.get())
-                .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                .define('D', GTNAItems.HYDRAULIC_PUMP.get())
-                .define('E', GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get())
-                .unlockedBy("has_hydraulic_vapor_generator",
-                        InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get()))
-                .save(provider);
+        GTNARecipeVisibility.saveRestricted(provider, GTNACORE.id("infinite_steam_singleblock_cover"),
+                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                                GTNAItems.INFINITE_STEAM_SINGLEBLOCK_COVER.get())
+                        .pattern("ABA")
+                        .pattern("CDC")
+                        .pattern("AEA")
+                        .define('A', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.CompressedSteam).getItem())
+                        .define('B', GTNAItems.HYDRAULIC_STEAM_RECEIVER.get())
+                        .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                        .define('D', GTNAItems.HYDRAULIC_PUMP.get())
+                        .define('E', GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get())
+                        .unlockedBy("has_hydraulic_vapor_generator", InventoryChangeTrigger.TriggerInstance
+                                .hasItems(GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get()))
+                        .save(restrictedProvider));
 
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_infinite_steam_singleblock_cover")
+                .addCondition(RestrictedItemsEnabledCondition.INSTANCE)
                 .inputItems(GTNAItems.HYDRAULIC_STEAM_RECEIVER.get(), 2)
                 .inputItems(GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get(), 2)
                 .inputItems(GTNAItems.PRECISION_STEAM_COMPONENT.get(), 4)
@@ -417,30 +422,32 @@ public class GTNAItemRecipes {
                 .EUt(120)
                 .save(provider);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAItems.INFINITE_ELECTRIC_SINGLEBLOCK_COVER.get())
-                .pattern("ABA")
-                .pattern("CDC")
-                .pattern("AEA")
-                .define('A', GTItems.FIELD_GENERATOR_EV.get())
-                .define('B', GTItems.ELECTRIC_PUMP_IV.get())
-                .define('C', GTItems.CONVEYOR_MODULE_IV.get())
-                .define('D', GTItems.ROBOT_ARM_IV.get())
-                .define('E', GTItems.SENSOR_EV.get())
-                .unlockedBy("has_electric_pump_iv",
-                        InventoryChangeTrigger.TriggerInstance.hasItems(GTItems.ELECTRIC_PUMP_IV.get()))
-                .save(provider);
+        GTNARecipeVisibility.saveRestricted(provider, GTNACORE.id("infinite_electric_singleblock_cover"),
+                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                                GTNAItems.INFINITE_ELECTRIC_SINGLEBLOCK_COVER.get())
+                        .pattern("ABA")
+                        .pattern("CDC")
+                        .pattern("AEA")
+                        .define('A', ChemicalHelper.get(TagPrefix.cableGtSingle, GTMaterials.Tin).getItem())
+                        .define('B', GTItems.ELECTRIC_PUMP_LV.get())
+                        .define('C', GTItems.CONVEYOR_MODULE_LV.get())
+                        .define('D', GTItems.ROBOT_ARM_LV.get())
+                        .define('E', GTItems.SENSOR_LV.get())
+                        .unlockedBy("has_electric_pump_lv",
+                                InventoryChangeTrigger.TriggerInstance.hasItems(GTItems.ELECTRIC_PUMP_LV.get()))
+                        .save(restrictedProvider));
 
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_infinite_electric_singleblock_cover")
-                .inputItems(GTItems.ELECTRIC_PUMP_IV.get(), 2)
-                .inputItems(GTItems.CONVEYOR_MODULE_IV.get(), 2)
-                .inputItems(GTItems.ROBOT_ARM_IV.get(), 2)
-                .inputItems(GTItems.FIELD_GENERATOR_EV.get(), 2)
-                .inputItems(GTItems.SENSOR_EV.get(), 2)
-                .inputItems(GTItems.COVER_WIRELESS_TRANSMITTER.get())
-                .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                .addCondition(RestrictedItemsEnabledCondition.INSTANCE)
+                .inputItems(GTItems.ELECTRIC_PUMP_LV.get(), 1)
+                .inputItems(GTItems.CONVEYOR_MODULE_LV.get(), 1)
+                .inputItems(GTItems.ROBOT_ARM_LV.get(), 1)
+                .inputItems(GTItems.SENSOR_LV.get(), 1)
+                .inputItems(TagPrefix.cableGtSingle, GTMaterials.Tin, 4)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(144))
                 .outputItems(GTNAItems.INFINITE_ELECTRIC_SINGLEBLOCK_COVER.get())
-                .duration(200)
-                .EUt(1920)
+                .duration(100)
+                .EUt(30)
                 .save(provider);
     }
 }

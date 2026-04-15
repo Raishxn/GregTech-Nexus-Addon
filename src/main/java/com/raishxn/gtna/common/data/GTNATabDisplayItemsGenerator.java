@@ -20,6 +20,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.config.GTNABalance;
+import com.raishxn.gtna.config.ConfigHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -71,6 +73,11 @@ public class GTNATabDisplayItemsGenerator implements CreativeModeTab.DisplayItem
     }
 
     private boolean shouldInclude(Item item) {
+        String restrictedGroup = getRestrictedGroup(item);
+        if (restrictedGroup != null && (!ConfigHolder.isRestrictedGroupAllowed(restrictedGroup) ||
+                (ConfigHolder.shouldHideRestrictedItemsFromJei() && GTNABalance.isRestrictedGroupHiddenFromJei(restrictedGroup)))) {
+            return false;
+        }
         return switch (tabType) {
             case "material_items" -> isMaterialItem(item);
             case "material_blocks" -> isMaterialBlockItem(item);
@@ -147,5 +154,32 @@ public class GTNATabDisplayItemsGenerator implements CreativeModeTab.DisplayItem
                     path.startsWith("nexus_capacitor_");
         }
         return false;
+    }
+
+    private String getRestrictedGroup(Item item) {
+        ResourceLocation rl = ForgeRegistries.ITEMS.getKey(item);
+        if (rl == null || !GTNACORE.MOD_ID.equals(rl.getNamespace())) {
+            return null;
+        }
+
+        String path = rl.getPath();
+        if (path.equals("infinite_steam_singleblock_cover") || path.equals("infinite_electric_singleblock_cover")) {
+            return "infinityCovers";
+        }
+        if (path.equals("infinite_steam_input_bus") || path.startsWith("infinite_input_bus_") ||
+                path.startsWith("infinite_input_hatch_")) {
+            return "infiniteInputParts";
+        }
+        if (path.equals("output_boost_steam_output_bus") || path.startsWith("output_boost_hatch_") ||
+                path.startsWith("output_boost_item_bus_") || path.startsWith("output_boost_fluid_hatch_")) {
+            return "outputBoostParts";
+        }
+        if (path.startsWith("quantum_cosmic_nexus_")) {
+            return "quantumCosmicNexusArmor";
+        }
+        if (path.equals("reality_ripper_sword")) {
+            return "realityRipper";
+        }
+        return null;
     }
 }

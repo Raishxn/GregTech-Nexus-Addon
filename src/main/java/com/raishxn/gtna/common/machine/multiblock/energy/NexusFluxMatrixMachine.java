@@ -25,10 +25,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import com.raishxn.gtna.client.renderer.BlockHighlightHandler;
 import com.raishxn.gtna.common.block.NexusCapacitorBlock;
 import com.raishxn.gtna.common.data.NexusEnergyNetwork;
+import com.raishxn.gtna.config.ConfigHolder;
+import com.raishxn.gtna.config.GTNABalance;
 import com.raishxn.gtna.utils.datastructure.Int128;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements IDisplayUIMachine {
@@ -45,12 +48,12 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
 
     private final List<NexusEnergyNetwork.ConnectionInfo> cachedConnections = new ArrayList<>();
 
+    @com.lowdragmc.lowdraglib.syncdata.annotation.Persisted
+    private java.util.UUID ownerUUID = null;
+
     public NexusFluxMatrixMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, args);
     }
-
-    @com.lowdragmc.lowdraglib.syncdata.annotation.Persisted
-    private java.util.UUID ownerUUID = null;
 
     public java.util.UUID getOwnerUUID() {
         return ownerUUID != null ? ownerUUID : (super.getOwnerUUID() != null ? super.getOwnerUUID() : null);
@@ -61,10 +64,8 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         super.onStructureFormed();
         recalculateCapacitors();
         if (getLevel() instanceof ServerLevel serverLevel && getOwnerUUID() != null) {
-            // SET the capacity directly — never ADD to prevent accumulation on re-form
             NexusEnergyNetwork network = NexusEnergyNetwork.get(serverLevel);
             network.setMaxCapacity(getOwnerUUID(), maxCapacity);
-            // Push structural stats to network for terminal access
             network.setMatrixStats(getOwnerUUID(), totalCapacitors, averageTier, efficiency, transferLimit, true);
         }
     }
@@ -72,10 +73,8 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
     @Override
     public void onStructureInvalid() {
         if (getLevel() instanceof ServerLevel serverLevel && getOwnerUUID() != null) {
-            // Clear capacity to zero on invalid
             NexusEnergyNetwork network = NexusEnergyNetwork.get(serverLevel);
             network.setMaxCapacity(getOwnerUUID(), Int128.ZERO());
-            // Clear structural stats
             network.setMatrixStats(getOwnerUUID(), 0, 0, 0.0, Int128.ZERO(), false);
         }
         super.onStructureInvalid();
@@ -83,9 +82,9 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         sumCapacities = Int128.ZERO();
         sumTiers = 0;
         maxCapacity = Int128.ZERO();
-        transferLimit = Int128.ZERO();
         averageTier = 1;
         maxTier = 1;
+        transferLimit = Int128.ZERO();
         efficiency = 0.85;
     }
 
@@ -93,18 +92,20 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         totalCapacitors = 0;
         sumCapacities = Int128.ZERO();
         sumTiers = 0;
+        maxTier = 1;
 
         if (getLevel() != null) {
             BlockPos startPos = getPos();
             for (int x = -16; x <= 16; x++) {
                 for (int y = -16; y <= 35; y++) {
                     for (int z = -16; z <= 16; z++) {
-                        BlockPos p = startPos.offset(x, y, z);
-                        BlockState bs = getLevel().getBlockState(p);
-                        if (bs.getBlock() instanceof NexusCapacitorBlock capacitor) {
+                        BlockPos pos = startPos.offset(x, y, z);
+                        BlockState blockState = getLevel().getBlockState(pos);
+                        if (blockState.getBlock() instanceof NexusCapacitorBlock capacitor) {
                             totalCapacitors++;
-                            // Use Int128 to avoid long overflow on high-tier capacitors
-                            sumCapacities.add(new Int128(capacitor.getUnitCapacity()));
+                            long configuredCapacity = GTNABalance
+                                    .getNexusCapacitorCapacity(capacitor.getTier(), capacitor.getUnitCapacity());
+                            sumCapacities.add(new Int128(configuredCapacity));
                             sumTiers += capacitor.getTier();
                             if (capacitor.getTier() > maxTier) {
                                 maxTier = capacitor.getTier();
@@ -115,33 +116,32 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
             }
         }
 
-        if (totalCapacitors > 0) {
-            var cfg = com.raishxn.gtna.config.ConfigHolder.INSTANCE.nexusFluxMatrix;
-
-            if (cfg.useHighestTierForEfficiency) {
-                averageTier = maxTier;
-            } else {
-                averageTier = (int) (sumTiers / totalCapacitors);
-            }
-            if (averageTier < 1) averageTier = 1;
-
-            // Using simple linear summation instead of quadratic PRD scaling
-            maxCapacity = sumCapacities.copy();
-
-            double tierRatio = (averageTier - 1) / 13.0;
-            double lossPercent = cfg.baseLossPercent * (1.0 - tierRatio);
-            efficiency = 1.0 - (lossPercent / 100.0);
-
-            long transferBase = 2000L * (long) Math.pow(4, averageTier - 1);
-            transferLimit = new Int128(transferBase);
-            if (averageTier >= 14) {
-                try {
-                    transferLimit = Int128.fromString(cfg.maxTransferTierMAX);
-                } catch (Exception e) {
-                    transferLimit = Int128.fromString("500000000000000000000000");
-                }
-            }
+        if (totalCapacitors <= 0) {
+            maxCapacity = Int128.ZERO();
+            averageTier = 1;
+            transferLimit = Int128.ZERO();
+            efficiency = 0.85;
+            return;
         }
+
+        var machineCfg = ConfigHolder.INSTANCE.machines.nexusFluxMatrix;
+        var balanceCfg = GTNABalance.getNexusFluxMatrix();
+
+        averageTier = machineCfg.useHighestTierForEfficiency ? maxTier : (int) (sumTiers / totalCapacitors);
+        if (averageTier < 1) averageTier = 1;
+
+        maxCapacity = sumCapacities.copy();
+
+        double tierRatio = (averageTier - 1) / 13.0;
+        double lossPercent = balanceCfg.efficiency.baseLossPercentAtLV * (1.0 - tierRatio);
+        efficiency = 1.0 - (lossPercent / 100.0);
+        efficiency = Math.max(balanceCfg.efficiency.minimumEfficiency,
+                Math.min(balanceCfg.efficiency.maximumEfficiency, efficiency));
+
+        long fallbackTransfer = 2000L * (long) Math.pow(4, Math.max(0, averageTier - 1));
+        transferLimit = Int128.fromString(
+                GTNABalance.getNexusTransferLimit(averageTier, Long.toString(fallbackTransfer)),
+                new Int128(fallbackTransfer));
     }
 
     public Int128 getMaxCapacity() {
@@ -160,8 +160,6 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         return efficiency;
     }
 
-    // ── UI — Expanded to 240x280 for better connections view ──
-
     @Override
     public ModularUI createUI(Player entityPlayer) {
         var screen = new DraggableScrollableWidgetGroup(7, 4, 292, 175)
@@ -175,117 +173,106 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         return new ModularUI(310, 270, this, entityPlayer)
                 .background(GuiTextures.BACKGROUND)
                 .widget(screen)
-                .widget(UITemplate.bindPlayerInventory(entityPlayer.getInventory(),
-                        GuiTextures.SLOT, 74, 188, true));
+                .widget(UITemplate.bindPlayerInventory(entityPlayer.getInventory(), GuiTextures.SLOT, 74, 188, true));
     }
 
-    /**
-     * Handle clicks on connection locate buttons.
-     * Uses GTMThings pattern: the click handler runs on BOTH client and server,
-     * but only the client-side execution sets the highlight static fields.
-     */
     private void handleLocateClick(String componentData, ClickData clickData) {
-        if (componentData == null) return;
+        if (componentData == null || !clickData.isRemote) return;
 
-        // Only process on the client side — set the highlight directly
-        if (clickData.isRemote) {
-            BlockHighlightHandler.highlightTicks = 100; // ~5 seconds
-            String[] parts = componentData.split(", ");
-            if (parts.length == 3) {
-                try {
-                    BlockHighlightHandler.highlightPos = new BlockPos(
-                            Integer.parseInt(parts[0]),
-                            Integer.parseInt(parts[1]),
-                            Integer.parseInt(parts[2]));
-                } catch (NumberFormatException ignored) {}
-            }
+        BlockHighlightHandler.highlightTicks = 100;
+        String[] parts = componentData.split(", ");
+        if (parts.length != 3) return;
+
+        try {
+            BlockHighlightHandler.highlightPos = new BlockPos(
+                    Integer.parseInt(parts[0]),
+                    Integer.parseInt(parts[1]),
+                    Integer.parseInt(parts[2]));
+        } catch (NumberFormatException ignored) {
         }
     }
 
     @Override
     public void addDisplayText(List<Component> textList) {
         IDisplayUIMachine.super.addDisplayText(textList);
-        if (isFormed()) {
-            textList.add(Component.literal("§b§l⚡ Nexus Flux Matrix"));
-            textList.add(Component.literal("§8────────────────────────────────"));
-            textList.add(Component.literal("§7Capacitors: §a" + totalCapacitors));
-            textList.add(Component.literal("§7Max Capacity: §e" + maxCapacity.toHumanReadableString() + " EU"));
+        if (!isFormed()) return;
 
-            String tierName = GTValues.VN[Math.min(averageTier, GTValues.VN.length - 1)];
-            textList.add(Component.literal("§7Average Tier: §e" + tierName + " §7(Tier " + averageTier + ")"));
-            textList.add(Component
-                    .literal("§7Efficiency: §d" + String.format(java.util.Locale.US, "%.1f", efficiency * 100) + "%"));
-            textList.add(Component.literal("§7Transfer Limit: §6" + transferLimit.toHumanReadableString() + " EU/t"));
+        textList.add(Component.literal("\u00a7b\u00a7lNexus Flux Matrix"));
+        textList.add(Component.literal("\u00a78--------------------------------"));
+        textList.add(Component.literal("\u00a77Capacitors: \u00a7a" + totalCapacitors));
+        textList.add(Component.literal("\u00a77Max Capacity: \u00a7e" + maxCapacity.toHumanReadableString() + " EU"));
 
-            boolean crossDim = averageTier >= 4; // Tier 4 = EV
-            textList.add(Component.literal("§7Cross-Dim: " + (crossDim ? "§a✅ Enabled" : "§c✖ Requires EV+")));
+        String tierName = GTValues.VN[Math.min(averageTier, GTValues.VN.length - 1)];
+        textList.add(Component.literal("\u00a77Average Tier: \u00a7e" + tierName + " \u00a77(Tier " + averageTier + ")"));
+        textList.add(Component.literal("\u00a77Efficiency: \u00a7d" +
+                String.format(Locale.US, "%.1f", efficiency * 100) + "%"));
+        textList.add(Component.literal("\u00a77Transfer Limit: \u00a76" +
+                transferLimit.toHumanReadableString() + " EU/t"));
 
-            if (getOwnerUUID() != null && getLevel() instanceof ServerLevel serverLevel) {
-                textList.add(Component.literal("§8────────────────────────────────"));
+        boolean crossDim = GTNABalance.isNexusCrossDimensionEnabled(averageTier);
+        textList.add(Component.literal("\u00a77Cross-Dim: " +
+                (crossDim ? "\u00a7aEnabled" : "\u00a7cRequires EV+")));
 
-                NexusEnergyNetwork network = NexusEnergyNetwork.get(serverLevel);
-                Int128 energy = network.getEnergy(getOwnerUUID());
-                // Use local maxCapacity for consistency — this is the single source of truth
-                Int128 maxCap = maxCapacity;
-                boolean safeMode = network.getSafeMode(getOwnerUUID());
-                Int128 inPerTick = network.getLastInputPerTick(getOwnerUUID());
-                Int128 outPerTick = network.getLastOutputPerTick(getOwnerUUID());
+        if (getOwnerUUID() == null || !(getLevel() instanceof ServerLevel serverLevel)) return;
 
-                // Status
-                textList.add(Component.literal("§7Status: " + (safeMode ? "§c⛔ SAFE MODE" : "§a✅ ONLINE")));
+        textList.add(Component.literal("\u00a78--------------------------------"));
 
-                // Energy bar
-                double fill = 0;
-                if (!maxCap.isZero()) {
-                    try {
-                        fill = energy.toBigInteger().doubleValue() / maxCap.toBigInteger().doubleValue();
-                    } catch (Exception e) {
-                        fill = 0;
-                    }
-                }
-                int barLen = 20;
-                int filledCount = (int) Math.round(fill * barLen);
-                StringBuilder bar = new StringBuilder("§b[");
-                for (int i = 0; i < barLen; i++) {
-                    bar.append(i < filledCount ? "§a█" : "§8▒");
-                }
-                bar.append("§b]");
-                textList.add(Component.literal(bar.toString() + " §f" + String.format("%.1f%%", fill * 100.0)));
-                textList.add(Component.literal("§7Energy: §f" + energy.toHumanReadableString() + " / " +
-                        maxCap.toHumanReadableString() + " EU"));
+        NexusEnergyNetwork network = NexusEnergyNetwork.get(serverLevel);
+        Int128 energy = network.getEnergy(getOwnerUUID());
+        Int128 maxCap = maxCapacity;
+        boolean safeMode = network.getSafeMode(getOwnerUUID());
+        Int128 inPerTick = network.getLastInputPerTick(getOwnerUUID());
+        Int128 outPerTick = network.getLastOutputPerTick(getOwnerUUID());
 
-                // IO
-                textList.add(Component.literal("§a⬆ Input: +" + inPerTick.toHumanReadableString() + " EU/t"));
-                textList.add(Component.literal("§c⬇ Output: -" + outPerTick.toHumanReadableString() + " EU/t"));
+        textList.add(Component.literal("\u00a77Status: " + (safeMode ? "\u00a7cSAFE MODE" : "\u00a7aONLINE")));
 
-                // Connections
-                Map<GlobalPos, NexusEnergyNetwork.ConnectionInfo> connections = network.getConnections(getOwnerUUID());
-                cachedConnections.clear();
-                cachedConnections.addAll(connections.values());
-
-                textList.add(Component.literal("§8────────────────────────────────"));
-                textList.add(Component.literal("§e§l📋 Connections (" + connections.size() + "):"));
-                textList.add(Component.literal("§7(Click any connection to locate it)"));
-
-                for (NexusEnergyNetwork.ConnectionInfo info : cachedConnections) {
-                    String dirColor = info.isInput ? "§a" : "§c";
-                    String dirLabel = info.isInput ? "[IN]" : "[OUT]";
-                    String connTierName = GTValues.VN[Math.min(info.tier, GTValues.VN.length - 1)];
-                    String amount = (info.isInput ? "+" : "-") + info.lastTickEuTransferred.toHumanReadableString();
-                    String posStr = info.pos.pos().toShortString(); // "x, y, z"
-                    String dim = info.pos.dimension().location().toString();
-
-                    textList.add(Component
-                            .literal(dirColor + dirLabel + " §f" + info.amperage + "A " + connTierName + " " +
-                                    info.machineType + " §7" + amount + " EU/t")
-                            .withStyle(s -> s
-                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                            Component.literal("§ePos: " + posStr + "\n§7Dim: " + dim +
-                                                    "\n§bClick [🔍] to locate")))
-                                    .withColor(ChatFormatting.WHITE))
-                            .append(ComponentPanelWidget.withButton(Component.literal(" §b[🔍]"), posStr)));
-                }
+        double fill = 0.0;
+        if (!maxCap.isZero()) {
+            try {
+                fill = energy.toBigInteger().doubleValue() / maxCap.toBigInteger().doubleValue();
+            } catch (Exception ignored) {
+                fill = 0.0;
             }
+        }
+
+        int barLength = 20;
+        int filledCount = (int) Math.round(fill * barLength);
+        StringBuilder bar = new StringBuilder("\u00a7b[");
+        for (int i = 0; i < barLength; i++) {
+            bar.append(i < filledCount ? "\u00a7a|" : "\u00a78|");
+        }
+        bar.append("\u00a7b]");
+
+        textList.add(Component.literal(bar + " \u00a7f" + String.format(Locale.US, "%.1f%%", fill * 100.0)));
+        textList.add(Component.literal("\u00a77Energy: \u00a7f" + energy.toHumanReadableString() + " / " +
+                maxCap.toHumanReadableString() + " EU"));
+        textList.add(Component.literal("\u00a7aInput: +" + inPerTick.toHumanReadableString() + " EU/t"));
+        textList.add(Component.literal("\u00a7cOutput: -" + outPerTick.toHumanReadableString() + " EU/t"));
+
+        Map<GlobalPos, NexusEnergyNetwork.ConnectionInfo> connections = network.getConnections(getOwnerUUID());
+        cachedConnections.clear();
+        cachedConnections.addAll(connections.values());
+
+        textList.add(Component.literal("\u00a78--------------------------------"));
+        textList.add(Component.literal("\u00a7eConnections (" + connections.size() + "):"));
+        textList.add(Component.literal("\u00a77Click a connection to locate it"));
+
+        for (NexusEnergyNetwork.ConnectionInfo info : cachedConnections) {
+            String directionColor = info.isInput ? "\u00a7a" : "\u00a7c";
+            String directionLabel = info.isInput ? "[IN]" : "[OUT]";
+            String connectionTier = GTValues.VN[Math.min(info.tier, GTValues.VN.length - 1)];
+            String amount = (info.isInput ? "+" : "-") + info.lastTickEuTransferred.toHumanReadableString();
+            String pos = info.pos.pos().toShortString();
+            String dimension = info.pos.dimension().location().toString();
+
+            textList.add(Component.literal(directionColor + directionLabel + " \u00a7f" + info.amperage + "A " +
+                            connectionTier + " " + info.machineType + " \u00a77" + amount + " EU/t")
+                    .withStyle(style -> style
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                    Component.literal("\u00a7ePos: " + pos + "\n\u00a77Dim: " + dimension +
+                                            "\n\u00a7bClick [Locate]")))
+                            .withColor(ChatFormatting.WHITE))
+                    .append(ComponentPanelWidget.withButton(Component.literal(" \u00a7b[Locate]"), pos)));
         }
     }
 }

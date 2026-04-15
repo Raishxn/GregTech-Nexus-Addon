@@ -14,77 +14,208 @@ public class ConfigHolder {
     private static final Object LOCK = new Object();
 
     @Configurable
-    @Comment({ "En: Disable Drift", "Pt: Desativar Drift" })
-    public boolean disableDrift = true;
+    @Comment({ "En: Gameplay Settings", "Pt: Configuracoes de gameplay" })
+    public Gameplay gameplay = new Gameplay();
 
     @Configurable
-    @Range(min = 1, max = 100) // Corrigido: 1.0 -> 1, 100.0 -> 100
-    @Comment("En: Energy Cost Multiplier for Accelerate Hatch.")
-    public double accelerateHatchEnergyCost = 1.5;
+    @Comment({ "En: Client Settings", "Pt: Configuracoes do cliente" })
+    public Client client = new Client();
 
     @Configurable
-    @Range(min = 1000, max = 1000000)
-    public int wirelessSteamTransferRate = 8192;
-
-    // --- Mega Solar Boiler ---
-    @Configurable
-    @Range(min = 1, max = 100000)
-    @Comment("En: Steam produced per sunlit block per operation.")
-    public int megaSolarSteamPerBlock = 500;
-
-    // --- Void Miner Steam Gate Aged ---
-
-    // Tier 1: Dense Supercritical Steam
-    @Configurable
-    @Range(min = 1, max = 64)
-    @Comment("En: Output Multiplier for Dense Steam.")
-    public int voidMinerDenseOutputMult = 2;
+    @Comment({ "En: Machine Settings", "Pt: Configuracoes de maquinas" })
+    public Machines machines = new Machines();
 
     @Configurable
-    @Range(min = 1, max = 128) // Corrigido: Removido decimais
-    @Comment("En: Speed Multiplier for Dense Steam (e.g. 2.0 = 2x faster).")
-    public double voidMinerDenseSpeedMult = 2.0;
+    @Comment({ "En: Restricted item rules", "Pt: Regras de itens restritos" })
+    public RestrictedItems restrictedItems = new RestrictedItems();
 
     @Configurable
-    @Range(min = 1, max = 128) // Corrigido
-    @Comment("En: Energy Cost Multiplier for Dense Steam.")
-    public double voidMinerDenseEnergyMult = 1.5;
+    @Comment({ "En: Wireless steam network rules", "Pt: Regras da rede wireless de vapor" })
+    public WirelessSteam wirelessSteam = new WirelessSteam();
 
-    // Tier 2: SuperHeated Steam
-    @Configurable
-    @Range(min = 1, max = 64)
-    @Comment("En: Output Multiplier for SuperHeated Steam.")
-    public int voidMinerSuperHeatedOutputMult = 3;
+    public enum ModDifficulty {
+        JOURNEY,
+        NORMAL
+    }
 
-    @Configurable
-    @Range(min = 1, max = 128) // Corrigido
-    @Comment("En: Speed Multiplier for SuperHeated Steam.")
-    public double voidMinerSuperHeatedSpeedMult = 3.0;
+    public static boolean isJourneyMode() {
+        return INSTANCE != null && INSTANCE.gameplay.modDifficulty == ModDifficulty.JOURNEY;
+    }
 
-    @Configurable
-    @Range(min = 1, max = 128) // Corrigido
-    @Comment("En: Energy Cost Multiplier for SuperHeated Steam.")
-    public double voidMinerSuperHeatedEnergyMult = 2.0;
+    public static boolean isSelfRestraintEnabled() {
+        return INSTANCE != null && INSTANCE.gameplay.selfRestraint;
+    }
 
-    // Tier 3: Insanely Supercritical Steam
-    @Configurable
-    @Range(min = 1, max = 64)
-    @Comment("En: Output Multiplier for Insanely Steam.")
-    public int voidMinerInsanelyOutputMult = 5;
+    public static boolean areRestrictedItemsEnabled() {
+        return INSTANCE != null && !isJourneyMode() && !isSelfRestraintEnabled() && !INSTANCE.restrictedItems.disableUsage;
+    }
 
-    @Configurable
-    @Range(min = 1, max = 128) // Corrigido
-    @Comment("En: Speed Multiplier for Insanely Steam.")
-    public double voidMinerInsanelySpeedMult = 5.0;
+    public static boolean areRestrictedRecipesEnabled() {
+        return areRestrictedItemsEnabled() && INSTANCE != null && !INSTANCE.restrictedItems.disableRecipes;
+    }
 
-    @Configurable
-    @Range(min = 1, max = 128)
-    @Comment("En: Energy Cost Multiplier for Insanely Steam.")
-    public double voidMinerInsanelyEnergyMult = 4.0;
+    public static boolean shouldHideRestrictedItemsFromJei() {
+        return INSTANCE == null || INSTANCE.restrictedItems.hideFromJei;
+    }
 
-    @Configurable
-    @Comment("Nexus Flux Matrix Configuration")
-    public NexusFluxMatrixConfig nexusFluxMatrix = new NexusFluxMatrixConfig();
+    public static boolean isRestrictedGroupAllowed(String groupId) {
+        if (!areRestrictedItemsEnabled() || INSTANCE == null) {
+            return false;
+        }
+        return switch (groupId) {
+            case "infinityCovers" -> INSTANCE.restrictedItems.allowInfinityCovers;
+            case "outputBoostParts" -> INSTANCE.restrictedItems.allowOutputBoostParts;
+            case "infiniteInputParts" -> INSTANCE.restrictedItems.allowInfiniteInputParts;
+            case "quantumCosmicNexusArmor" -> INSTANCE.restrictedItems.allowQuantumCosmicNexusArmor;
+            case "realityRipper" -> INSTANCE.restrictedItems.allowRealityRipper;
+            default -> true;
+        };
+    }
+
+    public static class Gameplay {
+
+        @Configurable
+        @Comment({ "En: Mod difficulty. Journey hides progression-breaking utility items.",
+                "Pt: Dificuldade do mod. Journey esconde itens utilitarios que quebram progressao." })
+        public ModDifficulty modDifficulty = ModDifficulty.NORMAL;
+
+        @Configurable
+        @Comment({ "En: Self restraint mode disables restricted cheat-like GTNA items.",
+                "Pt: Self restraint desabilita itens restritos e com cara de cheat do GTNA." })
+        public boolean selfRestraint = false;
+    }
+
+    public static class Client {
+
+        @Configurable
+        @Comment({ "En: Disable fly inertia when the player stops moving in the air.",
+                "Pt: Remove a inercia do voo quando o jogador para de se mover no ar." })
+        public boolean disableFlyInertia = true;
+    }
+
+    public static class RestrictedItems {
+
+        @Configurable
+        @Comment("En: Hide restricted items from JEI and creative tabs when disabled.")
+        public boolean hideFromJei = true;
+
+        @Configurable
+        @Comment("En: Disable recipes that use the broad restricted-items condition.")
+        public boolean disableRecipes = false;
+
+        @Configurable
+        @Comment("En: Disable restricted item usage entirely unless explicitly allowed below.")
+        public boolean disableUsage = false;
+
+        @Configurable
+        @Comment("En: Allow infinity covers.")
+        public boolean allowInfinityCovers = false;
+
+        @Configurable
+        @Comment("En: Allow output boost parts.")
+        public boolean allowOutputBoostParts = true;
+
+        @Configurable
+        @Comment("En: Allow infinite input parts.")
+        public boolean allowInfiniteInputParts = true;
+
+        @Configurable
+        @Comment("En: Allow Quantum Cosmic Nexus armor.")
+        public boolean allowQuantumCosmicNexusArmor = false;
+
+        @Configurable
+        @Comment("En: Allow Reality Ripper.")
+        public boolean allowRealityRipper = false;
+    }
+
+    public static class WirelessSteam {
+
+        @Configurable
+        @Comment("En: Master switch for the wireless steam network.")
+        public boolean enabled = true;
+
+        @Configurable
+        @Comment("En: Tank capacity for bronze wireless steam hatches.")
+        public int bronzeBuffer = 20000;
+
+        @Configurable
+        @Comment("En: Tank capacity for steel wireless steam hatches.")
+        public int steelBuffer = Integer.MAX_VALUE;
+
+        @Configurable
+        @Comment("En: Per-tick transfer limit for bronze wireless steam hatches.")
+        public int bronzeTransferRate = 10000;
+
+        @Configurable
+        @Comment("En: Per-tick transfer limit for steel wireless steam hatches.")
+        public int steelTransferRate = 1000000;
+    }
+
+    public static class Machines {
+
+        @Configurable
+        @Range(min = 1, max = 100)
+        @Comment("En: Energy Cost Multiplier for Accelerate Hatch.")
+        public double accelerateHatchEnergyCost = 1.5;
+
+        @Configurable
+        @Range(min = 1000, max = 1000000)
+        public int wirelessSteamTransferRate = 8192;
+
+        @Configurable
+        @Range(min = 1, max = 100000)
+        @Comment("En: Steam produced per sunlit block per operation.")
+        public int megaSolarSteamPerBlock = 500;
+
+        @Configurable
+        @Range(min = 1, max = 64)
+        @Comment("En: Output Multiplier for Dense Steam.")
+        public int voidMinerDenseOutputMult = 2;
+
+        @Configurable
+        @Range(min = 1, max = 128)
+        @Comment("En: Speed Multiplier for Dense Steam.")
+        public double voidMinerDenseSpeedMult = 2.0;
+
+        @Configurable
+        @Range(min = 1, max = 128)
+        @Comment("En: Energy Cost Multiplier for Dense Steam.")
+        public double voidMinerDenseEnergyMult = 1.5;
+
+        @Configurable
+        @Range(min = 1, max = 64)
+        @Comment("En: Output Multiplier for SuperHeated Steam.")
+        public int voidMinerSuperHeatedOutputMult = 3;
+
+        @Configurable
+        @Range(min = 1, max = 128)
+        @Comment("En: Speed Multiplier for SuperHeated Steam.")
+        public double voidMinerSuperHeatedSpeedMult = 3.0;
+
+        @Configurable
+        @Range(min = 1, max = 128)
+        @Comment("En: Energy Cost Multiplier for SuperHeated Steam.")
+        public double voidMinerSuperHeatedEnergyMult = 2.0;
+
+        @Configurable
+        @Range(min = 1, max = 64)
+        @Comment("En: Output Multiplier for Insanely Steam.")
+        public int voidMinerInsanelyOutputMult = 5;
+
+        @Configurable
+        @Range(min = 1, max = 128)
+        @Comment("En: Speed Multiplier for Insanely Steam.")
+        public double voidMinerInsanelySpeedMult = 5.0;
+
+        @Configurable
+        @Range(min = 1, max = 128)
+        @Comment("En: Energy Cost Multiplier for Insanely Steam.")
+        public double voidMinerInsanelyEnergyMult = 4.0;
+
+        @Configurable
+        @Comment("Nexus Flux Matrix Configuration")
+        public NexusFluxMatrixConfig nexusFluxMatrix = new NexusFluxMatrixConfig();
+    }
 
     public static class NexusFluxMatrixConfig {
 

@@ -28,7 +28,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import com.raishxn.gtna.common.data.GTNAMaterials;
 import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
-import com.raishxn.gtna.config.ConfigHolder;
+import com.raishxn.gtna.config.GTNABalance;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -53,51 +53,46 @@ public class VoidMinerSteamGateAged extends SteamMultiMachineBase implements IDi
         Fluid superHeatedSteam = GTNAMaterials.SuperHeatedSteam.getFluid();
         Fluid denseSteam = GTNAMaterials.DenseSupercriticalSteam.getFluid();
 
-        // Carrega configurações
-        var cfg = ConfigHolder.INSTANCE;
+        var denseCfg = GTNABalance.getVoidMinerDenseSteam();
+        var superCfg = GTNABalance.getVoidMinerSuperHeatedSteam();
+        var insaneCfg = GTNABalance.getVoidMinerInsanelySteam();
 
         boolean foundTier = false;
 
         for (IMultiPart part : voidMiner.getParts()) {
             IFluidHandler handler = part.self().getFluidHandlerCap(null, true);
-            if (handler != null) {
-                for (int i = 0; i < handler.getTanks(); i++) {
-                    FluidStack fluidInTank = handler.getFluidInTank(i);
-                    if (!fluidInTank.isEmpty()) {
-                        Fluid fluid = fluidInTank.getFluid();
+            if (handler == null) continue;
 
-                        // -- Lógica de Tiers (usando Config) --
+            for (int i = 0; i < handler.getTanks(); i++) {
+                FluidStack fluidInTank = handler.getFluidInTank(i);
+                if (fluidInTank.isEmpty()) continue;
 
-                        // Tier 3: Insanely Supercritical
-                        if (fluid.isSame(insanelySteam)) {
-                            outputMult = cfg.voidMinerInsanelyOutputMult;
-                            timeFactor = 1.0 / cfg.voidMinerInsanelySpeedMult; // Inverte para obter duração
-                            energyFactor = cfg.voidMinerInsanelyEnergyMult;
-                            foundTier = true;
-                            break;
-                        }
-                        // Tier 2: SuperHeated
-                        else if (fluid.isSame(superHeatedSteam)) {
-                            if (outputMult < cfg.voidMinerSuperHeatedOutputMult) {
-                                outputMult = cfg.voidMinerSuperHeatedOutputMult;
-                                timeFactor = 1.0 / cfg.voidMinerSuperHeatedSpeedMult;
-                                energyFactor = cfg.voidMinerSuperHeatedEnergyMult;
-                            }
-                        }
-                        // Tier 1: Dense Supercritical
-                        else if (fluid.isSame(denseSteam)) {
-                            if (outputMult < cfg.voidMinerDenseOutputMult) {
-                                outputMult = cfg.voidMinerDenseOutputMult;
-                                timeFactor = 1.0 / cfg.voidMinerDenseSpeedMult;
-                                energyFactor = cfg.voidMinerDenseEnergyMult;
-                            }
-                        }
+                Fluid fluid = fluidInTank.getFluid();
+
+                if (fluid.isSame(insanelySteam)) {
+                    outputMult = insaneCfg.outputMultiplier;
+                    timeFactor = 1.0 / insaneCfg.speedMultiplier;
+                    energyFactor = insaneCfg.energyMultiplier;
+                    foundTier = true;
+                    break;
+                } else if (fluid.isSame(superHeatedSteam)) {
+                    if (outputMult < superCfg.outputMultiplier) {
+                        outputMult = superCfg.outputMultiplier;
+                        timeFactor = 1.0 / superCfg.speedMultiplier;
+                        energyFactor = superCfg.energyMultiplier;
                     }
+                } else if (fluid.isSame(denseSteam) && outputMult < denseCfg.outputMultiplier) {
+                    outputMult = denseCfg.outputMultiplier;
+                    timeFactor = 1.0 / denseCfg.speedMultiplier;
+                    energyFactor = denseCfg.energyMultiplier;
                 }
             }
+
             if (foundTier) break;
         }
+
         if (outputMult == 1) return ModifierFunction.IDENTITY;
+
         long finalOutputMult = outputMult;
         double finalTimeFactor = timeFactor;
         double finalEnergyFactor = energyFactor;
@@ -148,32 +143,35 @@ public class VoidMinerSteamGateAged extends SteamMultiMachineBase implements IDi
         Fluid superHeatedSteam = GTNAMaterials.SuperHeatedSteam.getFluid();
         Fluid denseSteam = GTNAMaterials.DenseSupercriticalSteam.getFluid();
 
-        var cfg = ConfigHolder.INSTANCE;
+        var denseCfg = GTNABalance.getVoidMinerDenseSteam();
+        var superCfg = GTNABalance.getVoidMinerSuperHeatedSteam();
+        var insaneCfg = GTNABalance.getVoidMinerInsanelySteam();
 
         int currentTier = 0;
 
         for (IMultiPart part : getParts()) {
             IFluidHandler handler = part.self().getFluidHandlerCap(null, true);
-            if (handler != null) {
-                for (int i = 0; i < handler.getTanks(); i++) {
-                    FluidStack fs = handler.getFluidInTank(i);
-                    if (fs.isEmpty()) continue;
+            if (handler == null) continue;
 
-                    if (fs.getFluid().isSame(insanelySteam))
-                        return String.format("Insanely (%dx Items, %.0fx Speed)", cfg.voidMinerInsanelyOutputMult,
-                                cfg.voidMinerInsanelySpeedMult);
+            for (int i = 0; i < handler.getTanks(); i++) {
+                FluidStack fs = handler.getFluidInTank(i);
+                if (fs.isEmpty()) continue;
 
-                    if (fs.getFluid().isSame(superHeatedSteam)) currentTier = Math.max(currentTier, 2);
-                    if (fs.getFluid().isSame(denseSteam)) currentTier = Math.max(currentTier, 1);
+                if (fs.getFluid().isSame(insanelySteam)) {
+                    return String.format("Insanely (%dx Items, %.0fx Speed)", insaneCfg.outputMultiplier,
+                            insaneCfg.speedMultiplier);
                 }
+
+                if (fs.getFluid().isSame(superHeatedSteam)) currentTier = Math.max(currentTier, 2);
+                if (fs.getFluid().isSame(denseSteam)) currentTier = Math.max(currentTier, 1);
             }
         }
 
         return switch (currentTier) {
-            case 2 -> String.format("SuperHeated (%dx Items, %.0fx Speed)", cfg.voidMinerSuperHeatedOutputMult,
-                    cfg.voidMinerSuperHeatedSpeedMult);
-            case 1 -> String.format("Dense (%dx Items, %.0fx Speed)", cfg.voidMinerDenseOutputMult,
-                    cfg.voidMinerDenseSpeedMult);
+            case 2 -> String.format("SuperHeated (%dx Items, %.0fx Speed)", superCfg.outputMultiplier,
+                    superCfg.speedMultiplier);
+            case 1 -> String.format("Dense (%dx Items, %.0fx Speed)", denseCfg.outputMultiplier,
+                    denseCfg.speedMultiplier);
             default -> "Normal Steam";
         };
     }

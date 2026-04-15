@@ -20,6 +20,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
+import com.raishxn.gtna.config.ConfigHolder;
 
 import java.util.UUID;
 
@@ -35,30 +36,43 @@ public class WirelessSteamInputHatch extends SteamHatchPartMachine {
     public WirelessSteamInputHatch(IMachineBlockEntity holder, boolean isSteel, Object... args) {
         super(holder, args);
         this.isSteel = isSteel;
-        this.transferRate = isSteel ? 1_000_000L : 1_0000L;
+        this.transferRate = isSteel ? ConfigHolder.INSTANCE.wirelessSteam.steelTransferRate :
+                ConfigHolder.INSTANCE.wirelessSteam.bronzeTransferRate;
         this.setWorkingEnabled(false);
         if (this.isSteel) {
             if (this.tank.getStorages().length > 0) {
-                this.tank.getStorages()[0].setCapacity(Integer.MAX_VALUE);
+                this.tank.getStorages()[0].setCapacity(ConfigHolder.INSTANCE.wirelessSteam.steelBuffer);
             }
+        } else if (this.tank.getStorages().length > 0) {
+            this.tank.getStorages()[0].setCapacity(ConfigHolder.INSTANCE.wirelessSteam.bronzeBuffer);
         }
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return ConfigHolder.INSTANCE.wirelessSteam.enabled && super.isWorkingEnabled();
     }
 
     @Override
     public void onLoad() {
         super.onLoad();
-        if (!getLevel().isClientSide) {
+        if (getLevel() != null && !getLevel().isClientSide) {
             this.subscribeServerTick(this::updateWireless);
         }
     }
 
     @Override
     protected NotifiableFluidTank createTank(int initialCapacity, int slots, Object... args) {
-        return new NotifiableFluidTank(this, 1, initialCapacity, IO.IN)
+        int configuredCapacity = isSteel ? ConfigHolder.INSTANCE.wirelessSteam.steelBuffer :
+                ConfigHolder.INSTANCE.wirelessSteam.bronzeBuffer;
+        return new NotifiableFluidTank(this, 1, configuredCapacity, IO.IN)
                 .setFilter(fluidStack -> fluidStack.getFluid().is(GTMaterials.Steam.getFluidTag()));
     }
 
     private void updateWireless() {
+        if (!ConfigHolder.INSTANCE.wirelessSteam.enabled) {
+            return;
+        }
         if (getLevel() instanceof ServerLevel serverLevel) {
             UUID ownerId = getOwnerUUID();
             if (ownerId == null) return;

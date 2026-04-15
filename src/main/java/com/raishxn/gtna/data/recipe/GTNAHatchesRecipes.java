@@ -11,8 +11,10 @@ import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 
+import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.data.GTNAMachines2;
 
 import java.util.function.Consumer;
@@ -120,76 +122,89 @@ public class GTNAHatchesRecipes {
                                                 ItemLike sensor) {
         if (GTNAMachines2.OUTPUT_BOOST_HATCHES[tier] == null) return;
         ItemLike hull = GTMachines.HULL[tier].asStack().getItem();
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines2.OUTPUT_BOOST_HATCHES[tier].asStack().getItem())
-                .pattern("ABA")
-                .pattern("BCB")
-                .pattern("ABA")
-                .define('A', emitter)
-                .define('B', sensor)
-                .define('C', hull)
-                .unlockedBy("has_hull", InventoryChangeTrigger.TriggerInstance.hasItems(hull))
-                .save(provider);
+        GTNARecipeVisibility.saveRestricted(provider, id("output_boost_hatch_", tier),
+                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                                GTNAMachines2.OUTPUT_BOOST_HATCHES[tier].asStack().getItem())
+                        .pattern("ABA")
+                        .pattern("BCB")
+                        .pattern("ABA")
+                        .define('A', emitter)
+                        .define('B', sensor)
+                        .define('C', hull)
+                        .unlockedBy("has_hull", InventoryChangeTrigger.TriggerInstance.hasItems(hull))
+                        .save(restrictedProvider));
     }
 
     private static void createInfiniteInputBusRecipe(Consumer<FinishedRecipe> provider, int tier, ItemLike emitter,
                                                      ItemLike sensor) {
         if (GTNAMachines2.INFINITE_INPUT_BUSES[tier] == null) return;
         ItemLike baseBus = GTMachines.ITEM_IMPORT_BUS[tier].asStack().getItem();
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines2.INFINITE_INPUT_BUSES[tier].asStack().getItem())
-                .pattern("ABA")
-                .pattern("BCB")
-                .pattern("ABA")
-                .define('A', emitter)
-                .define('B', sensor)
-                .define('C', baseBus)
-                .unlockedBy("has_base_bus", InventoryChangeTrigger.TriggerInstance.hasItems(baseBus))
-                .save(provider);
+        GTNARecipeVisibility.saveRestricted(provider, id("infinite_input_bus_", tier),
+                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                                GTNAMachines2.INFINITE_INPUT_BUSES[tier].asStack().getItem())
+                        .pattern("ABA")
+                        .pattern("BCB")
+                        .pattern("ABA")
+                        .define('A', emitter)
+                        .define('B', sensor)
+                        .define('C', baseBus)
+                        .unlockedBy("has_base_bus", InventoryChangeTrigger.TriggerInstance.hasItems(baseBus))
+                        .save(restrictedProvider));
     }
 
     private static void createInfiniteInputHatchRecipe(Consumer<FinishedRecipe> provider, int tier, ItemLike emitter,
                                                        ItemLike fieldGenerator) {
         if (GTNAMachines2.INFINITE_INPUT_HATCHES[tier] == null) return;
         ItemLike baseHatch = GTMachines.FLUID_IMPORT_HATCH[tier].asStack().getItem();
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines2.INFINITE_INPUT_HATCHES[tier].asStack().getItem())
-                .pattern("ABA")
-                .pattern("BCB")
-                .pattern("ABA")
-                .define('A', emitter)
-                .define('B', fieldGenerator)
-                .define('C', baseHatch)
-                .unlockedBy("has_base_hatch", InventoryChangeTrigger.TriggerInstance.hasItems(baseHatch))
-                .save(provider);
+        GTNARecipeVisibility.saveRestricted(provider, id("infinite_input_hatch_", tier),
+                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                                GTNAMachines2.INFINITE_INPUT_HATCHES[tier].asStack().getItem())
+                        .pattern("ABA")
+                        .pattern("BCB")
+                        .pattern("ABA")
+                        .define('A', emitter)
+                        .define('B', fieldGenerator)
+                        .define('C', baseHatch)
+                        .unlockedBy("has_base_hatch", InventoryChangeTrigger.TriggerInstance.hasItems(baseHatch))
+                        .save(restrictedProvider));
     }
 
     private static void createOutputBoostItemBusRecipe(Consumer<FinishedRecipe> provider, int tier, ItemLike emitter,
                                                        ItemLike sensor) {
         if (GTNAMachines2.OUTPUT_BOOST_ITEM_BUSES[tier] == null) return;
         ItemLike baseBus = GTMachines.ITEM_EXPORT_BUS[tier].asStack().getItem();
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines2.OUTPUT_BOOST_ITEM_BUSES[tier].asStack().getItem())
-                .pattern("ABA")
-                .pattern("BCB")
-                .pattern("ABA")
-                .define('A', emitter)
-                .define('B', sensor)
-                .define('C', baseBus)
-                .unlockedBy("has_base_bus", InventoryChangeTrigger.TriggerInstance.hasItems(baseBus))
-                .save(provider);
+        GTNARecipeVisibility.saveRestricted(provider, id("output_boost_item_bus_", tier),
+                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                                GTNAMachines2.OUTPUT_BOOST_ITEM_BUSES[tier].asStack().getItem())
+                        .pattern("ABA")
+                        .pattern("BCB")
+                        .pattern("ABA")
+                        .define('A', emitter)
+                        .define('B', sensor)
+                        .define('C', baseBus)
+                        .unlockedBy("has_base_bus", InventoryChangeTrigger.TriggerInstance.hasItems(baseBus))
+                        .save(restrictedProvider));
     }
 
     private static void createOutputBoostFluidHatchRecipe(Consumer<FinishedRecipe> provider, int tier, ItemLike emitter,
                                                           ItemLike fieldGenerator) {
         if (GTNAMachines2.OUTPUT_BOOST_FLUID_HATCHES[tier] == null) return;
         ItemLike baseHatch = GTMachines.FLUID_EXPORT_HATCH[tier].asStack().getItem();
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                        GTNAMachines2.OUTPUT_BOOST_FLUID_HATCHES[tier].asStack().getItem())
-                .pattern("ABA")
-                .pattern("BCB")
-                .pattern("ABA")
-                .define('A', emitter)
-                .define('B', fieldGenerator)
-                .define('C', baseHatch)
-                .unlockedBy("has_base_hatch", InventoryChangeTrigger.TriggerInstance.hasItems(baseHatch))
-                .save(provider);
+        GTNARecipeVisibility.saveRestricted(provider, id("output_boost_fluid_hatch_", tier),
+                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                                GTNAMachines2.OUTPUT_BOOST_FLUID_HATCHES[tier].asStack().getItem())
+                        .pattern("ABA")
+                        .pattern("BCB")
+                        .pattern("ABA")
+                        .define('A', emitter)
+                        .define('B', fieldGenerator)
+                        .define('C', baseHatch)
+                        .unlockedBy("has_base_hatch", InventoryChangeTrigger.TriggerInstance.hasItems(baseHatch))
+                        .save(restrictedProvider));
+    }
+
+    private static ResourceLocation id(String prefix, int tier) {
+        return GTNACORE.id(prefix + VN[tier].toLowerCase());
     }
 
     private static ItemLike getEmitter(int tier) {
