@@ -10,7 +10,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import com.raishxn.gtna.GTNACORE;
-import com.raishxn.gtna.client.renderer.layer.NexusWingsLayer;
 import com.raishxn.gtna.config.ConfigHolder;
 
 @Mod.EventBusSubscriber(modid = GTNACORE.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -25,20 +24,6 @@ public class ClientEventHandler {
                     if (player.zza == 0 && player.xxa == 0) {
                         player.setDeltaMovement(player.getDeltaMovement().multiply(0.0, 1.0, 0.0));
                     }
-                }
-            }
-        }
-    }
-
-    @Mod.EventBusSubscriber(modid = GTNACORE.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class ModClientEvents {
-
-        @SubscribeEvent
-        public static void addLayers(EntityRenderersEvent.AddLayers event) {
-            for (String skin : event.getSkins()) {
-                PlayerRenderer renderer = event.getPlayerSkin(skin);
-                if (renderer != null) {
-                    renderer.addLayer(new NexusWingsLayer(renderer));
                 }
             }
         }

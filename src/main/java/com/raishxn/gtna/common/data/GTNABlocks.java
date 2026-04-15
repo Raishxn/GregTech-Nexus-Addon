@@ -106,6 +106,21 @@ public class GTNABlocks {
     public static final BlockEntry<Block> SPACETIME_COMPRESSION_FIELD_GENERATOR = createCasingBlock(
             "spacetime_compression_field_generator",
             GTNACORE.id("block/spacetime_compression_field_generator"));
+    public static final BlockEntry<Block> NEXUS_HYPERCORE_CASING = createCasingBlock(
+            "nexus_hypercore_casing",
+            GTNACORE.id("block/casings/magtech_casing"));
+    public static final BlockEntry<Block> MATRIX_MODULE_I = createCasingBlock(
+            "matrix_module_i",
+            GTNACORE.id("block/wireless_energy_unit/ev"));
+    public static final BlockEntry<Block> MATRIX_MODULE_II = createCasingBlock(
+            "matrix_module_ii",
+            GTNACORE.id("block/wireless_energy_unit/luv"));
+    public static final BlockEntry<Block> MATRIX_MODULE_III = createCasingBlock(
+            "matrix_module_iii",
+            GTNACORE.id("block/wireless_energy_unit/uv"));
+    public static final BlockEntry<Block> MATRIX_MODULE_IV = createCasingBlock(
+            "matrix_module_iv",
+            GTNACORE.id("block/wireless_energy_unit/uev"));
 
     public static final BlockEntry<NexusCapacitorBlock> NEXUS_CAPACITOR_LV = createCapacitorBlock("nexus_capacitor_lv",
             1, 160_000L);

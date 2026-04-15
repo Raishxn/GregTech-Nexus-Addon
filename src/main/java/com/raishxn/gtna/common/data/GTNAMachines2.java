@@ -21,7 +21,12 @@ import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AdvancedParallelHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.InfiniteInputBusPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.InfiniteInputHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostFluidHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostItemBusPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftPatternPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
@@ -38,6 +43,11 @@ public class GTNAMachines2 {
     public static final MachineDefinition[] ACCELERATE_HATCHES = new MachineDefinition[GTValues.MAX + 1];
     public static final MachineDefinition[] THREAD_HATCHES = new MachineDefinition[GTValues.MAX + 1];
     public static final MachineDefinition[] OVERCLOCK_HATCHES = new MachineDefinition[GTValues.MAX + 1];
+    public static final MachineDefinition[] OUTPUT_BOOST_HATCHES = new MachineDefinition[GTValues.MAX + 1];
+    public static final MachineDefinition[] INFINITE_INPUT_BUSES = new MachineDefinition[GTValues.MAX + 1];
+    public static final MachineDefinition[] INFINITE_INPUT_HATCHES = new MachineDefinition[GTValues.MAX + 1];
+    public static final MachineDefinition[] OUTPUT_BOOST_ITEM_BUSES = new MachineDefinition[GTValues.MAX + 1];
+    public static final MachineDefinition[] OUTPUT_BOOST_FLUID_HATCHES = new MachineDefinition[GTValues.MAX + 1];
     public static MachineDefinition ME_MINI_PATTERN_BUFFER;
     public static MachineDefinition ME_PATTERN_BUFFER;
     public static MachineDefinition ME_ADVANCED_PATTERN_BUFFER;
@@ -55,6 +65,11 @@ public class GTNAMachines2 {
         registerThreadHatches();
         for (int i = GTValues.LV; i <= GTValues.MAX; i++) {
             registerAccelerateHatch(i);
+            registerOutputBoostHatch(i);
+            registerInfiniteInputBus(i);
+            registerInfiniteInputHatch(i);
+            registerOutputBoostItemBus(i);
+            registerOutputBoostFluidHatch(i);
         }
     }
 
@@ -249,6 +264,140 @@ public class GTNAMachines2 {
                             Component.translatable("gtceu.part_sharing.disabled"))
                     .register();
         }
+    }
+
+    private static void registerOutputBoostHatch(int tier) {
+        String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
+        String regName = "output_boost_hatch_" + tierName;
+        var texturePath = GTCEu.id("block/overlay/machine/overlay_hatch");
+        int multiplier = OutputBoostHatchPartMachine.getMultiplierForTier(tier);
+
+        ResourceLocation hullSide = GTCEu.id("block/casings/voltage/" + tierName + "/side");
+        ResourceLocation hullTop = GTCEu.id("block/casings/voltage/" + tierName + "/top");
+        ResourceLocation hullBottom = GTCEu.id("block/casings/voltage/" + tierName + "/bottom");
+
+        OUTPUT_BOOST_HATCHES[tier] = REGISTRATE
+                .machine(regName, holder -> new OutputBoostHatchPartMachine(holder, tier))
+                .tier(tier)
+                .rotationState(RotationState.ALL)
+                .abilities(PartAbility.PARALLEL_HATCH)
+                .modelProperty(IS_FORMED, false)
+                .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
+                .model((ctx, prov, builder) -> {
+                    String modelName = "block/machines/output_boost_hatch/output_boost_hatch_" + tierName;
+                    var model = prov.models()
+                            .withExistingParent(modelName, GTCEu.id("block/machine/template/part/hatch_machine"))
+                            .texture("overlay", texturePath)
+                            .texture("side", hullSide)
+                            .texture("top", hullTop)
+                            .texture("bottom", hullBottom)
+                            .texture("particle", hullSide);
+                    builder.partialState().setModel(model);
+                })
+                .tooltips(
+                        Component.translatable("gtna.machine.output_boost_hatch.main_function"),
+                        Component.translatable("gtna.machine.output_boost_hatch.multiplier", multiplier),
+                        Component.translatable("gtceu.part_sharing.disabled"))
+                .register();
+    }
+
+    private static void registerInfiniteInputBus(int tier) {
+        String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
+        INFINITE_INPUT_BUSES[tier] = REGISTRATE
+                .machine("infinite_input_bus_" + tierName, holder -> new InfiniteInputBusPartMachine(holder, tier))
+                .tier(tier)
+                .rotationState(RotationState.ALL)
+                .abilities(PartAbility.IMPORT_ITEMS)
+                .modelProperty(IS_FORMED, false)
+                .model((ctx, prov, builder) -> {
+                    var model = prov.models()
+                            .withExistingParent(ctx.getName(), GTCEu.id("block/machine/template/part/hatch_machine"))
+                            .texture("overlay", GTCEu.id("block/overlay/machine/overlay_item_hatch_input"))
+                            .texture("side", GTCEu.id("block/casings/voltage/" + tierName + "/side"))
+                            .texture("top", GTCEu.id("block/casings/voltage/" + tierName + "/top"))
+                            .texture("bottom", GTCEu.id("block/casings/voltage/" + tierName + "/bottom"))
+                            .texture("particle", GTCEu.id("block/casings/voltage/" + tierName + "/side"));
+                    builder.partialState().setModel(model);
+                })
+                .tooltips(
+                        Component.translatable("gtna.machine.infinite_input_bus.tooltip"),
+                        Component.translatable("gtceu.part_sharing.disabled"))
+                .register();
+    }
+
+    private static void registerInfiniteInputHatch(int tier) {
+        String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
+        INFINITE_INPUT_HATCHES[tier] = REGISTRATE
+                .machine("infinite_input_hatch_" + tierName, holder -> new InfiniteInputHatchPartMachine(holder, tier))
+                .tier(tier)
+                .rotationState(RotationState.ALL)
+                .abilities(PartAbility.IMPORT_FLUIDS)
+                .modelProperty(IS_FORMED, false)
+                .model((ctx, prov, builder) -> {
+                    var model = prov.models()
+                            .withExistingParent(ctx.getName(), GTCEu.id("block/machine/template/part/hatch_machine"))
+                            .texture("overlay", GTCEu.id("block/overlay/machine/overlay_fluid_hatch_input"))
+                            .texture("side", GTCEu.id("block/casings/voltage/" + tierName + "/side"))
+                            .texture("top", GTCEu.id("block/casings/voltage/" + tierName + "/top"))
+                            .texture("bottom", GTCEu.id("block/casings/voltage/" + tierName + "/bottom"))
+                            .texture("particle", GTCEu.id("block/casings/voltage/" + tierName + "/side"));
+                    builder.partialState().setModel(model);
+                })
+                .tooltips(
+                        Component.translatable("gtna.machine.infinite_input_hatch.tooltip"),
+                        Component.translatable("gtceu.part_sharing.disabled"))
+                .register();
+    }
+
+    private static void registerOutputBoostItemBus(int tier) {
+        String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
+        int multiplier = OutputBoostHatchPartMachine.getMultiplierForTier(tier);
+        OUTPUT_BOOST_ITEM_BUSES[tier] = REGISTRATE
+                .machine("output_boost_item_bus_" + tierName, holder -> new OutputBoostItemBusPartMachine(holder, tier))
+                .tier(tier)
+                .rotationState(RotationState.ALL)
+                .abilities(PartAbility.EXPORT_ITEMS)
+                .modelProperty(IS_FORMED, false)
+                .model((ctx, prov, builder) -> {
+                    var model = prov.models()
+                            .withExistingParent(ctx.getName(), GTCEu.id("block/machine/template/part/hatch_machine"))
+                            .texture("overlay", GTCEu.id("block/overlay/machine/overlay_item_hatch_output"))
+                            .texture("side", GTCEu.id("block/casings/voltage/" + tierName + "/side"))
+                            .texture("top", GTCEu.id("block/casings/voltage/" + tierName + "/top"))
+                            .texture("bottom", GTCEu.id("block/casings/voltage/" + tierName + "/bottom"))
+                            .texture("particle", GTCEu.id("block/casings/voltage/" + tierName + "/side"));
+                    builder.partialState().setModel(model);
+                })
+                .tooltips(
+                        Component.translatable("gtna.machine.output_boost_bus.tooltip", multiplier),
+                        Component.translatable("gtceu.part_sharing.disabled"))
+                .register();
+    }
+
+    private static void registerOutputBoostFluidHatch(int tier) {
+        String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
+        int multiplier = OutputBoostHatchPartMachine.getMultiplierForTier(tier);
+        OUTPUT_BOOST_FLUID_HATCHES[tier] = REGISTRATE
+                .machine("output_boost_fluid_hatch_" + tierName,
+                        holder -> new OutputBoostFluidHatchPartMachine(holder, tier))
+                .tier(tier)
+                .rotationState(RotationState.ALL)
+                .abilities(PartAbility.EXPORT_FLUIDS)
+                .modelProperty(IS_FORMED, false)
+                .model((ctx, prov, builder) -> {
+                    var model = prov.models()
+                            .withExistingParent(ctx.getName(), GTCEu.id("block/machine/template/part/hatch_machine"))
+                            .texture("overlay", GTCEu.id("block/overlay/machine/overlay_fluid_hatch_output"))
+                            .texture("side", GTCEu.id("block/casings/voltage/" + tierName + "/side"))
+                            .texture("top", GTCEu.id("block/casings/voltage/" + tierName + "/top"))
+                            .texture("bottom", GTCEu.id("block/casings/voltage/" + tierName + "/bottom"))
+                            .texture("particle", GTCEu.id("block/casings/voltage/" + tierName + "/side"));
+                    builder.partialState().setModel(model);
+                })
+                .tooltips(
+                        Component.translatable("gtna.machine.output_boost_hatch.multiplier", multiplier),
+                        Component.translatable("gtceu.part_sharing.disabled"))
+                .register();
     }
 
     private static void registerOverclockHatches() {

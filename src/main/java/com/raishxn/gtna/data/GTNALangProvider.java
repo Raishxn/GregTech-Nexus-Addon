@@ -1,5 +1,8 @@
 package com.raishxn.gtna.data;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
@@ -15,6 +18,11 @@ import com.raishxn.gtna.common.data.GTNAMachines2;
 import com.raishxn.gtna.utils.TextUtil;
 import org.apache.commons.lang3.text.WordUtils;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -22,6 +30,7 @@ import java.util.Set;
 public class GTNALangProvider extends LanguageProvider {
 
     private final Set<String> addedKeys = new HashSet<>();
+    private final PackOutput output;
 
     private static final TagPrefix[] GTNA_PREFIXES = {
             GTNATagPrefix.doubleIngot,
@@ -37,6 +46,7 @@ public class GTNALangProvider extends LanguageProvider {
 
     public GTNALangProvider(PackOutput output) {
         super(output, GTNACORE.MOD_ID, "en_us");
+        this.output = output;
     }
 
     @Override
@@ -50,6 +60,7 @@ public class GTNALangProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        addManualTranslations();
         addStaticTranslations();
         addTagPrefixCategories();
         for (Material material : GTCEuAPI.materialManager.getRegisteredMaterials()) {
@@ -69,6 +80,33 @@ public class GTNALangProvider extends LanguageProvider {
                     }
                 }
             }
+        }
+    }
+
+    private void addManualTranslations() {
+        Path manualLangPath = output.getOutputFolder()
+                .getParent()
+                .getParent()
+                .resolve("main")
+                .resolve("resources")
+                .resolve("assets")
+                .resolve(GTNACORE.MOD_ID)
+                .resolve("lang")
+                .resolve("en_us.json");
+        if (!Files.exists(manualLangPath)) {
+            return;
+        }
+
+        try (Reader reader = Files.newBufferedReader(manualLangPath, StandardCharsets.UTF_8)) {
+            JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+            for (var entry : json.entrySet()) {
+                JsonElement value = entry.getValue();
+                if (value != null && value.isJsonPrimitive()) {
+                    add(entry.getKey(), value.getAsString());
+                }
+            }
+        } catch (IOException exception) {
+            throw new RuntimeException("Failed to load manual GTNA en_us translations", exception);
         }
     }
 
@@ -109,6 +147,19 @@ public class GTNALangProvider extends LanguageProvider {
                 "After installing this hatch, the overclock effect is increased to a maximum of every 4 times power used, machine duration x %s");
         add("gtna.machine.overclock_hatch.desc",
                 "- More aggressive overclocking strategies, more powerful machine performance and more extreme processing speeds!");
+        add("gtna.machine.output_boost_hatch.main_function",
+                "Main function: multiplies only recipe outputs for compatible multiblocks");
+        add("gtna.machine.output_boost_hatch.multiplier", "Output Multiplier: %sx items and fluids");
+        add("gtna.machine.infinite_input_bus.tooltip",
+                "Compatible multiblocks can read item inputs from this bus without consuming them");
+        add("gtna.machine.infinite_input_hatch.tooltip",
+                "Compatible multiblocks can read fluid inputs from this hatch without consuming them");
+        add("gtna.machine.output_boost_bus.tooltip",
+                "Compatible multiblocks multiply item outputs by %sx while this bus is installed");
+        add("gtna.machine.infinite_steam_input_bus.tooltip",
+                "Steam multiblocks can read item inputs from this bus without consuming them");
+        add("gtna.machine.output_boost_steam_output_bus.tooltip",
+                "Steam multiblocks multiply item outputs by %sx while this bus is installed");
 
         // Parallel Hatch
         add("block.gtna.parallel_hatch_uhv", "UHV Parallel Control Hatch");
@@ -340,6 +391,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.multiblock.parallel_amount", "Parallels: %s");
         add("block.gtna.huge_steam_input_bus", "Huge Steam Input Bus");
         add("block.gtna.huge_steam_output_bus", "Huge Steam Output Bus");
+        add("block.gtna.infinite_steam_input_bus", "Infinite Steam Input Bus");
+        add("block.gtna.output_boost_steam_output_bus", "Output Boost Steam Output Bus");
         add("gtna.tooltip.huge_steam_bus", "Input Bus with a lot of items capacity. around 3654 itens.");
         add("gtna.tooltip.mega_solar.desc", "A massive solar thermal power plant.");
         add("gtna.tooltip.mega_solar.expansion", "Structure is expandable! Add Solar Pipes behind and to the sides.");
@@ -392,16 +445,16 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.cosmos_simulation", "Cosmos Simulation");
         add("gtna.machine.artificial_star.output", "Supports Laser or Wireless Dynamo output.");
         add("gtna.machine.nexus_molecular_forge.tooltip.0",
-                "ZPM-tier AE mass crafting multiblock based directly on the GTOCore Super Molecular Assembler.");
+                "Ultra-fast AE2 mass crafting forge.");
         add("gtna.machine.nexus_molecular_forge.tooltip.1",
-                "Uses the exact 9x11x9 structure and block layout of the Super Molecular Assembler.");
+                "Queues jobs from Nexus Craft Pattern Hatches and materializes them in giant batches.");
         add("gtna.machine.nexus_molecular_forge.tooltip.2",
-                "Requires Hastelloy N frames, Oxidation Resistant Hastelloy N Casings, Zirconia Mechanical Blocks, Naquadah Borosilicate Glass, Magtech Casings, Process Machine Casings, Compressor Controller Casings, Extreme Density Casings, Assembly Line Casings, and High Power Casings.");
+                "Parallel crafting follows the AE2 CPU and is optimized for extreme throughput.");
         add("gtna.machine.nexus_molecular_forge.tooltip.3", "Each operation materializes every queued craft output at once.");
-        add("gtna.machine.nexus_molecular_forge.tooltip.4", "Cheat Mode: queued crafts do not consume physical ingredients.");
-        add("gtna.machine.nexus_molecular_forge.tooltip.5", "Power Cost: exactly 1 EU per crafted item, compressed into batch EU/t.");
+        add("gtna.machine.nexus_molecular_forge.tooltip.4", "Queued crafts do not consume physical ingredients.");
+        add("gtna.machine.nexus_molecular_forge.tooltip.5", "Power Cost: 1 EU per crafted item, compressed into batch EU/t.");
         add("gtna.machine.nexus_molecular_forge.tooltip.6",
-                "Install Nexus Craft Pattern Hatches on the zirconia block positions. The HUD shows hatches, patterns, queue, active batch, and forge ceiling.");
+                "HUD shows pattern hatches, loaded patterns, queued outputs, active batch, and forge ceiling.");
         add("gtna.machine.eye_of_harmony.tooltip.0", "Creates a miniature universe and extracts its resources.");
         add("gtna.machine.eye_of_harmony.tooltip.1", "Startup power comes directly from the GTNA wireless network.");
         add("gtna.machine.eye_of_harmony.tooltip.2", "Bind with a Data Stick to swap the network owner.");
@@ -561,6 +614,22 @@ public class GTNALangProvider extends LanguageProvider {
             }
             if (i < GTNAMachines2.OVERCLOCK_HATCHES.length && GTNAMachines2.OVERCLOCK_HATCHES[i] != null) {
                 add("block.gtna.overclock_hatch_" + tierLower, coloredTierName + " Overclock Hatch");
+            }
+            if (i < GTNAMachines2.OUTPUT_BOOST_HATCHES.length && GTNAMachines2.OUTPUT_BOOST_HATCHES[i] != null) {
+                add("block.gtna.output_boost_hatch_" + tierLower, coloredTierName + " Output Boost Hatch");
+            }
+            if (i < GTNAMachines2.INFINITE_INPUT_BUSES.length && GTNAMachines2.INFINITE_INPUT_BUSES[i] != null) {
+                add("block.gtna.infinite_input_bus_" + tierLower, coloredTierName + " Infinite Input Bus");
+            }
+            if (i < GTNAMachines2.INFINITE_INPUT_HATCHES.length && GTNAMachines2.INFINITE_INPUT_HATCHES[i] != null) {
+                add("block.gtna.infinite_input_hatch_" + tierLower, coloredTierName + " Infinite Input Hatch");
+            }
+            if (i < GTNAMachines2.OUTPUT_BOOST_ITEM_BUSES.length && GTNAMachines2.OUTPUT_BOOST_ITEM_BUSES[i] != null) {
+                add("block.gtna.output_boost_item_bus_" + tierLower, coloredTierName + " Output Boost Item Bus");
+            }
+            if (i < GTNAMachines2.OUTPUT_BOOST_FLUID_HATCHES.length &&
+                    GTNAMachines2.OUTPUT_BOOST_FLUID_HATCHES[i] != null) {
+                add("block.gtna.output_boost_fluid_hatch_" + tierLower, coloredTierName + " Output Boost Fluid Hatch");
             }
         }
     }

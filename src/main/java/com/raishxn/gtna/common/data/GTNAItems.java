@@ -6,8 +6,9 @@ import net.minecraft.resources.ResourceLocation;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.item.PatternBufferUpgraderBehavior;
+import com.raishxn.gtna.common.item.RealityRipperSwordItem;
 import com.raishxn.gtna.common.item.StructureDetectBehavior;
-import com.raishxn.gtna.common.item.armor.NexusArmorItem;
+import com.raishxn.gtna.common.item.armor.QuantumCosmicNexusArmorItem;
 import com.tterrag.registrate.util.entry.ItemEntry;
 
 import static com.gregtechceu.gtceu.common.data.GTItems.attach;
@@ -36,11 +37,10 @@ public class GTNAItems {
     public static ItemEntry<ComponentItem> PRECISION_STEAM_COMPONENT;
 
     public static ItemEntry<com.raishxn.gtna.common.item.NexusLinkerItem> NEXUS_LINKER;
-    public static ItemEntry<NexusArmorItem> NEXUS_HELMET;
-    public static ItemEntry<NexusArmorItem> NEXUS_CHESTPLATE;
-    public static ItemEntry<NexusArmorItem> NEXUS_LEGGINGS;
-    public static ItemEntry<NexusArmorItem> NEXUS_BOOTS;
-    public static ItemEntry<ComponentItem> NEXUS_WINGS;
+    public static ItemEntry<QuantumCosmicNexusArmorItem> QUANTUM_COSMIC_NEXUS_HELMET;
+    public static ItemEntry<QuantumCosmicNexusArmorItem> QUANTUM_COSMIC_NEXUS_CHESTPLATE;
+    public static ItemEntry<QuantumCosmicNexusArmorItem> QUANTUM_COSMIC_NEXUS_LEGGINGS;
+    public static ItemEntry<QuantumCosmicNexusArmorItem> QUANTUM_COSMIC_NEXUS_BOOTS;
     public static ItemEntry<ComponentItem> QUANTUM_NETWORK_TERMINAL;
     public static ItemEntry<ComponentItem> NEXUS_STRUCTURE_TERMINAL;
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_21;
@@ -51,6 +51,7 @@ public class GTNAItems {
     public static ItemEntry<ComponentItem> DRACONIUM_ANTIMATTER_FUEL_ROD;
     public static ItemEntry<ComponentItem> COSMIC_NEUTRONIUM_ANTIMATTER_FUEL_ROD;
     public static ItemEntry<ComponentItem> INFINITY_ANTIMATTER_FUEL_ROD;
+    public static ItemEntry<RealityRipperSwordItem> REALITY_RIPPER_SWORD;
 
     public static void init() {
         STRUCTURE_DETECT = REGISTRATE
@@ -109,33 +110,32 @@ public class GTNAItems {
                 .properties(stack -> stack.stacksTo(1))
                 .register();
 
-        NEXUS_HELMET = REGISTRATE.item("nexus_helmet",
-                props -> new NexusArmorItem(net.minecraft.world.item.ArmorItem.Type.HELMET, props))
-                .lang("Nexus Helmet")
+        QUANTUM_COSMIC_NEXUS_HELMET = REGISTRATE.item("quantum_cosmic_nexus_helmet",
+                props -> new QuantumCosmicNexusArmorItem(net.minecraft.world.item.ArmorItem.Type.HELMET, props))
+                .lang("Quantum Cosmic Nexus Helmet")
                 .properties(stack -> stack.stacksTo(1))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + ctx.getName())))
                 .register();
 
-        NEXUS_CHESTPLATE = REGISTRATE.item("nexus_chestplate",
-                props -> new NexusArmorItem(net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, props))
-                .lang("Nexus Chestplate")
+        QUANTUM_COSMIC_NEXUS_CHESTPLATE = REGISTRATE.item("quantum_cosmic_nexus_chestplate",
+                props -> new QuantumCosmicNexusArmorItem(net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, props))
+                .lang("Quantum Cosmic Nexus Chestplate")
                 .properties(stack -> stack.stacksTo(1))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + ctx.getName())))
                 .register();
 
-        NEXUS_LEGGINGS = REGISTRATE.item("nexus_leggings",
-                props -> new NexusArmorItem(net.minecraft.world.item.ArmorItem.Type.LEGGINGS, props))
-                .lang("Nexus Leggings")
+        QUANTUM_COSMIC_NEXUS_LEGGINGS = REGISTRATE.item("quantum_cosmic_nexus_leggings",
+                props -> new QuantumCosmicNexusArmorItem(net.minecraft.world.item.ArmorItem.Type.LEGGINGS, props))
+                .lang("Quantum Cosmic Nexus Leggings")
                 .properties(stack -> stack.stacksTo(1))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + ctx.getName())))
                 .register();
 
-        NEXUS_BOOTS = REGISTRATE.item("nexus_boots",
-                props -> new NexusArmorItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, props))
-                .lang("Nexus Boots")
+        QUANTUM_COSMIC_NEXUS_BOOTS = REGISTRATE.item("quantum_cosmic_nexus_boots",
+                props -> new QuantumCosmicNexusArmorItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, props))
+                .lang("Quantum Cosmic Nexus Boots")
                 .properties(stack -> stack.stacksTo(1))
-                .register();
-
-        NEXUS_WINGS = REGISTRATE.item("nexus_wings", ComponentItem::create)
-                .lang("Nexus Wings")
-                .properties(stack -> stack.stacksTo(1))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + ctx.getName())))
                 .register();
 
         QUANTUM_NETWORK_TERMINAL = REGISTRATE.item("quantum_network_terminal", ComponentItem::create)
@@ -195,6 +195,12 @@ public class GTNAItems {
         INFINITY_ANTIMATTER_FUEL_ROD = REGISTRATE.item("infinity_antimatter_fuel_rod", ComponentItem::create)
                 .lang("Infinity Antimatter Fuel Rod")
                 .properties(stack -> stack.stacksTo(64))
+                .register();
+
+        REALITY_RIPPER_SWORD = REGISTRATE.item("reality_ripper_sword", RealityRipperSwordItem::new)
+                .lang("Reality Ripper")
+                .properties(stack -> stack.stacksTo(1))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + ctx.getName())))
                 .register();
     }
 }

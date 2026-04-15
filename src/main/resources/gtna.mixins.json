@@ -5,8 +5,11 @@
   "refmap": "gtna.refmap.json",
   "minVersion": "0.8",
   "mixins": [
+    "ae2.CraftingCPUClusterMixin",
+    "ae2.ElapsedTimeTrackerMixin",
     "gtceu.GTNAPlateDoubleMixin",
-    "gtceu.GTRecipeLogicMixin"
+    "gtceu.GTRecipeLogicMixin",
+    "gtceu.RecipeHelperMixin"
   ],
   "client": [
   ],

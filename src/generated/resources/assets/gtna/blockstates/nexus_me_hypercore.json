@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gtna:block/machine/nexus_me_hypercore",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtna:block/machine/nexus_me_hypercore"
+    },
+    "facing=south": {
+      "model": "gtna:block/machine/nexus_me_hypercore",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gtna:block/machine/nexus_me_hypercore",
+      "y": 270
+    }
+  }
+}

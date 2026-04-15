@@ -21,6 +21,7 @@ import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
 import com.raishxn.gtna.api.machine.multiblock.ParallelMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
 import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +40,7 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
     // Listas essenciais para o Logic calcular o tempo
     private final List<AccelerateHatchPartMachine> accelerateHatches = new ArrayList<>();
     private final List<OverclockHatchPartMachine> overclockHatches = new ArrayList<>();
+    private final List<OutputBoostHatchPartMachine> outputBoostHatches = new ArrayList<>();
 
     public WorkableElectricMultipleRecipesMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, args);
@@ -93,6 +95,7 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
         super.onStructureFormed();
         this.accelerateHatches.clear();
         this.overclockHatches.clear();
+        this.outputBoostHatches.clear();
 
         for (IMultiPart part : getParts()) {
             if (part instanceof AccelerateHatchPartMachine accelerateHatch) {
@@ -100,6 +103,9 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
             }
             if (part instanceof OverclockHatchPartMachine overclockHatch) {
                 overclockHatches.add(overclockHatch);
+            }
+            if (part instanceof OutputBoostHatchPartMachine outputBoostHatch) {
+                outputBoostHatches.add(outputBoostHatch);
             }
         }
         if (this.energyContainer == null) {
@@ -112,6 +118,7 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
         super.onStructureInvalid();
         this.accelerateHatches.clear();
         this.overclockHatches.clear();
+        this.outputBoostHatches.clear();
     }
 
     @Override
@@ -140,6 +147,14 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
             multiplier *= hatch.getOverclockMultiplier();
         }
         return multiplier;
+    }
+
+    public int getOutputBoostMultiplier() {
+        int multiplier = 1;
+        for (OutputBoostHatchPartMachine hatch : outputBoostHatches) {
+            multiplier *= hatch.getOutputMultiplier();
+        }
+        return Math.max(1, multiplier);
     }
 
     @Override
@@ -180,6 +195,13 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
                         text.add(Component.literal("Accelerate Hatch: ").withStyle(ChatFormatting.GRAY)
                                 .append(Component.literal(String.format("%.2fx Duration", accMultiplier))
                                         .withStyle(ChatFormatting.LIGHT_PURPLE)));
+                    }
+
+                    int outputMultiplier = getOutputBoostMultiplier();
+                    if (outputMultiplier > 1) {
+                        text.add(Component.literal("Output Boost Hatch: ").withStyle(ChatFormatting.GRAY)
+                                .append(Component.literal(String.format("%dx Outputs", outputMultiplier))
+                                        .withStyle(ChatFormatting.AQUA)));
                     }
 
                     text.add(Component.literal("Active Threads: ").withStyle(ChatFormatting.GRAY)

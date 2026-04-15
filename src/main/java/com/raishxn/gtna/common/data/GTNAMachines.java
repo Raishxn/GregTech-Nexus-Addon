@@ -25,11 +25,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.client.renderer.machine.AnnihilateGeneratorRenderer;
 import com.raishxn.gtna.client.renderer.machine.EyeOfHarmonyRenderer;
 import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyAisles;
 import com.raishxn.gtna.common.machine.multiblock.energy.ArtificialStarMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhouse;
+import com.raishxn.gtna.common.machine.multiblock.energy.NexusMEHyperCoreMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.NexusMolecularForgeMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.EyeOfHarmonyMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.HyperPressureReactor;
@@ -37,6 +39,9 @@ import com.raishxn.gtna.common.machine.multiblock.noenergy.InfernalCokeOven;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.LeapForwardBlastFurnace;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.HugeSteamInputBus;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.HugeSteamOutputBus;
+import com.raishxn.gtna.common.machine.multiblock.part.steam.InfiniteSteamInputBus;
+import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.steam.OutputBoostSteamOutputBus;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamInputHatch;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamOutputHatch;
 import com.raishxn.gtna.common.machine.multiblock.steam.*;
@@ -158,6 +163,31 @@ public class GTNAMachines {
             .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, false)
             .colorOverlaySteamHullModel(OVERLAY_STEAM_OUT)
             .tooltips(Component.translatable("gtna.tooltip.huge_steam_bus").withStyle(ChatFormatting.GREEN))
+            .tooltipBuilder(GTNA_ADD)
+            .register();
+
+    public static final MachineDefinition INFINITE_STEAM_INPUT_BUS = REGISTRATE
+            .machine("infinite_steam_input_bus", InfiniteSteamInputBus::new)
+            .rotationState(RotationState.ALL)
+            .tier(GTValues.ULV)
+            .abilities(PartAbility.STEAM_IMPORT_ITEMS)
+            .modelProperty(IS_FORMED, false)
+            .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, false)
+            .colorOverlaySteamHullModel(OVERLAY_STEAM_IN)
+            .tooltips(Component.translatable("gtna.machine.infinite_steam_input_bus.tooltip"))
+            .tooltipBuilder(GTNA_ADD)
+            .register();
+
+    public static final MachineDefinition OUTPUT_BOOST_STEAM_OUTPUT_BUS = REGISTRATE
+            .machine("output_boost_steam_output_bus", OutputBoostSteamOutputBus::new)
+            .rotationState(RotationState.ALL)
+            .tier(GTValues.ULV)
+            .abilities(PartAbility.STEAM_EXPORT_ITEMS)
+            .modelProperty(IS_FORMED, false)
+            .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, false)
+            .colorOverlaySteamHullModel(OVERLAY_STEAM_OUT)
+            .tooltips(Component.translatable("gtna.machine.output_boost_steam_output_bus.tooltip",
+                    OutputBoostHatchPartMachine.getMultiplierForTier(GTValues.ULV)))
             .tooltipBuilder(GTNA_ADD)
             .register();
 
@@ -1669,13 +1699,40 @@ public class GTNAMachines {
                     GTNACORE.id("block/casings/oxidation_resistant_hastelloy_n_mechanical_casing"),
                     GTCEu.id("block/multiblock/fusion_reactor"))
             .tooltips(
-                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.0"),
-                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.1"),
-                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.2"),
-                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.3"),
-                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.4"),
-                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.5"),
-                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.6"))
+                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.0")
+                            .withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.BOLD),
+                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.1")
+                            .withStyle(ChatFormatting.AQUA),
+                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.2")
+                            .withStyle(ChatFormatting.LIGHT_PURPLE),
+                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.3")
+                            .withStyle(ChatFormatting.RED),
+                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.4")
+                            .withStyle(ChatFormatting.GOLD),
+                    Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.5")
+                            .withStyle(ChatFormatting.GRAY))
+            .tooltipBuilder(GTNA_ADD)
+            .register();
+
+    public static final MultiblockMachineDefinition NEXUS_ME_HYPERCORE = REGISTRATE
+            .multiblock("nexus_me_hypercore", NexusMEHyperCoreMachine::new)
+            .langValue("Nexus ME HyperCore")
+            .rotationState(RotationState.NON_Y_AXIS)
+            .allowExtendedFacing(false)
+            .recipeType(GTRecipeTypes.DUMMY_RECIPES)
+            .appearanceBlock(GTNABlocks.NEXUS_HYPERCORE_CASING)
+            .pattern(GTNAMachines::createNexusMEHyperCorePattern)
+            .workableCasingModel(
+                    GTNACORE.id("block/casings/magtech_casing"),
+                    GTCEu.id("block/multiblock/assembly_line"))
+            .tooltips(
+                    Component.literal("7x7x7 hollow AE2 computation core").withStyle(ChatFormatting.AQUA),
+                    Component.literal("Fill the 5x5x5 interior with Matrix Modules to scale storage, co-processors and threads.")
+                            .withStyle(ChatFormatting.GRAY),
+                    Component.literal("Tier 1 starts at EV, Tier 2 at LuV, and higher tiers keep skipping one tier.")
+                            .withStyle(ChatFormatting.GRAY),
+                    Component.literal("Full Matrix Module IV interior activates Transcendent Mode.")
+                            .withStyle(ChatFormatting.GOLD))
             .tooltipBuilder(GTNA_ADD)
             .register();
 
@@ -1726,7 +1783,7 @@ public class GTNAMachines {
     }
 
     private static BlockPattern createNexusMolecularForgePattern(MultiblockMachineDefinition definition) {
-        return FactoryBlockPattern.start(RIGHT, UP, BACK)
+        return FactoryBlockPattern.start()
                 .aisle("AAAAAAAAA", "AAAABAAAA", "AAAABAAAA", "AAAABAAAA", "AAAACAAAA", "AACCCCCAA", "AAAACAAAA",
                         "AAAABAAAA", "AAAABAAAA", "AAAABAAAA", "AAAAAAAAA")
                 .aisle("AAAABAAAA", "AAADCDAAA", "AADDCDDAA", "AAEDCDEAA", "AAEDFDEAA", "ACEDFDECA", "AAEDFDEAA",
@@ -1745,7 +1802,7 @@ public class GTNAMachines {
                         "AAEDCDEAA", "AADDCDDAA", "AAADCDAAA", "AAAABAAAA")
                 .aisle("AAAAAAAAA", "AAAABAAAA", "AAAABAAAA", "AAAABAAAA", "AAAACAAAA", "AACCMCCAA", "AAAACAAAA",
                         "AAAABAAAA", "AAAABAAAA", "AAAABAAAA", "AAAAAAAAA")
-                .where('A', any())
+                .where('A', Predicates.air())
                 .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTNAMaterials.HastelloyN)))
                 .where('C', blocks(GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.get()))
                 .where('D', blocks(GTNABlocks.ZIRCONIA_CERAMIC_HIGH_STRENGTH_BENDING_RESISTANCE_MECHANICAL_BLOCK.get())
@@ -1762,6 +1819,81 @@ public class GTNAMachines {
                 .where('K', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Europium)))
                 .where('L', blocks(GTNABlocks.EXTREME_DENSITY_CASING.get()))
                 .where('M', controller(blocks(definition.get())))
+                .build();
+    }
+
+    private static BlockPattern createNexusMEHyperCorePattern(MultiblockMachineDefinition definition) {
+        return FactoryBlockPattern.start()
+                .aisle(
+                        "AAAAAAA",
+                        "AAAAAAA",
+                        "AAAAAAA",
+                        "AAA~AAA",
+                        "AAAAAAA",
+                        "AAAAAAA",
+                        "AAAAAAA")
+                .aisle(
+                        "AAAAAAA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AAAAAAA")
+                .aisle(
+                        "AAAAAAA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AAAAAAA")
+                .aisle(
+                        "AAAAAAA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AAAAAAA")
+                .aisle(
+                        "AAAAAAA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AAAAAAA")
+                .aisle(
+                        "AAAAAAA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AMMMMMA",
+                        "AAAAAAA")
+                .aisle(
+                        "AAAAAAA",
+                        "AAAAAAA",
+                        "AAAAAAA",
+                        "AAAAAAA",
+                        "AAAAAAA",
+                        "AAAAAAA",
+                        "AAAAAAA")
+                .where('~', controller(blocks(definition.get())))
+                .where('A', blocks(GTNABlocks.NEXUS_HYPERCORE_CASING.get())
+                        .or(abilities(INPUT_ENERGY).setMaxGlobalLimited(2))
+                        .or(abilities(MAINTENANCE).setExactLimit(1))
+                        .or(abilities(PARALLEL_HATCH).setMaxGlobalLimited(1))
+                        .or(abilities(GTNAPartAbility.THREAD_HATCH).setMaxGlobalLimited(1))
+                        .or(blocks(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.getBlock()).setMaxGlobalLimited(1))
+                        .or(blocks(GTNAMachines2.ME_PATTERN_BUFFER.getBlock()).setMaxGlobalLimited(1))
+                        .or(blocks(GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER.getBlock()).setMaxGlobalLimited(1))
+                        .or(blocks(GTNAMachines2.ME_ULTIMATE_PATTERN_BUFFER.getBlock()).setMaxGlobalLimited(1)))
+                .where('M', blocks(GTNABlocks.MATRIX_MODULE_I.get())
+                        .or(blocks(GTNABlocks.MATRIX_MODULE_II.get()))
+                        .or(blocks(GTNABlocks.MATRIX_MODULE_III.get()))
+                        .or(blocks(GTNABlocks.MATRIX_MODULE_IV.get())))
                 .build();
     }
 

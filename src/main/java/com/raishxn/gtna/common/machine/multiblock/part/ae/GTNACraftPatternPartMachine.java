@@ -7,7 +7,6 @@ import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.transfer.item.CustomItemStackHandler;
-import com.gregtechceu.gtceu.integration.ae2.gui.widget.AETextInputButtonWidget;
 import com.gregtechceu.gtceu.integration.ae2.gui.widget.slot.AEPatternViewSlotWidget;
 import com.gregtechceu.gtceu.integration.ae2.machine.MEBusPartMachine;
 import com.gregtechceu.gtceu.utils.ItemStackHashStrategy;
@@ -43,6 +42,7 @@ import appeng.api.stacks.KeyCounter;
 import appeng.crafting.pattern.EncodedPatternItem;
 import appeng.crafting.pattern.ProcessingPatternItem;
 import appeng.helpers.patternprovider.PatternContainer;
+import com.raishxn.gtna.GTNACORE;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenCustomHashMap;
@@ -172,11 +172,20 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
         detailsSlotMap.clear();
         for (int i = 0; i < patternInventory.getSlots(); i++) {
             ItemStack pattern = patternInventory.getStackInSlot(i);
-            IPatternDetails details = PatternDetailsHelper.decodePattern(pattern, getLevel());
+            IPatternDetails details = decodePattern(pattern);
             if (details != null) {
                 detailsSlotMap.forcePut(details, internalInventory[i]);
+                GTNACORE.LOGGER.debug(
+                        "[GTNA] Hatch {} loaded pattern in slot {}: {}",
+                        getPos(),
+                        i,
+                        details.getDefinition());
             }
         }
+        GTNACORE.LOGGER.debug(
+                "[GTNA] Hatch {} rebuilt pattern map with {} loaded pattern(s)",
+                getPos(),
+                detailsSlotMap.size());
         needPatternSync = true;
         notifyController();
     }
@@ -187,7 +196,7 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
         }
         InternalSlot slot = internalInventory[index];
         ItemStack newPattern = patternInventory.getStackInSlot(index);
-        IPatternDetails newPatternDetails = PatternDetailsHelper.decodePattern(newPattern, getLevel());
+        IPatternDetails newPatternDetails = decodePattern(newPattern);
         IPatternDetails oldPatternDetails = detailsSlotMap.inverse().get(slot);
         if (oldPatternDetails != null && !oldPatternDetails.equals(newPatternDetails)) {
             slot.clear();
@@ -197,8 +206,18 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
         } else {
             detailsSlotMap.forcePut(newPatternDetails, slot);
         }
+        GTNACORE.LOGGER.debug(
+                "[GTNA] Hatch {} pattern changed in slot {}: old={}, new={}",
+                getPos(),
+                index,
+                oldPatternDetails == null ? "null" : oldPatternDetails.getDefinition(),
+                newPatternDetails == null ? "null" : newPatternDetails.getDefinition());
         needPatternSync = true;
         notifyController();
+    }
+
+    private @Nullable IPatternDetails decodePattern(ItemStack pattern) {
+        return PatternDetailsHelper.decodePattern(pattern, getLevel());
     }
 
     private void notifyController() {
@@ -206,13 +225,7 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
     }
 
     public int getLoadedPatternCount() {
-        int count = 0;
-        for (IPatternDetails details : detailsSlotMap.keySet()) {
-            if (details != null) {
-                count++;
-            }
-        }
-        return count;
+        return detailsSlotMap.size();
     }
 
     public long getPendingItemCount() {
@@ -261,10 +274,6 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
                 8,
                 2,
                 () -> this.isOnline ? "gtceu.gui.me_network.online" : "gtceu.gui.me_network.offline"));
-        group.addWidget(new AETextInputButtonWidget(Math.max(8, gridWidth - 70), 2, 70, 10)
-                .setText(customName)
-                .setOnConfirm(this::setCustomName)
-                .setButtonTooltips(Component.translatable("gui.gtceu.rename.desc")));
         return group;
     }
 
@@ -275,16 +284,54 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
 
     @Override
     public boolean pushPattern(IPatternDetails patternDetails, KeyCounter[] inputHolder) {
-        if (!isFormed() || !getMainNode().isActive() || !detailsSlotMap.containsKey(patternDetails) ||
-                !checkInput(inputHolder)) {
+        boolean formed = isFormed();
+        boolean nodeActive = getMainNode().isActive();
+        boolean knownPattern = containsPattern(patternDetails);
+        boolean validInputs = checkInput(inputHolder);
+        if (!formed || !nodeActive || !knownPattern || !validInputs) {
+            GTNACORE.LOGGER.debug(
+                    "[GTNA] Nexus Craft Pattern Hatch rejected pattern push at {}: formed={}, nodeActive={}, knownPattern={}, validInputs={}, outputs={}",
+                    getPos(), formed, nodeActive, knownPattern, validInputs, patternDetails.getOutputs().length);
             return false;
         }
-        InternalSlot slot = detailsSlotMap.get(patternDetails);
+        InternalSlot slot = resolveSlot(patternDetails);
         if (slot != null) {
             slot.pushPattern(patternDetails);
+            GTNACORE.LOGGER.debug(
+                    "[GTNA] Nexus Craft Pattern Hatch queued pattern at {} with {} outputs and {} pending items",
+                    getPos(), patternDetails.getOutputs().length, slot.getPendingItemCount());
             return true;
         }
+        GTNACORE.LOGGER.debug("[GTNA] Nexus Craft Pattern Hatch could not resolve internal slot for pattern at {}", getPos());
         return false;
+    }
+
+    private boolean containsPattern(IPatternDetails patternDetails) {
+        if (detailsSlotMap.containsKey(patternDetails)) {
+            return true;
+        }
+        var definition = patternDetails.getDefinition();
+        for (IPatternDetails details : detailsSlotMap.keySet()) {
+            if (details != null && details.getDefinition().equals(definition)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private @Nullable InternalSlot resolveSlot(IPatternDetails patternDetails) {
+        InternalSlot slot = detailsSlotMap.get(patternDetails);
+        if (slot != null) {
+            return slot;
+        }
+        var definition = patternDetails.getDefinition();
+        for (var entry : detailsSlotMap.entrySet()) {
+            IPatternDetails details = entry.getKey();
+            if (details != null && details.getDefinition().equals(definition)) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 
     @Override
@@ -368,6 +415,10 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
             return total;
         }
 
+        public boolean isEmpty() {
+            return outputInventory.isEmpty();
+        }
+
         public void clear() {
             outputInventory.clear();
             notifyController();
@@ -379,6 +430,12 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
             }
             outputInventory.object2LongEntrySet().forEach(entry -> target.addTo(entry.getKey(), entry.getLongValue()));
             outputInventory.clear();
+        }
+
+        public void loadFrom(Object2LongOpenCustomHashMap<ItemStack> source) {
+            outputInventory.clear();
+            source.object2LongEntrySet().forEach(entry -> outputInventory.put(entry.getKey(), entry.getLongValue()));
+            notifyController();
         }
 
         public void pushPattern(IPatternDetails patternDetails) {

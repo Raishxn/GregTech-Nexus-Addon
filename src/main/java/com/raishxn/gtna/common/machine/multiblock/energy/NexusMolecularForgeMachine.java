@@ -27,6 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
+import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftPatternPartMachine;
 import com.raishxn.gtna.common.machine.trait.GTNABatchRecipeLogic;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenCustomHashMap;
@@ -40,6 +41,9 @@ import java.util.Locale;
 public class NexusMolecularForgeMachine extends WorkableElectricMultiblockMachine
                                         implements IDisplayUIMachine, IFancyUIMachine {
 
+    private static final int BATCH_SETTLE_TICKS = 2;
+    private static final int BATCH_MAX_WAIT_TICKS = 20;
+
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
             NexusMolecularForgeMachine.class, WorkableElectricMultiblockMachine.MANAGED_FIELD_HOLDER);
 
@@ -48,6 +52,8 @@ public class NexusMolecularForgeMachine extends WorkableElectricMultiblockMachin
     private int activeBatchDistinctOutputs;
     private long activeBatchEUt;
     private int activeBatchDuration;
+    private long pendingBatchStartTick = -1L;
+    private long pendingBatchLastChangeTick = -1L;
 
     public NexusMolecularForgeMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, args);
@@ -65,7 +71,10 @@ public class NexusMolecularForgeMachine extends WorkableElectricMultiblockMachin
         for (var part : getParts()) {
             if (part instanceof GTNACraftPatternPartMachine patternPart) {
                 craftPatternParts.add(patternPart);
-                patternPart.setOnContentsChanged(() -> getRecipeLogic().updateTickSubscription());
+                patternPart.setOnContentsChanged(() -> {
+                    markPendingBatchChanged();
+                    getRecipeLogic().updateTickSubscription();
+                });
             }
         }
     }
@@ -75,6 +84,7 @@ public class NexusMolecularForgeMachine extends WorkableElectricMultiblockMachin
         super.onStructureInvalid();
         craftPatternParts.clear();
         clearActiveBatch();
+        clearPendingBatchWindow();
     }
 
     public int getCraftPatternHatchCount() {
@@ -123,11 +133,57 @@ public class NexusMolecularForgeMachine extends WorkableElectricMultiblockMachin
         activeBatchDuration = 0;
     }
 
+    private void clearPendingBatchWindow() {
+        pendingBatchStartTick = -1L;
+        pendingBatchLastChangeTick = -1L;
+    }
+
+    private void markPendingBatchChanged() {
+        if (getLevel() == null || isRemote()) {
+            return;
+        }
+        long gameTime = getLevel().getGameTime();
+        if (getQueuedItemCount() <= 0L) {
+            clearPendingBatchWindow();
+            return;
+        }
+        if (pendingBatchStartTick < 0L) {
+            pendingBatchStartTick = gameTime;
+        }
+        pendingBatchLastChangeTick = gameTime;
+    }
+
     private @Nullable GTRecipe buildBatchRecipe() {
         long maxEUt = getOverclockVoltage();
         if (maxEUt <= 0L) {
             clearActiveBatch();
+            clearPendingBatchWindow();
             return null;
+        }
+
+        long queuedItemsPreview = getQueuedItemCount();
+        if (queuedItemsPreview <= 0L) {
+            clearActiveBatch();
+            clearPendingBatchWindow();
+            return null;
+        }
+
+        if (getLevel() != null) {
+            long gameTime = getLevel().getGameTime();
+            if (pendingBatchStartTick < 0L) {
+                pendingBatchStartTick = gameTime;
+            }
+            if (pendingBatchLastChangeTick < 0L) {
+                pendingBatchLastChangeTick = gameTime;
+            }
+
+            boolean settled = gameTime - pendingBatchLastChangeTick >= BATCH_SETTLE_TICKS;
+            boolean waitedEnough = gameTime - pendingBatchStartTick >= BATCH_MAX_WAIT_TICKS;
+            boolean reachedForgeCeiling = queuedItemsPreview >= maxEUt;
+            if (!settled && !waitedEnough && !reachedForgeCeiling) {
+                clearActiveBatch();
+                return null;
+            }
         }
 
         Object2LongOpenCustomHashMap<ItemStack> outputs = new Object2LongOpenCustomHashMap<>(
@@ -135,8 +191,10 @@ public class NexusMolecularForgeMachine extends WorkableElectricMultiblockMachin
         for (GTNACraftPatternPartMachine part : craftPatternParts) {
             part.drainPendingOutputs(outputs);
         }
+        clearPendingBatchWindow();
 
         if (outputs.isEmpty()) {
+            GTNACORE.LOGGER.debug("[GTNA] Nexus Assembly Forge at {} found no queued outputs to batch", getPos());
             clearActiveBatch();
             return null;
         }
@@ -163,6 +221,10 @@ public class NexusMolecularForgeMachine extends WorkableElectricMultiblockMachin
         activeBatchDistinctOutputs = outputs.size();
         activeBatchEUt = eut;
         activeBatchDuration = duration;
+
+        GTNACORE.LOGGER.debug(
+                "[GTNA] Nexus Assembly Forge at {} built batch: {} types / {} items / {} EUt / {} t",
+                getPos(), activeBatchDistinctOutputs, activeBatchItemCount, activeBatchEUt, activeBatchDuration);
 
         builder.EUt(eut).duration(duration);
         return builder.buildRawRecipe();

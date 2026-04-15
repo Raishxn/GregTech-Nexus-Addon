@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gtna:item/quantum_cosmic_nexus_chestplate"
+  }
+}

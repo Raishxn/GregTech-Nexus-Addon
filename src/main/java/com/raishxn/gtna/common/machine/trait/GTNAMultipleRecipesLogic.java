@@ -244,6 +244,14 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
                 // Aplica na receita que já saiu do overclock do GT
                 recipeToRun = hatchModifier.apply(recipeToRun);
             }
+
+            int outputMultiplier = customMachine.getOutputBoostMultiplier();
+            if (outputMultiplier > 1) {
+                var outputModifier = ModifierFunction.builder()
+                        .outputModifier(ContentModifier.multiplier(outputMultiplier))
+                        .build();
+                recipeToRun = outputModifier.apply(recipeToRun);
+            }
         }
         // ------------------------------------------------
 

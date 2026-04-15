@@ -176,6 +176,30 @@ public class GTNAMachineRecipes {
                                 .hasItems(GTMachines.STEAM_EXPORT_BUS.asStack().getItem()))
                 .save(provider);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.INFINITE_STEAM_INPUT_BUS.asStack().getItem())
+                .pattern("ABA")
+                .pattern("CDC")
+                .pattern("ABA")
+                .define('A', GTMachines.BRONZE_CRATE.asStack().getItem())
+                .define('B', GTNAItems.HYDRAULIC_CONVEYOR.get())
+                .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                .define('D', GTMachines.STEAM_IMPORT_BUS.asStack().getItem())
+                .unlockedBy("has_steam_import",
+                        InventoryChangeTrigger.TriggerInstance.hasItems(GTMachines.STEAM_IMPORT_BUS.asStack().getItem()))
+                .save(provider);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.OUTPUT_BOOST_STEAM_OUTPUT_BUS.asStack().getItem())
+                .pattern("ABA")
+                .pattern("CDC")
+                .pattern("ABA")
+                .define('A', GTMachines.BRONZE_CRATE.asStack().getItem())
+                .define('B', GTNAItems.HYDRAULIC_ARM.get())
+                .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                .define('D', GTMachines.STEAM_EXPORT_BUS.asStack().getItem())
+                .unlockedBy("has_steam_export",
+                        InventoryChangeTrigger.TriggerInstance.hasItems(GTMachines.STEAM_EXPORT_BUS.asStack().getItem()))
+                .save(provider);
+
         // --- Wireless Steam Input Hatch (STEEL) ---
         GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("wireless_steam_input_hatch_steel")
                 .inputItems(GTMachines.STEEL_DRUM.asStack().getItem(), 8) // Mudado de .get() para .asStack().getItem()
