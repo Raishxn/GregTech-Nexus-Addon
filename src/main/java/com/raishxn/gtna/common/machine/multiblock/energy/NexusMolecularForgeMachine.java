@@ -233,6 +233,7 @@ public class NexusMolecularForgeMachine extends WorkableElectricMultiblockMachin
     @Override
     protected @NotNull RecipeLogic createRecipeLogic(Object... args) {
         return new GTNABatchRecipeLogic(this, this::buildBatchRecipe) {
+
             @Override
             public void onRecipeFinish() {
                 super.onRecipeFinish();

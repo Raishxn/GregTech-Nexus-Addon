@@ -50,10 +50,9 @@ public class GTNABlocks {
     public static final BlockEntry<Block> OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING = createCasingBlock(
             "oxidation_resistant_hastelloy_n_mechanical_casing",
             GTNACORE.id("block/casings/oxidation_resistant_hastelloy_n_mechanical_casing"));
-    public static final BlockEntry<Block> ZIRCONIA_CERAMIC_HIGH_STRENGTH_BENDING_RESISTANCE_MECHANICAL_BLOCK =
-            createCasingBlock(
-                    "zirconia_ceramic_high_strength_bending_resistance_mechanical_block",
-                    GTNACORE.id("block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block"));
+    public static final BlockEntry<Block> ZIRCONIA_CERAMIC_HIGH_STRENGTH_BENDING_RESISTANCE_MECHANICAL_BLOCK = createCasingBlock(
+            "zirconia_ceramic_high_strength_bending_resistance_mechanical_block",
+            GTNACORE.id("block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block"));
     public static final BlockEntry<Block> NAQUADAH_BOROSILICATE_GLASS = createGlassCasingBlock(
             "naquadah_borosilicate_glass",
             GTNACORE.id("block/casings/naquadah_borosilicate_glass"),

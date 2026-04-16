@@ -1,12 +1,10 @@
 package com.raishxn.gtna.mixin.ae2;
 
-import com.raishxn.gtna.integration.ae2.crafting.GTNAOptimizedCraftingCpuLogic;
-
 import net.minecraft.core.BlockPos;
 
 import appeng.crafting.execution.CraftingCpuLogic;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
-
+import com.raishxn.gtna.integration.ae2.crafting.GTNAOptimizedCraftingCpuLogic;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

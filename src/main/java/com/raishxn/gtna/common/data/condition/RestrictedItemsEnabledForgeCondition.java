@@ -1,13 +1,13 @@
 package com.raishxn.gtna.common.data.condition;
 
-import com.google.gson.JsonObject;
-import com.raishxn.gtna.GTNACORE;
-import com.raishxn.gtna.config.ConfigHolder;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
+
+import com.google.gson.JsonObject;
+import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.config.ConfigHolder;
 
 public class RestrictedItemsEnabledForgeCondition implements ICondition {
 

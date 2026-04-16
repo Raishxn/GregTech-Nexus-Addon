@@ -1,6 +1,7 @@
 package com.raishxn.gtna.common.data.multiblock;
 
 public final class EyeOfHarmonyAisles {
+
     private EyeOfHarmonyAisles() {}
 
     public static final String[][] AISLES = new String[][] {

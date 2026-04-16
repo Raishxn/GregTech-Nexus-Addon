@@ -1,5 +1,6 @@
 package com.raishxn.gtna.common.data;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -9,8 +10,6 @@ import net.minecraft.world.level.Level;
 
 import com.raishxn.gtna.GTNACORE;
 
-import net.minecraft.core.registries.Registries;
-
 public final class GTNADamageTypes {
 
     public static final ResourceKey<DamageType> REALITY_RIP = ResourceKey.create(Registries.DAMAGE_TYPE,
@@ -19,7 +18,8 @@ public final class GTNADamageTypes {
     private GTNADamageTypes() {}
 
     public static DamageSource realityRip(Level level, Entity attacker) {
-        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(REALITY_RIP),
+        return new DamageSource(
+                level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(REALITY_RIP),
                 attacker);
     }
 

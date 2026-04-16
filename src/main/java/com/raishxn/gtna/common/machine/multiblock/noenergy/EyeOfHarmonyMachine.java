@@ -13,6 +13,7 @@ import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
+
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
 import com.lowdragmc.lowdraglib.gui.widget.ComponentPanelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.DraggableScrollableWidgetGroup;
@@ -22,6 +23,7 @@ import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -32,6 +34,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+
 import com.raishxn.gtna.api.capability.WirelessEnergyManager;
 import com.raishxn.gtna.utils.MachineIO;
 import com.raishxn.gtna.utils.datastructure.Int128;
@@ -190,9 +193,8 @@ public class EyeOfHarmonyMachine extends WorkableMultiblockMachine implements ID
     public void addDisplayText(@NotNull List<Component> textList) {
         if (isFormed()) {
             String ownerName = networkOwner == null ? "-" : resolvePlayerName(networkOwner);
-            Int128 stored = getLevel() instanceof ServerLevel serverLevel && networkOwner != null
-                    ? WirelessEnergyManager.getEnergy(serverLevel, networkOwner)
-                    : Int128.ZERO();
+            Int128 stored = getLevel() instanceof ServerLevel serverLevel && networkOwner != null ?
+                    WirelessEnergyManager.getEnergy(serverLevel, networkOwner) : Int128.ZERO();
             textList.add(Component.translatable("gtna.machine.eye_of_harmony.owner", ownerName));
             textList.add(Component.translatable("gtna.machine.eye_of_harmony.network_eu",
                     FormattingUtil.formatNumbers(stored.toString())));

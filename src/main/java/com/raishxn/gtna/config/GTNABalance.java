@@ -1,13 +1,13 @@
 package com.raishxn.gtna.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
 import com.gregtechceu.gtceu.api.GTValues;
 
 import net.minecraftforge.fml.loading.FMLPaths;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import com.raishxn.gtna.GTNACORE;
 
 import java.io.IOException;
@@ -43,8 +43,10 @@ public final class GTNABalance {
 
         hatches = load("hatches.json", HatchesBalance.class, HatchesBalance.defaults());
         machines = load("machines.json", MachinesBalance.class, MachinesBalance.defaults());
-        nexusFluxMatrix = load("nexus_flux_matrix.json", NexusFluxMatrixBalance.class, NexusFluxMatrixBalance.defaults());
-        restrictedItems = load("restricted_items.json", RestrictedItemsBalance.class, RestrictedItemsBalance.defaults());
+        nexusFluxMatrix = load("nexus_flux_matrix.json", NexusFluxMatrixBalance.class,
+                NexusFluxMatrixBalance.defaults());
+        restrictedItems = load("restricted_items.json", RestrictedItemsBalance.class,
+                RestrictedItemsBalance.defaults());
     }
 
     private static <T extends DefaultsApplier<T>> T load(String fileName, Class<T> clazz, T defaults) {
@@ -98,7 +100,8 @@ public final class GTNABalance {
     }
 
     public static int getAccelerateBaseMinPercent(int tier) {
-        return getIntForTier(hatches.accelerateHatch.baseMinDurationPercentByTier, tier, Math.max(1, 50 - (2 * (tier - 1))));
+        return getIntForTier(hatches.accelerateHatch.baseMinDurationPercentByTier, tier,
+                Math.max(1, 50 - (2 * (tier - 1))));
     }
 
     public static int getAcceleratePenaltyPerTierBelowMachine() {
@@ -118,7 +121,8 @@ public final class GTNABalance {
     }
 
     public static int getThreadCount(int tier) {
-        return getIntForTier(hatches.threadHatch.extraThreadsByTier, tier, Math.max(0, (1 << Math.max(0, tier - 6)) - 1));
+        return getIntForTier(hatches.threadHatch.extraThreadsByTier, tier,
+                Math.max(0, (1 << Math.max(0, tier - 6)) - 1));
     }
 
     public static long getMegaSolarSteamPerBlock() {

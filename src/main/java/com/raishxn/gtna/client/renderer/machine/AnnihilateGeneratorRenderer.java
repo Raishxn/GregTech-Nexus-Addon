@@ -3,10 +3,7 @@ package com.raishxn.gtna.client.renderer.machine;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderManager;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderType;
-import com.raishxn.gtna.GTNACORE;
-import com.raishxn.gtna.common.machine.multiblock.energy.ArtificialStarMachine;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.serialization.Codec;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -18,6 +15,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.data.ModelData;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.serialization.Codec;
+import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.common.machine.multiblock.energy.ArtificialStarMachine;
 import org.joml.Quaternionf;
 
 public class AnnihilateGeneratorRenderer extends DynamicRender<ArtificialStarMachine, AnnihilateGeneratorRenderer> {

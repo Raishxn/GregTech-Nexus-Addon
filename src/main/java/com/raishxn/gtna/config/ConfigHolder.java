@@ -55,7 +55,8 @@ public class ConfigHolder {
     }
 
     public static boolean areRestrictedItemsEnabled() {
-        return INSTANCE != null && isJourneyMode() && !isSelfRestraintEnabled() && !INSTANCE.restrictedItems.disableUsage;
+        return INSTANCE != null && isJourneyMode() && !isSelfRestraintEnabled() &&
+                !INSTANCE.restrictedItems.disableUsage;
     }
 
     public static boolean areRestrictedRecipesEnabled() {
@@ -220,55 +221,100 @@ public class ConfigHolder {
 
     public static class MachineToggles {
 
-        @Configurable public boolean largeSteamCrusher = true;
-        @Configurable public boolean megaPressureSolarBoiler = true;
-        @Configurable public boolean largeSteamFurnace = true;
-        @Configurable public boolean largeSteamAlloySmelter = true;
-        @Configurable public boolean largeSteamHammer = true;
-        @Configurable public boolean largeSteamCompressor = true;
-        @Configurable public boolean largeSteamExtractor = true;
-        @Configurable public boolean largeSteamOreWasher = true;
-        @Configurable public boolean steamCobbler = true;
-        @Configurable public boolean stoneSuperheater = true;
-        @Configurable public boolean steamManufacturer = true;
-        @Configurable public boolean steamWoodcutter = true;
-        @Configurable public boolean leapForwardOneBlastFurnace = true;
-        @Configurable public boolean infernalCokeOven = true;
-        @Configurable public boolean hyperPressureReactor = true;
-        @Configurable public boolean compactHyperPressureReactor = true;
-        @Configurable public boolean voidMinerSteamGateAged = true;
-        @Configurable public boolean industrialSlaughterhouse = true;
-        @Configurable public boolean artificialStar = true;
-        @Configurable public boolean eyeOfHarmony = true;
-        @Configurable public boolean nexusMolecularForge = true;
-        @Configurable public boolean nexusMeHypercore = true;
-        @Configurable public boolean durationTester = true;
+        @Configurable
+        public boolean largeSteamCrusher = true;
+        @Configurable
+        public boolean megaPressureSolarBoiler = true;
+        @Configurable
+        public boolean largeSteamFurnace = true;
+        @Configurable
+        public boolean largeSteamAlloySmelter = true;
+        @Configurable
+        public boolean largeSteamHammer = true;
+        @Configurable
+        public boolean largeSteamCompressor = true;
+        @Configurable
+        public boolean largeSteamExtractor = true;
+        @Configurable
+        public boolean largeSteamOreWasher = true;
+        @Configurable
+        public boolean steamCobbler = true;
+        @Configurable
+        public boolean stoneSuperheater = true;
+        @Configurable
+        public boolean steamManufacturer = true;
+        @Configurable
+        public boolean steamWoodcutter = true;
+        @Configurable
+        public boolean leapForwardOneBlastFurnace = true;
+        @Configurable
+        public boolean infernalCokeOven = true;
+        @Configurable
+        public boolean hyperPressureReactor = true;
+        @Configurable
+        public boolean compactHyperPressureReactor = true;
+        @Configurable
+        public boolean voidMinerSteamGateAged = true;
+        @Configurable
+        public boolean industrialSlaughterhouse = true;
+        @Configurable
+        public boolean artificialStar = true;
+        @Configurable
+        public boolean eyeOfHarmony = true;
+        @Configurable
+        public boolean nexusMolecularForge = true;
+        @Configurable
+        public boolean nexusMeHypercore = true;
+        @Configurable
+        public boolean durationTester = true;
     }
 
     public static class HatchToggles {
 
-        @Configurable public boolean wirelessSteamInputBronze = true;
-        @Configurable public boolean wirelessSteamInputSteel = true;
-        @Configurable public boolean wirelessSteamOutputBronze = true;
-        @Configurable public boolean wirelessSteamOutputSteel = true;
-        @Configurable public boolean hugeSteamInputBus = true;
-        @Configurable public boolean hugeSteamOutputBus = true;
-        @Configurable public boolean infiniteSteamInputBus = true;
-        @Configurable public boolean outputBoostSteamOutputBus = true;
-        @Configurable public boolean advancedParallelHatches = true;
-        @Configurable public boolean accelerateHatches = true;
-        @Configurable public boolean threadHatches = true;
-        @Configurable public boolean overclockHatches = true;
-        @Configurable public boolean outputBoostHatches = true;
-        @Configurable public boolean infiniteInputBuses = true;
-        @Configurable public boolean infiniteInputHatches = true;
-        @Configurable public boolean outputBoostItemBuses = true;
-        @Configurable public boolean outputBoostFluidHatches = true;
-        @Configurable public boolean meMiniPatternBuffer = true;
-        @Configurable public boolean mePatternBuffer = true;
-        @Configurable public boolean meAdvancedPatternBuffer = true;
-        @Configurable public boolean meUltimatePatternBuffer = true;
-        @Configurable public boolean meCraftPatternHatch = true;
+        @Configurable
+        public boolean wirelessSteamInputBronze = true;
+        @Configurable
+        public boolean wirelessSteamInputSteel = true;
+        @Configurable
+        public boolean wirelessSteamOutputBronze = true;
+        @Configurable
+        public boolean wirelessSteamOutputSteel = true;
+        @Configurable
+        public boolean hugeSteamInputBus = true;
+        @Configurable
+        public boolean hugeSteamOutputBus = true;
+        @Configurable
+        public boolean infiniteSteamInputBus = true;
+        @Configurable
+        public boolean outputBoostSteamOutputBus = true;
+        @Configurable
+        public boolean advancedParallelHatches = true;
+        @Configurable
+        public boolean accelerateHatches = true;
+        @Configurable
+        public boolean threadHatches = true;
+        @Configurable
+        public boolean overclockHatches = true;
+        @Configurable
+        public boolean outputBoostHatches = true;
+        @Configurable
+        public boolean infiniteInputBuses = true;
+        @Configurable
+        public boolean infiniteInputHatches = true;
+        @Configurable
+        public boolean outputBoostItemBuses = true;
+        @Configurable
+        public boolean outputBoostFluidHatches = true;
+        @Configurable
+        public boolean meMiniPatternBuffer = true;
+        @Configurable
+        public boolean mePatternBuffer = true;
+        @Configurable
+        public boolean meAdvancedPatternBuffer = true;
+        @Configurable
+        public boolean meUltimatePatternBuffer = true;
+        @Configurable
+        public boolean meCraftPatternHatch = true;
     }
 
     public static class Machines {

@@ -40,7 +40,8 @@ public class SteamWirelessNetworkManager {
 
     public static boolean consumeSteamFromGlobalMap(ServerLevel level, UUID userUuid, long amount) {
         if (level == null || userUuid == null || amount <= 0) return false;
-        if (!ConfigHolder.INSTANCE.wirelessSteam.enabled || amount > ConfigHolder.INSTANCE.machines.wirelessSteamTransferRate) {
+        if (!ConfigHolder.INSTANCE.wirelessSteam.enabled ||
+                amount > ConfigHolder.INSTANCE.machines.wirelessSteamTransferRate) {
             return false;
         }
 

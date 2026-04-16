@@ -6,6 +6,7 @@ import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 
 import net.minecraft.network.chat.Component;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;

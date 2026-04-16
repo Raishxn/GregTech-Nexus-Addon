@@ -1,8 +1,5 @@
 package com.raishxn.gtna.data;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
@@ -12,6 +9,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.common.data.GTNAMachines2;
@@ -452,16 +452,19 @@ public class GTNALangProvider extends LanguageProvider {
                 "Queues jobs from Nexus Craft Pattern Hatches and materializes them in giant batches.");
         add("gtna.machine.nexus_molecular_forge.tooltip.2",
                 "Parallel crafting follows the AE2 CPU and is optimized for extreme throughput.");
-        add("gtna.machine.nexus_molecular_forge.tooltip.3", "Each operation materializes every queued craft output at once.");
+        add("gtna.machine.nexus_molecular_forge.tooltip.3",
+                "Each operation materializes every queued craft output at once.");
         add("gtna.machine.nexus_molecular_forge.tooltip.4", "Queued crafts do not consume physical ingredients.");
-        add("gtna.machine.nexus_molecular_forge.tooltip.5", "Power Cost: 1 EU per crafted item, compressed into batch EU/t.");
+        add("gtna.machine.nexus_molecular_forge.tooltip.5",
+                "Power Cost: 1 EU per crafted item, compressed into batch EU/t.");
         add("gtna.machine.nexus_molecular_forge.tooltip.6",
                 "HUD shows pattern hatches, loaded patterns, queued outputs, active batch, and forge ceiling.");
         add("gtna.machine.eye_of_harmony.tooltip.0", "Creates a miniature universe and extracts its resources.");
         add("gtna.machine.eye_of_harmony.tooltip.1", "Startup power comes directly from the GTNA wireless network.");
         add("gtna.machine.eye_of_harmony.tooltip.2", "Bind with a Data Stick to swap the network owner.");
         add("gtna.machine.eye_of_harmony.tooltip.3", "Uses circuits 1-4 to choose 0-3 special overclocks.");
-        add("gtna.machine.eye_of_harmony.tooltip.4", "Requires 1024 buckets each of Hydrogen and Helium before startup.");
+        add("gtna.machine.eye_of_harmony.tooltip.4",
+                "Requires 1024 buckets each of Hydrogen and Helium before startup.");
         add("gtna.machine.eye_of_harmony.tooltip.5", "Consumes those gases internally in 100-bucket batches.");
         add("gtna.machine.eye_of_harmony.tooltip.6", "No conventional energy hatches are used here.");
         add("gtna.machine.eye_of_harmony.tooltip.7", "Outputs are handled through the regular item and fluid ports.");

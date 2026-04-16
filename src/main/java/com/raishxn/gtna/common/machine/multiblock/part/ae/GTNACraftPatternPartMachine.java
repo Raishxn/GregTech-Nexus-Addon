@@ -3,9 +3,9 @@ package com.raishxn.gtna.common.machine.multiblock.part.ae;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
+import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
-import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.transfer.item.CustomItemStackHandler;
 import com.gregtechceu.gtceu.integration.ae2.gui.widget.slot.AEPatternViewSlotWidget;
 import com.gregtechceu.gtceu.integration.ae2.machine.MEBusPartMachine;
@@ -42,16 +42,16 @@ import appeng.api.stacks.KeyCounter;
 import appeng.crafting.pattern.EncodedPatternItem;
 import appeng.crafting.pattern.ProcessingPatternItem;
 import appeng.helpers.patternprovider.PatternContainer;
-import com.raishxn.gtna.GTNACORE;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.raishxn.gtna.GTNACORE;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenCustomHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.Collections;
+import java.util.Objects;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -302,7 +302,8 @@ public class GTNACraftPatternPartMachine extends MEBusPartMachine implements ICr
                     getPos(), patternDetails.getOutputs().length, slot.getPendingItemCount());
             return true;
         }
-        GTNACORE.LOGGER.debug("[GTNA] Nexus Craft Pattern Hatch could not resolve internal slot for pattern at {}", getPos());
+        GTNACORE.LOGGER.debug("[GTNA] Nexus Craft Pattern Hatch could not resolve internal slot for pattern at {}",
+                getPos());
         return false;
     }
 

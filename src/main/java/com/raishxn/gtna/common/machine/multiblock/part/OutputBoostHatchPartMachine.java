@@ -4,11 +4,11 @@ import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.feature.ITieredMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.part.MultiblockPartMachine;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
+
 import com.raishxn.gtna.api.machine.feature.GTNAOutputBoostFluidPart;
 import com.raishxn.gtna.api.machine.feature.GTNAOutputBoostItemPart;
 import com.raishxn.gtna.config.GTNABalance;
-
-import net.minecraft.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

@@ -59,7 +59,8 @@ public class MegaSolarBoilerMachine extends WorkableMultiblockMachine implements
 
         this.bDist = calculateDistance(world, getPos(), back, GTNABalance.getMegaSolarMaxBackDistance());
         this.lDist = calculateDistance(world, getPos().relative(back), left, GTNABalance.getMegaSolarMaxSideDistance());
-        this.rDist = calculateDistance(world, getPos().relative(back), right, GTNABalance.getMegaSolarMaxSideDistance());
+        this.rDist = calculateDistance(world, getPos().relative(back), right,
+                GTNABalance.getMegaSolarMaxSideDistance());
 
         this.formed = bDist >= 3 && lDist >= 1 && rDist >= 1;
     }

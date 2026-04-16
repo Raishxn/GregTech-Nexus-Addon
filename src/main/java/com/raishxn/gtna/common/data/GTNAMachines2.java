@@ -23,10 +23,10 @@ import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachin
 import com.raishxn.gtna.common.machine.multiblock.part.AdvancedParallelHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.InfiniteInputBusPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.InfiniteInputHatchPartMachine;
-import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostFluidHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostItemBusPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftPatternPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
@@ -111,7 +111,8 @@ public class GTNAMachines2 {
                 registerPatternBuffer("me_advanced_pattern_buffer", GTValues.UV, 32) : null;
         ME_ULTIMATE_PATTERN_BUFFER = ConfigHolder.isHatchEnabled("meUltimatePatternBuffer") ?
                 registerPatternBuffer("me_ultimate_pattern_buffer", GTValues.UHV, 72) : null;
-        ME_CRAFT_PATTERN_HATCH = ConfigHolder.isHatchEnabled("meCraftPatternHatch") ? registerCraftPatternHatch() : null;
+        ME_CRAFT_PATTERN_HATCH = ConfigHolder.isHatchEnabled("meCraftPatternHatch") ? registerCraftPatternHatch() :
+                null;
     }
 
     private static MachineDefinition registerPatternBuffer(String id, int tier, int slotCount) {

@@ -20,7 +20,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 
 import com.raishxn.gtna.common.data.GTNABlocks;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -138,8 +137,7 @@ public class NexusMEHyperCoreMachine extends WorkableMultiblockMachine implement
                             totalCoProcessors += MODULE_IV_COPROCESSORS;
                             totalThreads += MODULE_IV_THREADS;
                         }
-                        default -> {
-                        }
+                        default -> {}
                     }
                 }
             }
@@ -241,7 +239,8 @@ public class NexusMEHyperCoreMachine extends WorkableMultiblockMachine implement
         textList.add(Component.literal("Computation Tier: ")
                 .append(Component.literal(getComputationTierName()).withStyle(ChatFormatting.GOLD)));
         textList.add(Component.literal("Installed Modules: ")
-                .append(Component.literal(installedModules + " / " + TOTAL_MODULE_SLOTS).withStyle(ChatFormatting.GREEN)));
+                .append(Component.literal(installedModules + " / " + TOTAL_MODULE_SLOTS)
+                        .withStyle(ChatFormatting.GREEN)));
         textList.add(Component.literal("Storage: ")
                 .append(Component.literal(formatBytes(totalStorageBytes)).withStyle(ChatFormatting.YELLOW)));
         textList.add(Component.literal("Co-Processors: ")

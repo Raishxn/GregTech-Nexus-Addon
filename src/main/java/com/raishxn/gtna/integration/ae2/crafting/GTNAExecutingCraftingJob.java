@@ -1,7 +1,5 @@
 package com.raishxn.gtna.integration.ae2.crafting;
 
-import com.raishxn.gtna.integration.ae2.pattern.IParallelPatternDetails;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -18,11 +16,11 @@ import appeng.crafting.CraftingLink;
 import appeng.crafting.execution.ElapsedTimeTracker;
 import appeng.crafting.inv.ListCraftingInventory;
 import appeng.me.service.CraftingService;
+import com.raishxn.gtna.integration.ae2.pattern.IParallelPatternDetails;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jetbrains.annotations.Nullable;
 
 final class GTNAExecutingCraftingJob {
 
@@ -47,10 +45,12 @@ final class GTNAExecutingCraftingJob {
 
     @FunctionalInterface
     interface CraftingDifferenceListener {
+
         void onCraftingDifference(AEKey what);
     }
 
-    GTNAExecutingCraftingJob(ICraftingPlan plan, CraftingDifferenceListener listener, CraftingLink link, @Nullable Integer playerId) {
+    GTNAExecutingCraftingJob(ICraftingPlan plan, CraftingDifferenceListener listener, CraftingLink link,
+                             @Nullable Integer playerId) {
         this.finalOutput = plan.finalOutput();
         this.remainingAmount = this.finalOutput.amount();
         this.waitingFor = new ListCraftingInventory(listener::onCraftingDifference);
@@ -129,6 +129,7 @@ final class GTNAExecutingCraftingJob {
     }
 
     static final class TaskProgress {
+
         long value = 0L;
     }
 }

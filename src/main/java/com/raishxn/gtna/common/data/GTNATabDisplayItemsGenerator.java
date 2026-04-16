@@ -20,8 +20,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import com.raishxn.gtna.GTNACORE;
-import com.raishxn.gtna.config.GTNABalance;
 import com.raishxn.gtna.config.ConfigHolder;
+import com.raishxn.gtna.config.GTNABalance;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -75,7 +75,8 @@ public class GTNATabDisplayItemsGenerator implements CreativeModeTab.DisplayItem
     private boolean shouldInclude(Item item) {
         String restrictedGroup = getRestrictedGroup(item);
         if (restrictedGroup != null && (!ConfigHolder.isRestrictedGroupAllowed(restrictedGroup) ||
-                (ConfigHolder.shouldHideRestrictedItemsFromJei() && GTNABalance.isRestrictedGroupHiddenFromJei(restrictedGroup)))) {
+                (ConfigHolder.shouldHideRestrictedItemsFromJei() &&
+                        GTNABalance.isRestrictedGroupHiddenFromJei(restrictedGroup)))) {
             return false;
         }
         return switch (tabType) {

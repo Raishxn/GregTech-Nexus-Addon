@@ -124,7 +124,7 @@ public class GTNAHatchesRecipes {
         ItemLike hull = GTMachines.HULL[tier].asStack().getItem();
         GTNARecipeVisibility.saveRestricted(provider, id("output_boost_hatch_", tier),
                 restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                                GTNAMachines2.OUTPUT_BOOST_HATCHES[tier].asStack().getItem())
+                        GTNAMachines2.OUTPUT_BOOST_HATCHES[tier].asStack().getItem())
                         .pattern("ABA")
                         .pattern("BCB")
                         .pattern("ABA")
@@ -141,7 +141,7 @@ public class GTNAHatchesRecipes {
         ItemLike baseBus = GTMachines.ITEM_IMPORT_BUS[tier].asStack().getItem();
         GTNARecipeVisibility.saveRestricted(provider, id("infinite_input_bus_", tier),
                 restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                                GTNAMachines2.INFINITE_INPUT_BUSES[tier].asStack().getItem())
+                        GTNAMachines2.INFINITE_INPUT_BUSES[tier].asStack().getItem())
                         .pattern("ABA")
                         .pattern("BCB")
                         .pattern("ABA")
@@ -158,7 +158,7 @@ public class GTNAHatchesRecipes {
         ItemLike baseHatch = GTMachines.FLUID_IMPORT_HATCH[tier].asStack().getItem();
         GTNARecipeVisibility.saveRestricted(provider, id("infinite_input_hatch_", tier),
                 restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                                GTNAMachines2.INFINITE_INPUT_HATCHES[tier].asStack().getItem())
+                        GTNAMachines2.INFINITE_INPUT_HATCHES[tier].asStack().getItem())
                         .pattern("ABA")
                         .pattern("BCB")
                         .pattern("ABA")
@@ -175,7 +175,7 @@ public class GTNAHatchesRecipes {
         ItemLike baseBus = GTMachines.ITEM_EXPORT_BUS[tier].asStack().getItem();
         GTNARecipeVisibility.saveRestricted(provider, id("output_boost_item_bus_", tier),
                 restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                                GTNAMachines2.OUTPUT_BOOST_ITEM_BUSES[tier].asStack().getItem())
+                        GTNAMachines2.OUTPUT_BOOST_ITEM_BUSES[tier].asStack().getItem())
                         .pattern("ABA")
                         .pattern("BCB")
                         .pattern("ABA")
@@ -192,7 +192,7 @@ public class GTNAHatchesRecipes {
         ItemLike baseHatch = GTMachines.FLUID_EXPORT_HATCH[tier].asStack().getItem();
         GTNARecipeVisibility.saveRestricted(provider, id("output_boost_fluid_hatch_", tier),
                 restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                                GTNAMachines2.OUTPUT_BOOST_FLUID_HATCHES[tier].asStack().getItem())
+                        GTNAMachines2.OUTPUT_BOOST_FLUID_HATCHES[tier].asStack().getItem())
                         .pattern("ABA")
                         .pattern("BCB")
                         .pattern("ABA")

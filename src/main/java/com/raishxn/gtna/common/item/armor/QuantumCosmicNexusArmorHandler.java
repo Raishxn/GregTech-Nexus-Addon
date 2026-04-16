@@ -3,15 +3,15 @@ package com.raishxn.gtna.common.item.armor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -166,7 +166,8 @@ public final class QuantumCosmicNexusArmorHandler {
     }
 
     private static void applyFlightState(ServerPlayer player) {
-        boolean shouldManageFlight = isWearingFullSet(player) && !player.isSpectator() && !player.getAbilities().instabuild;
+        boolean shouldManageFlight = isWearingFullSet(player) && !player.isSpectator() &&
+                !player.getAbilities().instabuild;
         if (shouldManageFlight) {
             if (!player.getAbilities().mayfly) {
                 player.getAbilities().mayfly = true;
@@ -194,7 +195,8 @@ public final class QuantumCosmicNexusArmorHandler {
         player.setMaxUpStep(0.6F);
     }
 
-    private static void reflectDamage(@org.jetbrains.annotations.Nullable Entity attacker, Player defender, float amount) {
+    private static void reflectDamage(@org.jetbrains.annotations.Nullable Entity attacker, Player defender,
+                                      float amount) {
         if (!(attacker instanceof LivingEntity livingAttacker) || attacker == defender) {
             return;
         }

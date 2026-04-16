@@ -188,8 +188,7 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
                     Integer.parseInt(parts[0]),
                     Integer.parseInt(parts[1]),
                     Integer.parseInt(parts[2]));
-        } catch (NumberFormatException ignored) {
-        }
+        } catch (NumberFormatException ignored) {}
     }
 
     @Override
@@ -203,7 +202,8 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         textList.add(Component.literal("\u00a77Max Capacity: \u00a7e" + maxCapacity.toHumanReadableString() + " EU"));
 
         String tierName = GTValues.VN[Math.min(averageTier, GTValues.VN.length - 1)];
-        textList.add(Component.literal("\u00a77Average Tier: \u00a7e" + tierName + " \u00a77(Tier " + averageTier + ")"));
+        textList.add(
+                Component.literal("\u00a77Average Tier: \u00a7e" + tierName + " \u00a77(Tier " + averageTier + ")"));
         textList.add(Component.literal("\u00a77Efficiency: \u00a7d" +
                 String.format(Locale.US, "%.1f", efficiency * 100) + "%"));
         textList.add(Component.literal("\u00a77Transfer Limit: \u00a76" +
@@ -266,7 +266,7 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
             String dimension = info.pos.dimension().location().toString();
 
             textList.add(Component.literal(directionColor + directionLabel + " \u00a7f" + info.amperage + "A " +
-                            connectionTier + " " + info.machineType + " \u00a77" + amount + " EU/t")
+                    connectionTier + " " + info.machineType + " \u00a77" + amount + " EU/t")
                     .withStyle(style -> style
                             .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                     Component.literal("\u00a7ePos: " + pos + "\n\u00a77Dim: " + dimension +

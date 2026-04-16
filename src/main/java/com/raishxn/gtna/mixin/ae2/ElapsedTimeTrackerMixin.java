@@ -1,10 +1,8 @@
 package com.raishxn.gtna.mixin.ae2;
 
-import com.raishxn.gtna.integration.ae2.crafting.IGTNAElapsedTimeTracker;
-
 import appeng.api.stacks.AEKeyType;
 import appeng.crafting.execution.ElapsedTimeTracker;
-
+import com.raishxn.gtna.integration.ae2.crafting.IGTNAElapsedTimeTracker;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 

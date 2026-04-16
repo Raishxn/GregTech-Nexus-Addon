@@ -1,8 +1,5 @@
 package com.raishxn.gtna.integration.ae2.crafting;
 
-import com.raishxn.gtna.GTNACORE;
-import com.raishxn.gtna.integration.ae2.pattern.IParallelPatternDetails;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -34,13 +31,14 @@ import appeng.crafting.inv.ListCraftingInventory;
 import appeng.hooks.ticking.TickHandler;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.me.service.CraftingService;
+import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.integration.ae2.pattern.IParallelPatternDetails;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
-
-import org.jetbrains.annotations.Nullable;
 
 public class GTNAOptimizedCraftingCpuLogic extends CraftingCpuLogic {
 
@@ -57,7 +55,8 @@ public class GTNAOptimizedCraftingCpuLogic extends CraftingCpuLogic {
     }
 
     @Override
-    public ICraftingSubmitResult trySubmitJob(IGrid grid, ICraftingPlan plan, IActionSource src, @Nullable ICraftingRequester requester) {
+    public ICraftingSubmitResult trySubmitJob(IGrid grid, ICraftingPlan plan, IActionSource src,
+                                              @Nullable ICraftingRequester requester) {
         if (this.job != null) return CraftingSubmitResult.CPU_BUSY;
         if (!cluster.isActive()) return CraftingSubmitResult.CPU_OFFLINE;
         if (cluster.getAvailableStorage() < plan.bytes()) return CraftingSubmitResult.CPU_TOO_SMALL;
@@ -121,12 +120,14 @@ public class GTNAOptimizedCraftingCpuLogic extends CraftingCpuLogic {
     }
 
     @Override
-    public int executeCrafting(int maxPatterns, CraftingService craftingService, IEnergyService energyService, Level level) {
+    public int executeCrafting(int maxPatterns, CraftingService craftingService, IEnergyService energyService,
+                               Level level) {
         if (job == null) return 0;
 
         int pushedPatterns = 0;
         var it = job.tasks.entrySet().iterator();
-        taskLoop: while (it.hasNext()) {
+        taskLoop:
+        while (it.hasNext()) {
             var task = it.next();
             if (task.getValue().value <= 0) {
                 it.remove();
@@ -163,7 +164,8 @@ public class GTNAOptimizedCraftingCpuLogic extends CraftingCpuLogic {
             KeyCounter expectedOutputs = new KeyCounter();
             KeyCounter expectedContainerItems = new KeyCounter();
             @Nullable
-            KeyCounter[] craftingContainer = CraftingCpuHelper.extractPatternInputs(details, inventory, level, expectedOutputs, expectedContainerItems);
+            KeyCounter[] craftingContainer = CraftingCpuHelper.extractPatternInputs(details, inventory, level,
+                    expectedOutputs, expectedContainerItems);
             if (craftingContainer == null) {
                 GTNACORE.LOGGER.debug(
                         "[GTNA] CPU {} could not extract inputs for pattern {} at parallel {}",
@@ -186,7 +188,8 @@ public class GTNAOptimizedCraftingCpuLogic extends CraftingCpuLogic {
                 }
 
                 double patternPower = CraftingCpuHelper.calculatePatternPower(craftingContainer) * parallel;
-                if (energyService.extractAEPower(patternPower, Actionable.SIMULATE, PowerMultiplier.CONFIG) < patternPower - 0.01) {
+                if (energyService.extractAEPower(patternPower, Actionable.SIMULATE, PowerMultiplier.CONFIG) <
+                        patternPower - 0.01) {
                     break;
                 }
 
@@ -201,11 +204,14 @@ public class GTNAOptimizedCraftingCpuLogic extends CraftingCpuLogic {
                     pushedPatterns++;
 
                     for (var expectedOutput : expectedOutputs) {
-                        job.waitingFor.insert(expectedOutput.getKey(), expectedOutput.getLongValue(), Actionable.MODULATE);
+                        job.waitingFor.insert(expectedOutput.getKey(), expectedOutput.getLongValue(),
+                                Actionable.MODULATE);
                     }
                     for (var expectedContainerItem : expectedContainerItems) {
-                        job.waitingFor.insert(expectedContainerItem.getKey(), expectedContainerItem.getLongValue(), Actionable.MODULATE);
-                        job.tracker.gtna$addMaxItems(expectedContainerItem.getLongValue(), expectedContainerItem.getKey().getType());
+                        job.waitingFor.insert(expectedContainerItem.getKey(), expectedContainerItem.getLongValue(),
+                                Actionable.MODULATE);
+                        job.tracker.gtna$addMaxItems(expectedContainerItem.getLongValue(),
+                                expectedContainerItem.getKey().getType());
                     }
 
                     cluster.markDirty();
@@ -219,7 +225,8 @@ public class GTNAOptimizedCraftingCpuLogic extends CraftingCpuLogic {
 
                     expectedOutputs.reset();
                     expectedContainerItems.reset();
-                    craftingContainer = CraftingCpuHelper.extractPatternInputs(details, inventory, level, expectedOutputs, expectedContainerItems);
+                    craftingContainer = CraftingCpuHelper.extractPatternInputs(details, inventory, level,
+                            expectedOutputs, expectedContainerItems);
                 }
             }
 
@@ -241,7 +248,8 @@ public class GTNAOptimizedCraftingCpuLogic extends CraftingCpuLogic {
         for (IPatternDetails.IInput input : details.getInputs()) {
             long extracted = 0L;
             for (var stack : input.getPossibleInputs()) {
-                extracted += inventory.extract(stack.what(), Long.MAX_VALUE, Actionable.SIMULATE) / Math.max(1L, stack.amount());
+                extracted += inventory.extract(stack.what(), Long.MAX_VALUE, Actionable.SIMULATE) /
+                        Math.max(1L, stack.amount());
             }
             maxParallel = Math.min(maxParallel, extracted / Math.max(1L, input.getMultiplier()));
             if (maxParallel < 1L) {
@@ -444,7 +452,8 @@ public class GTNAOptimizedCraftingCpuLogic extends CraftingCpuLogic {
             }
         }
 
-        notifyJobOwner(job, success ? CraftingJobStatusPacket.Status.FINISHED : CraftingJobStatusPacket.Status.CANCELLED);
+        notifyJobOwner(job,
+                success ? CraftingJobStatusPacket.Status.FINISHED : CraftingJobStatusPacket.Status.CANCELLED);
         this.job = null;
         this.storeItems();
     }

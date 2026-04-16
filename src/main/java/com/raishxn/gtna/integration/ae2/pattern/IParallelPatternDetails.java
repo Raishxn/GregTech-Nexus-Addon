@@ -3,7 +3,6 @@ package com.raishxn.gtna.integration.ae2.pattern;
 import net.minecraft.world.level.Level;
 
 import appeng.api.crafting.IPatternDetails;
-
 import org.jetbrains.annotations.Nullable;
 
 public interface IParallelPatternDetails extends IPatternDetails {
@@ -16,7 +15,8 @@ public interface IParallelPatternDetails extends IPatternDetails {
 
     long getParallel();
 
-    static @Nullable IParallelPatternDetails of(@Nullable IPatternDetails details, @Nullable Level level, long parallelCount) {
+    static @Nullable IParallelPatternDetails of(@Nullable IPatternDetails details, @Nullable Level level,
+                                                long parallelCount) {
         if (details == null || level == null) {
             return null;
         }

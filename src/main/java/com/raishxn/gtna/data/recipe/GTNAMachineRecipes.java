@@ -1,9 +1,9 @@
 package com.raishxn.gtna.data.recipe;
 
-import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.recipe.ingredient.IntCircuitIngredient;
 import com.gregtechceu.gtceu.common.data.*;
 import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
@@ -16,10 +16,9 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
+import appeng.core.definitions.AEBlocks;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.data.*;
-import com.raishxn.gtna.common.data.condition.RestrictedItemsEnabledCondition;
-import appeng.core.definitions.AEBlocks;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -54,7 +53,8 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
         if (enabled(GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH)) {
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH.asStack().getItem())
+            ShapedRecipeBuilder
+                    .shaped(RecipeCategory.MISC, GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
                     .pattern("ABA")
@@ -77,7 +77,8 @@ public class GTNAMachineRecipes {
                     .define('D', GTBlocks.CASING_BRONZE_BRICKS.get())
                     .define('E', GTBlocks.CASING_STEEL_SOLID.get())
                     .unlockedBy("has_solar_boiling_cell",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNABlocks.SOLAR_BOILING_CELL.get().asItem()))
+                            InventoryChangeTrigger.TriggerInstance
+                                    .hasItems(GTNABlocks.SOLAR_BOILING_CELL.get().asItem()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_FURNACE)) {
@@ -181,7 +182,8 @@ public class GTNAMachineRecipes {
                     .define('E', Items.LAVA_BUCKET)
                     .unlockedBy("has_clay_compound_frame",
                             InventoryChangeTrigger.TriggerInstance
-                                    .hasItems(ChemicalHelper.get(TagPrefix.frameGt, GTNAMaterials.ClayCompound).getItem()))
+                                    .hasItems(ChemicalHelper.get(TagPrefix.frameGt, GTNAMaterials.ClayCompound)
+                                            .getItem()))
                     .save(provider);
         }
 
@@ -207,7 +209,8 @@ public class GTNAMachineRecipes {
                     .define('D', GTBlocks.CASING_STEEL_GEARBOX.get())
                     .define('E', GTNAItems.HYDRAULIC_CONVEYOR.get())
                     .unlockedBy("has_hydraulic_casing",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNABlocks.HYDRAULIC_ASSEMBLER_CASING.get()))
+                            InventoryChangeTrigger.TriggerInstance
+                                    .hasItems(GTNABlocks.HYDRAULIC_ASSEMBLER_CASING.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.STEAM_WOODCUTTER)) {
@@ -225,7 +228,8 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
         if (enabled(GTNAMachines.LEAP_FORWARD_ONE_BLAST_FURNACE)) {
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LEAP_FORWARD_ONE_BLAST_FURNACE.asStack().getItem())
+            ShapedRecipeBuilder
+                    .shaped(RecipeCategory.MISC, GTNAMachines.LEAP_FORWARD_ONE_BLAST_FURNACE.asStack().getItem())
                     .pattern("ABA")
                     .pattern("BCB")
                     .pattern("ABA")
@@ -264,33 +268,35 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
 
-        if (enabled(GTNAMachines.INFINITE_STEAM_INPUT_BUS)) GTNARecipeVisibility.saveRestricted(provider, GTNACORE.id("infinite_steam_input_bus"),
-                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                                GTNAMachines.INFINITE_STEAM_INPUT_BUS.asStack().getItem())
-                        .pattern("ABA")
-                        .pattern("CDC")
-                        .pattern("ABA")
-                        .define('A', GTMachines.BRONZE_CRATE.asStack().getItem())
-                        .define('B', GTNAItems.HYDRAULIC_CONVEYOR.get())
-                        .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                        .define('D', GTMachines.STEAM_IMPORT_BUS.asStack().getItem())
-                        .unlockedBy("has_steam_import", InventoryChangeTrigger.TriggerInstance
-                                .hasItems(GTMachines.STEAM_IMPORT_BUS.asStack().getItem()))
-                        .save(restrictedProvider));
+        if (enabled(GTNAMachines.INFINITE_STEAM_INPUT_BUS))
+            GTNARecipeVisibility.saveRestricted(provider, GTNACORE.id("infinite_steam_input_bus"),
+                    restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                            GTNAMachines.INFINITE_STEAM_INPUT_BUS.asStack().getItem())
+                            .pattern("ABA")
+                            .pattern("CDC")
+                            .pattern("ABA")
+                            .define('A', GTMachines.BRONZE_CRATE.asStack().getItem())
+                            .define('B', GTNAItems.HYDRAULIC_CONVEYOR.get())
+                            .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                            .define('D', GTMachines.STEAM_IMPORT_BUS.asStack().getItem())
+                            .unlockedBy("has_steam_import", InventoryChangeTrigger.TriggerInstance
+                                    .hasItems(GTMachines.STEAM_IMPORT_BUS.asStack().getItem()))
+                            .save(restrictedProvider));
 
-        if (enabled(GTNAMachines.OUTPUT_BOOST_STEAM_OUTPUT_BUS)) GTNARecipeVisibility.saveRestricted(provider, GTNACORE.id("output_boost_steam_output_bus"),
-                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                                GTNAMachines.OUTPUT_BOOST_STEAM_OUTPUT_BUS.asStack().getItem())
-                        .pattern("ABA")
-                        .pattern("CDC")
-                        .pattern("ABA")
-                        .define('A', GTMachines.BRONZE_CRATE.asStack().getItem())
-                        .define('B', GTNAItems.HYDRAULIC_ARM.get())
-                        .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                        .define('D', GTMachines.STEAM_EXPORT_BUS.asStack().getItem())
-                        .unlockedBy("has_steam_export", InventoryChangeTrigger.TriggerInstance
-                                .hasItems(GTMachines.STEAM_EXPORT_BUS.asStack().getItem()))
-                        .save(restrictedProvider));
+        if (enabled(GTNAMachines.OUTPUT_BOOST_STEAM_OUTPUT_BUS))
+            GTNARecipeVisibility.saveRestricted(provider, GTNACORE.id("output_boost_steam_output_bus"),
+                    restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                            GTNAMachines.OUTPUT_BOOST_STEAM_OUTPUT_BUS.asStack().getItem())
+                            .pattern("ABA")
+                            .pattern("CDC")
+                            .pattern("ABA")
+                            .define('A', GTMachines.BRONZE_CRATE.asStack().getItem())
+                            .define('B', GTNAItems.HYDRAULIC_ARM.get())
+                            .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                            .define('D', GTMachines.STEAM_EXPORT_BUS.asStack().getItem())
+                            .unlockedBy("has_steam_export", InventoryChangeTrigger.TriggerInstance
+                                    .hasItems(GTMachines.STEAM_EXPORT_BUS.asStack().getItem()))
+                            .save(restrictedProvider));
 
         // --- Wireless Steam Input Hatch (STEEL) ---
         if (enabled(GTNAMachines.WIRELESS_STEAM_INPUT_HATCH, GTNAMachines.WIRELESS_STEAM_INPUT_HATCH_STEEL)) {
@@ -324,7 +330,8 @@ public class GTNAMachineRecipes {
                     .define('C', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Stronze).getItem())
                     .define('D', GTMultiMachines.COKE_OVEN.asStack().getItem())
                     .unlockedBy("has_coke_oven",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTMultiMachines.COKE_OVEN.asStack().getItem()))
+                            InventoryChangeTrigger.TriggerInstance
+                                    .hasItems(GTMultiMachines.COKE_OVEN.asStack().getItem()))
                     .save(provider);
         }
 
@@ -353,7 +360,8 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
 
-        if (enabled(GTNAMachines.VOID_MINER_STEAM_GATE_AGED, GTNAMachines.LARGE_STEAM_FURNACE, GTNAMachines.LARGE_STEAM_CRUSHER)) {
+        if (enabled(GTNAMachines.VOID_MINER_STEAM_GATE_AGED, GTNAMachines.LARGE_STEAM_FURNACE,
+                GTNAMachines.LARGE_STEAM_CRUSHER)) {
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("void_miner_steam_gate_aged")
                     .inputItems(GTNAMachines.LARGE_STEAM_FURNACE.asStack().getItem(), 1)
                     .inputItems(GTNAMachines.LARGE_STEAM_CRUSHER.asStack().getItem(), 1)

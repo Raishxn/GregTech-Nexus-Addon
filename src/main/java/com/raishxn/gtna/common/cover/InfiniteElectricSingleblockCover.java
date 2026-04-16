@@ -11,7 +11,8 @@ import net.minecraft.core.Direction;
 
 public class InfiniteElectricSingleblockCover extends CoverBehavior {
 
-    public InfiniteElectricSingleblockCover(CoverDefinition definition, ICoverable coverHolder, Direction attachedSide) {
+    public InfiniteElectricSingleblockCover(CoverDefinition definition, ICoverable coverHolder,
+                                            Direction attachedSide) {
         super(definition, coverHolder, attachedSide);
     }
 

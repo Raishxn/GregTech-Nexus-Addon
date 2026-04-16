@@ -17,10 +17,10 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 
-import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.GTNACORE;
-import com.raishxn.gtna.common.data.GTNAItems;
+import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.common.data.GTNABlocks;
+import com.raishxn.gtna.common.data.GTNAItems;
 import com.raishxn.gtna.common.data.GTNAMachines2;
 import com.raishxn.gtna.common.data.GTNAMaterials;
 import com.raishxn.gtna.common.data.GTNARecipeType;
@@ -400,7 +400,7 @@ public class GTNAItemRecipes {
 
         GTNARecipeVisibility.saveRestricted(provider, GTNACORE.id("infinite_steam_singleblock_cover"),
                 restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                                GTNAItems.INFINITE_STEAM_SINGLEBLOCK_COVER.get())
+                        GTNAItems.INFINITE_STEAM_SINGLEBLOCK_COVER.get())
                         .pattern("ABA")
                         .pattern("CDC")
                         .pattern("AEA")
@@ -428,7 +428,7 @@ public class GTNAItemRecipes {
 
         GTNARecipeVisibility.saveRestricted(provider, GTNACORE.id("infinite_electric_singleblock_cover"),
                 restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                                GTNAItems.INFINITE_ELECTRIC_SINGLEBLOCK_COVER.get())
+                        GTNAItems.INFINITE_ELECTRIC_SINGLEBLOCK_COVER.get())
                         .pattern("ABA")
                         .pattern("CDC")
                         .pattern("AEA")
