@@ -207,8 +207,8 @@ public class GTNAItems {
                 .register();
 
         INFINITE_STEAM_SINGLEBLOCK_COVER = REGISTRATE.item("infinite_steam_singleblock_cover", ComponentItem::create)
-                .lang("Steam Infinity Cover")
-                .properties(stack -> stack.stacksTo(1))
+                .lang("Infinite Steam Singleblock Cover")
+                .properties(stack -> stack.stacksTo(64))
                 .onRegister(attach(new CoverPlaceBehavior(GTNACovers.INFINITE_STEAM_SINGLEBLOCK_COVER)))
                 .model((ctx, provider) -> provider.generated(ctx,
                         GTNACORE.id("item/734")))
@@ -216,8 +216,8 @@ public class GTNAItems {
 
         INFINITE_ELECTRIC_SINGLEBLOCK_COVER = REGISTRATE.item("infinite_electric_singleblock_cover",
                 ComponentItem::create)
-                .lang("Electric Infinity Cover")
-                .properties(stack -> stack.stacksTo(1))
+                .lang("Infinite Electric Singleblock Cover")
+                .properties(stack -> stack.stacksTo(64))
                 .onRegister(attach(new CoverPlaceBehavior(GTNACovers.INFINITE_ELECTRIC_SINGLEBLOCK_COVER)))
                 .model((ctx, provider) -> provider.generated(ctx,
                         GTNACORE.id("item/733")))

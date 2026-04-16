@@ -74,10 +74,13 @@ public class GTNATabDisplayItemsGenerator implements CreativeModeTab.DisplayItem
 
     private boolean shouldInclude(Item item) {
         String restrictedGroup = getRestrictedGroup(item);
-        if (restrictedGroup != null && (!ConfigHolder.isRestrictedGroupAllowed(restrictedGroup) ||
-                (ConfigHolder.shouldHideRestrictedItemsFromJei() &&
-                        GTNABalance.isRestrictedGroupHiddenFromJei(restrictedGroup)))) {
-            return false;
+        if (restrictedGroup != null) {
+            boolean allowed = ConfigHolder.isRestrictedGroupAllowed(restrictedGroup);
+            boolean shouldHideWhenDisabled = ConfigHolder.shouldHideRestrictedItemsFromJei() &&
+                    GTNABalance.isRestrictedGroupHiddenFromJei(restrictedGroup);
+            if (!allowed && shouldHideWhenDisabled) {
+                return false;
+            }
         }
         return switch (tabType) {
             case "material_items" -> isMaterialItem(item);
