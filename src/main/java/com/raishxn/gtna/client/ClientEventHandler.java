@@ -20,7 +20,7 @@ public class ClientEventHandler {
         if (event.phase == TickEvent.Phase.END && event.side.isClient()) {
             Player player = event.player;
             if (player == Minecraft.getInstance().player) {
-                if (ConfigHolder.INSTANCE.disableDrift && player.getAbilities().flying) {
+                if (ConfigHolder.INSTANCE.client.disableFlyInertia && player.getAbilities().flying) {
                     if (player.zza == 0 && player.xxa == 0) {
                         player.setDeltaMovement(player.getDeltaMovement().multiply(0.0, 1.0, 0.0));
                     }

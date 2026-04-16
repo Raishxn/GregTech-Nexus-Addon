@@ -30,8 +30,10 @@ import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostItemBusPartMac
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftPatternPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
+import com.raishxn.gtna.config.ConfigHolder;
 
 import java.util.Locale;
+import java.util.function.Supplier;
 
 import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
 import static com.gregtechceu.gtceu.api.pattern.Predicates.*;
@@ -73,7 +75,7 @@ public class GTNAMachines2 {
         }
     }
 
-    public static final MultiblockMachineDefinition DURATION_TESTER = REGISTRATE
+    public static final MultiblockMachineDefinition DURATION_TESTER = registerMachine("durationTester", () -> REGISTRATE
             .multiblock("duration_tester", WorkableElectricMultipleRecipesMachine::new)
             .rotationState(RotationState.NON_Y_AXIS)
             .recipeType(GTRecipeTypes.ASSEMBLER_RECIPES)
@@ -98,14 +100,18 @@ public class GTNAMachines2 {
                     GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
                     GTCEu.id("block/multiblock/implosion_compressor"))
             .tooltips(Component.literal("§6Machine for testing Duration & Accelerate Hatches"))
-            .register();
+            .register());
 
     private static void registerPatternBuffers() {
-        ME_MINI_PATTERN_BUFFER = registerPatternBuffer("me_mini_pattern_buffer", GTValues.LuV, 9);
-        ME_PATTERN_BUFFER = registerPatternBuffer("me_pattern_buffer", GTValues.ZPM, 21);
-        ME_ADVANCED_PATTERN_BUFFER = registerPatternBuffer("me_advanced_pattern_buffer", GTValues.UV, 32);
-        ME_ULTIMATE_PATTERN_BUFFER = registerPatternBuffer("me_ultimate_pattern_buffer", GTValues.UHV, 72);
-        ME_CRAFT_PATTERN_HATCH = registerCraftPatternHatch();
+        ME_MINI_PATTERN_BUFFER = ConfigHolder.isHatchEnabled("meMiniPatternBuffer") ?
+                registerPatternBuffer("me_mini_pattern_buffer", GTValues.LuV, 9) : null;
+        ME_PATTERN_BUFFER = ConfigHolder.isHatchEnabled("mePatternBuffer") ?
+                registerPatternBuffer("me_pattern_buffer", GTValues.ZPM, 21) : null;
+        ME_ADVANCED_PATTERN_BUFFER = ConfigHolder.isHatchEnabled("meAdvancedPatternBuffer") ?
+                registerPatternBuffer("me_advanced_pattern_buffer", GTValues.UV, 32) : null;
+        ME_ULTIMATE_PATTERN_BUFFER = ConfigHolder.isHatchEnabled("meUltimatePatternBuffer") ?
+                registerPatternBuffer("me_ultimate_pattern_buffer", GTValues.UHV, 72) : null;
+        ME_CRAFT_PATTERN_HATCH = ConfigHolder.isHatchEnabled("meCraftPatternHatch") ? registerCraftPatternHatch() : null;
     }
 
     private static MachineDefinition registerPatternBuffer(String id, int tier, int slotCount) {
@@ -145,6 +151,7 @@ public class GTNAMachines2 {
     }
 
     private static void registerParallelHatch(int tier, int parallelAmount) {
+        if (!ConfigHolder.isHatchEnabled("advancedParallelHatches")) return;
         GTNACORE.LOGGER.info("TENTANDO REGISTRAR PARALLEL HATCH: " + tier);
         String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
         int mkLevel = tier - 8;
@@ -184,6 +191,7 @@ public class GTNAMachines2 {
     }
 
     private static void registerAccelerateHatch(int tier) {
+        if (!ConfigHolder.isHatchEnabled("accelerateHatches")) return;
         String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
         String regName = "accelerate_hatch_" + tierName;
         int mkLevel = tier;
@@ -223,6 +231,7 @@ public class GTNAMachines2 {
     }
 
     private static void registerThreadHatches() {
+        if (!ConfigHolder.isHatchEnabled("threadHatches")) return;
         int[] tiers = {
                 GTValues.ZPM,
                 GTValues.UV, GTValues.UHV, GTValues.UEV,
@@ -268,6 +277,7 @@ public class GTNAMachines2 {
     }
 
     private static void registerOutputBoostHatch(int tier) {
+        if (!ConfigHolder.isHatchEnabled("outputBoostHatches")) return;
         String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
         String regName = "output_boost_hatch_" + tierName;
         var texturePath = GTCEu.id("block/overlay/machine/overlay_hatch");
@@ -281,7 +291,7 @@ public class GTNAMachines2 {
                 .machine(regName, holder -> new OutputBoostHatchPartMachine(holder, tier))
                 .tier(tier)
                 .rotationState(RotationState.ALL)
-                .abilities(GTNAPartAbility.OUTPUT_BOOST_HATCH)
+                .abilities(GTNAPartAbility.OUTPUT_BOOST_HATCH, PartAbility.EXPORT_ITEMS, PartAbility.EXPORT_FLUIDS)
                 .modelProperty(IS_FORMED, false)
                 .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
                 .model((ctx, prov, builder) -> {
@@ -303,6 +313,7 @@ public class GTNAMachines2 {
     }
 
     private static void registerInfiniteInputBus(int tier) {
+        if (!ConfigHolder.isHatchEnabled("infiniteInputBuses")) return;
         String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
         INFINITE_INPUT_BUSES[tier] = REGISTRATE
                 .machine("infinite_input_bus_" + tierName, holder -> new InfiniteInputBusPartMachine(holder, tier))
@@ -327,6 +338,7 @@ public class GTNAMachines2 {
     }
 
     private static void registerInfiniteInputHatch(int tier) {
+        if (!ConfigHolder.isHatchEnabled("infiniteInputHatches")) return;
         String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
         INFINITE_INPUT_HATCHES[tier] = REGISTRATE
                 .machine("infinite_input_hatch_" + tierName, holder -> new InfiniteInputHatchPartMachine(holder, tier))
@@ -351,6 +363,7 @@ public class GTNAMachines2 {
     }
 
     private static void registerOutputBoostItemBus(int tier) {
+        if (!ConfigHolder.isHatchEnabled("outputBoostItemBuses")) return;
         String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
         int multiplier = OutputBoostHatchPartMachine.getMultiplierForTier(tier);
         OUTPUT_BOOST_ITEM_BUSES[tier] = REGISTRATE
@@ -376,6 +389,7 @@ public class GTNAMachines2 {
     }
 
     private static void registerOutputBoostFluidHatch(int tier) {
+        if (!ConfigHolder.isHatchEnabled("outputBoostFluidHatches")) return;
         String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
         int multiplier = OutputBoostHatchPartMachine.getMultiplierForTier(tier);
         OUTPUT_BOOST_FLUID_HATCHES[tier] = REGISTRATE
@@ -402,6 +416,7 @@ public class GTNAMachines2 {
     }
 
     private static void registerOverclockHatches() {
+        if (!ConfigHolder.isHatchEnabled("overclockHatches")) return;
         int[] tiers = {
                 GTValues.UV, GTValues.UHV, GTValues.UEV,
                 GTValues.UIV, GTValues.UXV, GTValues.OpV, GTValues.MAX
@@ -455,5 +470,9 @@ public class GTNAMachines2 {
                             Component.translatable("gtceu.part_sharing.disabled"))
                     .register();
         }
+    }
+
+    private static <T extends MachineDefinition> T registerMachine(String machineId, Supplier<T> supplier) {
+        return ConfigHolder.isMachineEnabled(machineId) ? supplier.get() : null;
     }
 }

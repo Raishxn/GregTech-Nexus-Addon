@@ -480,25 +480,27 @@ public class GTNABlockRecipes {
                         .EUt(2013265920))
                 .save(provider);
 
-        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_spacetime_compression_field_generator")
-                .inputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get())
-                .inputItems(GTNABlocks.DIMENSIONAL_STABILITY_CASING.get())
-                .inputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.get())
-                .inputItems(GTNABlocks.ANNIHILATE_CORE.get())
-                .inputItems(GTNAMachines.ARTIFICIAL_STAR.asStack().getItem())
-                .inputItems(GTItems.FIELD_GENERATOR_OpV, 2)
-                .inputItems(CustomTags.OpV_CIRCUITS, 2)
-                .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 8)
-                .inputFluids(GTMaterials.SolderingAlloy.getFluid(4608))
-                .inputFluids(GTMaterials.Europium.getFluid(4608))
-                .inputFluids(GTMaterials.Naquadria.getFluid(4608))
-                .outputItems(GTNABlocks.SPACETIME_COMPRESSION_FIELD_GENERATOR.get())
-                .EUt(8053063680L)
-                .duration(1200)
-                .stationResearch(b -> b
-                        .researchStack(GTNABlocks.DIMENSIONAL_STABILITY_CASING.asStack())
-                        .CWUt(8192)
-                        .EUt(8053063680L))
-                .save(provider);
+        if (GTNAMachines.ARTIFICIAL_STAR != null) {
+            GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_spacetime_compression_field_generator")
+                    .inputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get())
+                    .inputItems(GTNABlocks.DIMENSIONAL_STABILITY_CASING.get())
+                    .inputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.get())
+                    .inputItems(GTNABlocks.ANNIHILATE_CORE.get())
+                    .inputItems(GTNAMachines.ARTIFICIAL_STAR.asStack().getItem())
+                    .inputItems(GTItems.FIELD_GENERATOR_OpV, 2)
+                    .inputItems(CustomTags.OpV_CIRCUITS, 2)
+                    .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 8)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(4608))
+                    .inputFluids(GTMaterials.Europium.getFluid(4608))
+                    .inputFluids(GTMaterials.Naquadria.getFluid(4608))
+                    .outputItems(GTNABlocks.SPACETIME_COMPRESSION_FIELD_GENERATOR.get())
+                    .EUt(8053063680L)
+                    .duration(1200)
+                    .stationResearch(b -> b
+                            .researchStack(GTNABlocks.DIMENSIONAL_STABILITY_CASING.asStack())
+                            .CWUt(8192)
+                            .EUt(8053063680L))
+                    .save(provider);
+        }
     }
 }

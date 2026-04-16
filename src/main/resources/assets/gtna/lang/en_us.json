@@ -110,6 +110,8 @@
   "death.attack.reality_rip": "%1$s was ripped out of reality",
   "death.attack.reality_rip.player": "%1$s was ripped out of reality by %2$s",
   "item.gtna.precision_steam_component": "Precision Steam Component",
+  "item.gtna.infinite_steam_singleblock_cover": "Infinite Steam Singleblock Cover",
+  "item.gtna.infinite_electric_singleblock_cover": "Infinite Electric Singleblock Cover",
 
   "gtna.registry.add": "GregTech Nexus Addon",
   "gtna.machine.craft_pattern_hatch.tooltip": "Dedicated AE2 crafting hatch for the Nexus Molecular Forge",
@@ -154,8 +156,8 @@
   "gtna.tooltip.steam_manufacturer.parallel": "Max Parallel: 16",
   "gtna.tooltip.steam_manufacturer.type": "Recipe Type: Hydraulic Manufacturing",
   "gtna.tooltip.huge_steam_bus": "Huge Steam Item Bus: Stores 54 slots.",
-  "item.gtna.infinite_steam_singleblock_cover.tooltip": "Steam singleblock cheat cover: infinite steam, no input consumption, 5x speed, 10x outputs.",
-  "item.gtna.infinite_electric_singleblock_cover.tooltip": "Electric singleblock cheat cover: infinite power, no input consumption, 5x speed, 10x outputs.",
+  "item.gtna.infinite_steam_singleblock_cover.tooltip": "Singleblock steam cover with infinite steam, free inputs, 5x speed, and 10x outputs.",
+  "item.gtna.infinite_electric_singleblock_cover.tooltip": "Singleblock electric cover with infinite power, free inputs, 5x speed, and 10x outputs.",
 
   "config.gtna.option.gameplay": "Gameplay",
   "config.gtna.option.client": "Client",

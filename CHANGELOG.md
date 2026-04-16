@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.3.0] - 2026-04-16
+
+### Added
+- **Steam Logistics Expansion**:
+  - Added `Wireless Steam Input Hatch` and `Wireless Steam Output Hatch` in bronze and steel variants.
+  - Added `Huge Steam Input Bus` and `Huge Steam Output Bus` for higher-throughput steam multiblocks.
+  - Added `Infinite Steam Input Bus` for creative and testing workflows.
+  - Added `Output Boost Steam Output Bus` with tier-based output multiplication.
+- **Infinity Covers**:
+  - Added `Steam Infinity Cover` for feeding singleblock steam machines without a conventional boiler chain.
+  - Added `Electric Infinity Cover` for singleblock electric machine testing and automation setups.
+- **Nexus Machine Expansion**:
+  - Added `Nexus Assembly Forge` multiblock.
+  - Added pattern-aware internal batching and craft pattern hatch aggregation for the Nexus forge UI and processing flow.
+  - Added `Nexus Structure Terminal` to support multiblock structure handling.
+- **Large Steam Multiblocks**:
+  - Added `Large Steam Hammer`.
+  - Added `Large Steam Compressor`.
+  - Added `Large Steam Extractor`.
+  - Added `Large Steam Ore Washer`.
+  - Reused reference-inspired multiblock layouts based on the addon structure files already bundled in the project.
+  - Hooked controller models to GTCEu overlays to keep the new steam line visually aligned with the rest of the pack.
+
+### Changed
+- **Steam Progression**:
+  - Expanded the early steam roster with stronger multiblock options aimed at reducing beginner grind while keeping steam-age identity.
+  - Added adjustable parallel controls to the new `Large Steam` machines so throughput can be tuned in-machine.
+- **Recipe Coverage**:
+  - Added crafting and assembler coverage for the new infinity covers.
+  - Added machine crafting recipes for the new `Large Steam` controller blocks using the addon's hydraulic and precision steam component progression.
+- **Nexus Forge UX**:
+  - Improved the `Nexus Assembly Forge` display text to surface craft-pattern hatch count and loaded pattern totals directly on the machine.
+- **Config and Gameplay Controls**:
+  - Expanded `gtna` config entries with grouped client, gameplay, machine, and Nexus balancing options.
+  - Added restriction messaging for Journey mode and `Self Restraint`-gated items to better surface when recipes are intentionally disabled.
+
 ## [0.2.0] - 2026-04-01
 
 ### Added

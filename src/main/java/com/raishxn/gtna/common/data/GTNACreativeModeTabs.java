@@ -62,7 +62,9 @@ public class GTNACreativeModeTabs {
     public static RegistryEntry<CreativeModeTab> MACHINES = REGISTRATE.defaultCreativeTab("gtna_machines",
             builder -> builder.displayItems(new GTNATabDisplayItemsGenerator("machines", REGISTRATE))
                     .title(REGISTRATE.addLang("itemGroup", GTNACORE.id("creative_tab.machines"), "GTNA Machines"))
-                    .icon(GTNAMachines.WIRELESS_STEAM_INPUT_HATCH::asStack)
+                    .icon(() -> GTNAMachines.WIRELESS_STEAM_INPUT_HATCH != null ?
+                            GTNAMachines.WIRELESS_STEAM_INPUT_HATCH.asStack() :
+                            GTNAItems.NEXUS_LINKER.asStack())
                     .build())
             .register();
 

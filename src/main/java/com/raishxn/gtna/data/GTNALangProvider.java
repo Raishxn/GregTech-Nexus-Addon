@@ -212,6 +212,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("item.gtna.pattern_buffer_upgrade_21", "Pattern Buffer Expansion Card");
         add("item.gtna.pattern_buffer_upgrade_32", "Pattern Buffer Precision Card");
         add("item.gtna.pattern_buffer_upgrade_72", "Pattern Buffer Ascension Card");
+        add("item.gtna.infinite_steam_singleblock_cover", "Infinite Steam Singleblock Cover");
+        add("item.gtna.infinite_electric_singleblock_cover", "Infinite Electric Singleblock Cover");
         add("item.gtna.pattern_buffer_upgrader.tooltip.use",
                 "Right-click a lower tier GTNA Pattern Buffer to upgrade it");
         add("item.gtna.pattern_buffer_upgrader.tooltip.keep_data",
@@ -483,6 +485,33 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.large_steam_alloy.speed", "Speed: 43% faster than Singleblock.");
         add("gtna.tooltip.large_steam_alloy.parallel", "Parallel: Processes up to 64 items.");
         add("gtna.tooltip.large_steam_alloy.structure", "Structure: 3x3x3 Cube (Hollow).");
+        add("block.gtna.large_steam_hammer", "Large Steam Hammer");
+        add("gtna.tooltip.large_steam_hammer.desc", "Heavy steam forge hammer based on the GTNH addon layout.");
+        add("gtna.tooltip.large_steam_hammer.speed", "Speed: 100% faster than singleblock.");
+        add("gtna.tooltip.large_steam_hammer.parallel", "Parallel: Processes up to 64 items.");
+        add("gtna.tooltip.large_steam_hammer.structure",
+                "Structure: 7x13x7 with iron core, bronze frames, and glass columns.");
+        add("block.gtna.large_steam_compressor", "Large Steam Compressor");
+        add("gtna.tooltip.large_steam_compressor.desc",
+                "High-throughput steam compressor using the GTNH reference shell.");
+        add("gtna.tooltip.large_steam_compressor.speed", "Speed: 150% faster than singleblock.");
+        add("gtna.tooltip.large_steam_compressor.parallel", "Parallel: Processes up to 48 items.");
+        add("gtna.tooltip.large_steam_compressor.structure",
+                "Structure: 7x7x7 with framed compression chamber and glass sides.");
+        add("block.gtna.large_steam_extractor", "Large Steam Extractor");
+        add("gtna.tooltip.large_steam_extractor.desc",
+                "Steam extractor with the same compact frame from the GTNH reference addon.");
+        add("gtna.tooltip.large_steam_extractor.speed", "Speed: 75% faster than singleblock.");
+        add("gtna.tooltip.large_steam_extractor.parallel", "Parallel: Processes up to 48 items.");
+        add("gtna.tooltip.large_steam_extractor.structure",
+                "Structure: 5x5x5 pressure cage with bronze pipes and glass vents.");
+        add("block.gtna.large_steam_ore_washer", "Large Steam Ore Washer");
+        add("gtna.tooltip.large_steam_ore_washer.desc",
+                "Large steam ore washer using the reference washing basin layout.");
+        add("gtna.tooltip.large_steam_ore_washer.speed", "Speed: 400% faster than singleblock.");
+        add("gtna.tooltip.large_steam_ore_washer.parallel", "Parallel: Processes up to 96 items.");
+        add("gtna.tooltip.large_steam_ore_washer.structure",
+                "Structure: 9x5x9 basin with glass walls and bronze pipe agitators.");
         add("block.gtna.steam_cobbler", "Steam Cobbler");
         add("gtna.tooltip.steam_cobbler.desc", "Advanced Steam Rock Generator.");
         add("gtna.tooltip.steam_cobbler.modes", "Generates various stones based on Programmed Circuits.");
@@ -569,6 +598,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.slaughterhouse", "Industrial Slaughter");
         add("gtna.multiblock.leap_pbf.layers_hud", "Extra Layers: %s");
         add("gtna.multiblock.max_threads", "Max Threads: %s");
+        add("gtna.recipe.condition.restricted_items_disabled", "Disabled by Journey mode or Self Restraint");
 
         // --- Configurações (GUI) ---
         // Drift

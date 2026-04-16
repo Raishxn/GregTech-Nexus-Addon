@@ -1,6 +1,7 @@
 package com.raishxn.gtna.common.data;
 
 import com.gregtechceu.gtceu.api.item.ComponentItem;
+import com.gregtechceu.gtceu.common.item.CoverPlaceBehavior;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -206,18 +207,20 @@ public class GTNAItems {
                 .register();
 
         INFINITE_STEAM_SINGLEBLOCK_COVER = REGISTRATE.item("infinite_steam_singleblock_cover", ComponentItem::create)
-                .lang("Singleblock Steam Infinity Cover")
+                .lang("Steam Infinity Cover")
                 .properties(stack -> stack.stacksTo(1))
+                .onRegister(attach(new CoverPlaceBehavior(GTNACovers.INFINITE_STEAM_SINGLEBLOCK_COVER)))
                 .model((ctx, provider) -> provider.generated(ctx,
-                        GTNACORE.id("item/quantum_cosmic_nexus_helmet")))
+                        GTNACORE.id("item/734")))
                 .register();
 
         INFINITE_ELECTRIC_SINGLEBLOCK_COVER = REGISTRATE.item("infinite_electric_singleblock_cover",
                 ComponentItem::create)
-                .lang("Singleblock Electric Infinity Cover")
+                .lang("Electric Infinity Cover")
                 .properties(stack -> stack.stacksTo(1))
+                .onRegister(attach(new CoverPlaceBehavior(GTNACovers.INFINITE_ELECTRIC_SINGLEBLOCK_COVER)))
                 .model((ctx, provider) -> provider.generated(ctx,
-                        GTNACORE.id("item/reality_ripper_sword")))
+                        GTNACORE.id("item/733")))
                 .register();
     }
 }

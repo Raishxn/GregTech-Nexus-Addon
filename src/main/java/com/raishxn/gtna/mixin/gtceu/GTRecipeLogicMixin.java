@@ -60,12 +60,12 @@ public abstract class GTRecipeLogicMixin {
             return recipe;
         }
 
-        int efficiencyBonus = Math.max(0, bestMufflerTier - 1) * 2;
-        if (efficiencyBonus <= 0) {
+        int bonusTiers = Math.max(0, bestMufflerTier - 1);
+        if (bonusTiers <= 0) {
             return recipe;
         }
 
-        double multiplier = Math.max(0.01D, (100.0D - efficiencyBonus) / 100.0D);
+        double multiplier = Math.max(0.01D, 1.0D / Math.pow(1.05D, bonusTiers));
         GTRecipe adjusted = recipe.copy();
         if (!gtna$scaleEnergyContents(adjusted.inputs, multiplier) &&
                 !gtna$scaleEnergyContents(adjusted.tickInputs, multiplier)) {

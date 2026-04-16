@@ -268,29 +268,33 @@ public class GTNAItemRecipes {
                 .EUt(120)
                 .save(provider);
 
-        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_me_mini_pattern_buffer")
-                .inputItems(GTAEMachines.ME_PATTERN_BUFFER.asStack())
-                .inputItems(GTItems.TERMINAL.get())
-                .inputItems(GTItems.TOOL_DATA_STICK.get())
-                .inputItems(GTItems.INTEGRATED_CIRCUIT_HV.get(), 2)
-                .inputFluids(GTMaterials.SolderingAlloy.getFluid(288))
-                .outputItems(GTNAMachines2.ME_MINI_PATTERN_BUFFER.asStack())
-                .duration(400)
-                .EUt(480)
-                .save(provider);
+        if (GTNAMachines2.ME_MINI_PATTERN_BUFFER != null) {
+            GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_me_mini_pattern_buffer")
+                    .inputItems(GTAEMachines.ME_PATTERN_BUFFER.asStack())
+                    .inputItems(GTItems.TERMINAL.get())
+                    .inputItems(GTItems.TOOL_DATA_STICK.get())
+                    .inputItems(GTItems.INTEGRATED_CIRCUIT_HV.get(), 2)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(288))
+                    .outputItems(GTNAMachines2.ME_MINI_PATTERN_BUFFER.asStack())
+                    .duration(400)
+                    .EUt(480)
+                    .save(provider);
+        }
 
-        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_me_craft_pattern_hatch")
-                .inputItems(GTNAMachines2.ME_PATTERN_BUFFER.asStack())
-                .inputItems(GTItems.ROBOT_ARM_ZPM.get())
-                .inputItems(GTItems.SENSOR_ZPM.get())
-                .inputItems(GTItems.TOOL_DATA_ORB.get())
-                .inputItems("expatternprovider:assembler_matrix_crafter", 2)
-                .inputItems("expatternprovider:assembler_matrix_speed", 2)
-                .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
-                .outputItems(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.asStack())
-                .duration(400)
-                .EUt(1920)
-                .save(provider);
+        if (GTNAMachines2.ME_PATTERN_BUFFER != null && GTNAMachines2.ME_CRAFT_PATTERN_HATCH != null) {
+            GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_me_craft_pattern_hatch")
+                    .inputItems(GTNAMachines2.ME_PATTERN_BUFFER.asStack())
+                    .inputItems(GTItems.ROBOT_ARM_ZPM.get())
+                    .inputItems(GTItems.SENSOR_ZPM.get())
+                    .inputItems(GTItems.TOOL_DATA_ORB.get())
+                    .inputItems("expatternprovider:assembler_matrix_crafter", 2)
+                    .inputItems("expatternprovider:assembler_matrix_speed", 2)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                    .outputItems(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.asStack())
+                    .duration(400)
+                    .EUt(1920)
+                    .save(provider);
+        }
 
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("pattern_buffer_upgrade_21")
                 .inputItems(GTItems.SENSOR_LuV.get())

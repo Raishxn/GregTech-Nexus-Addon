@@ -33,6 +33,14 @@ public class ConfigHolder {
     @Comment({ "En: Wireless steam network rules", "Pt: Regras da rede wireless de vapor" })
     public WirelessSteam wirelessSteam = new WirelessSteam();
 
+    @Configurable
+    @Comment({ "En: Per-machine server toggles", "Pt: Toggles de servidor por maquina" })
+    public MachineToggles machineToggles = new MachineToggles();
+
+    @Configurable
+    @Comment({ "En: Per-hatch server toggles", "Pt: Toggles de servidor por hatch" })
+    public HatchToggles hatchToggles = new HatchToggles();
+
     public enum ModDifficulty {
         JOURNEY,
         NORMAL
@@ -47,7 +55,7 @@ public class ConfigHolder {
     }
 
     public static boolean areRestrictedItemsEnabled() {
-        return INSTANCE != null && !isJourneyMode() && !isSelfRestraintEnabled() && !INSTANCE.restrictedItems.disableUsage;
+        return INSTANCE != null && isJourneyMode() && !isSelfRestraintEnabled() && !INSTANCE.restrictedItems.disableUsage;
     }
 
     public static boolean areRestrictedRecipesEnabled() {
@@ -72,11 +80,70 @@ public class ConfigHolder {
         };
     }
 
+    public static boolean isMachineEnabled(String machineId) {
+        if (INSTANCE == null) return true;
+        return switch (machineId) {
+            case "largeSteamCrusher" -> INSTANCE.machineToggles.largeSteamCrusher;
+            case "megaPressureSolarBoiler" -> INSTANCE.machineToggles.megaPressureSolarBoiler;
+            case "largeSteamFurnace" -> INSTANCE.machineToggles.largeSteamFurnace;
+            case "largeSteamAlloySmelter" -> INSTANCE.machineToggles.largeSteamAlloySmelter;
+            case "largeSteamHammer" -> INSTANCE.machineToggles.largeSteamHammer;
+            case "largeSteamCompressor" -> INSTANCE.machineToggles.largeSteamCompressor;
+            case "largeSteamExtractor" -> INSTANCE.machineToggles.largeSteamExtractor;
+            case "largeSteamOreWasher" -> INSTANCE.machineToggles.largeSteamOreWasher;
+            case "steamCobbler" -> INSTANCE.machineToggles.steamCobbler;
+            case "stoneSuperheater" -> INSTANCE.machineToggles.stoneSuperheater;
+            case "steamManufacturer" -> INSTANCE.machineToggles.steamManufacturer;
+            case "steamWoodcutter" -> INSTANCE.machineToggles.steamWoodcutter;
+            case "leapForwardOneBlastFurnace" -> INSTANCE.machineToggles.leapForwardOneBlastFurnace;
+            case "infernalCokeOven" -> INSTANCE.machineToggles.infernalCokeOven;
+            case "hyperPressureReactor" -> INSTANCE.machineToggles.hyperPressureReactor;
+            case "compactHyperPressureReactor" -> INSTANCE.machineToggles.compactHyperPressureReactor;
+            case "voidMinerSteamGateAged" -> INSTANCE.machineToggles.voidMinerSteamGateAged;
+            case "industrialSlaughterhouse" -> INSTANCE.machineToggles.industrialSlaughterhouse;
+            case "artificialStar" -> INSTANCE.machineToggles.artificialStar;
+            case "eyeOfHarmony" -> INSTANCE.machineToggles.eyeOfHarmony;
+            case "nexusMolecularForge" -> INSTANCE.machineToggles.nexusMolecularForge;
+            case "nexusMeHypercore" -> INSTANCE.machineToggles.nexusMeHypercore;
+            case "durationTester" -> INSTANCE.machineToggles.durationTester;
+            default -> true;
+        };
+    }
+
+    public static boolean isHatchEnabled(String hatchId) {
+        if (INSTANCE == null) return true;
+        return switch (hatchId) {
+            case "wirelessSteamInputBronze" -> INSTANCE.hatchToggles.wirelessSteamInputBronze;
+            case "wirelessSteamInputSteel" -> INSTANCE.hatchToggles.wirelessSteamInputSteel;
+            case "wirelessSteamOutputBronze" -> INSTANCE.hatchToggles.wirelessSteamOutputBronze;
+            case "wirelessSteamOutputSteel" -> INSTANCE.hatchToggles.wirelessSteamOutputSteel;
+            case "hugeSteamInputBus" -> INSTANCE.hatchToggles.hugeSteamInputBus;
+            case "hugeSteamOutputBus" -> INSTANCE.hatchToggles.hugeSteamOutputBus;
+            case "infiniteSteamInputBus" -> INSTANCE.hatchToggles.infiniteSteamInputBus;
+            case "outputBoostSteamOutputBus" -> INSTANCE.hatchToggles.outputBoostSteamOutputBus;
+            case "advancedParallelHatches" -> INSTANCE.hatchToggles.advancedParallelHatches;
+            case "accelerateHatches" -> INSTANCE.hatchToggles.accelerateHatches;
+            case "threadHatches" -> INSTANCE.hatchToggles.threadHatches;
+            case "overclockHatches" -> INSTANCE.hatchToggles.overclockHatches;
+            case "outputBoostHatches" -> INSTANCE.hatchToggles.outputBoostHatches;
+            case "infiniteInputBuses" -> INSTANCE.hatchToggles.infiniteInputBuses;
+            case "infiniteInputHatches" -> INSTANCE.hatchToggles.infiniteInputHatches;
+            case "outputBoostItemBuses" -> INSTANCE.hatchToggles.outputBoostItemBuses;
+            case "outputBoostFluidHatches" -> INSTANCE.hatchToggles.outputBoostFluidHatches;
+            case "meMiniPatternBuffer" -> INSTANCE.hatchToggles.meMiniPatternBuffer;
+            case "mePatternBuffer" -> INSTANCE.hatchToggles.mePatternBuffer;
+            case "meAdvancedPatternBuffer" -> INSTANCE.hatchToggles.meAdvancedPatternBuffer;
+            case "meUltimatePatternBuffer" -> INSTANCE.hatchToggles.meUltimatePatternBuffer;
+            case "meCraftPatternHatch" -> INSTANCE.hatchToggles.meCraftPatternHatch;
+            default -> true;
+        };
+    }
+
     public static class Gameplay {
 
         @Configurable
-        @Comment({ "En: Mod difficulty. Journey hides progression-breaking utility items.",
-                "Pt: Dificuldade do mod. Journey esconde itens utilitarios que quebram progressao." })
+        @Comment({ "En: Mod difficulty. Journey enables restricted utility items, while Normal keeps them disabled.",
+                "Pt: Dificuldade do mod. Journey libera itens utilitarios restritos, enquanto Normal os mantem desabilitados." })
         public ModDifficulty modDifficulty = ModDifficulty.NORMAL;
 
         @Configurable
@@ -109,7 +176,7 @@ public class ConfigHolder {
 
         @Configurable
         @Comment("En: Allow infinity covers.")
-        public boolean allowInfinityCovers = false;
+        public boolean allowInfinityCovers = true;
 
         @Configurable
         @Comment("En: Allow output boost parts.")
@@ -121,11 +188,11 @@ public class ConfigHolder {
 
         @Configurable
         @Comment("En: Allow Quantum Cosmic Nexus armor.")
-        public boolean allowQuantumCosmicNexusArmor = false;
+        public boolean allowQuantumCosmicNexusArmor = true;
 
         @Configurable
         @Comment("En: Allow Reality Ripper.")
-        public boolean allowRealityRipper = false;
+        public boolean allowRealityRipper = true;
     }
 
     public static class WirelessSteam {
@@ -149,6 +216,59 @@ public class ConfigHolder {
         @Configurable
         @Comment("En: Per-tick transfer limit for steel wireless steam hatches.")
         public int steelTransferRate = 1000000;
+    }
+
+    public static class MachineToggles {
+
+        @Configurable public boolean largeSteamCrusher = true;
+        @Configurable public boolean megaPressureSolarBoiler = true;
+        @Configurable public boolean largeSteamFurnace = true;
+        @Configurable public boolean largeSteamAlloySmelter = true;
+        @Configurable public boolean largeSteamHammer = true;
+        @Configurable public boolean largeSteamCompressor = true;
+        @Configurable public boolean largeSteamExtractor = true;
+        @Configurable public boolean largeSteamOreWasher = true;
+        @Configurable public boolean steamCobbler = true;
+        @Configurable public boolean stoneSuperheater = true;
+        @Configurable public boolean steamManufacturer = true;
+        @Configurable public boolean steamWoodcutter = true;
+        @Configurable public boolean leapForwardOneBlastFurnace = true;
+        @Configurable public boolean infernalCokeOven = true;
+        @Configurable public boolean hyperPressureReactor = true;
+        @Configurable public boolean compactHyperPressureReactor = true;
+        @Configurable public boolean voidMinerSteamGateAged = true;
+        @Configurable public boolean industrialSlaughterhouse = true;
+        @Configurable public boolean artificialStar = true;
+        @Configurable public boolean eyeOfHarmony = true;
+        @Configurable public boolean nexusMolecularForge = true;
+        @Configurable public boolean nexusMeHypercore = true;
+        @Configurable public boolean durationTester = true;
+    }
+
+    public static class HatchToggles {
+
+        @Configurable public boolean wirelessSteamInputBronze = true;
+        @Configurable public boolean wirelessSteamInputSteel = true;
+        @Configurable public boolean wirelessSteamOutputBronze = true;
+        @Configurable public boolean wirelessSteamOutputSteel = true;
+        @Configurable public boolean hugeSteamInputBus = true;
+        @Configurable public boolean hugeSteamOutputBus = true;
+        @Configurable public boolean infiniteSteamInputBus = true;
+        @Configurable public boolean outputBoostSteamOutputBus = true;
+        @Configurable public boolean advancedParallelHatches = true;
+        @Configurable public boolean accelerateHatches = true;
+        @Configurable public boolean threadHatches = true;
+        @Configurable public boolean overclockHatches = true;
+        @Configurable public boolean outputBoostHatches = true;
+        @Configurable public boolean infiniteInputBuses = true;
+        @Configurable public boolean infiniteInputHatches = true;
+        @Configurable public boolean outputBoostItemBuses = true;
+        @Configurable public boolean outputBoostFluidHatches = true;
+        @Configurable public boolean meMiniPatternBuffer = true;
+        @Configurable public boolean mePatternBuffer = true;
+        @Configurable public boolean meAdvancedPatternBuffer = true;
+        @Configurable public boolean meUltimatePatternBuffer = true;
+        @Configurable public boolean meCraftPatternHatch = true;
     }
 
     public static class Machines {
