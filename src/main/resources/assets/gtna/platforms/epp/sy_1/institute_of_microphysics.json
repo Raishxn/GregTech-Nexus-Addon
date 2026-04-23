@@ -1,0 +1,739 @@
+{
+  " ": {
+    "id": "minecraft:air",
+    "properties": {}
+  },
+  "A": {
+    "id": "minecraft:smooth_stone",
+    "properties": {}
+  },
+  "B": {
+    "id": "minecraft:polished_diorite",
+    "properties": {}
+  },
+  "C": {
+    "id": "minecraft:quartz_block",
+    "properties": {}
+  },
+  "D": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "E": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "F": {
+    "id": "minecraft:smooth_quartz",
+    "properties": {}
+  },
+  "G": {
+    "id": "minecraft:cyan_terracotta",
+    "properties": {}
+  },
+  "H": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "I": {
+    "id": "minecraft:smooth_quartz_slab",
+    "properties": {
+      "type": "bottom",
+      "waterlogged": "false"
+    }
+  },
+  "J": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "K": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "L": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "M": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "N": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "O": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "P": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Q": {
+    "id": "minecraft:iron_trapdoor",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "R": {
+    "id": "minecraft:iron_trapdoor",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "S": {
+    "id": "minecraft:cyan_stained_glass",
+    "properties": {}
+  },
+  "T": {
+    "id": "minecraft:iron_trapdoor",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "U": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "V": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "W": {
+    "id": "minecraft:iron_trapdoor",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "X": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Y": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Z": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "[": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "]": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "^": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "_": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "low",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "a": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "b": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "c": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "d": {
+    "id": "minecraft:iron_trapdoor",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "e": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "f": {
+    "id": "minecraft:iron_trapdoor",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "g": {
+    "id": "minecraft:iron_trapdoor",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "h": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "i": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "j": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "k": {
+    "id": "minecraft:smooth_quartz_slab",
+    "properties": {
+      "type": "top",
+      "waterlogged": "false"
+    }
+  },
+  "l": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "m": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "n": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "o": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "p": {
+    "id": "minecraft:polished_diorite_slab",
+    "properties": {
+      "type": "top",
+      "waterlogged": "false"
+    }
+  },
+  "q": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "r": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "s": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "t": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "u": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "v": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "w": {
+    "id": "minecraft:iron_trapdoor",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "x": {
+    "id": "minecraft:polished_diorite_slab",
+    "properties": {
+      "type": "bottom",
+      "waterlogged": "false"
+    }
+  },
+  "y": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "none",
+      "up": "false",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "z": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "{": {
+    "id": "minecraft:polished_andesite",
+    "properties": {}
+  },
+  "|": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "false",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "}": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "~": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "¡": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "¢": {
+    "id": "minecraft:light_gray_concrete",
+    "properties": {}
+  },
+  "£": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "¤": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "¥": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "¦": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "false",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "§": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "¨": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "©": {
+    "id": "minecraft:chain",
+    "properties": {
+      "axis": "y",
+      "waterlogged": "false"
+    }
+  },
+  "ª": {
+    "id": "minecraft:mangrove_slab",
+    "properties": {
+      "type": "top",
+      "waterlogged": "false"
+    }
+  },
+  "«": {
+    "id": "minecraft:mangrove_planks",
+    "properties": {}
+  },
+  "¬": {
+    "id": "minecraft:mangrove_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "®": {
+    "id": "minecraft:mangrove_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "¯": {
+    "id": "minecraft:mangrove_slab",
+    "properties": {
+      "type": "bottom",
+      "waterlogged": "false"
+    }
+  },
+  "°": {
+    "id": "minecraft:mangrove_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "±": {
+    "id": "minecraft:mangrove_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "²": {
+    "id": "minecraft:mangrove_trapdoor",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "³": {
+    "id": "minecraft:mangrove_trapdoor",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "´": {
+    "id": "minecraft:mangrove_trapdoor",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "µ": {
+    "id": "minecraft:mangrove_trapdoor",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "¶": {
+    "id": "minecraft:mangrove_trapdoor",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "·": {
+    "id": "minecraft:mangrove_trapdoor",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  }
+}

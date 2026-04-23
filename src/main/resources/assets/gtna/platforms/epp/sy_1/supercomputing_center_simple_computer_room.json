@@ -1,0 +1,220 @@
+{
+  " ": {
+    "id": "minecraft:air",
+    "properties": {}
+  },
+  "A": {
+    "id": "minecraft:light_gray_concrete",
+    "properties": {}
+  },
+  "B": {
+    "id": "gtceu:white_lamp",
+    "properties": {
+      "bloom": "true",
+      "inverted": "true",
+      "lit": "true",
+      "powered": "false"
+    }
+  },
+  "C": {
+    "id": "minecraft:smooth_quartz_slab",
+    "properties": {
+      "type": "top",
+      "waterlogged": "false"
+    }
+  },
+  "D": {
+    "id": "minecraft:quartz_block",
+    "properties": {}
+  },
+  "E": {
+    "id": "minecraft:iron_trapdoor",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "F": {
+    "id": "minecraft:polished_diorite",
+    "properties": {}
+  },
+  "G": {
+    "id": "minecraft:iron_trapdoor",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "H": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "I": {
+    "id": "minecraft:iron_trapdoor",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "J": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "K": {
+    "id": "minecraft:polished_diorite_slab",
+    "properties": {
+      "type": "top",
+      "waterlogged": "false"
+    }
+  },
+  "L": {
+    "id": "minecraft:white_concrete",
+    "properties": {}
+  },
+  "M": {
+    "id": "gtceu:cleanroom_glass",
+    "properties": {}
+  },
+  "N": {
+    "id": "minecraft:dark_oak_wall_sign",
+    "properties": {
+      "facing": "west",
+      "waterlogged": "false"
+    }
+  },
+  "O": {
+    "id": "minecraft:dark_oak_pressure_plate",
+    "properties": {
+      "powered": "false"
+    }
+  },
+  "P": {
+    "id": "minecraft:sea_pickle",
+    "properties": {
+      "pickles": "3",
+      "waterlogged": "false"
+    }
+  },
+  "Q": {
+    "id": "minecraft:potted_cherry_sapling",
+    "properties": {}
+  },
+  "R": {
+    "id": "minecraft:dark_oak_wall_sign",
+    "properties": {
+      "facing": "south",
+      "waterlogged": "false"
+    }
+  },
+  "S": {
+    "id": "minecraft:iron_trapdoor",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "open": "false",
+      "powered": "false",
+      "waterlogged": "false"
+    }
+  },
+  "T": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "U": {
+    "id": "minecraft:orange_concrete",
+    "properties": {}
+  },
+  "V": {
+    "id": "minecraft:polished_diorite_slab",
+    "properties": {
+      "type": "bottom",
+      "waterlogged": "false"
+    }
+  },
+  "W": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "X": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Y": {
+    "id": "minecraft:end_rod",
+    "properties": {
+      "facing": "south"
+    }
+  },
+  "Z": {
+    "id": "minecraft:acacia_fence_gate",
+    "properties": {
+      "facing": "west",
+      "in_wall": "false",
+      "open": "false",
+      "powered": "false"
+    }
+  },
+  "[": {
+    "id": "minecraft:acacia_fence_gate",
+    "properties": {
+      "facing": "east",
+      "in_wall": "false",
+      "open": "false",
+      "powered": "false"
+    }
+  },
+  "]": {
+    "id": "minecraft:end_rod",
+    "properties": {
+      "facing": "north"
+    }
+  },
+  "^": {
+    "id": "minecraft:end_rod",
+    "properties": {
+      "facing": "east"
+    }
+  },
+  "_": {
+    "id": "minecraft:end_rod",
+    "properties": {
+      "facing": "west"
+    }
+  }
+}

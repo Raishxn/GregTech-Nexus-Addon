@@ -126,5 +126,44 @@ public class GTNATagPrefix {
             .generateItem(true)
             .generationCondition(mat -> mat.hasFlag(GTNAMaterialFlags.GENERATE_SINGULARITY));
 
+    public static final TagPrefix brick = new TagPrefix("brick")
+            .idPattern("%s_brick")
+            .defaultTagPath("bricks/%s")
+            .unformattedTagPath("bricks")
+            .langValue("%s Brick")
+            .materialAmount(GTValues.M)
+            .maxStackSize(64)
+            .materialIconType(MaterialIconType.plate)
+            .unificationEnabled(true)
+            .enableRecycling()
+            .generateItem(true)
+            .generationCondition(hasDustProperty.and(mat -> mat.hasFlag(GTNAMaterialFlags.GENERATE_BRICK)));
+
+    public static final TagPrefix roughBlank = new TagPrefix("roughBlank")
+            .idPattern("%s_rough_blank")
+            .defaultTagPath("rough_blank/%s")
+            .unformattedTagPath("rough_blank")
+            .langValue("%s Rough Blank")
+            .materialAmount(GTValues.M * 9)
+            .maxStackSize(16)
+            .materialIconType(MaterialIconType.plateDouble)
+            .unificationEnabled(true)
+            .enableRecycling()
+            .generateItem(true)
+            .generationCondition(hasDustProperty.and(mat -> mat.hasFlag(GTNAMaterialFlags.GENERATE_BRICK)));
+
+    public static final TagPrefix flake = new TagPrefix("flake")
+            .idPattern("%s_flake")
+            .defaultTagPath("flake/%s")
+            .unformattedTagPath("flake")
+            .langValue("%s Flake")
+            .materialAmount(GTValues.M / 4)
+            .maxStackSize(64)
+            .materialIconType(MaterialIconType.foil)
+            .unificationEnabled(true)
+            .enableRecycling()
+            .generateItem(true)
+            .generationCondition(hasDustProperty.and(mat -> mat.hasFlag(GTNAMaterialFlags.GENERATE_BRICK)));
+
     public static void register() {}
 }

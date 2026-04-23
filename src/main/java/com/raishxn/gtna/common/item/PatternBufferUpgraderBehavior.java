@@ -5,7 +5,6 @@ import com.gregtechceu.gtceu.api.item.component.IInteractionItem;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.common.item.TooltipBehavior;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -20,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
+import com.raishxn.gtna.utils.GTNATooltips;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -36,9 +36,8 @@ public class PatternBufferUpgraderBehavior extends TooltipBehavior implements II
 
     private static Consumer<List<Component>> defaultTooltips() {
         return lines -> {
-            lines.add(Component.translatable("item.gtna.pattern_buffer_upgrader.tooltip.use"));
-            lines.add(Component.translatable("item.gtna.pattern_buffer_upgrader.tooltip.keep_data")
-                    .withStyle(ChatFormatting.GRAY));
+            lines.add(GTNATooltips.important("item.gtna.pattern_buffer_upgrader.tooltip.use"));
+            lines.add(GTNATooltips.structure("item.gtna.pattern_buffer_upgrader.tooltip.keep_data"));
         };
     }
 

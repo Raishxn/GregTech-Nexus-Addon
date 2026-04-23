@@ -7,6 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 public interface IParallelPatternDetails extends IPatternDetails {
 
+    IPatternDetails getDelegate();
+
     IParallelPatternDetails copy(long parallelCount, Level level);
 
     IParallelPatternDetails getCopy();

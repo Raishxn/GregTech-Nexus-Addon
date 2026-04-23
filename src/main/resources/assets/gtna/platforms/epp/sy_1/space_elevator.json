@@ -1,0 +1,3081 @@
+{
+  " ": {
+    "id": "minecraft:air",
+    "properties": {}
+  },
+  "A": {
+    "id": "minecraft:cyan_terracotta",
+    "properties": {}
+  },
+  "B": {
+    "id": "minecraft:smooth_stone",
+    "properties": {}
+  },
+  "C": {
+    "id": "minecraft:red_wool",
+    "properties": {}
+  },
+  "D": {
+    "id": "gtocore:restraint_device",
+    "properties": {}
+  },
+  "E": {
+    "id": "minecraft:polished_deepslate",
+    "properties": {}
+  },
+  "F": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "false",
+      "north": "false",
+      "south": "true",
+      "waterlogged": "false",
+      "west": "true"
+    }
+  },
+  "G": {
+    "id": "minecraft:blackstone_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "H": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "false",
+      "north": "false",
+      "south": "true",
+      "waterlogged": "false",
+      "west": "false"
+    }
+  },
+  "I": {
+    "id": "minecraft:blackstone_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "J": {
+    "id": "minecraft:blackstone_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "K": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "true",
+      "north": "false",
+      "south": "true",
+      "waterlogged": "false",
+      "west": "false"
+    }
+  },
+  "L": {
+    "id": "minecraft:black_concrete",
+    "properties": {}
+  },
+  "M": {
+    "id": "minecraft:polished_diorite",
+    "properties": {}
+  },
+  "N": {
+    "id": "minecraft:iron_bars",
+    "properties": {
+      "east": "true",
+      "north": "false",
+      "south": "true",
+      "waterlogged": "false",
+      "west": "true"
+    }
+  },
+  "O": {
+    "id": "minecraft:polished_blackstone",
+    "properties": {}
+  },
+  "P": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "true",
+      "north": "true",
+      "south": "true",
+      "waterlogged": "false",
+      "west": "true"
+    }
+  },
+  "Q": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "false",
+      "north": "true",
+      "south": "false",
+      "waterlogged": "false",
+      "west": "true"
+    }
+  },
+  "R": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "true",
+      "north": "false",
+      "south": "false",
+      "waterlogged": "false",
+      "west": "false"
+    }
+  },
+  "S": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "false",
+      "north": "true",
+      "south": "true",
+      "waterlogged": "false",
+      "west": "true"
+    }
+  },
+  "T": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "true",
+      "north": "true",
+      "south": "true",
+      "waterlogged": "false",
+      "west": "false"
+    }
+  },
+  "U": {
+    "id": "minecraft:iron_bars",
+    "properties": {
+      "east": "false",
+      "north": "true",
+      "south": "true",
+      "waterlogged": "false",
+      "west": "true"
+    }
+  },
+  "V": {
+    "id": "minecraft:red_concrete",
+    "properties": {}
+  },
+  "W": {
+    "id": "minecraft:blackstone_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "X": {
+    "id": "minecraft:blackstone_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Y": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "true",
+      "north": "false",
+      "south": "false",
+      "waterlogged": "false",
+      "west": "true"
+    }
+  },
+  "Z": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "false",
+      "north": "false",
+      "south": "false",
+      "waterlogged": "false",
+      "west": "true"
+    }
+  },
+  "[": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "true",
+      "north": "false",
+      "south": "true",
+      "waterlogged": "false",
+      "west": "true"
+    }
+  },
+  "]": {
+    "id": "minecraft:iron_bars",
+    "properties": {
+      "east": "true",
+      "north": "true",
+      "south": "false",
+      "waterlogged": "false",
+      "west": "true"
+    }
+  },
+  "^": {
+    "id": "minecraft:iron_bars",
+    "properties": {
+      "east": "true",
+      "north": "true",
+      "south": "true",
+      "waterlogged": "false",
+      "west": "false"
+    }
+  },
+  "_": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "true",
+      "north": "true",
+      "south": "false",
+      "waterlogged": "false",
+      "west": "false"
+    }
+  },
+  "a": {
+    "id": "minecraft:blackstone_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "b": {
+    "id": "minecraft:blackstone_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "c": {
+    "id": "minecraft:blackstone_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "d": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "true",
+      "north": "true",
+      "south": "false",
+      "waterlogged": "false",
+      "west": "true"
+    }
+  },
+  "e": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "false",
+      "north": "true",
+      "south": "false",
+      "waterlogged": "false",
+      "west": "false"
+    }
+  },
+  "f": {
+    "id": "minecraft:blackstone_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "g": {
+    "id": "minecraft:nether_brick_fence",
+    "properties": {
+      "east": "false",
+      "north": "true",
+      "south": "true",
+      "waterlogged": "false",
+      "west": "false"
+    }
+  },
+  "h": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "i": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "j": {
+    "id": "minecraft:blackstone_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "k": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "l": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "m": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "n": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "o": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "p": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "q": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "r": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "s": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "t": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "u": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "v": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "w": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "x": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "y": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "z": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "{": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "|": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "}": {
+    "id": "minecraft:blackstone_wall",
+    "properties": {
+      "east": "tall",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "~": {
+    "id": "minecraft:polished_andesite",
+    "properties": {}
+  },
+  "¡": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "none",
+      "up": "false",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "¢": {
+    "id": "minecraft:polished_diorite_slab",
+    "properties": {
+      "type": "bottom",
+      "waterlogged": "false"
+    }
+  },
+  "£": {
+    "id": "minecraft:polished_basalt",
+    "properties": {
+      "axis": "z"
+    }
+  },
+  "¤": {
+    "id": "minecraft:polished_basalt",
+    "properties": {
+      "axis": "x"
+    }
+  },
+  "¥": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "¦": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "§": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "¨": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "©": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ª": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "low",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "«": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "¬": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "low",
+      "north": "low",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "®": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "low",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "¯": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "°": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "±": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "²": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "³": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "´": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "µ": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "low",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "¶": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "·": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "¸": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "false",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "¹": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "º": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "»": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "¼": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "low",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "½": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "¾": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "¿": {
+    "id": "minecraft:blackstone_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "À": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Á": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Â": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ã": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ä": {
+    "id": "minecraft:polished_blackstone_slab",
+    "properties": {
+      "type": "bottom",
+      "waterlogged": "false"
+    }
+  },
+  "Å": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Æ": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ç": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "È": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "tall",
+      "up": "false",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "É": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ê": {
+    "id": "minecraft:polished_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ë": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ì": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "Í": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "Î": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ï": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ð": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ñ": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ò": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ó": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ô": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "Õ": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ö": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "×": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ø": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ù": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ú": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "Û": {
+    "id": "minecraft:polished_andesite_slab",
+    "properties": {
+      "type": "bottom",
+      "waterlogged": "false"
+    }
+  },
+  "Ü": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ý": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Þ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "ß": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "à": {
+    "id": "minecraft:polished_diorite_slab",
+    "properties": {
+      "type": "top",
+      "waterlogged": "false"
+    }
+  },
+  "á": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "â": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ã": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ä": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "å": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "æ": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "tall",
+      "up": "false",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ç": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "è": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "é": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ê": {
+    "id": "minecraft:polished_deepslate_slab",
+    "properties": {
+      "type": "bottom",
+      "waterlogged": "false"
+    }
+  },
+  "ë": {
+    "id": "minecraft:stone",
+    "properties": {}
+  },
+  "ì": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "í": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "î": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "ï": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "ð": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "ñ": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "ò": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "ó": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "low",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ô": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "õ": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ö": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "÷": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ø": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "ù": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "ú": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "û": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "ü": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "ý": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "þ": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "ÿ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ā": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "ā": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ă": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "ă": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ą": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "ą": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ć": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "ć": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ĉ": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ĉ": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ċ": {
+    "id": "minecraft:polished_diorite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "ċ": {
+    "id": "minecraft:gray_concrete",
+    "properties": {}
+  },
+  "Č": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "č": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ď": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ď": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Đ": {
+    "id": "minecraft:polished_blackstone_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "đ": {
+    "id": "minecraft:polished_blackstone_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ē": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "ē": {
+    "id": "minecraft:polished_blackstone_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ĕ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "ĕ": {
+    "id": "minecraft:polished_blackstone_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ė": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ė": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ę": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ę": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ě": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ě": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "Ĝ": {
+    "id": "minecraft:white_concrete",
+    "properties": {}
+  },
+  "ĝ": {
+    "id": "minecraft:polished_blackstone_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ğ": {
+    "id": "minecraft:polished_blackstone_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "ğ": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "low",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ġ": {
+    "id": "minecraft:polished_blackstone_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "ġ": {
+    "id": "minecraft:polished_blackstone_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ģ": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ģ": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ĥ": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "none",
+      "north": "low",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ĥ": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "Ħ": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ħ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ĩ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ĩ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ī": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ī": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ĭ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ĭ": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "Į": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "tall",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "į": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "İ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ı": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "Ĳ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ĳ": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ĵ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ĵ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ķ": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ķ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "ĸ": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ĺ": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "ĺ": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ļ": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "ļ": {
+    "id": "minecraft:polished_deepslate_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ľ": {
+    "id": "minecraft:light_gray_concrete",
+    "properties": {}
+  },
+  "ľ": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ŀ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "low",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ŀ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ł": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "ł": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ń": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "none",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "ń": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "low",
+      "north": "low",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ņ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ņ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ň": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "low",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ň": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "ŉ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ŋ": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "low",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "ŋ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "Ō": {
+    "id": "minecraft:andesite_wall",
+    "properties": {
+      "east": "none",
+      "north": "low",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "ō": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ŏ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ŏ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "Ő": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ő": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Œ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "low",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "œ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ŕ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ŕ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "Ŗ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ŗ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "low",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "Ř": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ř": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ś": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "low",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "ś": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "low",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ŝ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "low",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ŝ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ş": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "ş": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "tall",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Š": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "tall",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "š": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "Ţ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "ţ": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "low",
+      "north": "none",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ť": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "low",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ť": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "low",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ŧ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "ŧ": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "Ũ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "tall",
+      "south": "tall",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ũ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "low",
+      "north": "low",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "low"
+    }
+  },
+  "Ū": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "tall",
+      "south": "tall",
+      "up": "false",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "ū": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "low",
+      "north": "tall",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  },
+  "Ŭ": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "ŭ": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ů": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "ů": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ű": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "ű": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ų": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "ų": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ŵ": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "ŵ": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "straight",
+      "waterlogged": "false"
+    }
+  },
+  "Ŷ": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "ŷ": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ÿ": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ź": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "ź": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ż": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "ż": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ž": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "ž": {
+    "id": "minecraft:cobbled_deepslate_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "low",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "tall"
+    }
+  },
+  "ſ": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "ƀ": {
+    "id": "minecraft:smooth_quartz_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ɓ": {
+    "id": "minecraft:smooth_quartz",
+    "properties": {}
+  },
+  "Ƃ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "ƃ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ƅ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "ƅ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ɔ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ƈ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "top",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "ƈ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ɖ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ɗ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ƌ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "ƌ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "ƍ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ǝ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "top",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ə": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ɛ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "top",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ƒ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "top",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "ƒ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ɠ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ɣ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "ƕ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ɩ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ɨ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ƙ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "ƙ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "ƚ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "ƛ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ɯ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "east",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ɲ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "inner_left",
+      "waterlogged": "false"
+    }
+  },
+  "ƞ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "outer_left",
+      "waterlogged": "false"
+    }
+  },
+  "Ɵ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "west",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ơ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "south",
+      "half": "bottom",
+      "shape": "inner_right",
+      "waterlogged": "false"
+    }
+  },
+  "ơ": {
+    "id": "minecraft:polished_andesite_stairs",
+    "properties": {
+      "facing": "north",
+      "half": "bottom",
+      "shape": "outer_right",
+      "waterlogged": "false"
+    }
+  },
+  "Ƣ": {
+    "id": "minecraft:polished_basalt",
+    "properties": {
+      "axis": "y"
+    }
+  },
+  "ƣ": {
+    "id": "minecraft:diorite_wall",
+    "properties": {
+      "east": "none",
+      "north": "none",
+      "south": "none",
+      "up": "true",
+      "waterlogged": "false",
+      "west": "none"
+    }
+  }
+}

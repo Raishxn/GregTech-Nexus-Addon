@@ -1,6 +1,5 @@
 package com.raishxn.gtna.common.item;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -13,6 +12,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 import com.raishxn.gtna.common.data.GTNADamageTypes;
+import com.raishxn.gtna.utils.GTNATooltips;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -55,10 +55,8 @@ public class RealityRipperSwordItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.literal("Reality-ripping strike.")
-                .withStyle(ChatFormatting.DARK_RED));
-        tooltip.add(Component.literal("Kills through armor, invulnerability and creative mode.")
-                .withStyle(ChatFormatting.GOLD));
+        tooltip.add(GTNATooltips.warningLiteral("Reality-ripping strike."));
+        tooltip.add(GTNATooltips.importantLiteral("Kills through armor, invulnerability and creative mode."));
     }
 
     private static void realityRip(Entity target, LivingEntity attacker) {

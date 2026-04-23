@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.1] - 2026-04-23
+
+### Added
+- **Eye of Wood**:
+  - Added the `Eye of Wood` multiblock as a wood-and-bronze early proto-singularity machine.
+  - Added dynamic water/lava-fed success logic with steam venting on failed rolls.
+  - Added processed ore dust output bundles and an in-machine success chance display.
+  - Added crafting recipe, config toggle, and runtime localization for the controller.
+- **Steam Expansion Follow-up**:
+  - Added `Large Steam Circuit Assembler`, `Large Steam Mixer`, `Large Steam Centrifuge`, `Large Steam Thermal Centrifuge`, `Large Steam Bath`, `Large Steam Storage Tank`, `Large Steam Solar Boiler`, `Dimensionally Transcendent Steam Boiler`, and `Dimensionally Transcendent Steam Oven`.
+
+### Changed
+- **Steam Controller Coverage**:
+  - Expanded machine recipes and language entries so the newer steam multiblocks are fully exposed in-game.
+
 ## [0.3.0] - 2026-04-16
 
 ### Added

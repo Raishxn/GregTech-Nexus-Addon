@@ -2,16 +2,20 @@ package com.raishxn.gtna.data.recipe;
 
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.common.data.*;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
+import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.common.data.GTNABlocks;
 import com.raishxn.gtna.common.data.GTNAItems;
 import com.raishxn.gtna.common.data.GTNAMachines;
@@ -238,9 +242,76 @@ public class GTNABlockRecipes {
                 .inputItems(TagPrefix.frameGt, GTNAMaterials.HastelloyN)
                 .inputItems(TagPrefix.plate, GTNAMaterials.HastelloyN, 6)
                 .circuitMeta(6)
-                .outputItems(GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.get())
+                .outputItems(GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.asItem())
                 .EUt(16)
                 .duration(50)
+                .save(provider);
+
+        GTRecipeTypes.SIFTER_RECIPES.recipeBuilder("gtna_zirconia_ceramic_dust")
+                .inputItems(TagPrefix.dust, GTNAMaterials.ZirconiumOxide, 2)
+                .outputItems(TagPrefix.dust, GTNAMaterials.ZirconiaCeramic)
+                .duration(120)
+                .EUt(480)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_zirconia_ceramic_high_strength_bending_resistance_mechanical_block")
+                .inputItems(TagPrefix.frameGt, GTMaterials.TungstenSteel)
+                .inputItems(TagPrefix.plate, GTMaterials.RedSteel, 2)
+                .inputItems(GTNATagPrefix.flake, GTNAMaterials.ZirconiaCeramic, 16)
+                .outputItems(GTNABlocks.ZIRCONIA_CERAMIC_HIGH_STRENGTH_BENDING_RESISTANCE_MECHANICAL_BLOCK.asItem())
+                .duration(200)
+                .EUt(30)
+                .save(provider);
+
+        GTRecipeTypes.FLUID_SOLIDFICATION_RECIPES.recipeBuilder("gtna_naquadah_borosilicate_glass")
+                .inputItems(GTNABlocks.BOROSILICATE_GLASS_BLOCK.asItem())
+                .inputFluids(GTMaterials.Naquadah.getFluid(1152))
+                .outputItems(GTNABlocks.NAQUADAH_BOROSILICATE_GLASS.asItem())
+                .duration(200)
+                .EUt(122880)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_process_machine_casing")
+                .inputItems(GTBlocks.CASING_STEEL_SOLID.asItem())
+                .inputItems(CustomTags.IV_CIRCUITS, 2)
+                .inputItems(TagPrefix.wireGtQuadruple, GTNAMaterials.EndSteel)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.StainlessSteel, 2)
+                .inputItems(TagPrefix.plateDouble, GTNAMaterials.MarM200Steel, 4)
+                .inputFluids(GTNAMaterials.FallKing.getFluid(576))
+                .outputItems(GTNABlocks.PROCESS_MACHINE_CASING.asItem())
+                .EUt(7680)
+                .duration(200)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_magtech_casing")
+                .inputItems(TagPrefix.frameGt, GTMaterials.Tungsten)
+                .inputItems(TagPrefix.plate, GTMaterials.Nichrome, 2)
+                .inputItems(TagPrefix.plate, GTMaterials.IndiumTinBariumTitaniumCuprate, 4)
+                .inputItems(TagPrefix.plate, GTMaterials.HSSS, 2)
+                .circuitMeta(6)
+                .outputItems(GTNABlocks.MAGTECH_CASING.asItem())
+                .EUt(16)
+                .duration(50)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_compressor_controller_casing")
+                .inputItems(TagPrefix.frameGt, GTNAMaterials.AluminiumBronze)
+                .inputItems(TagPrefix.plate, GTMaterials.Titanium, 4)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Steel, 2)
+                .circuitMeta(6)
+                .outputItems(GTNABlocks.COMPRESSOR_CONTROLLER_CASING.asItem())
+                .EUt(16)
+                .duration(50)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_extreme_density_casing")
+                .inputItems(TagPrefix.frameGt, GTNAMaterials.Trinaquadalloy)
+                .inputItems(TagPrefix.plateDense, GTMaterials.NaquadahAlloy)
+                .inputItems(TagPrefix.plate, GTNAMaterials.Trinaquadalloy, 6)
+                .inputFluids(GTMaterials.Naquadria.getFluid(576))
+                .outputItems(GTNABlocks.EXTREME_DENSITY_CASING.asItem())
+                .EUt(120)
+                .duration(200)
                 .save(provider);
 
         GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("hyper_pressure_breel_casing")
@@ -502,5 +573,6 @@ public class GTNABlockRecipes {
                             .EUt(8053063680L))
                     .save(provider);
         }
+
     }
 }

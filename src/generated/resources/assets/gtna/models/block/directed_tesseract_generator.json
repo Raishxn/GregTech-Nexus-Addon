@@ -1,0 +1,10 @@
+{
+  "parent": "gtceu:block/machine/template/part/hatch_machine",
+  "textures": {
+    "bottom": "gtna:block/machines/tesseract_generator/top",
+    "overlay": "gtna:block/machines/tesseract_generator/side",
+    "particle": "gtna:block/machines/tesseract_generator/side",
+    "side": "gtna:block/machines/tesseract_generator/side",
+    "top": "gtna:block/machines/tesseract_generator/top"
+  }
+}

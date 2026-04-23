@@ -10,13 +10,17 @@ import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
 import appeng.core.definitions.AEBlocks;
+import appeng.core.definitions.AEItems;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.data.*;
 
@@ -169,6 +173,151 @@ public class GTNAMachineRecipes {
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_MOTOR.get()))
                     .save(provider);
         }
+        if (enabled(GTNAMachines.LARGE_STEAM_CIRCUIT_ASSEMBLER)) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_CIRCUIT_ASSEMBLER.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("ABA")
+                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
+                    .define('B', Blocks.COMPARATOR)
+                    .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('D', AEBlocks.MOLECULAR_ASSEMBLER.block().asItem())
+                    .unlockedBy("has_precision_steam_component",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines.LARGE_STEAM_MIXER)) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_MIXER.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("EBE")
+                    .define('A', ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.Steel).getItem())
+                    .define('B', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('C', ChemicalHelper.get(TagPrefix.pipeHugeFluid, GTMaterials.Copper).getItem())
+                    .define('D', machineItem("gtceu:steam_mixer"))
+                    .define('E', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
+                    .unlockedBy("has_precision_steam_component",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines.LARGE_STEAM_CENTRIFUGE)) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_CENTRIFUGE.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("ABA")
+                    .define('A', ChemicalHelper.get(TagPrefix.block, GTMaterials.Bronze).getItem())
+                    .define('B', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('C', ChemicalHelper.get(TagPrefix.gearSmall, GTMaterials.Iron).getItem())
+                    .define('D', machineItem("gtceu:centrifuge"))
+                    .unlockedBy("has_precision_steam_component",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines.LARGE_STEAM_THERMAL_CENTRIFUGE)) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_THERMAL_CENTRIFUGE.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("ABA")
+                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
+                    .define('B', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('C', ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.Copper).getItem())
+                    .define('D', GTNAMachines.LARGE_STEAM_CENTRIFUGE.asStack().getItem())
+                    .unlockedBy("has_large_steam_centrifuge",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(
+                                    GTNAMachines.LARGE_STEAM_CENTRIFUGE.asStack().getItem()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines.LARGE_STEAM_BATH)) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_BATH.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("EBE")
+                    .define('A', ChemicalHelper.get(TagPrefix.foil, GTMaterials.Steel).getItem())
+                    .define('B', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('C', ChemicalHelper.get(TagPrefix.rotor, GTMaterials.Aluminium).getItem())
+                    .define('D', machineItem("gtceu:steam_bath"))
+                    .define('E', ChemicalHelper.get(TagPrefix.block, GTMaterials.Bronze).getItem())
+                    .unlockedBy("has_precision_steam_component",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines.LARGE_STEAM_STORAGE_TANK)) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_STORAGE_TANK.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("ABA")
+                    .define('A', GTNABlocks.BRONZE_REINFORCED_WOOD.get())
+                    .define('B', GTBlocks.CASING_STEEL_SOLID.get())
+                    .define('C', ChemicalHelper.get(TagPrefix.pipeLargeFluid, GTMaterials.Bronze).getItem())
+                    .define('D', machineItem("gtceu:steel_multiblock_tank"))
+                    .unlockedBy("has_bronze_reinforced_wood",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNABlocks.BRONZE_REINFORCED_WOOD.get()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines.LARGE_STEAM_SOLAR_BOILER)) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_SOLAR_BOILER.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("EFE")
+                    .define('A', GTNABlocks.SOLAR_BOILING_CELL.get())
+                    .define('B', GTNAItems.HYDRAULIC_PUMP.get())
+                    .define('C', GTBlocks.STEEL_HULL.get())
+                    .define('D', GTMachines.STEAM_SOLAR_BOILER.right().asStack().getItem())
+                    .define('E', GTBlocks.CASING_BRONZE_PIPE.get())
+                    .define('F', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .unlockedBy("has_solar_boiling_cell",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNABlocks.SOLAR_BOILING_CELL.get()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines.DIMENSIONALLY_TRANSCENDENT_STEAM_BOILER)) {
+            ShapedRecipeBuilder
+                    .shaped(RecipeCategory.MISC, GTNAMachines.DIMENSIONALLY_TRANSCENDENT_STEAM_BOILER.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("EFE")
+                    .define('A', GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get())
+                    .define('B', GTItems.FIELD_GENERATOR_IV.get())
+                    .define('C', GTBlocks.CASING_TUNGSTENSTEEL_ROBUST.get())
+                    .define('D', GTNAMachines.LARGE_STEAM_SOLAR_BOILER.asStack().getItem())
+                    .define('E', GTBlocks.CASING_INVAR_HEATPROOF.get())
+                    .define('F', GTItems.ELECTRIC_PUMP_IV.get())
+                    .unlockedBy("has_dimensional_casing",
+                            InventoryChangeTrigger.TriggerInstance
+                                    .hasItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines.DIMENSIONALLY_TRANSCENDENT_STEAM_OVEN)) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.DIMENSIONALLY_TRANSCENDENT_STEAM_OVEN.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("EFE")
+                    .define('A', GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get())
+                    .define('B', GTItems.FIELD_GENERATOR_EV.get())
+                    .define('C', GTBlocks.CASING_BRONZE_BRICKS.get())
+                    .define('D', GTNAMachines.LARGE_STEAM_FURNACE.asStack().getItem())
+                    .define('E', GTBlocks.CASING_BRONZE_PIPE.get())
+                    .define('F', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .unlockedBy("has_large_steam_furnace",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(
+                                    GTNAMachines.LARGE_STEAM_FURNACE.asStack().getItem()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines.EYE_OF_WOOD)) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.EYE_OF_WOOD.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("EFE")
+                    .define('A', GTNABlocks.BRONZE_REINFORCED_WOOD.get())
+                    .define('B', Items.WATER_BUCKET)
+                    .define('C', GTBlocks.CASING_BRONZE_PIPE.get())
+                    .define('D', GTNAMachines.STEAM_WOODCUTTER.asStack().getItem())
+                    .define('E', GTBlocks.CASING_BRONZE_BRICKS.get())
+                    .define('F', Items.LAVA_BUCKET)
+                    .unlockedBy("has_steam_woodcutter",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(
+                                    GTNAMachines.STEAM_WOODCUTTER.asStack().getItem()))
+                    .save(provider);
+        }
 
         if (enabled(GTNAMachines.STEAM_COBBLER)) {
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.STEAM_COBBLER.asStack().getItem())
@@ -196,6 +345,21 @@ public class GTNAMachineRecipes {
                     .outputItems(GTNAMachines.STONE_SUPERHEATER.asStack())
                     .duration(400)
                     .EUt(250)
+                    .save(provider);
+        }
+        if (GTNAMachines2.DIRECTED_TESSERACT_GENERATOR != null) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines2.DIRECTED_TESSERACT_GENERATOR.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("EFE")
+                    .define('A', AEItems.WIRELESS_RECEIVER.asItem())
+                    .define('B', GTItems.EMITTER_HV.get())
+                    .define('C', GTItems.FIELD_GENERATOR_HV.get())
+                    .define('D', GTMachines.HULL[GTValues.IV].asStack().getItem())
+                    .define('E', GTNAItems.TESSERACT_TARGET_MARKER.get())
+                    .define('F', CustomTags.IV_CIRCUITS)
+                    .unlockedBy("has_tesseract_marker",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.TESSERACT_TARGET_MARKER.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.STEAM_MANUFACTURER)) {
@@ -396,6 +560,20 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
 
+        if (enabled(GTNAMachines.INDUSTRIAL_PLATFORM_DEPLOYMENT_TOOLS)) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                    GTNAMachines.INDUSTRIAL_PLATFORM_DEPLOYMENT_TOOLS.asStack().getItem())
+                    .pattern("AAA")
+                    .pattern("ABA")
+                    .pattern("AAA")
+                    .define('A', AEItems.MATTER_BALL.asItem())
+                    .define('B', GTNAItems.INDUSTRIAL_COMPONENTS[0][0].get())
+                    .unlockedBy("has_standard_industrial_component_small",
+                            InventoryChangeTrigger.TriggerInstance
+                                    .hasItems(GTNAItems.INDUSTRIAL_COMPONENTS[0][0].get()))
+                    .save(provider);
+        }
+
         if (enabled(GTNAMachines.ARTIFICIAL_STAR)) {
             GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("artificial_star")
                     .inputItems(GTNABlocks.GRAVITON_FIELD_CONSTRAINT_CASING.get(), 4)
@@ -450,8 +628,9 @@ public class GTNAMachineRecipes {
             GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("nexus_molecular_forge")
                     .inputItems(GTMachines.ASSEMBLER[GTValues.ZPM].asStack().getItem())
                     .inputItems(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.asStack().getItem(), 4)
-                    .inputItems("expatternprovider:assembler_matrix_crafter", 16)
-                    .inputItems("expatternprovider:assembler_matrix_speed", 16)
+                    .inputItems("expatternprovider:assembler_matrix_crafter", 32)
+                    .inputItems("expatternprovider:assembler_matrix_pattern", 32)
+                    .inputItems("expatternprovider:assembler_matrix_speed", 32)
                     .inputItems(GTItems.ROBOT_ARM_ZPM.asStack().getItem(), 4)
                     .inputItems(GTItems.EMITTER_ZPM.asStack().getItem(), 8)
                     .inputItems(CustomTags.ZPM_CIRCUITS, 8)
@@ -887,5 +1066,9 @@ public class GTNAMachineRecipes {
             }
         }
         return true;
+    }
+
+    private static Item machineItem(String id) {
+        return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id));
     }
 }

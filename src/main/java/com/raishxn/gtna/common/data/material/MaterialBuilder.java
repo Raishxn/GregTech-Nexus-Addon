@@ -53,6 +53,93 @@ public class MaterialBuilder {
                 .flags(GENERATE_PLATE, GENERATE_FRAME, DISABLE_DECOMPOSITION)
                 .buildAndRegister().setFormula("Ir2Mo4Cr2Ti2Ni15");
 
+        AluminiumBronze = new Material.Builder(GTNACORE.id("aluminium_bronze"))
+                .ingot().fluid()
+                .color(0xFFDEAD)
+                .iconSet(METALLIC)
+                .components(Aluminium, 1, Bronze, 6)
+                .blastTemp(1200, LOW)
+                .flags(GENERATE_PLATE, GENERATE_FRAME, GENERATE_ROD, GENERATE_BOLT_SCREW,
+                        GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FOIL,
+                        GENERATE_DOUBLE_PLATE, GENERATE_TRIPLE_PLATE)
+                .buildAndRegister().setFormula("Al(CuSn)3");
+
+        DarkSteel = new Material.Builder(GTNACORE.id("dark_steel"))
+                .ingot().fluid()
+                .color(0x414751)
+                .iconSet(METALLIC)
+                .components(Iron, 1, Coal, 1, Obsidian, 1)
+                .blastTemp(1450, LOW, GTValues.VA[GTValues.MV], 600)
+                .flags(GENERATE_PLATE, GENERATE_GEAR, DISABLE_DECOMPOSITION)
+                .buildAndRegister().setFormula("FeCOb");
+
+        EndSteel = new Material.Builder(GTNACORE.id("end_steel"))
+                .ingot()
+                .color(0xD6D980)
+                .iconSet(METALLIC)
+                .components(Endstone, 1, DarkSteel, 1, Obsidian, 1)
+                .blastTemp(3250, LOW, GTValues.VA[GTValues.HV], 900)
+                .flags(GENERATE_PLATE, GENERATE_FRAME, GENERATE_ROD, GENERATE_LONG_ROD,
+                        GENERATE_BOLT_SCREW, GENERATE_FOIL, GENERATE_FINE_WIRE,
+                        GENERATE_DOUBLE_PLATE, GENERATE_TRIPLE_PLATE, GENERATE_QUADRUPLE_PLATE)
+                .cableProperties(2048, 1, 0, true)
+                .buildAndRegister().setFormula("St4E");
+
+        Indalloy140 = new Material.Builder(GTNACORE.id("indalloy_140"))
+                .ingot().fluid().dust()
+                .color(0x6A5ACD)
+                .iconSet(METALLIC)
+                .components(Bismuth, 47, Lead, 25, Tin, 13, Cadmium, 10, Indium, 5)
+                .blastTemp(2600, LOW, GTValues.VA[GTValues.EV])
+                .flags(GENERATE_PLATE, GENERATE_FOIL, GENERATE_DOUBLE_PLATE, DISABLE_DECOMPOSITION)
+                .buildAndRegister().setFormula("In2PbAg");
+
+        Trinaquadalloy = new Material.Builder(GTNACORE.id("trinaquadalloy"))
+                .ingot().fluid()
+                .color(0x281832)
+                .iconSet(METALLIC)
+                .components(Trinium, 6, Naquadah, 2, Carbon, 1)
+                .blastTemp(8747, BlastProperty.GasTier.HIGHER, GTValues.VA[GTValues.ZPM], 1200)
+                .flags(GENERATE_PLATE, GENERATE_DENSE, GENERATE_FRAME, GENERATE_ROD,
+                        GENERATE_BOLT_SCREW, GENERATE_FOIL,
+                        GENERATE_DOUBLE_PLATE, GENERATE_TRIPLE_PLATE, GENERATE_QUADRUPLE_PLATE,
+                        GENERATE_QUINTUPLE_PLATE, GENERATE_SUPERDENSE)
+                .buildAndRegister().setFormula("Nq2WsHs");
+
+        MarM200Steel = new Material.Builder(GTNACORE.id("mar_m_200_steel"))
+                .ingot().fluid()
+                .color(0x515151)
+                .iconSet(METALLIC)
+                .components(Niobium, 2, Chromium, 9, Aluminium, 5, Titanium, 2, Cobalt, 10,
+                        Tungsten, 13, Nickel, 18)
+                .blastTemp(4600, BlastProperty.GasTier.HIGH, GTValues.VA[GTValues.IV], 300)
+                .flags(GENERATE_FRAME, GENERATE_GEAR, GENERATE_PLATE, GENERATE_DOUBLE_PLATE,
+                        DISABLE_DECOMPOSITION)
+                .buildAndRegister().setFormula("Nb2Cr9Al5Ti2Co10W13Ni18");
+
+        FallKing = new Material.Builder(GTNACORE.id("fall_king"))
+                .ingot().fluid()
+                .color(0xFFCF6B)
+                .iconSet(BRIGHT)
+                .components(Helium, 1, Lithium, 1, Cobalt, 1, Platinum, 1, Erbium, 1)
+                .blastTemp(5400, BlastProperty.GasTier.HIGH)
+                .flags(DISABLE_DECOMPOSITION)
+                .buildAndRegister().setFormula("HeLiCoPtEr");
+
+        ZirconiumOxide = new Material.Builder(GTNACORE.id("zirconium_oxide"))
+                .dust()
+                .color(0x3C3C3C)
+                .iconSet(DULL)
+                .components(Zirconium, 1, Oxygen, 2)
+                .buildAndRegister().setFormula("ZrO2");
+
+        ZirconiaCeramic = new Material.Builder(GTNACORE.id("zirconia_ceramic"))
+                .dust()
+                .color(0xEAEAEA)
+                .iconSet(BRIGHT)
+                .flags(GENERATE_BRICK)
+                .buildAndRegister().setFormula("ZrO2-C");
+
         ClayCompound = new Material.Builder(GTNACORE.id("clay_compound"))
                 .dust().ingot().fluid()
                 .color(0xAA8866).iconSet(MaterialIconSet.DULL)

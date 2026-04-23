@@ -191,6 +191,8 @@ dependencies {
     modCompileOnly("dev.latvian.mods:kubejs-forge:2001.6.5-build.16")
 
     modImplementation("curse.maven:gtceu-terminals-1423461:7787678")
+
+    modImplementation("curse.maven:modern-ui-352491:6956345")
 }
 
 // See com.example.examplemod.mixin.DummyMixin for information about mixins
@@ -216,6 +218,28 @@ tasks.named('processResources', ProcessResources).configure {
 
     filesMatching("META-INF/mods.toml") {
         expand properties + [project: project]
+    }
+
+    doLast {
+        def manualEnUs = file("src/main/resources/assets/gtna/lang/en_us.json")
+        def generatedEnUs = file("src/generated/resources/assets/gtna/lang/en_us.json")
+        def mergedEnUs = file("$destinationDir/assets/gtna/lang/en_us.json")
+        def slurper = new groovy.json.JsonSlurper()
+        Map<String, Object> merged = [:]
+
+        if (manualEnUs.exists()) {
+            merged.putAll(slurper.parse(manualEnUs) as Map<String, Object>)
+        }
+        if (generatedEnUs.exists()) {
+            merged.putAll(slurper.parse(generatedEnUs) as Map<String, Object>)
+        }
+
+        if (!merged.isEmpty()) {
+            mergedEnUs.parentFile.mkdirs()
+            mergedEnUs.text = groovy.json.JsonOutput.prettyPrint(
+                    groovy.json.JsonOutput.toJson(new TreeMap<>(merged))
+            ) + System.lineSeparator()
+        }
     }
 }
 

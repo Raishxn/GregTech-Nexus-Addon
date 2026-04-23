@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gtna:block/machine/industrial_platform_deployment_tools",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtna:block/machine/industrial_platform_deployment_tools"
+    },
+    "facing=south": {
+      "model": "gtna:block/machine/industrial_platform_deployment_tools",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gtna:block/machine/industrial_platform_deployment_tools",
+      "y": 270
+    }
+  }
+}

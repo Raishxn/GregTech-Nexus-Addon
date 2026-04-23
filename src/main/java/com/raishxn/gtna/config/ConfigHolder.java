@@ -104,6 +104,7 @@ public class ConfigHolder {
             case "industrialSlaughterhouse" -> INSTANCE.machineToggles.industrialSlaughterhouse;
             case "artificialStar" -> INSTANCE.machineToggles.artificialStar;
             case "eyeOfHarmony" -> INSTANCE.machineToggles.eyeOfHarmony;
+            case "eyeOfWood" -> INSTANCE.machineToggles.eyeOfWood;
             case "nexusMolecularForge" -> INSTANCE.machineToggles.nexusMolecularForge;
             case "nexusMeHypercore" -> INSTANCE.machineToggles.nexusMeHypercore;
             case "durationTester" -> INSTANCE.machineToggles.durationTester;
@@ -261,6 +262,8 @@ public class ConfigHolder {
         public boolean artificialStar = true;
         @Configurable
         public boolean eyeOfHarmony = true;
+        @Configurable
+        public boolean eyeOfWood = true;
         @Configurable
         public boolean nexusMolecularForge = true;
         @Configurable

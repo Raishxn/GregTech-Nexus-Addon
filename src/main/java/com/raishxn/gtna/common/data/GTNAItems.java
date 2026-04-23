@@ -6,9 +6,11 @@ import com.gregtechceu.gtceu.common.item.CoverPlaceBehavior;
 import net.minecraft.resources.ResourceLocation;
 
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.common.item.CoordinateCardBehavior;
 import com.raishxn.gtna.common.item.PatternBufferUpgraderBehavior;
 import com.raishxn.gtna.common.item.RealityRipperSwordItem;
 import com.raishxn.gtna.common.item.StructureDetectBehavior;
+import com.raishxn.gtna.common.item.TesseractTargetMarkerBehavior;
 import com.raishxn.gtna.common.item.armor.QuantumCosmicNexusArmorItem;
 import com.tterrag.registrate.util.entry.ItemEntry;
 
@@ -17,6 +19,11 @@ import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
 
 public class GTNAItems {
 
+    private static final String[] INDUSTRIAL_COMPONENT_GROUPS = { "standard", "extended", "special" };
+    private static final String[] INDUSTRIAL_COMPONENT_GROUP_NAMES = { "Standard", "Extended", "Special" };
+    private static final String[] INDUSTRIAL_COMPONENT_SIZES = { "small", "medium", "large" };
+    private static final String[] INDUSTRIAL_COMPONENT_SIZE_NAMES = { "Small", "Medium", "Large" };
+
     static {
         REGISTRATE.creativeModeTab(() -> GTNACreativeModeTabs.ITEMS);
     }
@@ -24,6 +31,8 @@ public class GTNAItems {
     // Ferramentas e Itens de Debug Existentes
     public static ItemEntry<ComponentItem> DEBUG_STRUCTURE_WRITER;
     public static ItemEntry<ComponentItem> STRUCTURE_DETECT;
+    public static ItemEntry<ComponentItem> COORDINATE_CARD;
+    public static ItemEntry<ComponentItem> TESSERACT_TARGET_MARKER;
 
     // --- NOVOS COMPONENTES HIDRÁULICOS ---
     public static ItemEntry<ComponentItem> HYDRAULIC_MOTOR;
@@ -36,6 +45,8 @@ public class GTNAItems {
     public static ItemEntry<ComponentItem> HYDRAULIC_STEAM_JET_SPEWER;
     public static ItemEntry<ComponentItem> HYDRAULIC_STEAM_RECEIVER;
     public static ItemEntry<ComponentItem> PRECISION_STEAM_COMPONENT;
+    @SuppressWarnings("unchecked")
+    public static ItemEntry<ComponentItem>[][] INDUSTRIAL_COMPONENTS = new ItemEntry[INDUSTRIAL_COMPONENT_GROUPS.length][INDUSTRIAL_COMPONENT_SIZES.length];
 
     public static ItemEntry<com.raishxn.gtna.common.item.NexusLinkerItem> NEXUS_LINKER;
     public static ItemEntry<QuantumCosmicNexusArmorItem> QUANTUM_COSMIC_NEXUS_HELMET;
@@ -65,6 +76,22 @@ public class GTNAItems {
                 .model((ctx, provider) -> {
                     provider.generated(ctx, new ResourceLocation("gtceu", "item/portable_scanner"));
                 })
+                .register();
+
+        COORDINATE_CARD = REGISTRATE
+                .item("coordinate_card", ComponentItem::create)
+                .lang("Coordinate Card")
+                .properties(stack -> stack.stacksTo(1))
+                .onRegister(attach(CoordinateCardBehavior.INSTANCE))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/coordinate_card")))
+                .register();
+
+        TESSERACT_TARGET_MARKER = REGISTRATE
+                .item("tesseract_target_marker", ComponentItem::create)
+                .lang("Tesseract Target Marker")
+                .properties(stack -> stack.stacksTo(1))
+                .onRegister(attach(TesseractTargetMarkerBehavior.INSTANCE))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/tesseract_target_marker")))
                 .register();
 
         HYDRAULIC_MOTOR = REGISTRATE.item("hydraulic_motor", ComponentItem::create)
@@ -107,6 +134,7 @@ public class GTNAItems {
                 .lang("Precision Steam Component")
                 .properties(stack -> stack.stacksTo(64))
                 .register();
+        registerIndustrialComponents();
 
         NEXUS_LINKER = REGISTRATE.item("nexus_linker", com.raishxn.gtna.common.item.NexusLinkerItem::new)
                 .lang("Nexus Linker")
@@ -222,5 +250,23 @@ public class GTNAItems {
                 .model((ctx, provider) -> provider.generated(ctx,
                         GTNACORE.id("item/733")))
                 .register();
+    }
+
+    private static void registerIndustrialComponents() {
+        for (int group = 0; group < INDUSTRIAL_COMPONENT_GROUPS.length; group++) {
+            for (int size = 0; size < INDUSTRIAL_COMPONENT_SIZES.length; size++) {
+                String id = INDUSTRIAL_COMPONENT_GROUPS[group] + "_industrial_components_" + INDUSTRIAL_COMPONENT_SIZES[size];
+                String lang = INDUSTRIAL_COMPONENT_GROUP_NAMES[group] + " Industrial Components (" +
+                        INDUSTRIAL_COMPONENT_SIZE_NAMES[size] + ")";
+                String sizeKey = INDUSTRIAL_COMPONENT_SIZES[size];
+                INDUSTRIAL_COMPONENTS[group][size] = REGISTRATE.item(id, ComponentItem::create)
+                        .lang(lang)
+                        .properties(stack -> stack.stacksTo(64))
+                        .model((ctx, provider) -> provider.generated(ctx,
+                                GTNACORE.id("item/industrial_components_" + sizeKey + "_0"),
+                                GTNACORE.id("item/industrial_components_" + sizeKey + "_1")))
+                        .register();
+            }
+        }
     }
 }

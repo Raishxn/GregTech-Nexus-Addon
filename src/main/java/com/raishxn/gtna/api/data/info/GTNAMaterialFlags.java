@@ -51,5 +51,9 @@ public class GTNAMaterialFlags {
     public static final MaterialFlag GENERATE_SINGULARITY = new MaterialFlag.Builder("generate_singularity")
             .build();
 
+    public static final MaterialFlag GENERATE_BRICK = new MaterialFlag.Builder("generate_brick")
+            .requireProps(PropertyKey.DUST)
+            .build();
+
     public static void register() {}
 }

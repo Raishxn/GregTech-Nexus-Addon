@@ -25,6 +25,7 @@ import com.raishxn.gtna.common.data.GTNAMachines2;
 import com.raishxn.gtna.common.data.GTNAMaterials;
 import com.raishxn.gtna.common.data.GTNARecipeType;
 import com.raishxn.gtna.common.data.condition.RestrictedItemsEnabledCondition;
+import appeng.core.definitions.AEItems;
 
 import java.util.function.Consumer;
 
@@ -50,6 +51,19 @@ public class GTNAItemRecipes {
                 .requires(Items.BOOK, 8)
                 .requires(GTItems.TERMINAL.get())
                 .unlockedBy("has_books", InventoryChangeTrigger.TriggerInstance.hasItems(Items.BOOK))
+                .save(provider);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAItems.TESSERACT_TARGET_MARKER.get())
+                .pattern("ABC")
+                .pattern(" DE")
+                .pattern(" FE")
+                .define('A', GTItems.SENSOR_LV.get())
+                .define('B', GTItems.COVER_SCREEN.get())
+                .define('C', ChemicalHelper.get(TagPrefix.frameGt, GTNAMaterials.Stronze).getItem())
+                .define('D', GTNAItems.COORDINATE_CARD.get())
+                .define('E', ChemicalHelper.get(TagPrefix.rod, GTNAMaterials.Stronze).getItem())
+                .define('F', CustomTags.MV_CIRCUITS)
+                .unlockedBy("has_coordinate_card",
+                        InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.COORDINATE_CARD.get()))
                 .save(provider);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAItems.HYDRAULIC_MOTOR.get())
                 .pattern("ABC")
@@ -254,6 +268,60 @@ public class GTNAItemRecipes {
                 .outputItems(GTNAItems.HYDRAULIC_REGULATOR.get())
                 .duration(160)
                 .EUt(16)
+                .save(provider);
+        GTRecipeTypes.COMPRESSOR_RECIPES.recipeBuilder("gtna_standard_industrial_components_small")
+                .inputItems(AEItems.MATTER_BALL.asItem(), 64)
+                .outputItems(GTNAItems.INDUSTRIAL_COMPONENTS[0][0].get())
+                .duration(20)
+                .EUt(30)
+                .save(provider);
+        GTRecipeTypes.COMPRESSOR_RECIPES.recipeBuilder("gtna_standard_industrial_components_medium")
+                .inputItems(GTNAItems.INDUSTRIAL_COMPONENTS[0][0].get(), 5)
+                .outputItems(GTNAItems.INDUSTRIAL_COMPONENTS[0][1].get())
+                .duration(20)
+                .EUt(30)
+                .save(provider);
+        GTRecipeTypes.COMPRESSOR_RECIPES.recipeBuilder("gtna_standard_industrial_components_large")
+                .inputItems(GTNAItems.INDUSTRIAL_COMPONENTS[0][1].get(), 5)
+                .outputItems(GTNAItems.INDUSTRIAL_COMPONENTS[0][2].get())
+                .duration(20)
+                .EUt(30)
+                .save(provider);
+        GTRecipeTypes.COMPRESSOR_RECIPES.recipeBuilder("gtna_extended_industrial_components_small")
+                .inputItems(AEItems.SINGULARITY.asItem(), 64)
+                .outputItems(GTNAItems.INDUSTRIAL_COMPONENTS[1][0].get())
+                .duration(20)
+                .EUt(480)
+                .save(provider);
+        GTRecipeTypes.COMPRESSOR_RECIPES.recipeBuilder("gtna_extended_industrial_components_medium")
+                .inputItems(GTNAItems.INDUSTRIAL_COMPONENTS[1][0].get(), 5)
+                .outputItems(GTNAItems.INDUSTRIAL_COMPONENTS[1][1].get())
+                .duration(20)
+                .EUt(480)
+                .save(provider);
+        GTRecipeTypes.COMPRESSOR_RECIPES.recipeBuilder("gtna_extended_industrial_components_large")
+                .inputItems(GTNAItems.INDUSTRIAL_COMPONENTS[1][1].get(), 5)
+                .outputItems(GTNAItems.INDUSTRIAL_COMPONENTS[1][2].get())
+                .duration(20)
+                .EUt(480)
+                .save(provider);
+        GTRecipeTypes.COMPRESSOR_RECIPES.recipeBuilder("gtna_special_industrial_components_small")
+                .inputItems(ChemicalHelper.get(TagPrefix.dust, GTMaterials.Neutronium).getItem(), 64)
+                .outputItems(GTNAItems.INDUSTRIAL_COMPONENTS[2][0].get())
+                .duration(20)
+                .EUt(7680)
+                .save(provider);
+        GTRecipeTypes.COMPRESSOR_RECIPES.recipeBuilder("gtna_special_industrial_components_medium")
+                .inputItems(GTNAItems.INDUSTRIAL_COMPONENTS[2][0].get(), 5)
+                .outputItems(GTNAItems.INDUSTRIAL_COMPONENTS[2][1].get())
+                .duration(20)
+                .EUt(7680)
+                .save(provider);
+        GTRecipeTypes.COMPRESSOR_RECIPES.recipeBuilder("gtna_special_industrial_components_large")
+                .inputItems(GTNAItems.INDUSTRIAL_COMPONENTS[2][1].get(), 5)
+                .outputItems(GTNAItems.INDUSTRIAL_COMPONENTS[2][2].get())
+                .duration(20)
+                .EUt(7680)
                 .save(provider);
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("vajra_assembly")
                 .inputItems(ChemicalHelper.get(TagPrefix.plateDouble, GTNAMaterials.Echoite), 2)

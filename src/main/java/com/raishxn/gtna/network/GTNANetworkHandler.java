@@ -9,7 +9,9 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.network.packet.CLocateConnectionPacket;
+import com.raishxn.gtna.network.packet.SRegionHighlightPacket;
 import com.raishxn.gtna.network.packet.SStructureDetectHighlight;
+import com.raishxn.gtna.network.packet.SStructureGhostPreviewPacket;
 
 public class GTNANetworkHandler {
 
@@ -34,6 +36,18 @@ public class GTNANetworkHandler {
                 .encoder(SStructureDetectHighlight::encode)
                 .decoder(SStructureDetectHighlight::decode)
                 .consumerMainThread(SStructureDetectHighlight::handle)
+                .add();
+
+        CHANNEL.messageBuilder(SRegionHighlightPacket.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SRegionHighlightPacket::encode)
+                .decoder(SRegionHighlightPacket::decode)
+                .consumerMainThread(SRegionHighlightPacket::handle)
+                .add();
+
+        CHANNEL.messageBuilder(SStructureGhostPreviewPacket.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SStructureGhostPreviewPacket::encode)
+                .decoder(SStructureGhostPreviewPacket::decode)
+                .consumerMainThread(SStructureGhostPreviewPacket::handle)
                 .add();
 
         // C2S – Client requests a locate highlight
@@ -68,5 +82,9 @@ public class GTNANetworkHandler {
      */
     public static void sendToPlayer(Object msg, ServerPlayer player) {
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), msg);
+    }
+
+    public static void sendToAll(Object msg) {
+        CHANNEL.send(PacketDistributor.ALL.noArg(), msg);
     }
 }

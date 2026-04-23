@@ -54,6 +54,11 @@ final class ParallelPatternDetails implements IParallelPatternDetails {
     }
 
     @Override
+    public IPatternDetails getDelegate() {
+        return delegate;
+    }
+
+    @Override
     public AEItemKey getDefinition() {
         return delegate.getDefinition();
     }

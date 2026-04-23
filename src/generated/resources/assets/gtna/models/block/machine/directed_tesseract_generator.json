@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:block/block",
+  "loader": "gtceu:machine",
+  "machine": "gtna:directed_tesseract_generator",
+  "variants": {
+    "": {
+      "model": "gtna:block/directed_tesseract_generator"
+    }
+  }
+}

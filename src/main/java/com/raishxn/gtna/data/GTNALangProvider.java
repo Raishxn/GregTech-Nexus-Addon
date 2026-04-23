@@ -41,7 +41,10 @@ public class GTNALangProvider extends LanguageProvider {
             GTNATagPrefix.quadruplePlate,
             GTNATagPrefix.quintuplePlate,
             GTNATagPrefix.superdensePlate,
-            GTNATagPrefix.singularity
+            GTNATagPrefix.singularity,
+            GTNATagPrefix.brick,
+            GTNATagPrefix.roughBlank,
+            GTNATagPrefix.flake
     };
 
     public GTNALangProvider(PackOutput output) {
@@ -124,9 +127,20 @@ public class GTNALangProvider extends LanguageProvider {
         add(GTNATagPrefix.quintuplePlate.getUnlocalizedName(), "Quintuple Plate");
         add(GTNATagPrefix.superdensePlate.getUnlocalizedName(), "Superdense Plate");
         add(GTNATagPrefix.singularity.getUnlocalizedName(), "Singularity");
+        add(GTNATagPrefix.brick.getUnlocalizedName(), "Brick");
+        add(GTNATagPrefix.roughBlank.getUnlocalizedName(), "Rough Blank");
+        add(GTNATagPrefix.flake.getUnlocalizedName(), "Flake");
     }
 
     private void addStaticTranslations() {
+        add("material.gtna.aluminium_bronze", "Aluminium Bronze");
+        add("material.gtna.end_steel", "EndSteel");
+        add("material.gtna.indalloy_140", "Indalloy 140");
+        add("material.gtna.trinaquadalloy", "Trinaquadalloy");
+        add("material.gtna.mar_m_200_steel", "Mar-M200 Steel");
+        add("material.gtna.fall_king", "FallKing");
+        add("material.gtna.zirconium_oxide", "Zirconium Oxide");
+        add("material.gtna.zirconia_ceramic", "Zirconia Ceramic");
         // --- Hatches Translations (UPDATED) ---
 
         // Accelerate Hatch
@@ -160,6 +174,11 @@ public class GTNALangProvider extends LanguageProvider {
                 "Steam multiblocks can read item inputs from this bus without consuming them");
         add("gtna.machine.output_boost_steam_output_bus.tooltip",
                 "Steam multiblocks multiply item outputs by %sx while this bus is installed");
+        add("block.gtna.industrial_platform_deployment_tools", "Industrial Platform Deployment Tools");
+        add("gtna.machine.industrial_platform_deployment_tools.tooltip.0",
+                "Deploys prefabricated platform and factory presets directly into the world");
+        add("gtna.machine.industrial_platform_deployment_tools.tooltip.1",
+                "Consumes hydraulic deployment materials from its internal inventory");
 
         // Parallel Hatch
         add("block.gtna.parallel_hatch_uhv", "UHV Parallel Control Hatch");
@@ -442,6 +461,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.extreme_density_casing", "Extreme Density Casing");
         add("block.gtna.annihilate_generator", "Artificial Star");
         add("block.gtna.eye_of_harmony", "Eye of Harmony");
+        add("block.gtna.eye_of_wood", "Eye of Wood");
         add("block.gtna.nexus_molecular_forge", "Nexus Assembly Forge");
         add("gtceu.annihilate_generator", "Annihilation Generator");
         add("gtna.cosmos_simulation", "Cosmos Simulation");
@@ -474,6 +494,20 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.eye_of_harmony.hydrogen", "Hydrogen Storage: %s mB");
         add("gtna.machine.eye_of_harmony.helium", "Helium Storage: %s mB");
         add("gtna.machine.eye_of_harmony.rebound", "[GTNA] Eye of Harmony rebound to your network.");
+        add("gtna.machine.eye_of_wood.tooltip.0",
+                "Wood-and-bronze proto-singularity that condenses ores from fluid sacrifice.");
+        add("gtna.machine.eye_of_wood.tooltip.1",
+                "Feeds on Water and Lava. More excess fluid pushes the success chance toward 100%.");
+        add("gtna.machine.eye_of_wood.tooltip.2",
+                "Successful rolls output processed dust bundles. Failed rolls vent Steam instead.");
+        add("gtna.machine.eye_of_wood.tooltip.3",
+                "Structure: 5x5x5 bronze-reinforced wood chamber with log core.");
+        add("gtna.machine.eye_of_wood.water", "Stored Water: %s / %s mB");
+        add("gtna.machine.eye_of_wood.lava", "Stored Lava: %s / %s mB");
+        add("gtna.machine.eye_of_wood.chance", "Success Chance: %s / 10000");
+        add("gtna.machine.eye_of_wood.last_result", "Last Roll: %s");
+        add("gtna.machine.eye_of_wood.result.success", "Success");
+        add("gtna.machine.eye_of_wood.result.fail", "Steam Vent");
         add("gtna.machine.wireless_steam_output.tooltip_desc", "Sends Steam wirelessly to your Global Network.");
         add("gtna.machine.wireless_steam_output.tooltip_usage", "Usage: Place on Boilers to export Steam.");
         add("gtna.machine.wireless_steam_input.tooltip_desc", "Receives Steam wirelessly from your Global Network.");
@@ -515,6 +549,45 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.large_steam_ore_washer.parallel", "Parallel: Processes up to 96 items.");
         add("gtna.tooltip.large_steam_ore_washer.structure",
                 "Structure: 9x5x9 basin with glass walls and bronze pipe agitators.");
+        add("block.gtna.large_steam_circuit_assembler", "Large Steam Circuit Assembler");
+        add("gtna.tooltip.large_steam_circuit_assembler.desc",
+                "Steam-era circuit assembly line with engraved-circuit targeting.");
+        add("gtna.tooltip.large_steam_circuit_assembler.mode",
+                "Supports a multiply mode after engraving the target circuit.");
+        add("gtna.tooltip.large_steam_circuit_assembler.structure", "Structure: 3x4x10 steam assembly tunnel.");
+        add("gtna.machine.large_steam_circuit_assembler.engrave_circuit", "Engrave Circuit");
+        add("gtna.machine.large_steam_circuit_assembler.circuit", "Engraved Circuit: %s");
+        add("gtna.machine.large_steam_circuit_assembler.remaining", "Circuits Needed: %s");
+        add("gtna.machine.large_steam_circuit_assembler.multiply_mode", "Multiply Mode: %s");
+        add("block.gtna.large_steam_mixer", "Large Steam Mixer");
+        add("gtna.tooltip.large_steam_mixer.desc", "Bulk steam mixing for dusts and fluids.");
+        add("gtna.tooltip.large_steam_mixer.parallel", "Parallel: Processes up to 64 recipes.");
+        add("block.gtna.large_steam_centrifuge", "Large Steam Centrifuge");
+        add("gtna.tooltip.large_steam_centrifuge.desc", "High-throughput steam centrifuge with fluid support.");
+        add("gtna.tooltip.large_steam_centrifuge.parallel", "Parallel: Processes up to 64 recipes.");
+        add("block.gtna.large_steam_thermal_centrifuge", "Large Steam Thermal Centrifuge");
+        add("gtna.tooltip.large_steam_thermal_centrifuge.desc",
+                "Firebox-heated thermal centrifuge for heavy steam processing.");
+        add("gtna.tooltip.large_steam_thermal_centrifuge.parallel", "Parallel: Processes up to 64 recipes.");
+        add("block.gtna.large_steam_bath", "Large Steam Bath");
+        add("gtna.tooltip.large_steam_bath.desc", "Large steam chemical bath for early bulk washing.");
+        add("gtna.tooltip.large_steam_bath.parallel", "Parallel: Processes up to 64 recipes.");
+        add("block.gtna.large_steam_storage_tank", "Large Steam Storage Tank");
+        add("gtna.tooltip.large_steam_storage_tank.desc", "A massive reservoir dedicated to storing steam.");
+        add("gtna.tooltip.large_steam_storage_tank.capacity", "Capacity: 120,000,000 mB of Steam.");
+        add("block.gtna.large_steam_solar_boiler", "Large Steam Solar Boiler");
+        add("gtna.tooltip.large_steam_solar_boiler.desc", "Expandable solar steam field using boiling cells.");
+        add("gtna.tooltip.large_steam_solar_boiler.expandable",
+                "Structure expands backward and sideways as long as cells remain sunlit.");
+        add("gtna.machine.large_steam_solar_boiler.size", "Structure Size: %s x %s");
+        add("gtna.machine.large_steam_solar_boiler.sunlit", "Sunlit Cells: %s");
+        add("gtna.machine.large_steam_solar_boiler.production", "Steam Production: %s L/s");
+        add("block.gtna.dimensionally_transcendent_steam_boiler", "Dimensionally Transcendent Steam Boiler");
+        add("gtna.tooltip.dimensionally_transcendent_steam_boiler.desc",
+                "Absurd late-game boiler that bends dimensional space into steam throughput.");
+        add("block.gtna.dimensionally_transcendent_steam_oven", "Dimensionally Transcendent Steam Oven");
+        add("gtna.tooltip.dimensionally_transcendent_steam_oven.desc",
+                "A steam oven pushed far beyond sane thermal engineering limits.");
         add("block.gtna.steam_cobbler", "Steam Cobbler");
         add("gtna.tooltip.steam_cobbler.desc", "Advanced Steam Rock Generator.");
         add("gtna.tooltip.steam_cobbler.modes", "Generates various stones based on Programmed Circuits.");
@@ -622,6 +695,7 @@ public class GTNALangProvider extends LanguageProvider {
 
         // Mega Solar Boiler
         add("config.gtna.option.megaSolarSteamPerBlock", "Solar Steam Per Block");
+        add("config.gtna.option.eyeOfWood", "Eye of Wood");
 
         // Void Miner - Tier 1 (Dense)
         add("config.gtna.option.voidMinerDenseOutputMult", "Void Miner (Dense) Output");

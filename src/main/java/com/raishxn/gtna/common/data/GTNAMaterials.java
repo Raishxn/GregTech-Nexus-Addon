@@ -10,6 +10,15 @@ public class GTNAMaterials {
     public static Material Stronze;
     public static Material Breel;
     public static Material HastelloyN;
+    public static Material AluminiumBronze;
+    public static Material DarkSteel;
+    public static Material EndSteel;
+    public static Material Indalloy140;
+    public static Material Trinaquadalloy;
+    public static Material MarM200Steel;
+    public static Material FallKing;
+    public static Material ZirconiumOxide;
+    public static Material ZirconiaCeramic;
     public static Material ClayCompound;
     public static Material Echoite;
     public static Material DenseSupercriticalSteam;

@@ -18,6 +18,7 @@ import static com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialFlag
 import static com.gregtechceu.gtceu.api.data.tag.TagPrefix.*;
 import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.BENDER_RECIPES;
 import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.COMPRESSOR_RECIPES;
+import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.CUTTER_RECIPES;
 import static com.raishxn.gtna.api.data.info.GTNAMaterialFlags.*;
 import static com.raishxn.gtna.api.data.tag.GTNATagPrefix.*;
 
@@ -40,6 +41,9 @@ public class GTNAGeneratesRecipes {
         processTripleIngot(provider, material);
         processQuadrupleIngot(provider, material);
         processQuintupleIngot(provider, material);
+
+        // Ceramics
+        processCeramicForms(provider, material);
 
         // Singularity
         processSingularity(provider, material);
@@ -260,6 +264,33 @@ public class GTNAGeneratesRecipes {
                 .outputItems(quintupleIngot, material)
                 .duration((int) material.getMass() * 5)
                 .EUt(2)
+                .save(provider);
+    }
+
+    private static void processCeramicForms(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+        if (!material.shouldGenerateRecipesFor(brick) || !material.hasProperty(PropertyKey.DUST)) {
+            return;
+        }
+
+        COMPRESSOR_RECIPES.recipeBuilder("compress_" + material.getName() + "_dust_to_rough_blank")
+                .inputItems(dust, material, 9)
+                .outputItems(roughBlank, material)
+                .duration(200)
+                .EUt(500)
+                .save(provider);
+
+        CUTTER_RECIPES.recipeBuilder(material.getName() + "_brick")
+                .inputItems(roughBlank, material)
+                .outputItems(brick, material, 9)
+                .duration(300)
+                .EUt(120)
+                .save(provider);
+
+        CUTTER_RECIPES.recipeBuilder(material.getName() + "_flakes")
+                .inputItems(brick, material)
+                .outputItems(flake, material, 4)
+                .duration(200)
+                .EUt(30)
                 .save(provider);
     }
 

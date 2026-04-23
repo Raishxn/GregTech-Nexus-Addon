@@ -30,6 +30,7 @@ import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftPatternPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
+import com.raishxn.gtna.common.machine.tesseract.DirectedTesseractMachine;
 import com.raishxn.gtna.config.ConfigHolder;
 
 import java.util.Locale;
@@ -55,9 +56,11 @@ public class GTNAMachines2 {
     public static MachineDefinition ME_ADVANCED_PATTERN_BUFFER;
     public static MachineDefinition ME_ULTIMATE_PATTERN_BUFFER;
     public static MachineDefinition ME_CRAFT_PATTERN_HATCH;
+    public static MachineDefinition DIRECTED_TESSERACT_GENERATOR;
 
     public static void init() {
         registerPatternBuffers();
+        registerDirectedTesseract();
         registerParallelHatch(GTValues.UHV, 1024);
         registerParallelHatch(GTValues.UEV, 4096);
         registerParallelHatch(GTValues.UIV, 16384);
@@ -113,6 +116,34 @@ public class GTNAMachines2 {
                 registerPatternBuffer("me_ultimate_pattern_buffer", GTValues.UHV, 72) : null;
         ME_CRAFT_PATTERN_HATCH = ConfigHolder.isHatchEnabled("meCraftPatternHatch") ? registerCraftPatternHatch() :
                 null;
+    }
+
+    private static void registerDirectedTesseract() {
+        DIRECTED_TESSERACT_GENERATOR = REGISTRATE
+                .machine("directed_tesseract_generator", DirectedTesseractMachine::new)
+                .tier(GTValues.IV)
+                .rotationState(RotationState.ALL)
+                .abilities(
+                        PartAbility.IMPORT_ITEMS,
+                        PartAbility.IMPORT_FLUIDS,
+                        PartAbility.EXPORT_ITEMS,
+                        PartAbility.EXPORT_FLUIDS)
+                .modelProperty(IS_FORMED, false)
+                .model((ctx, prov, builder) -> {
+                    var model = prov.models()
+                            .withExistingParent(ctx.getName(), GTCEu.id("block/machine/template/part/hatch_machine"))
+                            .texture("overlay", GTNACORE.id("block/machines/tesseract_generator/side"))
+                            .texture("side", GTNACORE.id("block/machines/tesseract_generator/side"))
+                            .texture("top", GTNACORE.id("block/machines/tesseract_generator/top"))
+                            .texture("bottom", GTNACORE.id("block/machines/tesseract_generator/top"))
+                            .texture("particle", GTNACORE.id("block/machines/tesseract_generator/side"));
+                    builder.partialState().setModel(model);
+                })
+                .tooltips(
+                        Component.translatable("gtna.machine.directed_tesseract.tooltip"),
+                        Component.translatable("gtna.machine.directed_tesseract.tooltip.assembly"),
+                        Component.translatable("gtna.machine.directed_tesseract.tooltip.marker"))
+                .register();
     }
 
     private static MachineDefinition registerPatternBuffer(String id, int tier, int slotCount) {

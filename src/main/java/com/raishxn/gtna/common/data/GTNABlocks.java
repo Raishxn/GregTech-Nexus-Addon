@@ -60,6 +60,18 @@ public class GTNABlocks {
     public static final BlockEntry<Block> MAGTECH_CASING = createCasingBlock(
             "magtech_casing",
             GTNACORE.id("block/casings/magtech_casing"));
+    public static final BlockEntry<Block> ABS_BLACK_CASING = createCasingBlock(
+            "abs_black_casing",
+            GTNACORE.id("block/casings/abs_black_casing"));
+    public static final BlockEntry<Block> ABS_GREY_CASING = createCasingBlock(
+            "abs_grey_casing",
+            GTNACORE.id("block/casings/abs_grey_casing"));
+    public static final BlockEntry<Block> ABS_LIGHT_GREY_CASING = createCasingBlock(
+            "abs_light_grey_casing",
+            GTNACORE.id("block/casings/abs_light_grey_casing"));
+    public static final BlockEntry<Block> RESTRAINT_DEVICE = createCasingBlock(
+            "restraint_device",
+            GTNACORE.id("block/restraint_device"));
     public static final BlockEntry<Block> PROCESS_MACHINE_CASING = createCasingBlock(
             "process_machine_casing",
             GTNACORE.id("block/casings/process_machine_casing"));

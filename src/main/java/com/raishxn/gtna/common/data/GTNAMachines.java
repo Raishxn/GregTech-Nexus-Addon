@@ -34,10 +34,12 @@ import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhous
 import com.raishxn.gtna.common.machine.multiblock.energy.NexusMEHyperCoreMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.NexusMolecularForgeMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.EyeOfHarmonyMachine;
+import com.raishxn.gtna.common.machine.multiblock.noenergy.EyeOfWoodMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.HyperPressureReactor;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.InfernalCokeOven;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.LeapForwardBlastFurnace;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
+import com.raishxn.gtna.common.machine.noenergy.platformdeployment.PlatformDeploymentMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.HugeSteamInputBus;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.HugeSteamOutputBus;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.InfiniteSteamInputBus;
@@ -196,6 +198,21 @@ public class GTNAMachines {
                     .colorOverlaySteamHullModel(OVERLAY_STEAM_OUT)
                     .tooltips(Component.translatable("gtna.machine.output_boost_steam_output_bus.tooltip",
                             OutputBoostHatchPartMachine.getMultiplierForTier(GTValues.ULV)))
+                    .tooltipBuilder(GTNA_ADD)
+                    .register());
+
+    public static final MachineDefinition INDUSTRIAL_PLATFORM_DEPLOYMENT_TOOLS = registerMachine(
+            "industrialPlatformDeploymentTools",
+            () -> REGISTRATE
+                    .machine("industrial_platform_deployment_tools", PlatformDeploymentMachine::new)
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .tier(GTValues.HV)
+                    .workableCasingModel(
+                            GTNACORE.id("block/casings/dyson_deployment_casing"),
+                            GTCEu.id("block/multiblock/fusion_reactor"))
+                    .tooltips(
+                            Component.translatable("gtna.machine.industrial_platform_deployment_tools.tooltip.0"),
+                            Component.translatable("gtna.machine.industrial_platform_deployment_tools.tooltip.1"))
                     .tooltipBuilder(GTNA_ADD)
                     .register());
 
@@ -748,6 +765,346 @@ public class GTNAMachines {
                             Component.translatable("gtna.tooltip.large_steam_ore_washer.structure",
                                     "Structure: 9x5x9 basin with glass walls and bronze pipe agitators.")
                                     .withStyle(ChatFormatting.DARK_GRAY))
+                    .register());
+
+    public static final MultiblockMachineDefinition LARGE_STEAM_CIRCUIT_ASSEMBLER = registerMachine(
+            "largeSteamCircuitAssembler", () -> REGISTRATE
+                    .multiblock("large_steam_circuit_assembler", LargeSteamCircuitAssembler::new)
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .recipeType(GTRecipeTypes.CIRCUIT_ASSEMBLER_RECIPES)
+                    .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
+                    .pattern(definition -> FactoryBlockPattern.start()
+                            .aisle("AAA", "AAA", "BBB", "CBC")
+                            .aisle("AAA", "ADA", "B B", "CBC")
+                            .aisle("AAA", "ADA", "B B", "CBC")
+                            .aisle("AAA", "ADA", "B B", "CBC")
+                            .aisle("AAA", "ADA", "B B", "CBC")
+                            .aisle("AAA", "ADA", "B B", "CBC")
+                            .aisle("AAA", "ADA", "B B", "CBC")
+                            .aisle("AAA", "ADA", "B B", "CBC")
+                            .aisle("AAA", "ADA", "B B", "CBC")
+                            .aisle("AAA", "ASA", "BBB", "CBC")
+                            .where('S', controller(blocks(definition.get())))
+                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                                    .or(abilities(PartAbility.STEAM).setExactLimit(1)))
+                            .where('B', blocks(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get()))
+                            .where('C', blocks(GTNABlocks.HYDRAULIC_ASSEMBLER_CASING.get()))
+                            .where('D', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                                    .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(2))
+                                    .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(IMPORT_FLUIDS).setMaxGlobalLimited(1)))
+                            .where(' ', Predicates.any())
+                            .build())
+                    .workableCasingModel(
+                            GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
+                            GTCEu.id("block/machines/circuit_assembler"))
+                    .tooltips(
+                            Component.translatable("gtna.tooltip.large_steam_circuit_assembler.desc")
+                                    .withStyle(ChatFormatting.GRAY),
+                            Component.translatable("gtna.tooltip.large_steam_circuit_assembler.mode")
+                                    .withStyle(ChatFormatting.GOLD),
+                            Component.translatable("gtna.tooltip.large_steam_circuit_assembler.structure")
+                                    .withStyle(ChatFormatting.DARK_GRAY))
+                    .register());
+
+    public static final MultiblockMachineDefinition LARGE_STEAM_MIXER = registerMachine("largeSteamMixer",
+            () -> REGISTRATE
+                    .multiblock("large_steam_mixer",
+                            holder -> new AdjustableSteamParallelMachine(holder, GTRecipeTypes.MIXER_RECIPES, 64, 64,
+                                    0.5, true))
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .recipeType(GTRecipeTypes.MIXER_RECIPES)
+                    .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
+                    .pattern(definition -> FactoryBlockPattern.start()
+                            .aisle("BAAAAAAAB", "BAAAAAAAB", "BAAAAAAAB", "BAAAAAAAB", "BAAAAAAAB", "BAAAAAAAB",
+                                    "BAAAAAAAB")
+                            .aisle("AAAAAAAAA", "AABBBBBAA", "AABBBBBAA", "AABBBBBAA", "AABBBBBAA", "AABBBBBAA",
+                                    "AABBDBBAA")
+                            .aisle("AAAAAAAAA", "ABBBBBBBA", "ABBB BBBA", "ABBBBBBBA", "ABBB BBBA", "ABBBBBBBA",
+                                    "ABBBDBBBA")
+                            .aisle("AAAAAAAAA", "ABBBBBBBA", "ABBB BBBA", "ABBBBBBBA", "ABBB BBBA", "ABBBBBBBA",
+                                    "ABBBDBBBA")
+                            .aisle("AAAAAAAAA", "ABBBCBBBA", "AB     BA", "ABBBCBBBA", "AB     BA", "ABBBCBBBA",
+                                    "ADDDDDDDA")
+                            .aisle("AAAAAAAAA", "ABBBBBBBA", "ABBB BBBA", "ABBBBBBBA", "ABBB BBBA", "ABBBBBBBA",
+                                    "ABBBDBBBA")
+                            .aisle("AAAAAAAAA", "ABBBBBBBA", "ABBB BBBA", "ABBBBBBBA", "ABBB BBBA", "ABBBBBBBA",
+                                    "ABBBDBBBA")
+                            .aisle("AAAAAAAAA", "AABBBBBAA", "AABBBBBAA", "AABBBBBAA", "AABBBBBAA", "AABBBBBAA",
+                                    "AABBDBBAA")
+                            .aisle("BAAAAAAAB", "BAAASAAAB", "BAAAAAAAB", "BAAAAAAAB", "BAAAAAAAB", "BAAAAAAAB",
+                                    "BAAAAAAAB")
+                            .where('S', controller(blocks(definition.get())))
+                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                                    .or(abilities(PartAbility.STEAM).setExactLimit(1))
+                                    .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(4))
+                                    .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(1)))
+                            .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
+                            .where('C', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
+                            .where('D', blocks(GTBlocks.CASING_BRONZE_GEARBOX.get()))
+                            .where(' ', air())
+                            .build())
+                    .workableCasingModel(
+                            GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
+                            GTCEu.id("block/machines/mixer"))
+                    .tooltips(
+                            Component.translatable("gtna.tooltip.large_steam_mixer.desc")
+                                    .withStyle(ChatFormatting.GRAY),
+                            Component.translatable("gtna.tooltip.large_steam_mixer.parallel")
+                                    .withStyle(ChatFormatting.BLUE))
+                    .register());
+
+    public static final MultiblockMachineDefinition LARGE_STEAM_CENTRIFUGE = registerMachine(
+            "largeSteamCentrifuge", () -> REGISTRATE
+                    .multiblock("large_steam_centrifuge",
+                            holder -> new AdjustableSteamParallelMachine(holder, GTRecipeTypes.CENTRIFUGE_RECIPES, 64,
+                                    64, 0.5, true))
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .recipeType(GTRecipeTypes.CENTRIFUGE_RECIPES)
+                    .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
+                    .pattern(definition -> FactoryBlockPattern.start()
+                            .aisle("AAAAAAAAAAA", "AAABBBBBAAA", "AABBBBBBBAA", "AAABBBBBAAA", "AAAAAAAAAAA")
+                            .aisle("AABBBBBBBAA", "AABAAAAABAA", "ABCAAAAACBA", "AABAAAAABAA", "AABBBBBBBAA")
+                            .aisle("ABBBBBBBBBA", "ABAAAAAAABA", "BCAAA AAACB", "ABAAAAAAABA", "ABBBBBBBBBA")
+                            .aisle("ABBBBBBBBBA", "BAAAAAAAAAB", "BAAAA AAAAB", "BAAAAAAAAAB", "ABBBBBBBBBA")
+                            .aisle("ABBBBBBBBBA", "BAAAAEAAAAB", "BAAAA AAAAB", "BAAAAAAAAAB", "ABBBBBBBBBA")
+                            .aisle("ABBBBBBBBBA", "BAAAE EAAAB", "BA       AB", "BAAAA AAAAB", "ABBBBFBBBBA")
+                            .aisle("ABBBBBBBBBA", "BAAAAEAAAAB", "BAAAA AAAAB", "BAAAAAAAAAB", "ABBBBBBBBBA")
+                            .aisle("ABBBBBBBBBA", "BAAAAAAAAAB", "BAAAA AAAAB", "BAAAAAAAAAB", "ABBBBBBBBBA")
+                            .aisle("ABBBBBBBBBA", "ABAAAAAAABA", "BCAAA AAACB", "ABAAAAAAABA", "ABBBBBBBBBA")
+                            .aisle("AABBBBBBBAA", "AABAAAAABAA", "ABCAAAAACBA", "AABAAAAABAA", "AABBBBBBBAA")
+                            .aisle("AAAAAAAAAAA", "AAABBBBBAAA", "AABBBSBBBAA", "AAABBBBBAAA", "AAAAAAAAAAA")
+                            .where('S', controller(blocks(definition.get())))
+                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                                    .or(abilities(PartAbility.STEAM).setExactLimit(1))
+                                    .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(4))
+                                    .or(abilities(IMPORT_FLUIDS).setMaxGlobalLimited(1))
+                                    .or(abilities(EXPORT_FLUIDS).setMaxGlobalLimited(4)))
+                            .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
+                            .where('C', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
+                            .where('E', blocks(GTBlocks.CASING_BRONZE_GEARBOX.get()))
+                            .where('F', abilities(MUFFLER))
+                            .where(' ', air())
+                            .build())
+                    .workableCasingModel(
+                            GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
+                            GTCEu.id("block/machines/centrifuge"))
+                    .tooltips(
+                            Component.translatable("gtna.tooltip.large_steam_centrifuge.desc")
+                                    .withStyle(ChatFormatting.GRAY),
+                            Component.translatable("gtna.tooltip.large_steam_centrifuge.parallel")
+                                    .withStyle(ChatFormatting.BLUE))
+                    .register());
+
+    public static final MultiblockMachineDefinition LARGE_STEAM_THERMAL_CENTRIFUGE = registerMachine(
+            "largeSteamThermalCentrifuge", () -> REGISTRATE
+                    .multiblock("large_steam_thermal_centrifuge",
+                            holder -> new AdjustableSteamParallelMachine(holder,
+                                    GTRecipeTypes.THERMAL_CENTRIFUGE_RECIPES, 64, 64, 0.5, true))
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .recipeType(GTRecipeTypes.THERMAL_CENTRIFUGE_RECIPES)
+                    .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
+                    .pattern(definition -> FactoryBlockPattern.start()
+                            .aisle("ACCCCCA", "ABBBBBA", "ABBBBBA", "ABBBBBA", "AAAAAAA")
+                            .aisle("CBBCBBC", "B AAA B", "B AAA B", "B AAA B", "ABBBBBA")
+                            .aisle("CBCCCBC", "BAAAAAB", "BAAAAAB", "BAAAAAB", "ABBBBBA")
+                            .aisle("CCCCCCC", "BAADAAB", "BAADAAB", "BAADAAB", "ABBEBBA")
+                            .aisle("CBCCCBC", "BAAAAAB", "BAAAAAB", "BAAAAAB", "ABBBBBA")
+                            .aisle("CBBCBBC", "B AAA B", "B AAA B", "B AAA B", "ABBBBBA")
+                            .aisle("ACCCCCA", "ABBBBBA", "ABBSBBA", "ABBBBBA", "AAAAAAA")
+                            .where('S', controller(blocks(definition.get())))
+                            .where('A', blocks(GTBlocks.FIREBOX_BRONZE.get()))
+                            .where('B', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                                    .or(abilities(PartAbility.STEAM).setExactLimit(1))
+                                    .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(3)))
+                            .where('C', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
+                            .where('D', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
+                            .where('E', abilities(MUFFLER))
+                            .where(' ', air())
+                            .build())
+                    .workableCasingModel(
+                            GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
+                            GTCEu.id("block/machines/thermal_centrifuge"))
+                    .tooltips(
+                            Component.translatable("gtna.tooltip.large_steam_thermal_centrifuge.desc")
+                                    .withStyle(ChatFormatting.GRAY),
+                            Component.translatable("gtna.tooltip.large_steam_thermal_centrifuge.parallel")
+                                    .withStyle(ChatFormatting.BLUE))
+                    .register());
+
+    public static final MultiblockMachineDefinition LARGE_STEAM_BATH = registerMachine("largeSteamBath",
+            () -> REGISTRATE
+                    .multiblock("large_steam_bath",
+                            holder -> new AdjustableSteamParallelMachine(holder, GTRecipeTypes.CHEMICAL_BATH_RECIPES,
+                                    64, 64, 0.5, true))
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .recipeType(GTRecipeTypes.CHEMICAL_BATH_RECIPES)
+                    .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
+                    .pattern(definition -> FactoryBlockPattern.start()
+                            .aisle("AAAAAAAAA", "AAAAAAAAA", "AAAAAAAAA", "AAAAAAAAA", "AAAAAAAAA")
+                            .aisle("AAAAAAAAA", "ABBBBBBBA", "ABBBDBBBA", "ABBBBBBBA", "AAAAAAAAA")
+                            .aisle("AAAAAAAAA", "ABCCCCCBA", "ABCCDCCBA", "ABCCCCCBA", "AA     AA")
+                            .aisle("AAAAAAAAA", "ABCCCCCBA", "ACCCDCCCA", "ABCCCCCBA", "AA     AA")
+                            .aisle("AAAAAAAAA", "ABCCCCCBA", "ACCCDCCCA", "ABCCCCCBA", "AA     AA")
+                            .aisle("AAAAAAAAA", "ABCCCCCBA", "ACCCDCCCA", "ABCCCCCBA", "AA     AA")
+                            .aisle("AAAAAAAAA", "ABCCCCCBA", "ACCCDCCCA", "ABCCCCCBA", "AA     AA")
+                            .aisle("AAAAAAAAA", "ABCCCCCBA", "ABCCDCCBA", "ABCCCCCBA", "AA     AA")
+                            .aisle("AAAAAAAAA", "ABBBBBBBA", "ABBBDBBBA", "ABBBBBBBA", "AAAAAAAAA")
+                            .aisle("AAAAAAAAA", "AAAAAAAAA", "AAAASAAAA", "AAAAAAAAA", "AAAAAAAAA")
+                            .where('S', controller(blocks(definition.get())))
+                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                                    .or(abilities(PartAbility.STEAM).setExactLimit(1))
+                                    .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(3))
+                                    .or(abilities(IMPORT_FLUIDS).setMaxGlobalLimited(1)))
+                            .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
+                            .where('C', blocks(Blocks.GLASS))
+                            .where('D', blocks(ChemicalHelper.getBlock(TagPrefix.block, GTMaterials.Potin)))
+                            .where(' ', air())
+                            .build())
+                    .workableCasingModel(
+                            GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
+                            GTCEu.id("block/machines/chemical_bath"))
+                    .tooltips(
+                            Component.translatable("gtna.tooltip.large_steam_bath.desc")
+                                    .withStyle(ChatFormatting.GRAY),
+                            Component.translatable("gtna.tooltip.large_steam_bath.parallel")
+                                    .withStyle(ChatFormatting.BLUE))
+                    .register());
+
+    public static final MultiblockMachineDefinition LARGE_STEAM_STORAGE_TANK = registerMachine(
+            "largeSteamStorageTank", () -> REGISTRATE
+                    .multiblock("large_steam_storage_tank", LargeSteamStorageTank::new)
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .recipeType(GTRecipeTypes.DUMMY_RECIPES)
+                    .appearanceBlock(GTNABlocks.BRONZE_REINFORCED_WOOD)
+                    .pattern(definition -> FactoryBlockPattern.start()
+                            .aisle("ABBBA", "ABCBA", "ABCBA", "ABABA", "ABABA", "ABABA", "A   A")
+                            .aisle("BBBBB", "BDEDB", "BDDDB", "BDFDB", "BDFDB", "BDFDB", " ADA ")
+                            .aisle("BBBBB", "CEEEC", "CDEDC", "AFAFA", "AFAFA", "AFAFA", " DCD ")
+                            .aisle("BBBBB", "BDEDB", "BDDDB", "BDFDB", "BDFDB", "BDFDB", " ADA ")
+                            .aisle("ABBBA", "ABGBA", "ABCBA", "ABABA", "ABABA", "ABABA", "A   A")
+                            .where('G', controller(blocks(definition.get())))
+                            .where('A', blocks(GTNABlocks.BRONZE_REINFORCED_WOOD.get()))
+                            .where('B', blocks(GTBlocks.CASING_STEEL_SOLID.get())
+                                    .or(abilities(IMPORT_FLUIDS).setMaxGlobalLimited(2))
+                                    .or(abilities(EXPORT_FLUIDS).setMaxGlobalLimited(2)))
+                            .where('C', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
+                            .where('D', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
+                            .where('E', blocks(Blocks.GLASS))
+                            .where('F', blocks(GTNABlocks.STEEL_REINFORCED_WOOD.get()))
+                            .where(' ', any())
+                            .build())
+                    .workableCasingModel(GTNACORE.id("block/casings/bronze_reinforced_wood"),
+                            GTCEu.id("block/multiblock/multiblock_tank"))
+                    .tooltips(
+                            Component.translatable("gtna.tooltip.large_steam_storage_tank.desc")
+                                    .withStyle(ChatFormatting.GRAY),
+                            Component.translatable("gtna.tooltip.large_steam_storage_tank.capacity")
+                                    .withStyle(ChatFormatting.BLUE))
+                    .register());
+
+    public static final MultiblockMachineDefinition LARGE_STEAM_SOLAR_BOILER = registerMachine(
+            "largeSteamSolarBoiler", () -> REGISTRATE
+                    .multiblock("large_steam_solar_boiler", LargeSteamSolarBoilerMachine::new)
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .recipeType(GTRecipeTypes.DUMMY_RECIPES)
+                    .appearanceBlock(GTBlocks.STEEL_HULL)
+                    .pattern(definition -> FactoryBlockPattern.start(LEFT, UP, FRONT)
+                            .aisle("AAAAA")
+                            .aisle("ABBBA").setRepeatable(3)
+                            .aisle("AB~BA")
+                            .where('A', blocks(GTBlocks.STEEL_HULL.get())
+                                    .or(abilities(IMPORT_FLUIDS).setPreviewCount(1))
+                                    .or(abilities(EXPORT_FLUIDS).setPreviewCount(1)))
+                            .where('B', blocks(GTNABlocks.SOLAR_BOILING_CELL.get()))
+                            .where('~', controller(blocks(definition.get())))
+                            .build())
+                    .workableCasingModel(GTCEu.id("block/machines/hull/steel"),
+                            GTNACORE.id("block/overlay/machine/solarboiler"))
+                    .tooltips(
+                            Component.translatable("gtna.tooltip.large_steam_solar_boiler.desc")
+                                    .withStyle(ChatFormatting.GRAY),
+                            Component.translatable("gtna.tooltip.large_steam_solar_boiler.expandable")
+                                    .withStyle(ChatFormatting.GOLD))
+                    .register());
+
+    public static final MultiblockMachineDefinition DIMENSIONALLY_TRANSCENDENT_STEAM_BOILER = registerMachine(
+            "dimensionallyTranscendentSteamBoiler", () -> REGISTRATE
+                    .multiblock("dimensionally_transcendent_steam_boiler",
+                            holder -> new com.gregtechceu.gtceu.common.machine.multiblock.steam.LargeBoilerMachine(
+                                    holder, 4_096_000, 32))
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .recipeType(GTRecipeTypes.LARGE_BOILER_RECIPES)
+                    .recipeModifier(
+                            com.gregtechceu.gtceu.common.machine.multiblock.steam.LargeBoilerMachine::recipeModifier)
+                    .appearanceBlock(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING)
+                    .pattern(definition -> FactoryBlockPattern.start()
+                            .aisle("AAA", "ABA", "AAA", "ACA", "AAA")
+                            .aisle("ADA", "E E", "F~F", "E E", "AGA")
+                            .aisle("AAA", "ABA", "AAA", "ACA", "AAA")
+                            .where('~', controller(blocks(definition.get())))
+                            .where('A', blocks(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get())
+                                    .or(abilities(EXPORT_FLUIDS).setMaxGlobalLimited(4))
+                                    .or(abilities(IMPORT_FLUIDS).setMaxGlobalLimited(2))
+                                    .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(1)))
+                            .where('B', blocks(GTBlocks.CASING_TUNGSTENSTEEL_ROBUST.get()))
+                            .where('C', blocks(GTBlocks.CASING_INVAR_HEATPROOF.get()))
+                            .where('D', heatingCoils())
+                            .where('E', blocks(GTBlocks.CASING_TUNGSTENSTEEL_PIPE.get()))
+                            .where('F', blocks(GTBlocks.CASING_TUNGSTENSTEEL_ROBUST.get()))
+                            .where('G', blocks(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get()))
+                            .where(' ', air())
+                            .build())
+                    .workableCasingModel(GTNACORE.id("block/casings/dimensionally_transcendent_casing"),
+                            GTCEu.id("block/multiblock/generator/large_tungstensteel_boiler"))
+                    .tooltips(
+                            Component.translatable("gtna.tooltip.dimensionally_transcendent_steam_boiler.desc")
+                                    .withStyle(ChatFormatting.GRAY))
+                    .register());
+
+    public static final MultiblockMachineDefinition DIMENSIONALLY_TRANSCENDENT_STEAM_OVEN = registerMachine(
+            "dimensionallyTranscendentSteamOven", () -> REGISTRATE
+                    .multiblock("dimensionally_transcendent_steam_oven", DimensionallyTranscendentSteamOvenMachine::new)
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .recipeType(GTRecipeTypes.FURNACE_RECIPES)
+                    .appearanceBlock(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING)
+                    .pattern(definition -> FactoryBlockPattern.start()
+                            .aisle("AAAAA", "ABBBA", "ABCBA", "ABBBA", "AAAAA")
+                            .aisle("ADDDA", "D   D", "D   D", "D   D", "ADDDA")
+                            .aisle("ADEDA", "E   E", "E ~ E", "E   E", "ADEDA")
+                            .aisle("ADDDA", "D   D", "D   D", "D   D", "ADDDA")
+                            .aisle("AAAAA", "ABBBA", "ABCBA", "ABBBA", "AAAAA")
+                            .where('~', controller(blocks(definition.get())))
+                            .where('A', blocks(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get()))
+                            .where('B', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                                    .or(abilities(PartAbility.STEAM).setExactLimit(1))
+                                    .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(4))
+                                    .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(4)))
+                            .where('C', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
+                            .where('D', blocks(Blocks.STONE_BRICKS))
+                            .where('E', blocks(Blocks.DEEPSLATE))
+                            .where(' ', air())
+                            .build())
+                    .workableCasingModel(GTNACORE.id("block/casings/dimensionally_transcendent_casing"),
+                            GTCEu.id("block/multiblock/steam_oven"))
+                    .tooltips(
+                            Component.translatable("gtna.tooltip.dimensionally_transcendent_steam_oven.desc")
+                                    .withStyle(ChatFormatting.GRAY))
                     .register());
 
     public static final MultiblockMachineDefinition STEAM_COBBLER = registerMachine("steamCobbler", () -> REGISTRATE
@@ -1939,6 +2296,41 @@ public class GTNAMachines {
                     .andThen(builder -> builder.addDynamicRenderer(EyeOfHarmonyRenderer::new)))
             .register());
 
+    public static final MultiblockMachineDefinition EYE_OF_WOOD = registerMachine("eyeOfWood", () -> REGISTRATE
+            .multiblock("eye_of_wood", EyeOfWoodMachine::new)
+            .rotationState(RotationState.NON_Y_AXIS)
+            .recipeType(GTRecipeTypes.DUMMY_RECIPES)
+            .appearanceBlock(GTNABlocks.BRONZE_REINFORCED_WOOD)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle("AAAAA", "ABBBA", "ABCBA", "ABBBA", "AAAAA")
+                    .aisle("ADDDA", "D   D", "D   D", "D   D", "ADDDA")
+                    .aisle("ADEDA", "D   D", "E   E", "D   D", "ADEDA")
+                    .aisle("ADDDA", "D   D", "D   D", "D   D", "ADDDA")
+                    .aisle("AAAAA", "ABBBA", "AB~BA", "ABBBA", "AAAAA")
+                    .where('~', controller(blocks(definition.get())))
+                    .where('A', blocks(GTNABlocks.BRONZE_REINFORCED_WOOD.get())
+                            .or(abilities(IMPORT_FLUIDS).setMaxGlobalLimited(2))
+                            .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(2))
+                            .or(abilities(EXPORT_FLUIDS).setMaxGlobalLimited(1)))
+                    .where('B', blocks(GTBlocks.CASING_BRONZE_BRICKS.get()))
+                    .where('C', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
+                    .where('D', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
+                    .where('E', blocks(
+                            Blocks.OAK_LOG, Blocks.SPRUCE_LOG, Blocks.BIRCH_LOG, Blocks.JUNGLE_LOG,
+                            Blocks.ACACIA_LOG, Blocks.DARK_OAK_LOG))
+                    .where(' ', air())
+                    .build())
+            .workableCasingModel(
+                    GTNACORE.id("block/casings/bronze_reinforced_wood"),
+                    GTCEu.id("block/multiblock/steam_oven"))
+            .tooltips(
+                    Component.translatable("gtna.machine.eye_of_wood.tooltip.0").withStyle(ChatFormatting.GRAY),
+                    Component.translatable("gtna.machine.eye_of_wood.tooltip.1").withStyle(ChatFormatting.GOLD),
+                    Component.translatable("gtna.machine.eye_of_wood.tooltip.2").withStyle(ChatFormatting.GREEN),
+                    Component.translatable("gtna.machine.eye_of_wood.tooltip.3").withStyle(ChatFormatting.DARK_GRAY))
+            .tooltipBuilder(GTNA_ADD)
+            .register());
+
     public static final MultiblockMachineDefinition NEXUS_MOLECULAR_FORGE = registerMachine("nexusMolecularForge",
             () -> REGISTRATE
                     .multiblock("nexus_molecular_forge", NexusMolecularForgeMachine::new)
@@ -2056,7 +2448,7 @@ public class GTNAMachines {
                         "AEAAFAAEA", "ADIIIIIDA", "AADGHGDAA", "AAAABAAAA")
                 .aisle("AAAABAAAA", "ADGGHGGDA", "ADIJJJIDA", "ADAAKAADA", "ADAAAAADA", "CDAAAAADC", "ADAAAAADA",
                         "ADAAKAADA", "ADIJJJIDA", "ADGGHGGDA", "AAAABAAAA")
-                .aisle("ABBBBBBBA", "BCHHHHHCB", "BCIJJJICB", "BCFKLKFCB", "CFAALAAFC", "CFAALAAFM", "CFAALAAFC",
+                .aisle("ABBBBBBBA", "BCHHHHHCB", "BCIJJJICB", "BCFKLKFCB", "CFAALAAFC", "CFAALAAFC", "CFAALAAFC",
                         "BCFKLKFCB", "BCIJJJICB", "BCHHHHHCB", "ABBBBBBBA")
                 .aisle("AAAABAAAA", "ADGGHGGDA", "ADIJJJIDA", "ADAAKAADA", "ADAAAAADA", "CDAAAAADC", "ADAAAAADA",
                         "ADAAKAADA", "ADIJJJIDA", "ADGGHGGDA", "AAAABAAAA")

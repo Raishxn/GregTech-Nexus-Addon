@@ -56,6 +56,91 @@ public class GTNAMaterialRecipes {
                 .duration(1000)
                 .save(provider);
 
+        GTRecipeTypes.MIXER_RECIPES.recipeBuilder("aluminium_bronze_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Aluminium)
+                .inputItems(TagPrefix.dust, GTMaterials.Bronze, 6)
+                .circuitMeta(1)
+                .outputItems(TagPrefix.dust, GTNAMaterials.AluminiumBronze, 7)
+                .EUt(30)
+                .duration(400)
+                .save(provider);
+
+        GTRecipeTypes.MIXER_RECIPES.recipeBuilder("dark_steel_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Iron)
+                .inputItems(TagPrefix.dust, GTMaterials.Coal)
+                .inputItems(TagPrefix.dust, GTMaterials.Obsidian)
+                .circuitMeta(3)
+                .outputItems(TagPrefix.dust, GTNAMaterials.DarkSteel, 3)
+                .EUt(30)
+                .duration(200)
+                .save(provider);
+
+        GTRecipeTypes.MIXER_RECIPES.recipeBuilder("end_steel_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Endstone)
+                .inputItems(TagPrefix.dust, GTNAMaterials.DarkSteel)
+                .inputItems(TagPrefix.dust, GTMaterials.Obsidian)
+                .circuitMeta(3)
+                .outputItems(TagPrefix.dust, GTNAMaterials.EndSteel, 3)
+                .EUt(480)
+                .duration(360)
+                .save(provider);
+
+        GTRecipeTypes.MIXER_RECIPES.recipeBuilder("indalloy_140_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Bismuth, 47)
+                .inputItems(TagPrefix.dust, GTMaterials.Lead, 25)
+                .inputItems(TagPrefix.dust, GTMaterials.Tin, 13)
+                .inputItems(TagPrefix.dust, GTMaterials.Cadmium, 10)
+                .inputItems(TagPrefix.dust, GTMaterials.Indium, 5)
+                .circuitMeta(1)
+                .outputItems(TagPrefix.dust, GTNAMaterials.Indalloy140, 100)
+                .EUt(GTValues.EV)
+                .duration(800)
+                .save(provider);
+
+        GTRecipeTypes.MIXER_RECIPES.recipeBuilder("trinaquadalloy_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Trinium, 6)
+                .inputItems(TagPrefix.dust, GTMaterials.Naquadah, 2)
+                .inputItems(TagPrefix.dust, GTMaterials.Carbon)
+                .circuitMeta(1)
+                .outputItems(TagPrefix.dust, GTNAMaterials.Trinaquadalloy, 9)
+                .EUt(GTValues.ZPM)
+                .duration(600)
+                .save(provider);
+
+        GTRecipeTypes.MIXER_RECIPES.recipeBuilder("mar_m_200_steel_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Niobium, 2)
+                .inputItems(TagPrefix.dust, GTMaterials.Chromium, 9)
+                .inputItems(TagPrefix.dust, GTMaterials.Aluminium, 5)
+                .inputItems(TagPrefix.dust, GTMaterials.Titanium, 2)
+                .inputItems(TagPrefix.dust, GTMaterials.Cobalt, 10)
+                .inputItems(TagPrefix.dust, GTMaterials.Tungsten, 13)
+                .inputItems(TagPrefix.dust, GTMaterials.Nickel, 18)
+                .circuitMeta(1)
+                .outputItems(TagPrefix.dust, GTNAMaterials.MarM200Steel, 59)
+                .EUt(GTValues.IV)
+                .duration(900)
+                .save(provider);
+
+        GTRecipeTypes.MIXER_RECIPES.recipeBuilder("fall_king_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Lithium)
+                .inputItems(TagPrefix.dust, GTMaterials.Cobalt)
+                .inputItems(TagPrefix.dust, GTMaterials.Platinum)
+                .inputItems(TagPrefix.dust, GTMaterials.Erbium)
+                .inputFluids(GTMaterials.Helium.getFluid(1000))
+                .circuitMeta(1)
+                .outputItems(TagPrefix.dust, GTNAMaterials.FallKing, 5)
+                .EUt(GTValues.IV)
+                .duration(500)
+                .save(provider);
+
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("zirconium_oxide_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Zirconium)
+                .inputFluids(GTMaterials.Oxygen.getFluid(2000))
+                .outputItems(TagPrefix.dust, GTNAMaterials.ZirconiumOxide)
+                .EUt(480)
+                .duration(200)
+                .save(provider);
+
         // --- Compressed Steam Ingot (Compressor) ---
         GTRecipeTypes.FLUID_SOLIDFICATION_RECIPES.recipeBuilder("compressed_steam_ingot")
                 .notConsumable(GTItems.SHAPE_MOLD_INGOT)
