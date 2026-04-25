@@ -10,10 +10,14 @@ import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.part.TieredPartMachine;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.content.ContentModifier;
 
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
+import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhouse;
 import com.raishxn.gtna.utils.GTNASpecialPartUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -49,6 +53,8 @@ public abstract class GTRecipeLogicMixin {
             return recipe;
         }
 
+        recipe = gtna$applyOverclockHatch(recipe, multiMachine);
+
         int bestMufflerTier = -1;
         for (var part : multiMachine.getParts()) {
             if (part instanceof IMufflerMachine && part instanceof TieredPartMachine tieredPart) {
@@ -71,6 +77,32 @@ public abstract class GTRecipeLogicMixin {
                 !gtna$scaleEnergyContents(adjusted.tickInputs, multiplier)) {
             return recipe;
         }
+        return adjusted;
+    }
+
+    private GTRecipe gtna$applyOverclockHatch(GTRecipe recipe, WorkableMultiblockMachine multiMachine) {
+        if (multiMachine instanceof WorkableElectricMultipleRecipesMachine ||
+                multiMachine instanceof IndustrialSlaughterhouse) {
+            return recipe;
+        }
+
+        if (recipe.ocLevel <= 0) {
+            return recipe;
+        }
+
+        double durationFactor = OverclockingLogic.STD_DURATION_FACTOR;
+        for (var part : multiMachine.getParts()) {
+            if (part instanceof OverclockHatchPartMachine hatch) {
+                durationFactor = Math.min(durationFactor, hatch.getOverclockMultiplier());
+            }
+        }
+        if (durationFactor >= OverclockingLogic.STD_DURATION_FACTOR) {
+            return recipe;
+        }
+
+        GTRecipe adjusted = recipe.copy();
+        double additionalMultiplier = Math.pow(durationFactor / OverclockingLogic.STD_DURATION_FACTOR, recipe.ocLevel);
+        adjusted.duration = Math.max(1, (int) Math.floor(adjusted.duration * additionalMultiplier));
         return adjusted;
     }
 

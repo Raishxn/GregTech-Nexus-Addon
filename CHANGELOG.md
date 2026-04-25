@@ -44,10 +44,12 @@
 - Fixed Primitive Distillation Tower preview/pattern registration issues that caused `Pattern formed checking failed: gtna:primitive_distillation_tower` during client startup.
 - Fixed several Large Steam structures incorrectly accepting wireless steam output hatches where only normal outputs or steam inputs should be valid.
 - Fixed missing or overly simple tooltip coverage for newly added steam multiblocks.
+- Fixed GTCEu standard electric multiblocks applying Overclock Hatch duration reduction even when no real energy overclock was available.
 
 ### Tested
 - Ran `compileJava`, `runData`, and `runClient` after the latest multiblock and hatch changes.
 - Confirmed the client starts without a Primitive Distillation Tower pattern failure after the upright preview fix.
+- Ran `compileJava` after correcting Overclock Hatch scaling on GTCEu standard electric multiblocks.
 
 ## [0.3.1] - 2026-04-23
 
