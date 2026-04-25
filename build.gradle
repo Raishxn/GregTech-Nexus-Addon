@@ -153,7 +153,6 @@ dependencies {
     def isDataRun = gradle.startParameter.taskNames.any { it.toLowerCase(java.util.Locale.ROOT).contains("rundata") }
 
     compileOnly("org.jetbrains:annotations:26.0.1")
-
     // Mixin
     annotationProcessor('org.spongepowered:mixin:0.8.5:processor')
 
@@ -192,7 +191,10 @@ dependencies {
 
     modImplementation("curse.maven:gtceu-terminals-1423461:7787678")
 
-    modImplementation("curse.maven:modern-ui-352491:6956345")
+    modCompileOnly("curse.maven:modern-ui-352491:6956345")
+    if (!isDataRun) {
+        modRuntimeOnly("curse.maven:modern-ui-352491:6956345")
+    }
 }
 
 // See com.example.examplemod.mixin.DummyMixin for information about mixins

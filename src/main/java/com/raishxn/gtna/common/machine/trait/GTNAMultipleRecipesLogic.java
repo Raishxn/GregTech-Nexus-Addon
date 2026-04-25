@@ -10,6 +10,7 @@ import com.gregtechceu.gtceu.api.machine.feature.IRecipeLogicMachine;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
+import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.recipe.ActionResult;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
@@ -39,6 +40,7 @@ import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
 import com.raishxn.gtna.api.machine.multiblock.ParallelMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
+import com.raishxn.gtna.common.machine.multiblock.steam.AdjustableSteamParallelMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
 import com.raishxn.gtna.utils.GTNARecipeUtils;
 import com.raishxn.gtna.utils.ThreadMultiplierStrategy;
@@ -102,7 +104,7 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
             }
         }
         boolean isMachineEnabled = true;
-        if (machine instanceof WorkableElectricMultiblockMachine workable) {
+        if (machine instanceof WorkableMultiblockMachine workable) {
             isMachineEnabled = workable.isWorkingEnabled();
         }
         if (isMachineEnabled) {
@@ -205,43 +207,46 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
     private boolean tryStartRecipe(GTRecipe recipe) {
         // --- INICIO DA LÓGICA MANUAL ---
 
-        int hatchParallel = getMaxParallel();
-        int feasibleParallel = 1;
+        GTRecipe recipeToRun;
+        if (machine instanceof AdjustableSteamParallelMachine steamMachine) {
+            recipeToRun = steamMachine.createThreadedRecipe(recipe);
+            if (recipeToRun == null) return false;
+        } else {
+            int hatchParallel = getMaxParallel();
+            int feasibleParallel = 1;
 
-        if (hatchParallel > 1) {
-            feasibleParallel = ParallelLogic.getParallelAmount((MetaMachine) machine, recipe, hatchParallel);
+            if (hatchParallel > 1) {
+                feasibleParallel = ParallelLogic.getParallelAmount((MetaMachine) machine, recipe, hatchParallel);
+            }
+
+            // 1. Modificador de Paralelo
+            recipeToRun = recipe.copy();
+            if (feasibleParallel > 1) {
+                var parallelModifier = ModifierFunction.builder()
+                        .modifyAllContents(ContentModifier.multiplier(feasibleParallel))
+                        .eutMultiplier(feasibleParallel)
+                        .parallels(feasibleParallel)
+                        .build();
+                recipeToRun = parallelModifier.apply(recipeToRun);
+            }
+
+            OverclockingLogic overclockingLogic = machine instanceof WorkableElectricMultipleRecipesMachine customMachine ?
+                    customMachine.getOverclockingLogic() :
+                    OverclockingLogic.NON_PERFECT_OVERCLOCK;
+            var overclockModifier = GTRecipeModifiers.ELECTRIC_OVERCLOCK.apply(overclockingLogic)
+                    .getModifier((MetaMachine) machine, recipeToRun);
+            recipeToRun = overclockModifier.apply(recipeToRun);
+
+            if (recipeToRun == null) return false;
         }
 
-        // 1. Modificador de Paralelo
-        GTRecipe recipeToRun = recipe.copy();
-        if (feasibleParallel > 1) {
-            var parallelModifier = ModifierFunction.builder()
-                    .modifyAllContents(ContentModifier.multiplier(feasibleParallel))
-                    .eutMultiplier(feasibleParallel)
-                    .parallels(feasibleParallel)
-                    .build();
-            recipeToRun = parallelModifier.apply(recipeToRun);
-        }
-
-        // 2. Overclock Elétrico Padrão (GregTech)
-        // O GT decide aqui se corta o tempo pela metade baseado na voltagem
-        var overclockModifier = GTRecipeModifiers.ELECTRIC_OVERCLOCK.apply(OverclockingLogic.NON_PERFECT_OVERCLOCK)
-                .getModifier((MetaMachine) machine, recipeToRun);
-        recipeToRun = overclockModifier.apply(recipeToRun);
-
-        if (recipeToRun == null) return false;
-
-        // 3. --- NOVO: Lógica dos Hatches Customizados ---
-        // Aplicamos DEPOIS do Overclock Elétrico para garantir que sua redução de tempo é final
         if (machine instanceof WorkableElectricMultipleRecipesMachine customMachine) {
-            double durationMultiplier = customMachine.getDurationMultiplier() *
-                    customMachine.getOverclockHatchMultiplier();
+            double durationMultiplier = customMachine.getDurationMultiplier();
 
-            if (durationMultiplier < 0.999) { // Se houver redução (ex: 0.115)
+            if (durationMultiplier < 0.999) {
                 var hatchModifier = ModifierFunction.builder()
                         .durationMultiplier(durationMultiplier)
                         .build();
-                // Aplica na receita que já saiu do overclock do GT
                 recipeToRun = hatchModifier.apply(recipeToRun);
             }
 

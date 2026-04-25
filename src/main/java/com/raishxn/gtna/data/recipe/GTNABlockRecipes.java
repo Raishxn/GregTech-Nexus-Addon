@@ -111,6 +111,40 @@ public class GTNABlockRecipes {
                 .unlockedBy("has_glass", InventoryChangeTrigger.TriggerInstance.hasItems(Blocks.GLASS))
                 .save(provider);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.STEAM_ASSEMBLY_BLOCK.get())
+                .pattern("ABA")
+                .pattern("DCD")
+                .pattern("ABA")
+                .define('A', ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTMaterials.Bronze).getItem())
+                .define('B', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                .define('C', ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Bronze).getItem())
+                .define('D', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
+                .unlockedBy("has_precision_steam_component",
+                        InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_brass_reinforced_wooden_casing")
+                .inputItems(TagPrefix.frameGt, GTMaterials.Wood)
+                .inputItems(GTBlocks.TREATED_WOOD_PLANK.asItem(), 4)
+                .inputItems(TagPrefix.screw, GTMaterials.Brass, 8)
+                .inputItems(TagPrefix.plate, GTMaterials.Brass, 2)
+                .circuitMeta(6)
+                .outputItems(GTNABlocks.BRASS_REINFORCED_WOODEN_CASING.asItem())
+                .EUt(16)
+                .duration(50)
+                .save(provider);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.SOLAR_HEAT_COLLECTOR_PIPE_CASING.get())
+                .pattern("AAA")
+                .pattern("BBB")
+                .pattern("CCC")
+                .define('A', Items.TINTED_GLASS)
+                .define('B', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTMaterials.Steel).getItem())
+                .define('C', ChemicalHelper.get(TagPrefix.plateDouble, GTMaterials.Silver).getItem())
+                .unlockedBy("has_tinted_glass",
+                        InventoryChangeTrigger.TriggerInstance.hasItems(Items.TINTED_GLASS))
+                .save(provider);
+
         GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_cobble_gen")
                 .circuitMeta(1)
                 .outputItems(Items.COBBLESTONE)
@@ -232,7 +266,7 @@ public class GTNABlockRecipes {
 
         GTRecipeTypes.ALLOY_SMELTER_RECIPES.recipeBuilder("borosilicate_gtna_glass_block_v2")
                 .inputItems(ChemicalHelper.get(TagPrefix.block, GTMaterials.BorosilicateGlass))
-                .inputItems(Blocks.GLASS)
+                .inputItems(Items.GLASS)
                 .outputItems(GTNABlocks.BOROSILICATE_GLASS_BLOCK.get().asItem())
                 .duration(100)
                 .EUt(120)
@@ -318,15 +352,15 @@ public class GTNABlockRecipes {
                 .inputItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Breel).getItem(), 6)
                 .inputItems(ChemicalHelper.get(TagPrefix.rod, GTMaterials.Beryllium).getItem(), 2)
                 .inputItems(ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Beryllium).getItem(), 1)
-                .outputItems(GTNABlocks.HYPER_PRESSURE_BREEL_CASING.get())
+                .outputItems(GTNABlocks.HYPER_PRESSURE_BREEL_CASING.asItem())
                 .duration(40)
                 .EUt(16)
                 .save(provider);
         GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_compact_pipe_casing_v2")
-                .inputItems(GTNABlocks.BREEL_PIPE_CASING.get(), 1)
+                .inputItems(GTNABlocks.BREEL_PIPE_CASING.asItem(), 1)
                 .inputItems(ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.CompressedSteam).getItem(), 2)
                 .inputItems(ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.CompressedSteam).getItem(), 6)
-                .outputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get())
+                .outputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem())
                 .duration(120)
                 .EUt(24)
                 .save(provider);
@@ -345,7 +379,7 @@ public class GTNABlockRecipes {
                 .inputItems(TagPrefix.frameGt, GTMaterials.NaquadahAlloy)
                 .inputItems(TagPrefix.plate, GTMaterials.NaquadahAlloy, 6)
                 .circuitMeta(6)
-                .outputItems(GTNABlocks.NAQUADAH_ALLOY_CASING.get())
+                .outputItems(GTNABlocks.NAQUADAH_ALLOY_CASING.asItem())
                 .EUt(16)
                 .duration(50)
                 .save(provider);
@@ -354,7 +388,7 @@ public class GTNABlockRecipes {
                 .inputItems(TagPrefix.frameGt, GTMaterials.NaquadahAlloy)
                 .inputItems(TagPrefix.plate, GTMaterials.Naquadria, 6)
                 .circuitMeta(6)
-                .outputItems(GTNABlocks.HYPER_MECHANICAL_CASING.get())
+                .outputItems(GTNABlocks.HYPER_MECHANICAL_CASING.asItem())
                 .EUt(16)
                 .duration(50)
                 .save(provider);
@@ -362,7 +396,7 @@ public class GTNABlockRecipes {
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_rhenium_reinforced_energy_glass")
                 .inputItems(GTBlocks.FUSION_GLASS.asItem(), 2)
                 .inputItems(TagPrefix.plate, GTMaterials.Rhenium, 6)
-                .outputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.get())
+                .outputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.asItem())
                 .EUt(491520)
                 .duration(1200)
                 .save(provider);
@@ -371,7 +405,7 @@ public class GTNABlockRecipes {
                 .circuitMeta(6)
                 .inputItems(TagPrefix.frameGt, GTMaterials.Rhenium)
                 .inputItems(TagPrefix.plate, GTMaterials.Rhenium, 6)
-                .outputItems(GTNABlocks.DEGENERATE_RHENIUM_CONSTRAINED_CASING.get())
+                .outputItems(GTNABlocks.DEGENERATE_RHENIUM_CONSTRAINED_CASING.asItem())
                 .EUt(491520)
                 .duration(1200)
                 .save(provider);
@@ -382,54 +416,54 @@ public class GTNABlockRecipes {
                 .inputItems(GTItems.SENSOR_UEV, 2)
                 .inputItems(TagPrefix.plateDouble, GTMaterials.Naquadria, 4)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
-                .outputItems(GTNABlocks.GRAVITON_FIELD_CONSTRAINT_CASING.get())
+                .outputItems(GTNABlocks.GRAVITON_FIELD_CONSTRAINT_CASING.asItem())
                 .EUt(7864320)
                 .duration(400)
                 .save(provider);
 
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_dyson_control_casing")
-                .inputItems(GTNABlocks.NAQUADAH_ALLOY_CASING.get())
+                .inputItems(GTNABlocks.NAQUADAH_ALLOY_CASING.asItem())
                 .inputItems(GTItems.EMITTER_ZPM, 2)
                 .inputItems(GTItems.SENSOR_ZPM, 2)
                 .inputItems(CustomTags.UV_CIRCUITS, 2)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
-                .outputItems(GTNABlocks.DYSON_CONTROL_CASING.get())
+                .outputItems(GTNABlocks.DYSON_CONTROL_CASING.asItem())
                 .EUt(491520)
                 .duration(300)
                 .save(provider);
 
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_dyson_receiver_casing")
-                .inputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.get(), 2)
-                .inputItems(GTNABlocks.NAQUADAH_ALLOY_CASING.get(), 2)
+                .inputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.asItem(), 2)
+                .inputItems(GTNABlocks.NAQUADAH_ALLOY_CASING.asItem(), 2)
                 .inputItems(GTItems.EMITTER_UV, 2)
                 .inputItems(GTItems.SENSOR_UV, 2)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
-                .outputItems(GTNABlocks.DYSON_RECEIVER_CASING.get())
+                .outputItems(GTNABlocks.DYSON_RECEIVER_CASING.asItem())
                 .EUt(1966080)
                 .duration(400)
                 .save(provider);
 
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_antimatter_containment_casing")
-                .inputItems(GTNABlocks.HYPER_MECHANICAL_CASING.get())
+                .inputItems(GTNABlocks.HYPER_MECHANICAL_CASING.asItem())
                 .inputItems(GTItems.FIELD_GENERATOR_UHV, 2)
-                .inputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.get(), 2)
+                .inputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.asItem(), 2)
                 .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 4)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
-                .outputItems(GTNABlocks.ANTIMATTER_CONTAINMENT_CASING.get())
+                .outputItems(GTNABlocks.ANTIMATTER_CONTAINMENT_CASING.asItem())
                 .EUt(1966080)
                 .duration(400)
                 .save(provider);
 
         GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_hollow_casing")
                 .inputItems(GTBlocks.HIGH_POWER_CASING.asItem(), 2)
-                .inputItems(GTNABlocks.NAQUADAH_ALLOY_CASING.get(), 2)
-                .inputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.get(), 2)
+                .inputItems(GTNABlocks.NAQUADAH_ALLOY_CASING.asItem(), 2)
+                .inputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.asItem(), 2)
                 .inputItems(GTItems.FIELD_GENERATOR_UV, 4)
                 .inputItems(CustomTags.UV_CIRCUITS, 2)
                 .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 4)
                 .inputFluids(GTMaterials.Europium.getFluid(2304))
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
-                .outputItems(GTNABlocks.HOLLOW_CASING.get(), 2)
+                .outputItems(GTNABlocks.HOLLOW_CASING.asItem(), 2)
                 .EUt(491520)
                 .duration(400)
                 .stationResearch(b -> b
@@ -443,12 +477,12 @@ public class GTNABlockRecipes {
                 .inputItems(GTItems.EMITTER_UIV, 4)
                 .inputItems(GTItems.ELECTRIC_PUMP_UIV, 2)
                 .inputItems(CustomTags.UIV_CIRCUITS, 2)
-                .inputItems(GTNABlocks.DYSON_CONTROL_CASING.get(), 2)
+                .inputItems(GTNABlocks.DYSON_CONTROL_CASING.asItem(), 2)
                 .inputItems(TagPrefix.foil, GTMaterials.Neutronium, 24)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(2000))
                 .inputFluids(GTMaterials.Naquadria.getFluid(1296))
                 .inputFluids(GTMaterials.Europium.getFluid(1296))
-                .outputItems(GTNABlocks.DYSON_CONTROL_TOROID.get())
+                .outputItems(GTNABlocks.DYSON_CONTROL_TOROID.asItem())
                 .EUt(31457280)
                 .duration(800)
                 .stationResearch(b -> b
@@ -466,15 +500,15 @@ public class GTNABlockRecipes {
                 .inputItems(CustomTags.UXV_CIRCUITS, 2)
                 .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 4)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(1296))
-                .outputItems(GTNABlocks.ANNIHILATE_CORE.get())
+                .outputItems(GTNABlocks.ANNIHILATE_CORE.asItem())
                 .EUt(125829120)
                 .duration(400)
                 .save(provider);
 
         GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_dimensionally_transcendent_casing")
                 .inputItems(GTBlocks.HIGH_POWER_CASING.asItem(), 4)
-                .inputItems(GTNABlocks.HOLLOW_CASING.get(), 4)
-                .inputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.get(), 4)
+                .inputItems(GTNABlocks.HOLLOW_CASING.asItem(), 4)
+                .inputItems(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.asItem(), 4)
                 .inputItems(GTItems.FIELD_GENERATOR_UHV, 4)
                 .inputItems(GTItems.SENSOR_UHV, 4)
                 .inputItems(CustomTags.UHV_CIRCUITS, 4)
@@ -482,7 +516,7 @@ public class GTNABlockRecipes {
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
                 .inputFluids(GTMaterials.Europium.getFluid(2304))
                 .inputFluids(GTMaterials.Naquadria.getFluid(2304))
-                .outputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get(), 2)
+                .outputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.asItem(), 2)
                 .EUt(31457280)
                 .duration(800)
                 .stationResearch(b -> b
@@ -492,8 +526,8 @@ public class GTNABlockRecipes {
                 .save(provider);
 
         GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_dimension_injection_casing")
-                .inputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get(), 2)
-                .inputItems(GTNABlocks.DYSON_RECEIVER_CASING.get(), 2)
+                .inputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.asItem(), 2)
+                .inputItems(GTNABlocks.DYSON_RECEIVER_CASING.asItem(), 2)
                 .inputItems(GTItems.FIELD_GENERATOR_UEV, 2)
                 .inputItems(GTItems.SENSOR_UEV, 2)
                 .inputItems(CustomTags.UEV_CIRCUITS, 2)
@@ -502,7 +536,7 @@ public class GTNABlockRecipes {
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
                 .inputFluids(GTMaterials.Europium.getFluid(1152))
                 .inputFluids(GTMaterials.Neutronium.getFluid(1152))
-                .outputItems(GTNABlocks.DIMENSION_INJECTION_CASING.get(), 2)
+                .outputItems(GTNABlocks.DIMENSION_INJECTION_CASING.asItem(), 2)
                 .EUt(125829120)
                 .duration(600)
                 .stationResearch(b -> b
@@ -512,8 +546,8 @@ public class GTNABlockRecipes {
                 .save(provider);
 
         GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_dimensional_bridge_casing")
-                .inputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get())
-                .inputItems(GTNABlocks.DIMENSION_INJECTION_CASING.get(), 2)
+                .inputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.asItem())
+                .inputItems(GTNABlocks.DIMENSION_INJECTION_CASING.asItem(), 2)
                 .inputItems(GTItems.FIELD_GENERATOR_UIV, 2)
                 .inputItems(GTItems.EMITTER_UIV, 2)
                 .inputItems(CustomTags.UIV_CIRCUITS, 2)
@@ -522,7 +556,7 @@ public class GTNABlockRecipes {
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
                 .inputFluids(GTMaterials.Europium.getFluid(2304))
                 .inputFluids(GTMaterials.Naquadria.getFluid(2304))
-                .outputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.get())
+                .outputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.asItem())
                 .EUt(503316480)
                 .duration(800)
                 .stationResearch(b -> b
@@ -532,9 +566,9 @@ public class GTNABlockRecipes {
                 .save(provider);
 
         GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_dimensional_stability_casing")
-                .inputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.get())
-                .inputItems(GTNABlocks.DYSON_CONTROL_CASING.get(), 2)
-                .inputItems(GTNABlocks.DYSON_CONTROL_TOROID.get(), 2)
+                .inputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.asItem())
+                .inputItems(GTNABlocks.DYSON_CONTROL_CASING.asItem(), 2)
+                .inputItems(GTNABlocks.DYSON_CONTROL_TOROID.asItem(), 2)
                 .inputItems(GTItems.FIELD_GENERATOR_UXV, 2)
                 .inputItems(GTItems.ELECTRIC_PUMP_UXV, 2)
                 .inputItems(CustomTags.UXV_CIRCUITS, 2)
@@ -542,7 +576,7 @@ public class GTNABlockRecipes {
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
                 .inputFluids(GTMaterials.Europium.getFluid(2304))
                 .inputFluids(GTMaterials.Neutronium.getFluid(2304))
-                .outputItems(GTNABlocks.DIMENSIONAL_STABILITY_CASING.get())
+                .outputItems(GTNABlocks.DIMENSIONAL_STABILITY_CASING.asItem())
                 .EUt(2013265920)
                 .duration(1000)
                 .stationResearch(b -> b
@@ -553,10 +587,10 @@ public class GTNABlockRecipes {
 
         if (GTNAMachines.ARTIFICIAL_STAR != null) {
             GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_spacetime_compression_field_generator")
-                    .inputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get())
-                    .inputItems(GTNABlocks.DIMENSIONAL_STABILITY_CASING.get())
-                    .inputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.get())
-                    .inputItems(GTNABlocks.ANNIHILATE_CORE.get())
+                    .inputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.asItem())
+                    .inputItems(GTNABlocks.DIMENSIONAL_STABILITY_CASING.asItem())
+                    .inputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.asItem())
+                    .inputItems(GTNABlocks.ANNIHILATE_CORE.asItem())
                     .inputItems(GTNAMachines.ARTIFICIAL_STAR.asStack().getItem())
                     .inputItems(GTItems.FIELD_GENERATOR_OpV, 2)
                     .inputItems(CustomTags.OpV_CIRCUITS, 2)
@@ -564,7 +598,7 @@ public class GTNABlockRecipes {
                     .inputFluids(GTMaterials.SolderingAlloy.getFluid(4608))
                     .inputFluids(GTMaterials.Europium.getFluid(4608))
                     .inputFluids(GTMaterials.Naquadria.getFluid(4608))
-                    .outputItems(GTNABlocks.SPACETIME_COMPRESSION_FIELD_GENERATOR.get())
+                    .outputItems(GTNABlocks.SPACETIME_COMPRESSION_FIELD_GENERATOR.asItem())
                     .EUt(8053063680L)
                     .duration(1200)
                     .stationResearch(b -> b

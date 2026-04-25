@@ -2,7 +2,10 @@ package com.raishxn.gtna.common.data;
 
 import com.gregtechceu.gtceu.api.item.ComponentItem;
 import com.gregtechceu.gtceu.common.item.CoverPlaceBehavior;
+import com.gregtechceu.gtceu.common.item.TooltipBehavior;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import com.raishxn.gtna.GTNACORE;
@@ -45,6 +48,7 @@ public class GTNAItems {
     public static ItemEntry<ComponentItem> HYDRAULIC_STEAM_JET_SPEWER;
     public static ItemEntry<ComponentItem> HYDRAULIC_STEAM_RECEIVER;
     public static ItemEntry<ComponentItem> PRECISION_STEAM_COMPONENT;
+    public static ItemEntry<ComponentItem> PRIMITIVE_MANS_SPACETIME_DISTORTION_DEVICE;
     @SuppressWarnings("unchecked")
     public static ItemEntry<ComponentItem>[][] INDUSTRIAL_COMPONENTS = new ItemEntry[INDUSTRIAL_COMPONENT_GROUPS.length][INDUSTRIAL_COMPONENT_SIZES.length];
 
@@ -133,6 +137,16 @@ public class GTNAItems {
         PRECISION_STEAM_COMPONENT = REGISTRATE.item("precision_steam_component", ComponentItem::create)
                 .lang("Precision Steam Component")
                 .properties(stack -> stack.stacksTo(64))
+                .register();
+        PRIMITIVE_MANS_SPACETIME_DISTORTION_DEVICE = REGISTRATE
+                .item("primitive_mans_spacetime_distortion_device", ComponentItem::create)
+                .lang("Primitive Man's SpaceTime Distortion Device")
+                .properties(stack -> stack.stacksTo(64))
+                .onRegister(attach(new TooltipBehavior(lines -> lines.add(
+                        Component.translatable("item.gtna.primitive_mans_spacetime_distortion_device.tooltip")
+                                .withStyle(ChatFormatting.GRAY)))))
+                .model((ctx, provider) -> provider.generated(ctx,
+                        GTNACORE.id("item/primitive_mans_spacetime_distortion_device")))
                 .register();
         registerIndustrialComponents();
 

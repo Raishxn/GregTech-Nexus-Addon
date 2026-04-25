@@ -92,6 +92,10 @@ public class ConfigHolder {
             case "largeSteamCompressor" -> INSTANCE.machineToggles.largeSteamCompressor;
             case "largeSteamExtractor" -> INSTANCE.machineToggles.largeSteamExtractor;
             case "largeSteamOreWasher" -> INSTANCE.machineToggles.largeSteamOreWasher;
+            case "primitiveDistillationTower" -> INSTANCE.machineToggles.primitiveDistillationTower;
+            case "largeSteamLathe" -> INSTANCE.machineToggles.largeSteamLathe;
+            case "largeSteamCutting" -> INSTANCE.machineToggles.largeSteamCutting;
+            case "largeSteamFormingPress" -> INSTANCE.machineToggles.largeSteamFormingPress;
             case "steamCobbler" -> INSTANCE.machineToggles.steamCobbler;
             case "stoneSuperheater" -> INSTANCE.machineToggles.stoneSuperheater;
             case "steamManufacturer" -> INSTANCE.machineToggles.steamManufacturer;
@@ -238,6 +242,14 @@ public class ConfigHolder {
         public boolean largeSteamExtractor = true;
         @Configurable
         public boolean largeSteamOreWasher = true;
+        @Configurable
+        public boolean primitiveDistillationTower = true;
+        @Configurable
+        public boolean largeSteamLathe = true;
+        @Configurable
+        public boolean largeSteamCutting = true;
+        @Configurable
+        public boolean largeSteamFormingPress = true;
         @Configurable
         public boolean steamCobbler = true;
         @Configurable

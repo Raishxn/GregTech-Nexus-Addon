@@ -33,11 +33,19 @@ public class GTNABlocks {
     public static final BlockEntry<Block> HYPER_PRESSURE_BREEL_CASING = createCasingBlock(
             "hyper_pressure_breel_casing");
     public static final BlockEntry<Block> STEAM_COMPACT_PIPE_CASING = createCasingBlock("steam_compact_pipe_casing");
+    public static final BlockEntry<Block> STEAM_ASSEMBLY_BLOCK = createCasingBlock(
+            "steam_assembly_block",
+            GTNACORE.id("block/steam_assembly_block"));
     public static final BlockEntry<Block> VIBRATION_SAFE_CASING = createCasingBlock("vibration_safe_casing");
     public static final BlockEntry<Block> BRONZE_REINFORCED_WOOD = createCasingBlock("bronze_reinforced_wood");
+    public static final BlockEntry<Block> BRASS_REINFORCED_WOODEN_CASING = createCasingBlock(
+            "brass_reinforced_wooden_casing",
+            GTNACORE.id("block/casings/brass_reinforced_wooden_casing"));
     public static final BlockEntry<Block> STEEL_REINFORCED_WOOD = createCasingBlock("steel_reinforced_wood");
     public static final BlockEntry<Block> IRON_REINFORCED_WOOD = createCasingBlock("iron_reinforced_wood");
     public static final BlockEntry<Block> SOLAR_BOILING_CELL = createSolarCasingBlock("solar_boiling_cell");
+    public static final BlockEntry<Block> SOLAR_HEAT_COLLECTOR_PIPE_CASING = createSolarCasingBlock(
+            "solar_heat_collector_pipe_casing");
     public static final BlockEntry<Block> STRONZE_WRAPPED_CASING = createCasingBlock("stronze_wrapped_casing"); // Usando
                                                                                                                 // Bronze
                                                                                                                 // como

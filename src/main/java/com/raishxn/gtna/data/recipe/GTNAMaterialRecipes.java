@@ -154,7 +154,7 @@ public class GTNAMaterialRecipes {
                 .inputFluids(GTMaterials.Steam.getFluid(15000))
                 .outputItems(TagPrefix.ingot, GTNAMaterials.CompressedSteam, 1)
                 .duration(900)
-                .EUt(GTValues.ULV)
+                .EUt(1)
                 .save(provider);
 
         GTRecipeTypes.BLAST_RECIPES.recipeBuilder("echoite_alloy_smelting")

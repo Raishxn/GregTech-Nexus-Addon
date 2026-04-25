@@ -145,8 +145,8 @@ public class GTNALangProvider extends LanguageProvider {
 
         // Accelerate Hatch
         add("gtna.machine.accelerate_hatch.main_function",
-                "Main Function: Unconditionally accelerates machine operation speed");
-        add("gtna.machine.accelerate_hatch.range", "Operation Duration adjustment Range: %s - 100%%");
+                "Main Function: directly reduces recipe duration after normal overclocking");
+        add("gtna.machine.accelerate_hatch.range", "Final Duration adjustment Range: %s - 100%%");
         add("gtna.machine.accelerate_hatch.weakness",
                 "The Acceleration effect is weakened by 20% per level when the level of accelerate hatch is lower than the machine tier.");
 
@@ -154,13 +154,13 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.thread_hatch.tooltip", "Can Provide +%s thread parallel processing for the machine.");
 
         // Overclock Hatch
-        add("gtna.machine.overclock_hatch.main_function", "Main function: Overclock machine");
+        add("gtna.machine.overclock_hatch.main_function", "Main function: improves the machine overclock curve");
         add("gtna.machine.overclock_hatch.not_installed",
-                "When this hatch is not installed, for every 4 times power used machine duration x 55%");
+                "Without this hatch, every 4x EU/t overclock uses the standard machine duration factor.");
         add("gtna.machine.overclock_hatch.installed",
-                "After installing this hatch, the overclock effect is increased to a maximum of every 4 times power used, machine duration x %s");
+                "With this hatch, every 4x EU/t overclock can reduce recipe duration to %s of its previous value.");
         add("gtna.machine.overclock_hatch.desc",
-                "- More aggressive overclocking strategies, more powerful machine performance and more extreme processing speeds!");
+                "This changes overclock scaling itself; it is not a final duration multiplier like an Accelerate Hatch.");
         add("gtna.machine.output_boost_hatch.main_function",
                 "Main function: multiplies only recipe outputs for compatible multiblocks");
         add("gtna.machine.output_boost_hatch.multiplier", "Output Multiplier: %sx items and fluids");
@@ -237,6 +237,9 @@ public class GTNALangProvider extends LanguageProvider {
                 "Right-click a lower tier GTNA Pattern Buffer to upgrade it");
         add("item.gtna.pattern_buffer_upgrader.tooltip.keep_data",
                 "Preserves encoded patterns, internal slot data, and slot specialization");
+        add("item.gtna.primitive_mans_spacetime_distortion_device",
+                "Primitive Man's SpaceTime Distortion Device");
+        add("item.gtna.primitive_mans_spacetime_distortion_device.tooltip", "Anyway...");
 
         // --- Wireless Energy/Dynamo Hatches ---
         add("gtna.machine.wireless_energy_hatch.tooltip", "Pulls energy wirelessly from the Nexus Network");
@@ -459,6 +462,9 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.process_machine_casing", "Process Machine Casing");
         add("block.gtna.compressor_controller_casing", "Compressor Controller Casing");
         add("block.gtna.extreme_density_casing", "Extreme Density Casing");
+        add("block.gtna.steam_assembly_block", "Steam Assembly Block");
+        add("block.gtna.brass_reinforced_wooden_casing", "Brass Reinforced Wooden Casing");
+        add("block.gtna.solar_heat_collector_pipe_casing", "Solar Heat Collector Pipe Casing");
         add("block.gtna.annihilate_generator", "Artificial Star");
         add("block.gtna.eye_of_harmony", "Eye of Harmony");
         add("block.gtna.eye_of_wood", "Eye of Wood");
@@ -495,13 +501,21 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.eye_of_harmony.helium", "Helium Storage: %s mB");
         add("gtna.machine.eye_of_harmony.rebound", "[GTNA] Eye of Harmony rebound to your network.");
         add("gtna.machine.eye_of_wood.tooltip.0",
-                "Wood-and-bronze proto-singularity that condenses ores from fluid sacrifice.");
+                "Overworld-only ore condenser based on the original Twist Space Technology machine.");
         add("gtna.machine.eye_of_wood.tooltip.1",
-                "Feeds on Water and Lava. More excess fluid pushes the success chance toward 100%.");
+                "Constantly consumes Water and Lava from input hatches and stores both fluids inside the machine.");
         add("gtna.machine.eye_of_wood.tooltip.2",
-                "Successful rolls output processed dust bundles. Failed rolls vent Steam instead.");
+                "Peak success rate: 75% when stored Water and Lava are both exactly 256,000 mB.");
         add("gtna.machine.eye_of_wood.tooltip.3",
-                "Structure: 5x5x5 bronze-reinforced wood chamber with log core.");
+                "Success falls off as either stored fluid drifts away from the 256,000 mB target.");
+        add("gtna.machine.eye_of_wood.tooltip.4",
+                "Each run takes a fixed 60 seconds.");
+        add("gtna.machine.eye_of_wood.tooltip.5",
+                "Success outputs large Overworld ore bundles.");
+        add("gtna.machine.eye_of_wood.tooltip.6",
+                "Failure vents a huge amount of Steam, up to 270,000,000 mB.");
+        add("gtna.machine.eye_of_wood.tooltip.7",
+                "Structure: iconic 33x33x33 Eye of Wood using bricks, planks, bookshelves, lapis, cracked stone bricks, and steel casings.");
         add("gtna.machine.eye_of_wood.water", "Stored Water: %s / %s mB");
         add("gtna.machine.eye_of_wood.lava", "Stored Lava: %s / %s mB");
         add("gtna.machine.eye_of_wood.chance", "Success Chance: %s / 10000");
@@ -516,7 +530,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.large_steam_furnace.speed", "Speed: 900% faster than a standard Steam Furnace.");
         add("gtna.tooltip.large_steam_furnace.efficiency", "Efficiency: Consumes only 50% of the required Steam.");
         add("gtna.tooltip.large_steam_furnace.parallel", "Parallelism: Processes up to 128 items simultaneously.");
-        add("gtna.tooltip.large_steam_furnace.structure", "Structure: 9x5x9 (Hollow Center). check JEI for details.");
+        add("gtna.tooltip.large_steam_furnace.structure", "Structure: GTOCore large steam furnace shell. Check JEI for details.");
         add("block.gtna.large_steam_alloy_smelter", "Large Steam Alloy Smelter");
         add("gtna.tooltip.large_steam_alloy.desc", "High-pressure steam alloying.");
         add("gtna.tooltip.large_steam_alloy.speed", "Speed: 43% faster than Singleblock.");
@@ -554,6 +568,7 @@ public class GTNALangProvider extends LanguageProvider {
                 "Steam-era circuit assembly line with engraved-circuit targeting.");
         add("gtna.tooltip.large_steam_circuit_assembler.mode",
                 "Supports a multiply mode after engraving the target circuit.");
+        add("gtna.tooltip.large_steam_circuit_assembler.parallel", "Parallel: Processes up to 64 recipes.");
         add("gtna.tooltip.large_steam_circuit_assembler.structure", "Structure: 3x4x10 steam assembly tunnel.");
         add("gtna.machine.large_steam_circuit_assembler.engrave_circuit", "Engrave Circuit");
         add("gtna.machine.large_steam_circuit_assembler.circuit", "Engraved Circuit: %s");
@@ -561,33 +576,81 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.large_steam_circuit_assembler.multiply_mode", "Multiply Mode: %s");
         add("block.gtna.large_steam_mixer", "Large Steam Mixer");
         add("gtna.tooltip.large_steam_mixer.desc", "Bulk steam mixing for dusts and fluids.");
+        add("gtna.tooltip.large_steam_mixer.speed", "Speed: 100% faster than singleblock.");
         add("gtna.tooltip.large_steam_mixer.parallel", "Parallel: Processes up to 64 recipes.");
+        add("gtna.tooltip.large_steam_mixer.structure", "Structure: 9x7x9 steam mixing chamber.");
         add("block.gtna.large_steam_centrifuge", "Large Steam Centrifuge");
         add("gtna.tooltip.large_steam_centrifuge.desc", "High-throughput steam centrifuge with fluid support.");
+        add("gtna.tooltip.large_steam_centrifuge.speed", "Speed: 250% faster than singleblock.");
         add("gtna.tooltip.large_steam_centrifuge.parallel", "Parallel: Processes up to 64 recipes.");
+        add("gtna.tooltip.large_steam_centrifuge.structure", "Structure: 11x5x11 reinforced steam centrifuge.");
         add("block.gtna.large_steam_thermal_centrifuge", "Large Steam Thermal Centrifuge");
         add("gtna.tooltip.large_steam_thermal_centrifuge.desc",
                 "Firebox-heated thermal centrifuge for heavy steam processing.");
+        add("gtna.tooltip.large_steam_thermal_centrifuge.speed", "Speed: 200% faster than singleblock.");
         add("gtna.tooltip.large_steam_thermal_centrifuge.parallel", "Parallel: Processes up to 64 recipes.");
+        add("gtna.tooltip.large_steam_thermal_centrifuge.structure",
+                "Structure: 7x5x7 with bronze fireboxes and a rear muffler.");
         add("block.gtna.large_steam_bath", "Large Steam Bath");
         add("gtna.tooltip.large_steam_bath.desc", "Large steam chemical bath for early bulk washing.");
+        add("gtna.tooltip.large_steam_bath.speed", "Speed: 100% faster than singleblock.");
         add("gtna.tooltip.large_steam_bath.parallel", "Parallel: Processes up to 64 recipes.");
+        add("gtna.tooltip.large_steam_bath.structure", "Structure: 9x5x9 basin with glass walls and bronze pipe agitators.");
+        add("block.gtna.primitive_distillation_tower", "Primitive Distillation Tower");
+        add("gtna.tooltip.primitive_distillation_tower.desc", "Machine Type: Distillation Tower. Can only output 6 types of fluids.");
+        add("gtna.tooltip.primitive_distillation_tower.parallel", "Consumes only 75% of the normal steam requirement. Can only process MV tier recipes or lower.");
+        add("gtna.tooltip.primitive_distillation_tower.structure", "Structure: GT-Not-Leisure primitive tower: 3x3 steel firebox base, five hollow steel hull layers, and a closed top layer.");
+        add("block.gtna.large_steam_lathe", "Large Steam Lathe");
+        add("gtna.tooltip.large_steam_lathe.desc", "GT-Not-Leisure style steam lathe for bulk turning.");
+        add("gtna.tooltip.large_steam_lathe.speed", "Speed: 100% faster than singleblock.");
+        add("gtna.tooltip.large_steam_lathe.efficiency", "Efficiency: consumes 50% total steam per recipe.");
+        add("gtna.tooltip.large_steam_lathe.parallel", "Parallel: Processes up to 16 recipes.");
+        add("block.gtna.large_steam_cutting", "Large Steam Cutting Machine");
+        add("gtna.tooltip.large_steam_cutting.desc", "GT-Not-Leisure style steam cutting machine.");
+        add("gtna.tooltip.large_steam_cutting.speed", "Speed: 100% faster than singleblock.");
+        add("gtna.tooltip.large_steam_cutting.efficiency", "Efficiency: consumes 50% total steam per recipe.");
+        add("gtna.tooltip.large_steam_cutting.parallel", "Parallel: Processes up to 16 recipes.");
+        add("block.gtna.large_steam_forming_press", "Large Steam Forming Press");
+        add("gtna.tooltip.large_steam_forming_press.desc", "GT-Not-Leisure style steam forming press.");
+        add("gtna.tooltip.large_steam_forming_press.speed", "Speed: 150% faster than singleblock.");
+        add("gtna.tooltip.large_steam_forming_press.efficiency", "Efficiency: consumes 40% total steam per recipe.");
+        add("gtna.tooltip.large_steam_forming_press.parallel", "Parallel: Processes up to 32 recipes.");
         add("block.gtna.large_steam_storage_tank", "Large Steam Storage Tank");
-        add("gtna.tooltip.large_steam_storage_tank.desc", "A massive reservoir dedicated to storing steam.");
+        add("gtna.tooltip.large_steam_storage_tank.desc", "A GTOCore-style industrial steam reservoir.");
         add("gtna.tooltip.large_steam_storage_tank.capacity", "Capacity: 120,000,000 mB of Steam.");
+        add("gtna.tooltip.large_steam_storage_tank.structure", "Structure: 5x7x5 steam tank with industrial steam casings.");
         add("block.gtna.large_steam_solar_boiler", "Large Steam Solar Boiler");
-        add("gtna.tooltip.large_steam_solar_boiler.desc", "Expandable solar steam field using boiling cells.");
+        add("gtna.tooltip.large_steam_solar_boiler.desc", "Expandable solar steam field using solar boiling cells.");
         add("gtna.tooltip.large_steam_solar_boiler.expandable",
                 "Structure expands backward and sideways as long as cells remain sunlit.");
+        add("gtna.tooltip.large_steam_solar_boiler.production", "Steam Output scales with the number of sunlit cells.");
+        add("gtna.tooltip.large_steam_solar_boiler.structure", "Structure: starts at 5x1x5 and expands horizontally.");
         add("gtna.machine.large_steam_solar_boiler.size", "Structure Size: %s x %s");
         add("gtna.machine.large_steam_solar_boiler.sunlit", "Sunlit Cells: %s");
         add("gtna.machine.large_steam_solar_boiler.production", "Steam Production: %s L/s");
+        add("block.gtna.dimensionally_transcendent_dirt_forge", "Dimensionally Transcendent Dirt Forge");
+        add("gtna.tooltip.dimensionally_transcendent_dirt_forge.desc",
+                "GTLCore's absurd primitive forge shell, repurposed for massive primitive blast throughput.");
+        add("gtna.tooltip.dimensionally_transcendent_dirt_forge.parallel",
+                "Parallel: Processes up to 524288 primitive blast recipes.");
+        add("gtna.tooltip.dimensionally_transcendent_dirt_forge.structure",
+                "Structure: GTLCore DTPF shell using primitive bricks, bricks, dirt, and stone bricks.");
         add("block.gtna.dimensionally_transcendent_steam_boiler", "Dimensionally Transcendent Steam Boiler");
         add("gtna.tooltip.dimensionally_transcendent_steam_boiler.desc",
                 "Absurd late-game boiler that bends dimensional space into steam throughput.");
+        add("gtna.tooltip.dimensionally_transcendent_steam_boiler.output", "Output: 4,096,000 L of steam per cycle.");
+        add("gtna.tooltip.dimensionally_transcendent_steam_boiler.structure",
+                "Structure: GTLCore DTPF shell with robust tungstensteel, heatproof casings, coils, and boiler pipes.");
         add("block.gtna.dimensionally_transcendent_steam_oven", "Dimensionally Transcendent Steam Oven");
         add("gtna.tooltip.dimensionally_transcendent_steam_oven.desc",
                 "A steam oven pushed far beyond sane thermal engineering limits.");
+        add("gtna.tooltip.dimensionally_transcendent_steam_oven.speed",
+                "Speed: 9900% faster than a standard furnace recipe.");
+        add("gtna.tooltip.dimensionally_transcendent_steam_oven.threads",
+                "Threads: 2 fixed recipe threads, allowing two different furnace recipes at the same time.");
+        add("gtna.tooltip.dimensionally_transcendent_steam_oven.parallel", "Parallel: Processes up to 524288 recipes.");
+        add("gtna.tooltip.dimensionally_transcendent_steam_oven.structure",
+                "Structure: GTLCore DTPF shell using bronze bricks, bricks, deepslate, and stone bricks.");
         add("block.gtna.steam_cobbler", "Steam Cobbler");
         add("gtna.tooltip.steam_cobbler.desc", "Advanced Steam Rock Generator.");
         add("gtna.tooltip.steam_cobbler.modes", "Generates various stones based on Programmed Circuits.");

@@ -11,7 +11,8 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtna:block/overlay/machine/largesteamfurnace/overlay_front"
+          "overlay_front": "gtceu:block/multiblock/steam_oven/overlay_front",
+          "overlay_front_emissive": "gtceu:block/multiblock/steam_oven/overlay_front_emissive"
         }
       }
     },
@@ -20,7 +21,8 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtna:block/overlay/machine/largesteamfurnace/overlay_front"
+          "overlay_front": "gtceu:block/multiblock/steam_oven/overlay_front",
+          "overlay_front_emissive": "gtceu:block/multiblock/steam_oven/overlay_front_emissive"
         }
       }
     },
@@ -29,7 +31,8 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtna:block/overlay/machine/largesteamfurnace/overlay_front"
+          "overlay_front": "gtceu:block/multiblock/steam_oven/overlay_front_active",
+          "overlay_front_emissive": "gtceu:block/multiblock/steam_oven/overlay_front_active_emissive"
         }
       }
     },
@@ -38,7 +41,8 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtna:block/overlay/machine/largesteamfurnace/overlay_front"
+          "overlay_front": "gtceu:block/multiblock/steam_oven/overlay_front_active",
+          "overlay_front_emissive": "gtceu:block/multiblock/steam_oven/overlay_front_active_emissive"
         }
       }
     },
@@ -47,7 +51,8 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtna:block/overlay/machine/largesteamfurnace/overlay_front"
+          "overlay_front": "gtceu:block/multiblock/steam_oven/overlay_front",
+          "overlay_front_emissive": "gtceu:block/multiblock/steam_oven/overlay_front_emissive"
         }
       }
     },
@@ -56,7 +61,8 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtna:block/overlay/machine/largesteamfurnace/overlay_front"
+          "overlay_front": "gtceu:block/multiblock/steam_oven/overlay_front",
+          "overlay_front_emissive": "gtceu:block/multiblock/steam_oven/overlay_front_emissive"
         }
       }
     },
@@ -65,7 +71,8 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtna:block/overlay/machine/largesteamfurnace/overlay_front"
+          "overlay_front": "gtceu:block/multiblock/steam_oven/overlay_front_active",
+          "overlay_front_emissive": "gtceu:block/multiblock/steam_oven/overlay_front_active_emissive"
         }
       }
     },
@@ -74,7 +81,8 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtna:block/overlay/machine/largesteamfurnace/overlay_front"
+          "overlay_front": "gtceu:block/multiblock/steam_oven/overlay_front_active",
+          "overlay_front_emissive": "gtceu:block/multiblock/steam_oven/overlay_front_active_emissive"
         }
       }
     }

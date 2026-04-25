@@ -16,13 +16,14 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
 import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
+import com.raishxn.gtna.api.machine.multiblock.ParallelMachine;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
-public class AdjustableSteamParallelMachine extends SteamMultiMachineBase {
+public class AdjustableSteamParallelMachine extends SteamMultiMachineBase implements ParallelMachine {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
             AdjustableSteamParallelMachine.class, SteamMultiMachineBase.MANAGED_FIELD_HOLDER);
@@ -54,6 +55,11 @@ public class AdjustableSteamParallelMachine extends SteamMultiMachineBase {
     @Nullable
     @Override
     protected GTRecipe getRealRecipe(@Nonnull GTRecipe recipe) {
+        return createThreadedRecipe(recipe);
+    }
+
+    @Nullable
+    public GTRecipe createThreadedRecipe(@Nonnull GTRecipe recipe) {
         if (recipe.getType() != recipeType) {
             return null;
         }
@@ -67,6 +73,11 @@ public class AdjustableSteamParallelMachine extends SteamMultiMachineBase {
                 .parallels(parallels)
                 .build()
                 .apply(recipe.copy());
+    }
+
+    @Override
+    public int getMaxParallel() {
+        return targetParallel;
     }
 
     @Override

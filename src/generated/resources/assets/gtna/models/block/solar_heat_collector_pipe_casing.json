@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gtna:block/casings/solar_heat_collector_pipe_casing",
+    "east": "gtna:block/casings/solar_heat_collector_pipe_casing",
+    "north": "gtna:block/casings/solar_heat_collector_pipe_casing",
+    "south": "gtna:block/casings/solar_heat_collector_pipe_casing",
+    "up": "gtna:block/overlay/block/solar_boiling_cell_top_overlay",
+    "west": "gtna:block/casings/solar_heat_collector_pipe_casing"
+  }
+}

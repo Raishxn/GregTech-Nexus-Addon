@@ -12,6 +12,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -19,6 +20,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.client.renderer.machine.AnnihilateGeneratorRenderer;
+import com.raishxn.gtna.client.renderer.machine.EyeOfHarmonyRenderer;
+import com.raishxn.gtna.client.renderer.machine.EyeOfWoodRenderer;
 import com.raishxn.gtna.common.data.*;
 import com.raishxn.gtna.data.GTNALangProvider;
 import com.raishxn.gtna.data.recipe.GTNARecipeConditions;
@@ -35,6 +39,7 @@ public class CommonProxy {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         REGISTRATE.registerEventListeners(eventBus);
         eventBus.addListener(this::clientSetup);
+        eventBus.addListener(this::registerAdditionalModels);
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::addMaterialRegistries);
         eventBus.addListener(this::addMaterials);
@@ -67,7 +72,28 @@ public class CommonProxy {
         generator.addProvider(client, new GTNALangProvider(packOutput));
     }
 
-    private void clientSetup(final FMLClientSetupEvent event) {}
+    private void clientSetup(final FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            registerDynamicRenderers();
+        });
+    }
+
+    private void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
+        registerDynamicRenderers();
+        event.register(GTNACORE.id("obj/star"));
+        event.register(GTNACORE.id("obj/space"));
+        event.register(GTNACORE.id("obj/overworld"));
+        event.register(GTNACORE.id("obj/the_nether"));
+        event.register(GTNACORE.id("obj/the_end"));
+        event.register(GTNACORE.id("obj/eye_of_wood_sweat"));
+        event.register(GTNACORE.id("obj/eye_of_wood_thinking"));
+    }
+
+    private static void registerDynamicRenderers() {
+        var ignoredAnnihilate = AnnihilateGeneratorRenderer.TYPE;
+        var ignoredEyeOfHarmony = EyeOfHarmonyRenderer.TYPE;
+        var ignoredEyeOfWood = EyeOfWoodRenderer.TYPE;
+    }
 
     // You MUST have this for custom materials.
     // Remember to register them not to GT's namespace, but your own.

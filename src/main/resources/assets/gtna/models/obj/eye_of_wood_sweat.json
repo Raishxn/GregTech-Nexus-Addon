@@ -1,0 +1,9 @@
+{
+  "loader": "forge:obj",
+  "flip_v": true,
+  "model": "gtna:models/obj/eye_of_wood_sweat.obj",
+  "textures": {
+    "texture0": "gtna:block/obj/eye_of_wood_sweat",
+    "particle": "gtna:block/obj/eye_of_wood_sweat"
+  }
+}

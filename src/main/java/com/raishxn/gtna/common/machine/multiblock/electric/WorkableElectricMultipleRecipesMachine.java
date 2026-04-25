@@ -64,7 +64,7 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
 
             // 3. Aplica o modificador e depois o Overclock Padrão
             return (ModifierFunction) GTRecipeModifiers.ELECTRIC_OVERCLOCK
-                    .apply(OverclockingLogic.NON_PERFECT_OVERCLOCK)
+                    .apply(getOverclockingLogic())
                     .applyModifier(machine, modifier.apply(recipe));
         };
     }
@@ -142,11 +142,26 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
     }
 
     public double getOverclockHatchMultiplier() {
-        double multiplier = 1.0;
+        return getOverclockDurationFactor();
+    }
+
+    public double getOverclockDurationFactor() {
+        double multiplier = OverclockingLogic.STD_DURATION_FACTOR;
         for (OverclockHatchPartMachine hatch : overclockHatches) {
-            multiplier *= hatch.getOverclockMultiplier();
+            multiplier = Math.min(multiplier, hatch.getOverclockMultiplier());
         }
         return multiplier;
+    }
+
+    public boolean hasOverclockHatch() {
+        return !overclockHatches.isEmpty();
+    }
+
+    public OverclockingLogic getOverclockingLogic() {
+        if (!hasOverclockHatch()) {
+            return OverclockingLogic.NON_PERFECT_OVERCLOCK;
+        }
+        return OverclockingLogic.create(getOverclockDurationFactor(), OverclockingLogic.STD_VOLTAGE_FACTOR, false);
     }
 
     public int getOutputBoostMultiplier() {
@@ -183,10 +198,11 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
                     }
 
                     // Informações de UI dos Hatches
-                    double ocMultiplier = getOverclockHatchMultiplier();
-                    if (ocMultiplier < 1.0) {
+                    if (hasOverclockHatch()) {
+                        double ocMultiplier = getOverclockDurationFactor();
                         text.add(Component.literal("Overclock Hatch: ").withStyle(ChatFormatting.GRAY)
-                                .append(Component.literal(String.format("%.2fx Duration", ocMultiplier))
+                                .append(Component.literal(String.format(Locale.US, "%.2fx duration per 4x EU",
+                                        ocMultiplier))
                                         .withStyle(ChatFormatting.LIGHT_PURPLE)));
                     }
 

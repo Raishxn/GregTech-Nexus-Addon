@@ -564,7 +564,7 @@ public final class GTNABalance {
 
     private static Map<String, Double> defaultOverclockMap() {
         LinkedHashMap<String, Double> values = new LinkedHashMap<>();
-        values.put("UV", 0.55);
+        values.put("UV", 0.50);
         values.put("UHV", 0.3333);
         values.put("UEV", 0.25);
         values.put("UIV", 0.20);

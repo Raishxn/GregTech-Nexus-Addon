@@ -1,0 +1,9 @@
+{
+  "loader": "forge:obj",
+  "flip_v": true,
+  "model": "gtna:models/obj/eye_of_wood_thinking.obj",
+  "textures": {
+    "texture0": "gtna:block/obj/eye_of_wood_thinking",
+    "particle": "gtna:block/obj/eye_of_wood_thinking"
+  }
+}

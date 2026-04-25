@@ -1,0 +1,98 @@
+{
+  "parent": "minecraft:block/block",
+  "loader": "gtceu:machine",
+  "machine": "gtna:large_steam_thermal_centrifuge",
+  "texture_overrides": {
+    "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks"
+  },
+  "variants": {
+    "is_formed=false,recipe_logic_status=idle": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
+          "overlay_front": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front",
+          "overlay_front_emissive": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front_emissive",
+          "overlay_top": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_top"
+        }
+      }
+    },
+    "is_formed=false,recipe_logic_status=suspend": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
+          "overlay_front": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front",
+          "overlay_front_emissive": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front_emissive",
+          "overlay_top": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_top"
+        }
+      }
+    },
+    "is_formed=false,recipe_logic_status=waiting": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
+          "overlay_front": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front_active",
+          "overlay_front_emissive": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front_active_emissive",
+          "overlay_top": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_top"
+        }
+      }
+    },
+    "is_formed=false,recipe_logic_status=working": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
+          "overlay_front": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front_active",
+          "overlay_front_emissive": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front_active_emissive",
+          "overlay_top": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_top"
+        }
+      }
+    },
+    "is_formed=true,recipe_logic_status=idle": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
+          "overlay_front": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front",
+          "overlay_front_emissive": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front_emissive",
+          "overlay_top": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_top"
+        }
+      }
+    },
+    "is_formed=true,recipe_logic_status=suspend": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
+          "overlay_front": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front",
+          "overlay_front_emissive": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front_emissive",
+          "overlay_top": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_top"
+        }
+      }
+    },
+    "is_formed=true,recipe_logic_status=waiting": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
+          "overlay_front": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front_active",
+          "overlay_front_emissive": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front_active_emissive",
+          "overlay_top": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_top"
+        }
+      }
+    },
+    "is_formed=true,recipe_logic_status=working": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
+          "overlay_front": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front_active",
+          "overlay_front_emissive": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_front_active_emissive",
+          "overlay_top": "gtna:block/multiblock/steam_thermal_centrifuge/overlay_top"
+        }
+      }
+    }
+  }
+}

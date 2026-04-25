@@ -466,7 +466,7 @@ public class GTNAMachines2 {
             ResourceLocation hullBottom = GTCEu.id("block/casings/voltage/" + tierName + "/bottom");
 
             double mult = switch (tier) {
-                case GTValues.UV -> 55.0;
+                case GTValues.UV -> 50.0;
                 case GTValues.UHV -> 33.33;
                 case GTValues.UEV -> 25.0;
                 case GTValues.UIV -> 20.0;
