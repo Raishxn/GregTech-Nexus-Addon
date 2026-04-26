@@ -381,6 +381,17 @@ public class NexusBlockPattern extends BlockPattern {
             if (Arrays.stream(blockInfos).anyMatch(info -> info.getBlockState().getBlock() instanceof CoilBlock)) {
                 category = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory.COILS;
             } else if (Arrays.stream(blockInfos)
+                    .anyMatch(info -> info.getItemStackForm().getDescriptionId().contains("me_storage_core"))) {
+                category = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory.MATRIX_STORAGE_MODULE;
+            } else if (Arrays.stream(blockInfos)
+                    .anyMatch(info -> info.getItemStackForm().getDescriptionId().contains("crafting_storage_core"))) {
+                category = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory.MATRIX_CRAFTING_MODULE;
+            } else if (Arrays.stream(blockInfos)
+                    .anyMatch(info -> info.getItemStackForm().getDescriptionId().contains("me_storage_access_hatch") ||
+                            info.getItemStackForm().getDescriptionId().contains("me_big_storage_access_hatch") ||
+                            info.getItemStackForm().getDescriptionId().contains("me_io_port_hatch"))) {
+                category = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory.ME_STORAGE_ACCESS;
+            } else if (Arrays.stream(blockInfos)
                     .anyMatch(info -> info.getItemStackForm().getDescriptionId().contains("machine_casing"))) {
                         category = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory.MACHINE_CASING;
                     } else

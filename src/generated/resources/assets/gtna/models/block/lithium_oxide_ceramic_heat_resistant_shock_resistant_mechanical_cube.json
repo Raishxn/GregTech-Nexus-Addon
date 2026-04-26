@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "gtna:block/casings/lithium_oxide_ceramic_heat_resistant_shock_resistant_mechanical_cube"
+  }
+}

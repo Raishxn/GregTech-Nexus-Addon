@@ -1,0 +1,8 @@
+{
+  "ctm": {
+    "ctm_version": 1,
+    "type": "CTM",
+    "layer": "SOLID",
+    "connection": "gtna:block/casings/lithium_oxide_ceramic_heat_resistant_shock_resistant_mechanical_cube_ctm"
+  }
+}

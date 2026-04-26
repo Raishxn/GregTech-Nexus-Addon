@@ -20,6 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 import com.raishxn.gtna.common.data.GTNABlocks;
+import com.raishxn.gtna.common.data.GTNAMachines2;
 
 import java.util.*;
 
@@ -54,7 +55,10 @@ public class BlockSelectionConfigWidget {
         MACHINE_CASING("gtna.terminal.config.machine_casing", "SelectedCasing"),
         MUFFLER("gtna.terminal.config.muffler", "SelectedMuffler"),
         ROTOR_HOLDER("gtna.terminal.config.rotor_holder", "SelectedRotor"),
-        WIRELESS_CAPACITOR("gtna.terminal.config.wireless_capacitor", "SelectedCapacitor");
+        WIRELESS_CAPACITOR("gtna.terminal.config.wireless_capacitor", "SelectedCapacitor"),
+        MATRIX_STORAGE_MODULE("gtna.terminal.config.matrix_storage_module", "SelectedMatrixStorageModule"),
+        MATRIX_CRAFTING_MODULE("gtna.terminal.config.matrix_crafting_module", "SelectedMatrixCraftingModule"),
+        ME_STORAGE_ACCESS("gtna.terminal.config.me_storage_access", "SelectedMEStorageAccess");
 
         public final String translationKey;
         public final String nbtKey;
@@ -114,6 +118,15 @@ public class BlockSelectionConfigWidget {
         // ── Category: Wireless Capacitors ─────────────────────────────────────
         scrollY = addCategory(scroll, scrollY, width - 14,
                 BlockCategory.WIRELESS_CAPACITOR, getWirelessCapacitorEntries());
+
+        scrollY = addCategory(scroll, scrollY, width - 14,
+                BlockCategory.MATRIX_STORAGE_MODULE, getMatrixStorageModuleEntries());
+
+        scrollY = addCategory(scroll, scrollY, width - 14,
+                BlockCategory.MATRIX_CRAFTING_MODULE, getMatrixCraftingModuleEntries());
+
+        scrollY = addCategory(scroll, scrollY, width - 14,
+                BlockCategory.ME_STORAGE_ACCESS, getMEStorageAccessEntries());
 
         panel.addWidget(scroll);
         return panel;
@@ -327,6 +340,48 @@ public class BlockSelectionConfigWidget {
         return stacks;
     }
 
+    public static List<ItemStack> getMatrixStorageModuleEntries() {
+        return blockEntries(
+                GTNABlocks.T1_ME_STORAGE_CORE,
+                GTNABlocks.T2_ME_STORAGE_CORE,
+                GTNABlocks.T3_ME_STORAGE_CORE,
+                GTNABlocks.T4_ME_STORAGE_CORE,
+                GTNABlocks.T5_ME_STORAGE_CORE);
+    }
+
+    public static List<ItemStack> getMatrixCraftingModuleEntries() {
+        return blockEntries(
+                GTNABlocks.T1_CRAFTING_STORAGE_CORE,
+                GTNABlocks.T2_CRAFTING_STORAGE_CORE,
+                GTNABlocks.T3_CRAFTING_STORAGE_CORE,
+                GTNABlocks.T4_CRAFTING_STORAGE_CORE,
+                GTNABlocks.T5_CRAFTING_STORAGE_CORE);
+    }
+
+    public static List<ItemStack> getMEStorageAccessEntries() {
+        List<ItemStack> stacks = new ArrayList<>();
+        if (GTNAMachines2.ME_STORAGE_ACCESS_HATCH != null) {
+            stacks.add(GTNAMachines2.ME_STORAGE_ACCESS_HATCH.asStack());
+        }
+        if (GTNAMachines2.ME_BIG_STORAGE_ACCESS_HATCH != null) {
+            stacks.add(GTNAMachines2.ME_BIG_STORAGE_ACCESS_HATCH.asStack());
+        }
+        if (GTNAMachines2.ME_IO_PORT_HATCH != null) {
+            stacks.add(GTNAMachines2.ME_IO_PORT_HATCH.asStack());
+        }
+        return stacks;
+    }
+
+    private static List<ItemStack> blockEntries(com.tterrag.registrate.util.entry.BlockEntry<?>... entries) {
+        List<ItemStack> stacks = new ArrayList<>();
+        for (var entry : entries) {
+            if (entry != null) {
+                stacks.add(new ItemStack(entry.get()));
+            }
+        }
+        return stacks;
+    }
+
     // ═══════════════════════════════════════════════════════════════════════════
     // NBT HELPERS
     // ═══════════════════════════════════════════════════════════════════════════
@@ -375,6 +430,9 @@ public class BlockSelectionConfigWidget {
             case MUFFLER -> getMufflerEntries();
             case ROTOR_HOLDER -> getRotorHolderEntries();
             case WIRELESS_CAPACITOR -> getWirelessCapacitorEntries();
+            case MATRIX_STORAGE_MODULE -> getMatrixStorageModuleEntries();
+            case MATRIX_CRAFTING_MODULE -> getMatrixCraftingModuleEntries();
+            case ME_STORAGE_ACCESS -> getMEStorageAccessEntries();
         };
 
         if (idx < entries.size()) {

@@ -111,6 +111,7 @@ public class ConfigHolder {
             case "eyeOfWood" -> INSTANCE.machineToggles.eyeOfWood;
             case "nexusMolecularForge" -> INSTANCE.machineToggles.nexusMolecularForge;
             case "nexusMeHypercore" -> INSTANCE.machineToggles.nexusMeHypercore;
+            case "meStorage" -> INSTANCE.machineToggles.meStorage;
             case "durationTester" -> INSTANCE.machineToggles.durationTester;
             default -> true;
         };
@@ -141,6 +142,9 @@ public class ConfigHolder {
             case "meAdvancedPatternBuffer" -> INSTANCE.hatchToggles.meAdvancedPatternBuffer;
             case "meUltimatePatternBuffer" -> INSTANCE.hatchToggles.meUltimatePatternBuffer;
             case "meCraftPatternHatch" -> INSTANCE.hatchToggles.meCraftPatternHatch;
+            case "meStorageAccessHatch" -> INSTANCE.hatchToggles.meStorageAccessHatch;
+            case "meBigStorageAccessHatch" -> INSTANCE.hatchToggles.meBigStorageAccessHatch;
+            case "meIOPortHatch" -> INSTANCE.hatchToggles.meIOPortHatch;
             default -> true;
         };
     }
@@ -281,6 +285,8 @@ public class ConfigHolder {
         @Configurable
         public boolean nexusMeHypercore = true;
         @Configurable
+        public boolean meStorage = true;
+        @Configurable
         public boolean durationTester = true;
     }
 
@@ -330,6 +336,12 @@ public class ConfigHolder {
         public boolean meUltimatePatternBuffer = true;
         @Configurable
         public boolean meCraftPatternHatch = true;
+        @Configurable
+        public boolean meStorageAccessHatch = true;
+        @Configurable
+        public boolean meBigStorageAccessHatch = true;
+        @Configurable
+        public boolean meIOPortHatch = true;
     }
 
     public static class Machines {

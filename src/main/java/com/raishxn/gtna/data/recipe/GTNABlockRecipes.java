@@ -13,6 +13,8 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
@@ -21,10 +23,12 @@ import com.raishxn.gtna.common.data.GTNAItems;
 import com.raishxn.gtna.common.data.GTNAMachines;
 import com.raishxn.gtna.common.data.GTNAMaterials;
 import com.raishxn.gtna.common.data.GTNARecipeType;
+import com.tterrag.registrate.util.entry.BlockEntry;
 
 import java.util.function.Consumer;
 
 import static com.gregtechceu.gtceu.common.data.GTMaterials.Lava;
+import static com.gregtechceu.gtceu.common.data.GTMaterials.CHEMICAL_DYES;
 import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.ROCK_BREAKER_RECIPES;
 
 public class GTNABlockRecipes {
@@ -296,6 +300,38 @@ public class GTNABlockRecipes {
                 .duration(200)
                 .EUt(30)
                 .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_high_strength_concrete")
+                .inputItems(Blocks.REINFORCED_DEEPSLATE)
+                .inputItems(TagPrefix.plate, GTMaterials.Steel, 2)
+                .inputItems(TagPrefix.dust, GTMaterials.Concrete, 4)
+                .inputFluids(GTMaterials.Concrete.getFluid(576))
+                .outputItems(GTNABlocks.HIGH_STRENGTH_CONCRETE.asItem(), 4)
+                .duration(160)
+                .EUt(120)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_cobalt_oxide_ceramic_mechanical_block")
+                .inputItems(TagPrefix.frameGt, GTMaterials.BlackSteel)
+                .inputItems(TagPrefix.dust, GTNAMaterials.CobaltOxide, 8)
+                .inputItems(TagPrefix.plate, GTMaterials.Cobalt, 4)
+                .inputFluids(GTMaterials.Polytetrafluoroethylene.getFluid(288))
+                .outputItems(GTNABlocks.COBALT_OXIDE_CERAMIC_STRONG_THERMALLY_CONDUCTIVE_MECHANICAL_BLOCK.asItem())
+                .duration(200)
+                .EUt(480)
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_lithium_oxide_ceramic_mechanical_cube")
+                .inputItems(TagPrefix.frameGt, GTNAMaterials.DarkSteel)
+                .inputItems(TagPrefix.dust, GTNAMaterials.LithiumOxide, 8)
+                .inputItems(TagPrefix.plate, GTMaterials.StainlessSteel, 4)
+                .inputFluids(GTMaterials.Polybenzimidazole.getFluid(288))
+                .outputItems(GTNABlocks.LITHIUM_OXIDE_CERAMIC_HEAT_RESISTANT_SHOCK_RESISTANT_MECHANICAL_CUBE.asItem())
+                .duration(200)
+                .EUt(1920)
+                .save(provider);
+
+        registerABSCasingRecipes(provider);
 
         GTRecipeTypes.FLUID_SOLIDFICATION_RECIPES.recipeBuilder("gtna_naquadah_borosilicate_glass")
                 .inputItems(GTNABlocks.BOROSILICATE_GLASS_BLOCK.asItem())
@@ -609,4 +645,52 @@ public class GTNABlockRecipes {
         }
 
     }
+
+    @SuppressWarnings("unchecked")
+    private static void registerABSCasingRecipes(Consumer<FinishedRecipe> provider) {
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("abs_white_casing")
+                .inputItems(TagPrefix.frameGt, GTMaterials.Europium)
+                .inputItems(TagPrefix.plate, GTNAMaterials.Abs, 6)
+                .inputItems(TagPrefix.foil, GTNAMaterials.Polystyrene, 4)
+                .inputFluids(GTMaterials.Polyethylene.getFluid(576))
+                .outputItems(GTNABlocks.ABS_WHITE_CASING.asItem())
+                .duration(100)
+                .EUt(30)
+                .save(provider);
+
+        BlockEntry<Block>[] absBlocks = new BlockEntry[] {
+                GTNABlocks.ABS_WHITE_CASING,
+                GTNABlocks.ABS_ORANGE_CASING,
+                GTNABlocks.ABS_MAGENTA_CASING,
+                GTNABlocks.ABS_LIGHT_BULL_CASING,
+                GTNABlocks.ABS_YELLOW_CASING,
+                GTNABlocks.ABS_LIME_CASING,
+                GTNABlocks.ABS_PINK_CASING,
+                GTNABlocks.ABS_GREY_CASING,
+                GTNABlocks.ABS_LIGHT_GREY_CASING,
+                GTNABlocks.ABS_CYAN_CASING,
+                GTNABlocks.ABS_PURPLE_CASING,
+                GTNABlocks.ABS_BLUE_CASING,
+                GTNABlocks.ABS_BROWN_CASING,
+                GTNABlocks.ABS_GREEN_CASING,
+                GTNABlocks.ABS_RED_CASING,
+                GTNABlocks.ABS_BLACK_CASING
+        };
+
+        for (int i = 0; i < CHEMICAL_DYES.length; i++) {
+            DyeColor color = DyeColor.values()[i];
+            if (color == DyeColor.WHITE) {
+                continue;
+            }
+            GTRecipeTypes.CHEMICAL_BATH_RECIPES.recipeBuilder("abs_" + color.getName())
+                    .inputItems(GTNABlocks.ABS_WHITE_CASING.asItem())
+                    .inputFluids(CHEMICAL_DYES[i], 144)
+                    .outputItems(absBlocks[i].asItem())
+                    .duration(200)
+                    .EUt(7)
+                    .category(GTRecipeCategories.CHEM_DYES)
+                    .save(provider);
+        }
+    }
 }
+

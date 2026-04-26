@@ -3,6 +3,12 @@
 ## [0.3.2-dev] - 2026-04-25
 
 ### Added
+- **Nexus ME Hypercore / AE2 Integration**:
+  - Added `Crafting CPU Interface` as the AE2 bridge part for the Nexus ME Hypercore multiblock.
+  - Added AE2 virtual Crafting CPU cluster support for the Nexus ME Hypercore, including saved CPU state and relog recovery.
+  - Added AE2 mixins for Nexus virtual CPU discovery, large CPU storage formatting, large co-processor formatting, and infinite-value display.
+  - Added generated assets, lang entries, and item/model coverage for the Crafting CPU Interface and Infinite Cell Component.
+  - Added the Nexus ME Hypercore structure file integration based on the GTOCore ME Computer Core style.
 - **Primitive Distillation Tower**:
   - Added the primitive steam distillation tower controller with GT-Not-Leisure-inspired structure behavior.
   - Added MV-and-below recipe restriction and 75% steam consumption behavior.
@@ -17,6 +23,13 @@
   - Added dedicated Eye of Wood structure data, renderer support, localization, and richer player-facing tooltip text based on the original Twist Space Technology behavior.
 
 ### Changed
+- **Nexus ME Hypercore / AE2 Integration**:
+  - Reworked the Nexus ME Hypercore structure predicates to accept only the required Crafting CPU Interface and Parallel Hatch where appropriate, removing Pattern Buffer acceptance.
+  - Changed Nexus ME Hypercore casing/render texture from Magtech casing to GTCEu Nonconducting Casing.
+  - Changed Nexus ME Hypercore module counting to use the formed multiblock pattern cache, fixing rotated or larger structure undercounting.
+  - Updated Nexus ME Hypercore controller UI to use full labels while abbreviating only large numeric values.
+  - Updated AE2 Crafting CPU list formatting so Nexus CPUs use compact storage and co-processor numbers.
+  - Updated transcendent mode to expose infinite storage/co-processors to AE2 and render them with the infinity symbol in the AE2 terminal.
 - **Primitive Distillation Tower**:
   - Reworked the structure to match the GT-Not-Leisure primitive tower layout: 3x3 steel firebox base, five hollow steel hull layers, and a closed steel hull top layer.
   - Fixed the multiblock preview so the tower renders upright instead of lying horizontally.
@@ -41,14 +54,26 @@
   - Updated Overclock Hatch and Accelerate Hatch tooltips to explain the difference clearly for players.
 
 ### Fixed
+- Fixed Nexus Terminal startup/opening crashes caused by incompatible glass predicate handling in the Nexus ME Hypercore pattern.
+- Fixed AE2 Crafting CPU screen crashes when Nexus Hypercore storage exceeded AE2's default byte unit formatting range.
+- Fixed Nexus ME Hypercore controller opening while formed by removing heavy module recalculation from UI creation and display refresh paths.
+- Fixed Nexus ME Hypercore T5 matrix module counting so full transcendent structures report `481/481`.
+- Fixed Nexus ME Hypercore transcendent state showing finite AE2 CPU values instead of the infinity symbol.
+- Fixed Nexus ME Hypercore / Crafting CPU Interface disconnecting after relog by persisting CPU storage/co-processor values and reannouncing the virtual CPU after grid reload.
+- Fixed a relog server crash where Nexus ME Hypercore sync tried to read the GTCEu multiblock cache before it had been rebuilt.
+- Fixed missing or overly abbreviated Nexus ME Hypercore, Crafting CPU Interface, and Infinite Cell Component language entries.
 - Fixed Primitive Distillation Tower preview/pattern registration issues that caused `Pattern formed checking failed: gtna:primitive_distillation_tower` during client startup.
 - Fixed several Large Steam structures incorrectly accepting wireless steam output hatches where only normal outputs or steam inputs should be valid.
 - Fixed missing or overly simple tooltip coverage for newly added steam multiblocks.
+- Fixed GTCEu electric multiblocks using automatic abilities, such as the Electric Blast Furnace, not accepting GTNA Accelerate Hatches and Overclock Hatches.
 - Fixed GTCEu standard electric multiblocks applying Overclock Hatch duration reduction even when no real energy overclock was available.
 
 ### Tested
+- Ran `compileJava`, `runData`, and `jar reobfJar` after the Nexus ME Hypercore, AE2 CPU, lang, and generated asset changes.
+- Confirmed the jar contains the Nexus ME Hypercore machine, Crafting CPU Interface part, AE2 Crafting Service mixin, AE2 Crafting CPU Cluster mixin, CPU Selection List mixin, and Tooltips mixin.
 - Ran `compileJava`, `runData`, and `runClient` after the latest multiblock and hatch changes.
 - Confirmed the client starts without a Primitive Distillation Tower pattern failure after the upright preview fix.
+- Ran `compileJava` and `runData` after adding GTNA performance hatches to GTCEu automatic multiblock abilities.
 - Ran `compileJava` after correcting Overclock Hatch scaling on GTCEu standard electric multiblocks.
 
 ## [0.3.1] - 2026-04-23

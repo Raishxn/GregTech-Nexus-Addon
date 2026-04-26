@@ -28,7 +28,9 @@ import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachi
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostItemBusPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftingCPUInterfacePartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftPatternPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEStorageAccessPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
 import com.raishxn.gtna.common.machine.tesseract.DirectedTesseractMachine;
 import com.raishxn.gtna.config.ConfigHolder;
@@ -56,10 +58,16 @@ public class GTNAMachines2 {
     public static MachineDefinition ME_ADVANCED_PATTERN_BUFFER;
     public static MachineDefinition ME_ULTIMATE_PATTERN_BUFFER;
     public static MachineDefinition ME_CRAFT_PATTERN_HATCH;
+    public static MachineDefinition CRAFTING_CPU_INTERFACE;
+    public static MachineDefinition ME_STORAGE_ACCESS_HATCH;
+    public static MachineDefinition ME_BIG_STORAGE_ACCESS_HATCH;
+    public static MachineDefinition ME_IO_PORT_HATCH;
     public static MachineDefinition DIRECTED_TESSERACT_GENERATOR;
 
     public static void init() {
         registerPatternBuffers();
+        registerCraftingCpuInterface();
+        registerMEStorageAccessHatches();
         registerDirectedTesseract();
         registerParallelHatch(GTValues.UHV, 1024);
         registerParallelHatch(GTValues.UEV, 4096);
@@ -179,6 +187,58 @@ public class GTNAMachines2 {
                         Component.translatable("gtna.machine.craft_pattern_hatch.slots", 72),
                         Component.translatable("gtna.machine.craft_pattern_hatch.patterns"),
                         Component.translatable("gtna.machine.craft_pattern_hatch.cheat"))
+                .register();
+    }
+
+    private static void registerCraftingCpuInterface() {
+        CRAFTING_CPU_INTERFACE = REGISTRATE
+                .machine("crafting_cpu_interface", GTNACraftingCPUInterfacePartMachine::new)
+                .langValue("Crafting CPU Interface")
+                .tier(GTValues.HV)
+                .rotationState(RotationState.ALL)
+                .colorOverlayTieredHullModel(GTCEu.id("block/overlay/appeng/me_buffer_hatch"))
+                .tooltips(
+                        Component.translatable("gtna.machine.crafting_cpu_interface.tooltip"),
+                        Component.translatable("gtna.machine.crafting_cpu_interface.network"),
+                        Component.translatable("gtceu.part_sharing.disabled"))
+                .register();
+    }
+
+    private static void registerMEStorageAccessHatches() {
+        ME_STORAGE_ACCESS_HATCH = ConfigHolder.isHatchEnabled("meStorageAccessHatch") ?
+                registerMEStorageAccessHatch(
+                        "me_storage_access_hatch",
+                        GTValues.EV,
+                        GTNAMEStorageAccessPartMachine.Mode.STORAGE,
+                        "gtna.machine.me_storage_access_hatch.tooltip") :
+                null;
+        ME_BIG_STORAGE_ACCESS_HATCH = ConfigHolder.isHatchEnabled("meBigStorageAccessHatch") ?
+                registerMEStorageAccessHatch(
+                        "me_big_storage_access_hatch",
+                        GTValues.IV,
+                        GTNAMEStorageAccessPartMachine.Mode.BIG_STORAGE,
+                        "gtna.machine.me_big_storage_access_hatch.tooltip") :
+                null;
+        ME_IO_PORT_HATCH = ConfigHolder.isHatchEnabled("meIOPortHatch") ?
+                registerMEStorageAccessHatch(
+                        "me_io_port_hatch",
+                        GTValues.EV,
+                        GTNAMEStorageAccessPartMachine.Mode.IO_PORT,
+                        "gtna.machine.me_io_port_hatch.tooltip") :
+                null;
+    }
+
+    private static MachineDefinition registerMEStorageAccessHatch(
+            String id, int tier, GTNAMEStorageAccessPartMachine.Mode mode, String tooltipKey) {
+        return REGISTRATE.machine(id, holder -> new GTNAMEStorageAccessPartMachine(holder, mode))
+                .tier(tier)
+                .rotationState(RotationState.ALL)
+                .abilities(GTNAPartAbility.ME_STORAGE_ACCESS)
+                .colorOverlayTieredHullModel(GTCEu.id("block/overlay/appeng/me_buffer_hatch"))
+                .tooltips(
+                        Component.translatable(tooltipKey),
+                        Component.translatable("gtna.machine.me_storage_access_hatch.network"),
+                        Component.translatable("gtceu.part_sharing.disabled"))
                 .register();
     }
 

@@ -1,0 +1,8 @@
+{
+  "ctm": {
+    "ctm_version": 1,
+    "type": "CTM",
+    "layer": "SOLID",
+    "connection": "gtna:block/casings/high_strength_concrete_ctm"
+  }
+}

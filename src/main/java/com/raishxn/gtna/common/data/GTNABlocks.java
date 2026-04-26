@@ -1,6 +1,7 @@
 package com.raishxn.gtna.common.data;
 
 import com.gregtechceu.gtceu.api.item.tool.GTToolType;
+import com.gregtechceu.gtceu.GTCEu;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.common.block.MEStorageCoreBlock;
 import com.raishxn.gtna.common.block.NexusCapacitorBlock;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
@@ -61,6 +63,15 @@ public class GTNABlocks {
     public static final BlockEntry<Block> ZIRCONIA_CERAMIC_HIGH_STRENGTH_BENDING_RESISTANCE_MECHANICAL_BLOCK = createCasingBlock(
             "zirconia_ceramic_high_strength_bending_resistance_mechanical_block",
             GTNACORE.id("block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block"));
+    public static final BlockEntry<Block> HIGH_STRENGTH_CONCRETE = createCasingBlock(
+            "high_strength_concrete",
+            GTNACORE.id("block/casings/high_strength_concrete"));
+    public static final BlockEntry<Block> COBALT_OXIDE_CERAMIC_STRONG_THERMALLY_CONDUCTIVE_MECHANICAL_BLOCK = createCasingBlock(
+            "cobalt_oxide_ceramic_strong_thermally_conductive_mechanical_block",
+            GTNACORE.id("block/casings/cobalt_oxide_ceramic_strong_thermally_conductive_mechanical_block"));
+    public static final BlockEntry<Block> LITHIUM_OXIDE_CERAMIC_HEAT_RESISTANT_SHOCK_RESISTANT_MECHANICAL_CUBE = createCasingBlock(
+            "lithium_oxide_ceramic_heat_resistant_shock_resistant_mechanical_cube",
+            GTNACORE.id("block/casings/lithium_oxide_ceramic_heat_resistant_shock_resistant_mechanical_cube"));
     public static final BlockEntry<Block> NAQUADAH_BOROSILICATE_GLASS = createGlassCasingBlock(
             "naquadah_borosilicate_glass",
             GTNACORE.id("block/casings/naquadah_borosilicate_glass"),
@@ -71,9 +82,48 @@ public class GTNABlocks {
     public static final BlockEntry<Block> ABS_BLACK_CASING = createCasingBlock(
             "abs_black_casing",
             GTNACORE.id("block/casings/abs_black_casing"));
+    public static final BlockEntry<Block> ABS_BLUE_CASING = createCasingBlock(
+            "abs_blue_casing",
+            GTNACORE.id("block/casings/abs_blue_casing"));
+    public static final BlockEntry<Block> ABS_BROWN_CASING = createCasingBlock(
+            "abs_brown_casing",
+            GTNACORE.id("block/casings/abs_brown_casing"));
+    public static final BlockEntry<Block> ABS_GREEN_CASING = createCasingBlock(
+            "abs_green_casing",
+            GTNACORE.id("block/casings/abs_green_casing"));
     public static final BlockEntry<Block> ABS_GREY_CASING = createCasingBlock(
             "abs_grey_casing",
             GTNACORE.id("block/casings/abs_grey_casing"));
+    public static final BlockEntry<Block> ABS_LIME_CASING = createCasingBlock(
+            "abs_lime_casing",
+            GTNACORE.id("block/casings/abs_lime_casing"));
+    public static final BlockEntry<Block> ABS_ORANGE_CASING = createCasingBlock(
+            "abs_orange_casing",
+            GTNACORE.id("block/casings/abs_orange_casing"));
+    public static final BlockEntry<Block> ABS_RED_CASING = createCasingBlock(
+            "abs_red_casing",
+            GTNACORE.id("block/casings/abs_red_casing"));
+    public static final BlockEntry<Block> ABS_WHITE_CASING = createCasingBlock(
+            "abs_white_casing",
+            GTNACORE.id("block/casings/abs_white_casing"));
+    public static final BlockEntry<Block> ABS_YELLOW_CASING = createCasingBlock(
+            "abs_yellow_casing",
+            GTNACORE.id("block/casings/abs_yellow_casing"));
+    public static final BlockEntry<Block> ABS_CYAN_CASING = createCasingBlock(
+            "abs_cyan_casing",
+            GTNACORE.id("block/casings/abs_cyan_casing"));
+    public static final BlockEntry<Block> ABS_MAGENTA_CASING = createCasingBlock(
+            "abs_magenta_casing",
+            GTNACORE.id("block/casings/abs_magenta_casing"));
+    public static final BlockEntry<Block> ABS_PINK_CASING = createCasingBlock(
+            "abs_pink_casing",
+            GTNACORE.id("block/casings/abs_pink_casing"));
+    public static final BlockEntry<Block> ABS_PURPLE_CASING = createCasingBlock(
+            "abs_purple_casing",
+            GTNACORE.id("block/casings/abs_purple_casing"));
+    public static final BlockEntry<Block> ABS_LIGHT_BULL_CASING = createCasingBlock(
+            "abs_light_bull_casing",
+            GTNACORE.id("block/casings/abs_light_bull_casing"));
     public static final BlockEntry<Block> ABS_LIGHT_GREY_CASING = createCasingBlock(
             "abs_light_grey_casing",
             GTNACORE.id("block/casings/abs_light_grey_casing"));
@@ -127,7 +177,7 @@ public class GTNABlocks {
             GTNACORE.id("block/spacetime_compression_field_generator"));
     public static final BlockEntry<Block> NEXUS_HYPERCORE_CASING = createCasingBlock(
             "nexus_hypercore_casing",
-            GTNACORE.id("block/casings/magtech_casing"));
+            GTCEu.id("block/casings/gcym/nonconducting_casing"));
     public static final BlockEntry<Block> MATRIX_MODULE_I = createCasingBlock(
             "matrix_module_i",
             GTNACORE.id("block/wireless_energy_unit/ev"));
@@ -140,6 +190,17 @@ public class GTNABlocks {
     public static final BlockEntry<Block> MATRIX_MODULE_IV = createCasingBlock(
             "matrix_module_iv",
             GTNACORE.id("block/wireless_energy_unit/uev"));
+
+    public static final BlockEntry<MEStorageCoreBlock> T1_ME_STORAGE_CORE = createMEStorageCore(1, false);
+    public static final BlockEntry<MEStorageCoreBlock> T2_ME_STORAGE_CORE = createMEStorageCore(2, false);
+    public static final BlockEntry<MEStorageCoreBlock> T3_ME_STORAGE_CORE = createMEStorageCore(3, false);
+    public static final BlockEntry<MEStorageCoreBlock> T4_ME_STORAGE_CORE = createMEStorageCore(4, false);
+    public static final BlockEntry<MEStorageCoreBlock> T5_ME_STORAGE_CORE = createMEStorageCore(5, false);
+    public static final BlockEntry<MEStorageCoreBlock> T1_CRAFTING_STORAGE_CORE = createMEStorageCore(1, true);
+    public static final BlockEntry<MEStorageCoreBlock> T2_CRAFTING_STORAGE_CORE = createMEStorageCore(2, true);
+    public static final BlockEntry<MEStorageCoreBlock> T3_CRAFTING_STORAGE_CORE = createMEStorageCore(3, true);
+    public static final BlockEntry<MEStorageCoreBlock> T4_CRAFTING_STORAGE_CORE = createMEStorageCore(4, true);
+    public static final BlockEntry<MEStorageCoreBlock> T5_CRAFTING_STORAGE_CORE = createMEStorageCore(5, true);
 
     public static final BlockEntry<NexusCapacitorBlock> NEXUS_CAPACITOR_LV = createCapacitorBlock("nexus_capacitor_lv",
             1, 160_000L);
@@ -227,6 +288,26 @@ public class GTNABlocks {
     private static BlockEntry<Block> createGlassCasingBlock(String name, ResourceLocation texture,
                                                             Supplier<Supplier<RenderType>> type) {
         return createCasingBlock(name, GlassBlock::new, texture, () -> Blocks.GLASS, type);
+    }
+
+    private static BlockEntry<MEStorageCoreBlock> createMEStorageCore(int tier, boolean craftingCore) {
+        String name = "t" + tier + (craftingCore ? "_crafting_storage_core" : "_me_storage_core");
+        String texture = "block/casings/" + (craftingCore ? "crafting_storage_core" : "me_storage_core") + "/t" + tier;
+        return REGISTRATE.block(name, p -> new MEStorageCoreBlock(p, tier, craftingCore))
+                .initialProperties(() -> Blocks.IRON_BLOCK)
+                .properties(p -> p
+                        .mapColor(MapColor.METAL)
+                        .strength(5.0f, 6.0f)
+                        .sound(SoundType.METAL)
+                        .requiresCorrectToolForDrops()
+                        .isValidSpawn((state, level, pos, ent) -> false))
+                .addLayer(() -> RenderType::solid)
+                .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models().cubeAll(ctx.getName(),
+                        GTNACORE.id(texture))))
+                .tag(GTToolType.WRENCH.harvestTags.get(0), BlockTags.MINEABLE_WITH_PICKAXE)
+                .item(BlockItem::new)
+                .build()
+                .register();
     }
 
     public static BlockEntry<NexusCapacitorBlock> createCapacitorBlock(String name, int tier, long capacity) {

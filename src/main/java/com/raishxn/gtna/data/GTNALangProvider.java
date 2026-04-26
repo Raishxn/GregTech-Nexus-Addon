@@ -139,6 +139,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("material.gtna.trinaquadalloy", "Trinaquadalloy");
         add("material.gtna.mar_m_200_steel", "Mar-M200 Steel");
         add("material.gtna.fall_king", "FallKing");
+        add("material.gtna.cobalt_oxide", "Cobalt Oxide");
+        add("material.gtna.lithium_oxide", "Lithium Oxide");
         add("material.gtna.zirconium_oxide", "Zirconium Oxide");
         add("material.gtna.zirconia_ceramic", "Zirconia Ceramic");
         // --- Hatches Translations (UPDATED) ---
@@ -194,6 +196,19 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.me_advanced_pattern_buffer", "ME Advanced Pattern Buffer");
         add("block.gtna.me_ultimate_pattern_buffer", "ME Ultimate Pattern Buffer");
         add("block.gtna.me_craft_pattern_hatch", "Nexus Craft Pattern Hatch");
+        add("block.gtna.crafting_cpu_interface", "Crafting CPU Interface");
+        add("block.gtna.nexus_me_hypercore", "Nexus ME Hypercore");
+        add("item.gtna.infinite_cell_component", "Infinite Cell Component");
+        add("gtna.ae2.cpu.nexus_hypercore", "N-ME CPU");
+        add("gtna.machine.nexus_me_hypercore.ui.title", "Nexus ME Hypercore");
+        add("gtna.machine.nexus_me_hypercore.ui.tier", "Tier: ");
+        add("gtna.machine.nexus_me_hypercore.ui.modules", "Installed Modules: ");
+        add("gtna.machine.nexus_me_hypercore.ui.storage", "Storage: ");
+        add("gtna.machine.nexus_me_hypercore.ui.coprocessors", "Co-Processors: ");
+        add("gtna.machine.nexus_me_hypercore.ui.threads", "Threads: ");
+        add("gtna.machine.nexus_me_hypercore.ui.transcendent", "Transcendent Mode: ");
+        add("gtna.machine.nexus_me_hypercore.ui.on", "Active");
+        add("gtna.machine.nexus_me_hypercore.ui.off", "Inactive");
         add("gtna.machine.pattern_buffer.tooltip", "AE2 pattern buffer with per-slot GTNA specialization");
         add("gtna.machine.pattern_buffer.slots", "Pattern Slots: %s");
         add("gtna.machine.pattern_buffer.break_persist", "Stored patterns and slot data are preserved on block drop");
@@ -228,6 +243,8 @@ public class GTNALangProvider extends LanguageProvider {
                 "Accepts encoded crafting patterns only and registers them to the AE2 network");
         add("gtna.machine.craft_pattern_hatch.cheat",
                 "Queues crafted outputs directly for the controller to materialize");
+        add("gtna.machine.crafting_cpu_interface.tooltip", "Connects the Nexus ME Hypercore to the AE2 crafting CPU network");
+        add("gtna.machine.crafting_cpu_interface.network", "The Nexus ME Hypercore structure requires exactly one interface");
         add("item.gtna.pattern_buffer_upgrade_21", "Pattern Buffer Expansion Card");
         add("item.gtna.pattern_buffer_upgrade_32", "Pattern Buffer Precision Card");
         add("item.gtna.pattern_buffer_upgrade_72", "Pattern Buffer Ascension Card");
@@ -334,6 +351,9 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.terminal.config.muffler", "§dMuffler Hatches");
         add("gtna.terminal.config.rotor_holder", "§dRotor Holders");
         add("gtna.terminal.config.wireless_capacitor", "§dWireless Capacitors");
+        add("gtna.terminal.config.matrix_storage_module", "§dMatrix Storage Modules");
+        add("gtna.terminal.config.matrix_crafting_module", "§dMatrix Crafting Modules");
+        add("gtna.terminal.config.me_storage_access", "§dME Storage Access");
 
         // AE2 Network linking
         add("gtna.terminal.nexus.ae2.linked", "§a[GTNA] §fLinked to ME Wireless Access Point!");
@@ -457,6 +477,52 @@ public class GTNALangProvider extends LanguageProvider {
                 "Oxidation Resistant Hastelloy N Mechanical Casing");
         add("block.gtna.zirconia_ceramic_high_strength_bending_resistance_mechanical_block",
                 "Zirconia Ceramic High Strength Bending Resistance Mechanical Block");
+        add("block.gtna.high_strength_concrete", "High Strength Concrete");
+        add("block.gtna.cobalt_oxide_ceramic_strong_thermally_conductive_mechanical_block",
+                "Cobalt Oxide Ceramic Strong Thermally Conductive Mechanical Block");
+        add("block.gtna.lithium_oxide_ceramic_heat_resistant_shock_resistant_mechanical_cube",
+                "Lithium Oxide Ceramic Heat Resistant Shock Resistant Mechanical Cube");
+        add("block.gtna.abs_black_casing", "Black ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_blue_casing", "Blue ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_brown_casing", "Brown ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_green_casing", "Green ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_grey_casing", "Gray ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_lime_casing", "Lime ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_orange_casing", "Orange ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_red_casing", "Red ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_white_casing", "White ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_yellow_casing", "Yellow ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_cyan_casing", "Cyan ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_magenta_casing", "Magenta ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_pink_casing", "Pink ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_purple_casing", "Purple ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_light_bull_casing", "Light Blue ABS Plastic Mechanical Casing");
+        add("block.gtna.abs_light_grey_casing", "Light Gray ABS Plastic Mechanical Casing");
+        add("block.gtna.t1_me_storage_core", "T1 Matrix Storage Module");
+        add("block.gtna.t2_me_storage_core", "T2 Matrix Storage Module");
+        add("block.gtna.t3_me_storage_core", "T3 Matrix Storage Module");
+        add("block.gtna.t4_me_storage_core", "T4 Matrix Storage Module");
+        add("block.gtna.t5_me_storage_core", "T5 Matrix Storage Module");
+        add("block.gtna.t1_crafting_storage_core", "T1 Matrix Crafting Module");
+        add("block.gtna.t2_crafting_storage_core", "T2 Matrix Crafting Module");
+        add("block.gtna.t3_crafting_storage_core", "T3 Matrix Crafting Module");
+        add("block.gtna.t4_crafting_storage_core", "T4 Matrix Crafting Module");
+        add("block.gtna.t5_crafting_storage_core", "T5 Matrix Crafting Module");
+        add("gtna.machine.me_storage_access_hatch.tooltip", "Connects ME Storage to an AE2 network.");
+        add("gtna.machine.me_big_storage_access_hatch.tooltip", "Connects ME Storage to an AE2 network with BigInteger storage mode.");
+        add("gtna.machine.me_io_port_hatch.tooltip", "Connects ME Storage to an AE2 network through IO Port mode.");
+        add("gtna.machine.me_storage_access_hatch.network", "The ME Storage multiblock accepts exactly one of these access hatches.");
+        add("gtna.machine.me_storage_access_hatch.mode", "Storage Access");
+        add("gtna.machine.me_big_storage_access_hatch.mode", "Big Storage Access");
+        add("gtna.machine.me_io_port_hatch.mode", "IO Port");
+        add("gtna.machine.me_storage.unformed", "Form the Matrix Storage structure to mount AE2 storage.");
+        add("gtna.machine.me_storage.title", "ME Storage");
+        add("gtna.machine.me_storage.no_access", "Missing ME Storage Access Hatch, ME Big Storage Access Hatch, or ME IO Port Hatch.");
+        add("gtna.machine.me_storage.access", "%s: %s");
+        add("gtna.machine.me_storage.capacity", "Capacity: %s");
+        add("gtna.machine.me_storage.used", "Used: %s / Types: %s");
+        add("gtna.machine.me_storage.infinite_status", "Infinite Cell Components: %s/64 - %s");
+        add("gtna.machine.me_storage.infinite_cell_slot", "Infinite Cell Component Slot");
         add("block.gtna.naquadah_borosilicate_glass", "Naquadah Borosilicate Glass");
         add("block.gtna.magtech_casing", "Magtech Casing");
         add("block.gtna.process_machine_casing", "Process Machine Casing");
@@ -469,6 +535,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.eye_of_harmony", "Eye of Harmony");
         add("block.gtna.eye_of_wood", "Eye of Wood");
         add("block.gtna.nexus_molecular_forge", "Nexus Assembly Forge");
+        add("block.gtna.me_storage", "ME Storage");
         add("gtceu.annihilate_generator", "Annihilation Generator");
         add("gtna.cosmos_simulation", "Cosmos Simulation");
         add("gtna.machine.artificial_star.output", "Supports Laser or Wireless Dynamo output.");
@@ -844,3 +911,4 @@ public class GTNALangProvider extends LanguageProvider {
         };
     }
 }
+

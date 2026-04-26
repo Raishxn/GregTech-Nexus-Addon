@@ -80,6 +80,8 @@ public final class GTNAMultiBlockFileReader {
             case 14 -> 'M';
             case 15 -> 'P';
             case 16 -> 'S';
+            case 18 -> 'Q';
+            case 19 -> ' ';
             case 61 -> '~';
             case 99 -> ' ';
             default -> throw new IllegalArgumentException("Unknown multiblock pattern symbol: " + symbol);

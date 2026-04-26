@@ -9,6 +9,7 @@ import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.feature.IFancyUIMachine;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDisplayUIMachine;
+import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
 import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockDisplayText;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
@@ -38,6 +39,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraftforge.items.IItemHandler;
 
 import com.raishxn.gtna.common.data.GTNARecipeType;
+import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -195,8 +197,24 @@ public class IndustrialSlaughterhouse extends WorkableElectricMultiblockMachine
     @Nullable
     public static ModifierFunction recipeModifier(MetaMachine machine, @NotNull GTRecipe recipe) {
         if (!(machine instanceof IndustrialSlaughterhouse slaughterhouse)) return ModifierFunction.NULL;
-        return OverclockingLogic.NON_PERFECT_OVERCLOCK.getModifier(machine, recipe,
+        OverclockingLogic overclockingLogic = slaughterhouse.getOverclockingLogic();
+        return overclockingLogic.getModifier(machine, recipe,
                 slaughterhouse.getEnergyContainer().getInputVoltage());
+    }
+
+    private OverclockingLogic getOverclockingLogic() {
+        double durationFactor = OverclockingLogic.STD_DURATION_FACTOR;
+        boolean hasOverclockHatch = false;
+        for (IMultiPart part : getParts()) {
+            if (part instanceof OverclockHatchPartMachine hatch) {
+                durationFactor = Math.min(durationFactor, hatch.getOverclockMultiplier());
+                hasOverclockHatch = true;
+            }
+        }
+        if (!hasOverclockHatch) {
+            return OverclockingLogic.NON_PERFECT_OVERCLOCK;
+        }
+        return OverclockingLogic.create(durationFactor, OverclockingLogic.STD_VOLTAGE_FACTOR, false);
     }
 
     @Override

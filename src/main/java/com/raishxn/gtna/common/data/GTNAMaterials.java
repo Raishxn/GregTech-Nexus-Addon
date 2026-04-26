@@ -17,6 +17,11 @@ public class GTNAMaterials {
     public static Material Trinaquadalloy;
     public static Material MarM200Steel;
     public static Material FallKing;
+    public static Material Acrylonitrile;
+    public static Material Abs;
+    public static Material Polystyrene;
+    public static Material CobaltOxide;
+    public static Material LithiumOxide;
     public static Material ZirconiumOxide;
     public static Material ZirconiaCeramic;
     public static Material ClayCompound;

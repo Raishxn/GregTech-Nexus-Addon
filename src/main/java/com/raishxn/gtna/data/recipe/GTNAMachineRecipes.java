@@ -722,6 +722,52 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
 
+        if (enabled(GTNAMachines.NEXUS_ME_HYPERCORE)) {
+            GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("me_super_computer_core")
+                    .inputItems(GTBlocks.HIGH_POWER_CASING.asItem(), 16)
+                    .inputItems(GTNABlocks.HIGH_STRENGTH_CONCRETE.asItem(), 32)
+                    .inputItems(GTNABlocks.COBALT_OXIDE_CERAMIC_STRONG_THERMALLY_CONDUCTIVE_MECHANICAL_BLOCK.asItem(), 16)
+                    .inputItems(GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.asItem(), 8)
+                    .inputItems(GCYMBlocks.ELECTROLYTIC_CELL.asItem(), 8)
+                    .inputItems(GCYMBlocks.MOLYBDENUM_DISILICIDE_COIL_BLOCK.asItem(), 8)
+                    .inputItems(AEBlocks.CRAFTING_UNIT.stack(16).getItem(), 16)
+                    .inputItems(CustomTags.UV_CIRCUITS, 8)
+                    .inputItems(GTItems.EMITTER_UV.asStack().getItem(), 8)
+                    .inputItems(GTItems.SENSOR_UV.asStack().getItem(), 8)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(4608))
+                    .inputFluids(GTMaterials.Polybenzimidazole.getFluid(2304))
+                    .outputItems(GTNAMachines.NEXUS_ME_HYPERCORE.asStack())
+                    .duration(900)
+                    .EUt(GTValues.VA[GTValues.UV])
+                    .stationResearch(b -> b.researchStack(AEBlocks.CRAFTING_UNIT.stack(1))
+                            .CWUt(256)
+                            .EUt(GTValues.VA[GTValues.UV]))
+                    .save(provider);
+        }
+
+        if (enabled(GTNAMachines.ME_STORAGE)) {
+            GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("me_storage")
+                    .inputItems(GTBlocks.COMPUTER_CASING.asItem(), 32)
+                    .inputItems(GTBlocks.COMPUTER_HEAT_VENT.asItem(), 16)
+                    .inputItems(GTBlocks.HIGH_POWER_CASING.asItem(), 8)
+                    .inputItems(GTNABlocks.LITHIUM_OXIDE_CERAMIC_HEAT_RESISTANT_SHOCK_RESISTANT_MECHANICAL_CUBE.asItem(), 16)
+                    .inputItems(GTNABlocks.ABS_BLACK_CASING.asItem(), 16)
+                    .inputItems(AEBlocks.CRAFTING_STORAGE_256K.stack(4).getItem(), 4)
+                    .inputItems(CustomTags.ZPM_CIRCUITS, 8)
+                    .inputItems(GTItems.FIELD_GENERATOR_ZPM.asStack().getItem(), 4)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
+                    .inputFluids(GTMaterials.Polybenzimidazole.getFluid(2304))
+                    .outputItems(GTNAMachines.ME_STORAGE.asStack())
+                    .duration(600)
+                    .EUt(GTValues.VA[GTValues.ZPM])
+                    .stationResearch(b -> b.researchStack(AEBlocks.CRAFTING_STORAGE_256K.stack(1))
+                            .CWUt(128)
+                            .EUt(GTValues.VA[GTValues.ZPM]))
+                    .save(provider);
+        }
+
+        registerMEStorageCoreRecipes(provider);
+
         GTNARecipeType.ARTIFICIAL_STAR_RECIPES.recipeBuilder("neutronium_antimatter_fuel_rod")
                 .inputItems(GTNAItems.NEUTRONIUM_ANTIMATTER_FUEL_ROD.get())
                 .chancedOutput(GTNAItems.ANNIHILATION_CONSTRAINER.asStack(), 9000, 0)
@@ -1121,6 +1167,89 @@ public class GTNAMachineRecipes {
                 }
             }
         }
+    }
+
+    private static void registerMEStorageCoreRecipes(Consumer<FinishedRecipe> provider) {
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("t1_me_storage_core")
+                .inputItems(AEBlocks.CRAFTING_STORAGE_64K.stack(1).getItem())
+                .inputItems(TagPrefix.plate, GTNAMaterials.DarkSteel, 4)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                .outputItems(GTNABlocks.T1_ME_STORAGE_CORE.asItem())
+                .duration(200)
+                .EUt(GTValues.VA[GTValues.EV])
+                .save(provider);
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("t2_me_storage_core")
+                .inputItems(AEBlocks.CRAFTING_STORAGE_256K.stack(1).getItem())
+                .inputItems(GTNABlocks.T1_ME_STORAGE_CORE.asItem())
+                .inputItems(TagPrefix.plate, GTNAMaterials.DarkSteel, 8)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(1152))
+                .outputItems(GTNABlocks.T2_ME_STORAGE_CORE.asItem())
+                .duration(240)
+                .EUt(GTValues.VA[GTValues.IV])
+                .save(provider);
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("t3_me_storage_core")
+                .inputItems(AEBlocks.CRAFTING_STORAGE_256K.stack(2).getItem(), 2)
+                .inputItems(GTNABlocks.T2_ME_STORAGE_CORE.asItem())
+                .inputItems(TagPrefix.plate, GTMaterials.TungstenSteel, 8)
+                .inputFluids(GTMaterials.Polybenzimidazole.getFluid(576))
+                .outputItems(GTNABlocks.T3_ME_STORAGE_CORE.asItem())
+                .duration(280)
+                .EUt(GTValues.VA[GTValues.LuV])
+                .save(provider);
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("t4_me_storage_core")
+                .inputItems(AEBlocks.CRAFTING_STORAGE_256K.stack(4).getItem(), 4)
+                .inputItems(GTNABlocks.T3_ME_STORAGE_CORE.asItem())
+                .inputItems(TagPrefix.plate, GTMaterials.RhodiumPlatedPalladium, 8)
+                .inputFluids(GTMaterials.Polybenzimidazole.getFluid(1152))
+                .outputItems(GTNABlocks.T4_ME_STORAGE_CORE.asItem())
+                .duration(320)
+                .EUt(GTValues.VA[GTValues.ZPM])
+                .save(provider);
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("t5_me_storage_core")
+                .inputItems(AEBlocks.CRAFTING_STORAGE_256K.stack(8).getItem(), 8)
+                .inputItems(GTNABlocks.T4_ME_STORAGE_CORE.asItem())
+                .inputItems(TagPrefix.plate, GTMaterials.NaquadahAlloy, 8)
+                .inputFluids(GTMaterials.Polybenzimidazole.getFluid(2304))
+                .outputItems(GTNABlocks.T5_ME_STORAGE_CORE.asItem())
+                .duration(360)
+                .EUt(GTValues.VA[GTValues.UV])
+                .save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("t1_crafting_storage_core")
+                .inputItems(GTNABlocks.T1_ME_STORAGE_CORE.asItem())
+                .inputItems(AEBlocks.CRAFTING_UNIT.stack(4).getItem(), 4)
+                .outputItems(GTNABlocks.T1_CRAFTING_STORAGE_CORE.asItem())
+                .duration(120)
+                .EUt(GTValues.VA[GTValues.EV])
+                .save(provider);
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("t2_crafting_storage_core")
+                .inputItems(GTNABlocks.T2_ME_STORAGE_CORE.asItem())
+                .inputItems(AEBlocks.CRAFTING_UNIT.stack(8).getItem(), 8)
+                .outputItems(GTNABlocks.T2_CRAFTING_STORAGE_CORE.asItem())
+                .duration(140)
+                .EUt(GTValues.VA[GTValues.IV])
+                .save(provider);
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("t3_crafting_storage_core")
+                .inputItems(GTNABlocks.T3_ME_STORAGE_CORE.asItem())
+                .inputItems(AEBlocks.CRAFTING_UNIT.stack(16).getItem(), 16)
+                .outputItems(GTNABlocks.T3_CRAFTING_STORAGE_CORE.asItem())
+                .duration(160)
+                .EUt(GTValues.VA[GTValues.LuV])
+                .save(provider);
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("t4_crafting_storage_core")
+                .inputItems(GTNABlocks.T4_ME_STORAGE_CORE.asItem())
+                .inputItems(AEBlocks.CRAFTING_UNIT.stack(32).getItem(), 32)
+                .outputItems(GTNABlocks.T4_CRAFTING_STORAGE_CORE.asItem())
+                .duration(180)
+                .EUt(GTValues.VA[GTValues.ZPM])
+                .save(provider);
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("t5_crafting_storage_core")
+                .inputItems(GTNABlocks.T5_ME_STORAGE_CORE.asItem())
+                .inputItems(AEBlocks.CRAFTING_UNIT.stack(64).getItem(), 64)
+                .outputItems(GTNABlocks.T5_CRAFTING_STORAGE_CORE.asItem())
+                .duration(200)
+                .EUt(GTValues.VA[GTValues.UV])
+                .save(provider);
     }
 
     private static boolean enabled(MachineDefinition... definitions) {

@@ -14,6 +14,7 @@ import com.gregtechceu.gtceu.api.pattern.BlockPattern;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
 import com.gregtechceu.gtceu.api.pattern.MultiblockShapeInfo;
 import com.gregtechceu.gtceu.api.pattern.Predicates;
+import com.gregtechceu.gtceu.api.pattern.TraceabilityPredicate;
 import com.gregtechceu.gtceu.common.data.GCYMBlocks;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTMachines;
@@ -27,6 +28,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.Tags;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
@@ -36,8 +38,10 @@ import com.raishxn.gtna.client.renderer.machine.EyeOfWoodRenderer;
 import com.raishxn.gtna.common.data.multiblock.DimensionallyTranscendentPatterns;
 import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyAisles;
 import com.raishxn.gtna.common.data.multiblock.EyeOfWoodAisles;
+import com.raishxn.gtna.common.data.multiblock.GTNAMultiBlockFileReader;
 import com.raishxn.gtna.common.machine.multiblock.energy.ArtificialStarMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhouse;
+import com.raishxn.gtna.common.machine.multiblock.energy.MEStorageMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.NexusMEHyperCoreMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.NexusMolecularForgeMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.DimensionallyTranscendentDirtForgeMachine;
@@ -56,6 +60,7 @@ import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamInputH
 import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamOutputHatch;
 import com.raishxn.gtna.common.machine.multiblock.steam.*;
 import com.raishxn.gtna.config.ConfigHolder;
+import com.raishxn.gtna.utils.Registries;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -2517,6 +2522,10 @@ public class GTNAMachines {
                                     .or(Predicates.abilities(PartAbility.EXPORT_ITEMS).setMaxGlobalLimited(4))
                                     .or(Predicates.abilities(PartAbility.IMPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(Predicates.abilities(PARALLEL_HATCH).setMaxGlobalLimited(1))
+                                    .or(Predicates.abilities(GTNAPartAbility.OVERCLOCK_HATCH)
+                                            .setMaxGlobalLimited(1))
+                                    .or(Predicates.abilities(GTNAPartAbility.ACCELERATE_HATCH)
+                                            .setMaxGlobalLimited(1))
                                     .or(Predicates.abilities(PartAbility.MAINTENANCE).setExactLimit(1)))
                             .where("B", Predicates.blocks(GTBlocks.CASING_TEMPERED_GLASS.get()))
                             .where("C", Predicates.blocks(GTBlocks.CASING_STEEL_GEARBOX.get()))
@@ -2645,25 +2654,46 @@ public class GTNAMachines {
     public static final MultiblockMachineDefinition NEXUS_ME_HYPERCORE = registerMachine("nexusMeHypercore",
             () -> REGISTRATE
                     .multiblock("nexus_me_hypercore", NexusMEHyperCoreMachine::new)
-                    .langValue("Nexus ME HyperCore")
+                    .langValue("Nexus ME Hypercore")
                     .rotationState(RotationState.NON_Y_AXIS)
                     .allowExtendedFacing(false)
                     .recipeType(GTRecipeTypes.DUMMY_RECIPES)
-                    .appearanceBlock(GTNABlocks.NEXUS_HYPERCORE_CASING)
+                    .appearanceBlock(GCYMBlocks.CASING_NONCONDUCTING)
                     .pattern(GTNAMachines::createNexusMEHyperCorePattern)
                     .workableCasingModel(
-                            GTNACORE.id("block/casings/magtech_casing"),
+                            GTCEu.id("block/casings/gcym/nonconducting_casing"),
                             GTCEu.id("block/multiblock/assembly_line"))
                     .tooltips(
-                            Component.literal("7x7x7 hollow AE2 computation core").withStyle(ChatFormatting.AQUA),
+                            Component.literal("Original ME Super Computer Core structure, renamed as the Nexus ME Hypercore.")
+                                    .withStyle(ChatFormatting.AQUA),
                             Component.literal(
-                                    "Fill the 5x5x5 interior with Matrix Modules to scale storage, co-processors and threads.")
+                                    "Uses the GTOCore ME CPU frame with Matrix Crafting Modules inside.")
                                     .withStyle(ChatFormatting.GRAY),
                             Component.literal(
-                                    "Tier 1 starts at EV, Tier 2 at LuV, and higher tiers keep skipping one tier.")
+                                    "Accepts the AE2 Crafting Unit fallback where the original structure allows it.")
+                                    .withStyle(ChatFormatting.GRAY))
+                    .tooltipBuilder(GTNA_ADD)
+                    .register());
+
+    public static final MultiblockMachineDefinition ME_STORAGE = registerMachine("meStorage",
+            () -> REGISTRATE
+                    .multiblock("me_storage", MEStorageMachine::new)
+                    .langValue("ME Storage")
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .allowExtendedFacing(false)
+                    .recipeType(GTRecipeTypes.DUMMY_RECIPES)
+                    .appearanceBlock(GTBlocks.COMPUTER_CASING)
+                    .pattern(GTNAMachines::createMEStoragePattern)
+                    .workableCasingModel(
+                            GTCEu.id("block/casings/hpca/computer_casing/back"),
+                            GTCEu.id("block/multiblock/fusion_reactor"))
+                    .tooltips(
+                            Component.literal("Expandable GTO-style ME storage multiblock.")
+                                    .withStyle(ChatFormatting.AQUA),
+                            Component.literal("Repeat the core slice to install up to 128 storage sections.")
                                     .withStyle(ChatFormatting.GRAY),
-                            Component.literal("Full Matrix Module IV interior activates Transcendent Mode.")
-                                    .withStyle(ChatFormatting.GOLD))
+                            Component.literal("Requires exactly one ME Storage Access, Big Storage Access, or IO Port Hatch.")
+                                    .withStyle(ChatFormatting.GRAY))
                     .tooltipBuilder(GTNA_ADD)
                     .register());
 
@@ -2781,91 +2811,86 @@ public class GTNAMachines {
     }
 
     private static BlockPattern createNexusMEHyperCorePattern(MultiblockMachineDefinition definition) {
-        var aPredicate = blocks(GTNABlocks.NEXUS_HYPERCORE_CASING.get())
-                .or(abilities(INPUT_ENERGY).setMaxGlobalLimited(2))
-                .or(abilities(MAINTENANCE).setExactLimit(1))
+        var bPredicate = blocks(GCYMBlocks.CASING_NONCONDUCTING.get())
                 .or(abilities(PARALLEL_HATCH).setMaxGlobalLimited(1))
-                .or(abilities(GTNAPartAbility.OUTPUT_BOOST_HATCH).setMaxGlobalLimited(1))
-                .or(abilities(GTNAPartAbility.THREAD_HATCH).setMaxGlobalLimited(1));
-        if (GTNAMachines2.ME_CRAFT_PATTERN_HATCH != null) {
-            aPredicate = aPredicate.or(blocks(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.getBlock()).setMaxGlobalLimited(1));
-        }
-        if (GTNAMachines2.ME_PATTERN_BUFFER != null) {
-            aPredicate = aPredicate.or(blocks(GTNAMachines2.ME_PATTERN_BUFFER.getBlock()).setMaxGlobalLimited(1));
-        }
-        if (GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER != null) {
-            aPredicate = aPredicate
-                    .or(blocks(GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER.getBlock()).setMaxGlobalLimited(1));
-        }
-        if (GTNAMachines2.ME_ULTIMATE_PATTERN_BUFFER != null) {
-            aPredicate = aPredicate
-                    .or(blocks(GTNAMachines2.ME_ULTIMATE_PATTERN_BUFFER.getBlock()).setMaxGlobalLimited(1));
-        }
+                .or(blocks(GTNAMachines2.CRAFTING_CPU_INTERFACE.getBlock()).setExactLimit(1));
 
-        return FactoryBlockPattern.start()
-                .aisle(
-                        "AAAAAAA",
-                        "AAAAAAA",
-                        "AAAAAAA",
-                        "AAA~AAA",
-                        "AAAAAAA",
-                        "AAAAAAA",
-                        "AAAAAAA")
-                .aisle(
-                        "AAAAAAA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AAAAAAA")
-                .aisle(
-                        "AAAAAAA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AAAAAAA")
-                .aisle(
-                        "AAAAAAA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AAAAAAA")
-                .aisle(
-                        "AAAAAAA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AAAAAAA")
-                .aisle(
-                        "AAAAAAA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AMMMMMA",
-                        "AAAAAAA")
-                .aisle(
-                        "AAAAAAA",
-                        "AAAAAAA",
-                        "AAAAAAA",
-                        "AAAAAAA",
-                        "AAAAAAA",
-                        "AAAAAAA",
-                        "AAAAAAA")
-                .where('~', controller(blocks(definition.get())))
-                .where('A', aPredicate)
-                .where('M', blocks(GTNABlocks.MATRIX_MODULE_I.get())
-                        .or(blocks(GTNABlocks.MATRIX_MODULE_II.get()))
-                        .or(blocks(GTNABlocks.MATRIX_MODULE_III.get()))
-                        .or(blocks(GTNABlocks.MATRIX_MODULE_IV.get())))
+        return GTNAMultiBlockFileReader.start(definition, "me_cpu")
+                .where('A', blocks(GTNABlocks.HIGH_STRENGTH_CONCRETE.get()))
+                .where('B', bPredicate)
+                .where('C', blocks(GCYMBlocks.MOLYBDENUM_DISILICIDE_COIL_BLOCK.get()))
+                .where('D', blocks(GCYMBlocks.CASING_NONCONDUCTING.get()))
+                .where('E', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.BlackSteel)))
+                .where('F',
+                        blocks(GTNABlocks.COBALT_OXIDE_CERAMIC_STRONG_THERMALLY_CONDUCTIVE_MECHANICAL_BLOCK.get()))
+                .where('G', blocks(GCYMBlocks.ELECTROLYTIC_CELL.get()))
+                .where('H', blocks(GTBlocks.CASING_PALLADIUM_SUBSTATION.get()))
+                .where('I', blocks(GCYMBlocks.CASING_LASER_SAFE_ENGRAVING.get()))
+                .where('J', blocks(GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.get()))
+                .where('K', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.StainlessSteel)))
+                .where('L', blocks(GTBlocks.CASING_EXTREME_ENGINE_INTAKE.get()))
+                .where('M', blocks(GTBlocks.HIGH_POWER_CASING.get()))
+                .where('N', blockTag(Tags.Blocks.GLASS))
+                .where('O', craftingStorageCorePredicate()
+                        .or(blocks(Registries.getBlock("ae2:crafting_unit")).setMaxGlobalLimited(480)))
+                .where('P', blocks(GTBlocks.FILTER_CASING.get()))
+                .where('Q', controller(blocks(definition.get())))
+                .where(' ', any())
                 .build();
+    }
+
+    private static TraceabilityPredicate craftingStorageCorePredicate() {
+        return blocks(GTNABlocks.T1_CRAFTING_STORAGE_CORE.get())
+                .or(blocks(GTNABlocks.T2_CRAFTING_STORAGE_CORE.get()))
+                .or(blocks(GTNABlocks.T3_CRAFTING_STORAGE_CORE.get()))
+                .or(blocks(GTNABlocks.T4_CRAFTING_STORAGE_CORE.get()))
+                .or(blocks(GTNABlocks.T5_CRAFTING_STORAGE_CORE.get()));
+    }
+
+    private static BlockPattern createMEStoragePattern(MultiblockMachineDefinition definition) {
+        var dPredicate = blocks(GTBlocks.COMPUTER_CASING.get());
+        var accessPredicate = abilities(GTNAPartAbility.ME_STORAGE_ACCESS).setExactLimit(1);
+
+        var corePredicate = blocks(GTNABlocks.T1_ME_STORAGE_CORE.get())
+                .or(blocks(GTNABlocks.T2_ME_STORAGE_CORE.get()))
+                .or(blocks(GTNABlocks.T3_ME_STORAGE_CORE.get()))
+                .or(blocks(GTNABlocks.T4_ME_STORAGE_CORE.get()))
+                .or(blocks(GTNABlocks.T5_ME_STORAGE_CORE.get()));
+
+        return FactoryBlockPattern.start(BACK, UP, RIGHT)
+                .aisle("AAA", "DDD", "DDD", "DDD", "AAA")
+                .aisle("AAA", "DBD", "EBD", "DBD", "AAA")
+                .aisle("BBB", "BGB", "BGB", "BGB", "BBB")
+                .aisle("CBC", "cHc", "cHc", "cHc", "CBC").setRepeatable(1, 128)
+                .aisle("BBB", "BBB", "BBB", "BBB", "BBB")
+                .where('A', blocks(GTBlocks.COMPUTER_HEAT_VENT.get()))
+                .where('B', blocks(GTBlocks.COMPUTER_CASING.get()))
+                .where('C', absCasingPredicate())
+                .where('D', dPredicate.or(accessPredicate))
+                .where('E', controller(blocks(definition.get())))
+                .where('G', blocks(GTBlocks.HIGH_POWER_CASING.get()))
+                .where('H', blocks(GTNABlocks.LITHIUM_OXIDE_CERAMIC_HEAT_RESISTANT_SHOCK_RESISTANT_MECHANICAL_CUBE.get()))
+                .where('c', corePredicate)
+                .build();
+    }
+
+    private static TraceabilityPredicate absCasingPredicate() {
+        return blocks(GTNABlocks.ABS_BLACK_CASING.get())
+                .or(blocks(GTNABlocks.ABS_BLUE_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_BROWN_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_GREEN_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_GREY_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_LIME_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_ORANGE_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_RED_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_WHITE_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_YELLOW_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_CYAN_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_MAGENTA_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_PINK_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_PURPLE_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_LIGHT_BULL_CASING.get()))
+                .or(blocks(GTNABlocks.ABS_LIGHT_GREY_CASING.get()));
     }
 
     private static String[] getArtificialStarAisle(int index) {

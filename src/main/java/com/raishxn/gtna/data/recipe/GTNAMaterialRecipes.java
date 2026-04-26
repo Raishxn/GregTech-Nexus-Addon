@@ -141,6 +141,51 @@ public class GTNAMaterialRecipes {
                 .duration(200)
                 .save(provider);
 
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("cobalt_oxide_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Cobalt)
+                .inputFluids(GTMaterials.Oxygen.getFluid(1000))
+                .outputItems(TagPrefix.dust, GTNAMaterials.CobaltOxide)
+                .EUt(120)
+                .duration(160)
+                .save(provider);
+
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("lithium_oxide_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Lithium, 2)
+                .inputFluids(GTMaterials.Oxygen.getFluid(1000))
+                .outputItems(TagPrefix.dust, GTNAMaterials.LithiumOxide, 3)
+                .EUt(120)
+                .duration(160)
+                .save(provider);
+
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("acrylonitrile")
+                .notConsumable(ChemicalHelper.get(TagPrefix.dust, GTMaterials.Platinum))
+                .inputFluids(GTMaterials.Oxygen.getFluid(3000))
+                .inputFluids(GTMaterials.Ammonia.getFluid(1000))
+                .inputFluids(GTMaterials.Propene.getFluid(1000))
+                .outputFluids(GTNAMaterials.Acrylonitrile.getFluid(2000))
+                .outputFluids(GTMaterials.Water.getFluid(3000))
+                .EUt(120)
+                .duration(100)
+                .save(provider);
+
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("polystyrene")
+                .circuitMeta(1)
+                .inputFluids(GTMaterials.Oxygen.getFluid(1000))
+                .inputFluids(GTMaterials.Styrene.getFluid(1000))
+                .outputFluids(GTNAMaterials.Polystyrene.getFluid(216))
+                .duration(160)
+                .EUt(GTValues.VA[GTValues.LV])
+                .save(provider);
+
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("abs")
+                .inputFluids(GTNAMaterials.Acrylonitrile.getFluid(1000))
+                .inputFluids(GTMaterials.Butadiene.getFluid(1000))
+                .inputFluids(GTMaterials.Styrene.getFluid(2000))
+                .outputFluids(GTNAMaterials.Abs.getFluid(4000))
+                .EUt(480)
+                .duration(420)
+                .save(provider);
+
         // --- Compressed Steam Ingot (Compressor) ---
         GTRecipeTypes.FLUID_SOLIDFICATION_RECIPES.recipeBuilder("compressed_steam_ingot")
                 .notConsumable(GTItems.SHAPE_MOLD_INGOT)

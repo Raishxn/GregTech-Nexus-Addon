@@ -62,6 +62,7 @@ public class GTNAItems {
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_21;
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_32;
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_72;
+    public static ItemEntry<ComponentItem> INFINITE_CELL_COMPONENT;
     public static ItemEntry<ComponentItem> ANNIHILATION_CONSTRAINER;
     public static ItemEntry<ComponentItem> NEUTRONIUM_ANTIMATTER_FUEL_ROD;
     public static ItemEntry<ComponentItem> DRACONIUM_ANTIMATTER_FUEL_ROD;
@@ -214,6 +215,12 @@ public class GTNAItems {
                 .properties(stack -> stack.stacksTo(16))
                 .onRegister(attach(new PatternBufferUpgraderBehavior(() -> GTNAMachines2.ME_ULTIMATE_PATTERN_BUFFER)))
                 .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/ex_pattern_buffer_ultra_upgrader")))
+                .register();
+
+        INFINITE_CELL_COMPONENT = REGISTRATE.item("infinite_cell_component", ComponentItem::create)
+                .lang("Infinite Cell Component")
+                .properties(stack -> stack.stacksTo(64))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/infinite_cell_component")))
                 .register();
 
         ANNIHILATION_CONSTRAINER = REGISTRATE.item("annihilation_constrainer", ComponentItem::create)

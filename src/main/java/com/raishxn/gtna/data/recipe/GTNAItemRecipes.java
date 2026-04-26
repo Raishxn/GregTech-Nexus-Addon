@@ -349,6 +349,20 @@ public class GTNAItemRecipes {
                 .EUt(120)
                 .save(provider);
 
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_infinite_cell_component")
+                .inputItems(AEItems.CELL_COMPONENT_256K.asItem(), 64)
+                .inputItems(AEBlocks.CREATIVE_ENERGY_CELL.block().asItem(), 16)
+                .inputItems(GTItems.FIELD_GENERATOR_UV.asStack().getItem(), 8)
+                .inputItems(GTItems.EMITTER_UV.asStack().getItem(), 8)
+                .inputItems(GTItems.SENSOR_UV.asStack().getItem(), 8)
+                .inputItems(CustomTags.UV_CIRCUITS, 16)
+                .inputItems(ChemicalHelper.get(TagPrefix.plateDouble, GTMaterials.Neutronium), 4)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(9216))
+                .outputItems(GTNAItems.INFINITE_CELL_COMPONENT.get())
+                .duration(2400)
+                .EUt(GTValues.VA[GTValues.UV])
+                .save(provider);
+
         if (GTNAMachines2.ME_MINI_PATTERN_BUFFER != null) {
             GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_me_mini_pattern_buffer")
                     .inputItems(GTAEMachines.ME_PATTERN_BUFFER.asStack())

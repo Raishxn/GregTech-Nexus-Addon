@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "gtna:lithium_oxide_ceramic_heat_resistant_shock_resistant_mechanical_cube"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "gtna:blocks/lithium_oxide_ceramic_heat_resistant_shock_resistant_mechanical_cube"
+}

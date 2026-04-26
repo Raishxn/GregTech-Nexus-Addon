@@ -8,6 +8,7 @@ import com.gregtechceu.gtceu.api.data.chemical.material.properties.ToolProperty;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.item.tool.GTNAToolType;
+import com.raishxn.gtna.common.data.GTNAMaterials;
 
 import static com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialFlags.*;
 import static com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet.*;
@@ -125,6 +126,46 @@ public class MaterialBuilder {
                 .blastTemp(5400, BlastProperty.GasTier.HIGH)
                 .flags(DISABLE_DECOMPOSITION)
                 .buildAndRegister().setFormula("HeLiCoPtEr");
+
+        Acrylonitrile = new Material.Builder(GTNACORE.id("acrylonitrile"))
+                .fluid()
+                .components(Carbon, 3, Hydrogen, 3, Nitrogen, 1)
+                .flags(DISABLE_DECOMPOSITION)
+                .color(0xA4A4E1)
+                .iconSet(DULL)
+                .buildAndRegister();
+
+        Abs = new Material.Builder(GTNACORE.id("abs"))
+                .polymer()
+                .fluid()
+                .components(Acrylonitrile, 1, Butadiene, 1, Styrene, 2)
+                .color(0xE8E7E5)
+                .iconSet(DULL)
+                .flags(GENERATE_PLATE, DISABLE_DECOMPOSITION)
+                .buildAndRegister().setFormula("ABS");
+
+        Polystyrene = new Material.Builder(GTNACORE.id("polystyrene"))
+                .polymer()
+                .fluid()
+                .components(Styrene, 1)
+                .color(0xC6C6C6)
+                .iconSet(DULL)
+                .flags(GENERATE_FOIL, DISABLE_DECOMPOSITION)
+                .buildAndRegister().setFormula("(C8H8)n");
+
+        GTNAMaterials.CobaltOxide = new Material.Builder(GTNACORE.id("cobalt_oxide"))
+                .dust()
+                .color(0x355D87)
+                .iconSet(DULL)
+                .components(Cobalt, 1, Oxygen, 1)
+                .buildAndRegister().setFormula("CoO");
+
+        LithiumOxide = new Material.Builder(GTNACORE.id("lithium_oxide"))
+                .dust()
+                .color(0xE7EEF5)
+                .iconSet(BRIGHT)
+                .components(Lithium, 2, Oxygen, 1)
+                .buildAndRegister().setFormula("Li2O");
 
         ZirconiumOxide = new Material.Builder(GTNACORE.id("zirconium_oxide"))
                 .dust()

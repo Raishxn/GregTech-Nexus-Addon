@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "gtna:block/casings/magtech_casing"
+    "all": "gtceu:block/casings/gcym/nonconducting_casing"
   }
 }

@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gtna:block/machine/crafting_cpu_interface",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "gtna:block/machine/crafting_cpu_interface",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtna:block/machine/crafting_cpu_interface"
+    },
+    "facing=south": {
+      "model": "gtna:block/machine/crafting_cpu_interface",
+      "y": 180
+    },
+    "facing=up": {
+      "gtceu:z": 180,
+      "model": "gtna:block/machine/crafting_cpu_interface",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "gtna:block/machine/crafting_cpu_interface",
+      "y": 270
+    }
+  }
+}

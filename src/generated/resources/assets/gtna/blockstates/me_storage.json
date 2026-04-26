@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gtna:block/machine/me_storage",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtna:block/machine/me_storage"
+    },
+    "facing=south": {
+      "model": "gtna:block/machine/me_storage",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gtna:block/machine/me_storage",
+      "y": 270
+    }
+  }
+}
