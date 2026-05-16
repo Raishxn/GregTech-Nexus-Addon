@@ -1,6 +1,11 @@
 package com.raishxn.gtna.common.data;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -19,9 +24,19 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
+import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import java.util.ArrayList;
+import java.util.List;
+
 public class NexusEnergyNetwork extends SavedData {
 
     private static final String DATA_NAME = "gtna_nexus_energy_network";
+    private static final Logger LOGGER = LogManager.getLogger(NexusEnergyNetwork.class);
     private final Map<UUID, NetworkState> energyStorage = new HashMap<>();
 
     public static class ConnectionInfo {
@@ -35,6 +50,35 @@ public class NexusEnergyNetwork extends SavedData {
         public Int128 lastTickEuTransferred = Int128.ZERO();
         public long lastUpdateTick;
         public long currentTick;
+    }
+
+    /**
+     * Immutable (after construction) structural snapshot of one NexusFluxMatrix controller.
+     * Multiple MatrixRecords may exist per network owner when several matrices share the
+     * same Network ID. Aggregate stats (capacity, tier, efficiency, TL) are computed
+     * from the full set by {@code recomputeAggregates}.
+     */
+    public static class MatrixRecord {
+
+        public long totalCapacitors;
+        public int averageTier;
+        public double efficiency;
+        public Int128 transferLimit;
+        public Int128 maxCapacity;
+
+        public MatrixRecord() {
+            this.transferLimit = Int128.ZERO();
+            this.maxCapacity   = Int128.ZERO();
+        }
+
+        public MatrixRecord(long totalCapacitors, int averageTier, double efficiency,
+                            Int128 transferLimit, Int128 maxCapacity) {
+            this.totalCapacitors = totalCapacitors;
+            this.averageTier     = averageTier;
+            this.efficiency      = efficiency;
+            this.transferLimit   = transferLimit.copy();
+            this.maxCapacity     = maxCapacity.copy();
+        }
     }
 
     public static class NetworkState {
@@ -51,6 +95,8 @@ public class NexusEnergyNetwork extends SavedData {
         public long lastTickTime = 0;
 
         public Map<GlobalPos, ConnectionInfo> connections = new ConcurrentHashMap<>();
+        // Per-controller structural registry — key is GlobalPos of the NFM controller.
+        public Map<GlobalPos, MatrixRecord> matrices = new HashMap<>();
 
         public long totalCapacitors = 0;
         public int averageTier = 0;
@@ -78,6 +124,42 @@ public class NexusEnergyNetwork extends SavedData {
             state.efficiency = entry.getDouble("Efficiency");
             state.transferLimit = Int128.fromString(entry.getString("TransferLimit"), Int128.ZERO());
             state.matrixFormed = entry.getBoolean("MatrixFormed");
+
+            // Load per-matrix registry (new format)
+            if (entry.contains("Matrices", Tag.TAG_LIST)) {
+                ListTag mList = entry.getList("Matrices", Tag.TAG_COMPOUND);
+                for (int j = 0; j < mList.size(); j++) {
+                    CompoundTag mTag = mList.getCompound(j);
+                    try {
+                        ResourceLocation dimRl = ResourceLocation.tryParse(mTag.getString("Dimension"));
+                        if (dimRl == null) continue; // skip malformed dimension entries
+                        ResourceKey<Level> dimKey = ResourceKey.create(Registries.DIMENSION, dimRl);
+                        BlockPos bpos = BlockPos.of(mTag.getLong("BlockPos"));
+                        GlobalPos gpos = GlobalPos.of(dimKey, bpos);
+                        MatrixRecord rec = new MatrixRecord();
+                        rec.totalCapacitors = mTag.getLong("Capacitors");
+                        rec.averageTier     = mTag.getInt("Tier");
+                        rec.efficiency      = mTag.getDouble("Efficiency");
+                        rec.transferLimit   = Int128.fromString(mTag.getString("TransferLimit"), Int128.ZERO());
+                        rec.maxCapacity     = Int128.fromString(mTag.getString("MaxCapacity"), Int128.ZERO());
+                        state.matrices.put(gpos, rec);
+                    } catch (Exception ignored) {}
+                }
+                // Only recompute when records were actually loaded.  An empty "Matrices"
+                // list (written during the window between world-load and controller
+                // re-registration) must NOT trigger recomputeAggregates because that
+                // would zero out flat fields that are still valid from the outer load.
+                if (!state.matrices.isEmpty()) {
+                    recomputeAggregates(state);
+                }
+            }
+            // Legacy saves (no "Matrices" key): flat fields (totalCapacitors, averageTier,
+            // etc.) were already loaded above and remain valid for the session.  matrices
+            // is left empty — real controllers call registerMatrix on onStructureFormed
+            // (within the same tick as world load) which re-populates the registry and
+            // triggers recomputeAggregates.  No fake placeholder is inserted because
+            // it could never be removed by unregisterMatrix(realControllerPos).
+
             energyStorage.put(entry.getUUID("Owner"), state);
         }
     }
@@ -101,6 +183,22 @@ public class NexusEnergyNetwork extends SavedData {
             entry.putDouble("Efficiency", state.efficiency);
             entry.putString("TransferLimit", state.transferLimit.toString());
             entry.putBoolean("MatrixFormed", state.matrixFormed);
+
+            // Serialise per-matrix registry
+            ListTag matrixList = new ListTag();
+            state.matrices.forEach((gpos, rec) -> {
+                CompoundTag mTag = new CompoundTag();
+                mTag.putString("Dimension", gpos.dimension().location().toString());
+                mTag.putLong("BlockPos", gpos.pos().asLong());
+                mTag.putLong("Capacitors", rec.totalCapacitors);
+                mTag.putInt("Tier", rec.averageTier);
+                mTag.putDouble("Efficiency", rec.efficiency);
+                mTag.putString("TransferLimit", rec.transferLimit.toString());
+                mTag.putString("MaxCapacity", rec.maxCapacity.toString());
+                matrixList.add(mTag);
+            });
+            entry.put("Matrices", matrixList);
+
             list.add(entry);
         });
         tag.put("EnergyNetworks", list);
@@ -177,16 +275,177 @@ public class NexusEnergyNetwork extends SavedData {
         return getState(owner).connections;
     }
 
-    public void setMatrixStats(UUID owner, long totalCapacitors, int averageTier, double efficiency,
-                               Int128 transferLimit, boolean matrixFormed) {
+    /**
+     * Register (or update) a single NexusFluxMatrix controller's structural stats
+     * in the per-owner matrix registry.  The aggregate network stats (capacity,
+     * tier, efficiency, transfer limit) are recomputed atomically from the full
+     * registry after every call.
+     *
+     * @param owner         Network ID (player UUID)
+     * @param controllerPos GlobalPos of the controller block (dim + BlockPos)
+     * @param record        Structural snapshot from the newly formed multiblock
+     */
+    public void registerMatrix(UUID owner, GlobalPos controllerPos, MatrixRecord record) {
+        if (owner == null || controllerPos == null || record == null) return;
         NetworkState state = getState(owner);
-        state.totalCapacitors = totalCapacitors;
-        state.averageTier = averageTier;
-        state.efficiency = efficiency;
-        state.transferLimit = transferLimit.copy();
-        state.matrixFormed = matrixFormed;
+        // Dedup: remove any stale entry for the same physical position.
+        // ResourceKey.create() does not guarantee reference equality with
+        // registry-interned keys, so we compare by location string instead.
+        final net.minecraft.core.BlockPos physPos = controllerPos.pos();
+        final String physDim = controllerPos.dimension().location().toString();
+        state.matrices.entrySet().removeIf(e ->
+                e.getKey().pos().equals(physPos)
+                        && e.getKey().dimension().location().toString().equals(physDim));
+        state.matrices.put(controllerPos, record);
+        recomputeAggregates(state);
         setDirty();
     }
+
+    /**
+     * Unregister a controller when its multiblock is invalidated.  If this was
+     * the last matrix on the network the aggregates are zeroed and
+     * {@code isMatrixFormed} returns false.
+     */
+    public void unregisterMatrix(UUID owner, GlobalPos controllerPos) {
+        if (owner == null || controllerPos == null) return;
+        NetworkState state = getState(owner);
+        final net.minecraft.core.BlockPos physPos = controllerPos.pos();
+        final String physDim = controllerPos.dimension().location().toString();
+        state.matrices.entrySet().removeIf(e ->
+                e.getKey().pos().equals(physPos)
+                        && e.getKey().dimension().location().toString().equals(physDim));
+        recomputeAggregates(state);
+        setDirty();
+    }
+
+    /**
+     * Startup sweep: verify every registered matrix entry is still a formed multiblock.
+     * Called once from ServerStartedEvent so the QNT reflects the true network state
+     * immediately after a world load, even when the controller was removed while the
+     * server was offline (crash, manual file edit, etc.).
+     *
+     * Chunks containing registered matrix positions are force-loaded momentarily so
+     * that the GTCEu machine lifecycle (onLoad / structure check) runs before we
+     * query isFormed().  The one-time startup cost is negligible for the small
+     * number of matrices typically registered.  Stale entries are pruned and
+     * aggregates recomputed so the QNT shows accurate data immediately.
+     */
+    public void sweepStaleMatrices(MinecraftServer server) {
+        boolean dirty = false;
+
+        for (Map.Entry<UUID, NetworkState> ownerEntry : energyStorage.entrySet()) {
+            NetworkState state = ownerEntry.getValue();
+            if (state.matrices.isEmpty()) continue;
+
+            List<GlobalPos> stale = new ArrayList<>();
+
+            for (GlobalPos gpos : state.matrices.keySet()) {
+                ResourceKey<Level> dimKey = gpos.dimension();
+                ServerLevel level = server.getLevel(dimKey);
+
+                if (level == null) {
+                    // Dimension no longer registered (mod removed, etc.) -- always stale.
+                    stale.add(gpos);
+                    LOGGER.warn("[GTNA] Startup sweep: dimension '{}' not found -- pruning stale matrix at {}",
+                            dimKey.location(), gpos.pos());
+                    continue;
+                }
+
+                BlockPos bpos = gpos.pos();
+                // Force-load the chunk so the GTCEu machine's onLoad() and structure-check
+                // lifecycle fires before we call isFormed().  One-time startup cost only.
+                level.getChunk(bpos.getX() >> 4, bpos.getZ() >> 4);
+
+                // A valid, formed NFM controller must be a GTCEu WorkableMultiblockMachine
+                // whose structure has successfully validated after loading.
+                BlockEntity be = level.getBlockEntity(bpos);
+                boolean formed = (be instanceof IMachineBlockEntity machBe)
+                        && (machBe.getMetaMachine() instanceof WorkableMultiblockMachine ctrl)
+                        && ctrl.isFormed();
+
+                if (!formed) {
+                    stale.add(gpos);
+                    LOGGER.warn("[GTNA] Startup sweep: matrix at {} in '{}' is missing or unformed -- pruning",
+                            bpos, dimKey.location());
+                }
+            }
+
+            if (!stale.isEmpty()) {
+                for (GlobalPos sp : stale) {
+                    final BlockPos physPos = sp.pos();
+                    final String physDim  = sp.dimension().location().toString();
+                    state.matrices.entrySet().removeIf(e ->
+                            e.getKey().pos().equals(physPos)
+                                    && e.getKey().dimension().location().toString().equals(physDim));
+                }
+                recomputeAggregates(state);
+                dirty = true;
+            }
+        }
+
+        if (dirty) {
+            setDirty();
+            LOGGER.info("[GTNA] Startup sweep complete -- pruned stale matrix entries and updated network state.");
+        } else {
+            LOGGER.info("[GTNA] Startup sweep complete -- all registered matrices verified OK.");
+        }
+    }
+
+    /** How many controllers are currently registered on this network. */
+    public int getMatrixCount(UUID owner) {
+        return getState(owner).matrices.size();
+    }
+
+    /** Read-only view of the per-controller registry, keyed by controller GlobalPos. */
+    public java.util.Map<GlobalPos, MatrixRecord> getMatrices(UUID owner) {
+        return java.util.Collections.unmodifiableMap(getState(owner).matrices);
+    }
+
+    /**
+     * Recompute all aggregate stats from the per-controller registry.
+     * Called after every register/unregister and after NBT deserialisation.
+     */
+    private void recomputeAggregates(NetworkState state) {
+        if (state.matrices.isEmpty()) {
+            state.totalCapacitors = 0;
+            state.averageTier     = 0;
+            state.efficiency      = 0.0;
+            state.transferLimit   = Int128.ZERO();
+            state.maxCapacity     = Int128.ZERO();
+            state.matrixFormed    = false;
+            return;
+        }
+
+        long caps           = 0;
+        long weightedTier   = 0;
+        double weightedEff  = 0.0;
+        Int128 totalTL      = Int128.ZERO();
+        Int128 totalCap     = Int128.ZERO();
+
+        for (MatrixRecord rec : state.matrices.values()) {
+            caps += rec.totalCapacitors;
+            if (rec.totalCapacitors > 0) {
+                weightedTier += (long) rec.averageTier * rec.totalCapacitors;
+                weightedEff  += rec.efficiency * rec.totalCapacitors;
+            }
+            totalTL.add(rec.transferLimit);
+            totalCap.add(rec.maxCapacity);
+        }
+
+        state.totalCapacitors = caps;
+        state.averageTier     = (caps > 0) ? (int) (weightedTier / caps) : 1;
+        if (state.averageTier < 1) state.averageTier = 1;
+        state.efficiency      = (caps > 0) ? (weightedEff / caps) : 0.85;
+        state.transferLimit   = totalTL;
+        state.maxCapacity     = totalCap;
+        state.matrixFormed    = true;
+
+        // Clamp stored energy to the new combined capacity.
+        if (!state.maxCapacity.isZero() && state.energy.compareTo(state.maxCapacity) > 0) {
+            state.energy = state.maxCapacity.copy();
+        }
+    }
+
 
     public long getTotalCapacitors(UUID owner) {
         return getState(owner).totalCapacitors;
@@ -208,12 +467,6 @@ public class NexusEnergyNetwork extends SavedData {
         return getState(owner).matrixFormed;
     }
 
-    public void setMaxCapacity(UUID owner, Int128 maxCapacity) {
-        NetworkState state = getState(owner);
-        state.maxCapacity = maxCapacity.copy();
-        setDirty();
-    }
-
     public Int128 getMaxCapacity(UUID owner) {
         return getState(owner).maxCapacity.copy();
     }
@@ -224,31 +477,87 @@ public class NexusEnergyNetwork extends SavedData {
         NetworkState state = getState(owner);
         handleTick(state, level.getGameTime());
 
-        Int128 accepted;
-        if (!state.maxCapacity.isZero()) {
-            Int128 space = state.maxCapacity.copy();
-            space.subtract(state.energy);
-            if (space.isZero() || space.isNegative()) return Int128.ZERO();
-            accepted = amount.compareTo(space) > 0 ? space : amount.copy();
-        } else {
-            accepted = amount.copy();
+        // Reject energy into networks with no registered matrix (maxCapacity == 0).
+        // Accepting unlimited energy into an unformed network causes overfill later.
+        if (state.maxCapacity.isZero()) return Int128.ZERO();
+
+        // Fix 1: clamp the incoming amount to the network transfer limit so
+        // dynamos cannot push more than the displayed cap in a single tick.
+        Int128 capped = (!state.transferLimit.isZero() && amount.compareTo(state.transferLimit) > 0)
+                ? state.transferLimit.copy()
+                : amount.copy();
+
+        Int128 space = state.maxCapacity.copy();
+        space.subtract(state.energy);
+        if (space.isZero() || space.isNegative()) return Int128.ZERO();
+        // accepted = how much the dynamo will drain from its own container
+        Int128 accepted = capped.compareTo(space) > 0 ? space : capped;
+
+        // Fix 2: apply efficiency — only a fraction of the accepted EU is actually
+        // stored; the rest is lost as heat. The dynamo still drains the full
+        // accepted amount so the energy "leaves" the source correctly.
+        Int128 stored = accepted.copy();
+        if (state.efficiency > 0.0 && state.efficiency < 1.0) {
+            long storedLong = (long) (accepted.toLong() * state.efficiency);
+            stored = new Int128(Math.max(0L, storedLong));
         }
 
-        state.energy.add(accepted);
-        state.inputPerTick.add(accepted);
+        state.energy.add(stored);
+        state.inputPerTick.add(stored); // record the actually-stored EU, not the raw push
 
         checkSafeMode(owner, state, level);
         setDirty();
-        return accepted;
+        return accepted; // caller (dynamo) drains this much from its container
     }
 
     public void setEnergy(UUID owner, Int128 amount) {
         NetworkState state = getState(owner);
-        state.energy = amount.copy();
+        Int128 clamped = amount.copy();
+        if (!state.maxCapacity.isZero() && clamped.compareTo(state.maxCapacity) > 0) {
+            clamped = state.maxCapacity.copy();
+        }
+        state.energy = clamped;
         setDirty();
     }
 
-    public boolean consumeEnergy(UUID owner, Int128 amount, ServerLevel level) {
+    /**
+     * Consume energy from the network, enforcing the per-tick transfer limit.
+     * Returns the amount actually consumed (Int128.ZERO on failure).
+     * Callers must use the returned value — not the requested amount — when
+     * crediting energy to a local buffer, so no EU is created from nothing.
+     * Special machines with intentionally large one-time costs should use
+     * {@link #consumeEnergyUnlimited} instead.
+     */
+    public Int128 consumeEnergy(UUID owner, Int128 amount, ServerLevel level) {
+        if (amount.isZero() || amount.isNegative()) return Int128.ZERO();
+
+        NetworkState state = getState(owner);
+        handleTick(state, level.getGameTime());
+
+        // Enforce transfer limit at the network layer (invariant for all hatch callers).
+        Int128 capped = (!state.transferLimit.isZero() && amount.compareTo(state.transferLimit) > 0)
+                ? state.transferLimit.copy()
+                : amount.copy();
+
+        if (state.safeMode) return Int128.ZERO();
+        // Partial withdrawal: if stored energy is less than the capped request,
+        // drain whatever remains so residual energy is never stranded.
+        Int128 actual = state.energy.compareTo(capped) < 0 ? state.energy.copy() : capped;
+        if (actual.isZero()) return Int128.ZERO();
+
+        state.energy.subtract(actual);
+        state.outputPerTick.add(actual);
+        checkSafeMode(owner, state, level);
+        setDirty();
+        return actual;
+    }
+
+    /**
+     * Consume energy without applying the transfer limit.
+     * Use only for machines that require large one-time energy costs
+     * (e.g. EyeOfHarmonyMachine startup) that must not be throttled.
+     */
+    public boolean consumeEnergyUnlimited(UUID owner, Int128 amount, ServerLevel level) {
         if (amount.isZero() || amount.isNegative()) return false;
 
         NetworkState state = getState(owner);

@@ -17,8 +17,8 @@ import com.raishxn.gtna.GTNACORE;
 public class Registries {
 
     public static Item getItem(String s) {
-        Item i = ForgeRegistries.ITEMS.getValue(new ResourceLocation(s));
-        if (i == Items.AIR) {
+        Item i = ForgeRegistries.ITEMS.getValue(ResourceLocation.tryParse(s));
+        if (i == null || i == Items.AIR) {
             GTNACORE.LOGGER.atError().log("Item with ID {}not found", s);
             return Items.BARRIER;
         }
@@ -34,8 +34,8 @@ public class Registries {
     }
 
     public static Block getBlock(String s) {
-        Block b = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
-        if (b == Blocks.AIR) {
+        Block b = ForgeRegistries.BLOCKS.getValue(ResourceLocation.tryParse(s));
+        if (b == null || b == Blocks.AIR) {
             GTNACORE.LOGGER.atError().log("No block with ID {}found", s);
             return Blocks.BARRIER;
         }
@@ -43,8 +43,8 @@ public class Registries {
     }
 
     public static Fluid getFluid(String s) {
-        Fluid f = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(s));
-        if (f == Fluids.EMPTY) {
+        Fluid f = ForgeRegistries.FLUIDS.getValue(ResourceLocation.tryParse(s));
+        if (f == null || f == Fluids.EMPTY) {
             GTNACORE.LOGGER.atError().log("No fluid with ID {}found", s);
             return Fluids.WATER;
         }
@@ -52,7 +52,8 @@ public class Registries {
     }
 
     public static ResourceKey<Level> getDimension(String s) {
-        return ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION,
-                new ResourceLocation(s));
+        ResourceLocation loc = ResourceLocation.tryParse(s);
+        if (loc == null) throw new IllegalArgumentException("Invalid dimension: " + s);
+        return ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, loc);
     }
 }

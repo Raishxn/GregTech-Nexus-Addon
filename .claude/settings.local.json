@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Program Files/Java//**)",
+      "Read(//c/Program Files/**)",
+      "Read(//c/Users/henry/.gradle/jdks//**)",
+      "Bash(\"/c/Program Files/Java/jdk-17/bin/java\" -version)",
+      "Bash(./gradlew build *)"
+    ]
+  }
+}

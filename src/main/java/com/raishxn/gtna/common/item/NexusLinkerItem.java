@@ -53,12 +53,7 @@ public class NexusLinkerItem extends Item {
                     return InteractionResult.SUCCESS;
                 }
             } else if (machine instanceof WirelessEnergyHatchPartMachine energyHatch) {
-                if (player.isShiftKeyDown()) {
-                    energyHatch.setNetworkOwner(null);
-                    player.displayClientMessage(Component.translatable("gtna.message.linker.unbound", "Energy Hatch")
-                            .withStyle(ChatFormatting.YELLOW), true);
-                    return InteractionResult.SUCCESS;
-                }
+                // Tag check first: link if NetworkID stored; unlink on shift+empty; hint otherwise.
                 CompoundTag tag = stack.getTag();
                 if (tag != null && tag.hasUUID("NetworkID")) {
                     UUID netId = tag.getUUID("NetworkID");
@@ -66,20 +61,33 @@ public class NexusLinkerItem extends Item {
                     player.displayClientMessage(Component.translatable("gtna.message.linker.linked", "Energy Hatch")
                             .withStyle(ChatFormatting.AQUA), true);
                     return InteractionResult.SUCCESS;
-                }
-            } else if (machine instanceof WirelessDynamoHatchPartMachine dynamoHatch) {
-                if (player.isShiftKeyDown()) {
-                    dynamoHatch.setNetworkOwner(null);
-                    player.displayClientMessage(Component.translatable("gtna.message.linker.unbound", "Dynamo Hatch")
+                } else if (player.isShiftKeyDown()) {
+                    energyHatch.setNetworkOwner(null);
+                    player.displayClientMessage(Component.translatable("gtna.message.linker.unbound", "Energy Hatch")
                             .withStyle(ChatFormatting.YELLOW), true);
                     return InteractionResult.SUCCESS;
+                } else {
+                    player.displayClientMessage(
+                            Component.translatable("gtna.message.linker.no_network_id"), true);
+                    return InteractionResult.SUCCESS;
                 }
+            } else if (machine instanceof WirelessDynamoHatchPartMachine dynamoHatch) {
+                // Tag check first: link if NetworkID stored; unlink on shift+empty; hint otherwise.
                 CompoundTag tag = stack.getTag();
                 if (tag != null && tag.hasUUID("NetworkID")) {
                     UUID netId = tag.getUUID("NetworkID");
                     dynamoHatch.setNetworkOwner(netId);
                     player.displayClientMessage(Component.translatable("gtna.message.linker.linked", "Dynamo Hatch")
                             .withStyle(ChatFormatting.AQUA), true);
+                    return InteractionResult.SUCCESS;
+                } else if (player.isShiftKeyDown()) {
+                    dynamoHatch.setNetworkOwner(null);
+                    player.displayClientMessage(Component.translatable("gtna.message.linker.unbound", "Dynamo Hatch")
+                            .withStyle(ChatFormatting.YELLOW), true);
+                    return InteractionResult.SUCCESS;
+                } else {
+                    player.displayClientMessage(
+                            Component.translatable("gtna.message.linker.no_network_id"), true);
                     return InteractionResult.SUCCESS;
                 }
             }

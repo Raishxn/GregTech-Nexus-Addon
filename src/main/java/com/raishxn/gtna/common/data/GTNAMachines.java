@@ -79,14 +79,10 @@ import static com.raishxn.gtna.common.data.GTNARecipeType.SUPERHEATER_RECIPES;
 
 public class GTNAMachines {
 
-    private static final ResourceLocation OVERLAY_IN = new ResourceLocation("gtna",
-            "block/overlay/machine/overlay_steam_wireless_in");
-    private static final ResourceLocation OVERLAY_OUT = new ResourceLocation("gtna",
-            "block/overlay/machine/overlay_steam_wireless_out");
-    private static final ResourceLocation OVERLAY_STEAM_IN = new ResourceLocation("gtceu",
-            "block/overlay/machine/overlay_item_hatch_input");
-    private static final ResourceLocation OVERLAY_STEAM_OUT = new ResourceLocation("gtceu",
-            "block/overlay/machine/overlay_item_hatch_output");
+    private static final ResourceLocation OVERLAY_IN = GTNACORE.id("block/overlay/machine/overlay_steam_wireless_in");
+    private static final ResourceLocation OVERLAY_OUT = GTNACORE.id("block/overlay/machine/overlay_steam_wireless_out");
+    private static final ResourceLocation OVERLAY_STEAM_IN = GTCEu.id("block/overlay/machine/overlay_item_hatch_input");
+    private static final ResourceLocation OVERLAY_STEAM_OUT = GTCEu.id("block/overlay/machine/overlay_item_hatch_output");
     public static final BiConsumer<ItemStack, List<Component>> GTNA_ADD = (stack, components) -> components
             .add(Component.translatable("gtna.registry.add")
                     .withStyle(ChatFormatting.LIGHT_PURPLE));
@@ -1889,7 +1885,7 @@ public class GTNAMachines {
                             .where(' ', any())
                             .build())
                     .workableCasingModel(
-                            new ResourceLocation("minecraft", "block/nether_bricks"),
+                            ResourceLocation.tryParse("minecraft:block/nether_bricks"),
                             GTNACORE.id("block/overlay/machine/steaminfernalcokeoven"))
                     .tooltips(
                             Component.translatable("gtna.tooltip.infernal_coke.desc").withStyle(ChatFormatting.DARK_RED,

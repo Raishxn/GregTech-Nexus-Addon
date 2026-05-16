@@ -27,6 +27,9 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 import com.raishxn.gtna.common.item.terminal.ui.NexusTerminalUIFactory;
 import com.raishxn.gtna.integration.ae2.NexusAE2Link;
 import org.jetbrains.annotations.Nullable;
@@ -153,6 +156,7 @@ public class NexusTerminalBehavior implements IItemUIFactory, IAddInformation {
     /**
      * Append range status tooltip. Separated to safely reference client-side player.
      */
+    @OnlyIn(Dist.CLIENT)
     private void appendAE2RangeTooltip(ItemStack stack, Level level, List<Component> tooltipComponents) {
         Player localPlayer = net.minecraft.client.Minecraft.getInstance().player;
         if (localPlayer == null) return;

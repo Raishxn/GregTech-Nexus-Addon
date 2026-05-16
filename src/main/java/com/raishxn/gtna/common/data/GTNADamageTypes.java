@@ -13,7 +13,7 @@ import com.raishxn.gtna.GTNACORE;
 public final class GTNADamageTypes {
 
     public static final ResourceKey<DamageType> REALITY_RIP = ResourceKey.create(Registries.DAMAGE_TYPE,
-            new ResourceLocation(GTNACORE.MOD_ID, "reality_rip"));
+            GTNACORE.id("reality_rip"));
 
     private GTNADamageTypes() {}
 

@@ -23,6 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
 import com.raishxn.gtna.utils.GTNARecipeUtils;
@@ -41,7 +42,7 @@ import java.util.List;
 public class GTNAMultipleRecipesProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
 
     public static final GTNAMultipleRecipesProvider INSTANCE = new GTNAMultipleRecipesProvider();
-    private static final ResourceLocation UID = new ResourceLocation("gtna", "multiple_recipes_provider");
+    private static final ResourceLocation UID = GTNACORE.id("multiple_recipes_provider");
 
     @Override
     public ResourceLocation getUid() {

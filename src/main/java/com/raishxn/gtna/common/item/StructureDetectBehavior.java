@@ -24,7 +24,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
-import com.raishxn.gtna.client.renderer.BlockHighlightHandler;
+import com.raishxn.gtna.network.GTNANetworkHandler;
+import com.raishxn.gtna.network.packet.SStructureDetectHighlight;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,7 +66,6 @@ public class StructureDetectBehavior extends TooltipBehavior implements IToolBeh
                     boolean isFlipped = !tag.isEmpty() && tag.getBoolean("isFlipped");
                     ((ServerLevel) level).getServer().execute(() -> {
                         var pattern = controller.getPattern();
-                        LOCK.lock();
                         if (LOCK.tryLock()) {
                             try {
                                 var result = check(controller, pattern, isFlipped);
@@ -73,7 +73,10 @@ public class StructureDetectBehavior extends TooltipBehavior implements IToolBeh
                             } finally {
                                 LOCK.unlock();
                             }
-                        } else LOCK.unlock();
+                        } else {
+                            player.sendSystemMessage(Component.literal(
+                                    "§eStructure check already in progress, please try again."));
+                        }
                     });
                     return InteractionResult.SUCCESS;
                 }
@@ -137,7 +140,11 @@ public class StructureDetectBehavior extends TooltipBehavior implements IToolBeh
             }
         }
         show.forEach(player::sendSystemMessage);
-        BlockHighlightHandler.highlight(error.getPos(), error.getWorld().dimension(),
-                System.currentTimeMillis() + 15000);
+        if (player instanceof ServerPlayer serverPlayer) {
+            GTNANetworkHandler.sendToPlayer(
+                    new SStructureDetectHighlight(error.getPos(), error.getWorld().dimension(),
+                            System.currentTimeMillis() + 15000),
+                    serverPlayer);
+        }
     }
 }

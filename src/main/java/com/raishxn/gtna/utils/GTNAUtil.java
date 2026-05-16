@@ -34,7 +34,7 @@ public class GTNAUtil {
 
     public static ItemStack loadItemStack(CompoundTag compoundTag) {
         try {
-            Item item = (Item) ForgeRegistries.ITEMS.getValue(new ResourceLocation(compoundTag.getString("id")));
+            Item item = (Item) ForgeRegistries.ITEMS.getValue(ResourceLocation.tryParse(compoundTag.getString("id")));
             ItemStack stack = new ItemStack((ItemLike) Objects.requireNonNull(item), 1);
             if (compoundTag.contains("tag", 10)) {
                 stack.setTag(compoundTag.getCompound("tag"));

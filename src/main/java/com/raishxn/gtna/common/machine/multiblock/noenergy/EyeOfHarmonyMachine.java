@@ -138,7 +138,10 @@ public class EyeOfHarmonyMachine extends WorkableMultiblockMachine implements ID
         }
 
         Int128 startupEnergy = harmonyMachine.getStartupEnergy();
-        if (!WirelessEnergyManager.consumeEnergy(serverLevel, harmonyMachine.networkOwner, startupEnergy)) {
+        // Startup energy is an intentionally large one-time cost (5.28e15+ EU).
+        // consumeEnergy() caps to transferLimit, which would make startup trivially
+        // cheap; use consumeEnergyUnlimited() to preserve the intended barrier.
+        if (!WirelessEnergyManager.consumeEnergyUnlimited(serverLevel, harmonyMachine.networkOwner, startupEnergy)) {
             return ModifierFunction.NULL;
         }
 

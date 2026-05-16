@@ -56,7 +56,7 @@ public class GTNABlocks {
     public static final BlockEntry<Block> HYDRAULIC_ASSEMBLER_CASING = createCasingBlock("hydraulic_assembler_casing");
     public static final BlockEntry<Block> BREEL_PLATED_CASING = createCasingBlock("breel_plated_casing");
     public static final BlockEntry<Block> BOROSILICATE_GLASS_BLOCK = createGlassCasingBlock(
-            "borosilicate_glass", GTNACORE.id("block/casings/borosilicate_glass"), () -> RenderType::cutoutMipped);
+            "borosilicate_glass", GTNACORE.id("block/casings/borosilicate_glass"), () -> RenderType::translucent);
     public static final BlockEntry<Block> OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING = createCasingBlock(
             "oxidation_resistant_hastelloy_n_mechanical_casing",
             GTNACORE.id("block/casings/oxidation_resistant_hastelloy_n_mechanical_casing"));

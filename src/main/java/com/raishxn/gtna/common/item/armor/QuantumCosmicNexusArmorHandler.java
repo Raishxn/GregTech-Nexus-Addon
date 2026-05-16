@@ -26,6 +26,7 @@ import com.raishxn.gtna.common.data.GTNAItems;
 public final class QuantumCosmicNexusArmorHandler {
 
     private static final double COSMIC_STEP_HEIGHT = 1.0D;
+    private static final String GTNA_FLIGHT_KEY = "gtna_managed_flight";
 
     private QuantumCosmicNexusArmorHandler() {}
 
@@ -72,7 +73,6 @@ public final class QuantumCosmicNexusArmorHandler {
             player.setHealth(player.getMaxHealth());
             player.hurtTime = 0;
             player.deathTime = 0;
-            player.setDeltaMovement(0.0D, 0.0D, 0.0D);
         }
     }
 
@@ -98,14 +98,19 @@ public final class QuantumCosmicNexusArmorHandler {
     public static void onLivingKnockback(LivingKnockBackEvent event) {
         if (event.getEntity() instanceof Player player && isWearingFullSet(player)) {
             event.setCanceled(true);
-            player.setDeltaMovement(0.0D, player.getDeltaMovement().y, 0.0D);
         }
     }
 
     @SubscribeEvent
     public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            disableManagedFlight(player);
+            // Explicitly clear the marker first so it cannot persist across
+            // sessions. Only revoke abilities if GTNA was the flight owner.
+            boolean hadGtnaFlight = player.getPersistentData().getBoolean(GTNA_FLIGHT_KEY);
+            player.getPersistentData().remove(GTNA_FLIGHT_KEY);
+            if (hadGtnaFlight) {
+                revokeFlightAbilities(player);
+            }
             resetStepHeight(player);
         }
     }
@@ -170,7 +175,12 @@ public final class QuantumCosmicNexusArmorHandler {
                 !player.getAbilities().instabuild;
         if (shouldManageFlight) {
             if (!player.getAbilities().mayfly) {
+                // Stamp ownership only when GTNA actually flips mayfly on;
+                // this prevents the marker from being set when another mod
+                // (e.g. Angel Rings) already granted flight before GTNA armor
+                // was equipped.
                 player.getAbilities().mayfly = true;
+                player.getPersistentData().putBoolean(GTNA_FLIGHT_KEY, true);
             }
             player.getAbilities().setFlyingSpeed(0.2F);
             player.onUpdateAbilities();
@@ -180,6 +190,17 @@ public final class QuantumCosmicNexusArmorHandler {
     }
 
     private static void disableManagedFlight(ServerPlayer player) {
+        // Only act when GTNA is the flight owner.
+        if (!player.getPersistentData().getBoolean(GTNA_FLIGHT_KEY)) {
+            return;
+        }
+        // Clear the marker before the game-mode guard so it is never left stale
+        // if the player is in spectator/creative when the armor is removed.
+        player.getPersistentData().remove(GTNA_FLIGHT_KEY);
+        revokeFlightAbilities(player);
+    }
+
+    private static void revokeFlightAbilities(ServerPlayer player) {
         if (player.isSpectator() || player.getAbilities().instabuild) {
             return;
         }

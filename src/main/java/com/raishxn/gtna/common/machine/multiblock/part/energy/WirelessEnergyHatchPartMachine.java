@@ -98,6 +98,12 @@ public class WirelessEnergyHatchPartMachine extends TieredIOPartMachine implemen
             NotifiableEnergyContainer container = this.energyContainer;
             if (container == null) return;
 
+            // Do not pull energy from a network with no active matrix -- the
+            // matrix is MISSING/OFFLINE so the network holds no usable energy.
+            com.raishxn.gtna.common.data.NexusEnergyNetwork network =
+                    com.raishxn.gtna.common.data.NexusEnergyNetwork.get(serverLevel);
+            if (!network.isMatrixFormed(networkOwner)) return;
+
             long storage = container.getEnergyStored();
             long maxCapacity = container.getEnergyCapacity();
             long deficit = maxCapacity - storage;
@@ -107,22 +113,16 @@ public class WirelessEnergyHatchPartMachine extends TieredIOPartMachine implemen
                 long maxPullAmount = GTValues.V[getTier()] * amperage;
                 long pullAmount = Math.min(deficit, maxPullAmount);
 
-                Int128 wirelessAvailable = WirelessEnergyManager.getEnergy(serverLevel, networkOwner);
-                if (wirelessAvailable.compareTo(new Int128(pullAmount)) >= 0) {
-                    boolean success = WirelessEnergyManager.consumeEnergy(serverLevel, networkOwner,
-                            new Int128(pullAmount));
-                    if (success) {
-                        container.addEnergy(pullAmount);
-                        amountTransferred = pullAmount;
-                    }
-                } else if (!wirelessAvailable.isZero()) {
-                    long availableLong = wirelessAvailable.toLong();
-                    boolean success = WirelessEnergyManager.consumeEnergy(serverLevel, networkOwner,
-                            new Int128(availableLong));
-                    if (success) {
-                        container.addEnergy(availableLong);
-                        amountTransferred = availableLong;
-                    }
+                // consumeEnergy() enforces the transfer limit internally and returns
+                // the actual EU consumed (ZERO on failure/empty/safe-mode).
+                // We credit the container with exactly what was returned — never the
+                // raw requested amount — so no EU is created from nothing.
+                Int128 consumed = WirelessEnergyManager.consumeEnergy(serverLevel, networkOwner,
+                        new Int128(pullAmount));
+                if (!consumed.isZero()) {
+                    long consumedLong = consumed.toLong();
+                    container.addEnergy(consumedLong);
+                    amountTransferred = consumedLong;
                 }
             }
 

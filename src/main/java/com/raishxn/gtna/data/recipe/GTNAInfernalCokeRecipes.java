@@ -22,21 +22,21 @@ public class GTNAInfernalCokeRecipes {
                 .outputItems(gem, Coke)
                 .outputFluids(GTMaterials.Creosote.getFluid(500))
                 .duration(900)
-                .EUt(0)
+                .EUt(4)
                 .save(provider);
         GTNARecipeType.INFERNAL_COKE_RECIPES.recipeBuilder("infernal_charcoal_from_logs")
                 .inputItems(ItemTags.LOGS_THAT_BURN)
                 .outputItems(Items.CHARCOAL)
                 .outputFluids(GTMaterials.Creosote.getFluid(250))
                 .duration(900)
-                .EUt(0)
+                .EUt(4)
                 .save(provider);
         GTNARecipeType.INFERNAL_COKE_RECIPES.recipeBuilder("infernal_coke_block_from_coal_block")
                 .inputItems(Items.COAL_BLOCK)
                 .outputItems(block, Coke)
                 .outputFluids(GTMaterials.Creosote.getFluid(4500))
                 .duration(8100)
-                .EUt(0)
+                .EUt(4)
                 .save(provider);
     }
 }

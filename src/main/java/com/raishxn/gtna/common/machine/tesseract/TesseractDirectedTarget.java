@@ -29,7 +29,9 @@ public record TesseractDirectedTarget(GlobalPos pos, Direction face, int order) 
         if (parts.length != 4) {
             throw new IllegalArgumentException("Invalid tesseract target: " + serialized);
         }
-        ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(parts[0]));
+        ResourceLocation dimLoc = ResourceLocation.tryParse(parts[0]);
+        if (dimLoc == null) throw new IllegalArgumentException("Invalid dimension: " + parts[0]);
+        ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, dimLoc);
         BlockPos blockPos = BlockPos.of(Long.parseLong(parts[1]));
         Direction face = Direction.from3DDataValue(Integer.parseInt(parts[2]));
         int order = Integer.parseInt(parts[3]);

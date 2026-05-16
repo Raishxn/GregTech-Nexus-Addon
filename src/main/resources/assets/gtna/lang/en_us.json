@@ -99,6 +99,7 @@
 
   "item.gtna.nexus_linker": "Nexus Linker",
   "item.gtna.nexus_linker.tooltip": "\u00A77Shift+Right Click on Nexus Flux Matrix to bind.\n\u00A77Right Click on Wireless Hatch/Dynamo to link.",
+  "gtna.message.linker.no_network_id": "Shift+right-click a Nexus Flux Matrix controller first to copy its Network ID.",
   "item.gtna.quantum_network_terminal": "Quantum Network Terminal",
   "item.gtna.quantum_network_terminal.tooltip": "\u00A77Right Click to view network status.\n\u00A77Shows energy, IO rates, connections, and more.",
 

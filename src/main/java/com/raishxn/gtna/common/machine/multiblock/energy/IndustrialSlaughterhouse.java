@@ -132,7 +132,7 @@ public class IndustrialSlaughterhouse extends WorkableElectricMultiblockMachine
             } else if (currentMobList != null) {
                 int index = GTValues.RNG.nextInt(currentMobList.length);
                 LootTable table = serverLevel.getServer().getLootData()
-                        .getLootTable(new ResourceLocation("minecraft", "entities/" + currentMobList[index]));
+                        .getLootTable(ResourceLocation.tryParse("minecraft:entities/" + currentMobList[index]));
                 drops.addAll(
                         table.getRandomItems(new LootParams.Builder(serverLevel).create(LootContextParamSets.EMPTY)));
             }

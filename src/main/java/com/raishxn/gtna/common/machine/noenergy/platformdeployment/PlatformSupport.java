@@ -12,7 +12,7 @@ final class PlatformSupport {
     private PlatformSupport() {}
 
     static ResourceLocation id(String path) {
-        return new ResourceLocation(GTNACORE.MOD_ID, path);
+        return GTNACORE.id(path);
     }
 
     static ResourceLocation parseId(String id) {

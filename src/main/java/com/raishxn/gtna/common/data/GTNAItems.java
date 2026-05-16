@@ -79,7 +79,7 @@ public class GTNAItems {
                 .properties(stack -> stack.stacksTo(1))
                 .onRegister(attach(StructureDetectBehavior.INSTANCE))
                 .model((ctx, provider) -> {
-                    provider.generated(ctx, new ResourceLocation("gtceu", "item/portable_scanner"));
+                    provider.generated(ctx, ResourceLocation.tryParse("gtceu:item/portable_scanner"));
                 })
                 .register();
 

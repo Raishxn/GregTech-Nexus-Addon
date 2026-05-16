@@ -29,33 +29,40 @@ public class WirelessEnergyManager {
         NexusEnergyNetwork.get(level).setEnergy(userUuid, amount);
     }
 
-    public static boolean consumeEnergy(ServerLevel level, UUID userUuid, Int128 amount) {
-        if (level == null || userUuid == null || amount == null || amount.isZero() || amount.isNegative()) return false;
+    /**
+     * Consume energy from the network, capped to the transfer limit.
+     * Returns the amount actually consumed (ZERO means failure / nothing consumed).
+     * Callers must credit their local buffer with the returned value, not the
+     * requested amount, to prevent EU creation.
+     */
+    public static Int128 consumeEnergy(ServerLevel level, UUID userUuid, Int128 amount) {
+        if (level == null || userUuid == null || amount == null || amount.isZero() || amount.isNegative())
+            return Int128.ZERO();
 
         NexusEnergyNetwork data = NexusEnergyNetwork.get(level);
         return data.consumeEnergy(userUuid, amount, level);
     }
 
-    public static void addMaxCapacity(ServerLevel level, UUID userUuid, Int128 capacity) {
-        if (level == null || userUuid == null || capacity == null || capacity.isZero()) return;
-        NexusEnergyNetwork data = NexusEnergyNetwork.get(level);
-        Int128 current = data.getMaxCapacity(userUuid);
-        current.add(capacity);
-        data.setMaxCapacity(userUuid, current);
-    }
+    /**
+     * Consume energy without the transfer-limit cap.
+     * Use only for machines with intentionally large one-time energy costs.
+     */
+    public static boolean consumeEnergyUnlimited(ServerLevel level, UUID userUuid, Int128 amount) {
+        if (level == null || userUuid == null || amount == null || amount.isZero() || amount.isNegative())
+            return false;
 
-    public static void removeMaxCapacity(ServerLevel level, UUID userUuid, Int128 capacity) {
-        if (level == null || userUuid == null || capacity == null || capacity.isZero()) return;
         NexusEnergyNetwork data = NexusEnergyNetwork.get(level);
-        Int128 current = data.getMaxCapacity(userUuid);
-        current.subtract(capacity);
-        if (current.isNegative()) current = Int128.ZERO();
-        data.setMaxCapacity(userUuid, current);
+        return data.consumeEnergyUnlimited(userUuid, amount, level);
     }
 
     public static Int128 getMaxCapacity(ServerLevel level, UUID userUuid) {
         if (level == null || userUuid == null) return Int128.ZERO();
         return NexusEnergyNetwork.get(level).getMaxCapacity(userUuid);
+    }
+
+    public static Int128 getTransferLimit(ServerLevel level, UUID userUuid) {
+        if (level == null || userUuid == null) return Int128.ZERO();
+        return NexusEnergyNetwork.get(level).getTransferLimit(userUuid);
     }
 
     public static void reportConnection(ServerLevel level, UUID userUuid, net.minecraft.core.GlobalPos pos,

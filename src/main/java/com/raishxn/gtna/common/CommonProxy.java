@@ -12,18 +12,18 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import com.raishxn.gtna.GTNACORE;
-import com.raishxn.gtna.client.renderer.machine.AnnihilateGeneratorRenderer;
-import com.raishxn.gtna.client.renderer.machine.EyeOfHarmonyRenderer;
-import com.raishxn.gtna.client.renderer.machine.EyeOfWoodRenderer;
 import com.raishxn.gtna.common.data.*;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import com.raishxn.gtna.data.GTNALangProvider;
 import com.raishxn.gtna.data.recipe.GTNARecipeConditions;
 import com.raishxn.gtna.network.GTNANetworkHandler;
@@ -34,12 +34,11 @@ import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
 
 public class CommonProxy {
 
+    @SuppressWarnings("removal")
     public CommonProxy() {
         CommonProxy.init();
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         REGISTRATE.registerEventListeners(eventBus);
-        eventBus.addListener(this::clientSetup);
-        eventBus.addListener(this::registerAdditionalModels);
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::addMaterialRegistries);
         eventBus.addListener(this::addMaterials);
@@ -48,6 +47,9 @@ public class CommonProxy {
         eventBus.addGenericListener(GTRecipeType.class, this::registerRecipeTypes);
         eventBus.addGenericListener(MachineDefinition.class, this::registerMachines);
         eventBus.addListener(this::gatherData);
+
+        // Server lifecycle events must be registered on the Forge event bus (not the mod bus).
+        MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
     }
 
     public static void init() {
@@ -62,6 +64,23 @@ public class CommonProxy {
         event.enqueueWork(GTNANetworkHandler::init);
     }
 
+    /**
+     * Fires on the Forge event bus after the server has fully started.
+     * Triggers a one-time sweep of all registered Nexus Flux Matrix entries,
+     * pruning any that are missing or no longer formed so the QNT shows
+     * accurate data immediately on world load.
+     */
+    private void onServerStarted(ServerStartedEvent event) {
+        MinecraftServer server = event.getServer();
+        ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+        if (overworld == null) {
+            GTNACORE.LOGGER.warn("[GTNA] ServerStartedEvent: overworld is null, skipping startup matrix sweep.");
+            return;
+        }
+        NexusEnergyNetwork network = NexusEnergyNetwork.get(overworld);
+        network.sweepStaleMatrices(server);
+    }
+
     public void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
@@ -70,29 +89,6 @@ public class CommonProxy {
         boolean server = event.includeServer();
         boolean client = event.includeClient();
         generator.addProvider(client, new GTNALangProvider(packOutput));
-    }
-
-    private void clientSetup(final FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-            registerDynamicRenderers();
-        });
-    }
-
-    private void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
-        registerDynamicRenderers();
-        event.register(GTNACORE.id("obj/star"));
-        event.register(GTNACORE.id("obj/space"));
-        event.register(GTNACORE.id("obj/overworld"));
-        event.register(GTNACORE.id("obj/the_nether"));
-        event.register(GTNACORE.id("obj/the_end"));
-        event.register(GTNACORE.id("obj/eye_of_wood_sweat"));
-        event.register(GTNACORE.id("obj/eye_of_wood_thinking"));
-    }
-
-    private static void registerDynamicRenderers() {
-        var ignoredAnnihilate = AnnihilateGeneratorRenderer.TYPE;
-        var ignoredEyeOfHarmony = EyeOfHarmonyRenderer.TYPE;
-        var ignoredEyeOfWood = EyeOfWoodRenderer.TYPE;
     }
 
     // You MUST have this for custom materials.

@@ -176,7 +176,7 @@ public class GTNABlockRecipes {
         // Circuito 4: Basalt (com Blue Ice - Não Consumido)
         GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_basalt_gen")
                 .circuitMeta(4)
-                .chancedInput(Items.BLUE_ICE.getDefaultInstance(), 0, 0)
+                .notConsumable(Items.BLUE_ICE.getDefaultInstance())
                 .outputItems(Items.BASALT)
                 .duration(40)
                 .EUt(30)
@@ -185,7 +185,7 @@ public class GTNABlockRecipes {
         // Circuito 5: Cobbled Deepslate (com Magma Block - Não Consumido)
         GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_deepslate_gen")
                 .circuitMeta(5)
-                .chancedInput(Items.MAGMA_BLOCK.getDefaultInstance(), 0, 0)
+                .notConsumable(Items.MAGMA_BLOCK.getDefaultInstance())
                 .outputItems(Items.COBBLED_DEEPSLATE)
                 .duration(40)
                 .EUt(30)
@@ -193,7 +193,6 @@ public class GTNABlockRecipes {
 
         // Circuito 6: Netherrack (com Glowstone Dust)
         GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_netherrack_gen")
-                .circuitMeta(6)
                 .inputItems(Items.GLOWSTONE_DUST)
                 .outputItems(Items.NETHERRACK)
                 .duration(40)
@@ -302,7 +301,7 @@ public class GTNABlockRecipes {
                 .save(provider);
 
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_high_strength_concrete")
-                .inputItems(Blocks.REINFORCED_DEEPSLATE)
+                .inputItems(Blocks.REINFORCED_DEEPSLATE.asItem())
                 .inputItems(TagPrefix.plate, GTMaterials.Steel, 2)
                 .inputItems(TagPrefix.dust, GTMaterials.Concrete, 4)
                 .inputFluids(GTMaterials.Concrete.getFluid(576))

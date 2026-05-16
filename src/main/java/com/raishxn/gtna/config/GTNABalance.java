@@ -599,9 +599,9 @@ public final class GTNABalance {
         values.put("LV", new NexusTierBalance("160000", "2000", false));
         values.put("MV", new NexusTierBalance("1500000", "8000", false));
         values.put("HV", new NexusTierBalance("10000000", "32000", false));
-        values.put("EV", new NexusTierBalance("50000000", "128000", true));
-        values.put("IV", new NexusTierBalance("250000000", "512000", true));
-        values.put("LuV", new NexusTierBalance("1500000000", "2048000", true));
+        values.put("EV", new NexusTierBalance("50000000", "128000", false));
+        values.put("IV", new NexusTierBalance("250000000", "512000", false));
+        values.put("LuV", new NexusTierBalance("1500000000", "2048000", false));
         values.put("ZPM", new NexusTierBalance("15000000000", "8192000", true));
         values.put("UV", new NexusTierBalance("150000000000", "32768000", true));
         values.put("UHV", new NexusTierBalance("3000000000000", "131072000", true));

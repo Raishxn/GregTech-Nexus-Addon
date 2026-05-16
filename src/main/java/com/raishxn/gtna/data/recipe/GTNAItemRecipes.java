@@ -344,7 +344,7 @@ public class GTNAItemRecipes {
                 .inputItems(GTItems.BATTERY_MV_LITHIUM.get(), 2)
                 .inputItems(GTItems.EMITTER_MV.get(), 2)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(144))
-                .outputItems(BuiltInRegistries.ITEM.get(new ResourceLocation("gtna", "echoite_vajra")))
+                .outputItems(BuiltInRegistries.ITEM.get(GTNACORE.id("echoite_vajra")))
                 .duration(600)
                 .EUt(120)
                 .save(provider);

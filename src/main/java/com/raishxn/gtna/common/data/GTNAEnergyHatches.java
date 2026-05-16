@@ -11,6 +11,7 @@ import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 
 import net.minecraft.network.chat.Component;
 
+import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.machine.multiblock.energy.NexusFluxMatrixMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.energy.WirelessDynamoHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.energy.WirelessEnergyHatchPartMachine;
@@ -33,12 +34,21 @@ public class GTNAEnergyHatches {
             .recipeType(GTRecipeTypes.DUMMY_RECIPES)
             .appearanceBlock(() -> com.gregtechceu.gtceu.common.data.GTBlocks.CASING_STEEL_SOLID.get())
             .pattern(definition -> FactoryBlockPattern
-                    .start(com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.RIGHT,
-                            com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.FRONT,
-                            com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.UP)
-                    .aisle("AAAAAAA", "AAAAAAA", "AAAAAAA", "AAAAAAA", "AAAAAAA", "AAAAAAA", "AAABAAA")
+                    // start(charDir=UP, rowDir=RIGHT, aisleDir=BACK):
+                    //   chars (UP=0..6)  = absolute height (bottom to top)
+                    //   rows  (RIGHT=0..6) = E/W span symmetric around controller (row=3)
+                    //   aisles stack BACK (= variable DEPTH axis, northward when facing south)
+                    //   Controller at UP=0, RIGHT=3, BACK=0 (bottom of south end-cap).
+                    //   NON_Y_AXIS: localRight = getFrontFacing().getClockWise() is always valid.
+                    .start(com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.UP,
+                            com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.RIGHT,
+                            com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.BACK)
+                    // South end-cap (BACK=0): solid casing; B at (UP=0, RIGHT=3) = bottom of centre row
+                    .aisle("AAAAAAA", "AAAAAAA", "AAAAAAA", "BAAAAAA", "AAAAAAA", "AAAAAAA", "AAAAAAA")
+                    // Inner layers (borosilicate glass E/W walls, hollow 5x5 interior)
                     .aisle("ACCCCCA", "CDDDDDC", "CDDDDDC", "CDDDDDC", "CDDDDDC", "CDDDDDC", "ACCCCCA")
-                    .setRepeatable(2, 30)
+                    .setRepeatable(1, 29)  // 1-29 inner layers => total width 3-31
+                    // North end-cap (solid casing)
                     .aisle("AAAAAAA", "AAAAAAA", "AAAAAAA", "AAAAAAA", "AAAAAAA", "AAAAAAA", "AAAAAAA")
                     .where('A', blocks(com.gregtechceu.gtceu.common.data.GTBlocks.CASING_STEEL_SOLID.get())
                             .or(Predicates
@@ -104,8 +114,7 @@ public class GTNAEnergyHatches {
                     var model = prov.models()
                             .withExistingParent(ctx.getName(), GTCEu.id("block/machine/template/part/hatch_machine"))
                             .texture("overlay",
-                                    new net.minecraft.resources.ResourceLocation("gtna",
-                                            "block/overlay/machine/overlay_steam_wireless_out"))
+                                    GTNACORE.id("block/overlay/machine/overlay_steam_wireless_out"))
                             .texture("side", GTCEu.id("block/casings/voltage/" + tierName + "/side"))
                             .texture("top", GTCEu.id("block/casings/voltage/" + tierName + "/top"))
                             .texture("bottom", GTCEu.id("block/casings/voltage/" + tierName + "/bottom"))
@@ -131,8 +140,7 @@ public class GTNAEnergyHatches {
                     var model = prov.models()
                             .withExistingParent(ctx.getName(), GTCEu.id("block/machine/template/part/hatch_machine"))
                             .texture("overlay",
-                                    new net.minecraft.resources.ResourceLocation("gtna",
-                                            "block/overlay/machine/overlay_steam_wireless_in"))
+                                    GTNACORE.id("block/overlay/machine/overlay_steam_wireless_in"))
                             .texture("side", GTCEu.id("block/casings/voltage/" + tierName + "/side"))
                             .texture("top", GTCEu.id("block/casings/voltage/" + tierName + "/top"))
                             .texture("bottom", GTCEu.id("block/casings/voltage/" + tierName + "/bottom"))

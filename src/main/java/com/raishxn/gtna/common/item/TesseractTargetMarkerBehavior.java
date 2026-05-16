@@ -124,8 +124,9 @@ public class TesseractTargetMarkerBehavior implements IInteractionItem, IAddInfo
         ListTag list = stack.getOrCreateTag().getList(TARGETS_KEY, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             CompoundTag entry = list.getCompound(i);
-            ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION,
-                    new ResourceLocation(entry.getString("dim")));
+            ResourceLocation dimLoc = ResourceLocation.tryParse(entry.getString("dim"));
+            if (dimLoc == null) continue;
+            ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, dimLoc);
             BlockPos pos = BlockPos.of(entry.getLong("pos"));
             Direction face = Direction.from3DDataValue(entry.getInt("face"));
             result.add(new PatternFaceUnindexed(GlobalPos.of(dimension, pos), face));

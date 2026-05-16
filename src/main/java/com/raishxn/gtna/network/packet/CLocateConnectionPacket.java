@@ -56,8 +56,9 @@ public class CLocateConnectionPacket {
             if (player == null) return;
 
             BlockPos pos = new BlockPos(msg.x, msg.y, msg.z);
-            ResourceKey<Level> dimKey = ResourceKey.create(
-                    Registries.DIMENSION, new ResourceLocation(msg.dimension));
+            ResourceLocation dimLoc = ResourceLocation.tryParse(msg.dimension);
+            if (dimLoc == null) return;
+            ResourceKey<Level> dimKey = ResourceKey.create(Registries.DIMENSION, dimLoc);
 
             // Highlight for 15 seconds
             long expiryTime = System.currentTimeMillis() + 15_000L;

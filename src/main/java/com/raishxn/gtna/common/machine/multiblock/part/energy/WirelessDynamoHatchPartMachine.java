@@ -98,6 +98,13 @@ public class WirelessDynamoHatchPartMachine extends TieredIOPartMachine implemen
             NotifiableEnergyContainer container = this.energyContainer;
             if (container == null) return;
 
+            // Do not push energy into an unformed network — the matrix has not yet
+            // registered a capacity, so any energy sent would be rejected by
+            // NexusEnergyNetwork.addEnergy() and lost from the container.
+            com.raishxn.gtna.common.data.NexusEnergyNetwork network =
+                    com.raishxn.gtna.common.data.NexusEnergyNetwork.get(serverLevel);
+            if (!network.isMatrixFormed(networkOwner)) return;
+
             long storage = container.getEnergyStored();
             long amountTransferred = 0;
             if (storage > 0) {

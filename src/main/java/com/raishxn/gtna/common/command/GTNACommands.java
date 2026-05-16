@@ -40,9 +40,13 @@ public class GTNACommands {
                                                         String dim = StringArgumentType.getString(context, "dim");
 
                                                         BlockPos pos = new BlockPos(x, y, z);
+                                                        ResourceLocation dimLoc = ResourceLocation.tryParse(dim);
+                                                        if (dimLoc == null) {
+                                                            source.sendFailure(Component.literal("Invalid dimension: " + dim));
+                                                            return 0;
+                                                        }
                                                         ResourceKey<net.minecraft.world.level.Level> dimKey = ResourceKey
-                                                                .create(Registries.DIMENSION,
-                                                                        new ResourceLocation(dim));
+                                                                .create(Registries.DIMENSION, dimLoc);
 
                                                         player.sendSystemMessage(Component.literal(
                                                                 "§a[GTNA Terminal] §fLocated connection at §eX: " + x +

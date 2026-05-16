@@ -1,6 +1,8 @@
 buildscript {
     repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
     }
     dependencies {
@@ -9,17 +11,77 @@ buildscript {
 }
 
 plugins {
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id "idea"
     id "eclipse"
     id "maven-publish"
-    id 'net.neoforged.moddev.legacyforge' version '2.0.91'
-    id 'com.diffplug.spotless' version '7.0.2'
 }
+
+apply plugin: 'org.spongepowered.mixin'
+
+version = mod_version
+group = maven_group
+base { archivesName = archives_base_name }
 
 sourceSets {
     main.resources {
         srcDir 'src/generated/resources'
     }
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+minecraft {
+    mappings channel: 'official', version: "${minecraft_version}"
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+        }
+        client {
+            workingDirectory project.file('run')
+            property 'mixin.debug.export', 'true'
+            property 'forge.enabledGameTestNamespaces', project.mod_id
+            args '--refresh-dependencies'
+            mods {
+                "${mod_id}" { source sourceSets.main }
+            }
+        }
+        server {
+            workingDirectory project.file('run')
+            property 'mixin.debug.export', 'true'
+            property 'forge.enabledGameTestNamespaces', project.mod_id
+            args '--nogui', '--world', 'world-extra'
+            mods {
+                "${mod_id}" { source sourceSets.main }
+            }
+        }
+        data {
+            workingDirectory project.file('run')
+            args '--mod', project.mod_id, '--all',
+                 '--output', file('src/generated/resources/').getAbsolutePath(),
+                 '--existing', file('src/main/resources/').getAbsolutePath(),
+                 '--existing-mod', 'gtceu'
+            mods {
+                "${mod_id}" { source sourceSets.main }
+            }
+        }
+    }
+}
+
+mixin {
+    add sourceSets.main, "mixins.${mod_id}.refmap.json"
+    config "${mod_id}.mixins.json"
+}
+
+jar {
+    manifest.attributes([
+            "MixinConfigs": "gtna.mixins.json"
+    ])
 }
 
 repositories {
@@ -53,12 +115,10 @@ repositories {
     maven { // Registrate
         url = "https://maven.tterrag.com/"
         content {
-            // need to be specific here due to version overlaps
             includeGroup("com.tterrag.registrate")
         }
     }
     maven {
-        // Patchouli, JEI
         name = "BlameJared"
         url = "https://maven.blamejared.com/"
     }
@@ -66,141 +126,68 @@ repositories {
         url = "https://maven.theillusivec4.top/"
     }
     maven {
-        // Curse Forge File
         url "https://cursemaven.com/"
         content {
             includeGroup "curse.maven"
         }
     }
     maven {
-        // EMI
         name = "TerraformersMC"
         url = "https://maven.terraformersmc.com/"
     }
     maven {
         url = "https://thedarkcolour.github.io/KotlinForForge/"
     }
-
 }
-
-version = mod_version
-group = maven_group
-base { archivesName = archives_base_name }
-java { sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17 }
-
-legacyForge {
-    version = project.minecraft_version + '-' + project.forge_version
-
-    parchment {
-        mappingsVersion = project.mapping_version
-        minecraftVersion = project.minecraft_version
-    }
-
-    runs {
-        configureEach {
-            // Recommended logging data for a userdev environment
-            // The markers can be added/remove as needed separated by commas.
-            // "SCAN": For mods scan.
-            // "REGISTRIES": For firing of registry events.
-            // "REGISTRYDUMP": For getting the contents of all registries.
-            systemProperty 'forge.logging.markers', 'REGISTRIES'
-
-            // Recommended logging level for the console
-            // You can set various levels here.
-            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
-            logLevel = org.slf4j.event.Level.DEBUG
-        }
-        client {
-            client()
-            sourceSet = sourceSets.main
-            programArguments.addAll('--refresh-dependencies')
-            systemProperty('forge.enabledGameTestNamespaces', project.mod_id)
-        }
-        server {
-            server()
-            sourceSet = sourceSets.main
-            systemProperty('forge.enabledGameTestNamespaces', project.mod_id)
-            programArguments.addAll('--nogui', '--world', 'world-extra')
-        }
-        data {
-            data()
-            sourceSet = sourceSets.main
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            programArguments.addAll('--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath())
-            programArguments.addAll('--existing-mod', 'gtceu')
-        }
-    }
-
-    mods {
-        // define mod <-> source bindings
-        // these are used to tell the game which sources are for which mod
-        // mostly optional in a single mod project
-        // but multi mod projects should define one per mod
-        "${mod_id}" {
-            sourceSet(sourceSets.main)
-        }
-    }
-}
-jar {
-    manifest.attributes([
-            "MixinConfigs": "gtna.mixins.json"
-    ])
-}
-
-apply from: "$rootDir/gradle/scripts/spotless.gradle"
 
 dependencies {
     def isDataRun = gradle.startParameter.taskNames.any { it.toLowerCase(java.util.Locale.ROOT).contains("rundata") }
 
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
     compileOnly("org.jetbrains:annotations:26.0.1")
-    // Mixin
     annotationProcessor('org.spongepowered:mixin:0.8.5:processor')
 
     // JEI, EMI, Jade
-    modCompileOnly("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
-    modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
-    modRuntimeOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
-    modRuntimeOnly("dev.emi:emi-forge:${emi_version}+${minecraft_version}")
-    modCompileOnly("curse.maven:jade-324717:5390389")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+    runtimeOnly fg.deobf("dev.emi:emi-forge:${emi_version}+${minecraft_version}")
+    compileOnly fg.deobf("curse.maven:jade-324717:5390389")
     if (!isDataRun) {
-        modRuntimeOnly("curse.maven:jade-324717:5390389")
+        runtimeOnly fg.deobf("curse.maven:jade-324717:5390389")
     }
 
     // GregTech and dependencies
-    modImplementation("com.gregtechceu.gtceu:gtceu-${minecraft_version}:${gtceu_version}:slim") { transitive = false }
-    modImplementation("com.lowdragmc.ldlib:ldlib-forge-${minecraft_version}:${ldlib_version}") { transitive = false }
-    modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
-    modImplementation("dev.toma.configuration:configuration-forge-${minecraft_version}:${configuration_version}")
+    implementation fg.deobf("com.gregtechceu.gtceu:gtceu-${minecraft_version}:${gtceu_version}:slim") { transitive = false }
+    implementation fg.deobf("com.lowdragmc.ldlib:ldlib-forge-${minecraft_version}:${ldlib_version}") { transitive = false }
+    implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
+    implementation fg.deobf("dev.toma.configuration:configuration-forge-${minecraft_version}:${configuration_version}")
 
     // lombok
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
-    //extendedAE and Glodium
-    modImplementation("curse.maven:glodium-957920:5226922")
-    modImplementation("curse.maven:ex-pattern-provider-892005:7248944")
-    //gtmthings version 1.3.5.b
-    modImplementation ("curse.maven:gtmthings-1104310:6843500")
-    //ae2 and guideme
-    modImplementation("curse.maven:applied-energistics-2-223794:7148487")
-    modImplementation("curse.maven:guideme-1173950:7127447")
 
-    modImplementation("curse.maven:configuration-444699:5840405")
+    // extendedAE and Glodium
+    implementation fg.deobf("curse.maven:glodium-957920:5226922")
+    implementation fg.deobf("curse.maven:ex-pattern-provider-892005:7248944")
+    // gtmthings
+    implementation fg.deobf("curse.maven:gtmthings-1104310:6843500")
+    // AE2 and GuideME
+    implementation fg.deobf("curse.maven:applied-energistics-2-223794:7148487")
+    implementation fg.deobf("curse.maven:guideme-1173950:7127447")
+
+    implementation fg.deobf("curse.maven:configuration-444699:5840405")
 
     // KubeJS soft dependency
-    modCompileOnly("dev.latvian.mods:kubejs-forge:2001.6.5-build.16")
+    compileOnly fg.deobf("dev.latvian.mods:kubejs-forge:2001.6.5-build.16")
 
-    modImplementation("curse.maven:gtceu-terminals-1423461:7787678")
+    implementation fg.deobf("curse.maven:gtceu-terminals-1423461:7787678")
 
-    modCompileOnly("curse.maven:modern-ui-352491:6956345")
+    compileOnly fg.deobf("curse.maven:modern-ui-352491:6956345")
     if (!isDataRun) {
-        modRuntimeOnly("curse.maven:modern-ui-352491:6956345")
+        runtimeOnly fg.deobf("curse.maven:modern-ui-352491:6956345")
     }
-}
-
-// See com.example.examplemod.mixin.DummyMixin for information about mixins
-mixin {
-    add sourceSets.main, "mixins.${mod_id}.refmap.json"
-    config "${mod_id}.mixins.json"
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -212,7 +199,7 @@ tasks.named('processResources', ProcessResources).configure {
             "mod_name": mod_name,
             "mod_url": mod_url,
             "mod_author": mod_author,
-            "forge_version": forge_version.split("\\.")[0], // only specify major version of forge
+            "forge_version": forge_version.split("\\.")[0],
             "minecraft_version": minecraft_version,
             "gtceu_version": gtceu_version,
     ]
@@ -247,11 +234,7 @@ tasks.named('processResources', ProcessResources).configure {
 
 tasks.named('jar', Jar).configure { finalizedBy 'reobfJar' }
 tasks.withType(JavaCompile).configureEach {
-    // ensure that the encoding is set to UTF-8, no matter what the system default is
-    // this fixes some edge cases with special characters not displaying correctly
-    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-    // If Javadoc is generated, this must be specified in that task too.
     options.encoding = "UTF-8"
     options.release.set(17)
-    options.compilerArgs << "-Aquiet=true" // Suppress mixin notes
+    options.compilerArgs << "-Aquiet=true"
 }
