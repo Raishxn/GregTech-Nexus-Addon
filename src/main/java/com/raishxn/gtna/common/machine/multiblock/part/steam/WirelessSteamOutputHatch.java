@@ -20,6 +20,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
 import com.raishxn.gtna.config.ConfigHolder;
+import com.raishxn.gtna.utils.GTNANetworkIdentityUtil;
 
 import java.util.UUID;
 
@@ -68,8 +69,9 @@ public class WirelessSteamOutputHatch extends SteamHatchPartMachine {
             return;
         }
         if (getLevel() instanceof ServerLevel serverLevel) {
-            UUID ownerId = getOwnerUUID();
-            if (ownerId == null) return;
+            UUID playerUUID = getOwnerUUID();
+            if (playerUUID == null) return;
+            UUID ownerId = GTNANetworkIdentityUtil.resolveNetworkId(playerUUID);
 
             long currentSteam = tank.getFluidInTank(0).getAmount();
 

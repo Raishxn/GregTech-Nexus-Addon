@@ -154,8 +154,11 @@ public class GTNATabDisplayItemsGenerator implements CreativeModeTab.DisplayItem
         ResourceLocation rl = ForgeRegistries.ITEMS.getKey(item);
         if (rl != null && rl.getNamespace().equals(GTNACORE.MOD_ID)) {
             String path = rl.getPath();
-            return path.startsWith("wireless_energy_hatch_") || path.startsWith("wireless_dynamo_hatch_") ||
-                    path.startsWith("nexus_capacitor_");
+            return path.startsWith("wireless_energy_hatch_")
+                    || path.startsWith("wireless_dynamo_hatch_")
+                    || path.startsWith("nexus_capacitor_")
+                    || path.startsWith("wireless_eu_receiver_cover_")
+                    || path.startsWith("wireless_eu_transmitter_cover_");
         }
         return false;
     }

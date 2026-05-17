@@ -41,3 +41,9 @@ Example Description
         versionRange = "[${gtceu_version},)"
         ordering = "AFTER"
         side = "BOTH"
+    [[dependencies.${mod_id}]]
+        modId = "fluxnetworks"
+        mandatory = false
+        versionRange = "[7.0,)"
+        ordering = "AFTER"
+        side = "BOTH"

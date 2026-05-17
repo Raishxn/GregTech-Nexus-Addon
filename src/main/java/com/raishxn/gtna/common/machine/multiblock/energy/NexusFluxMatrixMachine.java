@@ -25,6 +25,7 @@ import com.raishxn.gtna.common.data.NexusEnergyNetwork;
 import com.raishxn.gtna.config.ConfigHolder;
 import com.raishxn.gtna.config.GTNABalance;
 import com.raishxn.gtna.utils.datastructure.Int128;
+import com.raishxn.gtna.utils.GTNANetworkIdentityUtil;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -58,7 +59,8 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
     public void onLoad() {
         super.onLoad();
         if (this.ownerUUID == null && super.getOwnerUUID() != null) {
-            this.ownerUUID = super.getOwnerUUID();
+            // Resolve FTB Teams party UUID (or player UUID as fallback)
+            this.ownerUUID = GTNANetworkIdentityUtil.resolveNetworkId(super.getOwnerUUID());
         }
     }
 
@@ -70,7 +72,8 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
     public void onStructureFormed() {
         super.onStructureFormed();
         if (this.ownerUUID == null && super.getOwnerUUID() != null) {
-            this.ownerUUID = super.getOwnerUUID();
+            // Resolve FTB Teams party UUID (or player UUID as fallback)
+            this.ownerUUID = GTNANetworkIdentityUtil.resolveNetworkId(super.getOwnerUUID());
         }
         recalculateCapacitors();
         if (getLevel() instanceof ServerLevel serverLevel && getOwnerUUID() != null) {
@@ -337,6 +340,13 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
             textList.add(Component.literal("\u00a7cNetwork data unavailable."));
             return;
         }
+
+        // Force-validate every registered matrix position for this owner on
+        // every NFM GUI open so the displayed state always matches what is
+        // actually in the world (covers removal of other NFMs on the network
+        // while this GUI was closed, plus the self-check case where this
+        // controller's own chunk was reloaded without re-forming).
+        network.validateAndSweepOwner(getOwnerUUID(), serverLevel.getServer());
 
         Int128 networkEnergy = network.getEnergy(getOwnerUUID());
         Int128 networkMaxCap = network.getMaxCapacity(getOwnerUUID());

@@ -20,6 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import com.raishxn.gtna.api.capability.WirelessEnergyManager;
 import com.raishxn.gtna.utils.datastructure.Int128;
+import com.raishxn.gtna.utils.GTNANetworkIdentityUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -73,7 +74,7 @@ public class WirelessDynamoHatchPartMachine extends TieredIOPartMachine implemen
     @Override
     public void onMachinePlaced(@Nullable LivingEntity player, ItemStack stack) {
         if (player != null) {
-            setNetworkOwner(player.getUUID());
+            setNetworkOwner(GTNANetworkIdentityUtil.resolveNetworkId(player.getUUID()));
         }
     }
 
@@ -84,7 +85,7 @@ public class WirelessDynamoHatchPartMachine extends TieredIOPartMachine implemen
         super.onLoad();
         if (!getLevel().isClientSide) {
             if (this.networkOwner == null && getOwnerUUID() != null) {
-                setNetworkOwner(getOwnerUUID());
+                setNetworkOwner(GTNANetworkIdentityUtil.resolveNetworkId(getOwnerUUID()));
             }
             this.subscribeServerTick(this::updateWireless);
         }

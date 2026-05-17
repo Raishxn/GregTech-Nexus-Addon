@@ -117,13 +117,12 @@ public class NexusEnergyNetwork extends SavedData {
 
             NetworkState state = new NetworkState();
             state.energy = Int128.fromString(entry.getString("Amount"), Int128.ZERO());
-            state.maxCapacity = Int128.fromString(entry.getString("MaxCapacity"), Int128.ZERO());
             state.safeMode = entry.getBoolean("SafeMode");
-            state.totalCapacitors = entry.getLong("TotalCapacitors");
-            state.averageTier = entry.getInt("AvgTier");
-            state.efficiency = entry.getDouble("Efficiency");
-            state.transferLimit = Int128.fromString(entry.getString("TransferLimit"), Int128.ZERO());
-            state.matrixFormed = entry.getBoolean("MatrixFormed");
+            // Structural flat fields are NOT loaded from NBT.  They are ALWAYS
+            // recomputed from the per-controller matrices registry below.
+            // This guarantees that totalCapacitors / maxCapacity / efficiency /
+            // transferLimit / matrixFormed can NEVER persist stale values
+            // across a server restart.
 
             // Load per-matrix registry (new format)
             if (entry.contains("Matrices", Tag.TAG_LIST)) {
@@ -145,20 +144,16 @@ public class NexusEnergyNetwork extends SavedData {
                         state.matrices.put(gpos, rec);
                     } catch (Exception ignored) {}
                 }
-                // Only recompute when records were actually loaded.  An empty "Matrices"
-                // list (written during the window between world-load and controller
-                // re-registration) must NOT trigger recomputeAggregates because that
-                // would zero out flat fields that are still valid from the outer load.
-                if (!state.matrices.isEmpty()) {
-                    recomputeAggregates(state);
-                }
+                // ALWAYS recompute structural stats from the matrices registry.
+                // Flat fields are NOT loaded from NBT — they derive exclusively
+                // from the per-controller records.  If matrices is empty, all
+                // structural stats are zero and the QNT shows OFFLINE.
+                recomputeAggregates(state);
             }
-            // Legacy saves (no "Matrices" key): flat fields (totalCapacitors, averageTier,
-            // etc.) were already loaded above and remain valid for the session.  matrices
-            // is left empty — real controllers call registerMatrix on onStructureFormed
-            // (within the same tick as world load) which re-populates the registry and
-            // triggers recomputeAggregates.  No fake placeholder is inserted because
-            // it could never be removed by unregisterMatrix(realControllerPos).
+            // Legacy saves (no "Matrices" key): matrices is empty and
+            // recomputeAggregates was already called above, zeroing all
+            // structural stats.  Real controllers re-register via
+            // onStructureFormed → registerMatrix within the same tick.
 
             energyStorage.put(entry.getUUID("Owner"), state);
         }
@@ -175,16 +170,15 @@ public class NexusEnergyNetwork extends SavedData {
         energyStorage.forEach((uuid, state) -> {
             CompoundTag entry = new CompoundTag();
             entry.putUUID("Owner", uuid);
+            // Store energy and safe-mode (runtime state), but NOT structural
+            // flat fields (totalCapacitors, averageTier, efficiency, transferLimit,
+            // maxCapacity, matrixFormed).  Those are ALWAYS recomputed from the
+            // per-controller matrices registry on next load, so stale values can
+            // never survive a server restart.
             entry.putString("Amount", state.energy.toString());
-            entry.putString("MaxCapacity", state.maxCapacity.toString());
             entry.putBoolean("SafeMode", state.safeMode);
-            entry.putLong("TotalCapacitors", state.totalCapacitors);
-            entry.putInt("AvgTier", state.averageTier);
-            entry.putDouble("Efficiency", state.efficiency);
-            entry.putString("TransferLimit", state.transferLimit.toString());
-            entry.putBoolean("MatrixFormed", state.matrixFormed);
 
-            // Serialise per-matrix registry
+            // Serialise per-matrix registry — THE source of truth for all structural stats
             ListTag matrixList = new ListTag();
             state.matrices.forEach((gpos, rec) -> {
                 CompoundTag mTag = new CompoundTag();
@@ -285,6 +279,28 @@ public class NexusEnergyNetwork extends SavedData {
      * @param controllerPos GlobalPos of the controller block (dim + BlockPos)
      * @param record        Structural snapshot from the newly formed multiblock
      */
+
+    /**
+     * Nuclear cleanup: remove ALL owners from energy storage that have
+     * no registered matrices.  Called on server start to guarantee that
+     * no stale structural data can survive a reboot.
+     */
+    public void purgeEmptyOwners() {
+        List<UUID> toRemove = new ArrayList<>();
+        for (Map.Entry<UUID, NetworkState> e : energyStorage.entrySet()) {
+            if (e.getValue().matrices.isEmpty()) {
+                toRemove.add(e.getKey());
+            }
+        }
+        if (!toRemove.isEmpty()) {
+            for (UUID id : toRemove) {
+                energyStorage.remove(id);
+            }
+            setDirty();
+            LOGGER.info("[GTNA] Purged {} owners with empty matrices — network state rebuilt from scratch",
+                    toRemove.size());
+        }
+    }
     public void registerMatrix(UUID owner, GlobalPos controllerPos, MatrixRecord record) {
         if (owner == null || controllerPos == null || record == null) return;
         NetworkState state = getState(owner);
@@ -331,6 +347,9 @@ public class NexusEnergyNetwork extends SavedData {
      * aggregates recomputed so the QNT shows accurate data immediately.
      */
     public void sweepStaleMatrices(MinecraftServer server) {
+        // First, purge all owners with empty matrices — this clears entries
+        // that have no valid controllers but still carry stale flat fields.
+        purgeEmptyOwners();
         boolean dirty = false;
 
         for (Map.Entry<UUID, NetworkState> ownerEntry : energyStorage.entrySet()) {
@@ -339,34 +358,53 @@ public class NexusEnergyNetwork extends SavedData {
 
             List<GlobalPos> stale = new ArrayList<>();
 
-            for (GlobalPos gpos : state.matrices.keySet()) {
-                ResourceKey<Level> dimKey = gpos.dimension();
-                ServerLevel level = server.getLevel(dimKey);
-
-                if (level == null) {
-                    // Dimension no longer registered (mod removed, etc.) -- always stale.
+            // Snapshot keys to avoid concurrent modification during sweep.
+            List<GlobalPos> entries = new ArrayList<>(state.matrices.keySet());
+            for (GlobalPos gpos : entries) {
+                try {
+                    ResourceKey<Level> dimKey = gpos.dimension();
+                    if (dimKey == null) {
+                        stale.add(gpos);
+                        LOGGER.warn("[GTNA] Startup sweep: null dimension key -- pruning matrix at {}",
+                                gpos.pos());
+                        continue;
+                    }
+                    ServerLevel level = server.getLevel(dimKey);
+                    if (level == null) {
+                        // Dimension no longer registered (mod removed, etc.) -- always stale.
+                        stale.add(gpos);
+                        LOGGER.warn("[GTNA] Startup sweep: dimension '{}' not found -- pruning matrix at {}",
+                                dimKey.location(), gpos.pos());
+                        continue;
+                    }
+                    BlockPos bpos = gpos.pos();
+                    if (bpos == null) {
+                        stale.add(gpos);
+                        LOGGER.warn("[GTNA] Startup sweep: null block position -- pruning matrix");
+                        continue;
+                    }
+                    // Force-load to ChunkStatus.FULL so GTCEu machine lifecycle has run.
+                    net.minecraft.world.level.chunk.LevelChunk chunk =
+                            level.getChunk(bpos.getX() >> 4, bpos.getZ() >> 4);
+                    if (chunk == null) {
+                        stale.add(gpos);
+                        LOGGER.warn("[GTNA] Startup sweep: chunk null at {} in '{}' -- pruning",
+                                bpos, dimKey.location());
+                        continue;
+                    }
+                    BlockEntity be = level.getBlockEntity(bpos);
+                    boolean formed = (be instanceof IMachineBlockEntity machBe)
+                            && (machBe.getMetaMachine() instanceof WorkableMultiblockMachine ctrl)
+                            && ctrl.isFormed();
+                    if (!formed) {
+                        stale.add(gpos);
+                        LOGGER.warn("[GTNA] Startup sweep: matrix at {} in '{}' is missing or unformed -- pruning",
+                                bpos, dimKey.location());
+                    }
+                } catch (Exception e) {
                     stale.add(gpos);
-                    LOGGER.warn("[GTNA] Startup sweep: dimension '{}' not found -- pruning stale matrix at {}",
-                            dimKey.location(), gpos.pos());
-                    continue;
-                }
-
-                BlockPos bpos = gpos.pos();
-                // Force-load the chunk so the GTCEu machine's onLoad() and structure-check
-                // lifecycle fires before we call isFormed().  One-time startup cost only.
-                level.getChunk(bpos.getX() >> 4, bpos.getZ() >> 4);
-
-                // A valid, formed NFM controller must be a GTCEu WorkableMultiblockMachine
-                // whose structure has successfully validated after loading.
-                BlockEntity be = level.getBlockEntity(bpos);
-                boolean formed = (be instanceof IMachineBlockEntity machBe)
-                        && (machBe.getMetaMachine() instanceof WorkableMultiblockMachine ctrl)
-                        && ctrl.isFormed();
-
-                if (!formed) {
-                    stale.add(gpos);
-                    LOGGER.warn("[GTNA] Startup sweep: matrix at {} in '{}' is missing or unformed -- pruning",
-                            bpos, dimKey.location());
+                    LOGGER.warn("[GTNA] Startup sweep: exception validating matrix at {} in '{}' -- pruning: {}",
+                            gpos.pos(), gpos.dimension().location(), e.getMessage());
                 }
             }
 
@@ -383,11 +421,153 @@ public class NexusEnergyNetwork extends SavedData {
             }
         }
 
+        // After sweeping, force-recompute for EVERY owner — even those
+        // whose matrices were already empty on disk (stale flat fields from
+        // a prior save where matrices were removed but flat fields persisted).
+        for (Map.Entry<UUID, NetworkState> ownerEntry : energyStorage.entrySet()) {
+            NetworkState state = ownerEntry.getValue();
+            if (state.matrices.isEmpty() && (state.totalCapacitors != 0
+                    || !state.maxCapacity.isZero() || state.matrixFormed)) {
+                recomputeAggregates(state);
+                dirty = true;
+                LOGGER.info("[GTNA] Startup sweep: zeroed stale structural stats for owner {} (matrices were empty)",
+                        ownerEntry.getKey());
+            }
+        }
+
         if (dirty) {
             setDirty();
             LOGGER.info("[GTNA] Startup sweep complete -- pruned stale matrix entries and updated network state.");
         } else {
             LOGGER.info("[GTNA] Startup sweep complete -- all registered matrices verified OK.");
+        }
+    }
+
+    /**
+     * Per-open GUI sweep: verify every registered matrix entry for a single
+     * owner is still a formed multiblock.  Called on every QNT and NFM GUI
+     * open so displayed values are always real-time.
+     *
+     * Intentionally lightweight — it only touches the one owner's map, and
+     * chunk force-loading is limited to each matrix's single chunk.  Stale
+     * entries are pruned and aggregates recomputed so the GUI shows accurate
+     * Status / Matrix / Capacitor values immediately.
+     *
+     * <p>Each entry is validated in an isolated try/catch so that a single
+     * corrupt or problematic entry cannot abort the entire sweep.  The chunk
+     * is force-loaded with ChunkStatus.FULL to guarantee the block entity is
+     * ready before the isFormed() query.  Entries in dimensions that cannot
+     * be loaded, positions with no block entity, or machines that are not
+     * currently formed are all pruned.
+     */
+    public void validateAndSweepOwner(UUID owner, MinecraftServer server) {
+        if (owner == null || server == null) return;
+
+        // Sweep the primary owner first, then sweep any secondary UUIDs
+        // that might hold stale matrices for the same player (player UUID
+        // and FTB Teams party UUID can both contain matrix registrations).
+        sweepOneOwner(owner, server);
+
+        // Also sweep the alternate UUID so matrices registered under the
+        // player UUID are cleaned when the QNT uses the team UUID and
+        // vice versa.  resolveNetworkId is stable for the same player,
+        // so when the QNT already resolved to the same UUID as the matrices
+        // this is a harmless no-op.
+        UUID playerUuid = null;
+        for (ServerPlayer sp : server.getPlayerList().getPlayers()) {
+            if (sp.getUUID().equals(owner)) {
+                playerUuid = sp.getUUID();
+                break;
+            }
+        }
+        if (playerUuid == null) {
+            // owner might already be the player UUID — try resolving its team UUID
+            try {
+                UUID teamUuid = com.raishxn.gtna.utils.GTNANetworkIdentityUtil.resolveNetworkId(owner);
+                if (!teamUuid.equals(owner)) {
+                    sweepOneOwner(teamUuid, server);
+                }
+            } catch (Exception ignored) {}
+        } else {
+            UUID teamUuid = com.raishxn.gtna.utils.GTNANetworkIdentityUtil.resolveNetworkId(playerUuid);
+            if (!teamUuid.equals(owner)) {
+                sweepOneOwner(teamUuid, server);
+            }
+        }
+    }
+
+    /** Core sweep logic for one owner — extracted so it can be reused. */
+    private void sweepOneOwner(UUID owner, MinecraftServer server) {
+        NetworkState state = energyStorage.get(owner);
+        if (state == null || state.matrices.isEmpty()) return;
+
+        // Snapshot the current key set so we can safely iterate while removing.
+        List<GlobalPos> entries = new ArrayList<>(state.matrices.keySet());
+        List<GlobalPos> stale = new ArrayList<>();
+
+        for (GlobalPos gpos : entries) {
+            try {
+                ResourceKey<Level> dimKey = gpos.dimension();
+                if (dimKey == null) {
+                    stale.add(gpos);
+                    LOGGER.warn("[GTNA] GUI sweep: null dimension key -- pruning matrix at {} for owner {}",
+                            gpos.pos(), owner);
+                    continue;
+                }
+                ServerLevel level = server.getLevel(dimKey);
+                if (level == null) {
+                    // Dimension no longer registered — always stale.
+                    stale.add(gpos);
+                    LOGGER.warn("[GTNA] GUI sweep: dimension '{}' not found -- pruning matrix at {} for owner {}",
+                            dimKey.location(), gpos.pos(), owner);
+                    continue;
+                }
+                BlockPos bpos = gpos.pos();
+                if (bpos == null) {
+                    stale.add(gpos);
+                    LOGGER.warn("[GTNA] GUI sweep: null block position -- pruning matrix for owner {}", owner);
+                    continue;
+                }
+                // Force-load the chunk to ChunkStatus.FULL so the GTCEu machine
+                // lifecycle has definitely run before we query isFormed().
+                net.minecraft.world.level.chunk.LevelChunk chunk =
+                        level.getChunk(bpos.getX() >> 4, bpos.getZ() >> 4);
+                if (chunk == null) {
+                    // Chunk couldn't be loaded at all — treat as stale.
+                    stale.add(gpos);
+                    LOGGER.warn("[GTNA] GUI sweep: chunk null at {} in '{}' -- pruning for owner {}",
+                            bpos, dimKey.location(), owner);
+                    continue;
+                }
+                BlockEntity be = level.getBlockEntity(bpos);
+                boolean formed = (be instanceof IMachineBlockEntity machBe)
+                        && (machBe.getMetaMachine() instanceof WorkableMultiblockMachine ctrl)
+                        && ctrl.isFormed();
+                if (!formed) {
+                    stale.add(gpos);
+                    LOGGER.warn("[GTNA] GUI sweep: matrix at {} in '{}' is missing or unformed -- pruning for owner {}",
+                            bpos, dimKey.location(), owner);
+                }
+            } catch (Exception e) {
+                // Defensive: one corrupt entry must not abort the entire sweep.
+                stale.add(gpos);
+                LOGGER.warn("[GTNA] GUI sweep: exception validating matrix at {} in '{}' -- pruning for owner {}: {}",
+                        gpos.pos(), gpos.dimension().location(), owner, e.getMessage());
+            }
+        }
+
+        if (!stale.isEmpty()) {
+            for (GlobalPos sp : stale) {
+                final BlockPos physPos = sp.pos();
+                final String physDim  = sp.dimension().location().toString();
+                state.matrices.entrySet().removeIf(e ->
+                        e.getKey().pos().equals(physPos)
+                                && e.getKey().dimension().location().toString().equals(physDim));
+            }
+            recomputeAggregates(state);
+            setDirty();
+            LOGGER.info("[GTNA] GUI sweep: pruned {} stale matrix entries for owner {} ({} remain)",
+                    stale.size(), owner, state.matrices.size());
         }
     }
 
@@ -405,7 +585,12 @@ public class NexusEnergyNetwork extends SavedData {
      * Recompute all aggregate stats from the per-controller registry.
      * Called after every register/unregister and after NBT deserialisation.
      */
-    private void recomputeAggregates(NetworkState state) {
+    /**
+     * Recompute all aggregate stats from the per-controller registry.
+     * Called after every register/unregister, after every sweep, and explicitly
+     * by QNT to guarantee zeroed stats when all matrices are gone.
+     */
+    public void recomputeAggregates(NetworkState state) {
         if (state.matrices.isEmpty()) {
             state.totalCapacitors = 0;
             state.averageTier     = 0;
@@ -446,6 +631,41 @@ public class NexusEnergyNetwork extends SavedData {
         }
     }
 
+
+
+    /**
+     * Force-recompute all aggregate stats for a single owner, regardless of
+     * whether the matrices map is empty.  This is called by the Quantum
+     * Network Terminal GUI after every sweep to guarantee that flat fields
+     * (totalCapacitors, maxCapacity, efficiency, transferLimit, matrixFormed)
+     * are always consistent with the current matrices map.
+     *
+     * <p>Without this, a situation where matrices become empty but flat fields
+     * remain stale (from NBT load or a previous sweep that skipped recompute)
+     * would cause the QNT to display phantom stats even though no matrices
+     * are present.
+     */
+    public void forceRecomputeForOwner(UUID owner) {
+        if (owner == null) return;
+        NetworkState state = energyStorage.get(owner);
+        if (state == null) return;
+        recomputeAggregates(state);
+        if (!state.matrices.isEmpty() || state.totalCapacitors != 0 || !state.maxCapacity.isZero()
+                || state.matrixFormed || (!state.transferLimit.isZero() && !state.transferLimit.isNegative())) {
+            // If any stats are still non-zero after recompute (shouldn't happen
+            // when matrices is empty), force-zero them defensively.
+            if (state.matrices.isEmpty()) {
+                state.totalCapacitors = 0;
+                state.averageTier     = 0;
+                state.efficiency      = 0.0;
+                state.transferLimit   = Int128.ZERO();
+                state.maxCapacity     = Int128.ZERO();
+                state.matrixFormed    = false;
+                LOGGER.warn("[GTNA] Force-recomputed zero stats for owner {} — matrices were empty", owner);
+            }
+        }
+        setDirty();
+    }
 
     public long getTotalCapacitors(UUID owner) {
         return getState(owner).totalCapacitors;
@@ -496,10 +716,15 @@ public class NexusEnergyNetwork extends SavedData {
         // Fix 2: apply efficiency — only a fraction of the accepted EU is actually
         // stored; the rest is lost as heat. The dynamo still drains the full
         // accepted amount so the energy "leaves" the source correctly.
+        // Uses BigInteger arithmetic so values above Long.MAX_VALUE (e.g. 500 Z EU/t
+        // transfer limits) are scaled safely without silent truncation.
         Int128 stored = accepted.copy();
         if (state.efficiency > 0.0 && state.efficiency < 1.0) {
-            long storedLong = (long) (accepted.toLong() * state.efficiency);
-            stored = new Int128(Math.max(0L, storedLong));
+            java.math.BigDecimal acceptedBig = new java.math.BigDecimal(accepted.toBigInteger());
+            java.math.BigDecimal storedBig = acceptedBig.multiply(
+                    java.math.BigDecimal.valueOf(state.efficiency));
+            stored = Int128.fromBigInteger(
+                    storedBig.setScale(0, java.math.RoundingMode.FLOOR).toBigInteger());
         }
 
         state.energy.add(stored);

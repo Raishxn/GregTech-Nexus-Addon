@@ -14,6 +14,7 @@ import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.api.registry.GTNARegistry;
 import com.raishxn.gtna.common.data.*;
 import com.raishxn.gtna.data.recipe.*;
+import com.raishxn.gtna.data.recipe.GTNAWirelessCoverRecipes;
 
 import java.util.function.Consumer;
 
@@ -66,6 +67,7 @@ public class GTNAGTAddon implements IGTAddon {
         GTNAInfernalCokeRecipes.register(provider);
         GTNAHighPressureRecipes.register(provider);
         VoidminerRecipes.register(provider);
+        GTNAWirelessCoverRecipes.register(provider);
     }
 
     @Override

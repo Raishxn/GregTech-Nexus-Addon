@@ -71,6 +71,14 @@ public class GTNAItems {
     public static ItemEntry<RealityRipperSwordItem> REALITY_RIPPER_SWORD;
     public static ItemEntry<ComponentItem> INFINITE_STEAM_SINGLEBLOCK_COVER;
     public static ItemEntry<ComponentItem> INFINITE_ELECTRIC_SINGLEBLOCK_COVER;
+    // ── Wireless EU Cover item entries [tier][ampIndex: 0=1A 1=4A 2=16A 3=64A] ──
+    @SuppressWarnings("unchecked")
+    public static com.tterrag.registrate.util.entry.ItemEntry<ComponentItem>[][] WIRELESS_EU_RECEIVER_COVER_ITEMS =
+            new com.tterrag.registrate.util.entry.ItemEntry[com.gregtechceu.gtceu.api.GTValues.MAX + 1][4];
+    @SuppressWarnings("unchecked")
+    public static com.tterrag.registrate.util.entry.ItemEntry<ComponentItem>[][] WIRELESS_EU_TRANSMITTER_COVER_ITEMS =
+            new com.tterrag.registrate.util.entry.ItemEntry[com.gregtechceu.gtceu.api.GTValues.MAX + 1][4];
+
 
     public static void init() {
         STRUCTURE_DETECT = REGISTRATE
@@ -271,6 +279,10 @@ public class GTNAItems {
                 .model((ctx, provider) -> provider.generated(ctx,
                         GTNACORE.id("item/733")))
                 .register();
+
+        // Must be called after GTNACovers is initialised so the cover
+        // definitions referenced by CoverPlaceBehavior are already present.
+        registerWirelessEUCoverItems();
     }
 
     private static void registerIndustrialComponents() {
@@ -290,4 +302,48 @@ public class GTNAItems {
             }
         }
     }
+
+    private static void registerWirelessEUCoverItems() {
+        int[] tiers = com.gregtechceu.gtceu.api.GTValues.tiersBetween(
+                com.gregtechceu.gtceu.api.GTValues.LV,
+                com.gregtechceu.gtceu.api.GTCEuAPI.isHighTier()
+                        ? com.gregtechceu.gtceu.api.GTValues.MAX
+                        : com.gregtechceu.gtceu.api.GTValues.UV);
+
+        String[] ampTags    = { "1a", "4a", "16a", "64a" };
+
+        for (int tier : tiers) {
+            String tierLower = com.gregtechceu.gtceu.api.GTValues.VN[tier]
+                    .toLowerCase(java.util.Locale.ROOT);
+
+            for (int ai = 0; ai < ampTags.length; ai++) {
+                final int t   = tier;
+                final int idx = ai;
+                final String ampTag = ampTags[ai];
+
+                // ── Receiver item ─────────────────────────────────────────────
+                String rcvId  = "wireless_eu_receiver_cover_"    + ampTag + "_" + tierLower;
+                var rcvDef    = com.raishxn.gtna.common.data.GTNACovers.WIRELESS_EU_RECEIVER_COVERS[tier][ai];
+                var rcvEntry  = REGISTRATE.item(rcvId, ComponentItem::create)
+                        .properties(p -> p.stacksTo(64))
+                        .onRegister(attach(new com.gregtechceu.gtceu.common.item.CoverPlaceBehavior(rcvDef)))
+                        .model((ctx, provider) -> provider.generated(ctx,
+                                GTNACORE.id("item/wireless_eu_receiver_cover_" + ampTag + "_" + tierLower)))
+                        .register();
+                WIRELESS_EU_RECEIVER_COVER_ITEMS[tier][idx] = rcvEntry;
+
+                // ── Transmitter item ──────────────────────────────────────────
+                String txId   = "wireless_eu_transmitter_cover_" + ampTag + "_" + tierLower;
+                var txDef     = com.raishxn.gtna.common.data.GTNACovers.WIRELESS_EU_TRANSMITTER_COVERS[tier][ai];
+                var txEntry   = REGISTRATE.item(txId, ComponentItem::create)
+                        .properties(p -> p.stacksTo(64))
+                        .onRegister(attach(new com.gregtechceu.gtceu.common.item.CoverPlaceBehavior(txDef)))
+                        .model((ctx, provider) -> provider.generated(ctx,
+                                GTNACORE.id("item/wireless_eu_transmitter_cover_" + ampTag + "_" + tierLower)))
+                        .register();
+                WIRELESS_EU_TRANSMITTER_COVER_ITEMS[tier][idx] = txEntry;
+            }
+        }
+    }
+
 }

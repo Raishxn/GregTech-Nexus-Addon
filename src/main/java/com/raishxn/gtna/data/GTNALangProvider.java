@@ -261,15 +261,15 @@ public class GTNALangProvider extends LanguageProvider {
         // --- Wireless Energy/Dynamo Hatches ---
         add("gtna.machine.wireless_energy_hatch.tooltip", "Pulls energy wirelessly from the Nexus Network");
         add("gtna.machine.wireless_energy_hatch.tier_info", "Tier: %s | Amperage: %sA");
-        add("gtna.machine.wireless_energy_hatch.bound", "§a[GTNA] §fWireless Energy Hatch bound to your network.");
+        add("gtna.machine.wireless_energy_hatch.bound", "\u00a7a[GTNA] \u00a7fWireless Energy Hatch bound to your network.");
 
         add("gtna.machine.wireless_dynamo_hatch.tooltip", "Pushes energy wirelessly to the Nexus Network");
         add("gtna.machine.wireless_dynamo_hatch.tier_info", "Tier: %s | Amperage: %sA");
-        add("gtna.machine.wireless_dynamo_hatch.bound", "§a[GTNA] §fWireless Dynamo Hatch bound to your network.");
+        add("gtna.machine.wireless_dynamo_hatch.bound", "\u00a7a[GTNA] \u00a7fWireless Dynamo Hatch bound to your network.");
 
-        add("gtna.machine.wireless_hatch.not_bound", "§cNot bound to any network! Place to auto-bind.");
+        add("gtna.machine.wireless_hatch.not_bound", "\u00a7cNot bound to any network! Place to auto-bind.");
         add("gtna.machine.wireless_hatch.capacity", "Buffer Capacity: %s EU");
-        add("gtna.machine.wireless_hatch.auto_bind", "§8Place in world to auto-bind to your network");
+        add("gtna.machine.wireless_hatch.auto_bind", "\u00a78Place in world to auto-bind to your network");
 
         // Generate names for all Wireless Hatches (LV to MAX, 1A to MAX A) — colored tier names
         for (int tier = GTValues.LV; tier <= GTValues.MAX; tier++) {
@@ -277,7 +277,7 @@ public class GTNALangProvider extends LanguageProvider {
             ChatFormatting color = (tier < TextUtil.GTI_CORE$VC.length) ? TextUtil.GTI_CORE$VC[tier] :
                     ChatFormatting.WHITE;
             String colorCode = getColorCode(color);
-            String coloredTierName = colorCode + GTValues.VN[tier] + "§r";
+            String coloredTierName = colorCode + GTValues.VN[tier] + "\u00a7r";
             for (int ampExp = 0; ampExp <= 10; ampExp++) {
                 int amps = (int) Math.pow(4, ampExp);
                 String outName = "block.gtna.wireless_energy_hatch_" + amps + "a_" + tierName;
@@ -294,74 +294,74 @@ public class GTNALangProvider extends LanguageProvider {
 
         // Terminal
         add("item.gtna.quantum_network_terminal", "Quantum Network Terminal");
-        add("gtna.terminal.locate.message", "§a[GTNA Terminal] §fLocated at §eX: %s Y: %s Z: %s §7(%s)");
+        add("gtna.terminal.locate.message", "\u00a7a[GTNA Terminal] \u00a7fLocated at \u00a7eX: %s Y: %s Z: %s \u00a77(%s)");
 
         // Nexus Structure Terminal
         add("item.gtna.nexus_structure_terminal", "Nexus Structure Terminal");
-        add("gtna.terminal.nexus.title", "§l§5Nexus Terminal");
+        add("gtna.terminal.nexus.title", "\u00a7l\u00a75Nexus Terminal");
 
         // Toggle settings
         add("gtna.terminal.nexus.no_hatch", "No Hatch Mode");
         add("gtna.terminal.nexus.no_hatch.tooltip",
                 "When enabled, skips placing hatches\n(buses, energy I/O, etc.) during auto-build.");
-        add("gtna.terminal.nexus.no_hatch.hint", "§7Bypass hatch placement");
+        add("gtna.terminal.nexus.no_hatch.hint", "\u00a77Bypass hatch placement");
 
         add("gtna.terminal.nexus.replace_mode", "Replace Mode");
         add("gtna.terminal.nexus.replace_mode.tooltip",
                 "When enabled, replaces existing tier blocks\n(e.g. coils) with the configured selection.");
-        add("gtna.terminal.nexus.replace_mode.hint", "§7Swap existing blocks with configured tier");
+        add("gtna.terminal.nexus.replace_mode.hint", "\u00a77Swap existing blocks with configured tier");
 
         add("gtna.terminal.nexus.demolition_mode", "Demolition Mode");
         add("gtna.terminal.nexus.demolition_mode.tooltip",
                 "When enabled, removes blocks that don't\nbelong to the multiblock pattern.");
-        add("gtna.terminal.nexus.demolition_mode.hint", "§7Remove blocks outside the pattern");
+        add("gtna.terminal.nexus.demolition_mode.hint", "\u00a77Remove blocks outside the pattern");
 
         add("gtna.terminal.nexus.use_ae", "Use AE Items");
         add("gtna.terminal.nexus.use_ae.tooltip",
                 "When enabled, extracts required blocks from\nyour AE2 network via Wireless Terminal.");
-        add("gtna.terminal.nexus.use_ae.hint", "§7Pull materials from ME network");
+        add("gtna.terminal.nexus.use_ae.hint", "\u00a77Pull materials from ME network");
 
         add("gtna.terminal.nexus.mirror_build", "Mirror Build");
         add("gtna.terminal.nexus.mirror_build.tooltip",
                 "When enabled, builds the structure in\nmirrored orientation.");
-        add("gtna.terminal.nexus.mirror_build.hint", "§7Build mirrored structure");
+        add("gtna.terminal.nexus.mirror_build.hint", "\u00a77Build mirrored structure");
 
         // Numeric settings
         add("gtna.terminal.nexus.repetitions", "Repetitions");
         add("gtna.terminal.nexus.repetitions.tooltip",
                 "Number of structure layer repetitions (0-1000).\nUsed for expandable multiblocks like Distillation Tower.");
-        add("gtna.terminal.nexus.repetitions.hint", "§7Scroll wheel or type (0-1000)");
+        add("gtna.terminal.nexus.repetitions.hint", "\u00a77Scroll wheel or type (0-1000)");
 
         add("gtna.terminal.nexus.module_build", "Module Build");
         add("gtna.terminal.nexus.module_build.tooltip",
                 "Module build count (0-100).\nSets how many module layers to construct.");
-        add("gtna.terminal.nexus.module_build.hint", "§7Scroll wheel or type (0-100)");
+        add("gtna.terminal.nexus.module_build.hint", "\u00a77Scroll wheel or type (0-100)");
 
         // Nexus Structure Terminal Tooltips
-        add("item.gtna.nexus_structure_terminal.tooltip.use", "§dRight Click§7: Open Settings");
+        add("item.gtna.nexus_structure_terminal.tooltip.use", "\u00a7dRight Click\u00a77: Open Settings");
         add("item.gtna.nexus_structure_terminal.tooltip.shift_use",
-                "§dShift + Right Click§7 on Controller: Build Structure");
-        add("item.gtna.nexus_structure_terminal.tooltip.replace_mode_active", "§5⚠ Replace Mode Active");
+                "\u00a7dShift + Right Click\u00a77 on Controller: Build Structure");
+        add("item.gtna.nexus_structure_terminal.tooltip.replace_mode_active", "\u00a75⚠ Replace Mode Active");
         add("item.gtna.nexus_structure_terminal.tooltip.config", "Open block selection configuration");
 
         // Block Config tab — category labels with purple accent
         add("gtna.terminal.config.title", "Block Configuration");
-        add("gtna.terminal.config.coils", "§dCoils");
-        add("gtna.terminal.config.machine_casing", "§dMachine Casings");
-        add("gtna.terminal.config.muffler", "§dMuffler Hatches");
-        add("gtna.terminal.config.rotor_holder", "§dRotor Holders");
-        add("gtna.terminal.config.wireless_capacitor", "§dWireless Capacitors");
-        add("gtna.terminal.config.matrix_storage_module", "§dMatrix Storage Modules");
-        add("gtna.terminal.config.matrix_crafting_module", "§dMatrix Crafting Modules");
-        add("gtna.terminal.config.me_storage_access", "§dME Storage Access");
+        add("gtna.terminal.config.coils", "\u00a7dCoils");
+        add("gtna.terminal.config.machine_casing", "\u00a7dMachine Casings");
+        add("gtna.terminal.config.muffler", "\u00a7dMuffler Hatches");
+        add("gtna.terminal.config.rotor_holder", "\u00a7dRotor Holders");
+        add("gtna.terminal.config.wireless_capacitor", "\u00a7dWireless Capacitors");
+        add("gtna.terminal.config.matrix_storage_module", "\u00a7dMatrix Storage Modules");
+        add("gtna.terminal.config.matrix_crafting_module", "\u00a7dMatrix Crafting Modules");
+        add("gtna.terminal.config.me_storage_access", "\u00a7dME Storage Access");
 
         // AE2 Network linking
-        add("gtna.terminal.nexus.ae2.linked", "§a[GTNA] §fLinked to ME Wireless Access Point!");
-        add("gtna.terminal.nexus.ae2.tooltip.linked", "§a⚡ ME Network linked at [%s, %s, %s]");
-        add("gtna.terminal.nexus.ae2.tooltip.not_linked", "§c✖ ME Network: Not connected");
-        add("gtna.terminal.nexus.ae2.tooltip.how_to_link", "§8Right-click a Wireless Access Point to link");
-        add("gtna.terminal.nexus.ae2.tooltip.in_range", "§a✔ Wireless: In Range");
-        add("gtna.terminal.nexus.ae2.tooltip.out_of_range", "§c✖ Wireless: Out of Range");
+        add("gtna.terminal.nexus.ae2.linked", "\u00a7a[GTNA] \u00a7fLinked to ME Wireless Access Point!");
+        add("gtna.terminal.nexus.ae2.tooltip.linked", "\u00a7a⚡ ME Network linked at [%s, %s, %s]");
+        add("gtna.terminal.nexus.ae2.tooltip.not_linked", "\u00a7c✖ ME Network: Not connected");
+        add("gtna.terminal.nexus.ae2.tooltip.how_to_link", "\u00a78Right-click a Wireless Access Point to link");
+        add("gtna.terminal.nexus.ae2.tooltip.in_range", "\u00a7a✔ Wireless: In Range");
+        add("gtna.terminal.nexus.ae2.tooltip.out_of_range", "\u00a7c✖ Wireless: Out of Range");
 
         // Nexus Flux Matrix
         add("block.gtna.nexus_flux_matrix", "Nexus Flux Matrix");
@@ -376,7 +376,7 @@ public class GTNALangProvider extends LanguageProvider {
             ChatFormatting capColor = (capTier < TextUtil.GTI_CORE$VC.length) ? TextUtil.GTI_CORE$VC[capTier] :
                     ChatFormatting.WHITE;
             String capColorCode = getColorCode(capColor);
-            String coloredCapTierName = capColorCode + GTValues.VN[capTier] + "§r";
+            String coloredCapTierName = capColorCode + GTValues.VN[capTier] + "\u00a7r";
             add("block.gtna.nexus_capacitor_" + capacitorTierNames[ci], coloredCapTierName + " Nexus Capacitor");
         }
 
@@ -402,9 +402,9 @@ public class GTNALangProvider extends LanguageProvider {
         add("item.gtna.draconium_antimatter_fuel_rod", "Draconium Antimatter Fuel Rod");
         add("item.gtna.cosmic_neutronium_antimatter_fuel_rod", "Cosmic Neutronium Antimatter Fuel Rod");
         add("item.gtna.infinity_antimatter_fuel_rod", "Infinity Antimatter Fuel Rod");
-        add("item.gtna.structure_detect.tooltip.0", "§aRight click§7 block to select Multiblock Controller.");
-        add("item.gtna.structure_detect.tooltip.1", "§aShift Right click§7 to change mode.");
-        add("item.gtna.structure_detect.tooltip.2", "§aMode: §f%s");
+        add("item.gtna.structure_detect.tooltip.0", "\u00a7aRight click\u00a77 block to select Multiblock Controller.");
+        add("item.gtna.structure_detect.tooltip.1", "\u00a7aShift Right click\u00a77 to change mode.");
+        add("item.gtna.structure_detect.tooltip.2", "\u00a7aMode: \u00a7f%s");
         add("item.gtna.structure_detect.error.0", "Required at %s:\n");
         add("item.gtna.structure_detect.error.1", "Required at %s:");
         add("item.gtna.structure_detect.error.2", "At %s %s");
@@ -854,7 +854,7 @@ public class GTNALangProvider extends LanguageProvider {
             String tierLower = tierName.toLowerCase(Locale.ROOT);
             ChatFormatting color = (i < TextUtil.GTI_CORE$VC.length) ? TextUtil.GTI_CORE$VC[i] : ChatFormatting.WHITE;
             String colorCode = getColorCode(color);
-            String coloredTierName = colorCode + tierName + "§r";
+            String coloredTierName = colorCode + tierName + "\u00a7r";
             if (i < GTNAMachines2.THREAD_HATCHES.length && GTNAMachines2.THREAD_HATCHES[i] != null) {
                 add("block.gtna.thread_hatch_" + tierLower, coloredTierName + " Thread Hatch");
             }
@@ -884,30 +884,30 @@ public class GTNALangProvider extends LanguageProvider {
     }
 
     private String getColorCode(ChatFormatting formatting) {
-        if (formatting == null) return "§f";
+        if (formatting == null) return "\u00a7f";
         return switch (formatting) {
-            case BLACK -> "§0";
-            case DARK_BLUE -> "§1";
-            case DARK_GREEN -> "§2";
-            case DARK_AQUA -> "§3";
-            case DARK_RED -> "§4";
-            case DARK_PURPLE -> "§5";
-            case GOLD -> "§6";
-            case GRAY -> "§7";
-            case DARK_GRAY -> "§8";
-            case BLUE -> "§9";
-            case GREEN -> "§a";
-            case AQUA -> "§b";
-            case RED -> "§c";
-            case LIGHT_PURPLE -> "§d";
-            case YELLOW -> "§e";
-            case WHITE -> "§f";
-            case OBFUSCATED -> "§k";
-            case BOLD -> "§l";
-            case STRIKETHROUGH -> "§m";
-            case UNDERLINE -> "§n";
-            case ITALIC -> "§o";
-            case RESET -> "§r";
+            case BLACK -> "\u00a70";
+            case DARK_BLUE -> "\u00a71";
+            case DARK_GREEN -> "\u00a72";
+            case DARK_AQUA -> "\u00a73";
+            case DARK_RED -> "\u00a74";
+            case DARK_PURPLE -> "\u00a75";
+            case GOLD -> "\u00a76";
+            case GRAY -> "\u00a77";
+            case DARK_GRAY -> "\u00a78";
+            case BLUE -> "\u00a79";
+            case GREEN -> "\u00a7a";
+            case AQUA -> "\u00a7b";
+            case RED -> "\u00a7c";
+            case LIGHT_PURPLE -> "\u00a7d";
+            case YELLOW -> "\u00a7e";
+            case WHITE -> "\u00a7f";
+            case OBFUSCATED -> "\u00a7k";
+            case BOLD -> "\u00a7l";
+            case STRIKETHROUGH -> "\u00a7m";
+            case UNDERLINE -> "\u00a7n";
+            case ITALIC -> "\u00a7o";
+            case RESET -> "\u00a7r";
         };
     }
 }

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gtna:item/wireless_eu_receiver_cover_16a_ev"
+  }
+}

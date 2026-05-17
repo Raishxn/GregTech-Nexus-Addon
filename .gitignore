@@ -44,3 +44,7 @@ GTCEu-Terminals-ref/
 GTMThings-gto-ref/
 gtocore_terminal.txt
 compile.log
+
+# claude trees
+
+.claude/worktrees/

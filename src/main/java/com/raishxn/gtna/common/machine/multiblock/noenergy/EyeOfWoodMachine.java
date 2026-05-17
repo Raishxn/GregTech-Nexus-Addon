@@ -122,7 +122,16 @@ public class EyeOfWoodMachine extends WorkableMultiblockMachine implements IDisp
         if (!isFormed() || !isWorkingEnabled()) {
             return null;
         }
-        if (getLevel() == null || !getLevel().dimension().equals(Level.OVERWORLD)) {
+        // Compatibility: allows "minecraft:overworld" and the "deepspace:deep_space"
+        // dimension from the Sky of Grind / #deepspace modpack.  Any other dimension
+        // returns null so the Eye of Wood cannot be exploited outside those worlds.
+        if (getLevel() == null) {
+            successChance = 0;
+            return null;
+        }
+        var dimLoc = getLevel().dimension().location();
+        if (!dimLoc.equals(Level.OVERWORLD.location()) &&
+            !(dimLoc.getNamespace().equals("deepspace") && dimLoc.getPath().equals("deep_space"))) {
             successChance = 0;
             return null;
         }
