@@ -794,6 +794,8 @@
   "gtna.machine.pattern_buffer.back": "Back to patterns",
   "gtna.machine.pattern_buffer.break_persist": "Stored patterns and slot data are preserved on block drop",
   "gtna.machine.pattern_buffer.cached_recipe_short": "Recipe Cache: %s",
+  "gtna.machine.pattern_buffer.catalyst_fluid_field": "Catalyst Fluids (not consumed)",
+  "gtna.machine.pattern_buffer.catalyst_item_field": "Catalyst Items (not consumed)",
   "gtna.machine.pattern_buffer.circuit_field": "Circuit",
   "gtna.machine.pattern_buffer.clear_cache": "Clear Cache",
   "gtna.machine.pattern_buffer.clear_machine_recipe_cache": "Clear Machine Recipe Cache",

@@ -243,6 +243,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.pattern_buffer.clear_pattern_recipe_cache", "Clear Recipe in Pattern");
         add("gtna.machine.pattern_buffer.clear_pattern_recipe_cache.tooltip",
                 "Clear the recipe recorded in this pattern without changing its inputs or outputs");
+        add("gtna.machine.pattern_buffer.catalyst_item_field", "Catalyst Items (not consumed)");
+        add("gtna.machine.pattern_buffer.catalyst_fluid_field", "Catalyst Fluids (not consumed)");
         add("gtna.machine.pattern_buffer.terminal_visibility", "Terminal: ");
         add("gtna.machine.pattern_buffer.terminal_hidden", "Hidden from Pattern Access Terminal");
         add("gtna.machine.pattern_buffer.terminal_visible", "Visible in Pattern Access Terminal");

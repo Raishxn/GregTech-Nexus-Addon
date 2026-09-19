@@ -648,6 +648,16 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         addFluidGhostRow(configPanel, innerX, y);
         y += 24;
         configPanel.addWidget(new LabelWidget(innerX, y,
+                () -> Component.translatable("gtna.machine.pattern_buffer.catalyst_item_field").getString()));
+        y += 10;
+        addCatalystItemGhostRow(configPanel, innerX, y);
+        y += 24;
+        configPanel.addWidget(new LabelWidget(innerX, y,
+                () -> Component.translatable("gtna.machine.pattern_buffer.catalyst_fluid_field").getString()));
+        y += 10;
+        addCatalystFluidGhostRow(configPanel, innerX, y);
+        y += 24;
+        configPanel.addWidget(new LabelWidget(innerX, y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.circuit_field").getString()));
         y += 11;
         configPanel.addWidget(new IntInputWidget(innerX, y, 50, 14,
@@ -734,6 +744,29 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                     .setBackgroundTexture(new GuiTextureGroup(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY)));
         }
         panel.addWidget(container);
+    }
+
+    private void addCatalystItemGhostRow(WidgetGroup panel, int x, int y) {
+        for (int slot = 0; slot < 9; slot++) {
+            int logicalSlot = slot;
+            panel.addWidget(
+                    new PhantomSlotWidget(new SelectedConfigCatalystItemTransfer(), logicalSlot, x + slot * 18, y)
+                            .setClearSlotOnRightClick(true)
+                            .setChangeListener(this::onSelectedConfigWidgetChanged)
+                            .setBackgroundTexture(
+                                    new GuiTextureGroup(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY)));
+        }
+    }
+
+    private void addCatalystFluidGhostRow(WidgetGroup panel, int x, int y) {
+        for (int slot = 0; slot < 9; slot++) {
+            CatalystFluidStorageProxy storage = new CatalystFluidStorageProxy(slot);
+            panel.addWidget(new PhantomTankWidget(storage, x + slot * 18, y, 18, 18)
+                    .setAllowClickFilled(true)
+                    .setAllowClickDrained(true)
+                    .setBackground(GuiTextures.FLUID_SLOT)
+                    .setChangeListener(this::onSelectedConfigWidgetChanged));
+        }
     }
 
     private void addFluidGhostGrid(WidgetGroup panel, int x, int y) {
@@ -1891,6 +1924,98 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             return !(stack.getItem() instanceof ProcessingPatternItem);
+        }
+    }
+
+    /**
+     * Same indirection as {@link SelectedConfigItemTransfer} but bound to the per-slot catalyst
+     * item inventory (GTLCore's catalyst UI edits {@code catalystItems} directly; here we route
+     * through the selected slot config so one row serves whichever slot is open).
+     */
+    private final class SelectedConfigCatalystItemTransfer extends ItemStackTransfer {
+
+        private SelectedConfigCatalystItemTransfer() {
+            super(9);
+        }
+
+        @Override
+        public int getSlots() {
+            GTNAPatternBufferSlotConfig config = getSelectedConfig();
+            return config == null ? 9 : config.getCatalystItems().getSlots();
+        }
+
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            GTNAPatternBufferSlotConfig config = getSelectedConfig();
+            return config == null ? ItemStack.EMPTY : config.getCatalystItems().getStackInSlot(slot);
+        }
+
+        @Override
+        public void setStackInSlot(int slot, ItemStack stack) {
+            GTNAPatternBufferSlotConfig config = getSelectedConfig();
+            if (config != null) {
+                config.getCatalystItems().setStackInSlot(slot, stack);
+            }
+        }
+
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate, boolean notifyChanges) {
+            GTNAPatternBufferSlotConfig config = getSelectedConfig();
+            if (config == null) {
+                return stack;
+            }
+            return config.getCatalystItems().insertItem(slot, stack, simulate, notifyChanges);
+        }
+
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate, boolean notifyChanges) {
+            GTNAPatternBufferSlotConfig config = getSelectedConfig();
+            if (config == null) {
+                return ItemStack.EMPTY;
+            }
+            return config.getCatalystItems().extractItem(slot, amount, simulate, notifyChanges);
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            GTNAPatternBufferSlotConfig config = getSelectedConfig();
+            return config == null ? 64 : config.getCatalystItems().getSlotLimit(slot);
+        }
+
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return !(stack.getItem() instanceof ProcessingPatternItem);
+        }
+    }
+
+    private final class CatalystFluidStorageProxy extends FluidStorage {
+
+        private final int slot;
+
+        private CatalystFluidStorageProxy(int slot) {
+            super(Integer.MAX_VALUE);
+            this.slot = slot;
+        }
+
+        @Override
+        public com.lowdragmc.lowdraglib.side.fluid.FluidStack getFluid() {
+            GTNAPatternBufferSlotConfig config = getSelectedConfig();
+            return config == null ? com.lowdragmc.lowdraglib.side.fluid.FluidStack.empty() :
+                    config.getCatalystFluids()[slot].getFluid();
+        }
+
+        @Override
+        public void setFluid(com.lowdragmc.lowdraglib.side.fluid.FluidStack fluid) {
+            GTNAPatternBufferSlotConfig config = getSelectedConfig();
+            if (config != null) {
+                config.getCatalystFluids()[slot].setFluid(fluid);
+            }
+        }
+
+        @Override
+        public long getCapacity() {
+            GTNAPatternBufferSlotConfig config = getSelectedConfig();
+            return config == null ? Integer.MAX_VALUE : config.getCatalystFluids()[slot].getCapacity();
         }
     }
 
