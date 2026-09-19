@@ -20,33 +20,51 @@ public final class Int128Test {
     public static void main(String[] args) {
         addMatchesBigInteger();
         subtractMatchesBigInteger();
+        multiplyMatchesBigInteger();
+        divideMatchesBigInteger();
         shiftLeftMatchesBigInteger();
         negationAndSign();
         edgeValues();
-        reportKnownArithmeticBugs();
         System.out.println("[Int128Test] all cases passed");
     }
 
     /**
-     * KNOWN BUGS (documented, not fixed here — measured against a BigInteger oracle):
-     * <ul>
-     * <li>{@link Int128#multiply(Int128)}: wrong in ~7% of random 128-bit inputs
-     * (7298/100000) — carry-propagation error across the 32-bit limbs.</li>
-     * <li>{@link Int128#divideNew(long)}: wrong for large negative dividends (high != 0),
-     * e.g. a value ~-5.2e37 / 4.3e18 returns -3 instead of ~-1.2e19. Small operands and
-     * positive dividends are correct.</li>
-     * </ul>
-     * add / subtract / shiftLeft / negate are verified correct (0/100000 mismatches each).
-     * Both bugs feed the Nexus Flux Matrix energy math; repair is tracked in the audit.
+     * Regression guard for the previously-broken multiply(): the old 32-bit-limb schoolbook
+     * implementation dropped carries (~7% wrong). Now routed through the verified
+     * toBigInteger/fromBigInteger path and held to 0 mismatches against BigInteger.
      */
-    private static void reportKnownArithmeticBugs() {
-        require(new Int128(0, 3).multiply(new Int128(0, 3)).longValue() == 9, "small multiply 3*3 == 9");
-        require(new Int128(0, 100).divideNew(7).longValue() == 14, "small divide 100/7 == 14");
-        // NOTE: divideNew on a negative dividend does not even produce a correct two's-complement
-        // high word (e.g. -10/2 yields high=0,low=+2^63-5, which longValue() saturates to MIN_VALUE),
-        // so there is no reliable negative-divide assertion to make until the bug is fixed.
-        System.out.println("[Int128Test] NOTE: multiply() and divideNew() have known bugs (see audit); " +
-                "only verified-safe paths are asserted.");
+    private static void multiplyMatchesBigInteger() {
+        Random rng = new Random(0xC0FFEE);
+        for (int i = 0; i < 5000; i++) {
+            Int128 a = random(rng), b = random(rng);
+            BigInteger expected = wrap128(bi(a).multiply(bi(b)));
+            Int128 actual = a.copy().multiply(b);
+            require(expected.equals(bi(actual)), "multiply " + bi(a) + " * " + bi(b) + " = " + bi(actual));
+        }
+        require(new Int128(0, 3).multiply(new Int128(0, 3)).longValue() == 9, "3*3 == 9");
+        require(bi(Int128.MAX_VALUE.copy().multiply(Int128.MAX_VALUE)).equals(BigInteger.ONE),
+                "MAX_VALUE^2 wraps to 1");
+    }
+
+    /**
+     * Regression guard for the previously-broken divideNew()/divide(long): the old limb path was
+     * wrong for large or negative dividends. Now routed through the verified bit-by-bit divide.
+     */
+    private static void divideMatchesBigInteger() {
+        Random rng = new Random(0xD1E);
+        for (int i = 0; i < 5000; i++) {
+            Int128 a = random(rng);
+            long d = rng.nextLong();
+            if (d == 0) d = 1;
+            BigInteger expected = bi(a).divide(BigInteger.valueOf(d));
+            Int128 actual = a.copy().divideNew(d);
+            require(expected.equals(bi(actual)), "divideNew " + bi(a) + " / " + d + " = " + bi(actual));
+        }
+        // Note: a negative value is new Int128(-10) (high=-1), NOT new Int128(0,-10) — the
+        // latter is the large *positive* 2^64-10 because low is an unsigned limb.
+        require(new Int128(-10).divideNew(2).longValue() == -5, "-10 / 2 == -5");
+        require(new Int128(0, 100).divideNew(7).longValue() == 14, "100 / 7 == 14");
+        require(new Int128(0, 10).divideNew(-2).longValue() == -5, "10 / -2 == -5");
     }
 
     private static void addMatchesBigInteger() {

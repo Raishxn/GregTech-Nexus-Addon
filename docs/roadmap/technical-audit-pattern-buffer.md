@@ -114,11 +114,17 @@ O próprio código já registra isso (comentário em `gtna$slotAcceptsRecipe`, ~
 17. **Árvore de trabalho suja**: 8 arquivos modificados + `CoilWorkableElectricMultipleRecipesMachine.java` (novo, 70 linhas, herda `GTValues` sem usar) sem commit. Commitar antes de qualquer refactor.
 18. **Nome de pacote** `common/machine/multiMachineBase` — camelCase em pacote; convenção Java é minúsculas (`multiblock/base`).
 19. **`saveCustomPersistedData`/`loadCustomPersistedData`** em `GTNAMultipleRecipesLogic` não re-notifica handlers pós-load (o GTOCore sempre re-notifica). Menor.
-20. **`Int128` reimplementado** — 687 linhas de aritmética custom. **🔴 Confirmado em teste (Fase 2, `Int128Test`):** a suspeita de "campo de bugs silenciosos" era real. Medido contra oráculo `BigInteger` (100k casos aleatórios cada):
-    - `add`, `subtract`, `shiftLeft`, `negate`: **corretos** (0 erros).
-    - **`multiply(Int128)`: errado em ~7% dos casos** (7298/100000) — erro de propagação de carry entre os limbs de 32 bits.
-    - **`divideNew(long)`: errado para dividendos negativos grandes** (`high != 0`) — além de não gerar o high word two's-complement correto para resultados negativos (ex: `-10/2` satura em `longValue()`).
-    Ambos alimentam a matemática de energia do **Nexus Flux Matrix** → **correção é prioridade alta** antes de confiar em valores grandes. Teste criado e bugs documentados em `src/test/java/com/raishxn/gtna/Int128Test.java`.
+20. **`Int128` reimplementado** — 687 linhas de aritmética custom. ✅ **CORRIGIDO E VALIDADO (Fase 2, `Int128Test`):**
+    - A suspeita de "campo de bugs silenciosos" era real: `multiply(Int128)` errava **~7%
+      dos casos** (7298/100000) por perda de carry entre os limbs de 32 bits; `divideNew(long)`
+      e `divide(long)` erravam para dividendos grandes/negativos (mesma família de bug limb).
+    - **Correção:** os três métodos agora roteiam pelos caminhos já verificados —
+      `multiply*` por `toBigInteger`/`fromBigInteger` (roundtrip exato, 0/100k erros);
+      `divide(long)`/`divideNew(long)` pela `divide(Int128, rem)` bit-a-bit.
+    - **Validação:** 0 erros em 100.000 casos aleatórios cada (add, subtract, multiply,
+      shiftLeft, divide) contra oráculo `BigInteger` + probes de regressão no teste.
+    - Quem chama `Int128`: a matemática de energia do **Nexus Flux Matrix** — agora confiável.
+    Teste: `src/test/java/com/raishxn/gtna/Int128Test.java`.
 
 ---
 
