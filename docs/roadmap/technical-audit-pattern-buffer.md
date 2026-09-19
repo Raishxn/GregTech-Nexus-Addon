@@ -271,24 +271,42 @@ public class GTNAGametest {
 
 ## ✅ Checklist Priorizado de Execução
 
-### Fase 0 — Higiene (~30 min, risco zero)
+### Fase 0 — Higiene ✅ **CONCLUÍDA** (commit `d8e1494`)
 
-- [ ] `rm -rf net/ site/` + `.gitignore` (`site/`, `net/`, `build/`)
-- [ ] Deletar `EXAMPLE_REGISTRATE` de `GTNACORE.java`
-- [ ] Corrigir descrição do `mods.toml` + `ad_astra`/`sgjourney` → `mandatory = false` (com guards `ModList.isLoaded`)
-- [ ] Commit do WIP pendente (8 arquivos + `CoilWorkableElectricMultipleRecipesMachine`)
+- [x] `git rm -r net/ site/` + `.gitignore` (`site/`, `net/`) — `build/` já estava ignorado
+- [x] Deletado `EXAMPLE_REGISTRATE` de `GTNACORE.java` (confirmado: zero usos)
+- [x] Descrição do `mods.toml` substituída; `ad_astra`/`sgjourney` → `mandatory = false`.
+      **Nota:** guards `ModList.isLoaded` foram **desnecessários** — nenhuma classe GTNA
+      importa `ad_astra`/`sgjourney`/`botarium`/`resourceful*` ainda (essas deps foram
+      adicionadas no WIP para o conteúdo espacial futuro). O mod carrega standalone.
+- [x] Commit do WIP pendente (snapshot `af94676`, 17 arquivos)
+- [x] **Bônus:** `spotlessApply` executado no repositório inteiro (spotless estava
+      configurado mas nunca enforced — o CI não o rodava; ver achado #16)
 
-### Fase 1 — Feature pattern buffer multi-modo (o objetivo)
+### Fase 1 — Feature pattern buffer multi-modo ✅ **CONCLUÍDA** (commit `d8e1494`)
 
-- [ ] Criar `ModeIdMatcher` (sem hardcode saw/cutter)
-- [ ] Wire-up: `gtna$applyPatternBufferMode` chamado em `startRecipeInternal` + `updateTickSubscription` (fórmula GTM)
-- [ ] Remover NBT do pattern item; consolidar em `slotConfigs`
-- [ ] Unificar pipeline de modificadores (ordem oficial: match → modify → beforeWorking → IO IN)
-- [ ] Remover dead code restante (ou completar o que falta)
+- [x] `ModeIdMatcher` criado (`api/machine/feature/ModeIdMatcher.java`) — matching estrito
+      (exato + sufixo de path), **sem** `contains("saw")` e sem equivalência saw↔cutter.
+      Validado por 17 casos de lógica (incl. garantias anti-hardcode).
+- [x] Wire-up: `gtna$applyPatternBufferMode` agora é chamado em `tryStartRecipe`
+      (após o dry-run `matchContents`, antes de `beforeWorking`). As duas implementações
+      (`WorkableElectricMultipleRecipesMachine`, `SteamMultiMachineBase`) usam a **fórmula
+      exata da GTM** (setter + `updateTickSubscription()` condicional; `@Persisted` cuida
+      de NBT/sync). Dead code eliminado — agora há 1 call site real.
+- [x] NBT do pattern item removido: `persistPatternRecipeMetadata` deletado;
+      `loadPatternRecipeMetadata` virou migração que **remove** tags legadas de itens
+      antigos em vez de carregá-las. `slotConfigs` é a única fonte de verdade.
+- [x] Pipeline de modificadores: confirmado **um único caminho de execução**
+      (`tryStartRecipe`: parallel → overclock → hatches → match → mode-mirror →
+      beforeWorking → IO IN). O `getRecipeModifier` separado serve só ao preview/EMI,
+      não é um segundo pipeline de execução — fusão completa fica para a Fase 3.
 
-### Fase 2 — Testes
+### Fase 2 — Testes (próxima sessão)
 
-- [ ] JUnit 5 + primeiros 6 testes unitários
+- [ ] JUnit 5 + `src/test` (classpath MC no ModDevGradle precisa de configuração —
+      os primeiros alvos sem-bootstrap são `Int128Test`, `NumberUtilsTest`, etc.)
+- [ ] `ModeIdMatcherTest` em JUnit real (a lógica já está validada por harness temporário;
+      falta o harness JUnit com `GTRecipeType` mockável ou bootstrap leve)
 - [ ] CI com `spotlessCheck test`
 - [ ] (Opcional) 1 gametest de steam simples
 
@@ -298,6 +316,7 @@ public class GTNAGametest {
 - [ ] Split `GTNAMEPatternBufferPartMachine` (UI/resolver/mode)
 - [ ] Split GTNAMachines por domínio
 - [ ] Internacionalizar strings de UI
+- [ ] Fundir `getRecipeModifier` (preview) com o caminho de execução, se fizer sentido
 
 ---
 
@@ -307,7 +326,7 @@ Esta seção registra as confirmações feitas com o **source oficial** (`/home/
 
 1. **Busca de receita usa só o tipo ativo** — `RecipeLogic.searchRecipe()` (linha 334) chama `machine.getRecipeType().searchRecipe(...)`; `getRecipeType()` retorna `recipeTypes[activeRecipeType]` (linha 304). Não existe concatenação de todos os tipos no GTM oficial (isso é invenção do fork do GTO). Buscar por tipo com `searchRecipe` por índice é o caminho correto.
 
-2. **O GTM oficial JÁ tem a UI de troca de modo** — `IFancyUIMachine.java:104` anexa `new MachineModeFancyConfigurator(rLMachine)` a **todo** `IRecipeLogicMachine`. O tab "Machine Mode" já existe na UI do multibloco hoje; o que faltava era só o **automatismo** (atualizar `activeRecipeType` quando o pattern entrega receita de outro tipo).
+2. **O GTM oficial JÁ tem a UI de troca de modo** — `IFancyUIMachine.attachSideTabs` (~linha 103) anexa `new MachineModeFancyConfigurator(rLMachine)` a todo `IRecipeLogicMachine` **com `getRecipeTypes().length > 1`** (refinamento da 2ª passada: máquinas de tipo único não recebem o tab). O tab "Machine Mode" já existe na UI dos multiblocos multi-tipo hoje; o que faltava era só o **automatismo** (atualizar `activeRecipeType` quando o pattern entrega receita de outro tipo) — implementado na Fase 1.
 
 3. **Fórmula exata do "set mode"** — `MachineModeFancyConfigurator.setActiveRecipeTypeAndUpdateTickSubs` (linhas 66-72):
 
