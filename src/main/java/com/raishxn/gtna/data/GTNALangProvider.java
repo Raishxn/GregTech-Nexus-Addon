@@ -234,6 +234,15 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.pattern_buffer.mode_button.current", "Selected Mode: %s");
         add("gtna.machine.pattern_buffer.mode_button.derived", "Detected Mode: %s");
         add("gtna.machine.pattern_buffer.no_circuit", "No configured circuit");
+        add("gtna.machine.pattern_buffer.previous_page", "Previous pattern page");
+        add("gtna.machine.pattern_buffer.next_page", "Next pattern page");
+        add("gtna.machine.pattern_buffer.back", "Back to patterns");
+        add("gtna.machine.pattern_buffer.clear_machine_recipe_cache", "Clear Machine Recipe Cache");
+        add("gtna.machine.pattern_buffer.clear_machine_recipe_cache.tooltip",
+                "Clear all recipe lookup caches in this buffer without changing encoded patterns");
+        add("gtna.machine.pattern_buffer.clear_pattern_recipe_cache", "Clear Recipe in Pattern");
+        add("gtna.machine.pattern_buffer.clear_pattern_recipe_cache.tooltip",
+                "Clear the recipe recorded in this pattern without changing its inputs or outputs");
         add("gtna.machine.pattern_buffer.clear_specialization", "Clear Spec");
         add("gtna.machine.pattern_buffer.clear_cache", "Clear Cache");
         add("gtna.machine.pattern_buffer.refund_slot", "Refund");
@@ -428,7 +437,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("message.gtnacore.structure_formed", "Structure formed");
         add("block.gtna.large_steam_crusher", "Large Steam Crusher");
         add("item.gtna.precision_steam_component", "Precision Steam Component");
-        add("gtna.tooltip.large_steam_crusher.speed", "Speed: 900% faster than singleblock");
+        add("gtna.tooltip.large_steam_crusher.speed", "Speed: 100% faster than a standard Macerator");
         add("gtna.tooltip.large_steam_crusher.steam", "Steam Consumption: 80% of original");
         add("gtna.tooltip.large_steam_crusher.parallel", "Process up to 128 items at once");
         add("gtna.registry.add", "Added by GregTech Nexus Addon");
@@ -911,4 +920,3 @@ public class GTNALangProvider extends LanguageProvider {
         };
     }
 }
-

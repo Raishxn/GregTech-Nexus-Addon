@@ -60,9 +60,14 @@ public class GTNARecipeUtils {
         public final Map<RecipeCapability<?>, Object2IntMap<?>> chanceCaches;
 
         public ActiveRecipe(GTRecipe recipe, int maxProgress, Map<RecipeCapability<?>, Object2IntMap<?>> chanceCaches) {
+            this(recipe, 0, maxProgress, chanceCaches);
+        }
+
+        public ActiveRecipe(GTRecipe recipe, int progress, int maxProgress,
+                            Map<RecipeCapability<?>, Object2IntMap<?>> chanceCaches) {
             this.recipe = recipe;
-            this.progress = 0;
-            this.maxProgress = maxProgress;
+            this.progress = Math.max(0, progress);
+            this.maxProgress = Math.max(1, maxProgress);
             this.chanceCaches = chanceCaches;
         }
 

@@ -148,6 +148,9 @@ Acompanhe o progresso de desenvolvimento do GregTech Nexus Addon em tempo real.
 - [ ] CI/CD pipeline
 - [ ] Community playtest program
 
+!!! tip "Auditoria Técnica"
+    A auditoria estrutural completa do mod (pacotes, registries, mixins, testes, CI) + o plano de execução detalhado do **pattern buffer multi-modo** estão em [`technical-audit-pattern-buffer.md`](technical-audit-pattern-buffer.md). O escopo mecânico do port GTOCore/GTLAdditions segue em [`multiblock-port-manifest.md`](multiblock-port-manifest.md).
+
 ---
 
 ## 📊 Estatísticas do Projeto

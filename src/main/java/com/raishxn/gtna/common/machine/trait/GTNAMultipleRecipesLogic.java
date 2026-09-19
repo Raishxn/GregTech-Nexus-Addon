@@ -26,6 +26,8 @@ import com.gregtechceu.gtceu.common.data.GTRecipeModifiers;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
@@ -43,6 +45,7 @@ import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMulti
 import com.raishxn.gtna.common.machine.multiblock.steam.AdjustableSteamParallelMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
 import com.raishxn.gtna.utils.GTNARecipeUtils;
+import com.raishxn.gtna.utils.GTNAUtil;
 import com.raishxn.gtna.utils.ThreadMultiplierStrategy;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,23 +93,35 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
 
     @Override
     public void serverTick() {
-        // ... (lógica do serverTick mantida igual) ...
         MetaMachine metaMachine = (MetaMachine) this.machine;
         if (metaMachine.getLevel() == null || metaMachine.getLevel().isClientSide) return;
-        boolean visualChanged = false;
-        Iterator<GTNARecipeUtils.ActiveRecipe> iterator = activeRecipes.iterator();
-        while (iterator.hasNext()) {
-            GTNARecipeUtils.ActiveRecipe active = iterator.next();
-            if (active.update()) {
-                completeRecipe(active);
-                iterator.remove();
-                visualChanged = true;
+        boolean changed = false;
+        boolean progressed = false;
+        boolean waiting = false;
+        boolean isMachineEnabled = !(machine instanceof WorkableMultiblockMachine workable) ||
+                workable.isWorkingEnabled();
+
+        if (isMachineEnabled) {
+            Iterator<GTNARecipeUtils.ActiveRecipe> iterator = activeRecipes.iterator();
+            while (iterator.hasNext()) {
+                GTNARecipeUtils.ActiveRecipe active = iterator.next();
+                TickResult tickResult = tickRecipe(active);
+                if (tickResult == TickResult.COMPLETE) {
+                    completeRecipe(active);
+                    iterator.remove();
+                    changed = true;
+                    progressed = true;
+                } else if (tickResult == TickResult.ABORTED) {
+                    iterator.remove();
+                    changed = true;
+                } else if (tickResult == TickResult.PROGRESSED) {
+                    progressed = true;
+                } else {
+                    waiting = true;
+                }
             }
         }
-        boolean isMachineEnabled = true;
-        if (machine instanceof WorkableMultiblockMachine workable) {
-            isMachineEnabled = workable.isWorkingEnabled();
-        }
+
         if (isMachineEnabled) {
             int maxThreads = getMaxThreads();
             int currentParallel = getMaxParallel();
@@ -119,11 +134,71 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
                     if (activeRecipes.size() >= maxThreads) break;
                     if (limitUniqueRecipe && isRecipeAlreadyActive(validRecipe)) continue;
                     if (tryStartRecipe(validRecipe)) {
-                        visualChanged = true;
+                        changed = true;
+                        progressed = true;
                     }
                 }
             }
         }
+
+        updateAggregateState(progressed, waiting);
+        if (changed || (!activeRecipes.isEmpty() && metaMachine.getOffsetTimer() % 20 == 0)) {
+            metaMachine.markDirty();
+        }
+    }
+
+    private TickResult tickRecipe(GTNARecipeUtils.ActiveRecipe active) {
+        if (active == null || active.recipe == null) return TickResult.ABORTED;
+
+        ActionResult conditions = RecipeHelper.checkConditions(active.recipe, this);
+        if (!conditions.isSuccess()) return TickResult.WAITING;
+
+        if (active.recipe.hasTick()) {
+            ActionResult match = RecipeHelper.matchTickRecipe((IRecipeCapabilityHolder) machine, active.recipe);
+            if (!match.isSuccess()) return TickResult.WAITING;
+
+            ActionResult input = RecipeHelper.handleTickRecipeIO((IRecipeCapabilityHolder) machine,
+                    active.recipe, IO.IN, active.chanceCaches);
+            if (!input.isSuccess()) return TickResult.WAITING;
+
+            ActionResult output = RecipeHelper.handleTickRecipeIO((IRecipeCapabilityHolder) machine,
+                    active.recipe, IO.OUT, active.chanceCaches);
+            if (!output.isSuccess()) return TickResult.WAITING;
+        }
+
+        if (!machine.onWorking()) return TickResult.ABORTED;
+        return active.update() ? TickResult.COMPLETE : TickResult.PROGRESSED;
+    }
+
+    private void updateAggregateState(boolean progressed, boolean waiting) {
+        if (activeRecipes.isEmpty()) {
+            progress = 0;
+            duration = 0;
+            isActive = false;
+            setStatus(Status.IDLE);
+            lastRecipe = null;
+            return;
+        }
+
+        GTNARecipeUtils.ActiveRecipe representative = activeRecipes.get(0);
+        progress = representative.progress;
+        duration = representative.maxProgress;
+        lastRecipe = representative.recipe;
+        isActive = progressed;
+        if (progressed) {
+            setStatus(Status.WORKING);
+        } else if (waiting) {
+            setWaiting(Component.translatable("gtceu.recipe_logic.insufficient_input"));
+        } else {
+            setStatus(Status.SUSPEND);
+        }
+    }
+
+    private enum TickResult {
+        PROGRESSED,
+        WAITING,
+        COMPLETE,
+        ABORTED
     }
 
     private List<GTRecipe> collectPossibleRecipes(int searchLimit) {
@@ -184,12 +259,20 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
                 // Lookup direto por ID via RecipeManager → O(1)
                 var optional = recipeManager.byKey(recipeRL);
                 if (optional.isPresent() && optional.get() instanceof GTRecipe gtRecipe) {
-                    if (!containsRecipe(target, gtRecipe)) {
+                    if (isAllowedRecipeType(gtRecipe, recipeTypes) && buffer.gtna$slotAcceptsRecipe(i, gtRecipe) &&
+                            !containsRecipe(target, gtRecipe)) {
                         target.add(gtRecipe);
                     }
                 }
             }
         }
+    }
+
+    private static boolean isAllowedRecipeType(GTRecipe recipe, GTRecipeType[] recipeTypes) {
+        for (GTRecipeType recipeType : recipeTypes) {
+            if (recipeType == recipe.getType()) return true;
+        }
+        return false;
     }
 
     private static boolean containsRecipe(List<GTRecipe> possibleRecipes, GTRecipe candidate) {
@@ -262,19 +345,20 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
 
         // --- FIM DA LÓGICA MANUAL ---
 
-        applyPatternBufferMode(recipeToRun);
-
         if (!RecipeHelper.matchContents((IRecipeCapabilityHolder) machine, recipeToRun).isSuccess()) {
             return false;
         }
 
+        if (!machine.beforeWorking(recipeToRun)) return false;
+
+        var threadChanceCaches = makeChanceCaches();
         ActionResult result = RecipeHelper.handleRecipeIO((IRecipeCapabilityHolder) machine, recipeToRun, IO.IN,
-                this.getChanceCaches());
+                threadChanceCaches);
         if (result.isSuccess()) {
             GTNARecipeUtils.ActiveRecipe active = new GTNARecipeUtils.ActiveRecipe(
                     recipeToRun,
                     recipeToRun.duration,
-                    this.getChanceCaches());
+                    threadChanceCaches);
             this.activeRecipes.add(active);
             notifyPatternBufferProviders(recipeToRun);
             return true;
@@ -283,57 +367,6 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
     }
 
     // ... (Métodos isRecipeAlreadyActive, completeRecipe, getRecipeDisplayInfo, save/load mantidos iguais) ...
-    private void applyPatternBufferMode(GTRecipe recipe) {
-        String requestedMode = null;
-        for (IPatternBufferModeProvider provider : getPatternBufferProviders()) {
-            requestedMode = provider.gtna$getPreferredModeForRecipe(recipe);
-            if (requestedMode != null && !requestedMode.isBlank()) {
-                break;
-            }
-        }
-        if ((requestedMode == null || requestedMode.isBlank()) && machine instanceof IPatternBufferModeHost host) {
-            requestedMode = host.gtna$resolvePatternBufferMode(recipe);
-        }
-        if (requestedMode != null && !requestedMode.isBlank()) {
-            applyRequestedMode(requestedMode, recipe);
-        }
-    }
-
-    private void applyRequestedMode(String modeId, GTRecipe recipe) {
-        if (modeId == null || modeId.isBlank()) {
-            return;
-        }
-        if (machine instanceof IPatternBufferModeHost host && host.gtna$applyPatternBufferMode(modeId, recipe)) {
-            return;
-        }
-        var recipeTypes = machine.getRecipeTypes();
-        if (recipeTypes == null || recipeTypes.length <= 1) {
-            return;
-        }
-        for (int i = 0; i < recipeTypes.length; i++) {
-            var recipeType = recipeTypes[i];
-            if (recipeType == null || recipeType.registryName == null) {
-                continue;
-            }
-            String requested = modeId.trim().toLowerCase(Locale.ROOT);
-            String fullId = recipeType.registryName.toString().toLowerCase(Locale.ROOT);
-            String path = recipeType.registryName.getPath().toLowerCase(Locale.ROOT);
-            String requestedNormalized = requested.replace('_', '/');
-            String pathNormalized = path.replace('_', '/');
-            if (requested.equals(fullId) || requested.equals(path) ||
-                    requestedNormalized.equals(fullId) || requestedNormalized.equals(pathNormalized) ||
-                    path.endsWith("_" + requested) || path.endsWith("/" + requested) ||
-                    pathNormalized.endsWith("/" + requestedNormalized) ||
-                    (("saw".equals(requested) || "cutting_saw".equals(requested)) &&
-                            (path.contains("cutter") || path.contains("saw")))) {
-                if (machine.getActiveRecipeType() != i) {
-                    machine.setActiveRecipeType(i);
-                }
-                return;
-            }
-        }
-    }
-
     private void notifyPatternBufferProviders(GTRecipe recipe) {
         for (IPatternBufferModeProvider provider : getPatternBufferProviders()) {
             provider.gtna$onRecipeStarted(recipe);
@@ -364,6 +397,7 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
 
     private void completeRecipe(GTNARecipeUtils.ActiveRecipe active) {
         if (active != null && active.recipe != null) {
+            machine.afterWorking();
             RecipeHelper.handleRecipeIO((IRecipeCapabilityHolder) machine, active.recipe, IO.OUT, active.chanceCaches);
         }
     }
@@ -431,12 +465,16 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
     @Override
     public void saveCustomPersistedData(@NotNull CompoundTag tag, boolean forDrop) {
         super.saveCustomPersistedData(tag, forDrop);
-        tag.putInt("ActiveRecipeCount", activeRecipes.size());
-        for (int i = 0; i < activeRecipes.size(); i++) {
-            GTNARecipeUtils.ActiveRecipe recipe = activeRecipes.get(i);
-            tag.putInt("RProg" + i, recipe.progress);
-            tag.putInt("RMax" + i, recipe.maxProgress);
+        ListTag recipesTag = new ListTag();
+        for (GTNARecipeUtils.ActiveRecipe active : activeRecipes) {
+            if (active == null || active.recipe == null || active.recipe.id == null) continue;
+            CompoundTag activeTag = new CompoundTag();
+            activeTag.put("Recipe", GTNAUtil.serializeNBT(active.recipe));
+            activeTag.putInt("Progress", active.progress);
+            activeTag.putInt("MaxProgress", active.maxProgress);
+            recipesTag.add(activeTag);
         }
+        tag.put("ActiveRecipes", recipesTag);
     }
 
     public List<GTNARecipeUtils.ActiveRecipe> getActiveRecipes() {
@@ -447,5 +485,16 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
     public void loadCustomPersistedData(@NotNull CompoundTag tag) {
         super.loadCustomPersistedData(tag);
         activeRecipes.clear();
+        ListTag recipesTag = tag.getList("ActiveRecipes", Tag.TAG_COMPOUND);
+        for (int i = 0; i < recipesTag.size(); i++) {
+            CompoundTag activeTag = recipesTag.getCompound(i);
+            GTRecipe recipe = GTNAUtil.deserializeNBT(activeTag.get("Recipe"));
+            if (recipe == null || !isAllowedRecipeType(recipe, machine.getRecipeTypes())) continue;
+            int maxProgress = Math.max(1, activeTag.getInt("MaxProgress"));
+            int savedProgress = Math.min(activeTag.getInt("Progress"), maxProgress - 1);
+            activeRecipes.add(new GTNARecipeUtils.ActiveRecipe(recipe, savedProgress, maxProgress,
+                    makeChanceCaches()));
+        }
+        updateAggregateState(false, !activeRecipes.isEmpty());
     }
 }

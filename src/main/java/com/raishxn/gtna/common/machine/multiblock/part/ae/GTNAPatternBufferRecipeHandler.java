@@ -30,9 +30,82 @@ public final class GTNAPatternBufferRecipeHandler {
     public GTNAPatternBufferRecipeHandler(GTNAMEPatternBufferPartMachine buffer,
                                           GTNAMEPatternBufferPartMachine.InternalSlot[] slots,
                                           GTNAPatternBufferSlotConfig[] configs) {
-        this.slotHandlers = new ArrayList<>(slots.length);
+        this.slotHandlers = new ArrayList<>(slots.length + 1);
         for (int i = 0; i < slots.length; i++) {
             slotHandlers.add(new SlotRHL(buffer, slots[i], configs[i], i));
+        }
+        slotHandlers.add(new NetworkOutputRHL(buffer));
+    }
+
+    /** A shared AE2 output handler; it is intentionally not distinct per pattern slot. */
+    private static final class NetworkOutputRHL extends RecipeHandlerList {
+
+        private NetworkOutputRHL(GTNAMEPatternBufferPartMachine buffer) {
+            super(IO.OUT);
+            addHandlers(new NetworkItemOutputHandler(buffer), new NetworkFluidOutputHandler(buffer));
+        }
+    }
+
+    @Getter
+    private static final class NetworkItemOutputHandler extends NotifiableRecipeHandlerTrait<Ingredient> {
+
+        private final GTNAMEPatternBufferPartMachine buffer;
+        private final int priority = IFilteredHandler.HIGH;
+        private final int size = Integer.MAX_VALUE;
+        private final RecipeCapability<Ingredient> capability = ItemRecipeCapability.CAP;
+        private final IO handlerIO = IO.OUT;
+        private final boolean isDistinct = false;
+
+        private NetworkItemOutputHandler(GTNAMEPatternBufferPartMachine buffer) {
+            super(buffer);
+            this.buffer = buffer;
+        }
+
+        @Override
+        public List<Ingredient> handleRecipeInner(IO io, GTRecipe recipe, List<Ingredient> left, boolean simulate) {
+            return io == IO.OUT ? buffer.gtna$handleNetworkItemOutput(recipe, left, simulate) : left;
+        }
+
+        @Override
+        public @NotNull List<Object> getContents() {
+            return List.of();
+        }
+
+        @Override
+        public double getTotalContentAmount() {
+            return 0;
+        }
+    }
+
+    @Getter
+    private static final class NetworkFluidOutputHandler extends NotifiableRecipeHandlerTrait<FluidIngredient> {
+
+        private final GTNAMEPatternBufferPartMachine buffer;
+        private final int priority = IFilteredHandler.HIGH;
+        private final int size = Integer.MAX_VALUE;
+        private final RecipeCapability<FluidIngredient> capability = FluidRecipeCapability.CAP;
+        private final IO handlerIO = IO.OUT;
+        private final boolean isDistinct = false;
+
+        private NetworkFluidOutputHandler(GTNAMEPatternBufferPartMachine buffer) {
+            super(buffer);
+            this.buffer = buffer;
+        }
+
+        @Override
+        public List<FluidIngredient> handleRecipeInner(IO io, GTRecipe recipe, List<FluidIngredient> left,
+                                                        boolean simulate) {
+            return io == IO.OUT ? buffer.gtna$handleNetworkFluidOutput(recipe, left, simulate) : left;
+        }
+
+        @Override
+        public @NotNull List<Object> getContents() {
+            return List.of();
+        }
+
+        @Override
+        public double getTotalContentAmount() {
+            return 0;
         }
     }
 
@@ -63,7 +136,9 @@ public final class GTNAPatternBufferRecipeHandler {
     @Getter
     private static final class SlotItemRecipeHandler extends NotifiableRecipeHandlerTrait<Ingredient> {
 
+        private final GTNAMEPatternBufferPartMachine buffer;
         private final GTNAMEPatternBufferPartMachine.InternalSlot slot;
+        private final int index;
         private final int priority;
         private final int size = 81;
         private final RecipeCapability<Ingredient> capability = ItemRecipeCapability.CAP;
@@ -74,14 +149,16 @@ public final class GTNAPatternBufferRecipeHandler {
                                       GTNAMEPatternBufferPartMachine.InternalSlot slot,
                                       int index) {
             super(buffer);
+            this.buffer = buffer;
             this.slot = slot;
+            this.index = index;
             this.priority = IFilteredHandler.HIGH + index + 1;
             slot.setOnContentsChanged(this::notifyListeners);
         }
 
         @Override
         public List<Ingredient> handleRecipeInner(IO io, GTRecipe recipe, List<Ingredient> left, boolean simulate) {
-            if (io != IO.IN || slot.isItemEmpty()) return left;
+            if (io != IO.IN || !buffer.gtna$slotAcceptsRecipe(index, recipe) || slot.isItemEmpty()) return left;
             return slot.handleItemInternal(left, simulate);
         }
 
@@ -99,7 +176,9 @@ public final class GTNAPatternBufferRecipeHandler {
     @Getter
     private static final class SlotFluidRecipeHandler extends NotifiableRecipeHandlerTrait<FluidIngredient> {
 
+        private final GTNAMEPatternBufferPartMachine buffer;
         private final GTNAMEPatternBufferPartMachine.InternalSlot slot;
+        private final int index;
         private final int priority;
         private final int size = 81;
         private final RecipeCapability<FluidIngredient> capability = FluidRecipeCapability.CAP;
@@ -110,7 +189,9 @@ public final class GTNAPatternBufferRecipeHandler {
                                        GTNAMEPatternBufferPartMachine.InternalSlot slot,
                                        int index) {
             super(buffer);
+            this.buffer = buffer;
             this.slot = slot;
+            this.index = index;
             this.priority = IFilteredHandler.HIGH + index + 1;
             slot.setOnContentsChanged(this::notifyListeners);
         }
@@ -118,7 +199,7 @@ public final class GTNAPatternBufferRecipeHandler {
         @Override
         public List<FluidIngredient> handleRecipeInner(IO io, GTRecipe recipe, List<FluidIngredient> left,
                                                        boolean simulate) {
-            if (io != IO.IN || slot.isFluidEmpty()) return left;
+            if (io != IO.IN || !buffer.gtna$slotAcceptsRecipe(index, recipe) || slot.isFluidEmpty()) return left;
             return slot.handleFluidInternal(left, simulate);
         }
 
@@ -136,7 +217,9 @@ public final class GTNAPatternBufferRecipeHandler {
     @Getter
     private static final class SlotSpecialItemHandler extends NotifiableRecipeHandlerTrait<Ingredient> {
 
+        private final GTNAMEPatternBufferPartMachine buffer;
         private final GTNAPatternBufferSlotConfig config;
+        private final int index;
         private final int priority;
         private final int size = 10;
         private final RecipeCapability<Ingredient> capability = ItemRecipeCapability.CAP;
@@ -147,14 +230,16 @@ public final class GTNAPatternBufferRecipeHandler {
                                        GTNAPatternBufferSlotConfig config,
                                        int index) {
             super(buffer);
+            this.buffer = buffer;
             this.config = config;
+            this.index = index;
             this.priority = IFilteredHandler.HIGH + 1000 + index;
             config.setOnContentsChanged(this::notifyListeners);
         }
 
         @Override
         public List<Ingredient> handleRecipeInner(IO io, GTRecipe recipe, List<Ingredient> left, boolean simulate) {
-            if (io != IO.IN || left == null || left.isEmpty()) {
+            if (io != IO.IN || !buffer.gtna$slotAcceptsRecipe(index, recipe) || left == null || left.isEmpty()) {
                 return left;
             }
 
@@ -232,7 +317,9 @@ public final class GTNAPatternBufferRecipeHandler {
     @Getter
     private static final class SlotSpecialFluidHandler extends NotifiableRecipeHandlerTrait<FluidIngredient> {
 
+        private final GTNAMEPatternBufferPartMachine buffer;
         private final GTNAPatternBufferSlotConfig config;
+        private final int index;
         private final int priority;
         private final int size = 9;
         private final RecipeCapability<FluidIngredient> capability = FluidRecipeCapability.CAP;
@@ -243,7 +330,9 @@ public final class GTNAPatternBufferRecipeHandler {
                                         GTNAPatternBufferSlotConfig config,
                                         int index) {
             super(buffer);
+            this.buffer = buffer;
             this.config = config;
+            this.index = index;
             this.priority = IFilteredHandler.HIGH + 2000 + index;
             config.setOnContentsChanged(this::notifyListeners);
         }
@@ -252,7 +341,8 @@ public final class GTNAPatternBufferRecipeHandler {
         public List<FluidIngredient> handleRecipeInner(IO io, GTRecipe recipe, List<FluidIngredient> left,
                                                        boolean simulate) {
             List<FluidStack> configuredFluids = config.getVirtualFluidStacks();
-            if (io != IO.IN || left == null || left.isEmpty() || configuredFluids.isEmpty()) {
+            if (io != IO.IN || !buffer.gtna$slotAcceptsRecipe(index, recipe) || left == null || left.isEmpty() ||
+                    configuredFluids.isEmpty()) {
                 return left;
             }
 

@@ -204,3 +204,5 @@ nav:
     - development/contributing.md
   - 📋 Roadmap:
     - roadmap/index.md
+    - roadmap/multiblock-port-manifest.md
+    - roadmap/technical-audit-pattern-buffer.md

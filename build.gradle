@@ -80,6 +80,10 @@ repositories {
     maven {
         url = "https://thedarkcolour.github.io/KotlinForForge/"
     }
+    maven {
+        name = "Team Resourceful"
+        url = "https://maven.teamresourceful.com/repository/maven-public/"
+    }
 
 }
 
@@ -190,6 +194,15 @@ dependencies {
     modCompileOnly("dev.latvian.mods:kubejs-forge:2001.6.5-build.16")
 
     modImplementation("curse.maven:gtceu-terminals-1423461:7787678")
+
+    // Space multiblocks ported from GTLAdditions.
+    runtimeOnly("com.teamresourceful:yabn:1.0.3")
+    runtimeOnly("com.teamresourceful:bytecodecs:1.0.2")
+    modImplementation("com.teamresourceful.resourcefullib:resourcefullib-forge-${minecraft_version}:${resourcefullib_version}")
+    modImplementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-forge-${minecraft_version}:${resourcefulconfig_version}")
+    modImplementation("earth.terrarium.botarium:botarium-forge-${minecraft_version}:${botarium_version}")
+    modImplementation("earth.terrarium.adastra:ad_astra-forge-${minecraft_version}:${ad_astra_version}") { transitive = false }
+    modImplementation("curse.maven:stargate-journey-689083:${stargate_journey_file}") { transitive = false }
 
     modCompileOnly("curse.maven:modern-ui-352491:6956345")
     if (!isDataRun) {

@@ -63,6 +63,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 
 import appeng.api.crafting.IPatternDetails;
+import appeng.api.config.Actionable;
 import appeng.api.crafting.PatternDetailsHelper;
 import appeng.api.implementations.blockentities.PatternContainerGroup;
 import appeng.api.inventories.InternalInventory;
@@ -84,6 +85,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
+import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenCustomHashMap;
@@ -115,8 +117,9 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     private static final String INTERNAL_SLOTS_TAG = "gtnaPatternInternalSlots";
     private static final String PATTERN_RECIPE_ID_TAG = "gtnaPatternRecipeId";
     private static final String PATTERN_MODE_ID_TAG = "gtnaPatternModeId";
-    private static final int PANEL_WIDTH = 108;
-    private static final int PANEL_HEIGHT = 250;
+    private static final int PANEL_WIDTH = 176;
+    private static final int PANEL_HEIGHT = 220;
+    private static final int PATTERNS_PER_PAGE = 54;
 
     @Getter
     private final int maxPatternCount;
@@ -172,6 +175,10 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
 
     private boolean needPatternSync;
     private int selectedSlot = -1;
+    @Persisted
+    @DescSynced
+    private int currentPage;
+    private WidgetGroup patternPagePanel;
     private WidgetGroup configPanel;
     private ButtonWidget modeSelectorButton;
     @DescSynced
@@ -225,6 +232,84 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     @Override
     public List<RecipeHandlerList> getRecipeHandlers() {
         return internalRecipeHandler.getSlotHandlers();
+    }
+
+    /**
+     * Lets a Pattern Buffer act as an AE2 output hatch as well as an input bus.
+     * Outputs are inserted directly into the connected grid, so a separate ME
+     * Output Bus is not required for recipes started from this buffer.
+     */
+    public List<Ingredient> gtna$handleNetworkItemOutput(GTRecipe recipe, List<Ingredient> left, boolean simulate) {
+        if (left == null || left.isEmpty() || getMainNode().getGrid() == null) {
+            return left;
+        }
+        MEStorage storage = getMainNode().getGrid().getStorageService().getInventory();
+        for (var iterator = left.listIterator(); iterator.hasNext();) {
+            Ingredient ingredient = iterator.next();
+            if (ingredient == null || ingredient.isEmpty()) {
+                iterator.remove();
+                continue;
+            }
+            ItemStack[] candidates = ingredient.getItems();
+            if (candidates.length == 0 || candidates[0].isEmpty()) {
+                iterator.remove();
+                continue;
+            }
+            int amount = ingredient instanceof SizedIngredient sized ? sized.getAmount() : candidates[0].getCount();
+            AEItemKey key = AEItemKey.of(candidates[0]);
+            if (key == null || amount <= 0) {
+                continue;
+            }
+            long inserted = simulate
+                    ? storage.insert(key, amount, Actionable.SIMULATE, actionSource)
+                    : StorageHelper.poweredInsert(getMainNode().getGrid().getEnergyService(), storage, key, amount,
+                            actionSource);
+            int remaining = amount - GTMath.saturatedCast(inserted);
+            if (remaining <= 0) {
+                iterator.remove();
+            } else if (ingredient instanceof SizedIngredient sized) {
+                sized.setAmount(remaining);
+            } else {
+                candidates[0].setCount(remaining);
+            }
+        }
+        return left.isEmpty() ? null : left;
+    }
+
+    public List<FluidIngredient> gtna$handleNetworkFluidOutput(GTRecipe recipe, List<FluidIngredient> left,
+                                                                 boolean simulate) {
+        if (left == null || left.isEmpty() || getMainNode().getGrid() == null) {
+            return left;
+        }
+        MEStorage storage = getMainNode().getGrid().getStorageService().getInventory();
+        for (var iterator = left.iterator(); iterator.hasNext();) {
+            FluidIngredient ingredient = iterator.next();
+            if (ingredient == null || ingredient.isEmpty()) {
+                iterator.remove();
+                continue;
+            }
+            FluidStack[] candidates = ingredient.getStacks();
+            if (candidates.length == 0 || candidates[0].isEmpty()) {
+                iterator.remove();
+                continue;
+            }
+            int amount = candidates[0].getAmount();
+            AEFluidKey key = AEFluidKey.of(candidates[0]);
+            if (key == null || amount <= 0) {
+                continue;
+            }
+            long inserted = simulate
+                    ? storage.insert(key, amount, Actionable.SIMULATE, actionSource)
+                    : StorageHelper.poweredInsert(getMainNode().getGrid().getEnergyService(), storage, key, amount,
+                            actionSource);
+            int remaining = amount - GTMath.saturatedCast(inserted);
+            if (remaining <= 0) {
+                iterator.remove();
+            } else {
+                ingredient.setAmount(remaining);
+            }
+        }
+        return left.isEmpty() ? null : left;
     }
 
     @Override
@@ -336,6 +421,26 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         }
     }
 
+    /**
+     * Keeps a pattern-buffer slot bound to the recipe type selected for that slot.
+     * The controller's active recipe type is global, so it cannot be used as the
+     * routing state when several GTNA recipe threads run at once.
+     */
+    public boolean gtna$slotAcceptsRecipe(int slot, GTRecipe recipe) {
+        if (slot < 0 || slot >= slotConfigs.length || recipe == null) {
+            return false;
+        }
+        GTNAPatternBufferSlotConfig config = slotConfigs[slot];
+        if (!config.getPreferredModeId().isBlank()) {
+            return matchesPreferredMode(config, recipe);
+        }
+        // Auto is deliberately not constrained by the previous recipe.  Processing
+        // patterns already identify their machine recipe type, so retaining the
+        // derived type here made a slot permanently reject a different valid mode
+        // after its first craft.
+        return true;
+    }
+
     @Override
     public @Nullable String gtna$getPreferredModeForRecipe(GTRecipe recipe) {
         SlotMatch match = findMatchingSlot(recipe);
@@ -346,7 +451,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         if (!config.getPreferredModeId().isBlank()) {
             return config.getPreferredModeId();
         }
-        return config.getDerivedModeId().isBlank() ? null : config.getDerivedModeId();
+        return resolveDerivedMode(recipe);
     }
 
     @Override
@@ -423,17 +528,28 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
 
     @Override
     public Widget createUIWidget() {
-        int rows = Math.max(1, (int) Math.ceil(maxPatternCount / 9.0));
-        int columns = Math.min(9, maxPatternCount);
-        int gridWidth = 18 * columns + 16;
-        int gridHeight = 18 * rows + 16;
-        WidgetGroup group = new WidgetGroup(0, 0, gridWidth, gridHeight + 18);
-        int index = 0;
+        WidgetGroup group = new WidgetGroup(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+        group.setBackground(GuiTextures.BACKGROUND);
+        patternPagePanel = new WidgetGroup(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+        group.addWidget(patternPagePanel);
+
+        patternPagePanel.addWidget(new LabelWidget(5, 4,
+                () -> this.isOnline ? "gtceu.gui.me_network.online" : "gtceu.gui.me_network.offline"));
+        patternPagePanel.addWidget(new AETextInputButtonWidget(96, 4, 74, 10)
+                .setText(customName)
+                .setOnConfirm(this::setCustomName)
+                .setButtonTooltips(Component.translatable("gui.gtceu.rename.desc")));
+
+        int pageCount = getPageCount();
+        currentPage = Math.max(0, Math.min(currentPage, pageCount - 1));
+        int firstSlot = currentPage * PATTERNS_PER_PAGE;
+        int rows = Math.min(6, Math.max(1, (int) Math.ceil((maxPatternCount - firstSlot) / 9.0)));
+        int index = firstSlot;
         for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < 9 && index < maxPatternCount; x++) {
+            for (int x = 0; x < 9 && index < maxPatternCount && index < firstSlot + PATTERNS_PER_PAGE; x++) {
                 int finalIndex = index;
                 PatternSlotWidget slotWidget = new PatternSlotWidget(patternInventory, index++, 8 + x * 18,
-                        14 + y * 18, finalIndex);
+                        22 + y * 18, finalIndex);
                 slotWidget.setOccupiedTexture(GuiTextures.SLOT);
                 slotWidget.setItemHook(stack -> {
                     if (!stack.isEmpty() && stack.getItem() instanceof EncodedPatternItem encodedPatternItem) {
@@ -448,52 +564,74 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                 slotWidget.setBackground(GuiTextures.SLOT, GuiTextures.PATTERN_OVERLAY);
                 slotWidget.setOnAddedTooltips((widget, tooltips) -> tooltips
                         .add(Component.translatable("gtna.machine.pattern_buffer.middle_click_hint")));
-                group.addWidget(slotWidget);
+                patternPagePanel.addWidget(slotWidget);
             }
         }
-        group.addWidget(new LabelWidget(
-                8,
-                2,
-                () -> this.isOnline ? "gtceu.gui.me_network.online" : "gtceu.gui.me_network.offline"));
-        group.addWidget(new AETextInputButtonWidget(Math.max(8, gridWidth - 70), 2, 70, 10)
-                .setText(customName)
-                .setOnConfirm(this::setCustomName)
-                .setButtonTooltips(Component.translatable("gui.gtceu.rename.desc")));
-        addConfigPanel(group, gridWidth);
+        int navigationY = 22 + Math.min(6, Math.max(1, (int) Math.ceil((maxPatternCount - firstSlot) / 9.0))) * 18 + 4;
+        patternPagePanel.addWidget(new ButtonWidget(5, navigationY, 28, 13,
+                new GuiTextureGroup(GuiTextures.BUTTON, new TextTexture("<<")), clickData -> {
+                    if (!clickData.isRemote && currentPage > 0) currentPage--;
+                }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.previous_page")));
+        patternPagePanel.addWidget(new LabelWidget(67, navigationY + 2,
+                () -> (currentPage + 1) + " / " + getPageCount()));
+        patternPagePanel.addWidget(new ButtonWidget(143, navigationY, 28, 13,
+                new GuiTextureGroup(GuiTextures.BUTTON, new TextTexture(">>")), clickData -> {
+                    if (!clickData.isRemote && currentPage + 1 < getPageCount()) currentPage++;
+                }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.next_page")));
+        patternPagePanel.addWidget(new LabelWidget(5, navigationY + 18,
+                () -> Component.translatable("gtna.machine.pattern_buffer.middle_click_hint").getString()));
+        addConfigPanel(group);
         return group;
     }
 
-    private void addConfigPanel(WidgetGroup group, int gridWidth) {
-        int panelX = gridWidth + 4;
-        int innerX = 8;
-        int y = 8;
+    private int getPageCount() {
+        return Math.max(1, (int) Math.ceil(maxPatternCount / (double) PATTERNS_PER_PAGE));
+    }
 
-        configPanel = new WidgetGroup(panelX, 4, PANEL_WIDTH, PANEL_HEIGHT);
+    private void addConfigPanel(WidgetGroup group) {
+        int innerX = 8;
+        int y = 6;
+
+        configPanel = new WidgetGroup(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
         configPanel.setBackground(GuiTextures.BACKGROUND);
         configPanel.setVisible(false);
         configPanel.setActive(false);
         group.addWidget(configPanel);
 
-        configPanel.addWidget(new LabelWidget(innerX, y,
+        configPanel.addWidget(new ButtonWidget(innerX, y, 18, 13,
+                new GuiTextureGroup(GuiTextures.BUTTON, new TextTexture("<")), clickData -> {
+                    if (!clickData.isRemote) selectSlot(-1);
+                }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.back")));
+        configPanel.addWidget(new LabelWidget(innerX + 24, y + 2,
                 () -> selectedSlot >= 0 ?
                         Component.translatable("gtna.machine.pattern_buffer.selected_slot", selectedSlot + 1)
                                 .getString() :
                         Component.translatable("gtna.machine.pattern_buffer.no_slot_selected").getString()));
-        y += 14;
+        y += 17;
         configPanel.addWidget(new LabelWidget(innerX, y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.cached_recipe_short",
-                        compactDisplay(getSelectedConfig() == null ? "" : getSelectedConfig().getCachedRecipeId(), 10))
+                        compactDisplay(getSelectedConfig() == null ? "" : getSelectedConfig().getCachedRecipeId(), 27))
                         .getString()));
-        y += 12;
-        configPanel.addWidget(new LabelWidget(innerX, y,
-                () -> Component.translatable("gtna.machine.pattern_buffer.derived_mode_short",
-                        compactDisplay(getSelectedConfig() == null ? "" : getSelectedConfig().getDerivedModeId(), 12))
-                        .getString()));
-
         y += 14;
         configPanel.addWidget(new LabelWidget(innerX, y,
-                () -> Component.translatable("gtna.machine.pattern_buffer.circuit_field").getString()));
+                () -> Component.translatable("gtna.machine.pattern_buffer.derived_mode_short",
+                        compactDisplay(getSelectedConfig() == null ? "" : getSelectedConfig().getDerivedModeId(), 27))
+                        .getString()));
+
+        y += 16;
+        configPanel.addWidget(new LabelWidget(innerX, y,
+                () -> Component.translatable("gtna.machine.pattern_buffer.item_field").getString()));
         y += 10;
+        addItemGhostRow(configPanel, innerX, y);
+        y += 24;
+        configPanel.addWidget(new LabelWidget(innerX, y,
+                () -> Component.translatable("gtna.machine.pattern_buffer.fluid_field").getString()));
+        y += 10;
+        addFluidGhostRow(configPanel, innerX, y);
+        y += 24;
+        configPanel.addWidget(new LabelWidget(innerX, y,
+                () -> Component.translatable("gtna.machine.pattern_buffer.circuit_field").getString()));
+        y += 11;
         configPanel.addWidget(new IntInputWidget(innerX, y, 50, 14,
                 () -> getSelectedConfig() == null ? -1 : getSelectedConfig().getCircuitConfig(),
                 value -> {
@@ -512,17 +650,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                         tooltips.add(Component.translatable("gtna.machine.pattern_buffer.no_circuit"));
                     }
                 }));
-        y += 20;
-        configPanel.addWidget(new LabelWidget(innerX, y,
-                () -> Component.translatable("gtna.machine.pattern_buffer.item_field").getString()));
-        y += 10;
-        addItemGhostGrid(configPanel, innerX, y);
-        y += 68;
-        configPanel.addWidget(new LabelWidget(innerX, y,
-                () -> Component.translatable("gtna.machine.pattern_buffer.fluid_field").getString()));
-        y += 10;
-        addFluidGhostGrid(configPanel, innerX, y);
-        y += 68;
+        y += 19;
         configPanel.addWidget(new LabelWidget(innerX, y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.mode_field").getString()));
         y += 10;
@@ -541,17 +669,38 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         modeSelectorButton.setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.mode_button.tooltip"));
         configPanel.addWidget(modeSelectorButton);
 
-        int buttonY = y + 24;
-        configPanel.addWidget(makeIconButton(innerX, buttonY, GuiTextures.BUTTON_CLEAR_GRID,
-                "gtna.machine.pattern_buffer.clear_specialization",
+        int buttonY = y + 23;
+        configPanel.addWidget(makeTextButton(innerX, buttonY, 76,
+                "gtna.machine.pattern_buffer.clear_machine_recipe_cache",
                 clickData -> {
-                    if (!clickData.isRemote) clearSelectedSpecialization();
+                    if (!clickData.isRemote) clearMachineRecipeCaches();
                 }));
-        configPanel.addWidget(makeIconButton(innerX + 22, buttonY, GuiTextures.BUTTON_LIST,
-                "gtna.machine.pattern_buffer.clear_cache",
+        configPanel.addWidget(makeTextButton(innerX + 84, buttonY, 84,
+                "gtna.machine.pattern_buffer.clear_pattern_recipe_cache",
                 clickData -> {
                     if (!clickData.isRemote) clearSelectedRecipeCache();
                 }));
+    }
+
+    private void addItemGhostRow(WidgetGroup panel, int x, int y) {
+        for (int slot = 0; slot < 9; slot++) {
+            int logicalSlot = slot;
+            panel.addWidget(new PhantomSlotWidget(new SelectedConfigItemTransfer(), logicalSlot, x + slot * 18, y)
+                    .setClearSlotOnRightClick(true)
+                    .setChangeListener(this::onSelectedConfigWidgetChanged)
+                    .setBackgroundTexture(new GuiTextureGroup(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY)));
+        }
+    }
+
+    private void addFluidGhostRow(WidgetGroup panel, int x, int y) {
+        for (int slot = 0; slot < 9; slot++) {
+            FluidStorageProxy storage = new FluidStorageProxy(slot);
+            panel.addWidget(new PhantomTankWidget(storage, x + slot * 18, y, 18, 18)
+                    .setAllowClickFilled(true)
+                    .setAllowClickDrained(true)
+                    .setBackground(GuiTextures.FLUID_SLOT)
+                    .setChangeListener(this::onSelectedConfigWidgetChanged));
+        }
     }
 
     private void addItemGhostGrid(WidgetGroup panel, int x, int y) {
@@ -596,6 +745,19 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         return button;
     }
 
+    private ButtonWidget makeTextButton(int x, int y, int width, String key,
+                                        java.util.function.Consumer<com.lowdragmc.lowdraglib.gui.util.ClickData> onPress) {
+        ButtonWidget button = new ButtonWidget(x, y, width, 13,
+                new GuiTextureGroup(GuiTextures.BUTTON,
+                        new TextTexture(() -> Component.translatable(key).getString())
+                                .setWidth(width - 4)
+                                .setType(TextTexture.TextType.ROLL)
+                                .setDropShadow(false)),
+                onPress);
+        button.setHoverTooltips(Component.translatable(key + ".tooltip"));
+        return button;
+    }
+
     private void selectSlot(int slot) {
         if (slot >= 0 && slot < maxPatternCount && this.selectedSlot == slot) {
             this.selectedSlot = -1;
@@ -632,6 +794,16 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                 markDirty();
             }
         }
+    }
+
+    /** Clears runtime lookup caches without changing any encoded pattern data. */
+    private void clearMachineRecipeCaches() {
+        for (GTNAPatternBufferSlotConfig config : slotConfigs) {
+            config.clearRecipeCacheSilently();
+        }
+        needPatternSync = true;
+        refreshSelectedConfigPreview();
+        markDirty();
     }
 
     private void refreshSelectedConfigPreview() {
@@ -769,49 +941,43 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                     resolved.id,
                     slotConfigs[slot].getDerivedModeId(),
                     slotConfigs[slot].getPreferredModeId());
-            notifyControllerModeChange(slot, resolved);
+            syncSingleRecipeMachineMode(slot, resolved);
         } else {
             logPatternDetectionFailure(slot, pattern, searchTypes);
         }
     }
 
     /**
-     * Notifica o controller do multibloco para trocar o activeRecipeType
-     * imediatamente quando um pattern
-     * ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©
-     * inserido e a
-     * receita
-     * ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©
-     * resolvida.
-     * Isso garante que o multibloco
-     * jÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡
-     * esteja no modo
-     * correto ANTES da receita
-     * executar.
+     * Vanilla GTCEu recipe logic has one active recipe type and therefore needs
+     * the controller switched before a pattern can run. GTNA's threaded logic
+     * intentionally does not: each active recipe keeps its own recipe type.
      */
-    private void notifyControllerModeChange(int slot, GTRecipe recipe) {
-        if (!isFormed() || getControllers().isEmpty()) return;
+    private void syncSingleRecipeMachineMode(int slot, GTRecipe recipe) {
+        if (!isFormed() || getControllers().isEmpty()) {
+            return;
+        }
         IMultiController controller = getControllers().first();
+        if (!(controller instanceof IRecipeLogicMachine recipeMachine) ||
+                recipeMachine.getRecipeLogic() instanceof GTNAMultipleRecipesLogic) {
+            return;
+        }
 
         GTNAPatternBufferSlotConfig config = slotConfigs[slot];
-        String modeId = !config.getPreferredModeId().isBlank() ? config.getPreferredModeId() :
-                config.getDerivedModeId();
-
-        if (modeId == null || modeId.isBlank()) return;
-
-        if (controller instanceof IPatternBufferModeHost host) {
-            host.gtna$applyPatternBufferMode(modeId, recipe);
-        } else if (controller instanceof IRecipeLogicMachine recipeMachine) {
-            var recipeTypes = recipeMachine.getRecipeTypes();
-            if (recipeTypes != null && recipeTypes.length > 1) {
-                for (int i = 0; i < recipeTypes.length; i++) {
-                    if (modeMatches(modeId, recipeTypes[i])) {
-                        if (recipeMachine.getActiveRecipeType() != i) {
-                            recipeMachine.setActiveRecipeType(i);
-                        }
-                        return;
-                    }
+        String modeId = config.getPreferredModeId().isBlank() ? config.getDerivedModeId() :
+                config.getPreferredModeId();
+        if (modeId == null || modeId.isBlank()) {
+            return;
+        }
+        GTRecipeType[] recipeTypes = recipeMachine.getRecipeTypes();
+        if (recipeTypes == null || recipeTypes.length <= 1) {
+            return;
+        }
+        for (int i = 0; i < recipeTypes.length; i++) {
+            if (modeMatches(modeId, recipeTypes[i])) {
+                if (recipeMachine.getActiveRecipeType() != i) {
+                    recipeMachine.setActiveRecipeType(i);
                 }
+                return;
             }
         }
     }
@@ -1193,16 +1359,18 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         for (int i = 0; i < maxPatternCount; i++) {
             GTNAPatternBufferSlotConfig config = slotConfigs[i];
             if (!recipeId.isBlank() && recipeId.equals(config.getCachedRecipeId())) {
-                return new SlotMatch(i);
+                if (!gtna$slotAcceptsRecipe(i, recipe)) {
+                    continue;
+                }
+                IPatternDetails details = getPatternDetailsForSlot(i);
+                if ((details != null && matchesPatternDetails(i, recipe, details)) || matchesSlot(i, recipe)) {
+                    return new SlotMatch(i);
+                }
             }
         }
         for (int i = 0; i < maxPatternCount; i++) {
             GTNAPatternBufferSlotConfig config = slotConfigs[i];
             if (!config.getPreferredModeId().isBlank() && !matchesPreferredMode(config, recipe)) {
-                continue;
-            }
-            if (config.getPreferredModeId().isBlank() && !config.getDerivedModeId().isBlank() &&
-                    !matchesDerivedMode(config, recipe)) {
                 continue;
             }
             IPatternDetails details = getPatternDetailsForSlot(i);
