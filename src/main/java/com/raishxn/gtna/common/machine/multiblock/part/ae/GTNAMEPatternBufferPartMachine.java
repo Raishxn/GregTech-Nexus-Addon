@@ -1405,6 +1405,11 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         fluidInputs = consumeVirtualFluids(config, fluidInputs);
         itemInputs = consumePatternItems(collectPatternItemInputs(details), itemInputs);
         fluidInputs = consumePatternFluids(collectPatternFluidInputs(details), fluidInputs);
+        // Catalyst semantics (GTLCore parity): if the slot defines catalysts and the recipe
+        // consumes one of them without the slot's actual contents covering it, the recipe is
+        // rejected for this slot — the buffer never picks a recipe that "eats" a catalyst.
+        if (!testCatalystItems(config, recipe)) return false;
+        if (!testCatalystFluids(config, recipe)) return false;
 
         boolean inputsMatched = (itemInputs == null || itemInputs.isEmpty()) &&
                 (fluidInputs == null || fluidInputs.isEmpty());
@@ -1539,6 +1544,40 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
 
     private List<Ingredient> consumePatternItems(List<ItemStack> patternItems, List<Ingredient> left) {
         return consumeVirtualItemList(patternItems, left);
+    }
+
+    /**
+     * GTLCore {@code testCatalystItemInternal} parity: returns {@code false} when any recipe input
+     * could consume a catalyst key configured for the slot. The per-ingredient entries guard
+     * {@code content.chance <= 0} (crafting-only outputs) the same way the reference does.
+     */
+    private boolean testCatalystItems(GTNAPatternBufferSlotConfig config, GTRecipe recipe) {
+        List<ItemStack> catalysts = config.getCatalystItemStacks();
+        if (catalysts.isEmpty()) return true;
+        for (Content content : recipe.getInputContents(ItemRecipeCapability.CAP)) {
+            if (content.chance <= 0) continue;
+            if (!(content.getContent() instanceof Ingredient ingredient)) continue;
+            for (ItemStack catalyst : catalysts) {
+                if (!catalyst.isEmpty() && ingredient.test(catalyst)) return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * GTLCore {@code testCatalystFluidInternal} parity.
+     */
+    private boolean testCatalystFluids(GTNAPatternBufferSlotConfig config, GTRecipe recipe) {
+        List<net.minecraftforge.fluids.FluidStack> catalysts = config.getCatalystFluidStacks();
+        if (catalysts.isEmpty()) return true;
+        for (Content content : recipe.getInputContents(FluidRecipeCapability.CAP)) {
+            if (content.chance <= 0) continue;
+            if (!(content.getContent() instanceof FluidIngredient fluidIngredient)) continue;
+            for (net.minecraftforge.fluids.FluidStack catalyst : catalysts) {
+                if (!catalyst.isEmpty() && fluidIngredient.test(catalyst)) return false;
+            }
+        }
+        return true;
     }
 
     private List<FluidIngredient> consumeVirtualFluids(GTNAPatternBufferSlotConfig config, List<FluidIngredient> left) {

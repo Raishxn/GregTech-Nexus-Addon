@@ -25,13 +25,18 @@ import java.util.List;
 public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag>, IContentChangeAware {
 
     private static final int GHOST_GRID_SIZE = 9;
+    private static final int CATALYST_GRID_SIZE = 9;
     private static final String SPECIAL_ITEMS_TAG = "specialItems";
     private static final String SPECIAL_FLUIDS_TAG = "specialFluids";
+    private static final String CATALYST_ITEMS_TAG = "catalystItems";
+    private static final String CATALYST_FLUIDS_TAG = "catalystFluids";
 
     private Runnable onContentsChanged = () -> {};
 
     private final ItemStackTransfer specialItems = new ItemStackTransfer(GHOST_GRID_SIZE);
     private final FluidStorage[] specialFluids = new FluidStorage[GHOST_GRID_SIZE];
+    private final ItemStackTransfer catalystItems = new ItemStackTransfer(CATALYST_GRID_SIZE);
+    private final FluidStorage[] catalystFluids = new FluidStorage[CATALYST_GRID_SIZE];
 
     private int circuitConfig = -1;
     private String preferredModeId = "";
@@ -43,6 +48,11 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
         for (int i = 0; i < GHOST_GRID_SIZE; i++) {
             specialFluids[i] = new FluidStorage(Integer.MAX_VALUE);
             specialFluids[i].setOnContentsChanged(this::onContentsChanged);
+        }
+        catalystItems.setOnContentsChanged(this::onContentsChanged);
+        for (int i = 0; i < CATALYST_GRID_SIZE; i++) {
+            catalystFluids[i] = new FluidStorage(Integer.MAX_VALUE);
+            catalystFluids[i].setOnContentsChanged(this::onContentsChanged);
         }
     }
 
@@ -123,11 +133,66 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
         for (FluidStorage specialFluid : specialFluids) {
             specialFluid.setFluid(FluidStack.empty());
         }
+        clearCatalysts();
         this.circuitConfig = -1;
         this.preferredModeId = "";
         this.derivedModeId = "";
         this.cachedRecipeId = "";
         onContentsChanged();
+    }
+
+    /**
+     * Catalyst inventories (GTLCore parity): ghost-config insumos that make the slot accept a
+     * recipe which consumes them, without ever consuming the catalyst itself. Unlike
+     * {@code specialItems}/{@code specialFluids} (virtual supply that matches by test), catalyst
+     * entries block automatic recipe cache assignment for the recipe types they shadow — the
+     * buffer will not pick a recipe whose inputs intersect the catalyst set unless the catalyst
+     * key is also present in the slot's actual pushed contents.
+     */
+    public ItemStackTransfer getCatalystItems() {
+        return catalystItems;
+    }
+
+    public FluidStorage[] getCatalystFluids() {
+        return catalystFluids;
+    }
+
+    public boolean hasCatalysts() {
+        for (int i = 0; i < catalystItems.getSlots(); i++) {
+            if (!catalystItems.getStackInSlot(i).isEmpty()) return true;
+        }
+        for (FluidStorage catalystFluid : catalystFluids) {
+            if (!catalystFluid.getFluid().isEmpty()) return true;
+        }
+        return false;
+    }
+
+    public void clearCatalysts() {
+        for (int i = 0; i < catalystItems.getSlots(); i++) {
+            catalystItems.setStackInSlot(i, ItemStack.EMPTY);
+        }
+        for (FluidStorage catalystFluid : catalystFluids) {
+            catalystFluid.setFluid(FluidStack.empty());
+        }
+        onContentsChanged();
+    }
+
+    public List<ItemStack> getCatalystItemStacks() {
+        List<ItemStack> stacks = new ArrayList<>(catalystItems.getSlots());
+        for (int i = 0; i < catalystItems.getSlots(); i++) {
+            ItemStack stack = catalystItems.getStackInSlot(i);
+            if (!stack.isEmpty()) stacks.add(stack.copy());
+        }
+        return stacks;
+    }
+
+    public List<net.minecraftforge.fluids.FluidStack> getCatalystFluidStacks() {
+        List<net.minecraftforge.fluids.FluidStack> stacks = new ArrayList<>(catalystFluids.length);
+        for (FluidStorage catalystFluid : catalystFluids) {
+            FluidStack fluidStack = catalystFluid.getFluid();
+            if (!fluidStack.isEmpty()) stacks.add(toForgeFluid(fluidStack));
+        }
+        return stacks;
     }
 
     public boolean hasSpecialItem() {
@@ -193,6 +258,14 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
             fluidTag.add(entry);
         }
         tag.put(SPECIAL_FLUIDS_TAG, fluidTag);
+        tag.put(CATALYST_ITEMS_TAG, catalystItems.serializeNBT());
+        ListTag catalystFluidTag = new ListTag();
+        for (int i = 0; i < catalystFluids.length; i++) {
+            CompoundTag entry = catalystFluids[i].serializeNBT();
+            entry.putInt("slot", i);
+            catalystFluidTag.add(entry);
+        }
+        tag.put(CATALYST_FLUIDS_TAG, catalystFluidTag);
         tag.putInt("circuitConfig", circuitConfig);
         if (!preferredModeId.isBlank()) {
             tag.putString("preferredModeId", preferredModeId);
@@ -230,6 +303,24 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
             }
         } else {
             migrateLegacySingleFluid(tag);
+        }
+
+        catalystItems.deserializeNBT(
+                tag.contains(CATALYST_ITEMS_TAG, Tag.TAG_COMPOUND) ? tag.getCompound(CATALYST_ITEMS_TAG) :
+                        new CompoundTag());
+        for (FluidStorage catalystFluid : catalystFluids) {
+            catalystFluid.deserializeNBT(new CompoundTag());
+        }
+        if (tag.contains(CATALYST_FLUIDS_TAG, Tag.TAG_LIST)) {
+            ListTag catalystFluidTag = tag.getList(CATALYST_FLUIDS_TAG, Tag.TAG_COMPOUND);
+            for (Tag entry : catalystFluidTag) {
+                if (entry instanceof CompoundTag compoundTag) {
+                    int slot = compoundTag.getInt("slot");
+                    if (slot >= 0 && slot < catalystFluids.length) {
+                        catalystFluids[slot].deserializeNBT(compoundTag);
+                    }
+                }
+            }
         }
 
         this.circuitConfig = tag.contains("circuitConfig") ? tag.getInt("circuitConfig") : -1;
