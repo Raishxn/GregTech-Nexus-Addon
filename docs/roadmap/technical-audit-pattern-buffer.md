@@ -43,8 +43,8 @@ Confirmado por busca global: `IPatternBufferModeHost.gtna$applyPatternBufferMode
 
 ### 4. Zero testes
 
-- `src/test` não existe. GTLCore (referência) tem `src/test/java/org/gtlcore/gtlcore/...` com testes JUnit.
-- Verificado no jar/source oficial do GTM 7.5.3: **não há infraestrutura de GameTest publicada pela GTM** — nenhum addon da comunidade tem gametests de máquina. O padrão real é **JUnit puro para lógica** + teste manual/runtime.
+- `src/test` não existia (agora existe, ver Fase 2). **Correção factual (2ª passada):** o GTLCore **não usa JUnit** — seus testes em `src/test/java/org/gtlcore/gtlcore/...` são classes com `public static void main` + helper `require()` (asserts manuais, ex: `WirelessTerminalGridResolverTest`), sem `useJUnitPlatform` no build. Esse padrão é **mais simples** e foi o adotado (ver Fase 2).
+- Verificado no jar/source oficial do GTM 7.5.3: **não há infraestrutura de GameTest publicada pela GTM** — nenhum addon da comunidade tem gametests de máquina. O padrão real é **teste puro para lógica** + teste manual/runtime.
 - O `build.gradle` já tem `forge.enabledGameTestNamespaces` configurado (herdado do template) — abordagem híbrida viável (JUnit agora, gametest depois).
 
 ### 5. Dependências duras de soft-deps
@@ -114,7 +114,11 @@ O próprio código já registra isso (comentário em `gtna$slotAcceptsRecipe`, ~
 17. **Árvore de trabalho suja**: 8 arquivos modificados + `CoilWorkableElectricMultipleRecipesMachine.java` (novo, 70 linhas, herda `GTValues` sem usar) sem commit. Commitar antes de qualquer refactor.
 18. **Nome de pacote** `common/machine/multiMachineBase` — camelCase em pacote; convenção Java é minúsculas (`multiblock/base`).
 19. **`saveCustomPersistedData`/`loadCustomPersistedData`** em `GTNAMultipleRecipesLogic` não re-notifica handlers pós-load (o GTOCore sempre re-notifica). Menor.
-20. **`Int128` reimplementado** — 687 linhas de aritmética custom = campo de bugs silenciosos. Se for para energia além de `long`, mantenha, mas **teste unitário é mandatório** (`Int128Test` na Fase 2).
+20. **`Int128` reimplementado** — 687 linhas de aritmética custom. **🔴 Confirmado em teste (Fase 2, `Int128Test`):** a suspeita de "campo de bugs silenciosos" era real. Medido contra oráculo `BigInteger` (100k casos aleatórios cada):
+    - `add`, `subtract`, `shiftLeft`, `negate`: **corretos** (0 erros).
+    - **`multiply(Int128)`: errado em ~7% dos casos** (7298/100000) — erro de propagação de carry entre os limbs de 32 bits.
+    - **`divideNew(long)`: errado para dividendos negativos grandes** (`high != 0`) — além de não gerar o high word two's-complement correto para resultados negativos (ex: `-10/2` satura em `longValue()`).
+    Ambos alimentam a matemática de energia do **Nexus Flux Matrix** → **correção é prioridade alta** antes de confiar em valores grandes. Teste criado e bugs documentados em `src/test/java/com/raishxn/gtna/Int128Test.java`.
 
 ---
 
@@ -222,24 +226,26 @@ Nada de `contains("saw")`. Dois tipos cujo path termina com o mesmo sufixo colid
 
 ## 🧪 Plano de Testes (padrão real da comunidade GTM)
 
-### Nível 1 — JUnit 5 (`src/test/java`) — copy do padrão GTLCore
+### Nível 1 — Testes puros (`src/test/java`) — padrão **real** do GTLCore ✅ **IMPLEMENTADO**
+
+**Correção da 1ª passada:** o GTLCore não usa JUnit. O padrão adotado (igual ao deles) é
+`main()` + asserts, sem framework — mais leve e sem dor de classpath no ModDevGradle.
+Implementado:
 
 ```gradle
-// build.gradle
-dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.2')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-test { useJUnitPlatform() }
+// build.gradle: sourceSet 'test' (src/test/java) + task `runUnitTests` (JavaExec por classe)
+// `check` agora depende de `runUnitTests`.
 ```
 
-Alvos imediatos (todos **sem Minecraft bootstrap**, lógica pura ou extraível):
+Testes criados e **passando** (`./gradlew runUnitTests` → BUILD SUCCESSFUL):
 
-- `ModeIdMatcherTest` — nova classe (exato, sufixo, colisões, null/blank);
-- `Int128Test` — 687 linhas de aritmética custom;
-- `GTRecipe2IntBiMultiMapTest`, `CacheStateTest`, `NumberUtilsTest`, `StructureSlicerTest`;
-- `IPatternBufferModeHostTest` após extrair o matching para `ModeIdMatcher`.
+- `Int128Test` — add/subtract/shiftLeft/negate validados contra `BigInteger` (0 erros em 100k
+  casos cada); `multiply` e `divideNew` documentados como **bugs reais** (ver achado #20).
+- `ModeIdMatcherTest` — trava as regras de matching (exato + sufixo) e as garantias
+  anti-hardcode (saw↛cutter, etc.).
+
+Próximos alvos (todos **sem Minecraft bootstrap**, lógica pura ou extraível): `NumberUtilsTest`,
+`StructureSlicerTest`, `GTRecipe2IntBiMultiMapTest`.
 
 ### Nível 2 — GameTests Forge (`@GameTest`) — Fase 2+
 
@@ -301,14 +307,16 @@ public class GTNAGametest {
       beforeWorking → IO IN). O `getRecipeModifier` separado serve só ao preview/EMI,
       não é um segundo pipeline de execução — fusão completa fica para a Fase 3.
 
-### Fase 2 — Testes (próxima sessão)
+### Fase 2 — Testes 🟡 **INICIADA**
 
-- [ ] JUnit 5 + `src/test` (classpath MC no ModDevGradle precisa de configuração —
-      os primeiros alvos sem-bootstrap são `Int128Test`, `NumberUtilsTest`, etc.)
-- [ ] `ModeIdMatcherTest` em JUnit real (a lógica já está validada por harness temporário;
-      falta o harness JUnit com `GTRecipeType` mockável ou bootstrap leve)
-- [ ] CI com `spotlessCheck test`
-- [ ] (Opcional) 1 gametest de steam simples
+- [x] `src/test` criado + task `runUnitTests` (padrão GTLCore: `main()` + asserts, sem JUnit —
+      correção da 1ª passada que sugeria JUnit). `check` agora depende de `runUnitTests`.
+- [x] `Int128Test` — **revelou 2 bugs reais** em `multiply`/`divideNew` (achado #20 🔴).
+- [x] `ModeIdMatcherTest` — trava as regras anti-hardcode.
+- [ ] **🔴 Corrigir `Int128.multiply` e `Int128.divideNew`** (bloqueia confiança no Nexus Flux Matrix).
+- [ ] `NumberUtilsTest`, `StructureSlicerTest`, `GTRecipe2IntBiMultiMapTest`.
+- [ ] CI: adicionar `spotlessCheck` ao `gradle.yml` (hoje só roda `build`).
+- [ ] (Opcional) 1 gametest de steam simples — Fase 2+, requer AE2+GTCEu no ambiente de teste.
 
 ### Fase 3 — Refactor estrutural
 

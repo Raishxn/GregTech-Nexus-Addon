@@ -48,6 +48,6 @@ Stronze, Breel, Echoite, Clay Compound — new alloys and elements that unlock u
 | Thread / Accelerate / Overclock Hatches | <span class="status-badge status-done">:white_check_mark: Done</span> |
 | Advanced Parallel Hatches | <span class="status-badge status-done">:white_check_mark: Done</span> |
 | **Nexus Flux Matrix (Wireless Energy)** | <span class="status-badge status-wip">:arrows_counterclockwise: In Progress</span> |
-| Pattern Buffer System | <span class="status-badge status-planned">:crystal_ball: Planned</span> |
+| Pattern Buffer System | <span class="status-badge status-done">:white_check_mark: Done</span> |
 | New Elements & Alloys | <span class="status-badge status-planned">:crystal_ball: Planned</span> |
 | KubeJS Integration | <span class="status-badge status-planned">:crystal_ball: Planned</span> |

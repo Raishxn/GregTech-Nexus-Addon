@@ -77,15 +77,20 @@ Acompanhe o progresso de desenvolvimento do GregTech Nexus Addon em tempo real.
 - [ ] **Steam Distillation Column** — Destilação a vapor
 - [ ] **Hydraulic Press Complex** — Bender+Compressor+Hammer+Press+Extruder
 
-### Pattern Buffer System
+### Pattern Buffer System ✅ **Implementado** (multi-modo funcional)
 
-- [ ] Pattern Buffer MK-I (4 slots) — MV
-- [ ] Pattern Buffer MK-II (9 slots) — HV
-- [ ] Pattern Buffer MK-III (16 slots) — EV
-- [ ] Pattern Buffer MK-IV (36 slots) — IV
-- [ ] Pattern Buffer MK-V (64 slots) — LuV
-- [ ] GUI completa com configuração por slot
-- [ ] Integração AE2
+- [x] **ME Mini Pattern Buffer** (9 slots) — LuV
+- [x] **ME Pattern Buffer** (21 slots) — ZPM
+- [x] **ME Advanced Pattern Buffer** (32 slots) — UV
+- [x] **ME Ultimate Pattern Buffer** (72 slots) — UHV
+- [x] GUI completa com configuração por slot (item/fluido/circuito/modo)
+- [x] Integração AE2 (pattern push/pull via rede ME)
+- [x] **Troca automática de modo do multibloco** conforme o recipe type do pattern
+      (espelho de `activeRecipeType` com a fórmula oficial do GTM — ver
+      [auditoria técnica](technical-audit-pattern-buffer.md))
+- [x] Itens de upgrade entre tiers (preservam padrões e configuração)
+- [ ] Fidelidade 1:1 com GTOCore/GTLCore — *em análise* (ver
+      [gap de fidelidade](pattern-buffer-fidelity-gap.md))
 
 ### Novos Elementos
 
@@ -110,9 +115,9 @@ Acompanhe o progresso de desenvolvimento do GregTech Nexus Addon em tempo real.
 
 ### KubeJS Integration
 
-- [ ] Plugin KubeJS registrado
-- [ ] GTNAPartAbility exposto para scripts
-- [ ] WorkableElectricMultipleRecipesMachine via KubeJS
+- [x] Plugin KubeJS registrado (`GTNAKubeJSPlugin`)
+- [x] GTNAPartAbility exposto para scripts
+- [x] WorkableElectricMultipleRecipesMachine via KubeJS (`gtna:multiple_recipes`)
 - [ ] Documentação e exemplos completos
 - [ ] Script de teste validado
 

@@ -20,6 +20,11 @@ sourceSets {
     main.resources {
         srcDir 'src/generated/resources'
     }
+    // GTLCore-style unit tests: plain main()-based classes (no JUnit). They only exercise
+    // pure logic that does not require a Minecraft bootstrap (Int128, matcher rules, ...).
+    test {
+        java.srcDir 'src/test/java'
+    }
 }
 
 repositories {
@@ -152,6 +157,30 @@ jar {
 }
 
 apply from: "$rootDir/gradle/scripts/spotless.gradle"
+
+// Unit tests (GTLCore pattern): each test class exposes `public static void main` and throws
+// AssertionError on failure. We compile them against main's output + compile classpath (which
+// already carries Guava, annotations, etc.) and run every *Test main in sequence.
+tasks.register('runUnitTests') {
+    group = 'verification'
+    description = 'Runs GTLCore-style main()-based unit tests (no Minecraft bootstrap).'
+    dependsOn 'compileJava', 'compileTestJava'
+    def testClasses = [
+            'com.raishxn.gtna.Int128Test',
+            'com.raishxn.gtna.ModeIdMatcherTest',
+    ]
+    doLast {
+        testClasses.each { String cls ->
+            javaexec {
+                classpath = sourceSets.test.runtimeClasspath
+                mainClass.set(cls)
+            }
+            println "[runUnitTests] ${cls} OK"
+        }
+    }
+}
+
+tasks.named('check').configure { dependsOn 'runUnitTests' }
 
 dependencies {
     def isDataRun = gradle.startParameter.taskNames.any { it.toLowerCase(java.util.Locale.ROOT).contains("rundata") }

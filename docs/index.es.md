@@ -48,6 +48,6 @@ Stronze, Breel, Echoite, Clay Compound — nuevas aleaciones y elementos que des
 | Thread / Accelerate / Overclock Hatches | <span class="status-badge status-done">:white_check_mark: Listo</span> |
 | Advanced Parallel Hatches | <span class="status-badge status-done">:white_check_mark: Listo</span> |
 | **Nexus Flux Matrix (Energia Inalambrica)** | <span class="status-badge status-wip">:arrows_counterclockwise: En Progreso</span> |
-| Pattern Buffer System | <span class="status-badge status-planned">:crystal_ball: Planeado</span> |
+| Pattern Buffer System | <span class="status-badge status-done">:white_check_mark: Listo</span> |
 | Nuevos Elementos y Aleaciones | <span class="status-badge status-planned">:crystal_ball: Planeado</span> |
 | Integracion KubeJS | <span class="status-badge status-planned">:crystal_ball: Planeado</span> |

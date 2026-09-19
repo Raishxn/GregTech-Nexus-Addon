@@ -83,7 +83,7 @@ Acompanhe o que estamos desenvolvendo: novos multiblocos, Pattern Buffer, novos 
 | Thread / Accelerate / Overclock Hatches | <span class="status-badge status-done">✅ Pronto</span> |
 | Advanced Parallel Hatches | <span class="status-badge status-done">✅ Pronto</span> |
 | **Nexus Flux Matrix (Wireless Energy)** | <span class="status-badge status-wip">🔄 Em Progresso</span> |
-| Pattern Buffer System | <span class="status-badge status-planned">🔮 Planejado</span> |
+| Pattern Buffer System | <span class="status-badge status-done">✅ Pronto</span> |
 | Novos Elementos & Ligas | <span class="status-badge status-planned">🔮 Planejado</span> |
 | Integração KubeJS | <span class="status-badge status-planned">🔮 Planejado</span> |
 | Wiki Completa | <span class="status-badge status-wip">🔄 Em Progresso</span> |

@@ -206,3 +206,4 @@ nav:
     - roadmap/index.md
     - roadmap/multiblock-port-manifest.md
     - roadmap/technical-audit-pattern-buffer.md
+    - roadmap/pattern-buffer-fidelity-gap.md
