@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.fancy.ConfiguratorPanel;
+import com.gregtechceu.gtceu.api.gui.fancy.IFancyConfiguratorButton;
 import com.gregtechceu.gtceu.api.gui.widget.IntInputWidget;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
@@ -171,6 +172,16 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     @Persisted
     @Setter
     private String customName = "";
+
+    @DescSynced
+    @Persisted
+    @Setter
+    private boolean hiddenInTerminal = false;
+
+    @Override
+    public boolean isVisibleInTerminal() {
+        return !hiddenInTerminal;
+    }
 
     private boolean needPatternSync;
     private int selectedSlot = -1;
@@ -521,6 +532,16 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         configuratorPanel.attachConfigurators(new ButtonConfigurator(
                 new GuiTextureGroup(GuiTextures.BUTTON, GuiTextures.REFUND_OVERLAY), this::refundAll)
                 .setTooltips(List.of(Component.translatable("gui.gtceu.refund_all.desc"))));
+        // GTLCore parity: hide/show this buffer in the ME Pattern Access Terminal.
+        // No custom icons needed — labels come from the lang keys.
+        configuratorPanel.attachConfigurators(new IFancyConfiguratorButton.Toggle(
+                GuiTextures.BUTTON, GuiTextures.BUTTON,
+                () -> hiddenInTerminal,
+                (clickData, pressed) -> setHiddenInTerminal(pressed))
+                .setTooltipsSupplier(pressed -> List.of(
+                        Component.translatable("gtna.machine.pattern_buffer.terminal_visibility")
+                                .append(Component.translatable(pressed ? "gtna.machine.pattern_buffer.terminal_hidden" :
+                                        "gtna.machine.pattern_buffer.terminal_visible")))));
     }
 
     @Override
@@ -2002,6 +2023,80 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     public InteractionResult onDataStickShiftUse(Player player, ItemStack dataStick) {
         dataStick.getOrCreateTag().putIntArray("pos", new int[] { getPos().getX(), getPos().getY(), getPos().getZ() });
         return InteractionResult.SUCCESS;
+    }
+
+    // ------------------------------------------------------------------
+    // Pattern-buffer copy/paste API (GTLCore parity, machine side).
+    // Serializes ONLY the portable config: patterns themselves, the per-slot
+    // configs (specialization, circuit, preferred mode) and the custom name.
+    // Runtime caches, internal slot fluids/items and controller bindings are
+    // rebuilt from the patterns on the target machine, never copied.
+    // Format version is stored so future changes can migrate instead of failing.
+    // ------------------------------------------------------------------
+
+    private static final String COPY_TAG_ROOT = "gtnaBufferCopy";
+    private static final String COPY_TAG_VERSION = "version";
+    private static final int COPY_VERSION = 1;
+
+    /**
+     * Serializes a portable snapshot of this buffer into {@code out} without touching
+     * the machine's live state. The pattern items are copied; nothing is moved.
+     */
+    public void copyBufferToTag(CompoundTag out) {
+        CompoundTag root = new CompoundTag();
+        root.putInt(COPY_TAG_VERSION, COPY_VERSION);
+        root.putString("name", customName);
+        root.putInt("count", maxPatternCount);
+        ListTag patterns = new ListTag();
+        for (int i = 0; i < maxPatternCount; i++) {
+            ItemStack pattern = patternInventory.getStackInSlot(i);
+            if (pattern.isEmpty()) continue;
+            CompoundTag entry = new CompoundTag();
+            entry.putInt("slot", i);
+            entry.put("pattern", pattern.serializeNBT());
+            entry.put("config", slotConfigs[i].serializeNBT());
+            patterns.add(entry);
+        }
+        root.put("patterns", patterns);
+        out.put(COPY_TAG_ROOT, root);
+    }
+
+    /**
+     * Applies a snapshot produced by {@link #copyBufferToTag} to this buffer. Patterns are
+     * written only into empty slots; occupied slots are skipped so no encoded pattern is ever
+     * silently overwritten.
+     *
+     * @return number of patterns actually pasted.
+     */
+    public int pasteBufferFromTag(CompoundTag in) {
+        if (!in.contains(COPY_TAG_ROOT, Tag.TAG_COMPOUND)) return 0;
+        CompoundTag root = in.getCompound(COPY_TAG_ROOT);
+        if (root.getInt(COPY_TAG_VERSION) != COPY_VERSION) return 0;
+        int pasted = 0;
+        ListTag patterns = root.getList("patterns", Tag.TAG_COMPOUND);
+        for (Tag tag : patterns) {
+            if (!(tag instanceof CompoundTag entry)) continue;
+            int slot = entry.getInt("slot");
+            if (slot < 0 || slot >= maxPatternCount) continue;
+            if (!patternInventory.getStackInSlot(slot).isEmpty()) continue;
+            int target = slot;
+            if (!internalPatternInventory.getStackInSlot(target).isEmpty()) {
+                target = -1;
+                for (int i = 0; i < maxPatternCount; i++) {
+                    if (patternInventory.getStackInSlot(i).isEmpty()) {
+                        target = i;
+                        break;
+                    }
+                }
+                if (target < 0) break;
+            }
+            ItemStack pattern = ItemStack.of(entry.getCompound("pattern"));
+            if (pattern.isEmpty()) continue;
+            internalPatternInventory.setItemDirect(target, pattern);
+            slotConfigs[target].deserializeNBT(entry.getCompound("config"));
+            pasted++;
+        }
+        return pasted;
     }
 
     public record BufferData(Object2LongMap<ItemStack> items, Object2LongMap<FluidStack> fluids) {}

@@ -65,9 +65,9 @@ Comparando `GTLCore.MEPatternBufferPartMachine` (994 linhas) com
 | **Circuito embarcado** (`embeddedCircuitConfig` + `embedCircuitToPatterns` + `removeAllPatternCircuits` + `skipExistingCircuitPatterns`) | ⚠️ GTNA tem circuito por slot, mas não o "embed em massa" nos patterns | Média | Médio |
 | **Catalyst inventories** (`catalystItems[]`/`catalystFluids[]` + `reCalculateCatalyst*Map` + `testCatalyst*`) — insumos catalisadores não-consumidos | ⚠️ GTNA tem `slotConfigs` virtual item/fluid, mas sem a noção de "catalyst" separada | Alta | Alto |
 | **Proxy buffer** (`MEPatternBufferProxyPartMachine`) | ❌ (adiado por design, ver task-manager) | Baixa | Alto |
-| **Copy/Paste de config** (`copyFromTag`/`pasteFromTag` via data stick) | ❌ | Média | Médio |
+| **Copy/Paste de config** (`copyFromTag`/`pasteFromTag` via data stick) | 🟡 **API pronta** (`copyBufferToTag`/`pasteBufferFromTag` com versionamento; faltam os itens de comportamento estilo GTLCore `Copy/Cut`) | Média | Médio |
 | **Jade provider** (`MEPatternBufferProvider`/`...ProxyProvider`) | ⚠️ GTNA tem Jade p/ multiblocos, falta p/ buffer | Baixa | Baixo |
-| **`isHiddenTerminal`** toggle | ❌ | Baixa | Baixo |
+| **`isHiddenTerminal`** toggle | ✅ **portado** (`hiddenInTerminal` + override `isVisibleInTerminal` + toggle no painel) | Baixa | Baixo |
 | **Ticking AE2 otimizado** (`tickingRequest`/`TickRateModulation` por slot) | ⚠️ verificar necessidade | Média | Médio |
 
 ### 2.3 Divergências de design (GTNA ≠ referência, por escolha ou por base)
