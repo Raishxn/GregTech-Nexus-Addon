@@ -104,7 +104,8 @@ public class TesseractTargetMarkerBehavior implements IInteractionItem, IAddInfo
 
     public static boolean isTesseractTargetMarker(ItemStack stack) {
         if (stack.getItem() instanceof ComponentItem item) {
-            return item.getComponents().stream().anyMatch(component -> component instanceof TesseractTargetMarkerBehavior);
+            return item.getComponents().stream()
+                    .anyMatch(component -> component instanceof TesseractTargetMarkerBehavior);
         }
         return false;
     }

@@ -112,7 +112,8 @@ final class PlatformCreators {
                         int worldY = minY + outY;
                         int worldZ = minZ + transformed[1];
                         mutablePos.set(worldX, worldY, worldZ);
-                        BlockState state = transformState(getCachedBlockState(level, mutablePos, chunkCache), rotation, xMirror, zMirror);
+                        BlockState state = transformState(getCachedBlockState(level, mutablePos, chunkCache), rotation,
+                                xMirror, zMirror);
                         Character mapped = stateToChar.get(state);
                         if (mapped == null) {
                             mapped = nextValidChar(next);
@@ -141,13 +142,15 @@ final class PlatformCreators {
 
     private static char nextValidChar(char start) {
         char current = start;
-        while (current == '"' || current == '\\' || Character.isWhitespace(current) || Character.isISOControl(current)) {
+        while (current == '"' || current == '\\' || Character.isWhitespace(current) ||
+                Character.isISOControl(current)) {
             current++;
         }
         return current;
     }
 
-    private static int[] transformCoords(int x, int z, int sizeX, int sizeZ, int rotation, boolean xMirror, boolean zMirror) {
+    private static int[] transformCoords(int x, int z, int sizeX, int sizeZ, int rotation, boolean xMirror,
+                                         boolean zMirror) {
         int rx = x;
         int rz = z;
         switch (rotation) {
@@ -216,7 +219,8 @@ final class PlatformCreators {
                 if (blockJson.has("properties")) {
                     JsonObject properties = blockJson.getAsJsonObject("properties");
                     for (Map.Entry<String, JsonElement> propertyEntry : properties.entrySet()) {
-                        Property<?> property = state.getBlock().getStateDefinition().getProperty(propertyEntry.getKey());
+                        Property<?> property = state.getBlock().getStateDefinition()
+                                .getProperty(propertyEntry.getKey());
                         if (property != null) {
                             state = setProperty(state, property, propertyEntry.getValue().getAsString());
                         } else {
@@ -239,7 +243,8 @@ final class PlatformCreators {
         return blockId;
     }
 
-    private static <T extends Comparable<T>> BlockState setProperty(BlockState state, Property<T> property, String value) {
+    private static <T extends Comparable<T>> BlockState setProperty(BlockState state, Property<T> property,
+                                                                    String value) {
         return property.getValue(value).map(v -> state.setValue(property, v)).orElse(state);
     }
 
@@ -251,7 +256,8 @@ final class PlatformCreators {
             object.addProperty("block", BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString());
             if (!state.getValues().isEmpty()) {
                 JsonObject properties = new JsonObject();
-                state.getValues().forEach((property, value) -> properties.addProperty(property.getName(), value.toString()));
+                state.getValues()
+                        .forEach((property, value) -> properties.addProperty(property.getName(), value.toString()));
                 object.add("properties", properties);
             }
             data.put(String.valueOf(entry.getKey()), object);

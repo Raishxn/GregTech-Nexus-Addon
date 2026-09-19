@@ -22,7 +22,7 @@ public class CoilWorkableElectricMultipleRecipesMachine extends WorkableElectric
     }
 
     public CoilWorkableElectricMultipleRecipesMachine(IMachineBlockEntity holder, boolean scaleParallelWithCoil,
-                                                       Object... args) {
+                                                      Object... args) {
         super(holder, args);
         this.scaleParallelWithCoil = scaleParallelWithCoil;
     }

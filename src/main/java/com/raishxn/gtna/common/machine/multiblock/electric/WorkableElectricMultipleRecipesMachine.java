@@ -255,10 +255,15 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
         if (modeId == null || modeId.isBlank()) {
             return false;
         }
+        // Exact GTM formula (MachineModeFancyConfigurator.setActiveRecipeTypeAndUpdateTickSubs):
+        // only re-subscribe tick handlers when the mode actually changed and the machine
+        // does not keep its subscriptions alive permanently.
         for (int i = 0; i < getRecipeTypes().length; i++) {
             if (gtna$matchesModeId(modeId, getRecipeTypes()[i])) {
-                if (getActiveRecipeType() != i) {
-                    setActiveRecipeType(i);
+                boolean needUpdateTickSubs = !keepSubscribing() && getActiveRecipeType() != i;
+                setActiveRecipeType(i); // @Persisted: NBT + network sync are automatic
+                if (needUpdateTickSubs) {
+                    getRecipeLogic().updateTickSubscription();
                 }
                 return true;
             }

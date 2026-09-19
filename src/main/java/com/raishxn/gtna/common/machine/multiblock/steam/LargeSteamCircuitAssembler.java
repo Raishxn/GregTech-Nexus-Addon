@@ -1,7 +1,7 @@
 package com.raishxn.gtna.common.machine.multiblock.steam;
 
-import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
+import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
@@ -115,7 +115,8 @@ public class LargeSteamCircuitAssembler extends SteamMultiMachineBase {
                         ENGRAVING_NEEDED - engravedCount).withStyle(ChatFormatting.YELLOW));
             }
             textList.add(Component.translatable("gtna.machine.large_steam_circuit_assembler.multiply_mode",
-                    multiplyMode ? Component.translatable("gtna.machine.on") : Component.translatable("gtna.machine.off"))
+                    multiplyMode ? Component.translatable("gtna.machine.on") :
+                            Component.translatable("gtna.machine.off"))
                     .append(ComponentPanelWidget.withButton(Component.literal(" [Toggle]"), "toggleMultiplyMode")));
         }
     }

@@ -10,18 +10,6 @@ import com.gregtechceu.gtceu.api.machine.feature.IFancyUIMachine;
 import com.gregtechceu.gtceu.api.machine.feature.IMachineLife;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-
 import com.lowdragmc.lowdraglib.gui.texture.IGuiTexture;
 import com.lowdragmc.lowdraglib.gui.texture.ResourceTexture;
 import com.lowdragmc.lowdraglib.gui.util.ClickData;
@@ -33,6 +21,18 @@ import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
+
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.data.GTNAItems;
@@ -90,35 +90,86 @@ public class PlatformDeploymentMachine extends MetaMachine implements IFancyUIMa
 
     private int step = 0;
 
-    @Persisted @DescSynced private boolean presetConfirm = false;
-    @Persisted @DescSynced private int checkGroup = 0;
-    @Persisted @DescSynced private int checkId = 0;
-    @Persisted @DescSynced private int saveGroup = 0;
-    @Persisted @DescSynced private int saveId = 0;
-    @Persisted @DescSynced private boolean preview = false;
-    @Persisted @DescSynced private boolean highlight = false;
+    @Persisted
+    @DescSynced
+    private boolean presetConfirm = false;
+    @Persisted
+    @DescSynced
+    private int checkGroup = 0;
+    @Persisted
+    @DescSynced
+    private int checkId = 0;
+    @Persisted
+    @DescSynced
+    private int saveGroup = 0;
+    @Persisted
+    @DescSynced
+    private int saveId = 0;
+    @Persisted
+    @DescSynced
+    private boolean preview = false;
+    @Persisted
+    @DescSynced
+    private boolean highlight = false;
 
-    @Persisted @DescSynced private int offsetX = 0;
-    @Persisted @DescSynced private int offsetZ = 0;
-    @Persisted @DescSynced private int offsetY = -1;
-    @Persisted @DescSynced private int adjustX = 0;
-    @Persisted @DescSynced private int adjustZ = 0;
-    @Persisted @DescSynced private int adjustY = 0;
-    @Persisted @DescSynced private BlockPos pos1 = BlockPos.ZERO;
-    @Persisted @DescSynced private BlockPos pos2 = BlockPos.ZERO;
+    @Persisted
+    @DescSynced
+    private int offsetX = 0;
+    @Persisted
+    @DescSynced
+    private int offsetZ = 0;
+    @Persisted
+    @DescSynced
+    private int offsetY = -1;
+    @Persisted
+    @DescSynced
+    private int adjustX = 0;
+    @Persisted
+    @DescSynced
+    private int adjustZ = 0;
+    @Persisted
+    @DescSynced
+    private int adjustY = 0;
+    @Persisted
+    @DescSynced
+    private BlockPos pos1 = BlockPos.ZERO;
+    @Persisted
+    @DescSynced
+    private BlockPos pos2 = BlockPos.ZERO;
 
-    @Persisted private final int[] materialInventory = new int[] { 0, 0, 0 };
-    @Persisted @DescSynced private boolean insufficient = false;
+    @Persisted
+    private final int[] materialInventory = new int[] { 0, 0, 0 };
+    @Persisted
+    @DescSynced
+    private boolean insufficient = false;
 
-    @Persisted @DescSynced private boolean taskCompleted = true;
-    @Persisted @DescSynced private boolean skipAir = true;
-    @Persisted @DescSynced private boolean updateLight = true;
-    @Persisted @DescSynced private int speed = 50;
-    @Persisted @DescSynced private boolean xMirror = false;
-    @Persisted @DescSynced private boolean zMirror = false;
-    @Persisted @DescSynced private int rotation = 0;
-    @Persisted @DescSynced private boolean canExport = false;
-    @Persisted @DescSynced private int progress = 0;
+    @Persisted
+    @DescSynced
+    private boolean taskCompleted = true;
+    @Persisted
+    @DescSynced
+    private boolean skipAir = true;
+    @Persisted
+    @DescSynced
+    private boolean updateLight = true;
+    @Persisted
+    @DescSynced
+    private int speed = 50;
+    @Persisted
+    @DescSynced
+    private boolean xMirror = false;
+    @Persisted
+    @DescSynced
+    private boolean zMirror = false;
+    @Persisted
+    @DescSynced
+    private int rotation = 0;
+    @Persisted
+    @DescSynced
+    private boolean canExport = false;
+    @Persisted
+    @DescSynced
+    private int progress = 0;
 
     private static final Component EMPTY = Component.empty();
 
@@ -155,7 +206,8 @@ public class PlatformDeploymentMachine extends MetaMachine implements IFancyUIMa
         unloadingMaterial();
     }
 
-    public static void highlightRegion(ResourceKey<Level> dimension, BlockPos start, BlockPos end, int color, int durationTicks) {
+    public static void highlightRegion(ResourceKey<Level> dimension, BlockPos start, BlockPos end, int color,
+                                       int durationTicks) {
         GTNANetworkHandler.sendToAll(new SRegionHighlightPacket(
                 start, end, dimension, color, System.currentTimeMillis() + durationTicks * 50L, false));
     }
@@ -164,7 +216,8 @@ public class PlatformDeploymentMachine extends MetaMachine implements IFancyUIMa
         GTNANetworkHandler.sendToAll(new SRegionHighlightPacket(start, end, dimension, 0, 0L, true));
     }
 
-    public static void showGhostPreview(ResourceKey<Level> dimension, List<BlockPos> positions, int color, int durationTicks) {
+    public static void showGhostPreview(ResourceKey<Level> dimension, List<BlockPos> positions, int color,
+                                        int durationTicks) {
         GTNANetworkHandler.sendToAll(new SStructureGhostPreviewPacket(
                 dimension, positions, color, System.currentTimeMillis() + durationTicks * 50L, false));
     }
@@ -267,26 +320,30 @@ public class PlatformDeploymentMachine extends MetaMachine implements IFancyUIMa
                 PlatformBlockType.PlatformPreset group = getPlatformPreset(checkGroup);
                 PlatformBlockType.PlatformBlockStructure structure = getPlatformBlockStructure(checkGroup, checkId);
 
-                Component leftBtn1 = ComponentPanelWidget.withButton(Component.literal(" [ < ] "), "previous_group_plas");
+                Component leftBtn1 = ComponentPanelWidget.withButton(Component.literal(" [ < ] "),
+                        "previous_group_plas");
                 Component leftBtn2 = ComponentPanelWidget.withButton(Component.literal(" [ < ] "), "previous_group");
-                Component empty1 = Component.literal(" ".repeat(Math.max(0, 15 - ((checkGroup + 1) / 10 + maxGroup / 10 + 5) / 2)));
+                Component empty1 = Component
+                        .literal(" ".repeat(Math.max(0, 15 - ((checkGroup + 1) / 10 + maxGroup / 10 + 5) / 2)));
                 textList.add(Component.empty().append(leftBtn1).append(leftBtn2).append(empty1)
                         .append(Component.literal("<" + (checkGroup + 1) + "/" + maxGroup + ">")));
 
                 int totalIds = getPlatformPreset(checkGroup).structures().size();
                 Component leftBtn3 = ComponentPanelWidget.withButton(Component.literal(" [ < ] "), "previous_id_plas");
                 Component leftBtn4 = ComponentPanelWidget.withButton(Component.literal(" [ < ] "), "previous_id");
-                Component empty2 = Component.literal(" ".repeat(Math.max(0, 15 - ((checkId + 1) / 10 + totalIds / 10 + 5) / 2)));
+                Component empty2 = Component
+                        .literal(" ".repeat(Math.max(0, 15 - ((checkId + 1) / 10 + totalIds / 10 + 5) / 2)));
                 textList.add(Component.empty().append(leftBtn3).append(leftBtn4).append(empty2)
                         .append(Component.literal("<" + (checkId + 1) + "/" + totalIds + ">")));
 
-                textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.choose_this")
-                        .append(ComponentPanelWidget.withButton(Component.literal("[OK]"), "choose_this")));
+                textList.add(
+                        Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.choose_this")
+                                .append(ComponentPanelWidget.withButton(Component.literal("[OK]"), "choose_this")));
 
-                textList.add(structure.preview()
-                        ? Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.preview")
-                                .append(ComponentPanelWidget.withButton(Component.literal("[IMG]"), "preview"))
-                        : EMPTY);
+                textList.add(structure.preview() ?
+                        Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.preview")
+                                .append(ComponentPanelWidget.withButton(Component.literal("[IMG]"), "preview")) :
+                        EMPTY);
 
                 textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.size",
                         structure.xSize(), structure.ySize(), structure.zSize(),
@@ -295,53 +352,66 @@ public class PlatformDeploymentMachine extends MetaMachine implements IFancyUIMa
                 if (group.displayName() != null) textList.add(Component.literal(group.displayName()));
                 if (group.description() != null) textList.add(Component.literal(group.description()));
                 if (group.source() != null) {
-                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.source", group.source()));
+                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.source",
+                            group.source()));
                 }
                 if (structure.displayName() != null) textList.add(Component.literal(structure.displayName()));
                 if (structure.type() != null) textList.add(Component.literal(structure.type()));
                 if (structure.description() != null) textList.add(Component.literal(structure.description()));
                 if (structure.source() != null) {
-                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.source", structure.source()));
+                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.source",
+                            structure.source()));
                 }
             }
             case CONFIRM_CONSUMABLES -> {
                 textList.add(ComponentPanelWidget.withButton(
                         Component.translatable("gtna.machine.industrial_platform_deployment_tools.material.loading"),
                         "loading"));
-                textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.material.reserves"));
+                textList.add(
+                        Component.translatable("gtna.machine.industrial_platform_deployment_tools.material.reserves"));
                 textList.add(EMPTY);
 
                 if (!presetConfirm) {
-                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.unselected"));
+                    textList.add(Component
+                            .translatable("gtna.machine.industrial_platform_deployment_tools.text.unselected"));
                 } else {
                     PlatformBlockType.PlatformBlockStructure structure = getPlatformBlockStructure(saveGroup, saveId);
-                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.material.demand"));
+                    textList.add(Component
+                            .translatable("gtna.machine.industrial_platform_deployment_tools.material.demand"));
                     textList.add(EMPTY);
                     List<PlatformSupport.Counted<ItemStack>> extraMaterials = structure.extraMaterials();
                     if (!extraMaterials.isEmpty()) {
-                        textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.material.extra_demand"));
+                        textList.add(Component.translatable(
+                                "gtna.machine.industrial_platform_deployment_tools.material.extra_demand"));
                         extraMaterials.forEach(e -> textList.add(Component.literal("[")
                                 .append(e.value().getDisplayName()).append("x" + e.amount() + "]")));
                     }
-                    textList.add(Component.translatable(insufficient
-                            ? "gtna.machine.industrial_platform_deployment_tools.material.adequate"
-                            : "gtna.machine.industrial_platform_deployment_tools.material.insufficient"));
+                    textList.add(Component.translatable(
+                            insufficient ? "gtna.machine.industrial_platform_deployment_tools.material.adequate" :
+                                    "gtna.machine.industrial_platform_deployment_tools.material.insufficient"));
                 }
             }
             case ADJUST_SETTINGS -> {
                 textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.offset"));
-                textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.offset.x", offsetX));
-                textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.offset.y", offsetY));
-                textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.offset.z", offsetZ));
+                textList.add(
+                        Component.translatable("gtna.machine.industrial_platform_deployment_tools.offset.x", offsetX));
+                textList.add(
+                        Component.translatable("gtna.machine.industrial_platform_deployment_tools.offset.y", offsetY));
+                textList.add(
+                        Component.translatable("gtna.machine.industrial_platform_deployment_tools.offset.z", offsetZ));
                 textList.add(EMPTY);
 
                 if (!presetConfirm) {
-                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.unselected"));
+                    textList.add(Component
+                            .translatable("gtna.machine.industrial_platform_deployment_tools.text.unselected"));
                 } else {
                     textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.boundary"));
-                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.offset.x", pos2.getX()));
-                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.offset.y", pos2.getY()));
-                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.offset.z", pos2.getZ()));
+                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.offset.x",
+                            pos2.getX()));
+                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.offset.y",
+                            pos2.getY()));
+                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.offset.z",
+                            pos2.getZ()));
                 }
 
                 textList.add(EMPTY);
@@ -350,7 +420,8 @@ public class PlatformDeploymentMachine extends MetaMachine implements IFancyUIMa
                 textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.xMirror")
                         .append(ComponentPanelWidget.withButton(toggleText(xMirror), "xMirror")));
                 textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.rotation")
-                        .append(ComponentPanelWidget.withButton(Component.literal(String.valueOf(rotation)), "rotation")));
+                        .append(ComponentPanelWidget.withButton(Component.literal(String.valueOf(rotation)),
+                                "rotation")));
             }
             default -> {}
         }
@@ -361,9 +432,10 @@ public class PlatformDeploymentMachine extends MetaMachine implements IFancyUIMa
             case PRESET_SELECTION -> {
                 textList.add(EMPTY);
                 textList.add(EMPTY);
-                textList.add(presetConfirm
-                        ? Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.selected", saveGroup + 1, saveId + 1)
-                        : Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.unselected"));
+                textList.add(presetConfirm ?
+                        Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.selected",
+                                saveGroup + 1, saveId + 1) :
+                        Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.unselected"));
                 textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.highlight")
                         .append(ComponentPanelWidget.withButton(Component.literal("[HL]"), "highlight")));
             }
@@ -377,7 +449,8 @@ public class PlatformDeploymentMachine extends MetaMachine implements IFancyUIMa
                     textList.add(EMPTY);
                 } else {
                     int[] costMaterial = getPlatformBlockStructure(saveGroup, saveId).materials();
-                    textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.material.1"));
+                    textList.add(
+                            Component.translatable("gtna.machine.industrial_platform_deployment_tools.material.1"));
                     textList.add(Component.literal(String.valueOf(costMaterial[1])));
                 }
             }
@@ -491,10 +564,22 @@ public class PlatformDeploymentMachine extends MetaMachine implements IFancyUIMa
             case PRESET_SELECTION -> {
                 int maxId = getPlatformPreset(checkGroup).structures().size() - 1;
                 switch (componentData) {
-                    case "next_group" -> { checkGroup = Mth.clamp(checkGroup + 1, 0, maxGroup - 1); checkId = 0; }
-                    case "previous_group" -> { checkGroup = Mth.clamp(checkGroup - 1, 0, maxGroup - 1); checkId = 0; }
-                    case "next_group_plas" -> { checkGroup = Mth.clamp(checkGroup + 10, 0, maxGroup - 1); checkId = 0; }
-                    case "previous_group_plas" -> { checkGroup = Mth.clamp(checkGroup - 10, 0, maxGroup - 1); checkId = 0; }
+                    case "next_group" -> {
+                        checkGroup = Mth.clamp(checkGroup + 1, 0, maxGroup - 1);
+                        checkId = 0;
+                    }
+                    case "previous_group" -> {
+                        checkGroup = Mth.clamp(checkGroup - 1, 0, maxGroup - 1);
+                        checkId = 0;
+                    }
+                    case "next_group_plas" -> {
+                        checkGroup = Mth.clamp(checkGroup + 10, 0, maxGroup - 1);
+                        checkId = 0;
+                    }
+                    case "previous_group_plas" -> {
+                        checkGroup = Mth.clamp(checkGroup - 10, 0, maxGroup - 1);
+                        checkId = 0;
+                    }
                     case "next_id" -> checkId = Mth.clamp(checkId + 1, 0, maxId);
                     case "previous_id" -> checkId = Mth.clamp(checkId - 1, 0, maxId);
                     case "next_id_plas" -> checkId = Mth.clamp(checkId + 5, 0, maxId);
@@ -525,22 +610,58 @@ public class PlatformDeploymentMachine extends MetaMachine implements IFancyUIMa
             }
             case ADJUST_SETTINGS -> {
                 switch (componentData) {
-                    case "x_add" -> { offsetX++; posChanged(); }
-                    case "x_minus" -> { offsetX--; posChanged(); }
-                    case "z_add" -> { offsetZ++; posChanged(); }
-                    case "z_minus" -> { offsetZ--; posChanged(); }
-                    case "y_add" -> { offsetY++; posChanged(); }
-                    case "y_minus" -> { offsetY--; posChanged(); }
-                    case "x_add_plas" -> { offsetX += adjustX; posChanged(); }
-                    case "x_minus_plas" -> { offsetX -= adjustX; posChanged(); }
+                    case "x_add" -> {
+                        offsetX++;
+                        posChanged();
+                    }
+                    case "x_minus" -> {
+                        offsetX--;
+                        posChanged();
+                    }
+                    case "z_add" -> {
+                        offsetZ++;
+                        posChanged();
+                    }
+                    case "z_minus" -> {
+                        offsetZ--;
+                        posChanged();
+                    }
+                    case "y_add" -> {
+                        offsetY++;
+                        posChanged();
+                    }
+                    case "y_minus" -> {
+                        offsetY--;
+                        posChanged();
+                    }
+                    case "x_add_plas" -> {
+                        offsetX += adjustX;
+                        posChanged();
+                    }
+                    case "x_minus_plas" -> {
+                        offsetX -= adjustX;
+                        posChanged();
+                    }
                     case "adjust_x_add" -> adjustX = Math.max(0, adjustX + 1);
                     case "adjust_x_minus" -> adjustX = Math.max(0, adjustX - 1);
-                    case "z_add_plas" -> { offsetZ += adjustZ; posChanged(); }
-                    case "z_minus_plas" -> { offsetZ -= adjustZ; posChanged(); }
+                    case "z_add_plas" -> {
+                        offsetZ += adjustZ;
+                        posChanged();
+                    }
+                    case "z_minus_plas" -> {
+                        offsetZ -= adjustZ;
+                        posChanged();
+                    }
                     case "adjust_z_add" -> adjustZ = Math.max(0, adjustZ + 1);
                     case "adjust_z_minus" -> adjustZ = Math.max(0, adjustZ - 1);
-                    case "y_add_plas" -> { offsetY += adjustY; posChanged(); }
-                    case "y_minus_plas" -> { offsetY -= adjustY; posChanged(); }
+                    case "y_add_plas" -> {
+                        offsetY += adjustY;
+                        posChanged();
+                    }
+                    case "y_minus_plas" -> {
+                        offsetY -= adjustY;
+                        posChanged();
+                    }
                     case "adjust_y_add" -> adjustY = Math.max(0, adjustY + 1);
                     case "adjust_y_minus" -> adjustY = Math.max(0, adjustY - 1);
                     case "skipAir" -> skipAir = !skipAir;
@@ -561,7 +682,8 @@ public class PlatformDeploymentMachine extends MetaMachine implements IFancyUIMa
         if (step == PRESET_SELECTION && preview) {
             PlatformBlockType.PlatformBlockStructure structure = getPlatformBlockStructure(checkGroup, checkId);
             if (!structure.preview()) return IGuiTexture.EMPTY;
-            ResourceLocation imageLocation = GTNACORE.id("textures/gui/industrial_platform_deployment_tools/" + structure.name() + ".png");
+            ResourceLocation imageLocation = GTNACORE
+                    .id("textures/gui/industrial_platform_deployment_tools/" + structure.name() + ".png");
             return new ResourceTexture(imageLocation);
         }
         return IGuiTexture.EMPTY;
@@ -574,7 +696,8 @@ public class PlatformDeploymentMachine extends MetaMachine implements IFancyUIMa
         } else if (!presetConfirm) {
             textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.text.unselected"));
         } else if (!insufficient) {
-            textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.material.insufficient"));
+            textList.add(
+                    Component.translatable("gtna.machine.industrial_platform_deployment_tools.material.insufficient"));
         } else if (!taskCompleted) {
             textList.add(Component.translatable("gtna.machine.industrial_platform_deployment_tools.doing", progress));
         } else {
@@ -987,6 +1110,7 @@ public class PlatformDeploymentMachine extends MetaMachine implements IFancyUIMa
     }
 
     private record MaterialValue(java.util.function.Supplier<Item> supplier, int value) {
+
         @Nullable
         private Item item() {
             try {

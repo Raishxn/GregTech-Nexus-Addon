@@ -51,7 +51,6 @@ import com.raishxn.gtna.common.machine.multiblock.noenergy.HyperPressureReactor;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.InfernalCokeOven;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.LeapForwardBlastFurnace;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
-import com.raishxn.gtna.common.machine.noenergy.platformdeployment.PlatformDeploymentMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.HugeSteamInputBus;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.HugeSteamOutputBus;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.InfiniteSteamInputBus;
@@ -59,6 +58,7 @@ import com.raishxn.gtna.common.machine.multiblock.part.steam.OutputBoostSteamOut
 import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamInputHatch;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamOutputHatch;
 import com.raishxn.gtna.common.machine.multiblock.steam.*;
+import com.raishxn.gtna.common.machine.noenergy.platformdeployment.PlatformDeploymentMachine;
 import com.raishxn.gtna.config.ConfigHolder;
 import com.raishxn.gtna.utils.Registries;
 
@@ -804,8 +804,10 @@ public class GTNAMachines {
                             .where('B', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
                             .where('C', blocks(GTNABlocks.STEAM_ASSEMBLY_BLOCK.get()))
                             .where('D', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
-                                    .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1).setPreviewCount(1))
-                                    .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1).setPreviewCount(1))
+                                    .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1)
+                                            .setPreviewCount(1))
+                                    .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1)
+                                            .setPreviewCount(1))
                                     .or(abilities(IMPORT_FLUIDS).setMaxGlobalLimited(2))
                                     .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(2))
                                     .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(1)))
@@ -834,15 +836,24 @@ public class GTNAMachines {
                     .recipeType(GTRecipeTypes.MIXER_RECIPES)
                     .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
                     .pattern(definition -> FactoryBlockPattern.start()
-                            .aisle(" AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ")
-                            .aisle("AAAAAAAAA", "AA     AA", "AA     AA", "AA     AA", "AA     AA", "AA     AA", "AA  B  AA")
-                            .aisle("AAAAAAAAA", "A       A", "A   C   A", "A       A", "A   C   A", "A       A", "A   B   A")
-                            .aisle("AAAAAAAAA", "A       A", "A   C   A", "A       A", "A   C   A", "A       A", "A   B   A")
-                            .aisle("AAAAAAAAA", "A   D   A", "A CCCCC A", "A   D   A", "A CCCCC A", "A   D   A", "ABBBBBBBA")
-                            .aisle("AAAAAAAAA", "A       A", "A   C   A", "A       A", "A   C   A", "A       A", "A   B   A")
-                            .aisle("AAAAAAAAA", "A       A", "A   C   A", "A       A", "A   C   A", "A       A", "A   B   A")
-                            .aisle("AAAAAAAAA", "AA     AA", "AA     AA", "AA     AA", "AA     AA", "AA     AA", "AA  B  AA")
-                            .aisle(" AAAAAAA ", " AAASAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ")
+                            .aisle(" AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ",
+                                    " AAAAAAA ")
+                            .aisle("AAAAAAAAA", "AA     AA", "AA     AA", "AA     AA", "AA     AA", "AA     AA",
+                                    "AA  B  AA")
+                            .aisle("AAAAAAAAA", "A       A", "A   C   A", "A       A", "A   C   A", "A       A",
+                                    "A   B   A")
+                            .aisle("AAAAAAAAA", "A       A", "A   C   A", "A       A", "A   C   A", "A       A",
+                                    "A   B   A")
+                            .aisle("AAAAAAAAA", "A   D   A", "A CCCCC A", "A   D   A", "A CCCCC A", "A   D   A",
+                                    "ABBBBBBBA")
+                            .aisle("AAAAAAAAA", "A       A", "A   C   A", "A       A", "A   C   A", "A       A",
+                                    "A   B   A")
+                            .aisle("AAAAAAAAA", "A       A", "A   C   A", "A       A", "A   C   A", "A       A",
+                                    "A   B   A")
+                            .aisle("AAAAAAAAA", "AA     AA", "AA     AA", "AA     AA", "AA     AA", "AA     AA",
+                                    "AA  B  AA")
+                            .aisle(" AAAAAAA ", " AAASAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ",
+                                    " AAAAAAA ")
                             .where('S', controller(blocks(definition.get())))
                             .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
                                     .or(blocks(GTMachines.STEAM_HATCH.getBlock()).setExactLimit(1))
@@ -2664,7 +2675,8 @@ public class GTNAMachines {
                             GTCEu.id("block/casings/gcym/nonconducting_casing"),
                             GTCEu.id("block/multiblock/assembly_line"))
                     .tooltips(
-                            Component.literal("Original ME Super Computer Core structure, renamed as the Nexus ME Hypercore.")
+                            Component.literal(
+                                    "Original ME Super Computer Core structure, renamed as the Nexus ME Hypercore.")
                                     .withStyle(ChatFormatting.AQUA),
                             Component.literal(
                                     "Uses the GTOCore ME CPU frame with Matrix Crafting Modules inside.")
@@ -2692,7 +2704,8 @@ public class GTNAMachines {
                                     .withStyle(ChatFormatting.AQUA),
                             Component.literal("Repeat the core slice to install up to 128 storage sections.")
                                     .withStyle(ChatFormatting.GRAY),
-                            Component.literal("Requires exactly one ME Storage Access, Big Storage Access, or IO Port Hatch.")
+                            Component.literal(
+                                    "Requires exactly one ME Storage Access, Big Storage Access, or IO Port Hatch.")
                                     .withStyle(ChatFormatting.GRAY))
                     .tooltipBuilder(GTNA_ADD)
                     .register());
@@ -2869,7 +2882,8 @@ public class GTNAMachines {
                 .where('D', dPredicate.or(accessPredicate))
                 .where('E', controller(blocks(definition.get())))
                 .where('G', blocks(GTBlocks.HIGH_POWER_CASING.get()))
-                .where('H', blocks(GTNABlocks.LITHIUM_OXIDE_CERAMIC_HEAT_RESISTANT_SHOCK_RESISTANT_MECHANICAL_CUBE.get()))
+                .where('H',
+                        blocks(GTNABlocks.LITHIUM_OXIDE_CERAMIC_HEAT_RESISTANT_SHOCK_RESISTANT_MECHANICAL_CUBE.get()))
                 .where('c', corePredicate)
                 .build();
     }

@@ -13,7 +13,8 @@ public abstract class TooltipsMixin {
 
     /**
      * @author GTNA
-     * @reason AE2 15.4.10 only ships byte tooltip units up to GB, which crashes the CPU screen for Nexus Hypercore CPUs.
+     * @reason AE2 15.4.10 only ships byte tooltip units up to GB, which crashes the CPU screen for Nexus Hypercore
+     *         CPUs.
      */
     @Overwrite
     public static Tooltips.Amount getByteAmount(long amount) {

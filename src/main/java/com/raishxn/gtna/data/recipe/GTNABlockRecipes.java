@@ -2,18 +2,15 @@ package com.raishxn.gtna.data.recipe;
 
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
-import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.common.data.*;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
@@ -27,8 +24,8 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 
 import java.util.function.Consumer;
 
-import static com.gregtechceu.gtceu.common.data.GTMaterials.Lava;
 import static com.gregtechceu.gtceu.common.data.GTMaterials.CHEMICAL_DYES;
+import static com.gregtechceu.gtceu.common.data.GTMaterials.Lava;
 import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.ROCK_BREAKER_RECIPES;
 
 public class GTNABlockRecipes {
@@ -292,7 +289,8 @@ public class GTNABlockRecipes {
                 .EUt(480)
                 .save(provider);
 
-        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_zirconia_ceramic_high_strength_bending_resistance_mechanical_block")
+        GTRecipeTypes.ASSEMBLER_RECIPES
+                .recipeBuilder("gtna_zirconia_ceramic_high_strength_bending_resistance_mechanical_block")
                 .inputItems(TagPrefix.frameGt, GTMaterials.TungstenSteel)
                 .inputItems(TagPrefix.plate, GTMaterials.RedSteel, 2)
                 .inputItems(GTNATagPrefix.flake, GTNAMaterials.ZirconiaCeramic, 16)
@@ -643,7 +641,6 @@ public class GTNABlockRecipes {
                             .EUt(8053063680L))
                     .save(provider);
         }
-
     }
 
     @SuppressWarnings("unchecked")
@@ -693,4 +690,3 @@ public class GTNABlockRecipes {
         }
     }
 }
-

@@ -7,10 +7,10 @@ package com.raishxn.gtna.client;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import com.raishxn.gtna.common.CommonProxy;
 import com.raishxn.gtna.client.renderer.machine.AnnihilateGeneratorRenderer;
 import com.raishxn.gtna.client.renderer.machine.EyeOfHarmonyRenderer;
 import com.raishxn.gtna.client.renderer.machine.EyeOfWoodRenderer;
+import com.raishxn.gtna.common.CommonProxy;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientProxy extends CommonProxy {

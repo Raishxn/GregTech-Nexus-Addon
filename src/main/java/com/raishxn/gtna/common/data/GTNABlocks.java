@@ -1,7 +1,7 @@
 package com.raishxn.gtna.common.data;
 
-import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import com.gregtechceu.gtceu.GTCEu;
+import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;

@@ -42,8 +42,8 @@ import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
 import com.raishxn.gtna.api.machine.multiblock.ParallelMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
-import com.raishxn.gtna.common.machine.multiblock.steam.AdjustableSteamParallelMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.steam.AdjustableSteamParallelMachine;
 import com.raishxn.gtna.utils.GTNARecipeUtils;
 import com.raishxn.gtna.utils.GTNAUtil;
 import com.raishxn.gtna.utils.ThreadMultiplierStrategy;
@@ -347,6 +347,14 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
 
         if (!RecipeHelper.matchContents((IRecipeCapabilityHolder) machine, recipeToRun).isSuccess()) {
             return false;
+        }
+
+        // Mirror the pattern's mode onto the controller's activeRecipeType so the UI tab,
+        // machine mode display and tick subscriptions reflect what is actually running.
+        // Routing itself is per-slot (see gtna$slotAcceptsRecipe); this is display-only.
+        if (machine instanceof IPatternBufferModeHost host && recipeToRun.getType() != null &&
+                recipeToRun.getType().registryName != null) {
+            host.gtna$applyPatternBufferMode(recipeToRun.getType().registryName.toString(), recipeToRun);
         }
 
         if (!machine.beforeWorking(recipeToRun)) return false;

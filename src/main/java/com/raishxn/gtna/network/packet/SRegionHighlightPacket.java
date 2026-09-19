@@ -20,7 +20,8 @@ public class SRegionHighlightPacket {
     private final long expiryTime;
     private final boolean clear;
 
-    public SRegionHighlightPacket(BlockPos start, BlockPos end, ResourceKey<Level> dim, int color, long expiryTime, boolean clear) {
+    public SRegionHighlightPacket(BlockPos start, BlockPos end, ResourceKey<Level> dim, int color, long expiryTime,
+                                  boolean clear) {
         this.start = start;
         this.end = end;
         this.dim = dim;

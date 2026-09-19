@@ -276,7 +276,8 @@ public class GTNAItems {
     private static void registerIndustrialComponents() {
         for (int group = 0; group < INDUSTRIAL_COMPONENT_GROUPS.length; group++) {
             for (int size = 0; size < INDUSTRIAL_COMPONENT_SIZES.length; size++) {
-                String id = INDUSTRIAL_COMPONENT_GROUPS[group] + "_industrial_components_" + INDUSTRIAL_COMPONENT_SIZES[size];
+                String id = INDUSTRIAL_COMPONENT_GROUPS[group] + "_industrial_components_" +
+                        INDUSTRIAL_COMPONENT_SIZES[size];
                 String lang = INDUSTRIAL_COMPONENT_GROUP_NAMES[group] + " Industrial Components (" +
                         INDUSTRIAL_COMPONENT_SIZE_NAMES[size] + ")";
                 String sizeKey = INDUSTRIAL_COMPONENT_SIZES[size];

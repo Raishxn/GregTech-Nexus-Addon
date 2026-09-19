@@ -24,9 +24,8 @@ public final class GTNAMultiBlockFileReader {
     public static FactoryBlockPattern start(MultiblockMachineDefinition definition, String name,
                                             RelativeDirection... directions) {
         String[][] aisles = loadAisles(name);
-        FactoryBlockPattern pattern = directions.length == 3
-                ? FactoryBlockPattern.start(directions[0], directions[1], directions[2])
-                : FactoryBlockPattern.start();
+        FactoryBlockPattern pattern = directions.length == 3 ?
+                FactoryBlockPattern.start(directions[0], directions[1], directions[2]) : FactoryBlockPattern.start();
         for (String[] aisle : aisles) {
             pattern.aisle(aisle);
         }

@@ -21,7 +21,8 @@ public class SStructureGhostPreviewPacket {
     private final long expiryTime;
     private final boolean clear;
 
-    public SStructureGhostPreviewPacket(ResourceKey<Level> dim, List<BlockPos> positions, int color, long expiryTime, boolean clear) {
+    public SStructureGhostPreviewPacket(ResourceKey<Level> dim, List<BlockPos> positions, int color, long expiryTime,
+                                        boolean clear) {
         this.dim = dim;
         this.positions = positions;
         this.color = color;

@@ -4,13 +4,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 import appeng.api.networking.IGridNode;
-import appeng.crafting.execution.CraftingCpuLogic;
 import appeng.blockentity.crafting.CraftingBlockEntity;
+import appeng.crafting.execution.CraftingCpuLogic;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.me.helpers.MachineSource;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftingCPUInterfacePartMachine;
-import com.raishxn.gtna.integration.ae2.crafting.IGTNACraftingCPUCluster;
 import com.raishxn.gtna.integration.ae2.crafting.GTNAOptimizedCraftingCpuLogic;
+import com.raishxn.gtna.integration.ae2.crafting.IGTNACraftingCPUCluster;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

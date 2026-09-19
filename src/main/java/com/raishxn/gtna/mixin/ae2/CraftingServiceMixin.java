@@ -51,7 +51,8 @@ public abstract class CraftingServiceMixin {
     @Overwrite
     private void updateCPUClusters() {
         craftingCPUClusters.clear();
-        for (GTNACraftingCPUInterfacePartMachine machine : grid.getMachines(GTNACraftingCPUInterfacePartMachine.class)) {
+        for (GTNACraftingCPUInterfacePartMachine machine : grid
+                .getMachines(GTNACraftingCPUInterfacePartMachine.class)) {
             for (CraftingCPUCluster cluster : machine.getClusters()) {
                 craftingCPUClusters.add(cluster);
                 ICraftingLink maybeLink = cluster.craftingLogic.getLastLink();

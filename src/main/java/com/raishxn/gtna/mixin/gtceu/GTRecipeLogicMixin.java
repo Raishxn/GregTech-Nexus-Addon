@@ -14,10 +14,10 @@ import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.content.ContentModifier;
 
-import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
-import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhouse;
+import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import com.raishxn.gtna.utils.GTNASpecialPartUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

@@ -1,7 +1,5 @@
 package com.raishxn.gtna;
 
-import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.common.MinecraftForge;
@@ -23,7 +21,6 @@ public class GTNACORE {
 
     public static final String MOD_ID = "gtna";
     public static final Logger LOGGER = LogManager.getLogger();
-    public static GTRegistrate EXAMPLE_REGISTRATE = GTRegistrate.create(GTNACORE.MOD_ID);
 
     public GTNACORE() {
         GTNAConfigBootstrap.init();

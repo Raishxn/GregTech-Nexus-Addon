@@ -10,7 +10,8 @@ import net.minecraft.world.level.Level;
 
 import java.util.Comparator;
 
-public record TesseractDirectedTarget(GlobalPos pos, Direction face, int order) implements Comparable<TesseractDirectedTarget> {
+public record TesseractDirectedTarget(GlobalPos pos, Direction face, int order)
+        implements Comparable<TesseractDirectedTarget> {
 
     public static final Comparator<TesseractDirectedTarget> SORTER = Comparator.comparingInt(
             TesseractDirectedTarget::order);

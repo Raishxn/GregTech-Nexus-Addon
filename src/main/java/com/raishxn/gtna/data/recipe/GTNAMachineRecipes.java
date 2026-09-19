@@ -4,10 +4,8 @@ import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
-import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.ingredient.IntCircuitIngredient;
 import com.gregtechceu.gtceu.common.data.*;
-import com.gregtechceu.gtceu.common.data.machines.GCYMMachines;
 import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 
@@ -177,7 +175,8 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_CIRCUIT_ASSEMBLER)) {
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_CIRCUIT_ASSEMBLER.asStack().getItem())
+            ShapedRecipeBuilder
+                    .shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_CIRCUIT_ASSEMBLER.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
                     .pattern("ABA")
@@ -217,7 +216,8 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_THERMAL_CENTRIFUGE)) {
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_THERMAL_CENTRIFUGE.asStack().getItem())
+            ShapedRecipeBuilder
+                    .shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_THERMAL_CENTRIFUGE.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
                     .pattern("ABA")
@@ -316,7 +316,8 @@ public class GTNAMachineRecipes {
                     .define('C', ChemicalHelper.get(TagPrefix.pipeLargeFluid, GTMaterials.Bronze).getItem())
                     .define('D', GTMultiMachines.STEEL_MULTIBLOCK_TANK.asStack().getItem())
                     .unlockedBy("has_brass_reinforced_wooden_casing",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNABlocks.BRASS_REINFORCED_WOODEN_CASING.get()))
+                            InventoryChangeTrigger.TriggerInstance
+                                    .hasItems(GTNABlocks.BRASS_REINFORCED_WOODEN_CASING.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_SOLAR_BOILER)) {
@@ -331,7 +332,8 @@ public class GTNAMachineRecipes {
                     .define('E', GTBlocks.CASING_BRONZE_PIPE.get())
                     .define('F', GTNAItems.PRECISION_STEAM_COMPONENT.get())
                     .unlockedBy("has_solar_heat_collector_pipe_casing",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNABlocks.SOLAR_HEAT_COLLECTOR_PIPE_CASING.get()))
+                            InventoryChangeTrigger.TriggerInstance
+                                    .hasItems(GTNABlocks.SOLAR_HEAT_COLLECTOR_PIPE_CASING.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.DIMENSIONALLY_TRANSCENDENT_STEAM_BOILER)) {
@@ -412,7 +414,8 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
         if (GTNAMachines2.DIRECTED_TESSERACT_GENERATOR != null) {
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines2.DIRECTED_TESSERACT_GENERATOR.asStack().getItem())
+            ShapedRecipeBuilder
+                    .shaped(RecipeCategory.MISC, GTNAMachines2.DIRECTED_TESSERACT_GENERATOR.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
                     .pattern("EFE")
@@ -699,7 +702,8 @@ public class GTNAMachineRecipes {
                     .inputItems(GTItems.EMITTER_ZPM.asStack().getItem(), 8)
                     .inputItems(CustomTags.ZPM_CIRCUITS, 8)
                     .inputItems(GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.asItem(), 16)
-                    .inputItems(GTNABlocks.ZIRCONIA_CERAMIC_HIGH_STRENGTH_BENDING_RESISTANCE_MECHANICAL_BLOCK.asItem(), 20)
+                    .inputItems(GTNABlocks.ZIRCONIA_CERAMIC_HIGH_STRENGTH_BENDING_RESISTANCE_MECHANICAL_BLOCK.asItem(),
+                            20)
                     .inputItems(GTNABlocks.NAQUADAH_BOROSILICATE_GLASS.asItem(), 8)
                     .inputItems(GTNABlocks.MAGTECH_CASING.asItem(), 8)
                     .inputItems(GTNABlocks.PROCESS_MACHINE_CASING.asItem(), 8)
@@ -726,7 +730,8 @@ public class GTNAMachineRecipes {
             GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("me_super_computer_core")
                     .inputItems(GTBlocks.HIGH_POWER_CASING.asItem(), 16)
                     .inputItems(GTNABlocks.HIGH_STRENGTH_CONCRETE.asItem(), 32)
-                    .inputItems(GTNABlocks.COBALT_OXIDE_CERAMIC_STRONG_THERMALLY_CONDUCTIVE_MECHANICAL_BLOCK.asItem(), 16)
+                    .inputItems(GTNABlocks.COBALT_OXIDE_CERAMIC_STRONG_THERMALLY_CONDUCTIVE_MECHANICAL_BLOCK.asItem(),
+                            16)
                     .inputItems(GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.asItem(), 8)
                     .inputItems(GCYMBlocks.ELECTROLYTIC_CELL.asItem(), 8)
                     .inputItems(GCYMBlocks.MOLYBDENUM_DISILICIDE_COIL_BLOCK.asItem(), 8)
@@ -750,7 +755,9 @@ public class GTNAMachineRecipes {
                     .inputItems(GTBlocks.COMPUTER_CASING.asItem(), 32)
                     .inputItems(GTBlocks.COMPUTER_HEAT_VENT.asItem(), 16)
                     .inputItems(GTBlocks.HIGH_POWER_CASING.asItem(), 8)
-                    .inputItems(GTNABlocks.LITHIUM_OXIDE_CERAMIC_HEAT_RESISTANT_SHOCK_RESISTANT_MECHANICAL_CUBE.asItem(), 16)
+                    .inputItems(
+                            GTNABlocks.LITHIUM_OXIDE_CERAMIC_HEAT_RESISTANT_SHOCK_RESISTANT_MECHANICAL_CUBE.asItem(),
+                            16)
                     .inputItems(GTNABlocks.ABS_BLACK_CASING.asItem(), 16)
                     .inputItems(AEBlocks.CRAFTING_STORAGE_256K.stack(4).getItem(), 4)
                     .inputItems(CustomTags.ZPM_CIRCUITS, 8)

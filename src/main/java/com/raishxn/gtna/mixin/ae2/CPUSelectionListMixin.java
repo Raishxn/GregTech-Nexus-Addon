@@ -43,8 +43,8 @@ public abstract class CPUSelectionListMixin {
     }
 
     @Redirect(
-            method = "drawBackgroundLayer",
-            at = @At(value = "INVOKE", target = "Ljava/lang/String;valueOf(I)Ljava/lang/String;"))
+              method = "drawBackgroundLayer",
+              at = @At(value = "INVOKE", target = "Ljava/lang/String;valueOf(I)Ljava/lang/String;"))
     private String gtna$formatCoProcessors(int value) {
         return formatCount(value);
     }

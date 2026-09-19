@@ -1,12 +1,12 @@
 package com.raishxn.gtna.common.machine.tesseract;
 
+import com.gregtechceu.gtceu.api.blockentity.MetaMachineBlockEntity;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.feature.IFancyUIMachine;
 import com.gregtechceu.gtceu.api.machine.feature.IMachineLife;
-import com.gregtechceu.gtceu.api.blockentity.MetaMachineBlockEntity;
 
 import com.lowdragmc.lowdraglib.gui.texture.GuiTextureGroup;
 import com.lowdragmc.lowdraglib.gui.texture.TextTexture;
@@ -26,14 +26,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraft.world.level.Level;
 
 import appeng.api.config.Actionable;
 import appeng.api.crafting.IPatternDetails;
-import appeng.api.stacks.AEFluidKey;
 import appeng.api.networking.security.IActionSource;
+import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.AEKeyType;
 import appeng.api.stacks.GenericStack;
@@ -51,7 +51,6 @@ import com.raishxn.gtna.integration.ae2.pattern.IParallelPatternDetails;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,7 +115,8 @@ public class DirectedTesseractMachine extends MetaMachine
 
         List<OrderedPush> orderedInputs = getOrderedInputs(patternDetails, inputHolder);
         if (orderedInputs.isEmpty() || orderedInputs.size() > targets.size()) {
-            GTNACORE.LOGGER.debug("[GTNA] Directed Tesseract {} rejected pattern {} because {} ordered inputs do not fit {} targets",
+            GTNACORE.LOGGER.debug(
+                    "[GTNA] Directed Tesseract {} rejected pattern {} because {} ordered inputs do not fit {} targets",
                     getPos(), patternDetails.getDefinition(), orderedInputs.size(), targets.size());
             return false;
         }
@@ -148,7 +148,8 @@ public class DirectedTesseractMachine extends MetaMachine
                 return false;
             }
             if (target.containsPatternInput(patternInputs)) {
-                GTNACORE.LOGGER.debug("[GTNA] Directed Tesseract {} ignoring blocked-target check for explicit route {}",
+                GTNACORE.LOGGER.debug(
+                        "[GTNA] Directed Tesseract {} ignoring blocked-target check for explicit route {}",
                         getPos(), describeTarget(directedTarget));
             }
             if (!isTargetCompatible(orderedPush.key(), capabilitySummary)) {
@@ -465,7 +466,8 @@ public class DirectedTesseractMachine extends MetaMachine
             }
             long inserted = storage.insert(fluidKey, amount, actionable, actionSource);
             if (inserted > 0L) {
-                GTNACORE.LOGGER.debug("[GTNA] Directed Tesseract {} inserted fluid {} / {} into {} via fallback side {}",
+                GTNACORE.LOGGER.debug(
+                        "[GTNA] Directed Tesseract {} inserted fluid {} / {} into {} via fallback side {}",
                         getPos(), inserted, amount, describeTarget(target), direction);
                 return inserted;
             }
@@ -474,7 +476,8 @@ public class DirectedTesseractMachine extends MetaMachine
         if (nullSideStorage != null) {
             long inserted = nullSideStorage.insert(fluidKey, amount, actionable, actionSource);
             if (inserted > 0L) {
-                GTNACORE.LOGGER.debug("[GTNA] Directed Tesseract {} inserted fluid {} / {} into {} via fallback null side",
+                GTNACORE.LOGGER.debug(
+                        "[GTNA] Directed Tesseract {} inserted fluid {} / {} into {} via fallback null side",
                         getPos(), inserted, amount, describeTarget(target));
                 return inserted;
             }
@@ -486,7 +489,8 @@ public class DirectedTesseractMachine extends MetaMachine
                                            net.minecraft.world.level.block.entity.BlockEntity blockEntity,
                                            AEFluidKey fluidKey, long amount) {
         String machineInfo = "none";
-        if (blockEntity instanceof MetaMachineBlockEntity machineBlockEntity && machineBlockEntity.getMetaMachine() != null) {
+        if (blockEntity instanceof MetaMachineBlockEntity machineBlockEntity &&
+                machineBlockEntity.getMetaMachine() != null) {
             MetaMachine metaMachine = machineBlockEntity.getMetaMachine();
             machineInfo = metaMachine.getClass().getSimpleName() + " front=" + metaMachine.getFrontFacing();
         }
@@ -536,7 +540,8 @@ public class DirectedTesseractMachine extends MetaMachine
         lines.add(Component.literal(""));
         lines.add(Component.literal("Bound Targets"));
         for (TesseractDirectedTarget target : targets) {
-            lines.add(Component.literal(formatTargetLine(target) + " [" + inspectTargetCapabilities(target).displayName() + "]"));
+            lines.add(Component
+                    .literal(formatTargetLine(target) + " [" + inspectTargetCapabilities(target).displayName() + "]"));
         }
         return lines;
     }
@@ -599,7 +604,8 @@ public class DirectedTesseractMachine extends MetaMachine
         if (blockEntity == null || blockEntity.isRemoved()) {
             return TargetCapabilitySummary.UNKNOWN;
         }
-        if (blockEntity instanceof MetaMachineBlockEntity machineBlockEntity && machineBlockEntity.getMetaMachine() != null) {
+        if (blockEntity instanceof MetaMachineBlockEntity machineBlockEntity &&
+                machineBlockEntity.getMetaMachine() != null) {
             String machineName = machineBlockEntity.getMetaMachine().getClass().getSimpleName();
             if (machineName.contains("FluidHatchPartMachine")) {
                 return TargetCapabilitySummary.FLUID_HATCH;
@@ -646,6 +652,7 @@ public class DirectedTesseractMachine extends MetaMachine
     private record PendingInsert(TesseractDirectedTarget target, AEKey key, long amount) {}
 
     private enum TargetCapabilitySummary {
+
         ITEM("Item"),
         FLUID("Fluid"),
         ITEM_BUS("Item Bus"),

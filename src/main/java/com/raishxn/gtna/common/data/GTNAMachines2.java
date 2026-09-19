@@ -28,10 +28,10 @@ import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachi
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostItemBusPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
-import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftingCPUInterfacePartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftPatternPartMachine;
-import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEStorageAccessPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftingCPUInterfacePartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEStorageAccessPartMachine;
 import com.raishxn.gtna.common.machine.tesseract.DirectedTesseractMachine;
 import com.raishxn.gtna.config.ConfigHolder;
 
@@ -229,7 +229,9 @@ public class GTNAMachines2 {
     }
 
     private static MachineDefinition registerMEStorageAccessHatch(
-            String id, int tier, GTNAMEStorageAccessPartMachine.Mode mode, String tooltipKey) {
+                                                                  String id, int tier,
+                                                                  GTNAMEStorageAccessPartMachine.Mode mode,
+                                                                  String tooltipKey) {
         return REGISTRATE.machine(id, holder -> new GTNAMEStorageAccessPartMachine(holder, mode))
                 .tier(tier)
                 .rotationState(RotationState.ALL)

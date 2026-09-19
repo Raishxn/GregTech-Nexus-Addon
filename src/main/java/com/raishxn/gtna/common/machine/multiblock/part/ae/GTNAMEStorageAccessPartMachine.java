@@ -31,6 +31,7 @@ public class GTNAMEStorageAccessPartMachine extends MEBusPartMachine implements 
     private static final String AMOUNT_TAG = "amount";
 
     public enum Mode {
+
         STORAGE("gtna.machine.me_storage_access_hatch.mode"),
         BIG_STORAGE("gtna.machine.me_big_storage_access_hatch.mode"),
         IO_PORT("gtna.machine.me_io_port_hatch.mode");

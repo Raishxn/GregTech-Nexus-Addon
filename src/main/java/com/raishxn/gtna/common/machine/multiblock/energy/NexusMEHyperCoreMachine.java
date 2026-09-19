@@ -9,18 +9,21 @@ import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDisplayUIMachine;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
 import com.gregtechceu.gtceu.api.pattern.MultiblockState;
+
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
 import com.lowdragmc.lowdraglib.gui.widget.ComponentPanelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.DraggableScrollableWidgetGroup;
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
-import com.raishxn.gtna.common.data.GTNABlocks;
-import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftingCPUInterfacePartMachine;
-import com.raishxn.gtna.utils.Registries;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
+
+import com.raishxn.gtna.common.data.GTNABlocks;
+import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftingCPUInterfacePartMachine;
+import com.raishxn.gtna.utils.Registries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -303,7 +306,8 @@ public class NexusMEHyperCoreMachine extends WorkableMultiblockMachine implement
         textList.add(Component.translatable("gtna.machine.nexus_me_hypercore.ui.tier")
                 .append(Component.literal(getComputationTierName()).withStyle(ChatFormatting.GOLD)));
         textList.add(Component.translatable("gtna.machine.nexus_me_hypercore.ui.modules")
-                .append(Component.literal(installedModules + "/" + TOTAL_MODULE_SLOTS).withStyle(ChatFormatting.GREEN)));
+                .append(Component.literal(installedModules + "/" + TOTAL_MODULE_SLOTS)
+                        .withStyle(ChatFormatting.GREEN)));
         textList.add(Component.translatable("gtna.machine.nexus_me_hypercore.ui.storage")
                 .append(Component.literal(formatBytes(totalStorageBytes)).withStyle(ChatFormatting.YELLOW)));
         textList.add(Component.translatable("gtna.machine.nexus_me_hypercore.ui.coprocessors")
@@ -311,9 +315,9 @@ public class NexusMEHyperCoreMachine extends WorkableMultiblockMachine implement
         textList.add(Component.translatable("gtna.machine.nexus_me_hypercore.ui.threads")
                 .append(Component.literal(formatStat(totalThreads)).withStyle(ChatFormatting.AQUA)));
         textList.add(Component.translatable("gtna.machine.nexus_me_hypercore.ui.transcendent")
-                .append(Component.translatable(transcendentMode
-                        ? "gtna.machine.nexus_me_hypercore.ui.on"
-                        : "gtna.machine.nexus_me_hypercore.ui.off")
+                .append(Component
+                        .translatable(transcendentMode ? "gtna.machine.nexus_me_hypercore.ui.on" :
+                                "gtna.machine.nexus_me_hypercore.ui.off")
                         .withStyle(transcendentMode ? ChatFormatting.RED : ChatFormatting.GRAY)));
         textList.add(Component.literal("Matrix I: " + matrixI + "  Matrix II: " + matrixII));
         textList.add(Component.literal("Matrix III: " + matrixIII + "  Matrix IV/V: " + matrixIV));

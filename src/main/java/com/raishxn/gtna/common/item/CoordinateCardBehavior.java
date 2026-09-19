@@ -67,7 +67,8 @@ public class CoordinateCardBehavior implements IInteractionItem, IAddInformation
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list,
+                                TooltipFlag tooltipFlag) {
         list.add(GTNATooltips.desc("item.gtna.coordinate_card.tooltip.1"));
         CompoundTag tag = itemStack.getTag();
         if (tag != null && tag.contains("x") && tag.contains("y") && tag.contains("z")) {

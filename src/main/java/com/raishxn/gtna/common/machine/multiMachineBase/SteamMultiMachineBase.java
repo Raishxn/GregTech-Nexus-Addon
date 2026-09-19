@@ -121,10 +121,13 @@ public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine
         if (modeId == null || modeId.isBlank()) {
             return false;
         }
+        // Exact GTM formula (MachineModeFancyConfigurator.setActiveRecipeTypeAndUpdateTickSubs).
         for (int i = 0; i < getRecipeTypes().length; i++) {
             if (gtna$matchesModeId(modeId, getRecipeTypes()[i])) {
-                if (getActiveRecipeType() != i) {
-                    setActiveRecipeType(i);
+                boolean needUpdateTickSubs = !keepSubscribing() && getActiveRecipeType() != i;
+                setActiveRecipeType(i); // @Persisted: NBT + network sync are automatic
+                if (needUpdateTickSubs) {
+                    getRecipeLogic().updateTickSubscription();
                 }
                 return true;
             }

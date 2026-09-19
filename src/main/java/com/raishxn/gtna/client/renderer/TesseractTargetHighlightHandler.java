@@ -1,13 +1,6 @@
 package com.raishxn.gtna.client.renderer;
 
 import com.lowdragmc.lowdraglib.client.utils.RenderBufferUtils;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -21,6 +14,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.item.TesseractTargetMarkerBehavior;
 import com.raishxn.gtna.common.machine.tesseract.DirectedTesseractMachine;
@@ -51,7 +51,8 @@ public class TesseractTargetHighlightHandler {
         }
 
         if (!DirectedTesseractMachine.HIGHLIGHTS.isEmpty()) {
-            for (ImmutableList<TesseractDirectedTarget> targets : List.copyOf(DirectedTesseractMachine.HIGHLIGHTS.elementSet())) {
+            for (ImmutableList<TesseractDirectedTarget> targets : List
+                    .copyOf(DirectedTesseractMachine.HIGHLIGHTS.elementSet())) {
                 renderDirectedTargets(event, targets);
             }
         }
@@ -100,7 +101,8 @@ public class TesseractTargetHighlightHandler {
             RenderSystem.disableDepthTest();
             RenderSystem.enableBlend();
             RenderSystem.disableCull();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,
+                    GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
             Tesselator tesselator = Tesselator.getInstance();
             BufferBuilder buffer = tesselator.getBuilder();

@@ -44,3 +44,9 @@ GTCEu-Terminals-ref/
 GTMThings-gto-ref/
 gtocore_terminal.txt
 compile.log
+
+# decompiled forge classes (must never be compiled/versioned)
+net/
+
+# mkdocs build output (deployed via gh-deploy workflow)
+site/

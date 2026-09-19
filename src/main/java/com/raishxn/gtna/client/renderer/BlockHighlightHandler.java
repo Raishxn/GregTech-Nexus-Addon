@@ -56,8 +56,11 @@ public class BlockHighlightHandler {
     private static final Map<ResourceKey<Level>, GhostHighlightData> GHOST_HIGHLIGHTS = new ConcurrentHashMap<>();
 
     private record HighlightEntry(BlockPos pos, ResourceKey<Level> dim) {}
+
     private record RegionHighlightEntry(BlockPos start, BlockPos end, ResourceKey<Level> dim) {}
+
     private record RegionHighlightData(int color, long expiryTime) {}
+
     private record GhostHighlightData(int color, long expiryTime, BlockPos[] positions) {}
 
     /**
@@ -68,7 +71,8 @@ public class BlockHighlightHandler {
         HIGHLIGHTS.put(new HighlightEntry(pos, dim), expiryTime);
     }
 
-    public static void highlightRegion(BlockPos start, BlockPos end, ResourceKey<Level> dim, int color, long expiryTime) {
+    public static void highlightRegion(BlockPos start, BlockPos end, ResourceKey<Level> dim, int color,
+                                       long expiryTime) {
         BlockPos min = new BlockPos(
                 Math.min(start.getX(), end.getX()),
                 Math.min(start.getY(), end.getY()),
@@ -92,7 +96,8 @@ public class BlockHighlightHandler {
         REGION_HIGHLIGHTS.remove(new RegionHighlightEntry(min, max, dim));
     }
 
-    public static void highlightStructureGhost(ResourceKey<Level> dim, java.util.List<BlockPos> positions, int color, long expiryTime) {
+    public static void highlightStructureGhost(ResourceKey<Level> dim, java.util.List<BlockPos> positions, int color,
+                                               long expiryTime) {
         GHOST_HIGHLIGHTS.put(dim, new GhostHighlightData(color, expiryTime, positions.toArray(BlockPos[]::new)));
     }
 

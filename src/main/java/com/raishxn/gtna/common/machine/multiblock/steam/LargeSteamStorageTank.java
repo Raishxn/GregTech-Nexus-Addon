@@ -1,7 +1,7 @@
 package com.raishxn.gtna.common.machine.multiblock.steam;
 
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.fluids.PropertyFluidFilter;
+import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.MultiblockTankMachine;
 

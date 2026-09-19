@@ -142,7 +142,8 @@ public class MEStorageMachine extends WorkableMultiblockMachine implements IDisp
         }
 
         textList.add(Component.translatable("gtna.machine.me_storage.access", accessMode,
-                accessOnline ? "Online" : "Offline").withStyle(accessOnline ? ChatFormatting.GREEN : ChatFormatting.RED));
+                accessOnline ? "Online" : "Offline")
+                .withStyle(accessOnline ? ChatFormatting.GREEN : ChatFormatting.RED));
         textList.add(Component.translatable("gtna.machine.me_storage.capacity",
                 infinite ? "Infinite" : formatBytes(capacityBytes)).withStyle(ChatFormatting.GRAY));
         textList.add(Component.translatable("gtna.machine.me_storage.used",

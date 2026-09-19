@@ -6,7 +6,6 @@ import com.gregtechceu.gtceu.api.pattern.TraceabilityPredicate;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,7 +16,9 @@ public abstract class PredicatesMixin {
 
     @Inject(method = "autoAbilities([Lcom/gregtechceu/gtceu/api/recipe/GTRecipeType;ZZZZZZ)" +
             "Lcom/gregtechceu/gtceu/api/pattern/TraceabilityPredicate;",
-            at = @At("RETURN"), cancellable = true, remap = false)
+            at = @At("RETURN"),
+            cancellable = true,
+            remap = false)
     private static void gtna$addPerformanceHatchesToElectricMultiblocks(GTRecipeType[] recipeType,
                                                                         boolean checkEnergyIn,
                                                                         boolean checkEnergyOut,

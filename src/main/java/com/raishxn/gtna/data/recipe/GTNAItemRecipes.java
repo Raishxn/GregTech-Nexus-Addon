@@ -19,6 +19,8 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 
+import appeng.core.definitions.AEBlocks;
+import appeng.core.definitions.AEItems;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.common.data.GTNABlocks;
@@ -27,8 +29,6 @@ import com.raishxn.gtna.common.data.GTNAMachines2;
 import com.raishxn.gtna.common.data.GTNAMaterials;
 import com.raishxn.gtna.common.data.GTNARecipeType;
 import com.raishxn.gtna.common.data.condition.RestrictedItemsEnabledCondition;
-import appeng.core.definitions.AEBlocks;
-import appeng.core.definitions.AEItems;
 
 import java.util.function.Consumer;
 

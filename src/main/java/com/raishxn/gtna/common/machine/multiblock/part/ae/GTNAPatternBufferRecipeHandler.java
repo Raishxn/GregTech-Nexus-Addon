@@ -94,7 +94,7 @@ public final class GTNAPatternBufferRecipeHandler {
 
         @Override
         public List<FluidIngredient> handleRecipeInner(IO io, GTRecipe recipe, List<FluidIngredient> left,
-                                                        boolean simulate) {
+                                                       boolean simulate) {
             return io == IO.OUT ? buffer.gtna$handleNetworkFluidOutput(recipe, left, simulate) : left;
         }
 

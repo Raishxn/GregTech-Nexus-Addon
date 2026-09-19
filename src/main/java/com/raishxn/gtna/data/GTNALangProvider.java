@@ -252,8 +252,10 @@ public class GTNALangProvider extends LanguageProvider {
                 "Accepts encoded crafting patterns only and registers them to the AE2 network");
         add("gtna.machine.craft_pattern_hatch.cheat",
                 "Queues crafted outputs directly for the controller to materialize");
-        add("gtna.machine.crafting_cpu_interface.tooltip", "Connects the Nexus ME Hypercore to the AE2 crafting CPU network");
-        add("gtna.machine.crafting_cpu_interface.network", "The Nexus ME Hypercore structure requires exactly one interface");
+        add("gtna.machine.crafting_cpu_interface.tooltip",
+                "Connects the Nexus ME Hypercore to the AE2 crafting CPU network");
+        add("gtna.machine.crafting_cpu_interface.network",
+                "The Nexus ME Hypercore structure requires exactly one interface");
         add("item.gtna.pattern_buffer_upgrade_21", "Pattern Buffer Expansion Card");
         add("item.gtna.pattern_buffer_upgrade_32", "Pattern Buffer Precision Card");
         add("item.gtna.pattern_buffer_upgrade_72", "Pattern Buffer Ascension Card");
@@ -518,15 +520,18 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.t4_crafting_storage_core", "T4 Matrix Crafting Module");
         add("block.gtna.t5_crafting_storage_core", "T5 Matrix Crafting Module");
         add("gtna.machine.me_storage_access_hatch.tooltip", "Connects ME Storage to an AE2 network.");
-        add("gtna.machine.me_big_storage_access_hatch.tooltip", "Connects ME Storage to an AE2 network with BigInteger storage mode.");
+        add("gtna.machine.me_big_storage_access_hatch.tooltip",
+                "Connects ME Storage to an AE2 network with BigInteger storage mode.");
         add("gtna.machine.me_io_port_hatch.tooltip", "Connects ME Storage to an AE2 network through IO Port mode.");
-        add("gtna.machine.me_storage_access_hatch.network", "The ME Storage multiblock accepts exactly one of these access hatches.");
+        add("gtna.machine.me_storage_access_hatch.network",
+                "The ME Storage multiblock accepts exactly one of these access hatches.");
         add("gtna.machine.me_storage_access_hatch.mode", "Storage Access");
         add("gtna.machine.me_big_storage_access_hatch.mode", "Big Storage Access");
         add("gtna.machine.me_io_port_hatch.mode", "IO Port");
         add("gtna.machine.me_storage.unformed", "Form the Matrix Storage structure to mount AE2 storage.");
         add("gtna.machine.me_storage.title", "ME Storage");
-        add("gtna.machine.me_storage.no_access", "Missing ME Storage Access Hatch, ME Big Storage Access Hatch, or ME IO Port Hatch.");
+        add("gtna.machine.me_storage.no_access",
+                "Missing ME Storage Access Hatch, ME Big Storage Access Hatch, or ME IO Port Hatch.");
         add("gtna.machine.me_storage.access", "%s: %s");
         add("gtna.machine.me_storage.capacity", "Capacity: %s");
         add("gtna.machine.me_storage.used", "Used: %s / Types: %s");
@@ -606,7 +611,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.large_steam_furnace.speed", "Speed: 900% faster than a standard Steam Furnace.");
         add("gtna.tooltip.large_steam_furnace.efficiency", "Efficiency: Consumes only 50% of the required Steam.");
         add("gtna.tooltip.large_steam_furnace.parallel", "Parallelism: Processes up to 128 items simultaneously.");
-        add("gtna.tooltip.large_steam_furnace.structure", "Structure: GTOCore large steam furnace shell. Check JEI for details.");
+        add("gtna.tooltip.large_steam_furnace.structure",
+                "Structure: GTOCore large steam furnace shell. Check JEI for details.");
         add("block.gtna.large_steam_alloy_smelter", "Large Steam Alloy Smelter");
         add("gtna.tooltip.large_steam_alloy.desc", "High-pressure steam alloying.");
         add("gtna.tooltip.large_steam_alloy.speed", "Speed: 43% faster than Singleblock.");
@@ -671,11 +677,15 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.large_steam_bath.desc", "Large steam chemical bath for early bulk washing.");
         add("gtna.tooltip.large_steam_bath.speed", "Speed: 100% faster than singleblock.");
         add("gtna.tooltip.large_steam_bath.parallel", "Parallel: Processes up to 64 recipes.");
-        add("gtna.tooltip.large_steam_bath.structure", "Structure: 9x5x9 basin with glass walls and bronze pipe agitators.");
+        add("gtna.tooltip.large_steam_bath.structure",
+                "Structure: 9x5x9 basin with glass walls and bronze pipe agitators.");
         add("block.gtna.primitive_distillation_tower", "Primitive Distillation Tower");
-        add("gtna.tooltip.primitive_distillation_tower.desc", "Machine Type: Distillation Tower. Can only output 6 types of fluids.");
-        add("gtna.tooltip.primitive_distillation_tower.parallel", "Consumes only 75% of the normal steam requirement. Can only process MV tier recipes or lower.");
-        add("gtna.tooltip.primitive_distillation_tower.structure", "Structure: GT-Not-Leisure primitive tower: 3x3 steel firebox base, five hollow steel hull layers, and a closed top layer.");
+        add("gtna.tooltip.primitive_distillation_tower.desc",
+                "Machine Type: Distillation Tower. Can only output 6 types of fluids.");
+        add("gtna.tooltip.primitive_distillation_tower.parallel",
+                "Consumes only 75% of the normal steam requirement. Can only process MV tier recipes or lower.");
+        add("gtna.tooltip.primitive_distillation_tower.structure",
+                "Structure: GT-Not-Leisure primitive tower: 3x3 steel firebox base, five hollow steel hull layers, and a closed top layer.");
         add("block.gtna.large_steam_lathe", "Large Steam Lathe");
         add("gtna.tooltip.large_steam_lathe.desc", "GT-Not-Leisure style steam lathe for bulk turning.");
         add("gtna.tooltip.large_steam_lathe.speed", "Speed: 100% faster than singleblock.");
@@ -694,7 +704,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.large_steam_storage_tank", "Large Steam Storage Tank");
         add("gtna.tooltip.large_steam_storage_tank.desc", "A GTOCore-style industrial steam reservoir.");
         add("gtna.tooltip.large_steam_storage_tank.capacity", "Capacity: 120,000,000 mB of Steam.");
-        add("gtna.tooltip.large_steam_storage_tank.structure", "Structure: 5x7x5 steam tank with industrial steam casings.");
+        add("gtna.tooltip.large_steam_storage_tank.structure",
+                "Structure: 5x7x5 steam tank with industrial steam casings.");
         add("block.gtna.large_steam_solar_boiler", "Large Steam Solar Boiler");
         add("gtna.tooltip.large_steam_solar_boiler.desc", "Expandable solar steam field using solar boiling cells.");
         add("gtna.tooltip.large_steam_solar_boiler.expandable",

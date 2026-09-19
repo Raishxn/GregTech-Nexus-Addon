@@ -20,19 +20,19 @@ public final class PlatformBlockType {
     private PlatformBlockType() {}
 
     public record PlatformBlockStructure(
-            String name,
-            @Nullable String type,
-            @Nullable String displayName,
-            @Nullable String description,
-            @Nullable String source,
-            boolean preview,
-            ResourceLocation resource,
-            ResourceLocation blockMapping,
-            int[] materials,
-            List<PlatformSupport.Counted<ItemStack>> extraMaterials,
-            int xSize,
-            int ySize,
-            int zSize) {
+                                         String name,
+                                         @Nullable String type,
+                                         @Nullable String displayName,
+                                         @Nullable String description,
+                                         @Nullable String source,
+                                         boolean preview,
+                                         ResourceLocation resource,
+                                         ResourceLocation blockMapping,
+                                         int[] materials,
+                                         List<PlatformSupport.Counted<ItemStack>> extraMaterials,
+                                         int xSize,
+                                         int ySize,
+                                         int zSize) {
 
         public PlatformBlockStructure {
             Objects.requireNonNull(name, "name");
@@ -131,7 +131,8 @@ public final class PlatformBlockType {
                 int[] sizes;
                 String resourcePath = "assets/" + resource.getNamespace() + "/" + resource.getPath();
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                        Objects.requireNonNull(PlatformBlockType.class.getClassLoader().getResourceAsStream(resourcePath),
+                        Objects.requireNonNull(
+                                PlatformBlockType.class.getClassLoader().getResourceAsStream(resourcePath),
                                 "Missing resource: " + resourcePath)))) {
                     String line = reader.readLine();
                     if (line == null) {
@@ -170,11 +171,11 @@ public final class PlatformBlockType {
     }
 
     public record PlatformPreset(
-            String name,
-            @Nullable String displayName,
-            @Nullable String description,
-            @Nullable String source,
-            List<PlatformBlockStructure> structures) {
+                                 String name,
+                                 @Nullable String displayName,
+                                 @Nullable String description,
+                                 @Nullable String source,
+                                 List<PlatformBlockStructure> structures) {
 
         public PlatformPreset {
             Objects.requireNonNull(name, "name");

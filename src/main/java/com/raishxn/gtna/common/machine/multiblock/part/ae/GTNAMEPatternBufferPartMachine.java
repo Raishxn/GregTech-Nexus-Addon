@@ -62,8 +62,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 
-import appeng.api.crafting.IPatternDetails;
 import appeng.api.config.Actionable;
+import appeng.api.crafting.IPatternDetails;
 import appeng.api.crafting.PatternDetailsHelper;
 import appeng.api.implementations.blockentities.PatternContainerGroup;
 import appeng.api.inventories.InternalInventory;
@@ -85,8 +85,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
-import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
+import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
@@ -99,7 +99,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -260,9 +259,8 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             if (key == null || amount <= 0) {
                 continue;
             }
-            long inserted = simulate
-                    ? storage.insert(key, amount, Actionable.SIMULATE, actionSource)
-                    : StorageHelper.poweredInsert(getMainNode().getGrid().getEnergyService(), storage, key, amount,
+            long inserted = simulate ? storage.insert(key, amount, Actionable.SIMULATE, actionSource) :
+                    StorageHelper.poweredInsert(getMainNode().getGrid().getEnergyService(), storage, key, amount,
                             actionSource);
             int remaining = amount - GTMath.saturatedCast(inserted);
             if (remaining <= 0) {
@@ -277,7 +275,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     }
 
     public List<FluidIngredient> gtna$handleNetworkFluidOutput(GTRecipe recipe, List<FluidIngredient> left,
-                                                                 boolean simulate) {
+                                                               boolean simulate) {
         if (left == null || left.isEmpty() || getMainNode().getGrid() == null) {
             return left;
         }
@@ -298,9 +296,8 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             if (key == null || amount <= 0) {
                 continue;
             }
-            long inserted = simulate
-                    ? storage.insert(key, amount, Actionable.SIMULATE, actionSource)
-                    : StorageHelper.poweredInsert(getMainNode().getGrid().getEnergyService(), storage, key, amount,
+            long inserted = simulate ? storage.insert(key, amount, Actionable.SIMULATE, actionSource) :
+                    StorageHelper.poweredInsert(getMainNode().getGrid().getEnergyService(), storage, key, amount,
                             actionSource);
             int remaining = amount - GTMath.saturatedCast(inserted);
             if (remaining <= 0) {
@@ -434,7 +431,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         if (!config.getPreferredModeId().isBlank()) {
             return matchesPreferredMode(config, recipe);
         }
-        // Auto is deliberately not constrained by the previous recipe.  Processing
+        // Auto is deliberately not constrained by the previous recipe. Processing
         // patterns already identify their machine recipe type, so retaining the
         // derived type here made a slot permanently reject a different valid mode
         // after its first craft.
@@ -819,20 +816,20 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         refreshModeSelector();
     }
 
+    /**
+     * Legacy migration: strips the old per-item recipe/mode tags instead of loading them.
+     * Slot state now lives exclusively in {@code slotConfigs}; tags on the pattern item were
+     * a redundant second source of truth that carried ghost state across buffers.
+     */
     private void loadPatternRecipeMetadata(int slot, ItemStack pattern) {
         if (slot < 0 || slot >= slotConfigs.length || pattern.isEmpty() || !pattern.hasTag()) {
             return;
         }
         CompoundTag tag = pattern.getTag();
-        if (tag == null) {
-            return;
-        }
-        GTNAPatternBufferSlotConfig config = slotConfigs[slot];
-        if (tag.contains(PATTERN_RECIPE_ID_TAG, Tag.TAG_STRING)) {
-            config.setCachedRecipeId(tag.getString(PATTERN_RECIPE_ID_TAG));
-        }
-        if (config.getPreferredModeId().isBlank() && tag.contains(PATTERN_MODE_ID_TAG, Tag.TAG_STRING)) {
-            config.setDerivedModeId(tag.getString(PATTERN_MODE_ID_TAG));
+        if (tag != null && (tag.contains(PATTERN_RECIPE_ID_TAG, Tag.TAG_STRING) ||
+                tag.contains(PATTERN_MODE_ID_TAG, Tag.TAG_STRING))) {
+            tag.remove(PATTERN_RECIPE_ID_TAG);
+            tag.remove(PATTERN_MODE_ID_TAG);
         }
     }
 
@@ -860,24 +857,8 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         if (config.getPreferredModeId().isBlank()) {
             config.setDerivedModeId(resolvedMode == null ? "" : resolvedMode);
         }
-        persistPatternRecipeMetadata(slot, recipe, resolvedMode);
-    }
-
-    private void persistPatternRecipeMetadata(int slot, GTRecipe recipe, @Nullable String modeId) {
-        if (slot < 0 || slot >= patternInventory.getSlots() || recipe.id == null) {
-            return;
-        }
-        ItemStack pattern = patternInventory.getStackInSlot(slot);
-        if (pattern.isEmpty()) {
-            return;
-        }
-        CompoundTag tag = pattern.getOrCreateTag();
-        tag.putString(PATTERN_RECIPE_ID_TAG, recipe.id.toString());
-        if (modeId == null || modeId.isBlank()) {
-            tag.remove(PATTERN_MODE_ID_TAG);
-        } else {
-            tag.putString(PATTERN_MODE_ID_TAG, modeId);
-        }
+        // Single source of truth: slotConfigs. The pattern ItemStack is no longer mutated
+        // with recipe/mode tags (that produced ghost state when a pattern moved buffers).
     }
 
     private void resolveAndCacheSlotRecipe(int slot) {
@@ -1266,24 +1247,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     }
 
     private static boolean modeMatches(String modeId, @Nullable GTRecipeType recipeType) {
-        if (modeId == null || modeId.isBlank() || recipeType == null || recipeType.registryName == null) {
-            return false;
-        }
-        String requested = modeId.trim().toLowerCase(Locale.ROOT);
-        String fullId = recipeType.registryName.toString().toLowerCase(Locale.ROOT);
-        String path = recipeType.registryName.getPath().toLowerCase(Locale.ROOT);
-        String requestedNormalized = requested.replace('_', '/');
-        String pathNormalized = path.replace('_', '/');
-        if (requested.equals(fullId) || requested.equals(path) ||
-                requestedNormalized.equals(fullId) || requestedNormalized.equals(pathNormalized)) {
-            return true;
-        }
-        if (path.endsWith("_" + requested) || path.endsWith("/" + requested) ||
-                pathNormalized.endsWith("/" + requestedNormalized)) {
-            return true;
-        }
-        return ("saw".equals(requested) || "cutting_saw".equals(requested)) &&
-                (path.contains("cutter") || path.contains("saw"));
+        return com.raishxn.gtna.api.machine.feature.ModeIdMatcher.matches(modeId, recipeType);
     }
 
     private static String formatModeLabel(GTRecipeType recipeType) {

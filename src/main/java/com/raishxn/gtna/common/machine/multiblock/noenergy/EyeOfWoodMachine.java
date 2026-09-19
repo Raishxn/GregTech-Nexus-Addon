@@ -73,7 +73,8 @@ public class EyeOfWoodMachine extends WorkableMultiblockMachine implements IDisp
             new OutputEntry(6, GTMaterials.Diamond, new Material[] { GTMaterials.Coal, GTMaterials.Graphite }),
             new OutputEntry(6, GTMaterials.Emerald, new Material[] { GTMaterials.Beryllium, GTMaterials.Aluminium }),
             new OutputEntry(5, GTMaterials.Ruby, new Material[] { GTMaterials.Chromium, GTMaterials.Redstone }),
-            new OutputEntry(5, GTMaterials.Sapphire, new Material[] { GTMaterials.Aluminium, GTMaterials.GreenSapphire }),
+            new OutputEntry(5, GTMaterials.Sapphire,
+                    new Material[] { GTMaterials.Aluminium, GTMaterials.GreenSapphire }),
             new OutputEntry(4, GTMaterials.Silver, new Material[] { GTMaterials.Gold, GTMaterials.Lead }),
             new OutputEntry(4, GTMaterials.Lead, new Material[] { GTMaterials.Silver, GTMaterials.Sulfur })
     };
@@ -158,7 +159,8 @@ public class EyeOfWoodMachine extends WorkableMultiblockMachine implements IDisp
         storedLava += drainedLava;
         successChance = storedWater >= STANDARD_WATER && storedLava >= STANDARD_LAVA ? calculateSuccessChance() : 0;
         if (drainedWater > 0 || drainedLava > 0) {
-            GTNACORE.LOGGER.debug("Eye of Wood at {} drained water={}, lava={}, storedWater={}, storedLava={}, chance={}",
+            GTNACORE.LOGGER.debug(
+                    "Eye of Wood at {} drained water={}, lava={}, storedWater={}, storedLava={}, chance={}",
                     getPos(), drainedWater, drainedLava, storedWater, storedLava, successChance);
         }
     }
@@ -369,9 +371,9 @@ public class EyeOfWoodMachine extends WorkableMultiblockMachine implements IDisp
                     text.add(Component.translatable("gtna.machine.eye_of_wood.chance", successChance)
                             .withStyle(ChatFormatting.GOLD));
                     text.add(Component.translatable("gtna.machine.eye_of_wood.last_result",
-                                    Component.translatable(lastRollSucceeded ?
-                                            "gtna.machine.eye_of_wood.result.success" :
-                                            "gtna.machine.eye_of_wood.result.fail"))
+                            Component.translatable(lastRollSucceeded ?
+                                    "gtna.machine.eye_of_wood.result.success" :
+                                    "gtna.machine.eye_of_wood.result.fail"))
                             .withStyle(lastRollSucceeded ? ChatFormatting.GREEN : ChatFormatting.DARK_GRAY));
                 })
                 .addOutputLines(recipeLogic.getLastRecipe());

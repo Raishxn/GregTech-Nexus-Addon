@@ -15,8 +15,8 @@ import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
-import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
 import com.raishxn.gtna.api.machine.multiblock.ParallelMachine;
+import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

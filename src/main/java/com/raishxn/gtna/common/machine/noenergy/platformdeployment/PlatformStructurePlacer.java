@@ -91,7 +91,8 @@ final class PlatformStructurePlacer {
         }
         try (input) {
             BlockIterator iterator = new BlockIterator(input, startPos, mapping, structure, xMirror, zMirror, rotation);
-            int stride = Math.max(1, (structure.xSize() * structure.ySize() * structure.zSize()) / Math.max(1, maxBlocks));
+            int stride = Math.max(1,
+                    (structure.xSize() * structure.ySize() * structure.zSize()) / Math.max(1, maxBlocks));
             List<BlockPos> positions = new ArrayList<>(Math.min(maxBlocks, 1024));
             int index = 0;
             while (iterator.hasNext() && positions.size() < maxBlocks) {

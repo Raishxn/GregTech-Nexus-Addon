@@ -5,10 +5,11 @@ import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
 import com.gregtechceu.gtceu.api.recipe.modifier.RecipeModifier;
 
+import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
-import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 import com.raishxn.gtna.api.machine.IThreadModifierMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
 import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
