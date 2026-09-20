@@ -335,7 +335,7 @@ public class GTNAGametest {
 
 - [ ] Split AnnihilateGeneratorA/B → aisles em `common/data/multiblock/`
 - [x] Split `GTNAMEPatternBufferPartMachine` (UI/resolver/mode) — **CONCLUÍDO**
-      (`d2f9497`, `3b28fd1`, `b39d701`; 2759 → 1192 linhas). Três classes no mesmo pacote:
+      (`d2f9497`, `3b28fd1`, `74c8a1b`; 2759 → 1192 linhas). Três classes no mesmo pacote:
       `PatternSlotResolver` (busca/matching de receita por slot: resolução com preferência de
       cache, migração de tags legados, matching slot/pattern com catalyst + keepByProduct, e os
       helpers puramente estáticos de copy/consume/collect/compare); `PatternBufferModeRegistry`
