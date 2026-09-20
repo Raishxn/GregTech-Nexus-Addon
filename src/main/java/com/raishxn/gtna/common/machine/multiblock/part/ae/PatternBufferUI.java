@@ -12,7 +12,7 @@ import com.lowdragmc.lowdraglib.gui.widget.ButtonWidget;
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.PhantomSlotWidget;
 import com.lowdragmc.lowdraglib.gui.widget.PhantomTankWidget;
-import com.lowdragmc.lowdraglib.gui.widget.Widget;
+import com.lowdragmc.lowdraglib.gui.widget.SlotWidget;
 import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.lowdragmc.lowdraglib.misc.FluidStorage;
 import com.lowdragmc.lowdraglib.misc.ItemStackTransfer;
@@ -26,6 +26,7 @@ import appeng.crafting.pattern.EncodedPatternItem;
 import appeng.crafting.pattern.ProcessingPatternItem;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -39,19 +40,22 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * state ({@code selectedSlot}, {@code currentPage}, the inventories and slot configs) and the
  * domain actions the buttons trigger; this class is deliberately behaviour-free apart from
  * selection bookkeeping, so it can be reconstructed whenever a UI is opened.
+ *
+ * <p>
+ * The page is two columns (see {@link PatternBufferLayout}): patterns on the left, the selected
+ * slot's configuration docked on the right. The panel used to be swapped on top of the pattern grid
+ * at the same size, which drew most of its widgets outside the page; the footer actions that made
+ * it overflow (recipe-cache maintenance and embedded-circuit tooling) now live in the Buffer Tools
+ * side tab, {@link PatternBufferToolsConfigurator}.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 final class PatternBufferUI {
 
-    private static final int PANEL_WIDTH = 176;
-    private static final int PANEL_HEIGHT = 220;
-    private static final int PATTERNS_PER_PAGE = 54;
-
     private final GTNAMEPatternBufferPartMachine machine;
 
-    private WidgetGroup patternPagePanel;
-    private WidgetGroup configPanel;
+    private WidgetGroup configContent;
+    private LabelWidget configHint;
     private ButtonWidget modeSelectorButton;
     private final ItemStackTransfer circuitPreviewInventory = new ItemStackTransfer(1);
 
@@ -59,30 +63,49 @@ final class PatternBufferUI {
         this.machine = machine;
     }
 
-    Widget createUIWidget() {
-        WidgetGroup group = new WidgetGroup(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+    WidgetGroup createUIWidget() {
+        WidgetGroup group = new WidgetGroup(0, 0, PatternBufferLayout.PAGE_WIDTH, PatternBufferLayout.PAGE_HEIGHT);
         group.setBackground(GuiTextures.BACKGROUND);
-        patternPagePanel = new WidgetGroup(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
-        group.addWidget(patternPagePanel);
 
-        patternPagePanel.addWidget(new LabelWidget(5, 4,
+        addPatternColumn(group);
+        addConfigPanel(group);
+
+        applySelectionState(machine.getSelectedSlot() >= 0);
+        return group;
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // Left column: pattern grid
+    // ------------------------------------------------------------------------------------------
+
+    private void addPatternColumn(WidgetGroup group) {
+        WidgetGroup patternColumn = new WidgetGroup(PatternBufferLayout.PATTERN_COLUMN_X, 0,
+                PatternBufferLayout.PATTERN_COLUMN_WIDTH, PatternBufferLayout.PAGE_HEIGHT);
+        group.addWidget(patternColumn);
+
+        patternColumn.addWidget(new LabelWidget(PatternBufferLayout.PATTERN_GRID_X,
+                PatternBufferLayout.PATTERN_HEADER_Y,
                 () -> machine.isOnlineForUi() ? "gtceu.gui.me_network.online" : "gtceu.gui.me_network.offline"));
-        patternPagePanel.addWidget(new AETextInputButtonWidget(96, 4, 74, 10)
+        patternColumn.addWidget(new AETextInputButtonWidget(PatternBufferLayout.RENAME_FIELD_X,
+                PatternBufferLayout.RENAME_FIELD_Y, PatternBufferLayout.RENAME_FIELD_WIDTH,
+                PatternBufferLayout.RENAME_FIELD_HEIGHT)
                 .setText(machine.getCustomName())
                 .setOnConfirm(machine::setCustomName)
                 .setButtonTooltips(Component.translatable("gui.gtceu.rename.desc")));
 
         int pageCount = getPageCount();
         machine.setCurrentPage(Math.max(0, Math.min(machine.getCurrentPage(), pageCount - 1)));
-        int firstSlot = machine.getCurrentPage() * PATTERNS_PER_PAGE;
+        int firstSlot = machine.getCurrentPage() * PatternBufferLayout.PATTERNS_PER_PAGE;
         int maxPatternCount = machine.getMaxPatternCount();
-        int rows = Math.min(6, Math.max(1, (int) Math.ceil((maxPatternCount - firstSlot) / 9.0)));
+        int rows = getVisibleRows(firstSlot, maxPatternCount);
         int index = firstSlot;
         for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < 9 && index < maxPatternCount && index < firstSlot + PATTERNS_PER_PAGE; x++) {
+            for (int x = 0; x < PatternBufferLayout.PATTERN_COLUMNS && index < maxPatternCount &&
+                    index < firstSlot + PatternBufferLayout.PATTERNS_PER_PAGE; x++) {
                 int finalIndex = index;
                 PatternSlotWidget slotWidget = new PatternSlotWidget(machine.getPatternInventory(), index++,
-                        8 + x * 18, 22 + y * 18, finalIndex);
+                        PatternBufferLayout.PATTERN_GRID_X + x * PatternBufferLayout.PATTERN_CELL,
+                        PatternBufferLayout.PATTERN_GRID_Y + y * PatternBufferLayout.PATTERN_CELL, finalIndex);
                 slotWidget.setOccupiedTexture(GuiTextures.SLOT);
                 slotWidget.setItemHook(stack -> {
                     if (!stack.isEmpty() && stack.getItem() instanceof EncodedPatternItem encodedPatternItem) {
@@ -103,93 +126,111 @@ final class PatternBufferUI {
                         tooltips.add(Component.translatable("gtna.machine.pattern_buffer.recipe_cached"));
                     }
                 });
-                patternPagePanel.addWidget(slotWidget);
+                patternColumn.addWidget(slotWidget);
             }
         }
-        int navigationY = 22 + Math.min(6, Math.max(1, (int) Math.ceil((maxPatternCount - firstSlot) / 9.0))) * 18 + 4;
-        patternPagePanel.addWidget(new ButtonWidget(5, navigationY, 28, 13,
+
+        // Footer: navigation stays anchored to the bottom so a partially filled buffer does not
+        // leave the controls floating in the middle of the page.
+        patternColumn.addWidget(new ButtonWidget(PatternBufferLayout.NAV_LEFT_X, PatternBufferLayout.NAV_ROW_Y,
+                PatternBufferLayout.NAV_BUTTON_WIDTH, PatternBufferLayout.NAV_BUTTON_HEIGHT,
                 new GuiTextureGroup(GuiTextures.BUTTON, new TextTexture("<<")), clickData -> {
                     if (!clickData.isRemote && machine.getCurrentPage() > 0) machine.setCurrentPage(
                             machine.getCurrentPage() - 1);
                 }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.previous_page")));
-        patternPagePanel.addWidget(new LabelWidget(67, navigationY + 2,
+        patternColumn.addWidget(new LabelWidget(67, PatternBufferLayout.NAV_ROW_Y + 2,
                 () -> (machine.getCurrentPage() + 1) + " / " + getPageCount()));
-        patternPagePanel.addWidget(new ButtonWidget(143, navigationY, 28, 13,
+        patternColumn.addWidget(new ButtonWidget(PatternBufferLayout.NAV_RIGHT_X, PatternBufferLayout.NAV_ROW_Y,
+                PatternBufferLayout.NAV_BUTTON_WIDTH, PatternBufferLayout.NAV_BUTTON_HEIGHT,
                 new GuiTextureGroup(GuiTextures.BUTTON, new TextTexture(">>")), clickData -> {
                     if (!clickData.isRemote && machine.getCurrentPage() + 1 < getPageCount()) machine.setCurrentPage(
                             machine.getCurrentPage() + 1);
                 }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.next_page")));
-        patternPagePanel.addWidget(new LabelWidget(5, navigationY + 18,
+        patternColumn.addWidget(new LabelWidget(PatternBufferLayout.PATTERN_GRID_X,
+                PatternBufferLayout.PAGE_HINT_Y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.middle_click_hint").getString()));
-        addConfigPanel(group);
-        return group;
     }
 
     private int getPageCount() {
-        return Math.max(1, (int) Math.ceil(machine.getMaxPatternCount() / (double) PATTERNS_PER_PAGE));
+        return Math.max(1, (int) Math.ceil(machine.getMaxPatternCount() /
+                (double) PatternBufferLayout.PATTERNS_PER_PAGE));
     }
 
-    private void addConfigPanel(WidgetGroup group) {
-        int innerX = 8;
-        int y = 6;
+    private int getVisibleRows(int firstSlot, int maxPatternCount) {
+        int remaining = Math.max(0, maxPatternCount - firstSlot);
+        int rows = (int) Math.ceil(remaining / (double) PatternBufferLayout.PATTERN_COLUMNS);
+        return Math.max(1, Math.min(PatternBufferLayout.PATTERN_ROWS, rows));
+    }
 
-        configPanel = new WidgetGroup(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
-        configPanel.setBackground(GuiTextures.BACKGROUND);
-        configPanel.setVisible(false);
-        configPanel.setActive(false);
+    // ------------------------------------------------------------------------------------------
+    // Right column: per-slot configuration, docked (never overlapping the grid)
+    // ------------------------------------------------------------------------------------------
+
+    private void addConfigPanel(WidgetGroup group) {
+        WidgetGroup configPanel = new WidgetGroup(PatternBufferLayout.CONFIG_COLUMN_X, 0,
+                PatternBufferLayout.CONFIG_COLUMN_WIDTH, PatternBufferLayout.PAGE_HEIGHT);
+        configPanel.setBackground(GuiTextures.BACKGROUND_INVERSE);
         group.addWidget(configPanel);
 
-        configPanel.addWidget(new ButtonWidget(innerX, y, 18, 13,
+        configHint = new LabelWidget(PatternBufferLayout.CONFIG_INNER_X, PatternBufferLayout.PAGE_HEIGHT / 2 - 4,
+                () -> Component.translatable("gtna.machine.pattern_buffer.select_slot_hint").getString());
+        configPanel.addWidget(configHint);
+
+        configContent = new WidgetGroup(0, 0, PatternBufferLayout.CONFIG_COLUMN_WIDTH,
+                PatternBufferLayout.PAGE_HEIGHT);
+        configPanel.addWidget(configContent);
+
+        int x = PatternBufferLayout.CONFIG_INNER_X;
+        int wide = PatternBufferLayout.CONFIG_INNER_WIDTH;
+
+        configContent.addWidget(new ButtonWidget(x, PatternBufferLayout.HEADER_Y, 18,
+                PatternBufferLayout.HEADER_HEIGHT,
                 new GuiTextureGroup(GuiTextures.BUTTON, new TextTexture("<")), clickData -> {
                     if (!clickData.isRemote) selectSlot(-1);
                 }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.back")));
-        configPanel.addWidget(new LabelWidget(innerX + 24, y + 2,
+        configContent.addWidget(new LabelWidget(x + 24, PatternBufferLayout.HEADER_Y + 2,
                 () -> machine.getSelectedSlot() >= 0 ?
                         Component.translatable("gtna.machine.pattern_buffer.selected_slot",
                                 machine.getSelectedSlot() + 1).getString() :
                         Component.translatable("gtna.machine.pattern_buffer.no_slot_selected").getString()));
-        y += 17;
-        configPanel.addWidget(new LabelWidget(innerX, y,
+        // Two short diagnostic lines. Both values are pretty-printed and truncated to the panel's
+        // text budget: the raw registry ids overflow a 164 px column. The constant is the rough
+        // character width of the default font (6 px) minus room for the "Recipe:" / "Mode:" prefix.
+        int textBudget = Math.max(8, wide / 6 - 9);
+        configContent.addWidget(new LabelWidget(x, PatternBufferLayout.CACHED_LABEL_Y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.cached_recipe_short",
-                        PatternBufferModeRegistry.compactDisplay(
+                        PatternBufferModeRegistry.compactDisplay(prettyMode(
                                 machine.getSelectedConfig() == null ? "" :
-                                        machine.getSelectedConfig().getCachedRecipeId(),
-                                27))
+                                        machine.getSelectedConfig().getCachedRecipeId()),
+                                textBudget))
                         .getString()));
-        y += 14;
-        configPanel.addWidget(new LabelWidget(innerX, y,
+        configContent.addWidget(new LabelWidget(x, PatternBufferLayout.DERIVED_LABEL_Y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.derived_mode_short",
-                        PatternBufferModeRegistry.compactDisplay(
+                        PatternBufferModeRegistry.compactDisplay(prettyMode(
                                 machine.getSelectedConfig() == null ? "" :
-                                        machine.getSelectedConfig().getDerivedModeId(),
-                                27))
+                                        machine.getSelectedConfig().getDerivedModeId()),
+                                textBudget))
                         .getString()));
 
-        y += 16;
-        configPanel.addWidget(new LabelWidget(innerX, y,
+        configContent.addWidget(new LabelWidget(x, PatternBufferLayout.ITEM_LABEL_Y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.item_field").getString()));
-        y += 10;
-        addItemGhostRow(configPanel, innerX, y);
-        y += 24;
-        configPanel.addWidget(new LabelWidget(innerX, y,
+        addItemGhostRow(configContent, x, PatternBufferLayout.ITEM_ROW_Y);
+
+        configContent.addWidget(new LabelWidget(x, PatternBufferLayout.FLUID_LABEL_Y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.fluid_field").getString()));
-        y += 10;
-        addFluidGhostRow(configPanel, innerX, y);
-        y += 24;
-        configPanel.addWidget(new LabelWidget(innerX, y,
+        addFluidGhostRow(configContent, x, PatternBufferLayout.FLUID_ROW_Y);
+
+        configContent.addWidget(new LabelWidget(x, PatternBufferLayout.CATALYST_ITEM_LABEL_Y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.catalyst_item_field").getString()));
-        y += 10;
-        addCatalystItemGhostRow(configPanel, innerX, y);
-        y += 24;
-        configPanel.addWidget(new LabelWidget(innerX, y,
+        addCatalystItemGhostRow(configContent, x, PatternBufferLayout.CATALYST_ITEM_ROW_Y);
+
+        configContent.addWidget(new LabelWidget(x, PatternBufferLayout.CATALYST_FLUID_LABEL_Y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.catalyst_fluid_field").getString()));
-        y += 10;
-        addCatalystFluidGhostRow(configPanel, innerX, y);
-        y += 24;
-        configPanel.addWidget(new LabelWidget(innerX, y,
+        addCatalystFluidGhostRow(configContent, x, PatternBufferLayout.CATALYST_FLUID_ROW_Y);
+
+        configContent.addWidget(new LabelWidget(x, PatternBufferLayout.CIRCUIT_LABEL_Y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.circuit_field").getString()));
-        y += 11;
-        configPanel.addWidget(new IntInputWidget(innerX, y, 50, 14,
+        configContent.addWidget(new IntInputWidget(x, PatternBufferLayout.CIRCUIT_ROW_Y, 50, 14,
                 () -> machine.getSelectedConfig() == null ? -1 : machine.getSelectedConfig().getCircuitConfig(),
                 value -> {
                     GTNAPatternBufferSlotConfig config = machine.getSelectedConfig();
@@ -197,8 +238,8 @@ final class PatternBufferUI {
                         config.setCircuitConfig(value);
                     }
                 }).setMin(-1).setMax(32));
-        configPanel.addWidget(new com.lowdragmc.lowdraglib.gui.widget.SlotWidget(circuitPreviewInventory, 0,
-                innerX + 58, y - 2, false, false)
+        configContent.addWidget(new SlotWidget(circuitPreviewInventory, 0, x + 58,
+                PatternBufferLayout.CIRCUIT_ROW_Y - 2, false, false)
                 .setCanPutItems(false)
                 .setCanTakeItems(false)
                 .setBackgroundTexture(new GuiTextureGroup(GuiTextures.SLOT, GuiTextures.INT_CIRCUIT_OVERLAY))
@@ -207,15 +248,15 @@ final class PatternBufferUI {
                         tooltips.add(Component.translatable("gtna.machine.pattern_buffer.no_circuit"));
                     }
                 }));
-        y += 19;
-        configPanel.addWidget(new LabelWidget(innerX, y,
+
+        configContent.addWidget(new LabelWidget(x, PatternBufferLayout.MODE_LABEL_Y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.mode_field").getString()));
-        y += 10;
-        modeSelectorButton = new ButtonWidget(innerX, y, PANEL_WIDTH - 16, 14,
+        modeSelectorButton = new ButtonWidget(x, PatternBufferLayout.MODE_BUTTON_Y, wide,
+                PatternBufferLayout.BUTTON_HEIGHT,
                 new GuiTextureGroup(
                         GuiTextures.BUTTON,
                         new TextTexture(this::getSelectedModeButtonText)
-                                .setWidth(PANEL_WIDTH - 22)
+                                .setWidth(wide - 6)
                                 .setType(TextTexture.TextType.ROLL)
                                 .setDropShadow(false)),
                 clickData -> {
@@ -224,71 +265,21 @@ final class PatternBufferUI {
                     }
                 });
         modeSelectorButton.setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.mode_button.tooltip"));
-        configPanel.addWidget(modeSelectorButton);
+        configContent.addWidget(modeSelectorButton);
 
-        y += 19;
-        // Per-slot recipe caching toggle (GTLCore cacheRecipe[] parity).
-        configPanel.addWidget(new ButtonWidget(innerX, y, PANEL_WIDTH - 16, 14,
+        // Per-slot recipe caching toggle (GTLCore cacheRecipe[] parity). The buffer-wide cache
+        // maintenance and the embedded-circuit tooling moved to the Buffer Tools tab.
+        configContent.addWidget(new ButtonWidget(x, PatternBufferLayout.CACHE_TOGGLE_Y, wide,
+                PatternBufferLayout.BUTTON_HEIGHT,
                 new GuiTextureGroup(
                         GuiTextures.BUTTON,
                         new TextTexture(this::getCacheToggleText)
-                                .setWidth(PANEL_WIDTH - 22)
+                                .setWidth(wide - 6)
                                 .setType(TextTexture.TextType.ROLL)
                                 .setDropShadow(false)),
                 clickData -> {
                     if (!clickData.isRemote) machine.toggleSelectedCacheRecipe();
                 }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.cache_toggle.tooltip")));
-
-        int buttonY = y + 19;
-        configPanel.addWidget(makeTextButton(innerX, buttonY, 76,
-                "gtna.machine.pattern_buffer.clear_machine_recipe_cache",
-                clickData -> {
-                    if (!clickData.isRemote) machine.clearMachineRecipeCaches();
-                }));
-        configPanel.addWidget(makeTextButton(innerX + 84, buttonY, 84,
-                "gtna.machine.pattern_buffer.clear_pattern_recipe_cache",
-                clickData -> {
-                    if (!clickData.isRemote) machine.clearSelectedRecipeCache();
-                }));
-
-        // Embedded-circuit block (GTLCore PatternCircuitConfigurator parity): config input,
-        // skip-existing toggle, and the two bulk actions.
-        int circuitY = buttonY + 19;
-        configPanel.addWidget(new LabelWidget(innerX, circuitY,
-                () -> Component.translatable("gtna.machine.pattern_buffer.embedded_circuit").getString()));
-        configPanel.addWidget(new IntInputWidget(innerX, circuitY + 11, 50, 14,
-                machine::getEmbeddedCircuitConfig,
-                value -> {
-                    machine.setEmbeddedCircuitConfig(value);
-                    machine.markDirty();
-                }).setMin(1).setMax(32));
-        configPanel.addWidget(new ButtonWidget(innerX + 54, circuitY + 11, 52, 14,
-                new GuiTextureGroup(GuiTextures.BUTTON,
-                        new TextTexture(this::getSkipExistingText).setWidth(48)
-                                .setType(TextTexture.TextType.ROLL).setDropShadow(false)),
-                clickData -> {
-                    if (!clickData.isRemote) {
-                        machine.setSkipExistingCircuitPatterns(!machine.isSkipExistingCircuitPatterns());
-                        machine.markDirty();
-                    }
-                }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.skip_existing.tooltip")));
-        int actionY = circuitY + 27;
-        configPanel.addWidget(makeTextButton(innerX, actionY, 84,
-                "gtna.machine.pattern_buffer.embed_circuit",
-                clickData -> {
-                    if (!clickData.isRemote) machine.embedCircuitInAllPatterns();
-                }));
-        configPanel.addWidget(makeTextButton(innerX + 88, actionY, 80,
-                "gtna.machine.pattern_buffer.remove_circuits",
-                clickData -> {
-                    if (!clickData.isRemote) machine.removeAllPatternCircuits();
-                }));
-    }
-
-    private String getSkipExistingText() {
-        return Component.translatable(machine.isSkipExistingCircuitPatterns() ?
-                "gtna.machine.pattern_buffer.skip_existing.on" : "gtna.machine.pattern_buffer.skip_existing.off")
-                .getString();
     }
 
     private String getCacheToggleText() {
@@ -301,7 +292,8 @@ final class PatternBufferUI {
     private void addItemGhostRow(WidgetGroup panel, int x, int y) {
         for (int slot = 0; slot < 9; slot++) {
             int logicalSlot = slot;
-            panel.addWidget(new PhantomSlotWidget(new SelectedConfigItemTransfer(), logicalSlot, x + slot * 18, y)
+            panel.addWidget(new PhantomSlotWidget(new SelectedConfigItemTransfer(), logicalSlot,
+                    x + slot * PatternBufferLayout.GHOST_SLOT, y)
                     .setClearSlotOnRightClick(true)
                     .setChangeListener(this::onSelectedConfigWidgetChanged)
                     .setBackgroundTexture(new GuiTextureGroup(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY)));
@@ -311,7 +303,8 @@ final class PatternBufferUI {
     private void addFluidGhostRow(WidgetGroup panel, int x, int y) {
         for (int slot = 0; slot < 9; slot++) {
             FluidStorageProxy storage = new FluidStorageProxy(slot);
-            panel.addWidget(new PhantomTankWidget(storage, x + slot * 18, y, 18, 18)
+            panel.addWidget(new PhantomTankWidget(storage, x + slot * PatternBufferLayout.GHOST_SLOT, y,
+                    PatternBufferLayout.GHOST_SLOT, PatternBufferLayout.GHOST_SLOT)
                     .setAllowClickFilled(true)
                     .setAllowClickDrained(true)
                     .setBackground(GuiTextures.FLUID_SLOT)
@@ -319,26 +312,12 @@ final class PatternBufferUI {
         }
     }
 
-    private void addItemGhostGrid(WidgetGroup panel, int x, int y) {
-        WidgetGroup container = new WidgetGroup(x, y, 62, 62);
-        container.setBackground(GuiTextures.BACKGROUND_INVERSE);
-        for (int slot = 0; slot < 9; slot++) {
-            int drawX = 4 + (slot % 3) * 18;
-            int drawY = 4 + (slot / 3) * 18;
-            int logicalSlot = slot;
-            container.addWidget(new PhantomSlotWidget(new SelectedConfigItemTransfer(), logicalSlot, drawX, drawY)
-                    .setClearSlotOnRightClick(true)
-                    .setChangeListener(this::onSelectedConfigWidgetChanged)
-                    .setBackgroundTexture(new GuiTextureGroup(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY)));
-        }
-        panel.addWidget(container);
-    }
-
     private void addCatalystItemGhostRow(WidgetGroup panel, int x, int y) {
         for (int slot = 0; slot < 9; slot++) {
             int logicalSlot = slot;
             panel.addWidget(
-                    new PhantomSlotWidget(new SelectedConfigCatalystItemTransfer(), logicalSlot, x + slot * 18, y)
+                    new PhantomSlotWidget(new SelectedConfigCatalystItemTransfer(), logicalSlot,
+                            x + slot * PatternBufferLayout.GHOST_SLOT, y)
                             .setClearSlotOnRightClick(true)
                             .setChangeListener(this::onSelectedConfigWidgetChanged)
                             .setBackgroundTexture(
@@ -349,7 +328,8 @@ final class PatternBufferUI {
     private void addCatalystFluidGhostRow(WidgetGroup panel, int x, int y) {
         for (int slot = 0; slot < 9; slot++) {
             CatalystFluidStorageProxy storage = new CatalystFluidStorageProxy(slot);
-            panel.addWidget(new PhantomTankWidget(storage, x + slot * 18, y, 18, 18)
+            panel.addWidget(new PhantomTankWidget(storage, x + slot * PatternBufferLayout.GHOST_SLOT, y,
+                    PatternBufferLayout.GHOST_SLOT, PatternBufferLayout.GHOST_SLOT)
                     .setAllowClickFilled(true)
                     .setAllowClickDrained(true)
                     .setBackground(GuiTextures.FLUID_SLOT)
@@ -357,64 +337,28 @@ final class PatternBufferUI {
         }
     }
 
-    private void addFluidGhostGrid(WidgetGroup panel, int x, int y) {
-        WidgetGroup container = new WidgetGroup(x, y, 62, 62);
-        container.setBackground(GuiTextures.BACKGROUND_INVERSE);
-        for (int slot = 0; slot < 9; slot++) {
-            int drawX = 4 + (slot % 3) * 18;
-            int drawY = 4 + (slot / 3) * 18;
-            FluidStorageProxy storage = new FluidStorageProxy(slot);
-            container.addWidget(new PhantomTankWidget(storage, drawX, drawY, 18, 18)
-                    .setAllowClickFilled(true)
-                    .setAllowClickDrained(true)
-                    .setBackground(GuiTextures.FLUID_SLOT)
-                    .setChangeListener(this::onSelectedConfigWidgetChanged)
-                    .setOnAddedTooltips((widget, tooltips) -> tooltips
-                            .add(Component.translatable("gtna.machine.pattern_buffer.fluid_amount_hint"))));
-        }
-        panel.addWidget(container);
-    }
-
-    private ButtonWidget makeIconButton(int x, int y, com.lowdragmc.lowdraglib.gui.texture.IGuiTexture icon, String key,
-                                        java.util.function.Consumer<com.lowdragmc.lowdraglib.gui.util.ClickData> onPress) {
-        ButtonWidget button = new ButtonWidget(x, y, 18, 18,
-                new GuiTextureGroup(GuiTextures.BUTTON, icon), onPress);
-        button.setHoverTexture(new GuiTextureGroup(GuiTextures.BUTTON, icon));
-        button.setHoverTooltips(Component.translatable(key));
-        return button;
-    }
-
-    private ButtonWidget makeTextButton(int x, int y, int width, String key,
-                                        java.util.function.Consumer<com.lowdragmc.lowdraglib.gui.util.ClickData> onPress) {
-        ButtonWidget button = new ButtonWidget(x, y, width, 13,
-                new GuiTextureGroup(GuiTextures.BUTTON,
-                        new TextTexture(() -> Component.translatable(key).getString())
-                                .setWidth(width - 4)
-                                .setType(TextTexture.TextType.ROLL)
-                                .setDropShadow(false)),
-                onPress);
-        button.setHoverTooltips(Component.translatable(key + ".tooltip"));
-        return button;
-    }
-
     private void selectSlot(int slot) {
-        if (slot >= 0 && slot < machine.getMaxPatternCount() && machine.getSelectedSlot() == slot) {
+        int previous = machine.getSelectedSlot();
+        if (slot >= 0 && slot < machine.getMaxPatternCount() && previous == slot) {
             machine.setSelectedSlot(-1);
         } else {
             machine.setSelectedSlot(slot >= 0 && slot < machine.getMaxPatternCount() ? slot : -1);
         }
-        if (configPanel != null) {
-            configPanel.setVisible(machine.getSelectedSlot() >= 0);
-            configPanel.setActive(machine.getSelectedSlot() >= 0);
-        }
+        applySelectionState(machine.getSelectedSlot() >= 0);
         refreshSelectedConfigPreview();
-        refreshModeSelector();
     }
 
-    private void clearSelectedSpecialization() {
-        GTNAPatternBufferSlotConfig config = machine.getSelectedConfig();
-        if (config != null) {
-            config.clearSpecialization();
+    /**
+     * Shows either the configuration widgets or the "pick a slot" hint. Both are children of the
+     * docked panel, so hiding one keeps the page size fixed instead of reflowing the frame.
+     */
+    private void applySelectionState(boolean selected) {
+        if (configContent != null) {
+            configContent.setVisible(selected);
+            configContent.setActive(selected);
+        }
+        if (configHint != null) {
+            configHint.setVisible(!selected);
         }
     }
 
@@ -452,7 +396,7 @@ final class PatternBufferUI {
                                           String preferredModeId) {
         String current = preferredModeId == null ? "" : preferredModeId.trim();
         for (int i = 0; i < options.size(); i++) {
-            if (java.util.Objects.equals(options.get(i).id(), current)) {
+            if (Objects.equals(options.get(i).id(), current)) {
                 return i;
             }
         }
@@ -489,6 +433,14 @@ final class PatternBufferUI {
                 Component.translatable("gtna.machine.pattern_buffer.mode_button.tooltip"),
                 Component.translatable("gtna.machine.pattern_buffer.mode_button.current", preferredMode),
                 Component.translatable("gtna.machine.pattern_buffer.mode_button.derived", derivedMode));
+    }
+
+    /** Pretty-prints a registry id for the compact diagnostic labels, keeping blanks blank. */
+    private static String prettyMode(String modeId) {
+        if (modeId == null || modeId.isBlank()) {
+            return "";
+        }
+        return PatternBufferModeRegistry.formatModeLabel(modeId);
     }
 
     private final class SelectedConfigItemTransfer extends ItemStackTransfer {

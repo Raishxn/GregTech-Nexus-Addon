@@ -844,6 +844,9 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         // controller's own "Machine Mode" tab mirrors what is running; this one filters which recipe
         // types this buffer is allowed to serve in the first place.
         sideTabs.attachSubTab(new PatternBufferModeConfigurator(this));
+        // Buffer-wide maintenance (cache cleaning, encoded-pattern circuit tooling), split out of the
+        // per-slot panel so that panel fits beside the pattern grid.
+        sideTabs.attachSubTab(new PatternBufferToolsConfigurator(this));
     }
 
     @Override

@@ -218,8 +218,9 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.pattern_buffer.middle_click_hint", "Middle-click to configure this pattern slot");
         add("gtna.machine.pattern_buffer.selected_slot", "Editing Slot %s");
         add("gtna.machine.pattern_buffer.no_slot_selected", "No slot selected");
-        add("gtna.machine.pattern_buffer.cached_recipe_short", "Recipe Cache: %s");
-        add("gtna.machine.pattern_buffer.derived_mode_short", "Derived Mode: %s");
+        add("gtna.machine.pattern_buffer.cached_recipe_short", "Recipe: %s");
+        add("gtna.machine.pattern_buffer.derived_mode_short", "Mode: %s");
+        add("gtna.machine.pattern_buffer.select_slot_hint", "Select a pattern slot");
         add("gtna.machine.pattern_buffer.item_field", "Ghost Items");
         add("gtna.machine.pattern_buffer.item_count_field", "Special Item Count");
         add("gtna.machine.pattern_buffer.fluid_field", "Ghost Fluids");
@@ -254,6 +255,10 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.pattern_buffer.skip_existing.off", "Skip Existing: OFF");
         add("gtna.machine.pattern_buffer.skip_existing.tooltip",
                 "ON keeps patterns that already carry a circuit untouched when embedding");
+        add("gtna.machine.pattern_buffer.cache_section", "Recipe Cache");
+        add("gtna.machine.pattern_buffer.tools", "Buffer Tools");
+        add("gtna.machine.pattern_buffer.tools.tooltip",
+                "Recipe cache maintenance and encoded-pattern circuit tooling for the whole buffer");
         add("item.gtna.pattern_buffer_copy.tooltip.snapshot",
                 "Sneak-right-click a Pattern Buffer to snapshot its configuration");
         add("item.gtna.pattern_buffer_copy.tooltip.apply",
