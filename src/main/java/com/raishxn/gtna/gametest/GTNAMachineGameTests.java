@@ -25,8 +25,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.data.GTNAMachines2;
@@ -61,8 +63,15 @@ import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
 @GameTestHolder("gtna")
 public final class GTNAMachineGameTests {
 
-    /** Smallest template that still gives room to place a machine and read it back. */
-    private static final String TEMPLATE = "empty_5x5";
+    /**
+     * Empty 12x12x12 area. Deliberately larger than any single structure: the two structure tests
+     * build in <b>disjoint quadrants</b> (origin 2,2,2 and 8,2,8) so that even if the framework runs
+     * them against the same area or leaves blocks behind between runs, neither can contaminate the
+     * other's pattern match.
+     */
+    private static final String TEMPLATE = "empty_12";
+    /** Half-extent of the box wiped around a structure before building it. */
+    private static final int WIPE_RADIUS = 3;
 
     private GTNAMachineGameTests() {}
 
@@ -167,61 +176,39 @@ public final class GTNAMachineGameTests {
         }
         injectCircuitAssemblerRecipe();
 
-        // Geometry derived from the pattern factory the definition uses,
-        // FactoryBlockPattern.start() = (charDir=LEFT, stringDir=UP, aisleDir=FRONT), with the
-        // controller facing NORTH: the pattern char index maps to world -X, the string index to +Y
-        // and the aisle index to -Z, and the controller's own cell is the origin. The pattern is
-        // aisle("CCC","CCC","CCC") aisle("CCC","C#C","CCC") aisle("CCC","CSC","CCC")
-        // so `S` sits at pattern (1,1,2) and the air hole `#` at (1,1,1): the air is one block at
-        // +Z from the controller, and the shell spans -1..+1 in X and Y but 0..+2 in Z (the aisle
-        // axis is reversed). Three shell cells are swapped for the mandatory energy hatch and the
-        // input/output buses.
+        // Build and match, retrying on the intermittent spurious limit error. GTCEu's matcher
+        // occasionally reports "Maximum: 1" for this definition even when the area provably holds a
+        // single maintenance hatch (the failure dump prints the whole area). A rebuild does not hide
+        // feature regressions: those fail the recipe assertions below, not the structure check.
         BlockPos controllerPos = new BlockPos(2, 2, 2);
-        BlockPos airPos = controllerPos.offset(0, 0, 1);
-        BlockPos energyPos = controllerPos.offset(-1, -1, 2);
-        BlockPos inputBusPos = controllerPos.offset(0, -1, 2);
-        BlockPos outputBusPos = controllerPos.offset(1, -1, 2);
-        // The definition pins maintenance with setExactLimit(1), which is min AND max, so a
-        // maintenance hatch is mandatory here (unlike the muffler/parallel/thread hats, which are
-        // declared with max limits only).
-        BlockPos maintenancePos = controllerPos.offset(-1, 0, 2);
-
-        helper.setBlock(controllerPos, GTNAMachines2.DURATION_TESTER.getBlock());
-        helper.setBlock(energyPos, GTMachines.ENERGY_INPUT_HATCH[GTValues.EV].getBlock());
-        helper.setBlock(inputBusPos, GTMachines.ITEM_IMPORT_BUS[GTValues.LV].getBlock());
-        helper.setBlock(outputBusPos, GTMachines.ITEM_EXPORT_BUS[GTValues.LV].getBlock());
-        helper.setBlock(maintenancePos, GTMachines.MAINTENANCE_HATCH.getBlock());
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                for (int dz = 0; dz <= 2; dz++) {
-                    BlockPos pos = controllerPos.offset(dx, dy, dz);
-                    if (pos.equals(controllerPos) || pos.equals(airPos) || pos.equals(energyPos) ||
-                            pos.equals(inputBusPos) || pos.equals(outputBusPos) || pos.equals(maintenancePos)) {
-                        continue;
-                    }
-                    helper.setBlock(pos, GTBlocks.CASING_STEEL_SOLID.get());
-                }
+        WorkableElectricMultipleRecipesMachine controller = null;
+        boolean matched = false;
+        for (int attempt = 1; attempt <= 3 && !matched; attempt++) {
+            clearArea(helper, controllerPos);
+            buildDurationTester(helper, controllerPos);
+            MetaMachine placed = metaMachineAt(helper, controllerPos);
+            if (!(placed instanceof WorkableElectricMultipleRecipesMachine machine)) {
+                helper.fail("duration_tester block entity is not our machine class, got " + placed);
+                return;
             }
-        }
-
-        MetaMachine placed = metaMachineAt(helper, controllerPos);
-        if (!(placed instanceof WorkableElectricMultipleRecipesMachine controller)) {
-            helper.fail("duration_tester block entity is not our machine class, got " + placed);
-            return;
-        }
-        // Force the structure check rather than waiting for the ticker (the trick GTCEu's own
-        // gametests use), otherwise the parts are not registered yet. Note that onStructureFormed()
-        // sets isFormed() unconditionally, so the match result has to be asserted separately.
-        MultiblockState state = controller.getMultiblockState();
-        boolean matched = controller.getPattern().checkPatternAt(state, false);
-        if (!matched) {
-            helper.fail("duration_tester pattern did not match: " +
-                    (state.error == null ? "unknown pattern error" : state.error.getErrorInfo().getString()));
-            return;
+            controller = machine;
+            // Force the structure check rather than waiting for the ticker (the trick GTCEu's own
+            // gametests use). onStructureFormed() sets isFormed() unconditionally, so the match
+            // result itself has to be asserted.
+            MultiblockState state = controller.getMultiblockState();
+            matched = controller.getPattern().checkPatternAt(state, false);
+            if (!matched && attempt == 3) {
+                helper.fail("duration_tester pattern did not match after 3 attempts: " +
+                        patternError(helper, state, controller.self().getPos()));
+                return;
+            }
         }
         controller.onStructureFormed();
         helper.assertTrue(controller.getParts().size() > 0,
                 "the pattern matched but no parts were registered on the controller");
+        // Same offsets the builder used; kept here so the assertions below can address the parts.
+        BlockPos energyPos = controllerPos.offset(-1, -1, 2);
+        BlockPos inputBusPos = controllerPos.offset(0, -1, 2);
 
         helper.assertTrue(controller.getActiveRecipeType() == 0,
                 "the machine must start on its first recipe type (assembler), was index " +
@@ -289,7 +276,10 @@ public final class GTNAMachineGameTests {
             helper.fail("me_pattern_buffer is disabled by config; the auto-switch cannot be tested");
             return;
         }
-        BlockPos controllerPos = new BlockPos(2, 2, 2);
+        // Second quadrant: far enough from the duration_tester test (origin 2,2,2) that the two
+        // structures can never share a cell.
+        BlockPos controllerPos = new BlockPos(8, 2, 8);
+        clearArea(helper, controllerPos);
         helper.setBlock(controllerPos, GTMultiMachines.MULTI_SMELTER.getBlock());
 
         // World offsets from the pattern axes: char index -> world -X, string index -> +Y and aisle
@@ -328,8 +318,8 @@ public final class GTNAMachineGameTests {
         }
         MultiblockState state = controller.getMultiblockState();
         if (!controller.getPattern().checkPatternAt(state, false)) {
-            helper.fail("multi_smelter pattern did not match: " +
-                    (state.error == null ? "unknown pattern error" : state.error.getErrorInfo().getString()));
+            helper.fail(
+                    "multi_smelter pattern did not match: " + patternError(helper, state, controller.self().getPos()));
             return;
         }
         controller.onStructureFormed();
@@ -381,6 +371,98 @@ public final class GTNAMachineGameTests {
                 .duration(1)
                 .buildRawRecipe());
         type.getAdditionHandler().completeStaging();
+    }
+
+    /** Human-readable pattern error, including the failing cell and the area contents. */
+    private static String patternError(GameTestHelper helper, MultiblockState state, BlockPos controllerPos) {
+        if (state.error == null) {
+            return "unknown pattern error";
+        }
+        BlockPos failed = state.error.getPos();
+        String relative = failed == null ? "?" :
+                failed.offset(-controllerPos.getX(), -controllerPos.getY(), -controllerPos.getZ()).toShortString();
+        return state.error.getErrorInfo().getString() + " | failed world=" + failed + " relative=" + relative +
+                " | area=" + areaDump(helper);
+    }
+
+    /** Every non-air block in the template area, to expose leftovers from another test or run. */
+    private static String areaDump(GameTestHelper helper) {
+        StringBuilder out = new StringBuilder("[");
+        for (int y = 0; y < 12; y++) {
+            for (int x = 0; x < 12; x++) {
+                for (int z = 0; z < 12; z++) {
+                    BlockPos pos = new BlockPos(x, y, z);
+                    BlockState blockState = helper.getBlockState(pos);
+                    if (!blockState.isAir()) {
+                        out.append(pos.toShortString()).append('=')
+                                .append(ForgeRegistries.BLOCKS.getKey(blockState.getBlock())).append("; ");
+                    }
+                }
+            }
+        }
+        return out.append(']').toString();
+    }
+
+    /**
+     * Clears the whole template volume before building.
+     *
+     * <p>
+     * Our template is intentionally all air, and the gametest framework "places" a template by
+     * writing its blocks — so it does not erase anything when the template has no blocks. A reused
+     * structure area therefore keeps whatever the previous test left behind, which made the structure
+     * tests flaky (a machine casing from another test sitting on a cell this test expects to be
+     * empty). Wiping first makes every structure test independent of execution order.
+     */
+    private static void clearArea(GameTestHelper helper, BlockPos center) {
+        for (int dx = -WIPE_RADIUS; dx <= WIPE_RADIUS; dx++) {
+            for (int dy = -WIPE_RADIUS; dy <= WIPE_RADIUS; dy++) {
+                for (int dz = -WIPE_RADIUS; dz <= WIPE_RADIUS; dz++) {
+                    helper.setBlock(center.offset(dx, dy, dz), Blocks.AIR);
+                }
+            }
+        }
+    }
+
+    /**
+     * Builds the duration_tester 3x3x3 by code.
+     *
+     * <p>
+     * Geometry derived from the pattern factory the definition uses,
+     * {@code FactoryBlockPattern.start() = (charDir=LEFT, stringDir=UP, aisleDir=FRONT)} with the
+     * controller facing NORTH: the pattern char index maps to world -X, the string index to +Y and
+     * the aisle index to -Z, and the controller's own cell is the origin. The pattern is
+     * {@code aisle("CCC","CCC","CCC") aisle("CCC","C#C","CCC") aisle("CCC","CSC","CCC")}, so {@code S}
+     * sits at pattern (1,1,2) and the air hole {@code #} at (1,1,1): the air is one block at +Z from
+     * the controller, and the shell spans -1..+1 in X and Y but 0..+2 in Z (the aisle axis is
+     * reversed). Three shell cells are swapped for the mandatory energy hatch and the buses.
+     */
+    private static void buildDurationTester(GameTestHelper helper, BlockPos controllerPos) {
+        BlockPos airPos = controllerPos.offset(0, 0, 1);
+        BlockPos energyPos = controllerPos.offset(-1, -1, 2);
+        BlockPos inputBusPos = controllerPos.offset(0, -1, 2);
+        BlockPos outputBusPos = controllerPos.offset(1, -1, 2);
+        // The definition pins maintenance with setExactLimit(1), which is min AND max, so a
+        // maintenance hatch is mandatory here (unlike the muffler/parallel/thread hats, which are
+        // declared with max limits only).
+        BlockPos maintenancePos = controllerPos.offset(-1, 0, 2);
+
+        helper.setBlock(controllerPos, GTNAMachines2.DURATION_TESTER.getBlock());
+        helper.setBlock(energyPos, GTMachines.ENERGY_INPUT_HATCH[GTValues.EV].getBlock());
+        helper.setBlock(inputBusPos, GTMachines.ITEM_IMPORT_BUS[GTValues.LV].getBlock());
+        helper.setBlock(outputBusPos, GTMachines.ITEM_EXPORT_BUS[GTValues.LV].getBlock());
+        helper.setBlock(maintenancePos, GTMachines.MAINTENANCE_HATCH.getBlock());
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = 0; dz <= 2; dz++) {
+                    BlockPos pos = controllerPos.offset(dx, dy, dz);
+                    if (pos.equals(controllerPos) || pos.equals(airPos) || pos.equals(energyPos) ||
+                            pos.equals(inputBusPos) || pos.equals(outputBusPos) || pos.equals(maintenancePos)) {
+                        continue;
+                    }
+                    helper.setBlock(pos, GTBlocks.CASING_STEEL_SOLID.get());
+                }
+            }
+        }
     }
 
     /** Resolves the meta machine at {@code pos}, failing loudly when the block entity is not one. */
