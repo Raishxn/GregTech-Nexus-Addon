@@ -263,6 +263,10 @@ Testes criados e **passando** (`./gradlew runUnitTests` → BUILD SUCCESSFUL, 6 
   é o fallback", em `PatternBufferModeSelection.select` (função pura; chama a produção direto,
   sem espelho).
 
+> **Contagem atual (2026-09-20): 9 classes** em `runUnitTests` — as 6 acima mais
+> `BufferModeSwitchPolicyTest` (política idle-only do auto-switch), `ConfigLangKeysTest` (G-0007/G-0008)
+> e `PatternBufferLayoutTest` (geometria da página do buffer, ver Fase C.1).
+
 ### Nível 2 — GameTests Forge (`@GameTest`) — ✅ **IMPLEMENTADO** (commit `fb05806`)
 
 **Estado anterior (auditoria de 3ª passada):** o GTNA **não tinha gametest funcional** — nenhum
@@ -472,6 +476,51 @@ está naquele modo.
 
 **Validado:** `compileJava` + `spotlessCheck` + `runUnitTests` (6/6) + `runData`. A troca em si
 ainda precisa de verificação in-game (é onde um gametest do Nível 2 ajudaria).
+
+### Fase C.1 — Layout da página do buffer: painel **docado** ✅ **CONCLUÍDA** (commit `7822893`)
+
+**O bug (relatado in-game).** Ao clicar com o botão do meio num slot, a UI "vazava": widgets
+desenhados **fora** da página — por cima da moldura e das fileiras do inventário do jogador.
+
+**A causa (medida, não estimada).** A página era `176 x 220` e o painel de configuração era
+**trocado por cima** da grade de patterns com o mesmo tamanho, mas o conteúdo dele somava **326 px**
+de altura: 106 px eram desenhados além da borda inferior. O `FancyMachineUIWidget` dimensiona a
+moldura a partir de `page.getSize()` (`Math.max(86, page.height + border*2)` + a altura do
+`PlayerInventoryWidget`), e o LDLib **não recorta** os filhos de uma página — então o excesso
+aparecia literalmente em cima dos slots do inventário.
+
+**A correção.** A página virou **uma só** de `352 x 248`, com duas colunas:
+
+| Coluna | x | Conteúdo |
+|---|---|---|
+| Patterns | `0 … 176` | status ME, rename, grade 9x6 (`8 + 9*18 = 170`), rodapé de navegação ancorado embaixo |
+| Configuração | `176 … 352` | painel `BACKGROUND_INVERSE` do slot selecionado: 2 linhas de diagnóstico, 4 ghost rows (itens, fluidos, catalyst itens, catalyst fluidos), circuito, modo preferido, toggle de cache |
+
+Tudo que fazia o painel estourar **e não é decisão por slot** saiu para um novo side tab fancy,
+**Buffer Tools** (`PatternBufferToolsConfigurator`, ícone data stick): limpeza de cache
+(`clear_machine_recipe_cache` / `clear_pattern_recipe_cache`) e as ferramentas de circuito dos
+patterns codificados (`embed_circuit` / `remove_circuits` / `skip_existing`). O botão por slot fica
+**desabilitado** quando nenhum slot está selecionado.
+
+**Geometria como fonte única de verdade.** `PatternBufferLayout` guarda as constantes (página,
+colunas, cada linha do painel, página do tab de ferramentas) e um `describeViolation()` que percorre
+o plano vertical verificando sobreposição, estouro da coluna e estouro da página. O
+`PatternBufferLayoutTest` (9º unit test) chama esse walker e ainda afirma: soma das colunas, largura
+interna do painel, ghost rows casando com a grade (mesmo `9 * 18`), e que a GUI inteira
+(página + moldura `2*4` + inventário `86`) cabe nos **360 px lógicos** de uma tela 1080p em GUI scale
+3 (`248 + 8 + 86 = 342`).
+
+**Por que esse teste importa:** esta classe de bug é **invisível para os dois gates existentes** —
+unit tests são lógica pura e o gametest roda em servidor dedicado, sem client. É o mesmo ponto cego
+do G-0007 (config do Jade), com a mesma mitigação: um teste que lê a geometria, não o render.
+
+**Divergência consciente (anti-plágio).** O layout é **nosso**: mostra ghost rows de item/fluido +
+catalyst porque o GTNA guarda a especialização em `slotConfigs` (não no NBT do pattern item), então
+um clone 1:1 do GTLAdditions seria ao mesmo tempo impossível e uma violação de licença
+(GTLAdditions é **GPL-3.0**; o GTNA é **LGPLv3**). Nada de código foi copiado.
+
+**Pendência:** validação visual — só o usuário, com `./gradlew runClient`, pode confirmar o
+alinhamento fino (e se a página cabe no GUI scale dele).
 
 ### Fase D — Auto-switch de modo em multiblocos do **mod base** ✅ **CONCLUÍDA** (commit `733521e`)
 

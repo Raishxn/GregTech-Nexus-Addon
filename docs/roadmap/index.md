@@ -83,7 +83,11 @@ Acompanhe o progresso de desenvolvimento do GregTech Nexus Addon em tempo real.
 - [x] **ME Pattern Buffer** (21 slots) — ZPM
 - [x] **ME Advanced Pattern Buffer** (32 slots) — UV
 - [x] **ME Ultimate Pattern Buffer** (72 slots) — UHV
-- [x] GUI completa com configuração por slot (item/fluido/circuito/modo)
+- [x] GUI completa com configuração por slot (item/fluido/circuito/modo) — página de duas colunas
+      (`352x248`): grade de patterns à esquerda e painel de configuração do slot **docado** à
+      direita, mais o side tab **Buffer Tools** (cache de receitas + ferramentas de circuito dos
+      patterns). Geometria centralizada em `PatternBufferLayout` e guardada pelo unit test
+      `PatternBufferLayoutTest`.
 - [x] Integração AE2 (pattern push/pull via rede ME)
 - [x] **Troca automática de modo do multibloco** conforme o recipe type do pattern
       (espelho de `activeRecipeType` com a fórmula oficial do GTM — ver

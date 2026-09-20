@@ -24,18 +24,56 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
-- **HEAD `eeaeba7`**, árvore de trabalho limpa (verificado em 2026-09-20).
+- **HEAD `7822893`**, árvore de trabalho limpa (verificado em 2026-09-20).
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-20:** `spotlessCheck` + `runUnitTests` (**7/7**) +
+- **Gate verde em 2026-09-20:** `spotlessCheck` + `runUnitTests` (**9/9**) +
   `runGameTestServer` (**5/5**, `All 5 required tests passed`) + `runData`. Zero erros
   `invalid dist` no log do gametest.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
-- **Testes hoje:** 7 unit tests (`main()` + asserts, padrão GTLCore) e 5 gametests (`@GameTest`),
+- **Testes hoje:** 9 unit tests (`main()` + asserts, padrão GTLCore) e 5 gametests (`@GameTest`),
   ambos no gate do CI.
+- **Pendência imediata:** o layout novo da UI do buffer (G-0009) **passou por todos os gates
+  automatizados mas ainda não foi visto in-game** — é exatamente o ponto cego de sempre (client).
 
 ## Checkpoints
+
+### G-0009 (2026-09-20) — UI do pattern buffer: painel de config **docado** (o vazamento de 106 px)
+
+- **Sintoma (relatado in-game):** ao clicar com o botão do meio num slot, os widgets do painel de
+  configuração apareciam **fora** da página — por cima da moldura e das fileiras do inventário do
+  jogador. O usuário descreveu como "problema da UI"; a mecânica (modo por slot, ghost items,
+  circuito) funcionava.
+- **Causa medida:** página `176 x 220`, painel de config **trocado por cima** da grade de patterns
+  com o mesmo tamanho, conteúdo somando **326 px** → **106 px** desenhados abaixo da borda. O
+  `FancyMachineUIWidget.setupFancyUI` dimensiona a moldura por `page.getSize()` +
+  `PlayerInventoryWidget`, e o LDLib **não recorta** filhos de página (`WidgetGroup.drawInBackground`
+  só checa `isVisible()`, nunca a caixa). Não era um bug de "tamanho errado", era um bug de
+  **layout sem fonte de verdade**.
+- **Correção (`7822893`):** página única `352 x 248` em duas colunas — grade de patterns à esquerda,
+  painel de config **docado** à direita (`GuiTextures.BACKGROUND_INVERSE`). O bloco que estourava e
+  **não é decisão por slot** virou o side tab fancy **Buffer Tools**
+  (`PatternBufferToolsConfigurator`): limpeza de cache e ferramentas de circuito dos patterns
+  (`embed`/`remove`/`skip_existing`). As duas linhas de diagnóstico encurtaram para
+  `Recipe: %s` / `Mode: %s` com id *pretty-printed* e truncado (`formatModeLabel` + `compactDisplay`)
+  porque o id cru estourava os 164 px da coluna.
+- **Geometria centralizada:** `PatternBufferLayout` (constantes + `describeViolation()` que percorre
+  o plano vertical e reporta sobreposição/estouro) e o 9º unit test `PatternBufferLayoutTest`, que
+  chama o walker e ainda afirma soma das colunas, largura interna do painel, ghost rows casando com
+  a grade (`9 * 18`) e que a GUI inteira (`248 + 2*4 + 86 = 342`) cabe nos **360 px lógicos** de
+  1080p em GUI scale 3.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (9/9) + `runData` (só as chaves
+  novas/alteradas no en_us gerado) + `runGameTestServer` (5/5, 0 `invalid dist`).
+- **Divergência consciente (anti-plágio):** o layout é nosso. Ghost rows de item/fluido + catalyst
+  existem porque o GTNA guarda a especialização em `slotConfigs` (não no NBT do pattern item) — um
+  clone 1:1 do GTLAdditions seria impossível **e** violação de licença (GTLAdditions é **GPL-3.0**,
+  o GTNA é **LGPLv3**).
+- **Pendência aberta:** validação **visual** pelo usuário (`./gradlew runClient`) — alinhamento fino
+  e se a página cabe no GUI scale dele. Se não couber, o corte é uma linha:
+  `hasPlayerInventory()` → `false` em `GTNAMEPatternBufferPartMachine` (economiza 86 px; o custo é
+  perder o inventário na GUI — JEI ainda serve para arrastar itens pros ghost slots). Alternativa
+  mais barata: `PAGE_HEIGHT` menor em `PatternBufferLayout` (o teste diz o mínimo que ainda cabe).
 
 ### G-0008 (2026-09-20) — 9 opções de config sem tradução + guard automatizado
 
@@ -178,29 +216,34 @@ foi feito nem repetir os erros já pagos.
 
 ## Pendências abertas (priorizadas)
 
-1. **Teste de runtime do output ME lossless / drain ticker** — único bloco grande sem cobertura de
+1. **Validação visual da UI do buffer (G-0009)** — o layout docado passou em todos os gates
+   automatizados, mas nenhum deles enxerga render. Rodar `./gradlew runClient`, abrir um ME Pattern
+   Buffer, botão do meio num slot e conferir: (a) nada desenha fora da moldura; (b) a página cabe no
+   GUI scale do usuário; (c) alinhamento das ghost rows e do painel. Ajuste mais provável: cortar
+   `PAGE_HEIGHT` em `PatternBufferLayout` (o teste diz o mínimo).
+2. **Teste de runtime do output ME lossless / drain ticker** — único bloco grande sem cobertura de
    runtime. Exige montar um **grid AE2** no gametest (pattern buffer + controller AE) e simular
    rede cheia / sem energia de AE, afirmando que a sobra fica em `pendingNetworkOutput` e entra
    depois. Todo o resto (harness, notas de campo) já está pronto.
-2. **Cobrir o caminho de conteúdo staged do auto-switch** — o gametest do `multi_smelter` exercita o
+3. **Cobrir o caminho de conteúdo staged do auto-switch** — o gametest do `multi_smelter` exercita o
    **pin do buffer** (`selectedModeId`); falta exercitar o `gtna$getPendingModeId` quando são os
    **inputs empurrados pelo AE2** que definem o modo do slot (exige criar/pushar um pattern de
    processamento no gametest).
-3. **Fase 3 restante** (do audit doc):
+4. **Fase 3 restante** (do audit doc):
    - Split de `AnnihilateGeneratorA/B` → aisles em `common/data/multiblock/`;
    - Split de `GTNAMachines` por domínio;
    - Internacionalizar as strings hardcoded de UI (`WorkableElectricMultipleRecipesMachine`,
      `GTNAMultipleRecipesLogic`);
    - Fundir `getRecipeModifier` (preview/EMI) com o caminho de execução, se fizer sentido.
-4. **Higiene de testes:**
+5. **Higiene de testes:**
    - Hoje os gametests ficam em `src/main/java/.../gametest/` e portanto **vão no jar** (inertes em
      jogo normal). O UFO Future usa sourceset/mod de teste separado — é o refinamento natural.
    - Migração opcional dos unit tests `main()`-based para JUnit 5 (como o UFO Future).
    - A lista `testClasses` em `build.gradle` é **manual**: todo teste novo precisa ser registrado
      ali, senão nunca roda.
-5. **`CHANGELOG.md` parado em `0.3.2-dev`** enquanto o mod é `0.4.0`. O fix de servidor dedicado
-   (`998c8f8`) e o auto-switch em máquinas do mod base (`733521e`) merecem entrada — falta decidir
-   versão/data.
+6. **`CHANGELOG.md` parado em `0.3.2-dev`** enquanto o mod é `0.4.0`. O fix de servidor dedicado
+   (`998c8f8`), o auto-switch em máquinas do mod base (`733521e`) e o layout da UI (`7822893`)
+   merecem entrada — falta decidir versão/data.
 
 ## Notas de campo (custaram iteração — não redescobrir)
 
@@ -238,6 +281,28 @@ foi feito nem repetir os erros já pagos.
   `state.error.getErrorInfo()`, a célula do erro **relativa ao controller** (`state.error.getPos()`)
   e um dump de todos os blocos não-ar da área. Foi isso que provou que o erro era do matcher e não
   do teste.
+
+**UI fancy (LDLib / GTCEu)**
+
+- **A página não recorta os filhos.** `FancyMachineUIWidget.setupFancyUI` dimensiona a moldura a
+  partir de `Math.max(86, page.getSize().height + border*2)` **mais** a altura do
+  `PlayerInventoryWidget` (86) quando `hasPlayerInventory()`; o `WidgetGroup.drawInBackground` só
+  checa `isVisible()`, nunca a caixa. Resultado: widget posicionado além da borda da página **é
+  desenhado** — por cima da moldura e do inventário. Foi o bug do G-0009.
+- **Consequência prática:** todo layout de UI precisa de uma **fonte de verdade da geometria** e de
+  um teste que a valide (padrão `PatternBufferLayout` + `PatternBufferLayoutTest`). `setSize` da
+  página é derivado, nunca ajustado "no olho".
+- **Orçamento vertical:** numa tela 1080p em GUI scale 3 sobram **360 px lógicos**. Página + moldura
+  (`2*4`) + inventário (`86`) tem que caber nisso. `hasPlayerInventory()` é consultado **uma vez**, na
+  construção do `FancyMachineUIWidget` (que roda no servidor) — não dá para decidir por tela.
+- **Labels são 9 px de altura** (`fontRenderer.lineHeight`) e **não têm largura máxima** — texto
+  longo simplesmente vaza para a direita. Para valores de tamanho variável, use
+  `compactDisplay`/`formatModeLabel` (encurta o id e deixa legível) em vez de mostrar o registry id
+  cru. Não existe tooltip dinâmico em `Widget` (só estático na construção), então diagnóstico que
+  muda com a seleção tem que ser **label com supplier**, não tooltip.
+- `WidgetGroup.isActive()` do **pai** bloqueia o despacho de clique para os filhos
+  (`mouseClicked` só chama filho com `isVisible() && isActive()`), mas `isVisible()` do filho é o que
+  controla o desenho — dá para deixar um grupo inteiro inerte/oculto sem reconstruir a UI.
 
 **Dist (cliente vs servidor)**
 

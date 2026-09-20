@@ -71,6 +71,14 @@ Comparando `GTLCore.MEPatternBufferPartMachine` (994 linhas) com
 | **Output ME diferido + drain pump** (`tickingRequest`/`TickRateModulation`) | ✅ **portado (híbrido)** — `pendingNetworkOutput` (persistido; formato NBT do `AEUtils.createListTag`: chave + `real`) guarda **só a sobra** da inserção inline; `NetworkOutputTicker` (`IGridTickable`, `TickingRequest(5, 80, false, true)`, `SLEEP`/`SLOWER`/`URGENT`) drena com `poweredInsert` em lotes de até 64 ops, desistindo após 5 falhas seguidas; `alertDevice` acorda o pump na transição vazio → não-vazio (o `Ticker` do GTLCore não faz isso e pode ficar dormindo com pendência). O `refund()` dos `InternalSlot` manda a sobra para o mesmo buffer em vez de deixá-la presa no slot | Alta | Médio |
 
 ### 2.3 Divergências de design (GTNA ≠ referência, por escolha ou por base)
+- **Layout da UI do buffer (divergência visual deliberada, G-0009 / commit `7822893`):** o GTNA usa
+  uma página de duas colunas (`352x248`) — grade de patterns à esquerda, painel de configuração do
+  slot **docado** à direita — mais o side tab **Buffer Tools** para as ações de manutenção
+  (cache de receitas, embed/remove de circuito). A referência (GTLAdditions/GTOCore) usa um docked
+  manager próprio. **Manter a divergência**, por dois motivos: (1) o GTNA guarda a especialização em
+  `slotConfigs`, não no NBT do pattern item, então as ghost rows de item/fluido **e** as de catalyst
+  são obrigatórias — um clone 1:1 não é possível; (2) **licença** — o GTLAdditions é **GPL-3.0** e o
+  GTNA é **LGPLv3**: copiar código de lá seria violação, não só plágio. Nenhuma linha foi copiada.
 - **NBT no pattern item:** GTLCore/GTOCore gravam receita/estado no item; o GTNA **removeu
   isso de propósito** (fonte única de verdade = `slotConfigs`) para eliminar estado-fantasma
   quando um pattern migra de buffer. **Manter a divergência** — é uma melhoria, não um gap.
