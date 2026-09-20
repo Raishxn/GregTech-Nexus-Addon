@@ -24,7 +24,7 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
-- **HEAD `d22f6a8`**, árvore de trabalho limpa (verificado em 2026-09-20).
+- **HEAD `0032ddd`**, árvore de trabalho limpa (verificado em 2026-09-20).
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
 - **Gate verde em 2026-09-20:** `spotlessCheck` + `runUnitTests` (**7/7**) +
@@ -36,6 +36,22 @@ foi feito nem repetir os erros já pagos.
   ambos no gate do CI.
 
 ## Checkpoints
+
+### G-0007 (2026-09-20) — crash do client: tradução de config do Jade faltando
+
+- **Sintoma (relatado ao rodar o client):**
+  `java.lang.AssertionError: Missing config translation: config.jade.plugin_gtna.me_pattern_buffer`.
+- **Causa:** o Jade cria **uma entrada de config por data provider registrado** e **afirma** que a
+  tradução existe, derivando a chave do UID do provider:
+  `config.jade.plugin_<namespace>.<path do uid>`. O `GTNAPatternBufferProvider` (UID
+  `gtna:me_pattern_buffer`) entrou no commit `90b1102` **sem** a chave — bug pré-existente; o outro
+  provider (`multiple_recipes`) tinha a chave, então a asserção parava nele.
+- **Correção (`0032ddd`):** chave registrada no `GTNALangProvider` (en_us, regenerado por `runData`)
+  + `pt_br.json`. Conferido que `GTNAJadePlugin` registra exatamente esses dois UIDs e nenhum outro.
+- **Alcance:** em dev o `AssertionError` derruba o client; em produção o Jade mostraria a chave crua
+  na tela de config.
+- **Nota de processo:** isso é **client-only**, então nem `runUnitTests` nem `runGameTestServer`
+  (servidor dedicado, sem config client do Jade) pegam. **Todo provider do Jade novo exige a chave.**
 
 ### G-0006 (2026-09-20) — gametests de estrutura endurecidos contra uma flakiness do matcher
 
@@ -226,6 +242,13 @@ foi feito nem repetir os erros já pagos.
 - **Opção de config nova precisa de lang**: `dev.toma.configuration` resolve o rótulo por
   `config.gtna.option.<nomeDoCampo>`. Adicione no `GTNALangProvider` (en_us, regenerado por
   `runData`) **e** no `pt_br.json`, senão a tela de config mostra a chave crua.
+- **Provider do Jade novo exige lang**: o Jade afirma a existência de
+  `config.jade.plugin_<namespace>.<path do UID>` e **derruba o client em dev** se faltar. Mantenha em
+  sincronia com os `registerBlockDataProvider`/`registerBlockComponent` do `GTNAJadePlugin`.
+- **Ponto cego de validação:** os dois gates automatizados rodam sem client (unit tests são lógica
+  pura; o gametest server é servidor dedicado). Nada que seja de client — config do Jade, renderer,
+  texturas, tooltips de client — é pego por eles. Mudanças nessa área precisam de `./gradlew runClient`
+  manual.
 
 **Feature de modo do pattern buffer**
 
