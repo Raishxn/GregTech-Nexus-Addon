@@ -24,7 +24,7 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
-- **HEAD `733521e`**, árvore de trabalho limpa (verificado em 2026-09-20).
+- **HEAD `d22f6a8`**, árvore de trabalho limpa (verificado em 2026-09-20).
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
 - **Gate verde em 2026-09-20:** `spotlessCheck` + `runUnitTests` (**7/7**) +
@@ -36,6 +36,24 @@ foi feito nem repetir os erros já pagos.
   ambos no gate do CI.
 
 ## Checkpoints
+
+### G-0006 (2026-09-20) — gametests de estrutura endurecidos contra uma flakiness do matcher
+
+- **Sintoma:** o teste `runningSecondRecipeTypeMirrorsControllerMode` falhava de forma intermitente
+  (~1 a cada 6 runs) com `Maximum: 1` na célula do maintenance hatch.
+- **Diagnóstico (com dump):** o erro **não** era sobra de estado. Instrumentei o teste para despejar
+  todos os blocos não-ar da área no momento da falha: a área tinha **exatamente os 25 blocos** que o
+  teste colocou, com **um único** maintenance hatch. Ou seja, o próprio matcher do GTCEu reporta o
+  erro de limite para uma estrutura correta nessa definição. `MultiblockState.clean()` **reseta** os
+  contadores, então não é contagem acumulada entre checagens — a causa raiz ficou em aberto.
+- **Mitigação (`d22f6a8`):** o build da estrutura virou `buildDurationTester(...)` e o match é
+  tentado **até 3 vezes** (apagando e reconstruindo entre tentativas). Isso não esconde regressão de
+  feature: uma regressão falha as asserções de receita/modo, não o match, e um erro de estrutura
+  consistente falharia nas 3 tentativas.
+- **Outras mudanças:** template `empty_12` (12³) no lugar do `empty_5x5` (morto), com os dois testes
+  de estrutura em **quadrantes disjuntas** (origem `2,2,2` e `8,2,8`) e wipe por teste; e as
+  mensagens de falha agora despejam a área + a célula que falhou relativa ao controller.
+- **Validação:** 8 execuções consecutivas verdes (5/5 cada), além de `spotlessCheck` + `runUnitTests`.
 
 ### G-0005 (2026-09-20) — troca de modo automática em multiblocos do mod **base**
 
@@ -175,6 +193,18 @@ foi feito nem repetir os erros já pagos.
   consulta `getEnergyStored()` mesmo com `simulate = true`.
 - Receitas podem ser injetadas em runtime via `type.getAdditionHandler().beginStaging()/addStaging()/
   completeStaging()` — evita depender do datapack e ainda exercita o tipo real.
+- **Flakiness conhecida do matcher:** o `duration_tester` ocasionalmente falha o `checkPatternAt`
+  com `Maximum: 1` **mesmo com a estrutura correta** (confirmado por dump da área: 1 maintenance
+  hatch, 25 blocos exatos). Não é sobra de estado nem contagem acumulada (`clean()` reseta). A
+  mitigação é o retry com rebuild no teste; se um dia isso reaparecer em outro teste, **não perca
+  tempo caçando blocos fantasmas** — duplique o retry e siga.
+- **Isolamento entre testes de estrutura:** o template é todo ar, então o framework não "limpa"
+  nada ao reposicionar; e os testes podem se atropelar. Use **quadrantes disjuntas** dentro de um
+  template maior (`empty_12`, origens `2,2,2` e `8,2,8`) + wipe da própria área antes de construir.
+- **Diagnóstico que vale ouro:** em falha de `checkPatternAt`, inclua no `helper.fail` o
+  `state.error.getErrorInfo()`, a célula do erro **relativa ao controller** (`state.error.getPos()`)
+  e um dump de todos os blocos não-ar da área. Foi isso que provou que o erro era do matcher e não
+  do teste.
 
 **Dist (cliente vs servidor)**
 
