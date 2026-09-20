@@ -24,7 +24,7 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
-- **HEAD `0032ddd`**, árvore de trabalho limpa (verificado em 2026-09-20).
+- **HEAD `eeaeba7`**, árvore de trabalho limpa (verificado em 2026-09-20).
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
 - **Gate verde em 2026-09-20:** `spotlessCheck` + `runUnitTests` (**7/7**) +
@@ -36,6 +36,23 @@ foi feito nem repetir os erros já pagos.
   ambos no gate do CI.
 
 ## Checkpoints
+
+### G-0008 (2026-09-20) — 9 opções de config sem tradução + guard automatizado
+
+- **Achado (auditoria preventiva depois do G-0007):** dos **97** campos `@Configurable` do
+  `ConfigHolder`, **9** não tinham `config.gtna.option.<campo>` no en_us gerado —
+  `primitiveDistillationTower`, `largeSteamLathe`, `largeSteamCutting`, `largeSteamFormingPress`,
+  `meStorage`, `mePatternBufferProxy`, `meStorageAccessHatch`, `meBigStorageAccessHatch`,
+  `meIOPortHatch`. A lib de config (`dev.toma.configuration`) monta o rótulo como
+  `config.%s.option.%s` e **não asserta** — então era cosmético (chave crua na tela), não crash.
+- **Correção (`eeaeba7`):** rótulos no `en_us.json` manual (a fonte que o
+  `addManualTranslations()` injeta no gerado) + `pt_br.json`.
+- **Guard novo:** `ConfigLangKeysTest` (8º unit test) faz parsing do `ConfigHolder` procurando campos
+  `@Configurable` e afirma que cada um tem chave no en_us gerado, além de afirmar as duas chaves dos
+  providers do Jade. **Verificado por teste negativo:** removendo uma chave, o teste falha. É a rede
+  de segurança contra a classe inteira de bug do G-0007.
+- **Validação:** `runUnitTests` (8/8), `spotlessCheck`, e regeneração completa sem diffs além das 9
+  chaves.
 
 ### G-0007 (2026-09-20) — crash do client: tradução de config do Jade faltando
 
@@ -248,7 +265,12 @@ foi feito nem repetir os erros já pagos.
 - **Ponto cego de validação:** os dois gates automatizados rodam sem client (unit tests são lógica
   pura; o gametest server é servidor dedicado). Nada que seja de client — config do Jade, renderer,
   texturas, tooltips de client — é pego por eles. Mudanças nessa área precisam de `./gradlew runClient`
-  manual.
+  manual. Parcialmente mitigado pelo `ConfigLangKeysTest` (ver G-0008).
+- **Datagen pode "pular" o provider:** o `en_us.json` manual é lido pelo
+  `GTNALangProvider.addManualTranslations()`, mas **não é input rastreado** do datagen — editar só
+  ele pode resultar em `runData` escrevendo `written: 0` e o gerado ficar velho. Se o gerado não
+  pegar sua edição, **apague `src/generated/resources/.cache`** e rode `runData` de novo (foi o que
+  fez as 9 chaves de config entrarem).
 
 **Feature de modo do pattern buffer**
 
