@@ -24,18 +24,45 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
-- **HEAD `2d8f5a8`**, árvore de trabalho limpa (verificado em 2026-09-20).
+- **HEAD `733521e`**, árvore de trabalho limpa (verificado em 2026-09-20).
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-20:** `spotlessCheck` + `runUnitTests` (**6/6**) +
-  `runGameTestServer` (**4/4**, `All 4 required tests passed`) + `runData`. Zero erros
+- **Gate verde em 2026-09-20:** `spotlessCheck` + `runUnitTests` (**7/7**) +
+  `runGameTestServer` (**5/5**, `All 5 required tests passed`) + `runData`. Zero erros
   `invalid dist` no log do gametest.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
-- **Testes hoje:** 6 unit tests (`main()` + asserts, padrão GTLCore) e 4 gametests (`@GameTest`),
+- **Testes hoje:** 7 unit tests (`main()` + asserts, padrão GTLCore) e 5 gametests (`@GameTest`),
   ambos no gate do CI.
 
 ## Checkpoints
+
+### G-0005 (2026-09-20) — troca de modo automática em multiblocos do mod **base**
+
+- **Problema:** o espelho de modo existia só nas máquinas do GTNA, porque ele mora em
+  `GTNAMultipleRecipesLogic`. Máquinas multi-modo do GTCEu (`large_cutter` = cutter+lathe,
+  `multi_smelter` = furnace+alloy_smelter, o conjunto GCYM, ...) usam a `RecipeLogic` de estoque,
+  que tem um bloqueio a mais: `searchRecipe()` procura **só** `recipeTypes[activeRecipeType]`, então
+  um pattern do outro tipo nunca é encontrado — ovo-e-galinha.
+- **Solução (`733521e`)**: inject no **HEAD de `RecipeLogic.searchRecipe()`** (antes do corpo da
+  busca) que, se a máquina oferece >1 tipo, pergunta aos pattern buffers do controller qual modo
+  está pendente e aplica a fórmula de modo da GTM.
+  - API nova: `IPatternBufferModeProvider.gtna$getPendingModeId()` — devolve o modo do **filtro do
+    buffer** se ele estiver pinado, senão o `preferredModeId`/`derivedModeId` de um slot que
+    **realmente tem insumo staged** (pattern que não pode rodar não puxa a máquina).
+  - Regra pura `BufferModeSwitchPolicy.selectTargetIndex()`: troca só com a logic **IDLE**, só para
+    um tipo que a máquina oferece, e nunca como no-op. Idle-only é o que dá a segurança: máquina
+    ociosa não achou receita no modo atual, então nada é interrompido.
+  - `ConfigHolder.machines.bufferDrivenMachineMode`, **default ON** (o opt-in real é colocar o
+    buffer na máquina; a config é escape hatch).
+  - Guards: pula `GTNAMultipleRecipesLogic` (já espelha) e ignora logic que não é de controller
+    (`LargeCombustionEngineMachine` também chama `searchRecipe`).
+- **Cobertura:** 5º gametest `patternBufferDrivesBaseMachineMode` monta o `multi_smelter` do GTCEu
+  por código, forma, pina o buffer em `alloy_smelter` e afirma a troca 0 → 1 via
+  `findAndHandleRecipe()`; limpar o pin deve deixar o modo quieto. Mais
+  `BufferModeSwitchPolicyTest` para a regra.
+- **Lacuna honesta:** o caminho de **conteúdo staged** do `gtna$getPendingModeId` (inputs empurrados
+  pelo AE2 para o slot) não tem teste — o gametest cobre o caminho do **pin do buffer**.
 
 ### G-0004 (2026-09-20) — harness de gametest + espelho de modo end-to-end
 
@@ -104,20 +131,25 @@ foi feito nem repetir os erros já pagos.
    runtime. Exige montar um **grid AE2** no gametest (pattern buffer + controller AE) e simular
    rede cheia / sem energia de AE, afirmando que a sobra fica em `pendingNetworkOutput` e entra
    depois. Todo o resto (harness, notas de campo) já está pronto.
-2. **Fase 3 restante** (do audit doc):
+2. **Cobrir o caminho de conteúdo staged do auto-switch** — o gametest do `multi_smelter` exercita o
+   **pin do buffer** (`selectedModeId`); falta exercitar o `gtna$getPendingModeId` quando são os
+   **inputs empurrados pelo AE2** que definem o modo do slot (exige criar/pushar um pattern de
+   processamento no gametest).
+3. **Fase 3 restante** (do audit doc):
    - Split de `AnnihilateGeneratorA/B` → aisles em `common/data/multiblock/`;
    - Split de `GTNAMachines` por domínio;
    - Internacionalizar as strings hardcoded de UI (`WorkableElectricMultipleRecipesMachine`,
      `GTNAMultipleRecipesLogic`);
    - Fundir `getRecipeModifier` (preview/EMI) com o caminho de execução, se fizer sentido.
-3. **Higiene de testes:**
+4. **Higiene de testes:**
    - Hoje os gametests ficam em `src/main/java/.../gametest/` e portanto **vão no jar** (inertes em
      jogo normal). O UFO Future usa sourceset/mod de teste separado — é o refinamento natural.
-   - Migração opcional dos 6 unit tests `main()`-based para JUnit 5 (como o UFO Future).
+   - Migração opcional dos unit tests `main()`-based para JUnit 5 (como o UFO Future).
    - A lista `testClasses` em `build.gradle` é **manual**: todo teste novo precisa ser registrado
      ali, senão nunca roda.
-4. **`CHANGELOG.md` parado em `0.3.2-dev`** enquanto o mod é `0.4.0`. O fix de servidor dedicado
-   (`998c8f8`) merece entrada — falta decidir versão/data.
+5. **`CHANGELOG.md` parado em `0.3.2-dev`** enquanto o mod é `0.4.0`. O fix de servidor dedicado
+   (`998c8f8`) e o auto-switch em máquinas do mod base (`733521e`) merecem entrada — falta decidir
+   versão/data.
 
 ## Notas de campo (custaram iteração — não redescobrir)
 
@@ -161,12 +193,22 @@ foi feito nem repetir os erros já pagos.
   reescrevem o arquivo normalizam tudo e geram diff de centenas de linhas — insira chaves preservando
   os bytes (edição binária), como foi feito.
 - `spotlessApply` **remove imports não usados** e reordena; rode-o antes de compilar.
+- **Opção de config nova precisa de lang**: `dev.toma.configuration` resolve o rótulo por
+  `config.gtna.option.<nomeDoCampo>`. Adicione no `GTNALangProvider` (en_us, regenerado por
+  `runData`) **e** no `pt_br.json`, senão a tela de config mostra a chave crua.
 
 **Feature de modo do pattern buffer**
 
 - O **modo global do controller é espelho de display**; o roteamento real é **por slot**
   (`gtna$slotAcceptsRecipe`). O `activeRecipeType` é global e **não** serve de estado de roteamento
   com N threads de tipos diferentes — com threads concorrentes o tab vai alternar.
+- **Máquinas do mod base (GTCEu/GCYM)** têm o bloqueio extra: `RecipeLogic.searchRecipe()` procura
+  **só** o tipo ativo, então o modo precisa estar certo **antes** da busca — é por isso que o
+  auto-switch vive no HEAD de `searchRecipe()` (mixin `gtna$switchModeForPendingBufferContent`) e
+  não depois de achar a receita, como nas nossas máquinas.
+- Há **muitas** máquinas multi-tipo no GTCEu/GCYM (não só a cutter): `multi_smelter`
+  (furnace+alloy_smelter, **3x3x3** — o alvo barato para gametest de máquina base), o conjunto GCYM
+  de 2 a 4 tipos, etc.
 - Um pin não-vazio em `preferredModeId` **só** aceita receitas cujo tipo casa (é a invariante que
   `gtna$slotAcceptsRecipe` garante); por isso o espelho pode usar o tipo exato da receita como
   fallback sem perder fidelidade.

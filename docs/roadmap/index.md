@@ -90,6 +90,11 @@ Acompanhe o progresso de desenvolvimento do GregTech Nexus Addon em tempo real.
       [auditoria técnica](technical-audit-pattern-buffer.md)). **Coberto por gametest end-to-end**
       desde 2026-09-20: um `duration_tester` formado que roda uma receita do segundo tipo vira o
       modo sozinho (`runningSecondRecipeTypeMirrorsControllerMode`).
+- [x] **Troca automática de modo também em multiblocos do GTCEu/GCYM** (Large Cutter entre cutter
+      e lathe, Multi Smelter entre furnace e alloy smelter, etc.): o pattern buffer dirige o modo
+      quando a máquina está **ociosa**, então nunca interrompe produção. Coberto pelo gametest
+      `patternBufferDrivesBaseMachineMode`; desligável em `ConfigHolder` (`bufferDrivenMachineMode`,
+      ligado por padrão).
 - [x] **Filtro de modo por buffer** — seletor na UI do próprio buffer (paridade com o
       `MultiMachineModeFancyConfigurator` do GTOCore) que limita o buffer a um recipe type.
 - [x] **Output ME sem perda** — sobra de output vai para um buffer persistido e é drenada por um

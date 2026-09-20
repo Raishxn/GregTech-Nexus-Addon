@@ -473,6 +473,54 @@ está naquele modo.
 **Validado:** `compileJava` + `spotlessCheck` + `runUnitTests` (6/6) + `runData`. A troca em si
 ainda precisa de verificação in-game (é onde um gametest do Nível 2 ajudaria).
 
+### Fase D — Auto-switch de modo em multiblocos do **mod base** ✅ **CONCLUÍDA** (commit `733521e`)
+
+**O problema (duplo).** Até aqui o espelho de modo só existia nas máquinas do GTNA, porque ele mora
+em `GTNAMultipleRecipesLogic`. As máquinas multi-modo do GTCEu — `large_cutter` (cutter+lathe),
+`multi_smelter` (furnace+alloy_smelter) e o conjunto do GCYM (2 a 4 tipos) — usam a `RecipeLogic` de
+estoque, que além de não chamar o espelho tem um bloqueio estrutural:
+
+```java
+// RecipeLogic.java:334 (source oficial)
+public @NotNull Iterator<GTRecipe> searchRecipe() {
+    return machine.getRecipeType().searchRecipe(machine, r -> true);   // só o tipo ATIVO
+}
+```
+
+Ou seja: com a máquina em modo *cutter*, uma receita de *lathe* do buffer **nunca é procurada** —
+não existe "o que espelhar". É o ovo-e-galinha que o GTOCore só resolveu modificando o núcleo do
+GTM, e que aqui foi resolvido sem tocar na base.
+
+**A solução.** Inject no **HEAD de `searchRecipe()`** (`GTRecipeLogicMixin`), antes do corpo da
+busca: se a máquina oferece mais de um recipe type, o mixin pergunta aos pattern buffers do
+controller qual modo está pendente e aplica a fórmula de modo da GTM. Como roda antes da busca, a
+mesma chamada já procura no tipo correto.
+
+- **Hint nova:** `IPatternBufferModeProvider.gtna$getPendingModeId()` — o modo do **filtro do
+  buffer** quando ele está pinado (controle explícito, Fase C), senão o `preferredModeId`/
+  `derivedModeId` de um slot que **realmente tem insumo staged**. Um pattern que não pode rodar não
+  puxa a máquina para o modo dele.
+- **Política** (`BufferModeSwitchPolicy.selectTargetIndex`, pura e testada): troca só com a logic
+  **IDLE**, só para um tipo que a máquina oferece, e nunca como no-op. O idle-only é o que torna a
+  feature segura: máquina ociosa **não achou** receita no modo atual (senão estaria WORKING) e não
+  está no meio de uma receita (WAITING), então nada é interrompido nem disputado. O controle manual
+  continua no buffer (pins por slot + filtro do buffer) — deliberadamente **sem** uma segunda camada
+  de override no tab da máquina, que criaria dois "quem vence?" concorrentes.
+- **Config:** `ConfigHolder.machines.bufferDrivenMachineMode`, **default ON**. O opt-in real é o
+  jogador colocar um ME Pattern Buffer do GTNA na máquina; a config é o escape hatch.
+- **Guards:** pula `GTNAMultipleRecipesLogic` (as nossas máquinas já espelham, sem dupla aplicação)
+  e ignora logic que não é de controller (`LargeCombustionEngineMachine` também chama `searchRecipe`).
+
+**Cobertura:** 5º gametest `patternBufferDrivesBaseMachineMode` monta o `multi_smelter` do GTCEu por
+código (3x3x3, casings `CASING_INVAR_HEATPROOF`, coils, muffler, energy + maintenance hatch e o
+pattern buffer num slot de casing — ele registra `IMPORT_ITEMS`, então o `autoAbilities` o aceita
+como se fosse um input bus), forma, pina o buffer em `alloy_smelter` e afirma a troca 0 → 1 através
+de um `findAndHandleRecipe()` real; limpar o pin deve deixar o modo quieto. Mais o unit test
+`BufferModeSwitchPolicyTest`.
+
+**Lacuna conhecida:** o caminho de **conteúdo staged** do hint (inputs empurrados pelo AE2 para o
+slot) ainda não tem teste de runtime — o gametest cobre o caminho do pin do buffer.
+
 ---
 
 ## 📎 Verificações no Source Oficial GTCEu 7.5.3 (append de 2ª passada)
