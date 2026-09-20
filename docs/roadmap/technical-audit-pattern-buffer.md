@@ -258,39 +258,40 @@ Testes criados e **passando** (`./gradlew runUnitTests` → BUILD SUCCESSFUL, 6 
   é o fallback", em `PatternBufferModeSelection.select` (função pura; chama a produção direto,
   sem espelho).
 
-### Nível 2 — GameTests Forge (`@GameTest`) — 🔴 **NÃO EXISTE AINDA** (verificado)
+### Nível 2 — GameTests Forge (`@GameTest`) — ✅ **IMPLEMENTADO** (commit `fb05806`)
 
-**Estado real (auditoria de 3ª passada):** o GTNA **não tem gametest funcional**. Não existe
-nenhum `@GameTest`/`@GameTestHolder`/`TestFunction` no código, não existe `src/test/resources`
-(logo, nenhum template de estrutura) e — o ponto que trava tudo — **não existe o run
-`gameTestServer`** em `legacyForge.runs`: o `build.gradle` só define `client`, `server` e `data`.
-Sem esse run a task `runGameTestServer` nem é gerada. O `forge.enabledGameTestNamespaces` existe
-apenas como systemProperty em `client`/`server`, herdado do template — necessário, mas inútil
-sozinho.
+**Estado anterior (auditoria de 3ª passada):** o GTNA **não tinha gametest funcional** — nenhum
+`@GameTest`, nenhum template de estrutura, e **não existia o run `gameTestServer`** em
+`legacyForge.runs` (só `client`, `server` e `data`), então a task nem era gerada.
 
-**Modelo de referência (UFO Future, `~/MineProjects/UFO-Future-1.21.1`):** lá existem os **dois**
-níveis, separados de propósito —
+**O que existe agora, e que roda de verdade:**
 
-- **`test`** = JUnit 5 puro em `src/test` (238 `@Test`, roda por `./gradlew test`/`build`).
-- **`gametest`** = `@GameTest` real em sourceset separado (`src/gameTest`), num **mod de teste
-  próprio** (`ufo_tests`) que depende do mod principal, rodando headless por
-  `./gradlew runGameTestServer`, com templates em `src/gameTest/templates/*.snbt` copiados para
-  `run/gameteststructures`.
-- **CI:** cada passo de gametest tem guarda `grep -q "GAME TESTS COMPLETE" run/logs/latest.log`,
-  porque o `runGameTestServer` **sai com código 0 mesmo quando o mod falha ao carregar**.
+- Run `gameTestServer` em `legacyForge.runs` com `forge.enabledGameTestNamespaces=gtna`.
+- Template `src/main/resources/data/gtna/structures/empty_5x5.nbt` (estrutura vazia 5x5x5 gerada
+  à mão — palette/blocks/entities vazios, DataVersion 3465), para os testes terem onde construir.
+- `com.raishxn.gtna.gametest.GTNAMachineGameTests` com 3 testes, **todos passando**
+  (`./gradlew runGameTestServer` → `All 3 required tests passed`):
+  - `durationTesterExposesTwoRecipeTypes` — trava a **precondição** do auto-switch de modo (com um
+    único recipe type o espelho é um no-op silencioso, que foi exatamente como a feature ficou
+    invisível);
+  - `durationTesterControllerCanBePlaced` — smoke test do harness (placement + block entity →
+    nossa classe de máquina);
+  - `bufferModeFilterGatesSlotAcceptance` — exercita o filtro de modo do buffer (Fase C) numa receita
+    real: sem pin aceita, pinado no próprio tipo aceita, pinado em outro tipo recusa **em todos os
+    slots**, e limpar o filtro restaura a aceitação.
+- CI com o passo de gametest + **guarda do banner** `GAME TESTS COMPLETE` (o `runGameTestServer` sai
+  com código 0 mesmo quando o mod falha ao carregar) e criação do `run/eula.txt`, já que `run/` é
+  gitignored.
 
-**Mínimo viável para o GTNA (Forge 1.20.1, ainda não feito):**
+**Bônus — o harness pagou o investimento antes de rodar o primeiro teste:** a primeira execução
+revelou que o mod **não carregava em servidor dedicado** (dois vazamentos de classe client-only em
+código comum; ver o commit `998c8f8`). Isso passava batido porque o `runGameTestServer` retornava
+sucesso mesmo assim — precisamente o motivo da guarda do banner no CI.
 
-1. Run em `legacyForge.runs`:
-   `gameTestServer { type = "gameTestServer"; systemProperty('forge.enabledGameTestNamespaces', project.mod_id) }`.
-2. Uma classe com `@GameTestHolder("gtna")` + `@PrefixGameTestTemplate(false)` + `@GameTest(template = "empty")`
-   (em 1.20.1 o holder é `net.minecraftforge.gametest.GameTestHolder`).
-3. Template de estrutura em `data/gtna/structures/*.nbt` (ou o sourceset/mod de teste separado,
-   como no UFO).
-4. No CI, o passo com a guarda do banner — senão o gate passa verde com o mod quebrado.
-
-**Prioridade:** começar por **um multibloco de steam simples** (sem AE2), como já estava anotado
-aqui; o teste de troca de modo com pattern buffer vem depois, porque exige AE2 + GTCEu no ambiente.
+**Divergência consciente vs UFO Future:** aqui os testes ficam em `src/main/java/.../gametest/` (o
+mod inteiro já é o `sourceSet main`), então as classes de teste **vão no jar**; elas são inertes em
+jogo normal e só rodam quando o namespace é habilitado. O UFO Future usa um sourceset/mod de teste
+separado (`ufo_tests`) — é o refinamento natural quando quisermos tirar isso do jar.
 
 **Horizon-QA (`GTNewHorizons/Horizon-QA`) — não adotar.** É um framework de QA **para 1.7.10/GTNH**
 que reimplementa a API de GameTest no Minecraft 1.7.10 (que não tem GameTest nativo), acoplado ao
@@ -301,16 +302,26 @@ teste negativo com assert por tick, template exportado in-game e relatório/exit
 
 ### Nível 3 — CI
 
-Hoje o CI (`.github/workflows/gradle.yml`) roda `./gradlew build` e
-`./gradlew spotlessCheck runUnitTests` — os unit tests **já** estão no gate (o `test` citado em
-versões anteriores deste doc não existe como task; a task real é `runUnitTests`). Quando o
-gametest mínimo existir, acrescentar:
+O CI (`.github/workflows/gradle.yml`) roda `./gradlew build`, `./gradlew spotlessCheck runUnitTests`
+(os unit tests já estão no gate; o `test` citado em versões anteriores deste doc não existe como
+task — a real é `runUnitTests`) e, agora, também o gametest. Já aplicado:
 
 ```yaml
-- name: Game Tests
-  run: ./gradlew runGameTestServer
-- name: Assert game tests really ran
-  run: grep -q "GAME TESTS COMPLETE" run/logs/latest.log || (echo "::error::runGameTestServer completed no GameTest"; exit 1)
+- name: Game tests
+  run: |
+    # run/ is gitignored, so CI has to accept the EULA the dedicated server asks for.
+    mkdir -p run
+    echo "eula=true" > run/eula.txt
+    ./gradlew runGameTestServer
+
+- name: Assert game tests actually ran
+  run: |
+    if ! grep -q "GAME TESTS COMPLETE" run/logs/latest.log; then
+      echo "::error::runGameTestServer finished without running any GameTest"
+      tail -n 200 run/logs/latest.log
+      exit 1
+    fi
+    grep -E "All [0-9]+ required tests passed|GAME TESTS COMPLETE" run/logs/latest.log
 ```
 
 ---
