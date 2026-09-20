@@ -230,6 +230,9 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.pattern_buffer.mode.auto", "Auto");
         add("gtna.machine.pattern_buffer.mode.none", "No Mode");
         add("gtna.machine.pattern_buffer.mode.legacy", "Custom: %s");
+        add("gtna.machine.pattern_buffer.mode.all", "All Modes");
+        add("gtna.machine.pattern_buffer.buffer_mode.tooltip",
+                "Limits this buffer to a single recipe type");
         add("gtna.machine.pattern_buffer.mode_button.tooltip",
                 "Click to cycle the preferred multiblock mode for this slot");
         add("gtna.machine.pattern_buffer.mode_button.current", "Selected Mode: %s");

@@ -4,12 +4,14 @@ import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.fancy.ConfiguratorPanel;
 import com.gregtechceu.gtceu.api.gui.fancy.IFancyConfiguratorButton;
+import com.gregtechceu.gtceu.api.gui.fancy.TabsWidget;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.fancyconfigurator.ButtonConfigurator;
 import com.gregtechceu.gtceu.api.machine.feature.IDataStickInteractable;
 import com.gregtechceu.gtceu.api.machine.feature.IDropSaveMachine;
+import com.gregtechceu.gtceu.api.machine.feature.IRecipeLogicMachine;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
@@ -69,6 +71,7 @@ import appeng.helpers.patternprovider.PatternContainer;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
+import com.raishxn.gtna.api.machine.feature.ModeIdMatcher;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
@@ -238,6 +241,21 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     @DescSynced
     private String availableModeIds = "";
 
+    /**
+     * Buffer-level mode filter (GTOCore {@code MultiMachineModeFancyConfigurator} parity): when set,
+     * this buffer only serves recipes of that type; blank means "every mode the controller offers".
+     *
+     * <p>
+     * Stored as a full recipe-type registry id — that is what the selector offers — persisted so a
+     * pinned buffer keeps its filter across break/place, and synced so the UI reads it directly.
+     * Unlike the per-slot {@code preferredModeId}, which decides <em>which slot</em> serves a
+     * recipe, this decides <em>whether this buffer is in that mode at all</em>.
+     */
+    @Getter
+    @DescSynced
+    @Persisted
+    private String selectedModeId = "";
+
     /** Fase 3 extraction: the currently open UI, if any (client-side only, never persisted). */
     @Nullable
     private PatternBufferUI patternBufferUI;
@@ -272,6 +290,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     public void onLoad() {
         super.onLoad();
         modeRegistry.refreshAvailableModesCache();
+        verifySelectedMode();
         if (getLevel() instanceof ServerLevel serverLevel) {
             serverLevel.getServer().tell(new TickTask(1, this::rebuildPatternMap));
         }
@@ -281,12 +300,51 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     public void addedToController(IMultiController controller) {
         super.addedToController(controller);
         modeRegistry.refreshAvailableModesCache();
+        verifySelectedMode();
     }
 
     @Override
     public void removedFromController(IMultiController controller) {
         super.removedFromController(controller);
         modeRegistry.refreshAvailableModesCache();
+        verifySelectedMode();
+    }
+
+    /**
+     * Pins (or, with a blank id, clears) the recipe type this buffer serves.
+     *
+     * <p>
+     * Mirrors GTOCore's {@code setRecipeType}: the controller(s) are asked to re-search so the new
+     * filter takes effect immediately instead of on their next recipe change.
+     */
+    public void setSelectedModeId(@Nullable String modeId) {
+        String normalized = modeId == null ? "" : modeId.trim();
+        if (normalized.equals(selectedModeId)) {
+            return;
+        }
+        selectedModeId = normalized;
+        markDirty();
+        for (IMultiController controller : getControllers()) {
+            if (controller instanceof IRecipeLogicMachine recipeMachine) {
+                recipeMachine.getRecipeLogic().markLastRecipeDirty();
+            }
+        }
+    }
+
+    /**
+     * GTOCore {@code MultiMachineModeFancyConfigurator.verify}: attaching to or detaching from a
+     * controller can retire the selected mode, so drop the filter rather than silently serving
+     * nothing. Comparison is exact because the selector only ever offers full registry ids.
+     */
+    void verifySelectedMode() {
+        // Server-side concern only: on the client the synced availableModeIds may not have arrived
+        // yet, and clearing there would just flicker the UI until the next sync.
+        if (isRemote() || selectedModeId.isBlank() ||
+                modeRegistry.getCachedAvailableModeIds().contains(selectedModeId)) {
+            return;
+        }
+        selectedModeId = "";
+        markDirty();
     }
 
     @Override
@@ -657,6 +715,11 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         if (slot < 0 || slot >= slotConfigs.length || recipe == null) {
             return false;
         }
+        // Buffer-level filter first (GTOCore MultiMachineModeFancyConfigurator parity): a buffer
+        // pinned to one mode serves only that type, no matter what its slots are configured for.
+        if (!selectedModeId.isBlank() && !ModeIdMatcher.matches(selectedModeId, recipe.getType())) {
+            return false;
+        }
         GTNAPatternBufferSlotConfig config = slotConfigs[slot];
         if (!config.getPreferredModeId().isBlank()) {
             return PatternSlotResolver.matchesPreferredMode(config, recipe);
@@ -743,6 +806,15 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                 internalSlot.refund();
             }
         }
+    }
+
+    @Override
+    public void attachSideTabs(TabsWidget sideTabs) {
+        super.attachSideTabs(sideTabs);
+        // Buffer-level mode selector (GTOCore MultiMachineModeFancyConfigurator parity). The
+        // controller's own "Machine Mode" tab mirrors what is running; this one filters which recipe
+        // types this buffer is allowed to serve in the first place.
+        sideTabs.attachSubTab(new PatternBufferModeConfigurator(this));
     }
 
     @Override

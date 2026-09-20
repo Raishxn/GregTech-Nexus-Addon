@@ -6,6 +6,8 @@ import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 
 import net.minecraft.network.chat.Component;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -94,6 +96,31 @@ final class PatternBufferModeRegistry {
             }
         }
         return ids;
+    }
+
+    /**
+     * Buffer-level mode options, i.e. which recipe types this buffer is allowed to serve
+     * (GTOCore {@code MultiMachineModeFancyConfigurator.createRecipeTypeList} parity).
+     *
+     * <p>
+     * "All modes" comes first, then every recipe type the controller(s) currently expose, then the
+     * currently selected mode when it is no longer offered — so a stale selection stays visible and
+     * the player can clear it instead of being stuck with an invisible filter.
+     */
+    List<ModeOption> getBufferModeOptions(@Nullable String selectedModeId) {
+        List<ModeOption> options = new ArrayList<>();
+        options.add(new ModeOption("", Component.translatable("gtna.machine.pattern_buffer.mode.all").getString()));
+
+        Set<String> seen = new LinkedHashSet<>();
+        for (String modeId : getCachedAvailableModeIds()) {
+            if (seen.add(modeId)) {
+                options.add(new ModeOption(modeId, formatModeLabel(modeId)));
+            }
+        }
+        if (selectedModeId != null && !selectedModeId.isBlank() && seen.add(selectedModeId.trim())) {
+            options.add(new ModeOption(selectedModeId.trim(), formatModeLabel(selectedModeId)));
+        }
+        return options;
     }
 
     /** Recomputes the synced recipe-type list from the current controller(s). */
