@@ -244,6 +244,29 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         return internalRecipeHandler.getSlotHandlers();
     }
 
+    // ------------------------------------------------------------------
+    // Proxy support (GTLCore MEPatternBufferProxyPartMachine parity).
+    // A proxy is a part placed inside another multiblock that borrows this
+    // buffer's slot handlers, so a distant structure can use the patterns here.
+    // ------------------------------------------------------------------
+
+    private final Set<GTNAMEPatternBufferProxyPartMachine> proxies = new LinkedHashSet<>();
+
+    public void addProxy(GTNAMEPatternBufferProxyPartMachine proxy) {
+        proxies.add(proxy);
+    }
+
+    public void removeProxy(GTNAMEPatternBufferProxyPartMachine proxy) {
+        proxies.remove(proxy);
+    }
+
+    /** Re-notifies every attached proxy that this buffer's slot handlers may have changed. */
+    public void notifyProxySlotRemoved(int slot) {
+        for (GTNAMEPatternBufferProxyPartMachine proxy : List.copyOf(proxies)) {
+            proxy.onBufferSlotInvalidated(slot);
+        }
+    }
+
     /**
      * Lets a Pattern Buffer act as an AE2 output hatch as well as an input bus.
      * Outputs are inserted directly into the connected grid, so a separate ME
@@ -426,6 +449,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         if (slot >= 0 && slot < slotConfigs.length) {
             slotConfigs[slot].clearRecipeCacheSilently();
             clearPatternRecipeMetadata(slot);
+            notifyProxySlotRemoved(slot);
         }
     }
 

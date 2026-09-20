@@ -195,6 +195,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.me_pattern_buffer", "ME Pattern Buffer");
         add("block.gtna.me_advanced_pattern_buffer", "ME Advanced Pattern Buffer");
         add("block.gtna.me_ultimate_pattern_buffer", "ME Ultimate Pattern Buffer");
+        add("block.gtna.me_pattern_buffer_proxy", "ME Pattern Buffer Proxy");
         add("block.gtna.me_craft_pattern_hatch", "Nexus Craft Pattern Hatch");
         add("block.gtna.crafting_cpu_interface", "Crafting CPU Interface");
         add("block.gtna.nexus_me_hypercore", "Nexus ME Hypercore");
@@ -243,6 +244,14 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.pattern_buffer.clear_pattern_recipe_cache", "Clear Recipe in Pattern");
         add("gtna.machine.pattern_buffer.clear_pattern_recipe_cache.tooltip",
                 "Clear the recipe recorded in this pattern without changing its inputs or outputs");
+        add("gtna.machine.pattern_buffer.proxy", "ME Pattern Buffer Proxy");
+        add("gtna.machine.pattern_buffer.proxy.tooltip",
+                "Lets another multiblock use the patterns stored in a distant ME Pattern Buffer");
+        add("gtna.machine.pattern_buffer.proxy.binding",
+                "Bind: Shift-right-click the buffer with a Data Stick, then right-click this part");
+        add("gtna.machine.pattern_buffer.proxy.range_note",
+                "Same dimension only; the buffer chunk must be loaded");
+        add("gtna.machine.pattern_buffer.proxy_bound", "Pattern Buffer bound to this proxy");
         add("gtna.machine.pattern_buffer.catalyst_item_field", "Catalyst Items (not consumed)");
         add("gtna.machine.pattern_buffer.catalyst_fluid_field", "Catalyst Fluids (not consumed)");
         add("gtna.machine.pattern_buffer.terminal_visibility", "Terminal: ");

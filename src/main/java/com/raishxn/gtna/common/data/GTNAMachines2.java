@@ -31,6 +31,7 @@ import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftPatternPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftingCPUInterfacePartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferProxyPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEStorageAccessPartMachine;
 import com.raishxn.gtna.common.machine.tesseract.DirectedTesseractMachine;
 import com.raishxn.gtna.config.ConfigHolder;
@@ -58,6 +59,7 @@ public class GTNAMachines2 {
     public static MachineDefinition ME_ADVANCED_PATTERN_BUFFER;
     public static MachineDefinition ME_ULTIMATE_PATTERN_BUFFER;
     public static MachineDefinition ME_CRAFT_PATTERN_HATCH;
+    public static MachineDefinition ME_PATTERN_BUFFER_PROXY;
     public static MachineDefinition CRAFTING_CPU_INTERFACE;
     public static MachineDefinition ME_STORAGE_ACCESS_HATCH;
     public static MachineDefinition ME_BIG_STORAGE_ACCESS_HATCH;
@@ -124,6 +126,29 @@ public class GTNAMachines2 {
                 registerPatternBuffer("me_ultimate_pattern_buffer", GTValues.UHV, 72) : null;
         ME_CRAFT_PATTERN_HATCH = ConfigHolder.isHatchEnabled("meCraftPatternHatch") ? registerCraftPatternHatch() :
                 null;
+        ME_PATTERN_BUFFER_PROXY = ConfigHolder.isHatchEnabled("mePatternBufferProxy") ?
+                registerPatternBufferProxy() : null;
+    }
+
+    /**
+     * A part that borrows the slot handlers of a distant ME Pattern Buffer. Bind with a data
+     * stick (shift-right-click the buffer to store its position, right-click this part to apply).
+     */
+    private static MachineDefinition registerPatternBufferProxy() {
+        return REGISTRATE.machine("me_pattern_buffer_proxy", GTNAMEPatternBufferProxyPartMachine::new)
+                .tier(GTValues.UV)
+                .rotationState(RotationState.ALL)
+                .abilities(
+                        PartAbility.IMPORT_ITEMS,
+                        PartAbility.IMPORT_FLUIDS,
+                        PartAbility.EXPORT_FLUIDS,
+                        PartAbility.EXPORT_ITEMS)
+                .colorOverlayTieredHullModel(GTCEu.id("block/overlay/appeng/me_buffer_hatch"))
+                .tooltips(
+                        Component.translatable("gtna.machine.pattern_buffer.proxy.tooltip"),
+                        Component.translatable("gtna.machine.pattern_buffer.proxy.binding"),
+                        Component.translatable("gtna.machine.pattern_buffer.proxy.range_note"))
+                .register();
     }
 
     private static void registerDirectedTesseract() {

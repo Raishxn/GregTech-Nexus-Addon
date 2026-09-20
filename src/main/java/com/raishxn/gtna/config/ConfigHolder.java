@@ -142,6 +142,7 @@ public class ConfigHolder {
             case "meAdvancedPatternBuffer" -> INSTANCE.hatchToggles.meAdvancedPatternBuffer;
             case "meUltimatePatternBuffer" -> INSTANCE.hatchToggles.meUltimatePatternBuffer;
             case "meCraftPatternHatch" -> INSTANCE.hatchToggles.meCraftPatternHatch;
+            case "mePatternBufferProxy" -> INSTANCE.hatchToggles.mePatternBufferProxy;
             case "meStorageAccessHatch" -> INSTANCE.hatchToggles.meStorageAccessHatch;
             case "meBigStorageAccessHatch" -> INSTANCE.hatchToggles.meBigStorageAccessHatch;
             case "meIOPortHatch" -> INSTANCE.hatchToggles.meIOPortHatch;
@@ -336,6 +337,8 @@ public class ConfigHolder {
         public boolean meUltimatePatternBuffer = true;
         @Configurable
         public boolean meCraftPatternHatch = true;
+        @Configurable
+        public boolean mePatternBufferProxy = true;
         @Configurable
         public boolean meStorageAccessHatch = true;
         @Configurable
