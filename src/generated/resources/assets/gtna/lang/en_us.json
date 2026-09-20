@@ -563,6 +563,7 @@
   "config.gtna.option.baseLossPercent": "Base Loss Percent",
   "config.gtna.option.bronzeBuffer": "Bronze Buffer Capacity",
   "config.gtna.option.bronzeTransferRate": "Bronze Transfer Rate",
+  "config.gtna.option.bufferDrivenMachineMode": "Buffer Driven Machine Mode",
   "config.gtna.option.client": "Client",
   "config.gtna.option.compactHyperPressureReactor": "Compact Hyper Pressure Reactor",
   "config.gtna.option.disableFlyInertia": "Disable Fly Inertia",

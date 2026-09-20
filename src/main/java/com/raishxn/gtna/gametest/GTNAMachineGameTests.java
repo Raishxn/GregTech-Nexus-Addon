@@ -7,12 +7,14 @@ import com.gregtechceu.gtceu.api.capability.recipe.EURecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
+import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.pattern.MultiblockState;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTMachines;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
+import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.EnergyHatchPartMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.ItemBusPartMachine;
 
@@ -256,6 +258,106 @@ public final class GTNAMachineGameTests {
         helper.assertTrue(controller.getActiveRecipeType() == 1,
                 "running a circuit-assembler recipe must mirror mode index 1 onto the controller, " +
                         "but activeRecipeType is " + controller.getActiveRecipeType());
+        helper.succeed();
+    }
+
+    /**
+     * The pattern grid of GTCEu's {@code multi_smelter} (GTMultiMachines), copied so the structure can
+     * be rebuilt by code: aisle 0 = pattern z+2 relative to the controller, aisle 2 = the controller's
+     * own layer. {@code X} casing (also accepts the buses/hatches), {@code C} heating coil,
+     * {@code M} muffler, {@code #} air, {@code S} controller.
+     */
+    private static final String[][] MULTI_SMELTER_PATTERN = {
+            { "XXX", "CCC", "XXX" },
+            { "XXX", "C#C", "XMX" },
+            { "XSX", "CCC", "XXX" },
+    };
+
+    /**
+     * End-to-end test of the buffer-driven machine mode on a <b>base GTCEu</b> multiblock: the
+     * {@code multi_smelter} uses the stock {@code RecipeLogic}, which only searches its active recipe
+     * type, so the mixin at HEAD of {@code searchRecipe} is what lets a pattern buffer put the
+     * machine in the right mode before the search.
+     *
+     * <p>
+     * Pinning the buffer to the machine's second type must flip {@code activeRecipeType} 0 -> 1 once
+     * the machine searches; clearing the pin must leave the mode alone.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 200)
+    public static void patternBufferDrivesBaseMachineMode(GameTestHelper helper) {
+        if (GTNAMachines2.ME_PATTERN_BUFFER == null) {
+            helper.fail("me_pattern_buffer is disabled by config; the auto-switch cannot be tested");
+            return;
+        }
+        BlockPos controllerPos = new BlockPos(2, 2, 2);
+        helper.setBlock(controllerPos, GTMultiMachines.MULTI_SMELTER.getBlock());
+
+        // World offsets from the pattern axes: char index -> world -X, string index -> +Y and aisle
+        // index -> -Z, with the controller cell as the origin. The multi_smelter's controller sits at
+        // char 1, string 0, aisle 2, so the offsets below are relative to it.
+        for (int aisle = 0; aisle < 3; aisle++) {
+            for (int string = 0; string < 3; string++) {
+                for (int charX = 0; charX < 3; charX++) {
+                    BlockPos pos = controllerPos.offset(1 - charX, string, 2 - aisle);
+                    switch (MULTI_SMELTER_PATTERN[aisle][string].charAt(charX)) {
+                        case 'C' -> helper.setBlock(pos, GTBlocks.COIL_CUPRONICKEL.get());
+                        case 'M' -> helper.setBlock(pos, GTMachines.MUFFLER_HATCH[GTValues.LV].getBlock());
+                        case 'X' -> helper.setBlock(pos, GTBlocks.CASING_INVAR_HEATPROOF.get());
+                        default -> {
+                            // 'S' (controller, already placed) and '#' (must stay air)
+                        }
+                    }
+                }
+            }
+        }
+
+        // The GTNA pattern buffer registers IMPORT_ITEMS, so the machine's autoAbilities predicates
+        // accept it in a casing slot exactly like an input bus. Energy and maintenance are mandatory
+        // here (autoAbilities requires an energy hatch, and maintenance is enabled by default).
+        BlockPos bufferPos = controllerPos.offset(0, 0, 1);
+        helper.setBlock(bufferPos, GTNAMachines2.ME_PATTERN_BUFFER.getBlock());
+        helper.setBlock(controllerPos.offset(1, 0, 2), GTMachines.ENERGY_INPUT_HATCH[GTValues.LV].getBlock());
+        helper.setBlock(controllerPos.offset(0, 0, 2), GTMachines.ITEM_IMPORT_BUS[GTValues.LV].getBlock());
+        helper.setBlock(controllerPos.offset(-1, 0, 2), GTMachines.ITEM_EXPORT_BUS[GTValues.LV].getBlock());
+        helper.setBlock(controllerPos.offset(1, 0, 1), GTMachines.MAINTENANCE_HATCH.getBlock());
+
+        MetaMachine placed = metaMachineAt(helper, controllerPos);
+        if (!(placed instanceof WorkableElectricMultiblockMachine controller)) {
+            helper.fail("multi_smelter block entity is not a WorkableElectricMultiblockMachine, got " + placed);
+            return;
+        }
+        MultiblockState state = controller.getMultiblockState();
+        if (!controller.getPattern().checkPatternAt(state, false)) {
+            helper.fail("multi_smelter pattern did not match: " +
+                    (state.error == null ? "unknown pattern error" : state.error.getErrorInfo().getString()));
+            return;
+        }
+        controller.onStructureFormed();
+        helper.assertTrue(controller.getParts().size() > 0,
+                "the pattern matched but no parts were registered on the controller");
+        helper.assertTrue(controller.getActiveRecipeType() == 0,
+                "multi_smelter must start on furnace, was index " + controller.getActiveRecipeType());
+
+        if (!(metaMachineAt(helper, bufferPos) instanceof GTNAMEPatternBufferPartMachine buffer)) {
+            helper.fail("no GTNA pattern buffer in the structure");
+            return;
+        }
+
+        // Pin the buffer to the machine's second recipe type. The buffer's own filter is the explicit
+        // manual control, and it is what the auto-switch reads as the pending request.
+        buffer.setSelectedModeId("gtceu:alloy_smelter");
+        controller.getRecipeLogic().findAndHandleRecipe();
+        helper.assertTrue(controller.getActiveRecipeType() == 1,
+                "an idle machine must follow the buffer's pinned mode (expected alloy_smelter, got index " +
+                        controller.getActiveRecipeType() + ")");
+
+        // Clearing the request must not move the machine back: with nothing pending the buffer has
+        // no opinion, which is exactly the idle-only policy.
+        buffer.setSelectedModeId("");
+        controller.getRecipeLogic().findAndHandleRecipe();
+        helper.assertTrue(controller.getActiveRecipeType() == 1,
+                "a buffer with no request must leave the mode alone, but it became index " +
+                        controller.getActiveRecipeType());
         helper.succeed();
     }
 

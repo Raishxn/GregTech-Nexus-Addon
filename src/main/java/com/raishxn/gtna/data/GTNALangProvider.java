@@ -885,6 +885,9 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.accelerateHatchMultiplier", "Accelerate Hatch Speed");
         add("config.gtna.option.accelerateHatchEnergyCost", "Accelerate Hatch Energy Cost");
 
+        // Pattern Buffer mode auto-switch on GTCEu multiblocks
+        add("config.gtna.option.bufferDrivenMachineMode", "Buffer Driven Machine Mode");
+
         // Wireless Steam
         add("config.gtna.option.wirelessSteamTransferRate", "Wireless Steam Transfer Rate");
 

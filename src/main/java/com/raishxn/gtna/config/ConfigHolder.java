@@ -355,6 +355,15 @@ public class ConfigHolder {
         public double accelerateHatchEnergyCost = 1.5;
 
         @Configurable
+        @Comment({ "En: Let a GTNA ME Pattern Buffer switch the machine mode of GTCEu multiblocks",
+                "En: (e.g. the Large Cutter between cutter and lathe). The buffer only drives the",
+                "En: mode while the machine is idle, so it never interrupts work; the buffer's own",
+                "En: per-slot mode pins and its buffer-level filter stay the manual control.",
+                "Pt: Permite que um ME Pattern Buffer do GTNA troque o modo de maquinas do GTCEu",
+                "Pt: (ex: Large Cutter entre cutter e lathe) enquanto a maquina estiver ociosa." })
+        public boolean bufferDrivenMachineMode = true;
+
+        @Configurable
         @Range(min = 1000, max = 1000000)
         public int wirelessSteamTransferRate = 8192;
 

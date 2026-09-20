@@ -342,6 +342,7 @@
   "config.gtna.option.meUltimatePatternBuffer": "ME Ultimate Pattern Buffer",
   "config.gtna.option.meCraftPatternHatch": "ME Craft Pattern Hatch",
   "config.gtna.option.accelerateHatchEnergyCost": "Custo de Energia do Accelerate Hatch",
+  "config.gtna.option.bufferDrivenMachineMode": "Troca de Modo pelo Buffer",
   "config.gtna.option.wirelessSteamTransferRate": "Taxa de Transferência de Vapor Wireless",
   "config.gtna.option.megaSolarSteamPerBlock": "Vapor Solar por Bloco",
   "config.gtna.option.voidMinerDenseOutputMult": "Void Miner (Dense) Saída",

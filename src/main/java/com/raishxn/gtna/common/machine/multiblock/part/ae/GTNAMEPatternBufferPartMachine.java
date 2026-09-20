@@ -744,6 +744,35 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         return slotResolver.resolveDerivedMode(recipe);
     }
 
+    /**
+     * Mode this buffer's staged content asks for, used by the idle-only auto-switch that lets GTCEu
+     * multiblocks (Large Cutter, Multi Smelter, ...) follow the buffer's patterns.
+     *
+     * <p>
+     * Only slots that actually hold staged inputs count: a pattern that cannot run must not pull the
+     * machine into its mode. The buffer-level filter wins because a pinned buffer is an explicit
+     * "this buffer serves only this type" instruction.
+     */
+    @Override
+    public @Nullable String gtna$getPendingModeId() {
+        if (!selectedModeId.isBlank()) {
+            return selectedModeId;
+        }
+        for (int i = 0; i < maxPatternCount; i++) {
+            if (internalInventory[i].isItemEmpty() && internalInventory[i].isFluidEmpty()) {
+                continue;
+            }
+            GTNAPatternBufferSlotConfig config = slotConfigs[i];
+            if (!config.getPreferredModeId().isBlank()) {
+                return config.getPreferredModeId();
+            }
+            if (!config.getDerivedModeId().isBlank()) {
+                return config.getDerivedModeId();
+            }
+        }
+        return null;
+    }
+
     @Override
     public void gtna$onRecipeStarted(GTRecipe recipe) {
         PatternSlotResolver.SlotMatch match = slotResolver.findMatchingSlot(recipe);
