@@ -313,15 +313,22 @@ public class GTNAGametest {
       beforeWorking → IO IN). O `getRecipeModifier` separado serve só ao preview/EMI,
       não é um segundo pipeline de execução — fusão completa fica para a Fase 3.
 
-### Fase 2 — Testes 🟡 **INICIADA**
+### Fase 2 — Testes ✅ **CONCLUÍDA** (gametest opcional fica para a Fase 2+)
 
 - [x] `src/test` criado + task `runUnitTests` (padrão GTLCore: `main()` + asserts, sem JUnit —
       correção da 1ª passada que sugeria JUnit). `check` agora depende de `runUnitTests`.
 - [x] `Int128Test` — **revelou 2 bugs reais** em `multiply`/`divideNew` (achado #20 🔴).
 - [x] `ModeIdMatcherTest` — trava as regras anti-hardcode.
-- [ ] **🔴 Corrigir `Int128.multiply` e `Int128.divideNew`** (bloqueia confiança no Nexus Flux Matrix).
-- [ ] `NumberUtilsTest`, `StructureSlicerTest`, `GTRecipe2IntBiMultiMapTest`.
-- [ ] CI: adicionar `spotlessCheck` ao `gradle.yml` (hoje só roda `build`).
+- [x] **🔴 Corrigir `Int128.multiply` e `Int128.divideNew`** — corrigido (commit `5a7129a`) e
+      validado com **0 erros em 100.000 casos** vs oráculo `BigInteger`
+      (add/subtract/multiply/shiftLeft/divide), com probes de regressão travadas no `Int128Test`.
+- [x] `NumberUtilsTest` (formatação K/M/G, tabela `pow95`, tiers de voltagem fake com round-trip,
+      `saturatedAdd`/`saturatedMultiply`), `StructureSlicerTest` (semântica exata de
+      slice/insert dos aisles, clamps e `q` 1-based) e `GTRecipe2IntBiMultiMapTest`
+      (espelho byte-a-byte da estrutura, pois `GTRecipe` exige bootstrap; chave stand-in com
+      equals/hashCode por id igual ao `GTRecipe`, + fuzz de 5.000 passos contra modelo de
+      referência verificando a invariante dos dois mapas a cada passo).
+- [x] CI: `spotlessCheck` + `runUnitTests` adicionados ao `gradle.yml` (commit `4bf0f0c`).
 - [ ] (Opcional) 1 gametest de steam simples — Fase 2+, requer AE2+GTCEu no ambiente de teste.
 
 ### Fase 3 — Refactor estrutural

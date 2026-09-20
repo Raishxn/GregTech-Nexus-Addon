@@ -21,7 +21,8 @@ sourceSets {
         srcDir 'src/generated/resources'
     }
     // GTLCore-style unit tests: plain main()-based classes (no JUnit). They only exercise
-    // pure logic that does not require a Minecraft bootstrap (Int128, matcher rules, ...).
+    // pure logic that does not require a Minecraft bootstrap (Int128, NumberUtils,
+    // StructureSlicer, matcher rules; GTRecipe2IntBiMultiMap via a byte-for-byte mirror).
     test {
         java.srcDir 'src/test/java'
     }
@@ -168,6 +169,9 @@ tasks.register('runUnitTests') {
     def testClasses = [
             'com.raishxn.gtna.Int128Test',
             'com.raishxn.gtna.ModeIdMatcherTest',
+            'com.raishxn.gtna.NumberUtilsTest',
+            'com.raishxn.gtna.StructureSlicerTest',
+            'com.raishxn.gtna.GTRecipe2IntBiMultiMapTest',
     ]
     doLast {
         testClasses.each { String cls ->
@@ -188,6 +192,12 @@ dependencies {
     compileOnly("org.jetbrains:annotations:26.0.1")
     // Mixin
     annotationProcessor('org.spongepowered:mixin:0.8.5:processor')
+
+    // Unit tests: fastutil + Guava for production classes they exercise (NumberUtils uses
+    // LongMath). The test source set does not inherit the Minecraft libraries that normally
+    // provide them; these are the MC 1.20.1 versions.
+    testImplementation("it.unimi.dsi:fastutil:8.5.9")
+    testImplementation("com.google.guava:guava:32.1.2-jre")
 
     // JEI, EMI, Jade
     modCompileOnly("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
