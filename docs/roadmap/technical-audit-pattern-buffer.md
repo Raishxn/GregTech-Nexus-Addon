@@ -269,8 +269,8 @@ Testes criados e **passando** (`./gradlew runUnitTests` → BUILD SUCCESSFUL, 6 
 - Run `gameTestServer` em `legacyForge.runs` com `forge.enabledGameTestNamespaces=gtna`.
 - Template `src/main/resources/data/gtna/structures/empty_5x5.nbt` (estrutura vazia 5x5x5 gerada
   à mão — palette/blocks/entities vazios, DataVersion 3465), para os testes terem onde construir.
-- `com.raishxn.gtna.gametest.GTNAMachineGameTests` com 3 testes, **todos passando**
-  (`./gradlew runGameTestServer` → `All 3 required tests passed`):
+- `com.raishxn.gtna.gametest.GTNAMachineGameTests` com 4 testes, **todos passando**
+  (`./gradlew runGameTestServer` → `All 4 required tests passed`):
   - `durationTesterExposesTwoRecipeTypes` — trava a **precondição** do auto-switch de modo (com um
     único recipe type o espelho é um no-op silencioso, que foi exatamente como a feature ficou
     invisível);
@@ -278,7 +278,19 @@ Testes criados e **passando** (`./gradlew runUnitTests` → BUILD SUCCESSFUL, 6 
     nossa classe de máquina);
   - `bufferModeFilterGatesSlotAcceptance` — exercita o filtro de modo do buffer (Fase C) numa receita
     real: sem pin aceita, pinado no próprio tipo aceita, pinado em outro tipo recusa **em todos os
-    slots**, e limpar o filtro restaura a aceitação.
+    slots**, e limpar o filtro restaura a aceitação;
+  - `runningSecondRecipeTypeMirrorsControllerMode` — **o teste end-to-end do espelho**: monta o
+    duration_tester formado, injeta uma receita trivial no `CIRCUIT_ASSEMBLER_RECIPES`, alimenta o
+    input bus com energia no energy hatch e afirma que o `activeRecipeType` sai de 0 (assembler)
+    para 1 (circuit assembler). É a asserção que a feature inteira depende e que os unit tests não
+    alcançam.
+    Notas de campo que valem para qualquer teste de multibloco futuro: a geometria vem de
+    `FactoryBlockPattern.start()` = (LEFT, UP, FRONT) → char→-X, string→+Y, aisle→-Z com a célula do
+    controller como origem; o padrão do duration_tester **exige** maintenance hatch
+    (`setExactLimit(1)` é mínimo E máximo) além do energy hatch do `autoAbilities`; o
+    `EnergyContainerList` do controller não implementa `addEnergy` (o default da interface é no-op),
+    então a energia vai no `NotifiableEnergyContainer` do hatch; e `onStructureFormed()` marca
+    `isFormed()` incondicionalmente, então o teste afirma o retorno de `checkPatternAt()`.`
 - CI com o passo de gametest + **guarda do banner** `GAME TESTS COMPLETE` (o `runGameTestServer` sai
   com código 0 mesmo quando o mod falha ao carregar) e criação do `run/eula.txt`, já que `run/` é
   gitignored.
