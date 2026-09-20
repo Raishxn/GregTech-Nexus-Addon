@@ -178,6 +178,32 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     @Setter
     private boolean hiddenInTerminal = false;
 
+    /**
+     * GTLCore {@code keepByProduct} parity (default {@code false}): when disabled, only the
+     * primary output of each pattern is considered when matching a recipe, so secondary
+     * byproducts do not have to line up. Enabled keeps every output in the comparison.
+     */
+    @Persisted
+    @Setter
+    private boolean keepByProduct = false;
+
+    /**
+     * GTLCore {@code embeddedCircuitConfig} / {@code skipExistingCircuitPatterns} parity: the
+     * circuit written into every pattern by the "embed circuit" action, and whether patterns that
+     * already carry one are left alone.
+     */
+    @DescSynced
+    @Persisted
+    @Setter
+    @Getter
+    private int embeddedCircuitConfig = 1;
+
+    @DescSynced
+    @Persisted
+    @Setter
+    @Getter
+    private boolean skipExistingCircuitPatterns = true;
+
     @Override
     public boolean isVisibleInTerminal() {
         return !hiddenInTerminal;
@@ -566,6 +592,18 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                         Component.translatable("gtna.machine.pattern_buffer.terminal_visibility")
                                 .append(Component.translatable(pressed ? "gtna.machine.pattern_buffer.terminal_hidden" :
                                         "gtna.machine.pattern_buffer.terminal_visible")))));
+        // GTLCore keepByProduct toggle: when OFF only the primary output is matched.
+        configuratorPanel.attachConfigurators(new IFancyConfiguratorButton.Toggle(
+                GuiTextures.BUTTON, GuiTextures.BUTTON,
+                () -> keepByProduct,
+                (clickData, pressed) -> {
+                    setKeepByProduct(pressed);
+                    markDirty();
+                })
+                .setTooltipsSupplier(pressed -> List.of(
+                        Component.translatable("gtna.machine.pattern_buffer.keep_byproduct")
+                                .append(Component.translatable(pressed ? "gtna.machine.pattern_buffer.toggle_yes" :
+                                        "gtna.machine.pattern_buffer.toggle_no")))));
     }
 
     @Override
@@ -604,8 +642,13 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                 });
                 slotWidget.setChangeListener(() -> onPatternChange(finalIndex));
                 slotWidget.setBackground(GuiTextures.SLOT, GuiTextures.PATTERN_OVERLAY);
-                slotWidget.setOnAddedTooltips((widget, tooltips) -> tooltips
-                        .add(Component.translatable("gtna.machine.pattern_buffer.middle_click_hint")));
+                slotWidget.setOnAddedTooltips((widget, tooltips) -> {
+                    tooltips.add(Component.translatable("gtna.machine.pattern_buffer.middle_click_hint"));
+                    // GTLCore parity: flag the slots whose resolved recipe is being cached.
+                    if (finalIndex >= 0 && finalIndex < slotConfigs.length && slotConfigs[finalIndex].isCacheRecipe()) {
+                        tooltips.add(Component.translatable("gtna.machine.pattern_buffer.recipe_cached"));
+                    }
+                });
                 patternPagePanel.addWidget(slotWidget);
             }
         }
@@ -721,7 +764,20 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         modeSelectorButton.setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.mode_button.tooltip"));
         configPanel.addWidget(modeSelectorButton);
 
-        int buttonY = y + 23;
+        y += 19;
+        // Per-slot recipe caching toggle (GTLCore cacheRecipe[] parity).
+        configPanel.addWidget(new ButtonWidget(innerX, y, PANEL_WIDTH - 16, 14,
+                new GuiTextureGroup(
+                        GuiTextures.BUTTON,
+                        new TextTexture(this::getCacheToggleText)
+                                .setWidth(PANEL_WIDTH - 22)
+                                .setType(TextTexture.TextType.ROLL)
+                                .setDropShadow(false)),
+                clickData -> {
+                    if (!clickData.isRemote) toggleSelectedCacheRecipe();
+                }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.cache_toggle.tooltip")));
+
+        int buttonY = y + 19;
         configPanel.addWidget(makeTextButton(innerX, buttonY, 76,
                 "gtna.machine.pattern_buffer.clear_machine_recipe_cache",
                 clickData -> {
@@ -732,6 +788,113 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                 clickData -> {
                     if (!clickData.isRemote) clearSelectedRecipeCache();
                 }));
+
+        // Embedded-circuit block (GTLCore PatternCircuitConfigurator parity): config input,
+        // skip-existing toggle, and the two bulk actions.
+        int circuitY = buttonY + 19;
+        configPanel.addWidget(new LabelWidget(innerX, circuitY,
+                () -> Component.translatable("gtna.machine.pattern_buffer.embedded_circuit").getString()));
+        configPanel.addWidget(new IntInputWidget(innerX, circuitY + 11, 50, 14,
+                this::getEmbeddedCircuitConfig,
+                value -> {
+                    setEmbeddedCircuitConfig(value);
+                    markDirty();
+                }).setMin(1).setMax(32));
+        configPanel.addWidget(new ButtonWidget(innerX + 54, circuitY + 11, 52, 14,
+                new GuiTextureGroup(GuiTextures.BUTTON,
+                        new TextTexture(this::getSkipExistingText).setWidth(48)
+                                .setType(TextTexture.TextType.ROLL).setDropShadow(false)),
+                clickData -> {
+                    if (!clickData.isRemote) {
+                        setSkipExistingCircuitPatterns(!skipExistingCircuitPatterns);
+                        markDirty();
+                    }
+                }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.skip_existing.tooltip")));
+        int actionY = circuitY + 27;
+        configPanel.addWidget(makeTextButton(innerX, actionY, 84,
+                "gtna.machine.pattern_buffer.embed_circuit",
+                clickData -> {
+                    if (!clickData.isRemote) embedCircuitInAllPatterns();
+                }));
+        configPanel.addWidget(makeTextButton(innerX + 88, actionY, 80,
+                "gtna.machine.pattern_buffer.remove_circuits",
+                clickData -> {
+                    if (!clickData.isRemote) removeAllPatternCircuits();
+                }));
+    }
+
+    private String getSkipExistingText() {
+        return Component.translatable(skipExistingCircuitPatterns ?
+                "gtna.machine.pattern_buffer.skip_existing.on" : "gtna.machine.pattern_buffer.skip_existing.off")
+                .getString();
+    }
+
+    private String getCacheToggleText() {
+        GTNAPatternBufferSlotConfig config = getSelectedConfig();
+        boolean enabled = config == null || config.isCacheRecipe();
+        return Component.translatable(enabled ? "gtna.machine.pattern_buffer.cache_toggle.on" :
+                "gtna.machine.pattern_buffer.cache_toggle.off").getString();
+    }
+
+    // ------------------------------------------------------------------
+    // Embedded circuit actions (GTLCore embedCircuitToPatterns /
+    // removeAllPatternCircuits parity). Both only touch encoded patterns;
+    // slot configs are left as they are.
+    // ------------------------------------------------------------------
+
+    /** Writes {@link #embeddedCircuitConfig} into every pattern that does not already have one. */
+    private void embedCircuitInAllPatterns() {
+        int circuit = Math.max(1, Math.min(IntCircuitBehaviour.CIRCUIT_MAX, embeddedCircuitConfig));
+        int changed = 0;
+        for (int i = 0; i < patternInventory.getSlots(); i++) {
+            ItemStack stack = patternInventory.getStackInSlot(i);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            // GTLCore's skipExistingCircuitPatterns is the inverse of replaceExisting.
+            ItemStack updated = GTNAPatternCircuitHelper.withCircuit(stack, circuit,
+                    !skipExistingCircuitPatterns, getLevel());
+            if (!updated.isEmpty() && !ItemStack.matches(stack, updated)) {
+                internalPatternInventory.setItemDirect(i, updated);
+                changed++;
+            }
+        }
+        if (changed > 0) {
+            rebuildPatternMap();
+        }
+    }
+
+    /** Strips the embedded circuit from every pattern. */
+    private void removeAllPatternCircuits() {
+        int changed = 0;
+        for (int i = 0; i < patternInventory.getSlots(); i++) {
+            ItemStack stack = patternInventory.getStackInSlot(i);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            ItemStack updated = GTNAPatternCircuitHelper.withoutCircuit(stack, getLevel());
+            if (!updated.isEmpty() && !ItemStack.matches(stack, updated)) {
+                internalPatternInventory.setItemDirect(i, updated);
+                changed++;
+            }
+        }
+        if (changed > 0) {
+            rebuildPatternMap();
+        }
+    }
+
+    private void toggleSelectedCacheRecipe() {
+        GTNAPatternBufferSlotConfig config = getSelectedConfig();
+        if (config == null) {
+            return;
+        }
+        config.setCacheRecipe(!config.isCacheRecipe());
+        if (selectedSlot >= 0) {
+            invalidateSlotCache(selectedSlot);
+            resolveAndCacheSlotRecipe(selectedSlot);
+            refreshSelectedConfigPreview();
+            markDirty();
+        }
     }
 
     private void addItemGhostRow(WidgetGroup panel, int x, int y) {
@@ -929,6 +1092,10 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             return;
         }
         GTNAPatternBufferSlotConfig config = slotConfigs[slot];
+        // cacheRecipe toggle (GTLCore parity): a slot may opt out of recipe caching entirely.
+        if (!config.isCacheRecipe()) {
+            return;
+        }
         config.setCachedRecipeId(recipe.id.toString());
         String resolvedMode = config.getPreferredModeId().isBlank() ? resolveDerivedMode(recipe) :
                 config.getPreferredModeId();
@@ -1476,8 +1643,20 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
 
         List<ItemStack> patternItemOutputs = collectPatternItemOutputs(details);
         List<FluidStack> patternFluidOutputs = collectPatternFluidOutputs(details);
+        // keepByProduct == false (GTLCore default): secondary byproducts are not part of the
+        // identity check, so only the primary output of each kind is compared.
+        if (!keepByProduct) {
+            itemOutputs = primaryOnly(itemOutputs);
+            patternItemOutputs = primaryOnly(patternItemOutputs);
+            fluidOutputs = primaryOnly(fluidOutputs);
+            patternFluidOutputs = primaryOnly(patternFluidOutputs);
+        }
         return compareItemStacks(itemOutputs, patternItemOutputs) &&
                 compareFluidStacks(fluidOutputs, patternFluidOutputs);
+    }
+
+    private static <T> List<T> primaryOnly(List<T> stacks) {
+        return stacks.size() <= 1 ? stacks : List.of(stacks.get(0));
     }
 
     private List<Ingredient> copyItemInputs(GTRecipe recipe) {

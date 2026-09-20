@@ -60,9 +60,9 @@ Comparando `GTLCore.MEPatternBufferPartMachine` (994 linhas) com
 
 | Feature GTLCore | Estado GTNA | Prioridade | Esforço |
 |---|---|---|---|
-| **`cacheRecipe[]` toggle por slot** (liga/desliga cache por slot) | ❌ cache é sempre ativo | Média | Baixo |
-| **`keepByProduct`** (manter subprodutos no slot em vez de devolver à rede) | ❌ | Média | Médio |
-| **Circuito embarcado** (`embeddedCircuitConfig` + `embedCircuitToPatterns` + `removeAllPatternCircuits` + `skipExistingCircuitPatterns`) | ⚠️ GTNA tem circuito por slot, mas não o "embed em massa" nos patterns | Média | Médio |
+| **`cacheRecipe[]` toggle por slot** (liga/desliga cache por slot) | ✅ **portado** — `cacheRecipe` por slot no `slotConfigs` (persistido), toggle no painel de config, tooltip "Recipe cached" no slot (igual à referência) | Média | Baixo |
+| **`keepByProduct`** (manter subprodutos no slot em vez de devolver à rede) | ✅ **portado** — toggle no painel de configuradores; OFF (default GTLCore) compara só o output primário no matching | Média | Médio |
+| **Circuito embarcado** (`embeddedCircuitConfig` + `embedCircuitToPatterns` + `removeAllPatternCircuits` + `skipExistingCircuitPatterns`) | ✅ **portado** — `GTNAPatternCircuitHelper` (extract/with/without circuit em `AEProcessingPattern` via `IntCircuitBehaviour.isIntegratedCircuit`, sem o campo de fork `GTItems.INTEGRATED_CIRCUIT`) + UI: input de circuito, toggle skip-existing, ações "Embed"/"Remove" em massa | Média | Médio |
 | **Catalyst inventories** (`catalystItems[]`/`catalystFluids[]` + `reCalculateCatalyst*Map` + `testCatalyst*`) — insumos catalisadores não-consumidos | ✅ **portado** — lógica (`catalystItems`/`catalystFluids` + persistência + `testCatalyst*` no match) **e UI** (linhas de ghost slots item/fluido no painel de config por slot + lang keys, seguindo o padrão das linhas existentes em vez do docked manager do GTLCore) | Alta | Alto |
 | **Proxy buffer** (`MEPatternBufferProxyPartMachine`) | ❌ (adiado por design, ver task-manager) | Baixa | Alto |
 | **Copy/Paste de config** (`copyFromTag`/`pasteFromTag` via data stick) | 🟡 **API pronta** (`copyBufferToTag`/`pasteBufferFromTag` com versionamento; faltam os itens de comportamento estilo GTLCore `Copy/Cut`) | Média | Médio |

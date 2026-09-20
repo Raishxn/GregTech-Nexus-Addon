@@ -244,6 +244,21 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.pattern_buffer.clear_pattern_recipe_cache", "Clear Recipe in Pattern");
         add("gtna.machine.pattern_buffer.clear_pattern_recipe_cache.tooltip",
                 "Clear the recipe recorded in this pattern without changing its inputs or outputs");
+        add("gtna.machine.pattern_buffer.embedded_circuit", "Embedded Circuit (all patterns)");
+        add("gtna.machine.pattern_buffer.embed_circuit", "Embed Circuit");
+        add("gtna.machine.pattern_buffer.remove_circuits", "Remove Circuits");
+        add("gtna.machine.pattern_buffer.skip_existing.on", "Skip Existing: ON");
+        add("gtna.machine.pattern_buffer.skip_existing.off", "Skip Existing: OFF");
+        add("gtna.machine.pattern_buffer.skip_existing.tooltip",
+                "ON keeps patterns that already carry a circuit untouched when embedding");
+        add("gtna.machine.pattern_buffer.recipe_cached", "Recipe cached for this slot");
+        add("gtna.machine.pattern_buffer.cache_toggle.on", "Recipe Cache: ON (click to disable)");
+        add("gtna.machine.pattern_buffer.cache_toggle.off", "Recipe Cache: OFF (click to enable)");
+        add("gtna.machine.pattern_buffer.cache_toggle.tooltip",
+                "Caching remembers the resolved recipe per slot; disable to always resolve fresh");
+        add("gtna.machine.pattern_buffer.keep_byproduct", "Keep Byproducts: ");
+        add("gtna.machine.pattern_buffer.toggle_yes", "ON");
+        add("gtna.machine.pattern_buffer.toggle_no", "OFF");
         add("gtna.machine.pattern_buffer.proxy", "ME Pattern Buffer Proxy");
         add("gtna.machine.pattern_buffer.proxy.tooltip",
                 "Lets another multiblock use the patterns stored in a distant ME Pattern Buffer");

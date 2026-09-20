@@ -42,6 +42,12 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
     private String preferredModeId = "";
     private String derivedModeId = "";
     private String cachedRecipeId = "";
+    /**
+     * GTLCore {@code cacheRecipe[]} parity: when enabled the slot's resolved recipe is remembered
+     * and reused for routing; when disabled the recipe is always resolved fresh (slower, but never
+     * stale). Defaults to {@code true} like the reference.
+     */
+    private boolean cacheRecipe = true;
 
     public GTNAPatternBufferSlotConfig() {
         specialItems.setOnContentsChanged(this::onContentsChanged);
@@ -107,6 +113,21 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
 
     public void setCachedRecipeId(String cachedRecipeId) {
         this.cachedRecipeId = cachedRecipeId == null ? "" : cachedRecipeId.trim();
+    }
+
+    public boolean isCacheRecipe() {
+        return cacheRecipe;
+    }
+
+    public void setCacheRecipe(boolean cacheRecipe) {
+        if (this.cacheRecipe != cacheRecipe) {
+            this.cacheRecipe = cacheRecipe;
+            if (!cacheRecipe) {
+                this.cachedRecipeId = "";
+                this.derivedModeId = "";
+            }
+            onContentsChanged();
+        }
     }
 
     public String getDerivedModeId() {
@@ -267,6 +288,7 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
         }
         tag.put(CATALYST_FLUIDS_TAG, catalystFluidTag);
         tag.putInt("circuitConfig", circuitConfig);
+        tag.putBoolean("cacheRecipe", cacheRecipe);
         if (!preferredModeId.isBlank()) {
             tag.putString("preferredModeId", preferredModeId);
         }
@@ -324,6 +346,7 @@ public class GTNAPatternBufferSlotConfig implements ITagSerializable<CompoundTag
         }
 
         this.circuitConfig = tag.contains("circuitConfig") ? tag.getInt("circuitConfig") : -1;
+        this.cacheRecipe = !tag.contains("cacheRecipe") || tag.getBoolean("cacheRecipe");
         this.preferredModeId = tag.getString("preferredModeId");
         this.derivedModeId = tag.getString("derivedModeId");
         this.cachedRecipeId = tag.getString("cachedRecipeId");
