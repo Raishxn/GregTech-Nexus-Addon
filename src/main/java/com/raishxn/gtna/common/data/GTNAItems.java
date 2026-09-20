@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.item.CoordinateCardBehavior;
+import com.raishxn.gtna.common.item.PatternBufferCopyBehavior;
 import com.raishxn.gtna.common.item.PatternBufferUpgraderBehavior;
 import com.raishxn.gtna.common.item.RealityRipperSwordItem;
 import com.raishxn.gtna.common.item.StructureDetectBehavior;
@@ -62,6 +63,8 @@ public class GTNAItems {
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_21;
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_32;
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_UPGRADE_72;
+    public static ItemEntry<ComponentItem> PATTERN_BUFFER_COPY_CARD;
+    public static ItemEntry<ComponentItem> PATTERN_BUFFER_CUT_CARD;
     public static ItemEntry<ComponentItem> INFINITE_CELL_COMPONENT;
     public static ItemEntry<ComponentItem> ANNIHILATION_CONSTRAINER;
     public static ItemEntry<ComponentItem> NEUTRONIUM_ANTIMATTER_FUEL_ROD;
@@ -215,6 +218,20 @@ public class GTNAItems {
                 .properties(stack -> stack.stacksTo(16))
                 .onRegister(attach(new PatternBufferUpgraderBehavior(() -> GTNAMachines2.ME_ULTIMATE_PATTERN_BUFFER)))
                 .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/ex_pattern_buffer_ultra_upgrader")))
+                .register();
+
+        PATTERN_BUFFER_COPY_CARD = REGISTRATE.item("pattern_buffer_copy_card", ComponentItem::create)
+                .lang("Pattern Buffer Copy Card")
+                .properties(stack -> stack.stacksTo(1))
+                .onRegister(attach(new PatternBufferCopyBehavior(false)))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/pattern_buffer_copy_card")))
+                .register();
+
+        PATTERN_BUFFER_CUT_CARD = REGISTRATE.item("pattern_buffer_cut_card", ComponentItem::create)
+                .lang("Pattern Buffer Cut Card")
+                .properties(stack -> stack.stacksTo(1))
+                .onRegister(attach(new PatternBufferCopyBehavior(true)))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/pattern_buffer_cut_card")))
                 .register();
 
         INFINITE_CELL_COMPONENT = REGISTRATE.item("infinite_cell_component", ComponentItem::create)

@@ -251,6 +251,18 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.pattern_buffer.skip_existing.off", "Skip Existing: OFF");
         add("gtna.machine.pattern_buffer.skip_existing.tooltip",
                 "ON keeps patterns that already carry a circuit untouched when embedding");
+        add("item.gtna.pattern_buffer_copy.tooltip.snapshot",
+                "Sneak-right-click a Pattern Buffer to snapshot its configuration");
+        add("item.gtna.pattern_buffer_copy.tooltip.apply",
+                "Right-click another Pattern Buffer to paste the configuration");
+        add("item.gtna.pattern_buffer_cut.tooltip.snapshot",
+                "Sneak-right-click a Pattern Buffer to cut its configuration out");
+        add("item.gtna.pattern_buffer_cut.tooltip.apply",
+                "Right-click another Pattern Buffer to paste the configuration");
+        add("gtna.machine.pattern_buffer.copy.copied", "Pattern buffer configuration copied");
+        add("gtna.machine.pattern_buffer.copy.cut", "Pattern buffer configuration cut");
+        add("gtna.machine.pattern_buffer.copy.empty", "No buffer configuration stored on this card");
+        add("gtna.machine.pattern_buffer.copy.pasted", "Pasted %s pattern(s) into the buffer");
         add("gtna.machine.pattern_buffer.recipe_cached", "Recipe cached for this slot");
         add("gtna.machine.pattern_buffer.cache_toggle.on", "Recipe Cache: ON (click to disable)");
         add("gtna.machine.pattern_buffer.cache_toggle.off", "Recipe Cache: OFF (click to enable)");

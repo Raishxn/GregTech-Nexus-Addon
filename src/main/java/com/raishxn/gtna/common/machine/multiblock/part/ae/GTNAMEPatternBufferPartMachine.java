@@ -2401,6 +2401,25 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     // Format version is stored so future changes can migrate instead of failing.
     // ------------------------------------------------------------------
 
+    /**
+     * Strips every encoded pattern from this buffer (GTLCore "cut" semantics). Slot configs are
+     * cleared as well so the snapshot/apply pair is symmetric.
+     */
+    public void cutPatternsFromBuffer() {
+        for (int i = 0; i < patternInventory.getSlots(); i++) {
+            if (!patternInventory.getStackInSlot(i).isEmpty()) {
+                patternInventory.setStackInSlot(i, ItemStack.EMPTY);
+                onPatternChange(i);
+            }
+        }
+        for (GTNAPatternBufferSlotConfig config : slotConfigs) {
+            config.clearSpecialization();
+        }
+        rebuildPatternMap();
+        needPatternSync = true;
+        markDirty();
+    }
+
     private static final String COPY_TAG_ROOT = "gtnaBufferCopy";
     private static final String COPY_TAG_VERSION = "version";
     private static final int COPY_VERSION = 1;
