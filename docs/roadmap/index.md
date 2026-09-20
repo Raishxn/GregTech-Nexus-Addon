@@ -87,10 +87,16 @@ Acompanhe o progresso de desenvolvimento do GregTech Nexus Addon em tempo real.
 - [x] Integração AE2 (pattern push/pull via rede ME)
 - [x] **Troca automática de modo do multibloco** conforme o recipe type do pattern
       (espelho de `activeRecipeType` com a fórmula oficial do GTM — ver
-      [auditoria técnica](technical-audit-pattern-buffer.md))
+      [auditoria técnica](technical-audit-pattern-buffer.md)). **Coberto por gametest end-to-end**
+      desde 2026-09-20: um `duration_tester` formado que roda uma receita do segundo tipo vira o
+      modo sozinho (`runningSecondRecipeTypeMirrorsControllerMode`).
+- [x] **Filtro de modo por buffer** — seletor na UI do próprio buffer (paridade com o
+      `MultiMachineModeFancyConfigurator` do GTOCore) que limita o buffer a um recipe type.
+- [x] **Output ME sem perda** — sobra de output vai para um buffer persistido e é drenada por um
+      `IGridTickable` com frequência adaptativa, em vez de ser voidada.
 - [x] Itens de upgrade entre tiers (preservam padrões e configuração)
-- [ ] Fidelidade 1:1 com GTOCore/GTLCore — *em análise* (ver
-      [gap de fidelidade](pattern-buffer-fidelity-gap.md))
+- [x] Fidelidade 1:1 com GTOCore/GTLCore — **tabela de gap toda verde**; as divergências restantes
+      são conscientes e documentadas em [gap de fidelidade](pattern-buffer-fidelity-gap.md).
 
 ### Novos Elementos
 
@@ -149,12 +155,19 @@ Acompanhe o progresso de desenvolvimento do GregTech Nexus Addon em tempo real.
 ### Infraestrutura
 
 - [ ] Wiki completa (MkDocs + GitHub Pages)
-- [ ] Automated testing
-- [ ] CI/CD pipeline
+- [x] **Automated testing** — 6 unit tests (`main()` + asserts, padrão GTLCore) e **4 gametests**
+      (`@GameTest` em servidor dedicado real), todos no gate do CI.
+- [x] **CI/CD pipeline** — `gradle.yml` roda `build`, `spotlessCheck`, `runUnitTests` e
+      `runGameTestServer` (com guarda do banner `GAME TESTS COMPLETE`); `docs.yml` publica o MkDocs.
 - [ ] Community playtest program
 
 !!! tip "Auditoria Técnica"
     A auditoria estrutural completa do mod (pacotes, registries, mixins, testes, CI) + o plano de execução detalhado do **pattern buffer multi-modo** estão em [`technical-audit-pattern-buffer.md`](technical-audit-pattern-buffer.md). O escopo mecânico do port GTOCore/GTLAdditions segue em [`multiblock-port-manifest.md`](multiblock-port-manifest.md).
+
+!!! info "Retomar o trabalho numa sessão nova"
+    O estado atual, as pendências priorizadas e as **notas de campo** (os erros já pagos, para não
+    redescobrir) ficam no `CONTINUITY_LEDGER.md`, na raiz do repositório. Comece por lá: ele diz o
+    que está verde, o que falta e quais comandos rodar antes de mexer em qualquer coisa.
 
 ---
 

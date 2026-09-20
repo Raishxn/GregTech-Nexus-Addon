@@ -6,6 +6,11 @@
     **Verificações:** 203 arquivos Java, build/CI/workflows, mixins, datagen, git status, bytecode/source do GTM 7.5.3 (`javap` + leitura direta do source)
     **Manifest correlato:** [`docs/roadmap/multiblock-port-manifest.md`](multiblock-port-manifest.md)
 
+!!! warning "Este documento é o detalhe técnico, não o estado atual"
+    O estado corrente do trabalho, as pendências priorizadas e as notas de campo (custos já pagos,
+    para não redescobrir) ficam no **`CONTINUITY_LEDGER.md`**, na raiz do repositório. Uma sessão
+    nova deve começar por lá; este documento explica o *porquê* das decisões e o histórico das fases.
+
 ---
 
 ## 📊 Resumo Executivo
@@ -415,7 +420,11 @@ ver a feature funcionar:
       equals/hashCode por id igual ao `GTRecipe`, + fuzz de 5.000 passos contra modelo de
       referência verificando a invariante dos dois mapas a cada passo).
 - [x] CI: `spotlessCheck` + `runUnitTests` adicionados ao `gradle.yml` (commit `4bf0f0c`).
-- [ ] (Opcional) 1 gametest de steam simples — Fase 2+, requer AE2+GTCEu no ambiente de teste.
+- [x] Gametest: em vez do "steam simples" previsto aqui, o harness completo foi construído e o
+      primeiro alvo foi um **multibloco elétrico end-to-end** (o `duration_tester` do espelho de
+      modo), que exigia mais do harness do que um steam — ver Nível 2 e o checkpoint `G-0004` do
+      `CONTINUITY_LEDGER.md`. Um teste de steam continua barato de adicionar, mas deixou de ser o
+      caminho crítico.
 
 ### Fase 3 — Refactor estrutural 🟡 **INICIADA**
 
