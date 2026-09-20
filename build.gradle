@@ -184,6 +184,7 @@ tasks.register('runUnitTests') {
             'com.raishxn.gtna.GTRecipe2IntBiMultiMapTest',
             'com.raishxn.gtna.PatternBufferModeSelectionTest',
             'com.raishxn.gtna.BufferModeSwitchPolicyTest',
+            'com.raishxn.gtna.ConfigLangKeysTest',
     ]
     doLast {
         testClasses.each { String cls ->
