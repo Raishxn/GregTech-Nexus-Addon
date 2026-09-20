@@ -38,3 +38,21 @@ jobs:
 
     - name: Code quality (spotless) + unit tests
       run: ./gradlew spotlessCheck runUnitTests
+
+    # runGameTestServer exits 0 even when the mod fails to load, so the log banner is the real
+    # assertion. Without this guard a broken build passes silently.
+    - name: Game tests
+      run: |
+        # run/ is gitignored, so CI has to accept the EULA the dedicated server asks for.
+        mkdir -p run
+        echo "eula=true" > run/eula.txt
+        ./gradlew runGameTestServer
+
+    - name: Assert game tests actually ran
+      run: |
+        if ! grep -q "GAME TESTS COMPLETE" run/logs/latest.log; then
+          echo "::error::runGameTestServer finished without running any GameTest"
+          tail -n 200 run/logs/latest.log
+          exit 1
+        fi
+        grep -E "All [0-9]+ required tests passed|GAME TESTS COMPLETE" run/logs/latest.log
