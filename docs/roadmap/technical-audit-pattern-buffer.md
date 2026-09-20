@@ -334,13 +334,19 @@ public class GTNAGametest {
 ### Fase 3 — Refactor estrutural 🟡 **INICIADA**
 
 - [ ] Split AnnihilateGeneratorA/B → aisles em `common/data/multiblock/`
-- [ ] Split `GTNAMEPatternBufferPartMachine` (UI/resolver/mode) — 🟡 **resolver extraído**
-      (2759 → 1923 linhas): `PatternSlotResolver` (mesmo pacote) agora carrega o núcleo de
-      busca/matching de receita por slot (resolução com preferência de cache, migração de tags
-      legados, matching slot/pattern com catalyst + keepByProduct, e os helpers puramente
-      estáticos de copy/consume/collect/compare). A máquina mantém o estado persistente e a
-      orquestração de UI. Restam: extração da UI (config panel + widgets internos) e do cluster
-      de modos (`ModeOption`/cycle/refresh).
+- [x] Split `GTNAMEPatternBufferPartMachine` (UI/resolver/mode) — **CONCLUÍDO**
+      (`d2f9497`, `3b28fd1`, `b39d701`; 2759 → 1192 linhas). Três classes no mesmo pacote:
+      `PatternSlotResolver` (busca/matching de receita por slot: resolução com preferência de
+      cache, migração de tags legados, matching slot/pattern com catalyst + keepByProduct, e os
+      helpers puramente estáticos de copy/consume/collect/compare); `PatternBufferModeRegistry`
+      (descoberta dos recipe types do controller + formatação de label, com o cache sincronizado
+      `availableModeIds` permanecendo na máquina); e `PatternBufferUI` (página de slots, config
+      panel, ghost rows de item/fluido/catalyst, widgets internos, seleção/preview e apresentação
+      do seletor de modo).
+      A máquina mantém o estado persistente/sincronizado (`selectedSlot`, `currentPage`,
+      inventários, `slotConfigs`) e as ações de domínio que os botões disparam; a UI só as invoca.
+      Um back-reference `@Nullable patternBufferUI` roteia os refreshes de preview disparados no
+      lado do servidor (`refreshUiPreview()`), que viram no-op quando nenhuma UI está aberta.
 - [ ] Split GTNAMachines por domínio
 - [ ] Internacionalizar strings de UI
 - [ ] Fundir `getRecipeModifier` (preview) com o caminho de execução, se fizer sentido
