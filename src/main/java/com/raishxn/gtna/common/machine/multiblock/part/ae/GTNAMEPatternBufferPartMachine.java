@@ -51,8 +51,12 @@ import appeng.api.crafting.PatternDetailsHelper;
 import appeng.api.implementations.blockentities.PatternContainerGroup;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGrid;
+import appeng.api.networking.IGridNode;
 import appeng.api.networking.IGridNodeListener;
 import appeng.api.networking.crafting.ICraftingProvider;
+import appeng.api.networking.ticking.IGridTickable;
+import appeng.api.networking.ticking.TickRateModulation;
+import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
@@ -92,6 +96,21 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             GTNAMEPatternBufferPartMachine.class, MEBusPartMachine.MANAGED_FIELD_HOLDER);
     private static final String SLOT_CONFIGS_TAG = "gtnaPatternConfigs";
     private static final String INTERNAL_SLOTS_TAG = "gtnaPatternInternalSlots";
+    private static final String PENDING_OUTPUT_TAG = "gtnaPendingNetworkOutput";
+
+    /**
+     * Bounds of the AE2 drain pump, mirroring GTLCore's {@code MEPatternOutputMin/Max} defaults
+     * (5 and 80 ticks).
+     */
+    private static final int MIN_DRAIN_TICKS = 5;
+    private static final int MAX_DRAIN_TICKS = 80;
+
+    /** Caps the work a single tick can do when a large backlog accumulated. */
+    private static final int DRAIN_OPS_PER_TICK = 64;
+    private static final int MAX_DRAIN_FAILURES = 5;
+
+    /** Key (and amount, under {@code real}) format used by GTLCore's {@code AEUtils.createListTag}. */
+    private static final String PENDING_OUTPUT_AMOUNT_TAG = "real";
     @Getter
     private final int maxPatternCount;
 
@@ -141,6 +160,17 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
 
     /** Fase 3 extraction: recipe search + matching core; the persistent state stays here. */
     private final PatternSlotResolver slotResolver = new PatternSlotResolver(this);
+
+    /**
+     * Outputs (and refunded slot contents) that the ME network could not accept at the moment they
+     * were produced. The drain ticker retries them until they fit, so a momentarily full network or
+     * a missing AE energy buffer never voids items.
+     *
+     * <p>
+     * GTLCore parity: {@code MEExtendedOutputPartMachineBase.buffer}, persisted under the same
+     * key/amount NBT shape.
+     */
+    private final Object2LongOpenHashMap<AEKey> pendingNetworkOutput = new Object2LongOpenHashMap<>();
 
     /** Fase 3 extraction: recipe-type mode discovery + labels; the synced cache stays here. */
     @Getter
@@ -230,6 +260,9 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             this.slotConfigs[i].setOnContentsChanged(() -> onSlotConfigurationChanged(slotIndex));
         }
         getMainNode().addService(ICraftingProvider.class, this);
+        // Hybrid output path: leftovers land in pendingNetworkOutput, so the machine needs a
+        // drain pump (GTLCore registers its Ticker the same way).
+        getMainNode().addService(IGridTickable.class, new NetworkOutputTicker());
         this.shareInventory = new NotifiableItemStackHandler(this, 9, IO.IN, IO.NONE);
         this.shareTank = new NotifiableFluidTank(this, 9, 8 * FluidType.BUCKET_VOLUME, IO.IN, IO.NONE);
         this.internalRecipeHandler = new GTNAPatternBufferRecipeHandler(this, this.internalInventory, this.slotConfigs);
@@ -320,10 +353,19 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             int remaining = amount - GTMath.saturatedCast(inserted);
             if (remaining <= 0) {
                 iterator.remove();
-            } else if (ingredient instanceof SizedIngredient sized) {
-                sized.setAmount(remaining);
+            } else if (simulate) {
+                // Matching pass: keep reporting the shortfall so the recipe is not started while
+                // the grid cannot accept its output.
+                if (ingredient instanceof SizedIngredient sized) {
+                    sized.setAmount(remaining);
+                } else {
+                    candidates[0].setCount(remaining);
+                }
             } else {
-                candidates[0].setCount(remaining);
+                // Hybrid path: hand the shortfall to the drain pump instead of returning it to the
+                // recipe logic, where onRecipeFinish() discards the failed IO.OUT result.
+                bufferPendingNetworkOutput(key, remaining);
+                iterator.remove();
             }
         }
         return left.isEmpty() ? null : left;
@@ -357,11 +399,115 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             int remaining = amount - GTMath.saturatedCast(inserted);
             if (remaining <= 0) {
                 iterator.remove();
-            } else {
+            } else if (simulate) {
+                // Matching pass: keep reporting the shortfall so the recipe is not started while
+                // the grid cannot accept its output.
                 ingredient.setAmount(remaining);
+            } else {
+                // Hybrid path: hand the shortfall to the drain pump instead of returning it to the
+                // recipe logic, where onRecipeFinish() discards the failed IO.OUT result.
+                bufferPendingNetworkOutput(key, remaining);
+                iterator.remove();
             }
         }
         return left.isEmpty() ? null : left;
+    }
+
+    // ------------------------------------------------------------------
+    // Deferred network output (GTLCore MEPatternBufferPartMachine.Ticker parity, adapted to the
+    // hybrid path: the inline insert is still attempted first, and only the shortfall lands here).
+    // ------------------------------------------------------------------
+
+    /** Queues an output the grid could not take and wakes the drain pump if it was idle. */
+    private void bufferPendingNetworkOutput(AEKey key, long amount) {
+        if (key == null || amount <= 0) {
+            return;
+        }
+        boolean wasEmpty = pendingNetworkOutput.isEmpty();
+        pendingNetworkOutput.addTo(key, amount);
+        if (wasEmpty) {
+            alertPendingOutputDrain();
+        }
+    }
+
+    /**
+     * Asks AE2's tick manager to tick this node again. Without it a dynamic ticker that returned
+     * {@link TickRateModulation#SLEEP} would only be revived by an unrelated grid change, so the
+     * pending output could sit there indefinitely.
+     */
+    private void alertPendingOutputDrain() {
+        IGrid network = getMainNode().getGrid();
+        if (network != null) {
+            network.getTickManager().alertDevice(getMainNode().getNode());
+        }
+    }
+
+    /**
+     * Pushes at most {@link #DRAIN_OPS_PER_TICK} buffered keys into the grid and gives up after
+     * {@link #MAX_DRAIN_FAILURES} consecutive rejections, so a saturated network cannot burn the
+     * whole tick. Mirrors GTLCore's {@code AEUtils.reFunds}.
+     *
+     * @return {@code true} when at least one key moved
+     */
+    private boolean drainPendingNetworkOutput() {
+        IGrid network = getMainNode().getGrid();
+        if (network == null || pendingNetworkOutput.isEmpty()) {
+            return false;
+        }
+        MEStorage storage = network.getStorageService().getInventory();
+        var energy = network.getEnergyService();
+        boolean didWork = false;
+        int operations = 0;
+        int consecutiveFailures = 0;
+        for (var it = pendingNetworkOutput.object2LongEntrySet()
+                .iterator(); it.hasNext() && operations < DRAIN_OPS_PER_TICK;) {
+            var entry = it.next();
+            long amount = entry.getLongValue();
+            if (amount <= 0) {
+                it.remove();
+                continue;
+            }
+            long inserted = StorageHelper.poweredInsert(energy, storage, entry.getKey(), amount, actionSource);
+            operations++;
+            if (inserted > 0) {
+                didWork = true;
+                consecutiveFailures = 0;
+                long remaining = amount - inserted;
+                if (remaining <= 0) {
+                    it.remove();
+                } else {
+                    entry.setValue(remaining);
+                }
+            } else if (++consecutiveFailures >= MAX_DRAIN_FAILURES) {
+                break;
+            }
+        }
+        return didWork;
+    }
+
+    /**
+     * AE2 ticking service that empties {@link #pendingNetworkOutput} with an adaptive rate: it
+     * sleeps once nothing is pending (bounded by {@link #MAX_DRAIN_TICKS}), reports
+     * {@link TickRateModulation#URGENT} when it made progress and slows down otherwise.
+     */
+    protected class NetworkOutputTicker implements IGridTickable {
+
+        @Override
+        public TickingRequest getTickingRequest(IGridNode node) {
+            return new TickingRequest(MIN_DRAIN_TICKS, MAX_DRAIN_TICKS, false, true);
+        }
+
+        @Override
+        public TickRateModulation tickingRequest(IGridNode node, int ticksSinceLastCall) {
+            if (!getMainNode().isActive()) {
+                return TickRateModulation.SLEEP;
+            }
+            if (pendingNetworkOutput.isEmpty()) {
+                return ticksSinceLastCall >= MAX_DRAIN_TICKS ?
+                        TickRateModulation.SLEEP : TickRateModulation.SLOWER;
+            }
+            return drainPendingNetworkOutput() ? TickRateModulation.URGENT : TickRateModulation.SLOWER;
+        }
     }
 
     @Override
@@ -418,6 +564,20 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         }
         tag.put(SLOT_CONFIGS_TAG, slotConfigTag);
         tag.put(INTERNAL_SLOTS_TAG, internalSlotTag);
+        if (!pendingNetworkOutput.isEmpty()) {
+            ListTag pendingTag = new ListTag();
+            for (var entry : pendingNetworkOutput.object2LongEntrySet()) {
+                if (entry.getLongValue() <= 0) {
+                    continue;
+                }
+                CompoundTag entryTag = entry.getKey().toTagGeneric();
+                entryTag.putLong(PENDING_OUTPUT_AMOUNT_TAG, entry.getLongValue());
+                pendingTag.add(entryTag);
+            }
+            if (!pendingTag.isEmpty()) {
+                tag.put(PENDING_OUTPUT_TAG, pendingTag);
+            }
+        }
     }
 
     @Override
@@ -448,6 +608,20 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             }
         }
         rebuildPatternMap();
+        pendingNetworkOutput.clear();
+        ListTag pendingTag = tag.getList(PENDING_OUTPUT_TAG, Tag.TAG_COMPOUND);
+        for (Tag entry : pendingTag) {
+            if (entry instanceof CompoundTag ct) {
+                AEKey key = AEKey.fromTagGeneric(ct);
+                long amount = ct.getLong(PENDING_OUTPUT_AMOUNT_TAG);
+                if (key != null && amount > 0) {
+                    pendingNetworkOutput.addTo(key, amount);
+                }
+            }
+        }
+        if (!pendingNetworkOutput.isEmpty()) {
+            alertPendingOutputDrain();
+        }
     }
 
     @Override
@@ -1005,14 +1179,13 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                 var key = AEItemKey.of(stack);
                 if (key == null) continue;
                 long inserted = StorageHelper.poweredInsert(energy, networkInv, key, count, actionSource);
-                if (inserted > 0) {
-                    count -= inserted;
-                    if (count == 0) {
-                        it.remove();
-                    } else {
-                        entry.setValue(count);
-                    }
+                count -= inserted;
+                if (count > 0) {
+                    // Whatever the grid could not take goes to the drain pump, leaving the slot
+                    // clean; keeping it here would strand it until the next pattern change.
+                    bufferPendingNetworkOutput(key, count);
                 }
+                it.remove();
             }
             for (var it = fluidInventory.object2LongEntrySet().iterator(); it.hasNext();) {
                 var entry = it.next();
@@ -1025,14 +1198,12 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                 var key = AEFluidKey.of(stack);
                 if (key == null) continue;
                 long inserted = StorageHelper.poweredInsert(energy, networkInv, key, amount, actionSource);
-                if (inserted > 0) {
-                    amount -= inserted;
-                    if (amount == 0) {
-                        it.remove();
-                    } else {
-                        entry.setValue(amount);
-                    }
+                amount -= inserted;
+                if (amount > 0) {
+                    // See the item loop above.
+                    bufferPendingNetworkOutput(key, amount);
                 }
+                it.remove();
             }
             onContentsChanged();
         }

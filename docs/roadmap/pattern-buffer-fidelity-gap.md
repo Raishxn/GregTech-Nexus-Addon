@@ -56,7 +56,7 @@ Comparando `GTLCore.MEPatternBufferPartMachine` (994 linhas) com
 - Circuito por slot + especialização item/fluido/circuito.
 - Rename custom + grupo de terminal (AE2 `PatternContainerGroup`).
 
-### 2.2 Ausentes ou divergentes no GTNA 🔴 (candidatos a port 1:1)
+### 2.2 Ausentes ou divergentes no GTNA ✅ (todas portadas)
 
 | Feature GTLCore | Estado GTNA | Prioridade | Esforço |
 |---|---|---|---|
@@ -68,7 +68,7 @@ Comparando `GTLCore.MEPatternBufferPartMachine` (994 linhas) com
 | **Copy/Paste de config** (`copyFromTag`/`pasteFromTag` via data stick) | ✅ **portado** — API versionada (`copyBufferToTag`/`pasteBufferFromTag`) + itens **Pattern Buffer Copy Card** e **Cut Card** (sneak-copy / cut, right-click paste; ocupados nunca sobrescritos; "cut" limpa o buffer de origem) | Média | Médio |
 | **Jade provider** (`MEPatternBufferProvider`/`...ProxyProvider`) | ✅ **portado** — `GTNAPatternBufferProvider`: conteúdo mesclado dos slots (itens + fluidos, formato NBT idêntico ao GTM oficial) + contagem de proxies vinculados; registrado no `GTNAJadePlugin` | Baixa | Baixo |
 | **`isHiddenTerminal`** toggle | ✅ **portado** (`hiddenInTerminal` + override `isVisibleInTerminal` + toggle no painel) | Baixa | Baixo |
-| **Ticking AE2 otimizado** (`tickingRequest`/`TickRateModulation` por slot) | ⚠️ verificar necessidade | Média | Médio |
+| **Output ME diferido + drain pump** (`tickingRequest`/`TickRateModulation`) | ✅ **portado (híbrido)** — `pendingNetworkOutput` (persistido; formato NBT do `AEUtils.createListTag`: chave + `real`) guarda **só a sobra** da inserção inline; `NetworkOutputTicker` (`IGridTickable`, `TickingRequest(5, 80, false, true)`, `SLEEP`/`SLOWER`/`URGENT`) drena com `poweredInsert` em lotes de até 64 ops, desistindo após 5 falhas seguidas; `alertDevice` acorda o pump na transição vazio → não-vazio (o `Ticker` do GTLCore não faz isso e pode ficar dormindo com pendência). O `refund()` dos `InternalSlot` manda a sobra para o mesmo buffer em vez de deixá-la presa no slot | Alta | Médio |
 
 ### 2.3 Divergências de design (GTNA ≠ referência, por escolha ou por base)
 - **NBT no pattern item:** GTLCore/GTOCore gravam receita/estado no item; o GTNA **removeu
@@ -76,16 +76,30 @@ Comparando `GTLCore.MEPatternBufferPartMachine` (994 linhas) com
   quando um pattern migra de buffer. **Manter a divergência** — é uma melhoria, não um gap.
 - **Matching de modo:** GTNA usa `ModeIdMatcher` estrito (sem o fuzzy `contains("saw")`).
   **Manter a divergência** — o fuzzy da referência era fonte de regressão.
+- **Output ME híbrido (inline + sobra bufferizada) em vez de puramente diferido.** O GTLCore
+  **nunca** insere na hora: todo output vai para o `buffer` e o `Ticker` drena em até 80 ticks. O
+  GTNA tenta a inserção inline (latência zero no caminho comum) e só manda a **sobra** para o
+  `pendingNetworkOutput`. Motivo: escala — no 1:1 puro toda craft concluída acorda o ticker daquele
+  buffer (pressão no `TickManagerService` do AE2, que tem orçamento de ticks por tick de jogo) e o
+  teto de 64 ops/tick passa a valer para *todo* output; no híbrido o pump só acorda quando a rede
+  está de fato saturada. **Manter a divergência** — mesma garantia de não perder nada, com menos
+  latência e menos pressão no tick manager.
+- **Sem backpressure de output: a sobra é bufferizada em vez de voidada.** Evidência de que hoje há
+  perda real: `RecipeRunner.handleContents()` (linhas 232-236) **voida** a sobra de output quando o
+  controller é `IVoidable` (`canVoidRecipeOutputs(cap)`) e `PASS_NO_CONTENTS` conta como sucesso —
+  então o `onRecipeFinish()` que ignora o retorno de `handleRecipeIO(IO.OUT)` não é o único caminho
+  de descarte (e, para controllers voidáveis, o próprio match simulado pula a checagem de espaço,
+  linha 82). Com o buffer nada é voidado; em troca, a máquina deixa de "esperar" com a rede cheia —
+  acumula e entrega depois, como o GTLCore. **Divergência consciente.**
 
 ---
 
 ## 3. Recomendação de rota para o "1:1"
 
 1. **Não trocar a base** (GTM oficial) — o roteamento multi-tipo já está em paridade funcional.
-2. **Portar as features de conveniência da seção 2.2** em ordem de prioridade:
-   - **Alta:** catalyst inventories (a mais usada em automação pesada).
-   - **Média:** `cacheRecipe[]` toggle, `keepByProduct`, circuito embarcado, copy/paste.
-   - **Baixa:** proxy, Jade, `isHiddenTerminal`.
+2. **Portar as features de conveniência da seção 2.2** — ✅ **todas portadas**. Ordem usada:
+   catalyst inventories → `cacheRecipe[]`/`keepByProduct`/circuito embarcado → copy/paste →
+   proxy/Jade/`isHiddenTerminal` → output ME diferido + drain pump.
 3. Cada port deve vir **com um caso de teste** no `src/test` (padrão GTLCore) quando a lógica
    for pura, ou validação `runData` quando tocar registro/recurso.
 
