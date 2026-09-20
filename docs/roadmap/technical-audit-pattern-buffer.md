@@ -246,40 +246,71 @@ Implementado:
 // `check` agora depende de `runUnitTests`.
 ```
 
-Testes criados e **passando** (`./gradlew runUnitTests` → BUILD SUCCESSFUL):
+Testes criados e **passando** (`./gradlew runUnitTests` → BUILD SUCCESSFUL, 6 classes):
 
 - `Int128Test` — add/subtract/shiftLeft/negate validados contra `BigInteger` (0 erros em 100k
   casos cada); `multiply` e `divideNew` documentados como **bugs reais** (ver achado #20).
 - `ModeIdMatcherTest` — trava as regras de matching (exato + sufixo) e as garantias
   anti-hardcode (saw↛cutter, etc.).
+- `NumberUtilsTest`, `StructureSlicerTest`, `GTRecipe2IntBiMultiMapTest` — os três alvos
+  originalmente listados aqui, entregues na Fase 2 (ver checklist).
+- `PatternBufferModeSelectionTest` — trava a decisão "modo fixado no slot vence, tipo da receita
+  é o fallback", em `PatternBufferModeSelection.select` (função pura; chama a produção direto,
+  sem espelho).
 
-Próximos alvos (todos **sem Minecraft bootstrap**, lógica pura ou extraível): `NumberUtilsTest`,
-`StructureSlicerTest`, `GTRecipe2IntBiMultiMapTest`.
+### Nível 2 — GameTests Forge (`@GameTest`) — 🔴 **NÃO EXISTE AINDA** (verificado)
 
-### Nível 2 — GameTests Forge (`@GameTest`) — Fase 2+
+**Estado real (auditoria de 3ª passada):** o GTNA **não tem gametest funcional**. Não existe
+nenhum `@GameTest`/`@GameTestHolder`/`TestFunction` no código, não existe `src/test/resources`
+(logo, nenhum template de estrutura) e — o ponto que trava tudo — **não existe o run
+`gameTestServer`** em `legacyForge.runs`: o `build.gradle` só define `client`, `server` e `data`.
+Sem esse run a task `runGameTestServer` nem é gerada. O `forge.enabledGameTestNamespaces` existe
+apenas como systemProperty em `client`/`server`, herdado do template — necessário, mas inútil
+sozinho.
 
-O build **já** configura `forge.enabledGameTestNamespaces`. Estruturas de teste não precisam de `.mb`: registre NBTs de estrutura pequenos em `src/test/resources/data/gtna/gametest/structures/...` via vanilla structure block. Esqueleto:
+**Modelo de referência (UFO Future, `~/MineProjects/UFO-Future-1.21.1`):** lá existem os **dois**
+níveis, separados de propósito —
 
-```java
-public class GTNAGametest {
-    @GameTest(template = "gtna:pattern_buffer_mode_switch")
-    public static void patternBufferSwitchesControllerMode(GameTestHelper helper) {
-        // 1. formar multibloco pequeno com 2 recipe types;
-        // 2. ME Pattern Buffer + pattern de receita do tipo B;
-        // 3. suprimento via import hatch cheat + helper.runAfterDelay;
-        // 4. assert: controller.getActiveRecipeType() == idx(B)
-        helper.succeed();
-    }
-}
-```
+- **`test`** = JUnit 5 puro em `src/test` (238 `@Test`, roda por `./gradlew test`/`build`).
+- **`gametest`** = `@GameTest` real em sourceset separado (`src/gameTest`), num **mod de teste
+  próprio** (`ufo_tests`) que depende do mod principal, rodando headless por
+  `./gradlew runGameTestServer`, com templates em `src/gameTest/templates/*.snbt` copiados para
+  `run/gameteststructures`.
+- **CI:** cada passo de gametest tem guarda `grep -q "GAME TESTS COMPLETE" run/logs/latest.log`,
+  porque o `runGameTestServer` **sai com código 0 mesmo quando o mod falha ao carregar**.
 
-⚠️ **Caveat honesto:** gametests de máquina exigem AE2+GTCEu no ambiente de teste e a GTM oficial não dá helpers prontos. Comece pelos **JUnits** (retorno garantido); gametest como Fase 2, priorizando 1 multibloco simples de steam antes do pattern buffer.
+**Mínimo viável para o GTNA (Forge 1.20.1, ainda não feito):**
+
+1. Run em `legacyForge.runs`:
+   `gameTestServer { type = "gameTestServer"; systemProperty('forge.enabledGameTestNamespaces', project.mod_id) }`.
+2. Uma classe com `@GameTestHolder("gtna")` + `@PrefixGameTestTemplate(false)` + `@GameTest(template = "empty")`
+   (em 1.20.1 o holder é `net.minecraftforge.gametest.GameTestHolder`).
+3. Template de estrutura em `data/gtna/structures/*.nbt` (ou o sourceset/mod de teste separado,
+   como no UFO).
+4. No CI, o passo com a guarda do banner — senão o gate passa verde com o mod quebrado.
+
+**Prioridade:** começar por **um multibloco de steam simples** (sem AE2), como já estava anotado
+aqui; o teste de troca de modo com pattern buffer vem depois, porque exige AE2 + GTCEu no ambiente.
+
+**Horizon-QA (`GTNewHorizons/Horizon-QA`) — não adotar.** É um framework de QA **para 1.7.10/GTNH**
+que reimplementa a API de GameTest no Minecraft 1.7.10 (que não tem GameTest nativo), acoplado ao
+toolchain RetroFuturaGradle e a conceitos do GT5-Unofficial (`helper.gtnh()`, EU, manutenção).
+O motivo de existir dele é justamente o que o Forge 1.20.1 **já tem nativo**, e nem
+`--mcJvmArgs` do RFG existe no ModDevGradle. O que vale aproveitar é só a **disciplina**:
+teste negativo com assert por tick, template exportado in-game e relatório/exit-code no CI.
 
 ### Nível 3 — CI
 
+Hoje o CI (`.github/workflows/gradle.yml`) roda `./gradlew build` e
+`./gradlew spotlessCheck runUnitTests` — os unit tests **já** estão no gate (o `test` citado em
+versões anteriores deste doc não existe como task; a task real é `runUnitTests`). Quando o
+gametest mínimo existir, acrescentar:
+
 ```yaml
-- name: Build + Quality
-  run: ./gradlew build spotlessCheck test
+- name: Game Tests
+  run: ./gradlew runGameTestServer
+- name: Assert game tests really ran
+  run: grep -q "GAME TESTS COMPLETE" run/logs/latest.log || (echo "::error::runGameTestServer completed no GameTest"; exit 1)
 ```
 
 ---
@@ -382,6 +413,33 @@ ver a feature funcionar:
 - [ ] Split GTNAMachines por domínio
 - [ ] Internacionalizar strings de UI
 - [ ] Fundir `getRecipeModifier` (preview) com o caminho de execução, se fizer sentido
+
+### Fase C — Seletor de modo no buffer (paridade GTOCore) ✅ **CONCLUÍDA** (commit `21265ae`)
+
+O GTOCore permite escolher, **na UI do próprio buffer**, quais recipe types ele atende
+(`MultiMachineModeFancyConfigurator`: `List<GTRecipeType> recipeTypes` + `recipeType` selecionado,
+`null` = todos; trocar só invalida a busca de receita). O GTNA só tinha o modo **por slot**
+(`preferredModeId`), que decide *qual slot* serve a receita — nada decidia se o buffer inteiro
+está naquele modo.
+
+- `selectedModeId` no part machine (vazio = todos os modos), `@Persisted` + `@DescSynced`, com
+  setter que valida e pede `markLastRecipeDirty()` aos controllers — o equivalente GTNA do
+  `setRecipeType` do GTOCore.
+- `gtna$slotAcceptsRecipe` aplica o filtro **do buffer antes** do filtro do slot: um único ponto
+  cobre os slot handlers, o fast-path de receita cacheada (`collectCachedBufferRecipes`) e o
+  matcher de slots.
+- `verifySelectedMode()` (par do `MultiMachineModeFancyConfigurator.verify`) descarta uma seleção
+  que o controller não oferece mais, no load e ao anexar/desanexar de controller. **Só no
+  servidor** — no cliente o cache sincronizado pode não ter chegado e limpar ali só piscaria a UI.
+- `PatternBufferModeRegistry.getBufferModeOptions` monta a lista: "todos", os recipe types do
+  controller e a seleção stale (para continuar visível e poder ser limpa).
+- `PatternBufferModeConfigurator` é um **side tab fancy** no buffer (reusa o título/ícone
+  "Machine Mode" da própria GTM). Não precisa do sync manual de widget do GTOCore porque a seleção
+  é um campo `@DescSynced`; o clique é aplicado só no servidor.
+- Lang keys no `GTNALangProvider` (en_us, regenerado por `runData`) e no `pt_br.json`.
+
+**Validado:** `compileJava` + `spotlessCheck` + `runUnitTests` (6/6) + `runData`. A troca em si
+ainda precisa de verificação in-game (é onde um gametest do Nível 2 ajudaria).
 
 ---
 
