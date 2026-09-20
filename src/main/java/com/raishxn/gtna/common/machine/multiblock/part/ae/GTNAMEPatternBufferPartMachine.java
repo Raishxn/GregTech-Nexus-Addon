@@ -11,13 +11,11 @@ import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.fancyconfigurator.ButtonConfigurator;
 import com.gregtechceu.gtceu.api.machine.feature.IDataStickInteractable;
 import com.gregtechceu.gtceu.api.machine.feature.IDropSaveMachine;
-import com.gregtechceu.gtceu.api.machine.feature.IRecipeLogicMachine;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeHandlerList;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
-import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import com.gregtechceu.gtceu.api.recipe.ingredient.SizedIngredient;
 import com.gregtechceu.gtceu.api.transfer.item.CustomItemStackHandler;
@@ -161,6 +159,10 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     /** Fase 3 extraction: recipe search + matching core; the persistent state stays here. */
     private final PatternSlotResolver slotResolver = new PatternSlotResolver(this);
 
+    /** Fase 3 extraction: recipe-type mode discovery + labels; the synced cache stays here. */
+    private final PatternBufferModeRegistry modeRegistry = new PatternBufferModeRegistry(this);
+
+    @Getter
     @DescSynced
     @Persisted
     @Setter
@@ -211,6 +213,8 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     private WidgetGroup patternPagePanel;
     private WidgetGroup configPanel;
     private ButtonWidget modeSelectorButton;
+    @Getter
+    @Setter
     @DescSynced
     private String availableModeIds = "";
     private final ItemStackTransfer circuitPreviewInventory = new ItemStackTransfer(1);
@@ -241,7 +245,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     @Override
     public void onLoad() {
         super.onLoad();
-        refreshAvailableModesCache();
+        modeRegistry.refreshAvailableModesCache();
         if (getLevel() instanceof ServerLevel serverLevel) {
             serverLevel.getServer().tell(new TickTask(1, this::rebuildPatternMap));
         }
@@ -250,13 +254,13 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     @Override
     public void addedToController(IMultiController controller) {
         super.addedToController(controller);
-        refreshAvailableModesCache();
+        modeRegistry.refreshAvailableModesCache();
     }
 
     @Override
     public void removedFromController(IMultiController controller) {
         super.removedFromController(controller);
-        refreshAvailableModesCache();
+        modeRegistry.refreshAvailableModesCache();
     }
 
     @Override
@@ -693,12 +697,14 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         y += 17;
         configPanel.addWidget(new LabelWidget(innerX, y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.cached_recipe_short",
-                        compactDisplay(getSelectedConfig() == null ? "" : getSelectedConfig().getCachedRecipeId(), 27))
+                        PatternBufferModeRegistry.compactDisplay(
+                                getSelectedConfig() == null ? "" : getSelectedConfig().getCachedRecipeId(), 27))
                         .getString()));
         y += 14;
         configPanel.addWidget(new LabelWidget(innerX, y,
                 () -> Component.translatable("gtna.machine.pattern_buffer.derived_mode_short",
-                        compactDisplay(getSelectedConfig() == null ? "" : getSelectedConfig().getDerivedModeId(), 27))
+                        PatternBufferModeRegistry.compactDisplay(
+                                getSelectedConfig() == null ? "" : getSelectedConfig().getDerivedModeId(), 27))
                         .getString()));
 
         y += 16;
@@ -1008,7 +1014,8 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         refreshModeSelector();
     }
 
-    private @Nullable GTNAPatternBufferSlotConfig getSelectedConfig() {
+    @Nullable
+    GTNAPatternBufferSlotConfig getSelectedConfig() {
         return selectedSlot >= 0 && selectedSlot < slotConfigs.length ? slotConfigs[selectedSlot] : null;
     }
 
@@ -1059,61 +1066,20 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         refreshSelectedConfigPreview();
     }
 
-    private List<ModeOption> getAvailableModeOptions() {
-        List<ModeOption> options = new ArrayList<>();
-        options.add(new ModeOption("", Component.translatable("gtna.machine.pattern_buffer.mode.auto").getString()));
-
-        Set<String> seen = new LinkedHashSet<>();
-        for (String modeId : getCachedAvailableModeIds()) {
-            if (seen.add(modeId)) {
-                options.add(new ModeOption(modeId, formatModeLabel(modeId)));
-            }
-        }
-        if (isFormed() && !getControllers().isEmpty()) {
-            IMultiController controller = getControllers().first();
-            if (controller instanceof IRecipeLogicMachine recipeMachine) {
-                GTRecipeType[] recipeTypes = recipeMachine.getRecipeTypes();
-                if (recipeTypes == null || recipeTypes.length == 0) {
-                    recipeTypes = new GTRecipeType[] { recipeMachine.getRecipeType() };
-                }
-                for (GTRecipeType recipeType : recipeTypes) {
-                    if (recipeType == null || recipeType.registryName == null) {
-                        continue;
-                    }
-                    String id = recipeType.registryName.toString();
-                    if (seen.add(id)) {
-                        options.add(new ModeOption(id, formatModeLabel(recipeType)));
-                    }
-                }
-            }
-        }
-
-        GTNAPatternBufferSlotConfig config = getSelectedConfig();
-        if (config != null && !config.getPreferredModeId().isBlank() && seen.add(config.getPreferredModeId())) {
-            options.add(new ModeOption(config.getPreferredModeId(),
-                    Component.translatable("gtna.machine.pattern_buffer.mode.legacy",
-                            compactDisplay(config.getPreferredModeId(), 18)).getString()));
-        }
-        if (config != null && config.getPreferredModeId().isBlank() && !config.getDerivedModeId().isBlank() &&
-                seen.add(config.getDerivedModeId())) {
-            options.add(new ModeOption(config.getDerivedModeId(), formatModeLabel(config.getDerivedModeId())));
-        }
-        return options;
-    }
-
     private void cycleSelectedMode() {
         GTNAPatternBufferSlotConfig config = getSelectedConfig();
         if (config == null) {
             return;
         }
-        List<ModeOption> options = getAvailableModeOptions();
+        List<PatternBufferModeRegistry.ModeOption> options = modeRegistry.getAvailableModeOptions();
         int currentIndex = getCurrentModeOptionIndex(options, config.getPreferredModeId());
-        ModeOption next = options.get((currentIndex + 1) % options.size());
+        PatternBufferModeRegistry.ModeOption next = options.get((currentIndex + 1) % options.size());
         config.setPreferredModeId(next.id());
         refreshModeSelector();
     }
 
-    private int getCurrentModeOptionIndex(List<ModeOption> options, String preferredModeId) {
+    private int getCurrentModeOptionIndex(List<PatternBufferModeRegistry.ModeOption> options,
+                                          String preferredModeId) {
         String current = preferredModeId == null ? "" : preferredModeId.trim();
         for (int i = 0; i < options.size(); i++) {
             if (Objects.equals(options.get(i).id(), current)) {
@@ -1128,7 +1094,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         if (config == null) {
             return Component.translatable("gtna.machine.pattern_buffer.mode.none").getString();
         }
-        List<ModeOption> options = getAvailableModeOptions();
+        List<PatternBufferModeRegistry.ModeOption> options = modeRegistry.getAvailableModeOptions();
         return options.get(getCurrentModeOptionIndex(options, config.getPreferredModeId())).label();
     }
 
@@ -1154,81 +1120,6 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                 Component.translatable("gtna.machine.pattern_buffer.mode_button.derived", derivedMode));
     }
 
-    private static String compactDisplay(String value, int maxLength) {
-        if (value == null || value.isBlank()) {
-            return "-";
-        }
-        return value.length() <= maxLength ? value : value.substring(0, Math.max(0, maxLength - 3)) + "...";
-    }
-
-    private static String formatModeLabel(GTRecipeType recipeType) {
-        if (recipeType == null || recipeType.registryName == null) {
-            return "-";
-        }
-        return formatModeLabel(recipeType.registryName.toString());
-    }
-
-    private static String formatModeLabel(String modeId) {
-        if (modeId == null || modeId.isBlank()) {
-            return "-";
-        }
-        String path = modeId;
-        int namespaceSeparator = path.indexOf(':');
-        if (namespaceSeparator >= 0 && namespaceSeparator + 1 < path.length()) {
-            path = path.substring(namespaceSeparator + 1);
-        }
-        String[] parts = path.split("[/_]");
-        StringBuilder builder = new StringBuilder();
-        for (String part : parts) {
-            if (part.isBlank()) {
-                continue;
-            }
-            if (builder.length() > 0) {
-                builder.append(' ');
-            }
-            builder.append(Character.toUpperCase(part.charAt(0)));
-            if (part.length() > 1) {
-                builder.append(part.substring(1));
-            }
-        }
-        return builder.length() == 0 ? path : builder.toString();
-    }
-
-    private List<String> getCachedAvailableModeIds() {
-        if (availableModeIds == null || availableModeIds.isBlank()) {
-            return List.of();
-        }
-        List<String> ids = new ArrayList<>();
-        for (String token : availableModeIds.split("\\|")) {
-            String trimmed = token == null ? "" : token.trim();
-            if (!trimmed.isBlank()) {
-                ids.add(trimmed);
-            }
-        }
-        return ids;
-    }
-
-    private void refreshAvailableModesCache() {
-        Set<String> ids = new LinkedHashSet<>();
-        if (isFormed() && !getControllers().isEmpty()) {
-            for (IMultiController controller : getControllers()) {
-                if (!(controller instanceof IRecipeLogicMachine recipeMachine)) {
-                    continue;
-                }
-                GTRecipeType[] recipeTypes = recipeMachine.getRecipeTypes();
-                if (recipeTypes == null || recipeTypes.length == 0) {
-                    recipeTypes = new GTRecipeType[] { recipeMachine.getRecipeType() };
-                }
-                for (GTRecipeType recipeType : recipeTypes) {
-                    if (recipeType != null && recipeType.registryName != null) {
-                        ids.add(recipeType.registryName.toString());
-                    }
-                }
-            }
-        }
-        availableModeIds = String.join("|", ids);
-    }
-
     List<Ingredient> consumeCircuitInventory(List<Ingredient> left) {
         if (left == null || left.isEmpty() || !isHasCircuitSlot()) {
             return left;
@@ -1239,8 +1130,6 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         }
         return PatternSlotResolver.consumeVirtualItemList(List.of(circuitStack), left);
     }
-
-    private record ModeOption(String id, String label) {}
 
     private final class SelectedConfigItemTransfer extends ItemStackTransfer {
 
