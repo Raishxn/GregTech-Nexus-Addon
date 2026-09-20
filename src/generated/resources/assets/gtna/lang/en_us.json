@@ -647,6 +647,7 @@
   "gtna.high_pressure_reactor": "Hyper Pressure Reactor",
   "gtna.hydraulic_manufacturing": "Hydraulic Manufacturing",
   "gtna.infernal_coke": "Infernal Coke Processing",
+  "gtna.jade.pattern_buffer.proxies": "Bound Proxies: %s",
   "gtna.machine.accelerate_hatch.main_function": "Main Function: directly reduces recipe duration after normal overclocking",
   "gtna.machine.accelerate_hatch.range": "Final Duration adjustment Range: %s - 100%%",
   "gtna.machine.accelerate_hatch.weakness": "The Acceleration effect is weakened by 20% per level when the level of accelerate hatch is lower than the machine tier.",

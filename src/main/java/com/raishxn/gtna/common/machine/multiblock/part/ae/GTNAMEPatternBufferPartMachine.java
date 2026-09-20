@@ -293,6 +293,10 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         }
     }
 
+    public int getProxyCount() {
+        return proxies.size();
+    }
+
     /**
      * Lets a Pattern Buffer act as an AE2 output hatch as well as an input bus.
      * Outputs are inserted directly into the connected grid, so a separate ME

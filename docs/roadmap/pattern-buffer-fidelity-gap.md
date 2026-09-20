@@ -66,7 +66,7 @@ Comparando `GTLCore.MEPatternBufferPartMachine` (994 linhas) com
 | **Catalyst inventories** (`catalystItems[]`/`catalystFluids[]` + `reCalculateCatalyst*Map` + `testCatalyst*`) — insumos catalisadores não-consumidos | ✅ **portado** — lógica (`catalystItems`/`catalystFluids` + persistência + `testCatalyst*` no match) **e UI** (linhas de ghost slots item/fluido no painel de config por slot + lang keys, seguindo o padrão das linhas existentes em vez do docked manager do GTLCore) | Alta | Alto |
 | **Proxy buffer** (`MEPatternBufferProxyPartMachine`) | ❌ (adiado por design, ver task-manager) | Baixa | Alto |
 | **Copy/Paste de config** (`copyFromTag`/`pasteFromTag` via data stick) | ✅ **portado** — API versionada (`copyBufferToTag`/`pasteBufferFromTag`) + itens **Pattern Buffer Copy Card** e **Cut Card** (sneak-copy / cut, right-click paste; ocupados nunca sobrescritos; "cut" limpa o buffer de origem) | Média | Médio |
-| **Jade provider** (`MEPatternBufferProvider`/`...ProxyProvider`) | ⚠️ GTNA tem Jade p/ multiblocos, falta p/ buffer | Baixa | Baixo |
+| **Jade provider** (`MEPatternBufferProvider`/`...ProxyProvider`) | ✅ **portado** — `GTNAPatternBufferProvider`: conteúdo mesclado dos slots (itens + fluidos, formato NBT idêntico ao GTM oficial) + contagem de proxies vinculados; registrado no `GTNAJadePlugin` | Baixa | Baixo |
 | **`isHiddenTerminal`** toggle | ✅ **portado** (`hiddenInTerminal` + override `isVisibleInTerminal` + toggle no painel) | Baixa | Baixo |
 | **Ticking AE2 otimizado** (`tickingRequest`/`TickRateModulation` por slot) | ⚠️ verificar necessidade | Média | Médio |
 

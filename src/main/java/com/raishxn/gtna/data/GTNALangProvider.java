@@ -263,6 +263,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.pattern_buffer.copy.cut", "Pattern buffer configuration cut");
         add("gtna.machine.pattern_buffer.copy.empty", "No buffer configuration stored on this card");
         add("gtna.machine.pattern_buffer.copy.pasted", "Pasted %s pattern(s) into the buffer");
+        add("gtna.jade.pattern_buffer.proxies", "Bound Proxies: %s");
         add("gtna.machine.pattern_buffer.recipe_cached", "Recipe cached for this slot");
         add("gtna.machine.pattern_buffer.cache_toggle.on", "Recipe Cache: ON (click to disable)");
         add("gtna.machine.pattern_buffer.cache_toggle.off", "Recipe Cache: OFF (click to enable)");
