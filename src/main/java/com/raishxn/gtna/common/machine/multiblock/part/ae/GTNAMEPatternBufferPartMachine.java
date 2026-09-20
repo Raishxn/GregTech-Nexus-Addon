@@ -1,8 +1,6 @@
 package com.raishxn.gtna.common.machine.multiblock.part.ae;
 
-import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
-import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.fancy.ConfiguratorPanel;
 import com.gregtechceu.gtceu.api.gui.fancy.IFancyConfiguratorButton;
@@ -20,10 +18,8 @@ import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeHandlerList;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
-import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import com.gregtechceu.gtceu.api.recipe.ingredient.SizedIngredient;
-import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.api.transfer.item.CustomItemStackHandler;
 import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 import com.gregtechceu.gtceu.integration.ae2.gui.widget.AETextInputButtonWidget;
@@ -75,7 +71,6 @@ import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.AEKeyType;
-import appeng.api.stacks.GenericStack;
 import appeng.api.stacks.KeyCounter;
 import appeng.api.storage.MEStorage;
 import appeng.api.storage.StorageHelper;
@@ -84,10 +79,7 @@ import appeng.crafting.pattern.ProcessingPatternItem;
 import appeng.helpers.patternprovider.PatternContainer;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.raishxn.gtna.GTNACORE;
-import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
-import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
@@ -115,8 +107,6 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             GTNAMEPatternBufferPartMachine.class, MEBusPartMachine.MANAGED_FIELD_HOLDER);
     private static final String SLOT_CONFIGS_TAG = "gtnaPatternConfigs";
     private static final String INTERNAL_SLOTS_TAG = "gtnaPatternInternalSlots";
-    private static final String PATTERN_RECIPE_ID_TAG = "gtnaPatternRecipeId";
-    private static final String PATTERN_MODE_ID_TAG = "gtnaPatternModeId";
     private static final int PANEL_WIDTH = 176;
     private static final int PANEL_HEIGHT = 220;
     private static final int PATTERNS_PER_PAGE = 54;
@@ -168,6 +158,9 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     @Getter
     protected final GTNAPatternBufferRecipeHandler internalRecipeHandler;
 
+    /** Fase 3 extraction: recipe search + matching core; the persistent state stays here. */
+    private final PatternSlotResolver slotResolver = new PatternSlotResolver(this);
+
     @DescSynced
     @Persisted
     @Setter
@@ -183,6 +176,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
      * primary output of each pattern is considered when matching a recipe, so secondary
      * byproducts do not have to line up. Enabled keeps every output in the comparison.
      */
+    @Getter
     @Persisted
     @Setter
     private boolean keepByProduct = false;
@@ -478,7 +472,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     public void invalidateSlotCache(int slot) {
         if (slot >= 0 && slot < slotConfigs.length) {
             slotConfigs[slot].clearRecipeCacheSilently();
-            clearPatternRecipeMetadata(slot);
+            slotResolver.clearPatternRecipeMetadata(slot);
             notifyProxySlotRemoved(slot);
         }
     }
@@ -494,7 +488,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         }
         GTNAPatternBufferSlotConfig config = slotConfigs[slot];
         if (!config.getPreferredModeId().isBlank()) {
-            return matchesPreferredMode(config, recipe);
+            return PatternSlotResolver.matchesPreferredMode(config, recipe);
         }
         // Auto is deliberately not constrained by the previous recipe. Processing
         // patterns already identify their machine recipe type, so retaining the
@@ -505,7 +499,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
 
     @Override
     public @Nullable String gtna$getPreferredModeForRecipe(GTRecipe recipe) {
-        SlotMatch match = findMatchingSlot(recipe);
+        PatternSlotResolver.SlotMatch match = slotResolver.findMatchingSlot(recipe);
         if (match == null) {
             return null;
         }
@@ -513,16 +507,16 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         if (!config.getPreferredModeId().isBlank()) {
             return config.getPreferredModeId();
         }
-        return resolveDerivedMode(recipe);
+        return slotResolver.resolveDerivedMode(recipe);
     }
 
     @Override
     public void gtna$onRecipeStarted(GTRecipe recipe) {
-        SlotMatch match = findMatchingSlot(recipe);
+        PatternSlotResolver.SlotMatch match = slotResolver.findMatchingSlot(recipe);
         if (match == null) {
             return;
         }
-        cacheResolvedRecipe(match.slot(), recipe);
+        slotResolver.cacheResolvedRecipe(match.slot(), recipe);
         if (match.slot() == selectedSlot) {
             refreshSelectedConfigPreview();
         }
@@ -537,14 +531,14 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             if (details != null) {
                 detailsSlotMap.forcePut(details, internalInventory[i]);
             }
-            loadPatternRecipeMetadata(i, pattern);
+            slotResolver.loadPatternRecipeMetadata(i, pattern);
         }
         needPatternSync = true;
     }
 
     private void onSlotConfigurationChanged(int slot) {
         invalidateSlotCache(slot);
-        resolveAndCacheSlotRecipe(slot);
+        slotResolver.resolveAndCacheSlotRecipe(slot);
         needPatternSync = true;
         if (slot == selectedSlot) {
             refreshSelectedConfigPreview();
@@ -567,8 +561,8 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             detailsSlotMap.forcePut(newPatternDetails, internalSlot);
         }
         invalidateSlotCache(index);
-        loadPatternRecipeMetadata(index, newPattern);
-        resolveAndCacheSlotRecipe(index);
+        slotResolver.loadPatternRecipeMetadata(index, newPattern);
+        slotResolver.resolveAndCacheSlotRecipe(index);
         needPatternSync = true;
     }
 
@@ -895,7 +889,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         config.setCacheRecipe(!config.isCacheRecipe());
         if (selectedSlot >= 0) {
             invalidateSlotCache(selectedSlot);
-            resolveAndCacheSlotRecipe(selectedSlot);
+            slotResolver.resolveAndCacheSlotRecipe(selectedSlot);
             refreshSelectedConfigPreview();
             markDirty();
         }
@@ -1029,7 +1023,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         GTNAPatternBufferSlotConfig config = getSelectedConfig();
         if (config != null) {
             config.clearRecipeCache();
-            clearPatternRecipeMetadata(selectedSlot);
+            slotResolver.clearPatternRecipeMetadata(selectedSlot);
             if (selectedSlot >= 0) {
                 needPatternSync = true;
                 refreshSelectedConfigPreview();
@@ -1059,301 +1053,6 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         }
         circuitPreviewInventory.setStackInSlot(0, stack);
         refreshModeSelector();
-    }
-
-    /**
-     * Legacy migration: strips the old per-item recipe/mode tags instead of loading them.
-     * Slot state now lives exclusively in {@code slotConfigs}; tags on the pattern item were
-     * a redundant second source of truth that carried ghost state across buffers.
-     */
-    private void loadPatternRecipeMetadata(int slot, ItemStack pattern) {
-        if (slot < 0 || slot >= slotConfigs.length || pattern.isEmpty() || !pattern.hasTag()) {
-            return;
-        }
-        CompoundTag tag = pattern.getTag();
-        if (tag != null && (tag.contains(PATTERN_RECIPE_ID_TAG, Tag.TAG_STRING) ||
-                tag.contains(PATTERN_MODE_ID_TAG, Tag.TAG_STRING))) {
-            tag.remove(PATTERN_RECIPE_ID_TAG);
-            tag.remove(PATTERN_MODE_ID_TAG);
-        }
-    }
-
-    private void clearPatternRecipeMetadata(int slot) {
-        if (slot < 0 || slot >= patternInventory.getSlots()) {
-            return;
-        }
-        ItemStack pattern = patternInventory.getStackInSlot(slot);
-        if (pattern.isEmpty() || !pattern.hasTag()) {
-            return;
-        }
-        CompoundTag tag = pattern.getOrCreateTag();
-        tag.remove(PATTERN_RECIPE_ID_TAG);
-        tag.remove(PATTERN_MODE_ID_TAG);
-    }
-
-    private void cacheResolvedRecipe(int slot, GTRecipe recipe) {
-        if (slot < 0 || slot >= slotConfigs.length || recipe.id == null) {
-            return;
-        }
-        GTNAPatternBufferSlotConfig config = slotConfigs[slot];
-        // cacheRecipe toggle (GTLCore parity): a slot may opt out of recipe caching entirely.
-        if (!config.isCacheRecipe()) {
-            return;
-        }
-        config.setCachedRecipeId(recipe.id.toString());
-        String resolvedMode = config.getPreferredModeId().isBlank() ? resolveDerivedMode(recipe) :
-                config.getPreferredModeId();
-        if (config.getPreferredModeId().isBlank()) {
-            config.setDerivedModeId(resolvedMode == null ? "" : resolvedMode);
-        }
-        // Single source of truth: slotConfigs. The pattern ItemStack is no longer mutated
-        // with recipe/mode tags (that produced ghost state when a pattern moved buffers).
-    }
-
-    private void resolveAndCacheSlotRecipe(int slot) {
-        if (slot < 0 || slot >= maxPatternCount || isRemote()) {
-            return;
-        }
-        ItemStack pattern = patternInventory.getStackInSlot(slot);
-        if (pattern.isEmpty()) {
-            return;
-        }
-
-        com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder holder = null;
-        GTRecipeType[] recipeTypes = new GTRecipeType[0];
-        if (isFormed() && !getControllers().isEmpty()) {
-            IMultiController controller = getControllers().first();
-            if (controller instanceof IRecipeLogicMachine recipeMachine &&
-                    controller instanceof com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder controllerHolder) {
-                holder = controllerHolder;
-                recipeTypes = recipeMachine.getRecipeTypes();
-                if (recipeTypes == null || recipeTypes.length == 0) {
-                    recipeTypes = new GTRecipeType[] { recipeMachine.getRecipeType() };
-                }
-            }
-        }
-
-        if (holder == null &&
-                this instanceof com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder selfHolder) {
-            holder = selfHolder;
-        }
-        if (holder == null) {
-            return;
-        }
-
-        GTRecipeType[] searchTypes = getRecipeTypesForSlotSearch(slot, recipeTypes);
-        GTRecipe resolved = findPatternResolvedRecipeForSlot(slot, holder, searchTypes);
-        if (resolved == null) {
-            resolved = findResolvedRecipeForSlot(slot, holder, searchTypes);
-        }
-        if (resolved == null) {
-            GTRecipeType[] fallbackTypes = getGlobalRecipeTypesForSlotSearch(slot, searchTypes);
-            resolved = findPatternResolvedRecipeForSlot(slot, holder, fallbackTypes);
-            if (resolved == null) {
-                resolved = findResolvedRecipeForSlot(slot, holder, fallbackTypes);
-            }
-        }
-        if (resolved != null) {
-            GTNAPatternBufferSlotConfig config = slotConfigs[slot];
-            if (!config.getPreferredModeId().isBlank() && !matchesModeId(config.getPreferredModeId(), resolved)) {
-                GTNACORE.LOGGER.warn(
-                        "[GTNA][PatternBuffer] slot={} clearing stale preferred mode {} because detected recipe {} belongs to {}",
-                        slot,
-                        config.getPreferredModeId(),
-                        resolved.id,
-                        resolved.getType() == null || resolved.getType().registryName == null ? "unknown" :
-                                resolved.getType().registryName);
-                config.setPreferredModeId("");
-            }
-            cacheResolvedRecipe(slot, resolved);
-            GTNACORE.LOGGER.info("[GTNA][PatternBuffer] slot={} detected recipe={} mode={} preferred={}",
-                    slot,
-                    resolved.id,
-                    slotConfigs[slot].getDerivedModeId(),
-                    slotConfigs[slot].getPreferredModeId());
-            syncSingleRecipeMachineMode(slot, resolved);
-        } else {
-            logPatternDetectionFailure(slot, pattern, searchTypes);
-        }
-    }
-
-    /**
-     * Vanilla GTCEu recipe logic has one active recipe type and therefore needs
-     * the controller switched before a pattern can run. GTNA's threaded logic
-     * intentionally does not: each active recipe keeps its own recipe type.
-     */
-    private void syncSingleRecipeMachineMode(int slot, GTRecipe recipe) {
-        if (!isFormed() || getControllers().isEmpty()) {
-            return;
-        }
-        IMultiController controller = getControllers().first();
-        if (!(controller instanceof IRecipeLogicMachine recipeMachine) ||
-                recipeMachine.getRecipeLogic() instanceof GTNAMultipleRecipesLogic) {
-            return;
-        }
-
-        GTNAPatternBufferSlotConfig config = slotConfigs[slot];
-        String modeId = config.getPreferredModeId().isBlank() ? config.getDerivedModeId() :
-                config.getPreferredModeId();
-        if (modeId == null || modeId.isBlank()) {
-            return;
-        }
-        GTRecipeType[] recipeTypes = recipeMachine.getRecipeTypes();
-        if (recipeTypes == null || recipeTypes.length <= 1) {
-            return;
-        }
-        for (int i = 0; i < recipeTypes.length; i++) {
-            if (modeMatches(modeId, recipeTypes[i])) {
-                if (recipeMachine.getActiveRecipeType() != i) {
-                    recipeMachine.setActiveRecipeType(i);
-                }
-                return;
-            }
-        }
-    }
-
-    private GTRecipeType[] getRecipeTypesForSlotSearch(int slot, GTRecipeType[] recipeTypes) {
-        if (recipeTypes == null || recipeTypes.length == 0) {
-            return recipeTypes;
-        }
-        GTNAPatternBufferSlotConfig config = slotConfigs[slot];
-        if (config.getPreferredModeId().isBlank() || recipeTypes.length <= 1) {
-            return recipeTypes;
-        }
-        List<GTRecipeType> ordered = new ArrayList<>(recipeTypes.length);
-        for (GTRecipeType recipeType : recipeTypes) {
-            if (modeMatches(config.getPreferredModeId(), recipeType)) {
-                ordered.add(recipeType);
-            }
-        }
-        return ordered.isEmpty() ? recipeTypes : ordered.toArray(GTRecipeType[]::new);
-    }
-
-    private GTRecipeType[] getGlobalRecipeTypesForSlotSearch(int slot, GTRecipeType[] alreadySearched) {
-        GTNAPatternBufferSlotConfig config = slotConfigs[slot];
-        List<GTRecipeType> ordered = new ArrayList<>();
-        Set<String> seen = new LinkedHashSet<>();
-
-        if (alreadySearched != null) {
-            for (GTRecipeType recipeType : alreadySearched) {
-                if (recipeType != null && recipeType.registryName != null) {
-                    seen.add(recipeType.registryName.toString());
-                }
-            }
-        }
-
-        for (GTRecipeType recipeType : GTRegistries.RECIPE_TYPES) {
-            if (recipeType == null || recipeType.registryName == null) {
-                continue;
-            }
-            String id = recipeType.registryName.toString();
-            if (seen.contains(id)) {
-                continue;
-            }
-            if (!config.getPreferredModeId().isBlank() && !modeMatches(config.getPreferredModeId(), recipeType)) {
-                continue;
-            }
-            ordered.add(recipeType);
-        }
-        return ordered.toArray(GTRecipeType[]::new);
-    }
-
-    private @Nullable GTRecipe findResolvedRecipeForSlot(int slot,
-                                                         com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder holder,
-                                                         GTRecipeType[] recipeTypes) {
-        String cachedRecipeId = slotConfigs[slot].getCachedRecipeId();
-        GTRecipe fallback = null;
-        for (GTRecipeType recipeType : recipeTypes) {
-            if (recipeType == null) {
-                continue;
-            }
-            var iterator = recipeType.searchRecipe(holder, recipe -> true);
-            int searchLimit = 256;
-            while (iterator.hasNext() && searchLimit-- > 0) {
-                GTRecipe recipe = iterator.next();
-                if (recipe == null || !matchesSlot(slot, recipe)) {
-                    continue;
-                }
-                if (recipe.id != null && recipe.id.toString().equals(cachedRecipeId)) {
-                    return recipe;
-                }
-                if (fallback == null) {
-                    fallback = recipe;
-                }
-            }
-        }
-        return fallback;
-    }
-
-    private @Nullable GTRecipe findPatternResolvedRecipeForSlot(int slot,
-                                                                com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder holder,
-                                                                GTRecipeType[] recipeTypes) {
-        ItemStack pattern = patternInventory.getStackInSlot(slot);
-        IPatternDetails details = PatternDetailsHelper.decodePattern(pattern, getLevel());
-        if (details == null || getLevel() == null) {
-            GTNACORE.LOGGER.info("[GTNA][PatternBuffer] slot={} failed to decode pattern item={}",
-                    slot, pattern.getItem().getDescriptionId());
-            return null;
-        }
-        String cachedRecipeId = slotConfigs[slot].getCachedRecipeId();
-        GTRecipe fallback = null;
-        int scanned = 0;
-        for (GTRecipeType recipeType : recipeTypes) {
-            if (recipeType == null) {
-                continue;
-            }
-            int searchLimit = 512;
-            for (GTRecipe recipe : getLevel().getRecipeManager().getAllRecipesFor(recipeType)) {
-                if (searchLimit-- <= 0) {
-                    break;
-                }
-                scanned++;
-                if (recipe == null || !matchesPatternDetails(slot, recipe, details)) {
-                    continue;
-                }
-                if (recipe.id != null && recipe.id.toString().equals(cachedRecipeId)) {
-                    GTNACORE.LOGGER.info(
-                            "[GTNA][PatternBuffer] slot={} matched cached recipe={} after scanning {} recipes",
-                            slot, recipe.id, scanned);
-                    return recipe;
-                }
-                if (fallback == null) {
-                    fallback = recipe;
-                }
-            }
-        }
-        if (fallback != null) {
-            GTNACORE.LOGGER.info("[GTNA][PatternBuffer] slot={} matched recipe={} after scanning {} recipes",
-                    slot, fallback.id, scanned);
-        } else {
-            GTNACORE.LOGGER.info(
-                    "[GTNA][PatternBuffer] slot={} scanned {} recipes but found no match for pattern inputs={} fluids={} outputs={} fluidOutputs={}",
-                    slot,
-                    scanned,
-                    summarizeItemStacks(collectPatternItemInputs(details)),
-                    summarizeFluidStacks(collectPatternFluidInputs(details)),
-                    summarizeItemStacks(collectPatternItemOutputs(details)),
-                    summarizeFluidStacks(collectPatternFluidOutputs(details)));
-        }
-        return fallback;
-    }
-
-    private void logPatternDetectionFailure(int slot, ItemStack pattern, GTRecipeType[] recipeTypes) {
-        List<String> typeIds = new ArrayList<>();
-        if (recipeTypes != null) {
-            for (GTRecipeType recipeType : recipeTypes) {
-                if (recipeType != null && recipeType.registryName != null) {
-                    typeIds.add(recipeType.registryName.toString());
-                }
-            }
-        }
-        GTNACORE.LOGGER.warn(
-                "[GTNA][PatternBuffer] slot={} no mode detected for pattern={} preferred={} cachedRecipe={} triedTypes={}",
-                slot,
-                pattern.getItem().getDescriptionId(),
-                slotConfigs[slot].getPreferredModeId(),
-                slotConfigs[slot].getCachedRecipeId(),
-                typeIds);
     }
 
     private void onSelectedConfigWidgetChanged() {
@@ -1462,43 +1161,6 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         return value.length() <= maxLength ? value : value.substring(0, Math.max(0, maxLength - 3)) + "...";
     }
 
-    private @Nullable String resolveDerivedMode(GTRecipe recipe) {
-        if (!isFormed() || getControllers().isEmpty()) {
-            return null;
-        }
-        IMultiController controller = getControllers().first();
-        if (controller instanceof IPatternBufferModeHost host) {
-            return host.gtna$resolvePatternBufferMode(recipe);
-        }
-        if (controller instanceof IRecipeLogicMachine recipeMachine &&
-                recipeMachine.getRecipeTypes() != null &&
-                recipeMachine.getRecipeTypes().length > 1 &&
-                recipe.getType() != null &&
-                recipe.getType().registryName != null) {
-            return recipe.getType().registryName.toString();
-        }
-        return null;
-    }
-
-    private static boolean matchesPreferredMode(GTNAPatternBufferSlotConfig config, GTRecipe recipe) {
-        return matchesModeId(config.getPreferredModeId(), recipe);
-    }
-
-    private static boolean matchesDerivedMode(GTNAPatternBufferSlotConfig config, GTRecipe recipe) {
-        return matchesModeId(config.getDerivedModeId(), recipe);
-    }
-
-    private static boolean matchesModeId(String modeId, GTRecipe recipe) {
-        if (modeId == null || modeId.isBlank() || recipe.getType() == null || recipe.getType().registryName == null) {
-            return false;
-        }
-        return modeMatches(modeId, recipe.getType());
-    }
-
-    private static boolean modeMatches(String modeId, @Nullable GTRecipeType recipeType) {
-        return com.raishxn.gtna.api.machine.feature.ModeIdMatcher.matches(modeId, recipeType);
-    }
-
     private static String formatModeLabel(GTRecipeType recipeType) {
         if (recipeType == null || recipeType.registryName == null) {
             return "-";
@@ -1567,161 +1229,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         availableModeIds = String.join("|", ids);
     }
 
-    private @Nullable SlotMatch findMatchingSlot(GTRecipe recipe) {
-        String recipeId = recipe.id == null ? "" : recipe.id.toString();
-        for (int i = 0; i < maxPatternCount; i++) {
-            GTNAPatternBufferSlotConfig config = slotConfigs[i];
-            if (!recipeId.isBlank() && recipeId.equals(config.getCachedRecipeId())) {
-                if (!gtna$slotAcceptsRecipe(i, recipe)) {
-                    continue;
-                }
-                IPatternDetails details = getPatternDetailsForSlot(i);
-                if ((details != null && matchesPatternDetails(i, recipe, details)) || matchesSlot(i, recipe)) {
-                    return new SlotMatch(i);
-                }
-            }
-        }
-        for (int i = 0; i < maxPatternCount; i++) {
-            GTNAPatternBufferSlotConfig config = slotConfigs[i];
-            if (!config.getPreferredModeId().isBlank() && !matchesPreferredMode(config, recipe)) {
-                continue;
-            }
-            IPatternDetails details = getPatternDetailsForSlot(i);
-            if (details != null && matchesPatternDetails(i, recipe, details)) {
-                return new SlotMatch(i);
-            }
-            if (matchesSlot(i, recipe)) {
-                return new SlotMatch(i);
-            }
-        }
-        return null;
-    }
-
-    private @Nullable IPatternDetails getPatternDetailsForSlot(int slot) {
-        if (slot < 0 || slot >= patternInventory.getSlots()) {
-            return null;
-        }
-        ItemStack pattern = patternInventory.getStackInSlot(slot);
-        if (pattern.isEmpty()) {
-            return null;
-        }
-        return PatternDetailsHelper.decodePattern(pattern, getLevel());
-    }
-
-    private boolean matchesSlot(int slotIndex, GTRecipe recipe) {
-        List<Ingredient> itemInputs = copyItemInputs(recipe);
-        List<FluidIngredient> fluidInputs = copyFluidInputs(recipe);
-        itemInputs = consumeCircuitInventory(itemInputs);
-        itemInputs = consumeVirtualItems(slotConfigs[slotIndex], itemInputs);
-        fluidInputs = consumeVirtualFluids(slotConfigs[slotIndex], fluidInputs);
-        itemInputs = internalInventory[slotIndex].handleItemInternal(itemInputs, true);
-        fluidInputs = internalInventory[slotIndex].handleFluidInternal(fluidInputs, true);
-        boolean itemsMatched = itemInputs == null || itemInputs.isEmpty();
-        boolean fluidsMatched = fluidInputs == null || fluidInputs.isEmpty();
-        return itemsMatched && fluidsMatched;
-    }
-
-    private boolean matchesPatternDetails(int slotIndex, GTRecipe recipe, IPatternDetails details) {
-        List<Ingredient> itemInputs = copyItemInputs(recipe);
-        List<FluidIngredient> fluidInputs = copyFluidInputs(recipe);
-        List<ItemStack> itemOutputs = copyItemOutputs(recipe);
-        List<FluidStack> fluidOutputs = copyFluidOutputs(recipe);
-
-        GTNAPatternBufferSlotConfig config = slotConfigs[slotIndex];
-        itemInputs = consumeConfiguredCircuit(config, itemInputs);
-        itemInputs = consumeVirtualItems(config, itemInputs);
-        fluidInputs = consumeVirtualFluids(config, fluidInputs);
-        itemInputs = consumePatternItems(collectPatternItemInputs(details), itemInputs);
-        fluidInputs = consumePatternFluids(collectPatternFluidInputs(details), fluidInputs);
-        // Catalyst semantics (GTLCore parity): if the slot defines catalysts and the recipe
-        // consumes one of them without the slot's actual contents covering it, the recipe is
-        // rejected for this slot — the buffer never picks a recipe that "eats" a catalyst.
-        if (!testCatalystItems(config, recipe)) return false;
-        if (!testCatalystFluids(config, recipe)) return false;
-
-        boolean inputsMatched = (itemInputs == null || itemInputs.isEmpty()) &&
-                (fluidInputs == null || fluidInputs.isEmpty());
-        if (!inputsMatched) {
-            return false;
-        }
-
-        List<ItemStack> patternItemOutputs = collectPatternItemOutputs(details);
-        List<FluidStack> patternFluidOutputs = collectPatternFluidOutputs(details);
-        // keepByProduct == false (GTLCore default): secondary byproducts are not part of the
-        // identity check, so only the primary output of each kind is compared.
-        if (!keepByProduct) {
-            itemOutputs = primaryOnly(itemOutputs);
-            patternItemOutputs = primaryOnly(patternItemOutputs);
-            fluidOutputs = primaryOnly(fluidOutputs);
-            patternFluidOutputs = primaryOnly(patternFluidOutputs);
-        }
-        return compareItemStacks(itemOutputs, patternItemOutputs) &&
-                compareFluidStacks(fluidOutputs, patternFluidOutputs);
-    }
-
-    private static <T> List<T> primaryOnly(List<T> stacks) {
-        return stacks.size() <= 1 ? stacks : List.of(stacks.get(0));
-    }
-
-    private List<Ingredient> copyItemInputs(GTRecipe recipe) {
-        List<Ingredient> copied = new ArrayList<>();
-        for (Content content : recipe.getInputContents(ItemRecipeCapability.CAP)) {
-            Object inner = content.getContent();
-            if (inner instanceof Ingredient ingredient) {
-                copied.add(SizedIngredient.copy(ingredient));
-            } else if (inner instanceof ItemStack stack && !stack.isEmpty()) {
-                copied.add(SizedIngredient.create(stack.copy()));
-            }
-        }
-        return copied;
-    }
-
-    private List<ItemStack> copyItemOutputs(GTRecipe recipe) {
-        List<ItemStack> copied = new ArrayList<>();
-        for (Content content : recipe.getOutputContents(ItemRecipeCapability.CAP)) {
-            Object inner = content.getContent();
-            if (inner instanceof ItemStack stack && !stack.isEmpty()) {
-                copied.add(stack.copy());
-            } else if (inner instanceof Ingredient ingredient) {
-                ItemStack[] items = ingredient.getItems();
-                if (items.length > 0 && !items[0].isEmpty()) {
-                    copied.add(items[0].copy());
-                }
-            }
-        }
-        return copied;
-    }
-
-    private List<FluidIngredient> copyFluidInputs(GTRecipe recipe) {
-        List<FluidIngredient> copied = new ArrayList<>();
-        for (Content content : recipe.getInputContents(FluidRecipeCapability.CAP)) {
-            Object inner = content.getContent();
-            if (inner instanceof FluidIngredient ingredient) {
-                copied.add(ingredient.copy());
-            } else if (inner instanceof FluidStack stack && !stack.isEmpty()) {
-                copied.add(FluidIngredient.of(stack.copy()));
-            }
-        }
-        return copied;
-    }
-
-    private List<FluidStack> copyFluidOutputs(GTRecipe recipe) {
-        List<FluidStack> copied = new ArrayList<>();
-        for (Content content : recipe.getOutputContents(FluidRecipeCapability.CAP)) {
-            Object inner = content.getContent();
-            if (inner instanceof FluidIngredient ingredient) {
-                FluidStack[] stacks = ingredient.getStacks();
-                if (stacks.length > 0 && !stacks[0].isEmpty()) {
-                    copied.add(stacks[0].copy());
-                }
-            } else if (inner instanceof FluidStack stack && !stack.isEmpty()) {
-                copied.add(stack.copy());
-            }
-        }
-        return copied;
-    }
-
-    private List<Ingredient> consumeCircuitInventory(List<Ingredient> left) {
+    List<Ingredient> consumeCircuitInventory(List<Ingredient> left) {
         if (left == null || left.isEmpty() || !isHasCircuitSlot()) {
             return left;
         }
@@ -1729,352 +1237,8 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         if (circuitStack.isEmpty()) {
             return left;
         }
-        return consumeVirtualItemList(List.of(circuitStack), left);
+        return PatternSlotResolver.consumeVirtualItemList(List.of(circuitStack), left);
     }
-
-    private List<Ingredient> consumeConfiguredCircuit(GTNAPatternBufferSlotConfig config, List<Ingredient> left) {
-        if (left == null || left.isEmpty()) {
-            return left;
-        }
-        ItemStack circuitStack = config.getCircuitStack();
-        if (circuitStack == null || circuitStack.isEmpty()) {
-            return left;
-        }
-        return consumeVirtualItemList(List.of(circuitStack), left);
-    }
-
-    private List<Ingredient> consumeVirtualItems(GTNAPatternBufferSlotConfig config, List<Ingredient> left) {
-        if (left == null || left.isEmpty()) {
-            return left;
-        }
-        return consumeVirtualItemList(config.getVirtualItemStacks(), left);
-    }
-
-    private List<Ingredient> consumeVirtualItemList(List<ItemStack> virtualStacks, List<Ingredient> left) {
-        if (virtualStacks.isEmpty()) {
-            return left;
-        }
-        for (var it = left.listIterator(); it.hasNext();) {
-            Ingredient ingredient = it.next();
-            if (ingredient == null || ingredient.isEmpty()) {
-                it.remove();
-                continue;
-            }
-            int amountLeft = extractAmount(ingredient);
-            if (amountLeft <= 0) {
-                it.remove();
-                continue;
-            }
-            for (ItemStack stack : virtualStacks) {
-                if (stack.isEmpty() || !ingredient.test(stack)) {
-                    continue;
-                }
-                amountLeft -= stack.getCount();
-                if (amountLeft <= 0) {
-                    it.remove();
-                    break;
-                }
-            }
-            if (amountLeft > 0) {
-                applyAmount(ingredient, amountLeft);
-            }
-        }
-        return left.isEmpty() ? null : left;
-    }
-
-    private List<Ingredient> consumePatternItems(List<ItemStack> patternItems, List<Ingredient> left) {
-        return consumeVirtualItemList(patternItems, left);
-    }
-
-    /**
-     * GTLCore {@code testCatalystItemInternal} parity: returns {@code false} when any recipe input
-     * could consume a catalyst key configured for the slot. The per-ingredient entries guard
-     * {@code content.chance <= 0} (crafting-only outputs) the same way the reference does.
-     */
-    private boolean testCatalystItems(GTNAPatternBufferSlotConfig config, GTRecipe recipe) {
-        List<ItemStack> catalysts = config.getCatalystItemStacks();
-        if (catalysts.isEmpty()) return true;
-        for (Content content : recipe.getInputContents(ItemRecipeCapability.CAP)) {
-            if (content.chance <= 0) continue;
-            if (!(content.getContent() instanceof Ingredient ingredient)) continue;
-            for (ItemStack catalyst : catalysts) {
-                if (!catalyst.isEmpty() && ingredient.test(catalyst)) return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * GTLCore {@code testCatalystFluidInternal} parity.
-     */
-    private boolean testCatalystFluids(GTNAPatternBufferSlotConfig config, GTRecipe recipe) {
-        List<net.minecraftforge.fluids.FluidStack> catalysts = config.getCatalystFluidStacks();
-        if (catalysts.isEmpty()) return true;
-        for (Content content : recipe.getInputContents(FluidRecipeCapability.CAP)) {
-            if (content.chance <= 0) continue;
-            if (!(content.getContent() instanceof FluidIngredient fluidIngredient)) continue;
-            for (net.minecraftforge.fluids.FluidStack catalyst : catalysts) {
-                if (!catalyst.isEmpty() && fluidIngredient.test(catalyst)) return false;
-            }
-        }
-        return true;
-    }
-
-    private List<FluidIngredient> consumeVirtualFluids(GTNAPatternBufferSlotConfig config, List<FluidIngredient> left) {
-        if (left == null || left.isEmpty()) {
-            return left;
-        }
-        List<FluidStack> configuredFluids = config.getVirtualFluidStacks();
-        if (configuredFluids.isEmpty()) {
-            return left;
-        }
-        for (var it = left.listIterator(); it.hasNext();) {
-            FluidIngredient ingredient = it.next();
-            if (ingredient == null || ingredient.isEmpty()) {
-                it.remove();
-                continue;
-            }
-            int amountLeft = ingredient.getAmount();
-            for (FluidStack configuredFluid : configuredFluids) {
-                if (configuredFluid.isEmpty() || !ingredient.test(configuredFluid)) {
-                    continue;
-                }
-                amountLeft -= configuredFluid.getAmount();
-                if (amountLeft <= 0) {
-                    break;
-                }
-            }
-            if (amountLeft <= 0) {
-                it.remove();
-            } else {
-                ingredient.setAmount(amountLeft);
-            }
-        }
-        return left.isEmpty() ? null : left;
-    }
-
-    private List<FluidIngredient> consumePatternFluids(List<FluidStack> patternFluids, List<FluidIngredient> left) {
-        if (left == null || left.isEmpty() || patternFluids.isEmpty()) {
-            return left;
-        }
-        for (var it = left.listIterator(); it.hasNext();) {
-            FluidIngredient ingredient = it.next();
-            if (ingredient == null || ingredient.isEmpty()) {
-                it.remove();
-                continue;
-            }
-            int amountLeft = ingredient.getAmount();
-            for (FluidStack patternFluid : patternFluids) {
-                if (patternFluid.isEmpty() || !ingredient.test(patternFluid)) {
-                    continue;
-                }
-                amountLeft -= patternFluid.getAmount();
-                if (amountLeft <= 0) {
-                    break;
-                }
-            }
-            if (amountLeft <= 0) {
-                it.remove();
-            } else {
-                ingredient.setAmount(amountLeft);
-            }
-        }
-        return left.isEmpty() ? null : left;
-    }
-
-    private List<ItemStack> collectPatternItemInputs(IPatternDetails details) {
-        List<ItemStack> items = new ArrayList<>();
-        for (IPatternDetails.IInput input : details.getInputs()) {
-            if (input == null) {
-                continue;
-            }
-            GenericStack selected = null;
-            for (GenericStack candidate : input.getPossibleInputs()) {
-                if (candidate != null && candidate.what() instanceof AEItemKey) {
-                    selected = candidate;
-                    break;
-                }
-            }
-            if (selected == null || !(selected.what() instanceof AEItemKey itemKey)) {
-                continue;
-            }
-            long amount = selected.amount() * Math.max(1L, input.getMultiplier());
-            ItemStack stack = itemKey.toStack(GTMath.saturatedCast(amount));
-            if (!stack.isEmpty()) {
-                items.add(stack);
-            }
-        }
-        return items;
-    }
-
-    private List<FluidStack> collectPatternFluidInputs(IPatternDetails details) {
-        List<FluidStack> fluids = new ArrayList<>();
-        for (IPatternDetails.IInput input : details.getInputs()) {
-            if (input == null) {
-                continue;
-            }
-            GenericStack selected = null;
-            for (GenericStack candidate : input.getPossibleInputs()) {
-                if (candidate != null && candidate.what() instanceof AEFluidKey) {
-                    selected = candidate;
-                    break;
-                }
-            }
-            if (selected == null || !(selected.what() instanceof AEFluidKey fluidKey)) {
-                continue;
-            }
-            long amount = selected.amount() * Math.max(1L, input.getMultiplier());
-            FluidStack stack = fluidKey.toStack(GTMath.saturatedCast(amount));
-            if (!stack.isEmpty()) {
-                fluids.add(stack);
-            }
-        }
-        return fluids;
-    }
-
-    private List<ItemStack> collectPatternItemOutputs(IPatternDetails details) {
-        List<ItemStack> items = new ArrayList<>();
-        for (GenericStack output : details.getOutputs()) {
-            if (output == null || !(output.what() instanceof AEItemKey itemKey)) {
-                continue;
-            }
-            ItemStack stack = itemKey.toStack(GTMath.saturatedCast(output.amount()));
-            if (!stack.isEmpty()) {
-                items.add(stack);
-            }
-        }
-        return items;
-    }
-
-    private List<FluidStack> collectPatternFluidOutputs(IPatternDetails details) {
-        List<FluidStack> fluids = new ArrayList<>();
-        for (GenericStack output : details.getOutputs()) {
-            if (output == null || !(output.what() instanceof AEFluidKey fluidKey)) {
-                continue;
-            }
-            FluidStack stack = fluidKey.toStack(GTMath.saturatedCast(output.amount()));
-            if (!stack.isEmpty()) {
-                fluids.add(stack);
-            }
-        }
-        return fluids;
-    }
-
-    private boolean compareItemStacks(List<ItemStack> expected, List<ItemStack> actual) {
-        if (expected.size() != actual.size()) {
-            return false;
-        }
-        List<ItemStack> remaining = new ArrayList<>();
-        for (ItemStack stack : actual) {
-            if (!stack.isEmpty()) {
-                remaining.add(stack.copy());
-            }
-        }
-        for (ItemStack expectedStack : expected) {
-            if (expectedStack.isEmpty()) {
-                continue;
-            }
-            boolean matched = false;
-            for (var it = remaining.listIterator(); it.hasNext();) {
-                ItemStack actualStack = it.next();
-                if (!ItemStack.isSameItemSameTags(expectedStack, actualStack)) {
-                    continue;
-                }
-                if (actualStack.getCount() != expectedStack.getCount()) {
-                    continue;
-                }
-                it.remove();
-                matched = true;
-                break;
-            }
-            if (!matched) {
-                return false;
-            }
-        }
-        return remaining.isEmpty();
-    }
-
-    private boolean compareFluidStacks(List<FluidStack> expected, List<FluidStack> actual) {
-        if (expected.size() != actual.size()) {
-            return false;
-        }
-        List<FluidStack> remaining = new ArrayList<>();
-        for (FluidStack stack : actual) {
-            if (!stack.isEmpty()) {
-                remaining.add(stack.copy());
-            }
-        }
-        for (FluidStack expectedStack : expected) {
-            if (expectedStack.isEmpty()) {
-                continue;
-            }
-            boolean matched = false;
-            for (var it = remaining.listIterator(); it.hasNext();) {
-                FluidStack actualStack = it.next();
-                if (!actualStack.isFluidEqual(expectedStack)) {
-                    continue;
-                }
-                if (actualStack.getAmount() != expectedStack.getAmount()) {
-                    continue;
-                }
-                it.remove();
-                matched = true;
-                break;
-            }
-            if (!matched) {
-                return false;
-            }
-        }
-        return remaining.isEmpty();
-    }
-
-    private String summarizeItemStacks(List<ItemStack> stacks) {
-        if (stacks == null || stacks.isEmpty()) {
-            return "[]";
-        }
-        List<String> summary = new ArrayList<>();
-        for (ItemStack stack : stacks) {
-            if (!stack.isEmpty()) {
-                summary.add(stack.getCount() + "x" + stack.getItem().getDescriptionId());
-            }
-        }
-        return summary.toString();
-    }
-
-    private String summarizeFluidStacks(List<FluidStack> stacks) {
-        if (stacks == null || stacks.isEmpty()) {
-            return "[]";
-        }
-        List<String> summary = new ArrayList<>();
-        for (FluidStack stack : stacks) {
-            if (!stack.isEmpty()) {
-                String fluidId = stack.getFluid().getFluidType().toString();
-                summary.add(stack.getAmount() + "mb:" + fluidId);
-            }
-        }
-        return summary.toString();
-    }
-
-    private static int extractAmount(Ingredient ingredient) {
-        if (ingredient instanceof SizedIngredient sizedIngredient) {
-            return sizedIngredient.getAmount();
-        }
-        ItemStack[] items = ingredient.getItems();
-        return items.length > 0 ? items[0].getCount() : 0;
-    }
-
-    private static void applyAmount(Ingredient ingredient, int amount) {
-        if (ingredient instanceof SizedIngredient sizedIngredient) {
-            sizedIngredient.setAmount(amount);
-            return;
-        }
-        ItemStack[] items = ingredient.getItems();
-        if (items.length > 0) {
-            items[0].setCount(amount);
-        }
-    }
-
-    private record SlotMatch(int slot) {}
 
     private record ModeOption(String id, String label) {}
 
@@ -2302,7 +1466,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             slot.pushPattern(patternDetails, inputHolder);
             int logicalSlot = getInternalSlotIndex(slot);
             if (logicalSlot >= 0) {
-                resolveAndCacheSlotRecipe(logicalSlot);
+                slotResolver.resolveAndCacheSlotRecipe(logicalSlot);
             }
             return true;
         }

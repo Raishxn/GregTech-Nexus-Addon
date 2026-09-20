@@ -331,10 +331,16 @@ public class GTNAGametest {
 - [x] CI: `spotlessCheck` + `runUnitTests` adicionados ao `gradle.yml` (commit `4bf0f0c`).
 - [ ] (Opcional) 1 gametest de steam simples — Fase 2+, requer AE2+GTCEu no ambiente de teste.
 
-### Fase 3 — Refactor estrutural
+### Fase 3 — Refactor estrutural 🟡 **INICIADA**
 
 - [ ] Split AnnihilateGeneratorA/B → aisles em `common/data/multiblock/`
-- [ ] Split `GTNAMEPatternBufferPartMachine` (UI/resolver/mode)
+- [ ] Split `GTNAMEPatternBufferPartMachine` (UI/resolver/mode) — 🟡 **resolver extraído**
+      (2759 → 1923 linhas): `PatternSlotResolver` (mesmo pacote) agora carrega o núcleo de
+      busca/matching de receita por slot (resolução com preferência de cache, migração de tags
+      legados, matching slot/pattern com catalyst + keepByProduct, e os helpers puramente
+      estáticos de copy/consume/collect/compare). A máquina mantém o estado persistente e a
+      orquestração de UI. Restam: extração da UI (config panel + widgets internos) e do cluster
+      de modos (`ModeOption`/cycle/refresh).
 - [ ] Split GTNAMachines por domínio
 - [ ] Internacionalizar strings de UI
 - [ ] Fundir `getRecipeModifier` (preview) com o caminho de execução, se fizer sentido
