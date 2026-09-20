@@ -143,7 +143,10 @@ Em `GTOCore-Main/.../MEPatternBufferPartMachine.java` + `MultiMachineModeFancyCo
 ### O que o GTNA faz hoje (e por que travou)
 
 - ✅ Ponto 3 já implementado (`GTNAPatternBufferRecipeHandler` com RHLs por slot) e routing por slot (`gtna$slotAcceptsRecipe`) — **a mecânica de rodar múltiplos tipos já funciona**;
-- ❌ O "modo do controller" (`setActiveRecipeType`) ficou órfão: `gtna$applyPatternBufferMode` existe mas ninguém chama; `resolveDerivedMode` é computado e **só vira tooltip na UI** do buffer;
+- ⚠️ O "modo do controller" (`setActiveRecipeType`): a ligação **existe** em `tryStartRecipe`, mas
+  ficou **inerte** até a 3ª passada — nenhuma máquina Java declarava mais de um recipe type (então
+  `gtna$resolvePatternBufferMode` sempre retornava `null`) e o provider do buffer
+  (`gtna$getPreferredModeForRecipe`) estava órfão. Corrigido; ver o adendo da Fase 1;
 - ❌ `GTNAMultipleRecipesLogic` tem **dois pipelines** (`tryStartRecipe` manual duplicando `getRecipeModifier`, além do `searchRecipe` cego por todos os tipos no fallback);
 - ❌ Matching por string fuzzy com hardcode saw/cutter (achado #6).
 
@@ -312,6 +315,35 @@ public class GTNAGametest {
       (`tryStartRecipe`: parallel → overclock → hatches → match → mode-mirror →
       beforeWorking → IO IN). O `getRecipeModifier` separado serve só ao preview/EMI,
       não é um segundo pipeline de execução — fusão completa fica para a Fase 3.
+
+**Adendo (3ª passada) — a Fase 1 estava inerte na prática.** A ligação do espelho existia
+(`tryStartRecipe` chamava `gtna$applyPatternBufferMode`), mas duas coisas impediam o jogador de
+ver a feature funcionar:
+
+- **Nenhuma máquina Java declarava mais de um recipe type.** Scan dos 40 registros de multiblock:
+  zero usos de `.recipeTypes(...)` e zero `.recipeType()` repetido na mesma cadeia. Como
+  `gtna$resolvePatternBufferMode` retorna `null` quando `getRecipeTypes().length <= 1`, o espelho
+  era **no-op em todo o mod**. O único usuário da base multi-receita era o `duration_tester`
+  (declarado com 1 tipo) e o caminho KubeJS (`gtna:multiple_recipes`).
+- **O provider do buffer estava órfão.** `gtna$getPreferredModeForRecipe` era declarado e
+  implementado (`GTNAMEPatternBufferPartMachine`) mas não tinha **nenhum call site**: o modo
+  fixado no slot (`preferredModeId`) filtrava o roteamento (`gtna$slotAcceptsRecipe`) mas não
+  dirigia o modo da máquina.
+
+**Corrigido nesta rodada:**
+
+- `duration_tester` agora declara `ASSEMBLER_RECIPES` + `CIRCUIT_ASSEMBLER_RECIPES` — 2 modos, o
+  que torna o auto-switch exercitável in-game (o tab "Machine Mode" da GTM só aparece com
+  `length > 1`).
+- `tryStartRecipe` resolve o modo **pelo pattern buffer**: `gtna$getPreferredModeForRecipe` do
+  provider que serve a receita, com fallback no tipo exato da receita quando o slot está em AUTO
+  (ou quando o pin é um id legado que não resolve em nenhum modo da máquina — sem esse fallback um
+  pin stale desligaria o espelho silenciosamente).
+- A decisão virou a função pura `PatternBufferModeSelection.select(preferred, recipeType)`,
+  coberta por `PatternBufferModeSelectionTest` (6º teste do `runUnitTests`).
+- **Política escolhida:** espelhar sempre o tipo que iniciou a receita. Com N threads de tipos
+  diferentes o `activeRecipeType` é global e vai alternar entre eles — limitação inerente ao
+  campo, não do espelho.
 
 ### Fase 2 — Testes ✅ **CONCLUÍDA** (gametest opcional fica para a Fase 2+)
 

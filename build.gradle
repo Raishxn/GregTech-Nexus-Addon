@@ -172,6 +172,7 @@ tasks.register('runUnitTests') {
             'com.raishxn.gtna.NumberUtilsTest',
             'com.raishxn.gtna.StructureSlicerTest',
             'com.raishxn.gtna.GTRecipe2IntBiMultiMapTest',
+            'com.raishxn.gtna.PatternBufferModeSelectionTest',
     ]
     doLast {
         testClasses.each { String cls ->

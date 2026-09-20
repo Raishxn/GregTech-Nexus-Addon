@@ -40,6 +40,7 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import com.raishxn.gtna.api.machine.IThreadModifierMachine;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
+import com.raishxn.gtna.api.machine.feature.PatternBufferModeSelection;
 import com.raishxn.gtna.api.machine.multiblock.ParallelMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
@@ -48,6 +49,7 @@ import com.raishxn.gtna.utils.GTNARecipeUtils;
 import com.raishxn.gtna.utils.GTNAUtil;
 import com.raishxn.gtna.utils.ThreadMultiplierStrategy;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -352,9 +354,19 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
         // Mirror the pattern's mode onto the controller's activeRecipeType so the UI tab,
         // machine mode display and tick subscriptions reflect what is actually running.
         // Routing itself is per-slot (see gtna$slotAcceptsRecipe); this is display-only.
-        if (machine instanceof IPatternBufferModeHost host && recipeToRun.getType() != null &&
-                recipeToRun.getType().registryName != null) {
-            host.gtna$applyPatternBufferMode(recipeToRun.getType().registryName.toString(), recipeToRun);
+        //
+        // Policy (chosen deliberately): the mode pinned on the pattern-buffer slot that serves
+        // this recipe wins, because that is what the player asked for; AUTO slots fall back to the
+        // recipe's own type. With several threads of different types the global activeRecipeType
+        // will alternate between them — that is inherent to the field being global.
+        String mirrorModeId = resolvePatternBufferModeId(recipeToRun);
+        if (mirrorModeId != null && machine instanceof IPatternBufferModeHost host) {
+            if (!host.gtna$applyPatternBufferMode(mirrorModeId, recipeToRun)) {
+                // A pin is guaranteed by gtna$slotAcceptsRecipe to match the recipe's type, but it
+                // may be a stale id that no machine mode resolves to anymore. Falling back to the
+                // exact type keeps the mirror alive instead of silently disabling it.
+                applyRecipeTypeMode(host, recipeToRun);
+            }
         }
 
         if (!machine.beforeWorking(recipeToRun)) return false;
@@ -391,6 +403,36 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
             }
         }
         return providers;
+    }
+
+    /**
+     * Mode to mirror onto the controller when this recipe starts: the mode pinned on the
+     * pattern-buffer slot that serves it, falling back to the recipe's own type for AUTO slots.
+     *
+     * @return the mode id to apply, or {@code null} when no buffer and no recipe type provide one
+     */
+    @Nullable
+    private String resolvePatternBufferModeId(GTRecipe recipe) {
+        String preferredModeId = null;
+        for (IPatternBufferModeProvider provider : getPatternBufferProviders()) {
+            String candidate = provider.gtna$getPreferredModeForRecipe(recipe);
+            if (candidate != null && !candidate.isBlank()) {
+                preferredModeId = candidate;
+                break;
+            }
+        }
+        GTRecipeType recipeType = recipe.getType();
+        String recipeTypeId = recipeType == null || recipeType.registryName == null ? null :
+                recipeType.registryName.toString();
+        return PatternBufferModeSelection.select(preferredModeId, recipeTypeId);
+    }
+
+    /** Applies the recipe's exact type id as the mirrored mode, when the recipe has one. */
+    private void applyRecipeTypeMode(IPatternBufferModeHost host, GTRecipe recipe) {
+        GTRecipeType recipeType = recipe.getType();
+        if (recipeType != null && recipeType.registryName != null) {
+            host.gtna$applyPatternBufferMode(recipeType.registryName.toString(), recipe);
+        }
     }
 
     private boolean isRecipeAlreadyActive(GTRecipe recipe) {

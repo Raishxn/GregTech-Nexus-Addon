@@ -91,7 +91,10 @@ public class GTNAMachines2 {
     public static final MultiblockMachineDefinition DURATION_TESTER = registerMachine("durationTester", () -> REGISTRATE
             .multiblock("duration_tester", WorkableElectricMultipleRecipesMachine::new)
             .rotationState(RotationState.NON_Y_AXIS)
+            // Two recipe types so the pattern buffer's automatic mode mirroring is exercisable:
+            // a pattern of either type must flip the controller's machine-mode tab on start.
             .recipeType(GTRecipeTypes.ASSEMBLER_RECIPES)
+            .recipeType(GTRecipeTypes.CIRCUIT_ASSEMBLER_RECIPES)
             .appearanceBlock(GTBlocks.CASING_STEEL_SOLID)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("CCC", "CCC", "CCC")
