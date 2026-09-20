@@ -26,7 +26,10 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
+import com.raishxn.gtna.client.ClientPlayerLookup;
 import com.raishxn.gtna.common.item.terminal.ui.NexusTerminalUIFactory;
 import com.raishxn.gtna.integration.ae2.NexusAE2Link;
 import org.jetbrains.annotations.Nullable;
@@ -154,7 +157,10 @@ public class NexusTerminalBehavior implements IItemUIFactory, IAddInformation {
      * Append range status tooltip. Separated to safely reference client-side player.
      */
     private void appendAE2RangeTooltip(ItemStack stack, Level level, List<Component> tooltipComponents) {
-        Player localPlayer = net.minecraft.client.Minecraft.getInstance().player;
+        // Routed through a client-only helper: referencing Minecraft/LocalPlayer from this common
+        // class made a dedicated server reject the class while verifying it, and the mod failed to
+        // load. unsafeCallWhenOn returns null on the server.
+        Player localPlayer = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> ClientPlayerLookup::localPlayer);
         if (localPlayer == null) return;
 
         if (NexusAE2Link.isInRange(stack, level, localPlayer)) {
