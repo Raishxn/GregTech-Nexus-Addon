@@ -915,7 +915,11 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.safeModeRecovery", "Safe Mode Recovery");
         add("config.gtna.option.alertCooldownTicks", "Alert Cooldown");
         add("config.gtna.option.useHighestTierForEfficiency", "Use Highest Tier For Efficiency");
+        // Jade builds one config entry per registered data provider and asserts the translation
+        // exists (config.jade.plugin_<namespace>.<provider uid path>); a missing one crashes the dev
+        // client with 'Missing config translation'. Keep these in sync with GTNAJadePlugin.
         add("config.jade.plugin_gtna.multiple_recipes_provider", "Multiple Recipes Machine Info");
+        add("config.jade.plugin_gtna.me_pattern_buffer", "ME Pattern Buffer Info");
 
         for (int i = 0; i < GTValues.V.length; i++) {
             String tierName = GTValues.VN[i];

@@ -639,6 +639,7 @@
   "config.gtna.option.wirelessSteamOutputBronze": "Wireless Steam Output Bronze",
   "config.gtna.option.wirelessSteamOutputSteel": "Wireless Steam Output Steel",
   "config.gtna.option.wirelessSteamTransferRate": "Wireless Steam Transfer Rate",
+  "config.jade.plugin_gtna.me_pattern_buffer": "ME Pattern Buffer Info",
   "config.jade.plugin_gtna.multiple_recipes_provider": "Multiple Recipes Machine Info",
   "death.attack.reality_rip": "%1$s was ripped out of reality",
   "death.attack.reality_rip.player": "%1$s was ripped out of reality by %2$s",

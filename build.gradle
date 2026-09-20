@@ -119,11 +119,14 @@ legacyForge {
             // You can set various levels here.
             // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             logLevel = org.slf4j.event.Level.DEBUG
+
+            // Force XWayland (X11) backend on Linux to avoid GLFW 0x1000C crashes under Wayland
+            environment 'XDG_SESSION_TYPE', 'x11'
+            environment 'GDK_BACKEND', 'x11'
         }
         client {
             client()
             sourceSet = sourceSets.main
-            programArguments.addAll('--refresh-dependencies')
             systemProperty('forge.enabledGameTestNamespaces', project.mod_id)
         }
         server {
@@ -315,4 +318,9 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
     options.release.set(17)
     options.compilerArgs << "-Aquiet=true" // Suppress mixin notes
+}
+
+tasks.withType(JavaExec).configureEach {
+    environment 'XDG_SESSION_TYPE', 'x11'
+    environment 'GDK_BACKEND', 'x11'
 }
