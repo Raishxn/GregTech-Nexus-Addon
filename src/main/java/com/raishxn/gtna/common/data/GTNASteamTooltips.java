@@ -27,10 +27,24 @@ public final class GTNASteamTooltips {
     /** Steam machines whose pattern uses {@code SteamMultiMachineBase.casing()}. */
     private static final Set<String> HIGH_PRESSURE = Set.of(
             "large_steam_alloy_smelter",
+            "large_steam_bath",
             "large_steam_bending",
+            "large_steam_centrifuge",
+            "large_steam_circuit_assembler",
+            "large_steam_compressor",
+            "large_steam_crusher",
+            "large_steam_cutting",
+            "large_steam_extractor",
             "large_steam_extruder",
-            "large_steam_wiremill",
+            "large_steam_forming_press",
+            "large_steam_furnace",
+            "large_steam_hammer",
+            "large_steam_lathe",
+            "large_steam_mixer",
+            "large_steam_ore_washer",
             "large_steam_sifter",
+            "large_steam_thermal_centrifuge",
+            "large_steam_wiremill",
             "steam_lava_maker",
             "steam_item_vault");
 

@@ -303,7 +303,7 @@ public final class GTNAMachineGameTests {
      */
     private static final String[][] LARGE_STEAM_ALLOY_SMELTER_PATTERN = {
             { "BBB", "AAA", "AAA", " A " },
-            { "BBB", "A A", "A A", "AAA" },
+            { "BBB", "A A", "AAA", "AAA" },
             { "BBB", "A~A", "AAA", " A " },
     };
 
@@ -541,7 +541,7 @@ public final class GTNAMachineGameTests {
                         continue;
                     }
                     switch (LARGE_STEAM_ALLOY_SMELTER_PATTERN[aisle][string].charAt(charX)) {
-                        case 'B' -> helper.setBlock(pos, GTBlocks.FIREBOX_BRONZE.get());
+                        case 'B' -> helper.setBlock(pos, GTBlocks.FIREBOX_STEEL.get());
                         case 'A' -> helper.setBlock(pos, GTNABlocks.ADVANCED_INDUSTRIAL_STEAM_CASING.get());
                         default -> {
                             // '~' (controller, already placed) and space (any).
@@ -567,7 +567,7 @@ public final class GTNAMachineGameTests {
         helper.assertTrue(controller.isFormed(),
                 "the steel-cased structure must form and find the steam hatch as its steam source");
         helper.assertTrue(controller.isHighPressure(),
-                "steel solid casings must put the machine in high pressure mode");
+                "a fully steel-cased structure must put the machine in high pressure mode");
         helper.assertTrue(controller.getEffectiveConversionRate() == 2.0,
                 "high pressure mode must double the steam consumption (conversion rate 2.0)");
         helper.succeed();

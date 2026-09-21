@@ -210,6 +210,7 @@ Detalhe em `docs/roadmap/port-audit-2026-09-21.md` e `THIRD_PARTY_NOTICES.md`.
 3. **Re-portar as estruturas das `large_steam_*`** (as 21, incluindo o furnace) a partir dos `.mbs` do
    GTNL, com §5/§6 e o mapeamento de blocos certo — **e trocar o predicado de casing inline pelo
    `SteamMultiMachineBase.casing()`** (aceita bronze/steel) e adicionar o id em `GTNASteamTooltips`.
+   ✅ **Feito (G-0028)** para as 21; falta **validar in-game** as que não têm gametest de formação.
 4. **Portar o `LargeBronzeBoiler`** (novo) e alinhar o **`SteamManufacturer`** (§7).
 5. **Padronizar as tooltips** no estilo GTNL, com **`Source:`** e **nomes rainbow** (§1).
 6. **`VaultPortHatch`** (AE2, HV) para o `steam_item_vault` (§8).

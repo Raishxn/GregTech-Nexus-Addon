@@ -94,6 +94,32 @@ foi feito nem repetir os erros já pagos.
   usuário encontrar corte; o corte de emergência é `hasPlayerInventory()` → `false` em
   `GTNAMEPatternBufferPartMachine` (economiza 86 px, mas perde o inventário na GUI).
 
+### G-0028 (2026-09-21) — Re-port das 21 estruturas `large_steam_*` a partir dos `.mbs` do GTNL
+
+- **Forma exata:** as 21 `large_steam_*` agora usam a forma do GTNL decodificada dos `.mbs`
+  (`StructureFileCodec`/MBS1) com a convenção do §5 (inverter linhas e aisles). Verificação
+  programática: 15 derivadas do GTNL + 6 já portadas, **todas OK** contra o `.mbs`.
+- **Predicados cientes de tier** (todos gravam o **menor** tier no match context, semântica do
+  `checkMachineTier` do GTNL): `casing()` (bricks/solid + industrial bronze/steel),
+  `gearboxCasing()`, `pipeCasing()`, `fireboxCasing()`, `frameCasing()` (`frameGt` bronze/steel).
+  Uma estrutura toda em aço → high pressure; qualquer peça de bronze → normal.
+- **Mapeamento** (§6): industrial/machine casing → `casing()`; gear → `gearboxCasing()`; pipe →
+  `pipeCasing()`; firebox → `fireboxCasing()`; frame (`sBlockFrames` / `metaBlockColumn` 4/5) →
+  `frameCasing()`; material block → `iron_block`; glass → `Blocks.GLASS`; `SteamAssemblyCasing` →
+  `STEAM_ASSEMBLY_BLOCK`.
+- **Substituídas (10 divergentes):** alloy_smelter, centrifuge, thermal_centrifuge, circuit_assembler,
+  crusher, forming_press, furnace, mixer, ore_washer, chemical_bath (id GTNA `large_steam_bath`).
+  **Atualizadas (5 de forma correta, predicados antigos):** compressor, cutting, extractor, hammer,
+  lathe.
+- **Tooltips:** `GTNASteamTooltips` agora lista as 21 — todas recebem a linha de high pressure.
+- **Achado (pré-existente):** a receita `gtna:large_steam_bath` falha no parse
+  (`Item array cannot be empty`) — a máquina fica sem craft. Não é deste re-port; investigar depois
+  (provável `ChemicalHelper.get` de prefixo/material inexistente).
+- **Pendência:** validação **in-game** das estruturas re-portadas — os gametests só montam o
+  alloy smelter; as demais foram validadas por comparação com o `.mbs`, não por formação real.
+- **Validação:** `spotlessCheck` + `runUnitTests` (14/14) + `runGameTestServer` (25/25) + `runData`
+  (written: 0).
+
 ### G-0027 (2026-09-21) — Blocos: Industrial / Advanced Industrial Steam Casing (texturas do Modernity)
 
 - **Criados** `industrial_steam_casing` e `advanced_industrial_steam_casing` — porta dos

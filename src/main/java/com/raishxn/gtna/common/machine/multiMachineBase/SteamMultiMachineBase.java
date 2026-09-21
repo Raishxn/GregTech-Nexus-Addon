@@ -2,6 +2,8 @@ package com.raishxn.gtna.common.machine.multiMachineBase;
 
 import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
+import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
+import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.UITemplate;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
@@ -33,6 +35,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
@@ -40,6 +43,7 @@ import com.raishxn.gtna.common.data.GTNABlocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine
                                             implements IDisplayUIMachine, IPatternBufferModeHost {
@@ -102,8 +106,72 @@ public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine
      * casing lists. Machines whose pattern does not use this predicate simply never see a steel tier.
      */
     public static TraceabilityPredicate casing() {
-        return new TraceabilityPredicate(SteamMultiMachineBase::matchesSteamCasing,
-                SteamMultiMachineBase::steamCasingCandidates);
+        return tieredCasing(
+                new Block[] { GTBlocks.CASING_BRONZE_BRICKS.get(), GTNABlocks.INDUSTRIAL_STEAM_CASING.get() },
+                new Block[] { GTBlocks.CASING_STEEL_SOLID.get(),
+                        GTNABlocks.ADVANCED_INDUSTRIAL_STEAM_CASING.get() });
+    }
+
+    /** Tiered bronze/steel gearbox casing. */
+    public static TraceabilityPredicate gearboxCasing() {
+        return tieredCasing(new Block[] { GTBlocks.CASING_BRONZE_GEARBOX.get() },
+                new Block[] { GTBlocks.CASING_STEEL_GEARBOX.get() });
+    }
+
+    /** Tiered bronze/steel pipe casing. */
+    public static TraceabilityPredicate pipeCasing() {
+        return tieredCasing(new Block[] { GTBlocks.CASING_BRONZE_PIPE.get() },
+                new Block[] { GTBlocks.CASING_STEEL_PIPE.get() });
+    }
+
+    /** Tiered bronze/steel firebox. */
+    public static TraceabilityPredicate fireboxCasing() {
+        return tieredCasing(new Block[] { GTBlocks.FIREBOX_BRONZE.get() },
+                new Block[] { GTBlocks.FIREBOX_STEEL.get() });
+    }
+
+    /** Tiered bronze/steel GT frame. */
+    public static TraceabilityPredicate frameCasing() {
+        return tieredCasing(new Block[] { ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze) },
+                new Block[] { ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Steel) });
+    }
+
+    private static TraceabilityPredicate tieredCasing(Block[] bronze, Block[] steel) {
+        List<Block> bronzeList = List.of(bronze);
+        List<Block> steelList = List.of(steel);
+        return new TraceabilityPredicate(state -> {
+            BlockState blockState = state.getBlockState();
+            int tier = -1;
+            for (Block block : bronzeList) {
+                if (blockState.is(block)) {
+                    tier = BRONZE_TIER;
+                    break;
+                }
+            }
+            if (tier < 0) {
+                for (Block block : steelList) {
+                    if (blockState.is(block)) {
+                        tier = STEEL_TIER;
+                        break;
+                    }
+                }
+            }
+            if (tier < 0) {
+                return false;
+            }
+            recordCasingTier(state, tier);
+            return true;
+        }, () -> Stream.concat(bronzeList.stream(), steelList.stream())
+                .map(block -> new BlockInfo(block.defaultBlockState(), null))
+                .toArray(BlockInfo[]::new));
+    }
+
+    private static void recordCasingTier(MultiblockState state, int tier) {
+        PatternMatchContext context = state.getMatchContext();
+        int current = context.getOrDefault(CASING_TIER_KEY, Integer.MAX_VALUE);
+        if (tier < current) {
+            context.set(CASING_TIER_KEY, tier);
+        }
     }
 
     private static boolean matchesSteamCasing(MultiblockState state) {
@@ -111,11 +179,7 @@ public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine
         if (tier < 0) {
             return false;
         }
-        PatternMatchContext context = state.getMatchContext();
-        int current = context.getOrDefault(CASING_TIER_KEY, Integer.MAX_VALUE);
-        if (tier < current) {
-            context.set(CASING_TIER_KEY, tier);
-        }
+        recordCasingTier(state, tier);
         return true;
     }
 
@@ -130,14 +194,6 @@ public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine
             return STEEL_TIER;
         }
         return -1;
-    }
-
-    private static BlockInfo[] steamCasingCandidates() {
-        return new BlockInfo[] {
-                new BlockInfo(GTBlocks.CASING_BRONZE_BRICKS.get().defaultBlockState(), null),
-                new BlockInfo(GTBlocks.CASING_STEEL_SOLID.get().defaultBlockState(), null),
-                new BlockInfo(GTNABlocks.INDUSTRIAL_STEAM_CASING.get().defaultBlockState(), null),
-                new BlockInfo(GTNABlocks.ADVANCED_INDUSTRIAL_STEAM_CASING.get().defaultBlockState(), null) };
     }
 
     @Override

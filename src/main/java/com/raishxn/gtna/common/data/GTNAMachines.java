@@ -245,114 +245,22 @@ public class GTNAMachines {
                             GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
                             GTCEu.id("block/multiblock/steam_grinder"))
                     .pattern(definition -> FactoryBlockPattern.start()
-                            .aisle(
-                                    "EEEEEEE",
-                                    "AAAAAAA",
-                                    "AAAAAAA",
-                                    "AAAAAAA",
-                                    "DDDDDDD",
-                                    "       ",
-                                    "       ",
-                                    "       ")
-                            .aisle(
-                                    "EEEEEEE",
-                                    "A     A",
-                                    "ACCCCCA",
-                                    "A     A",
-                                    "ABBBBBA",
-                                    "DCCCCCD",
-                                    "DD   DD",
-                                    "       ")
-                            .aisle(
-                                    "EEEEEEE",
-                                    "DBBBBBD",
-                                    "A     A",
-                                    "A     A",
-                                    "A     A",
-                                    "DD   DD",
-                                    "D     D",
-                                    "       ")
-                            .aisle(
-                                    "EEEEEEE",
-                                    "ACCCCCA",
-                                    "DBBBBBD",
-                                    "ACCCCCA",
-                                    "AAAAAAA",
-                                    "ADDDDDA",
-                                    "A     A",
-                                    "ADDDDDA")
-                            .aisle(
-                                    "EEEEEEE",
-                                    "DBBBBBD",
-                                    "A     A",
-                                    "A     A",
-                                    "AAAAAAA",
-                                    "AAAAAAA",
-                                    "AAAAAAA",
-                                    "AAAAAAA")
-                            .aisle(
-                                    "EEEEEEE",
-                                    "ACCCCCA",
-                                    "AAAAAAA",
-                                    "AAAAAAA",
-                                    " AAAAA ",
-                                    "AAAAAAA",
-                                    "AAAAAAA",
-                                    "CAAAAAC")
-                            .aisle(
-                                    "EEEEEEE",
-                                    "A     A",
-                                    "AAAAAAA",
-                                    " AAAAA ",
-                                    "       ",
-                                    " AAAAA ",
-                                    " AAAAA ",
-                                    "C     C")
-                            .aisle(
-                                    "EEEEEEE",
-                                    "AAAAAAA",
-                                    "AADDDAA",
-                                    " ADDDA ",
-                                    "  DDD  ",
-                                    "  DDD  ",
-                                    "       ",
-                                    "C     C")
-                            .aisle(
-                                    "EEEEEEE",
-                                    "AAAAAAA",
-                                    "  D D  ",
-                                    "  D D  ",
-                                    "  DDD  ",
-                                    "  DDD  ",
-                                    "       ",
-                                    "C     C")
-                            .aisle(
-                                    "EEEEEEE",
-                                    "AAAAAAA",
-                                    "  DDD  ",
-                                    "  DDD  ",
-                                    "  DDD  ",
-                                    "  DDD  ",
-                                    "       ",
-                                    "C     C")
-                            .aisle(
-                                    "EEEEEEE",
-                                    "ACCCCCA",
-                                    "AAA~AAA",
-                                    "AAAAAAA",
-                                    "C     C",
-                                    "C     C",
-                                    "C     C",
-                                    "CCCCCCC")
+                            .aisle("EEEEE", "ADADA", "ADADA", "ADADA", "AAAAA", "     ")
+                            .aisle("EEEEE", "DBCBD", "DCBCD", "DBCBD", "A   A", "AAAAA")
+                            .aisle("EEEEE", "ACBCA", "ABCBA", "ACBCA", "A   A", "A   A")
+                            .aisle("EEEEE", "DBCBD", "DCBCD", "DBCBD", "A   A", "A   A")
+                            .aisle("EEEEE", "AAAAA", "AAAAA", "AAAAA", "AAAAA", "     ")
+                            .aisle("EEEEE", "DAAAD", "DACAD", "DAAAD", "     ", "     ")
+                            .aisle(" EEE ", " A~A ", " AAA ", "     ", "     ", "     ")
                             .where('~', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .where('A', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1)))
-                            .where('B', blocks(GTBlocks.CASING_STEEL_SOLID.get()))
-                            .where('C', blocks(GTBlocks.CASING_BRONZE_BRICKS.get()))
-                            .where('D', blocks(GTBlocks.CASING_STEEL_SOLID.get()))
-                            .where('E', blocks(GTBlocks.CASING_BRONZE_BRICKS.get()))
+                            .where('B', SteamMultiMachineBase.gearboxCasing())
+                            .where('C', SteamMultiMachineBase.pipeCasing())
+                            .where('D', SteamMultiMachineBase.frameCasing())
+                            .where('E', SteamMultiMachineBase.casing())
                             .where(' ', Predicates.any())
                             .build())
                     .tooltipBuilder(GTNA_ADD)
@@ -371,93 +279,33 @@ public class GTNAMachines {
                     .recipeModifier(LargeSteamFurnace::recipeModifier)
                     .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
                     .pattern(definition -> FactoryBlockPattern.start()
-                            .aisle(
-                                    "F_______F",
-                                    "D_______D",
-                                    "D_______D",
-                                    "D_______D",
-                                    "D_______D",
-                                    "D_______D",
-                                    "D_______D",
-                                    "F_______F")
-                            .aisle(
-                                    "FGGGGGGGF",
-                                    "DAAAAAAAD",
-                                    "DAAAAAAAD",
-                                    "DAAAAAAAD",
-                                    "DAAAAAAAD",
-                                    "DAAAAAAAD",
-                                    "DAAAAAAAD",
-                                    "FGGGGGGGF")
-                            .aisle(
-                                    "FGGGGGGGF",
-                                    "DABBBBBAD",
-                                    "DAHHHHHAD",
-                                    "DAHHHHHAD",
-                                    "DAHHHHHAD",
-                                    "DAHHHHHAD",
-                                    "DABBBBBAD",
-                                    "FGGGGGGGF")
-                            .aisle(
-                                    "FGGGGGGGF",
-                                    "DABBBBBAD",
-                                    "DAHDDDHAD",
-                                    "DAH   HAD",
-                                    "DAH   HAD",
-                                    "DAHDDDHAD",
-                                    "DABBBBBAD",
-                                    "FGGGGGGGF")
-                            .aisle(
-                                    "FGGGGGGGF",
-                                    "DABBBBBAD",
-                                    "DAHDDDHAD",
-                                    "DAH   HAD",
-                                    "DAH   HAD",
-                                    "DAHDDDHAD",
-                                    "DABBBBBAD",
-                                    "FGGGGGGGF")
-                            .aisle(
-                                    "FGGGGGGGF",
-                                    "DABBBBBAD",
-                                    "DAHDDDHAD",
-                                    "DAH   HAD",
-                                    "DAH   HAD",
-                                    "DAHDDDHAD",
-                                    "DABBBBBAD",
-                                    "FGGGGGGGF")
-                            .aisle(
-                                    "FGGGGGGGF",
-                                    "DAAAAAAAD",
-                                    "DAHHHHHAD",
-                                    "DAHHHHHAD",
-                                    "DAHHHHHAD",
-                                    "DAHHHHHAD",
-                                    "DAAAAAAAD",
-                                    "FGGGGGGGF")
-                            .aisle(
-                                    "FFFFFFFFF",
-                                    "DAAAAAAAD",
-                                    "DAAAAAAAD",
-                                    "DAAASAAAD",
-                                    "DAAAAAAAD",
-                                    "DAAAAAAAD",
-                                    "DAAAAAAAD",
-                                    "FFFFFFFFF")
-                            .where('S', Predicates.controller(Predicates.blocks(definition.get())))
-                            .where('A', Predicates.blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .aisle(" CCCCC ", " AAAAA ", " DDDDD ", "  D D  ", "  D D  ", "  D D  ", "  D D  ",
+                                    "       ")
+                            .aisle("CEEEEEC", "AFFFFFA", "DFFFFFD", " FFFFF ", " FFFFF ", " FFFFF ", " FFFFF ",
+                                    "  F F  ")
+                            .aisle("CEEEEEC", "AFFFFFA", "DF F FD", " F F F ", " F F F ", " F F F ", " F F F ",
+                                    " F F F ")
+                            .aisle("CEEEEEC", "AFFFFFA", "DFFFFFD", " FFFFF ", " FFFFF ", " FFFFF ", " FFFFF ",
+                                    "  F F  ")
+                            .aisle("CEEEEEC", "AAAAAAA", "DABBBAD", " ABBBA ", "  BBB  ", "  BBB  ", "       ",
+                                    "       ")
+                            .aisle("CEEEEEC", "AAAAAAA", "DAB BAD", " AB BA ", " DB BD ", " DB BD ", "       ",
+                                    "       ")
+                            .aisle("CEEEEEC", "AAAAAAA", "DABBBAD", " ABBBA ", "  BBB  ", "  BBB  ", "       ",
+                                    "       ")
+                            .aisle(" CCCCC ", " AAAAA ", " DA~AD ", "  AAA  ", "  AAA  ", "       ", "       ",
+                                    "       ")
+                            .where('~', controller(blocks(definition.get())))
+                            .where('A', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1)))
-                            .where('B', Predicates.blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
-                            .where('C', Predicates.blocks(GTBlocks.CASING_BRONZE_GEARBOX.get()))
-                            .where('D',
-                                    Predicates.blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
-                            .where('E', Predicates.blocks(GTBlocks.CASING_STEEL_SOLID.get()))
-                            .where('F', Predicates.blocks(GTBlocks.CASING_BRONZE_BRICKS.get()))
-                            .where('G', Predicates.blocks(Blocks.STONE_BRICKS))
-                            .where('H', Predicates.blocks(GTBlocks.CASING_STEEL_SOLID.get()))
-                            .where(' ', Predicates.air())
-                            .where('_', Predicates.any())
+                            .where('B', SteamMultiMachineBase.pipeCasing())
+                            .where('C', SteamMultiMachineBase.fireboxCasing())
+                            .where('D', SteamMultiMachineBase.frameCasing())
+                            .where('E', SteamMultiMachineBase.casing())
+                            .where('F', SteamMultiMachineBase.casing())
+                            .where(' ', Predicates.any())
                             .build())
                     .workableCasingModel(GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
                             GTCEu.id("block/multiblock/steam_oven"))
@@ -508,7 +356,7 @@ public class GTNAMachines {
                             .aisle(
                                     "BBB",
                                     "A A",
-                                    "A A",
+                                    "AAA",
                                     "AAA")
                             .aisle(
                                     "BBB",
@@ -520,7 +368,7 @@ public class GTNAMachines {
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1)))
-                            .where('B', blocks(GTBlocks.FIREBOX_BRONZE.get()))
+                            .where('B', SteamMultiMachineBase.fireboxCasing())
                             .where(' ', any())
                             .build())
                     .workableCasingModel(
@@ -575,12 +423,12 @@ public class GTNAMachines {
                                     "       ",
                                     "       ", "       ", "   A   ", "  AAA  ", "  AAA  ")
                             .where('~', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .where('A', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1)))
-                            .where('B', blocks(GTBlocks.CASING_BRONZE_GEARBOX.get()))
-                            .where('C', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
+                            .where('B', SteamMultiMachineBase.gearboxCasing())
+                            .where('C', SteamMultiMachineBase.frameCasing())
                             .where('D', blocks(Blocks.IRON_BLOCK))
                             .where('E', blocks(Blocks.GLASS))
                             .where(' ', Predicates.air())
@@ -620,12 +468,12 @@ public class GTNAMachines {
                             .aisle(" AAAAA ", " ABBBA ", " CEEEC ", " CEEEC ", " CEEEC ", " ABBBA ", " AAAAA ")
                             .aisle("  AAA  ", "  A~A  ", "       ", "       ", "       ", "  AAA  ", "  AAA  ")
                             .where('~', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .where('A', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1)))
-                            .where('B', blocks(GTBlocks.CASING_BRONZE_GEARBOX.get()))
-                            .where('C', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
+                            .where('B', SteamMultiMachineBase.gearboxCasing())
+                            .where('C', SteamMultiMachineBase.frameCasing())
                             .where('D', blocks(Blocks.IRON_BLOCK))
                             .where('E', blocks(Blocks.GLASS))
                             .where(' ', Predicates.air())
@@ -662,10 +510,10 @@ public class GTNAMachines {
                             .aisle("C   C", "DDCDD", "DAAAD", "DB BD", "DD DD")
                             .aisle("C   C", "DD~DD", "DAAAD", "DDDDD", " DDD ")
                             .where('~', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.CASING_BRONZE_GEARBOX.get()))
-                            .where('B', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
-                            .where('C', blocks(Blocks.GLASS))
-                            .where('D', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .where('A', SteamMultiMachineBase.gearboxCasing())
+                            .where('B', SteamMultiMachineBase.pipeCasing())
+                            .where('C', SteamMultiMachineBase.frameCasing())
+                            .where('D', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1)))
@@ -697,24 +545,25 @@ public class GTNAMachines {
                     .recipeModifier(LargeSteamOreWasher::recipeModifier)
                     .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
                     .pattern(definition -> FactoryBlockPattern.start()
-                            .aisle("AAAAAAAAA", "AAAAAAAAA", "AAAAAAAAA", "AAAAAAAAA", "AAAAAAAAA")
-                            .aisle("AAAAAAAAA", "A   B   A", "A       A", "A       A", "ACCCCCCCA")
-                            .aisle("AAAAAAAAA", "A   B   A", "A       A", "A       A", "ACCCCCCCA")
-                            .aisle("AAAAAAAAA", "A   B   A", "A   B   A", "A       A", "ACCCCCCCA")
-                            .aisle("AAAAAAAAA", "ABBBBBBBA", "A  BBB  A", "A       A", "ACCCCCCCA")
-                            .aisle("AAAAAAAAA", "A   B   A", "A   B   A", "A       A", "ACCCCCCCA")
-                            .aisle("AAAAAAAAA", "A   B   A", "A       A", "A       A", "ACCCCCCCA")
-                            .aisle("AAAAAAAAA", "A   B   A", "A       A", "A       A", "ACCCCCCCA")
-                            .aisle("AAAA~AAAA", "AAAAAAAAA", "AAAAAAAAA", "AAAAAAAAA", "AAAAAAAAA")
+                            .aisle("BBBBB", "DBBBD", "DBBBD", "D   D", " DDD ", " BBB ")
+                            .aisle("BBBBB", "ABBBA", "ACCCA", "ABBBA", "DBBBD", "B   B")
+                            .aisle("BBBBB", "AB BA", "AC CA", "AB BA", "DB BD", "B   B")
+                            .aisle("BBBBB", "ABBBA", "ACCCA", "ABBBA", "DBBBD", "B   B")
+                            .aisle("BBBBB", "DBBBD", "DCCCD", "D   D", " DDD ", " BBB ")
+                            .aisle("BBBBB", "B C B", "B   B", "     ", "     ", "     ")
+                            .aisle("BBBBB", "BCCCB", "B   B", "     ", "     ", "     ")
+                            .aisle("BBBBB", "B C B", "B   B", "     ", "     ", "     ")
+                            .aisle(" BBB ", " B~B ", " BBB ", "     ", "     ", "     ")
                             .where('~', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .where('A', blocks(Blocks.GLASS))
+                            .where('B', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1))
                                     .or(abilities(IMPORT_FLUIDS).setPreviewCount(1)))
-                            .where('B', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
-                            .where('C', blocks(Blocks.GLASS))
-                            .where(' ', Predicates.air())
+                            .where('C', SteamMultiMachineBase.pipeCasing())
+                            .where('D', SteamMultiMachineBase.frameCasing())
+                            .where(' ', Predicates.any())
                             .build())
                     .workableCasingModel(
                             GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
@@ -741,22 +590,20 @@ public class GTNAMachines {
                     .recipeType(GTRecipeTypes.CIRCUIT_ASSEMBLER_RECIPES)
                     .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
                     .pattern(definition -> FactoryBlockPattern.start()
-                            .aisle("AAA", "AAA", "DDD", " D ")
-                            .aisle("AAA", "ABA", "DCD", " D ")
-                            .aisle("AAA", "ABA", "DCD", " D ")
-                            .aisle("AAA", "ABA", "DCD", " D ")
-                            .aisle("AAA", "ABA", "DCD", " D ")
-                            .aisle("AAA", "ABA", "DCD", " D ")
-                            .aisle("AAA", "ABA", "DCD", " D ")
-                            .aisle("AAA", "ABA", "DCD", " D ")
-                            .aisle("AAA", "ABA", "DCD", " D ")
-                            .aisle("AAA", "ASA", "DDD", " D ")
-                            .where('S', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
-                                    .or(abilities(PartAbility.STEAM).setExactLimit(1)))
-                            .where('B', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
-                            .where('C', blocks(GTNABlocks.STEAM_ASSEMBLY_BLOCK.get()))
-                            .where('D', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .aisle("BBB", "BBB", "BBB", " B ")
+                            .aisle("BBB", "BCB", "BAB", " B ")
+                            .aisle("BBB", "BCB", "BAB", " B ")
+                            .aisle("BBB", "BCB", "BAB", " B ")
+                            .aisle("BBB", "BCB", "BAB", " B ")
+                            .aisle("BBB", "BCB", "BAB", " B ")
+                            .aisle("BBB", "BCB", "BAB", " B ")
+                            .aisle("BBB", "BCB", "BAB", " B ")
+                            .aisle("BBB", "BCB", "BAB", " B ")
+                            .aisle("BBB", "B~B", "BBB", " B ")
+                            .where('~', controller(blocks(definition.get())))
+                            .where('A', blocks(GTNABlocks.STEAM_ASSEMBLY_BLOCK.get()))
+                            .where('B', SteamMultiMachineBase.casing()
+                                    .or(abilities(PartAbility.STEAM).setExactLimit(1))
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1)
                                             .setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1)
@@ -764,6 +611,7 @@ public class GTNAMachines {
                                     .or(abilities(IMPORT_FLUIDS).setMaxGlobalLimited(2))
                                     .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(2))
                                     .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(1)))
+                            .where('C', SteamMultiMachineBase.pipeCasing())
                             .where(' ', any())
                             .build())
                     .workableCasingModel(
@@ -789,26 +637,15 @@ public class GTNAMachines {
                     .recipeType(GTRecipeTypes.MIXER_RECIPES)
                     .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
                     .pattern(definition -> FactoryBlockPattern.start()
-                            .aisle(" AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ",
-                                    " AAAAAAA ")
-                            .aisle("AAAAAAAAA", "AA     AA", "AA     AA", "AA     AA", "AA     AA", "AA     AA",
-                                    "AA  B  AA")
-                            .aisle("AAAAAAAAA", "A       A", "A   C   A", "A       A", "A   C   A", "A       A",
-                                    "A   B   A")
-                            .aisle("AAAAAAAAA", "A       A", "A   C   A", "A       A", "A   C   A", "A       A",
-                                    "A   B   A")
-                            .aisle("AAAAAAAAA", "A   D   A", "A CCCCC A", "A   D   A", "A CCCCC A", "A   D   A",
-                                    "ABBBBBBBA")
-                            .aisle("AAAAAAAAA", "A       A", "A   C   A", "A       A", "A   C   A", "A       A",
-                                    "A   B   A")
-                            .aisle("AAAAAAAAA", "A       A", "A   C   A", "A       A", "A   C   A", "A       A",
-                                    "A   B   A")
-                            .aisle("AAAAAAAAA", "AA     AA", "AA     AA", "AA     AA", "AA     AA", "AA     AA",
-                                    "AA  B  AA")
-                            .aisle(" AAAAAAA ", " AAASAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ", " AAAAAAA ",
-                                    " AAAAAAA ")
-                            .where('S', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .aisle("  DDD  ", "  EAE  ", "  EAE  ", "  EAE  ", "  EAE  ", "  EAE  ", "  DDD  ")
+                            .aisle(" DAAAD ", " AFBFA ", " AFBFA ", " AFBFA ", " AFBFA ", " AFBFA ", " DAAAD ")
+                            .aisle("DAAAAAD", "EF C FE", "EFCCCFE", "EFB BFE", "EFCCCFE", "EF   FE", "DAAAAAD")
+                            .aisle("DAAAAAD", "ABCCCBA", "ABCCCBA", "AB B BA", "ABCCCBA", "AB C BA", "DAAAAAD")
+                            .aisle("DAAAAAD", "EF C FE", "EFCCCFE", "EFB BFE", "EFCCCFE", "EF   FE", "DAAAAAD")
+                            .aisle(" DAAAD ", " AFBFA ", " AFBFA ", " AFBFA ", " AFBFA ", " AFBFA ", " DAAAD ")
+                            .aisle("  DDD  ", "  EAE  ", "  EAE  ", "  E~E  ", "  EAE  ", "  EAE  ", "  DDD  ")
+                            .where('~', controller(blocks(definition.get())))
+                            .where('A', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1))
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
@@ -816,9 +653,11 @@ public class GTNAMachines {
                                     .or(abilities(EXPORT_FLUIDS).setMaxGlobalLimited(1))
                                     .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(4))
                                     .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(1)))
-                            .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
-                            .where('C', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
-                            .where('D', blocks(GTBlocks.CASING_BRONZE_GEARBOX.get()))
+                            .where('B', SteamMultiMachineBase.gearboxCasing())
+                            .where('C', SteamMultiMachineBase.pipeCasing())
+                            .where('D', SteamMultiMachineBase.fireboxCasing())
+                            .where('E', blocks(Blocks.GLASS))
+                            .where('F', SteamMultiMachineBase.casing())
                             .where(' ', any())
                             .build())
                     .workableCasingModel(
@@ -844,19 +683,22 @@ public class GTNAMachines {
                     .recipeType(GTRecipeTypes.CENTRIFUGE_RECIPES)
                     .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
                     .pattern(definition -> FactoryBlockPattern.start()
-                            .aisle("           ", "   AAAAA   ", "  AAAAAAA  ", "   AAAAA   ", "           ")
-                            .aisle("  AAAAAAA  ", "  A     A  ", " AB     BA ", "  A     A  ", "  AAAAAAA  ")
-                            .aisle(" AAAAAAAAA ", " A       A ", "AB   C   BA", " A       A ", " AAAAAAAAA ")
-                            .aisle(" AAAAAAAAA ", "A         A", "A    C    A", "A         A", " AAAAAAAAA ")
-                            .aisle(" AAAAAAAAA ", "A    E    A", "A    C    A", "A         A", " AAAAAAAAA ")
-                            .aisle(" AAAAAAAAA ", "A   ECE   A", "A CCCCCCC A", "A    C    A", " AAAAFAAAA ")
-                            .aisle(" AAAAAAAAA ", "A    E    A", "A    C    A", "A         A", " AAAAAAAAA ")
-                            .aisle(" AAAAAAAAA ", "A         A", "A    C    A", "A         A", " AAAAAAAAA ")
-                            .aisle(" AAAAAAAAA ", " A       A ", "AB   C   BA", " A       A ", " AAAAAAAAA ")
-                            .aisle("  AAAAAAA  ", "  A     A  ", " AB     BA ", "  A     A  ", "  AAAAAAA  ")
-                            .aisle("           ", "   AAAAA   ", "  AAASAAA  ", "   AAAAA   ", "           ")
-                            .where('S', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .aisle("  AAA  ", "  AEA  ", "  AEA  ", "  AEA  ", "  AEA  ", "  AEA  ", "  AEA  ",
+                                    "  AEA  ", "  AAA  ", "       ")
+                            .aisle(" AAAAA ", " DC CD ", " DB BD ", " DC CD ", " DB BD ", " DC CD ", " DB BD ",
+                                    " DC CD ", " AAAAA ", "  AAA  ")
+                            .aisle("AAAAAAA", "AC   CA", "AB   BA", "AC   CA", "AB   BA", "AC   CA", "AB   BA",
+                                    "AC   CA", "AA   AA", " AAAAA ")
+                            .aisle("AAAAAAA", "E     E", "E     E", "E     E", "E     E", "E     E", "E     E",
+                                    "E     E", "A     A", " AABAA ")
+                            .aisle("AAAAAAA", "AC   CA", "AB   BA", "AC   CA", "AB   BA", "AC   CA", "AB   BA",
+                                    "AC   CA", "AA   AA", " AAAAA ")
+                            .aisle(" AAAAA ", " DC CD ", " DB BD ", " DC CD ", " DB BD ", " DC CD ", " DB BD ",
+                                    " DC CD ", " AAAAA ", "  AAA  ")
+                            .aisle("  A~A  ", "  AEA  ", "  AEA  ", "  AEA  ", "  AEA  ", "  AEA  ", "  AEA  ",
+                                    "  AEA  ", "  AAA  ", "       ")
+                            .where('~', controller(blocks(definition.get())))
+                            .where('A', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1))
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
@@ -864,10 +706,10 @@ public class GTNAMachines {
                                     .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(4))
                                     .or(abilities(IMPORT_FLUIDS).setMaxGlobalLimited(1))
                                     .or(abilities(EXPORT_FLUIDS).setMaxGlobalLimited(4)))
-                            .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
-                            .where('C', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
-                            .where('E', blocks(GTBlocks.CASING_BRONZE_GEARBOX.get()))
-                            .where('F', abilities(MUFFLER).setExactLimit(1))
+                            .where('B', SteamMultiMachineBase.gearboxCasing())
+                            .where('C', SteamMultiMachineBase.pipeCasing())
+                            .where('D', SteamMultiMachineBase.frameCasing())
+                            .where('E', blocks(Blocks.GLASS))
                             .where(' ', any())
                             .build())
                     .workableCasingModel(
@@ -893,24 +735,23 @@ public class GTNAMachines {
                     .recipeType(GTRecipeTypes.THERMAL_CENTRIFUGE_RECIPES)
                     .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
                     .pattern(definition -> FactoryBlockPattern.start()
-                            .aisle(" AAAAA ", " BBBBB ", " BBBBB ", " BBBBB ", "       ")
-                            .aisle("ABBABBA", "BC   CB", "BC   CB", "BC   CB", " BBBBB ")
-                            .aisle("ABAAABA", "B     B", "B     B", "B     B", " BBBBB ")
-                            .aisle("AAAAAAA", "B  D  B", "B  D  B", "B  D  B", " BBEBB ")
-                            .aisle("ABAAABA", "B     B", "B     B", "B     B", " BBBBB ")
-                            .aisle("ABBABBA", "BC   CB", "BC   CB", "BC   CB", " BBBBB ")
-                            .aisle(" AAAAA ", " BBBBB ", " BBSBB ", " BBBBB ", "       ")
-                            .where('S', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.FIREBOX_BRONZE.get()))
-                            .where('B', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .aisle(" CCCCC ", " AAAAA ", " AAAAA ", " AAAAA ", "       ")
+                            .aisle("CAACAAC", "AD   DA", "AD   DA", "AD   DA", " AAAAA ")
+                            .aisle("CACCCAC", "A     A", "A     A", "A     A", " AAAAA ")
+                            .aisle("CCCCCCC", "A  B  A", "A  B  A", "A  B  A", " AAAAA ")
+                            .aisle("CACCCAC", "A     A", "A     A", "A     A", " AAAAA ")
+                            .aisle("CAACAAC", "AD   DA", "AD   DA", "AD   DA", " AAAAA ")
+                            .aisle(" CCCCC ", " AAAAA ", " AA~AA ", " AAAAA ", "       ")
+                            .where('~', controller(blocks(definition.get())))
+                            .where('A', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1))
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(3)))
-                            .where('C', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
-                            .where('D', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
-                            .where('E', abilities(MUFFLER).setExactLimit(1))
+                            .where('B', SteamMultiMachineBase.pipeCasing())
+                            .where('C', SteamMultiMachineBase.fireboxCasing())
+                            .where('D', SteamMultiMachineBase.frameCasing())
                             .where(' ', any())
                             .build())
                     .workableCasingModel(
@@ -936,28 +777,23 @@ public class GTNAMachines {
                     .recipeType(GTRecipeTypes.CHEMICAL_BATH_RECIPES)
                     .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
                     .pattern(definition -> FactoryBlockPattern.start()
-                            .aisle("AAAAAAAAA", "AAAAAAAAA", "AAAAAAAAA", "AAAAAAAAA", "AAAAAAAAA")
-                            .aisle("AAAAAAAAA", "ABBBBBBBA", "ABBBDBBBA", "ABBBBBBBA", "AAAAAAAAA")
-                            .aisle("AAAAAAAAA", "AB     BA", "AB  D  BA", "AB     BA", "AACCCCCAA")
-                            .aisle("AAAAAAAAA", "AB     BA", "A   D   A", "AB     BA", "AACCCCCAA")
-                            .aisle("AAAAAAAAA", "AB     BA", "A   D   A", "AB     BA", "AACCCCCAA")
-                            .aisle("AAAAAAAAA", "AB     BA", "A   D   A", "AB     BA", "AACCCCCAA")
-                            .aisle("AAAAAAAAA", "AB     BA", "A   D   A", "AB     BA", "AACCCCCAA")
-                            .aisle("AAAAAAAAA", "AB     BA", "AB  D  BA", "AB     BA", "AACCCCCAA")
-                            .aisle("AAAAAAAAA", "ABBBBBBBA", "ABBBDBBBA", "ABBBBBBBA", "AAAAAAAAA")
-                            .aisle("AAAAAAAAA", "AAAAAAAAA", "AAAASAAAA", "AAAAAAAAA", "AAAAAAAAA")
-                            .where('S', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .aisle("BBBBBBB", "BBBBAAB", " BBBAAB", "  BAAAB", "   BBB ", "       ")
+                            .aisle("BBBBBBB", "BBBCCCA", " BBCCCA", "  BCCCA", "  B   B", "       ")
+                            .aisle("BBBBBBB", "DBBC CA", "DBBC CA", "D BC CA", "D B D B", "DDDDD  ")
+                            .aisle("BBBBBBB", "BBBCCCA", " BBCCCA", "  BCCCA", "  B   B", "       ")
+                            .aisle("BBBBBBB", "BB~BAAB", " BBBAAB", "  BAAAB", "   BBB ", "       ")
+                            .where('~', controller(blocks(definition.get())))
+                            .where('A', blocks(Blocks.GLASS))
+                            .where('B', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1))
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(3))
                                     .or(abilities(IMPORT_FLUIDS).setMaxGlobalLimited(1)))
-                            .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
-                            .where('C', blocks(Blocks.GLASS))
-                            .where('D', blocks(ChemicalHelper.getBlock(TagPrefix.block, GTMaterials.Potin)))
-                            .where(' ', air())
+                            .where('C', SteamMultiMachineBase.pipeCasing())
+                            .where('D', SteamMultiMachineBase.frameCasing())
+                            .where(' ', any())
                             .build())
                     .workableCasingModel(
                             GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
@@ -1045,17 +881,17 @@ public class GTNAMachines {
                             .aisle("BAAAAAB", "BADDDAB", " AHHHA ", " EFFFE ")
                             .aisle(" BBBBB ", "  B~B  ", "       ", "       ")
                             .where('~', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get()))
-                            .where('B', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .where('A', SteamMultiMachineBase.casing())
+                            .where('B', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1))
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(2)))
-                            .where('C', blocks(GTBlocks.CASING_BRONZE_GEARBOX.get()))
-                            .where('D', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
-                            .where('E', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
-                            .where('F', blocks(GTBlocks.CASING_BRONZE_BRICKS.get()))
+                            .where('C', SteamMultiMachineBase.gearboxCasing())
+                            .where('D', SteamMultiMachineBase.pipeCasing())
+                            .where('E', SteamMultiMachineBase.frameCasing())
+                            .where('F', SteamMultiMachineBase.frameCasing())
                             .where('G', blocks(Blocks.IRON_BLOCK))
                             .where('H', blocks(Blocks.GLASS))
                             .where(' ', any())
@@ -1089,19 +925,19 @@ public class GTNAMachines {
                             .aisle("AAFFFFFAA", "AAG   GAA", " AE C EA ", "  BGGGB  ")
                             .aisle(" GBBBBBG ", " GBB~BBG ", "  GEEEG  ", "   BBB   ")
                             .where('~', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get()))
-                            .where('B', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .where('A', SteamMultiMachineBase.casing())
+                            .where('B', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1))
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(2))
                                     .or(abilities(IMPORT_FLUIDS).setMaxGlobalLimited(1)))
-                            .where('C', blocks(GTBlocks.CASING_BRONZE_GEARBOX.get()))
-                            .where('D', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
-                            .where('E', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Bronze)))
-                            .where('F', blocks(Blocks.BRICKS))
-                            .where('G', blocks(GTBlocks.CASING_BRONZE_BRICKS.get()))
+                            .where('C', SteamMultiMachineBase.gearboxCasing())
+                            .where('D', SteamMultiMachineBase.pipeCasing())
+                            .where('E', SteamMultiMachineBase.frameCasing())
+                            .where('F', SteamMultiMachineBase.casing())
+                            .where('G', SteamMultiMachineBase.frameCasing())
                             .where('H', blocks(Blocks.DIAMOND_BLOCK))
                             .where(' ', any())
                             .build())
@@ -1387,16 +1223,16 @@ public class GTNAMachines {
                             .aisle("AAAAA", "ABCBA", "AAAAA")
                             .aisle("AAAAA", " C C ", "AAAAA")
                             .aisle("AAAAA", "ABCBA", "AAAAA")
-                            .aisle(" AAA ", " A A ", " A~A ")
+                            .aisle(" A~A ", " A A ", " AAA ")
                             .where('~', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .where('A', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1))
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(IMPORT_ITEMS).setMaxGlobalLimited(1))
                                     .or(abilities(EXPORT_ITEMS).setMaxGlobalLimited(1)))
-                            .where('B', blocks(GTBlocks.CASING_BRONZE_GEARBOX.get()))
-                            .where('C', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
+                            .where('B', SteamMultiMachineBase.gearboxCasing())
+                            .where('C', SteamMultiMachineBase.pipeCasing())
                             .where(' ', any())
                             .build())
                     .workableCasingModel(
