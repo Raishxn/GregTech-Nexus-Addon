@@ -7,19 +7,23 @@ The **Accelerate Hatch** reduces the duration of ALL recipes in a multiblock. Hi
 ## Available Tiers
 | Tier | Min Duration (%) | Formula |
 |------|:-:|---------|
-| LV | 48% of original | `50 - 2x(1-1) = 48%` |
-| MV | 46% | `50 - 2x(2-1) = 46%` |
-| HV | 44% | `50 - 2x(3-1) = 44%` |
-| EV | 42% | `50 - 2x(4-1) = 42%` |
-| IV | 40% | `50 - 2x(5-1) = 40%` |
-| LuV | 38% | `50 - 2x(6-1) = 38%` |
-| ZPM | 36% | `50 - 2x(7-1) = 36%` |
-| UV | 34% | `50 - 2x(8-1) = 34%` |
-| UHV | 32% | `50 - 2x(9-1) = 32%` |
-| UEV | 30% | `50 - 2x(10-1) = 30%` |
-| UIV | 28% | `50 - 2x(11-1) = 28%` |
-| UXV | 26% | `50 - 2x(12-1) = 26%` |
-| OpV | 24% | `50 - 2x(13-1) = 24%` |
+| LV | 50% of original | `50 - 2x(1-1) = 50%` |
+| MV | 48% | `50 - 2x(2-1) = 48%` |
+| HV | 46% | `50 - 2x(3-1) = 46%` |
+| EV | 44% | `50 - 2x(4-1) = 44%` |
+| IV | 42% | `50 - 2x(5-1) = 42%` |
+| LuV | 40% | `50 - 2x(6-1) = 40%` |
+| ZPM | 38% | `50 - 2x(7-1) = 38%` |
+| UV | 36% | `50 - 2x(8-1) = 36%` |
+| UHV | 34% | `50 - 2x(9-1) = 34%` |
+| UEV | 32% | `50 - 2x(10-1) = 32%` |
+| UIV | 30% | `50 - 2x(11-1) = 30%` |
+| UXV | 28% | `50 - 2x(12-1) = 28%` |
+| OpV | 26% | `50 - 2x(13-1) = 26%` |
+| MAX | 24% | `50 - 2x(14-1) = 24%` |
+
+> Equivalent to GTOCore's formula (`52 - 2xtier`): the value is the **minimum** duration percentage
+> (no penalty); the absolute floor is 1% and the ceiling 100% (config `accelerateHatch`).
 
 ## Detailed Mechanics
 ### Base Formula
@@ -27,20 +31,28 @@ The **Accelerate Hatch** reduces the duration of ALL recipes in a multiblock. Hi
 Reduced_Duration = Base_Duration x (Percentage / 100)
 ```
 ### Tier Penalty
-If the Accelerate Hatch tier is **lower** than the machine tier, efficiency decreases:
+The penalty follows the **recipe**, not the machine (same as GTOCore): a high-tier hatch in a
+high-tier machine is **not** punished for running low-tier recipes. It only applies when the
+**recipe** tier is above the hatch tier:
 ```
-Penalized_Percentage = Min_Percentage + (TierDiff x 20)
+Penalized_Percentage = Base_Percentage + max(0, Recipe_Tier - Hatch_Tier) x 20
 Maximum: 100% (no effect)
 ```
 
 !!! example
-    **HV Accelerate Hatch** on **EV** machine:
-    - Base: 44%, TierDiff: 1
-    - With penalty: 44% + (1 x 20) = 64%
-    - 100 tick recipe -> 64 ticks
+    **HV Accelerate Hatch** running an **EV** recipe:
+    - Base: 46%, TierDiff: 1
+    - With penalty: 46% + (1 x 20) = 66%
+    - 100 tick recipe -> 66 ticks
 
 !!! warning
-    Using an Accelerate Hatch with tier much lower than the machine will have almost no effect.
+    Using an Accelerate Hatch with a tier much lower than the recipes will have almost no effect.
 
 ## Compatibility
-Works on any multiblock using `WorkableElectricMultipleRecipesMachine`.
+Works on **any electric multiblock** that accepts the `ACCELERATE_HATCH` ability (all GTCEu/GTNA
+electric multiblocks get it via `autoAbilities`), through both the multiple-recipes logic and the
+global `RecipeLogic` mixin. The effect is applied **exactly once** per recipe.
+
+!!! note "GTOCore parity"
+    The penalty uses the recipe's **pre-overclock** tier (`recipeTier - hatchTier`), exactly like
+    GTOCore. The machine tier is not part of the calculation.

@@ -1,5 +1,44 @@
 # Changelog
 
+## [0.4.0] - 2026-09-21
+
+### Added
+- **Universal Factory** (GTNA-native port of GTLsupb, LGPLv3): 32 recipe types, cross-recipe
+  threads, warmup/overload/batch processing, and the new `universal_factory_casing`.
+- **Primitive Stone Furnace** (GTLsupb port): zero-energy multiblock that smelts with effectively
+  unlimited threads and parallel.
+- **Thread Hatch** wiring: the Industrial Slaughterhouse and the Dimensionally Transcendent Dirt
+  Forge are now on the multiple-recipes base and accept the Thread Hatch.
+- **Source attribution in tooltips**: ported machines now show `Source: <addon>` (GTO, GTNL, TST,
+  GTLsupb, GTOEPP), and `THIRD_PARTY_NOTICES.md` documents the license of every source.
+
+### Changed
+- **Accelerate Hatch**: penalty now uses the recipe's pre-overclock tier (GTO parity — a low-tier
+  recipe in a high-tier machine is not punished), the amount is player-configurable, and the
+  tooltips follow the GTO wording.
+- **Overclock Hatch**: parity with GTOCore (`100 / (tier - 6) %`, configurable).
+- **Industrial Slaughterhouse** migrated to `WorkableElectricMultipleRecipesMachine`.
+- **Dimensionally Transcendent Dirt Forge** migrated to the multiple-recipes base as a zero-energy
+  machine (`getMaxParallel()` = 524288, 1-tick duration).
+- **Large Steam Solar Boiler** is the single solar boiler; the duplicate Mega Pressure Solar Boiler
+  (class, config, balance, lang, docs and recipes) was removed and the Hyper Pressure Reactor recipe
+  now uses the large one.
+- Configurable amounts for the Accelerate/Overclock/Thread hatches, with GTO-style tooltips.
+
+### Fixed
+- **Output Boost** double application (M→M²) on the multiple-recipes base.
+- **Pattern buffer** crashes: tier-index guard in `WorkableElectricMultipleRecipesMachine`
+  display text, NPE guard in `PatternSlotResolver`, and scaled-input push in
+  `ParallelPatternDetails`.
+- **Dedicated server** crash: two client-only leaks in common code.
+- **Jade** config translation crash for the pattern buffer provider.
+- Nine config options that rendered as raw lang keys.
+- Zero-energy parallel computation bypassing GT's `ParallelLogic.getMaxByInput`.
+
+### QA
+- GameTest harness plus structure/behaviour tests (16 gametests) and 12 unit tests, all gated in CI.
+- `runData` determinism check in CI.
+
 ## [0.3.2-dev] - 2026-04-25
 
 ### Added

@@ -32,7 +32,7 @@ Plate, Rod, Long Rod, Bolt/Screw, Frame, Gear, Small Gear, Ring, Round, Spring, 
 ### Usos Principales
 - **Breel Pipe Casing** - interior del Steam Manufacturer
 - **Breel Plated Casing** - usado en Steam Manufacturer y Hydraulic Press
-- **Hyper Pressure Breel Casing** - Mega Solar Boiler
+- **Hyper Pressure Breel Casing** - Large Steam Solar Boiler
 
 ---
 

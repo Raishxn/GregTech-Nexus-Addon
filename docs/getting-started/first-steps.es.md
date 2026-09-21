@@ -9,5 +9,5 @@ El **Large Steam Alloy Smelter** es el multibloque mas simple de construir:
 1. Construye un **Steam Boiler** (GT vanilla)
 2. Construye el **Large Steam Alloy Smelter** (3x4x3 - primer multibloque GTNA)
 3. Construye el **Large Steam Furnace** (9x8x9 - 128 paralelos!)
-4. Construye el **Mega Solar Boiler** (generacion de vapor expandible)
+4. Construye el **Large Steam Solar Boiler** (generacion de vapor expandible)
 5. Transiciona a **Multibloques Electricos** para contenido late-game

@@ -11,7 +11,7 @@ R: No, KubeJS es opcional. La integracion KubeJS (v0.2.0) permitira crear maquin
 R: Si! GTNA tiene licencia LGPLv3. Sientete libre de incluirlo.
 
 ## Maquinas
-**P: Por que mi Mega Solar Boiler no produce vapor?**
+**P: Por que mi Large Steam Solar Boiler no produce vapor?**
 R: Verifica que todas las Solar Boiling Cells tengan acceso directo al cielo (sin bloques arriba) y que sea de dia con clima despejado.
 
 **P: Como cambio los modos del Slaughterhouse?**

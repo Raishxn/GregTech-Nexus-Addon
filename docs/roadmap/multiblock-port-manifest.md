@@ -70,6 +70,17 @@ These Botania-mana controllers are excluded: `mana_alloy_blast_smelter`, `base_m
 
 1. Runtime foundation, Thread Hatch correctness, Pattern Buffer modes and coiled base.
 2. Existing GTNA controller migration and regression tests.
+
+!!! warning
+
+    **Status (2026-09-21, G-0018):** rule 8 is applied **only to machines that benefit from it**. The
+    Thread Hatch foundation is correct and locked by a gametest, and the controllers that actually need
+    cross-recipe threads were migrated: **Industrial Slaughterhouse** and **Dimensionally Transcendent
+    Dirt Forge** (the latter as a zero-energy machine). The remaining controllers are **intentionally
+    not migrated**: generators (Artificial Star; its modifier scales EU generation), machines with
+    their own logic (Nexus Molecular Forge / Eye of Wood use `GTNABatchRecipeLogic`, Eye of Harmony is
+    a no-energy custom machine) and non-processors (ME Storage / Nexus ME Hypercore) do not need the
+    Thread Hatch. `CoilWorkable...` stays as the coiled base for future machines.
 3. Low/mid-tier GTO processing and generators.
 4. GTO infrastructure, research and advanced processing.
 5. GTO space systems.

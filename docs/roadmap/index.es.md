@@ -12,7 +12,7 @@ Sigue el progreso de desarrollo de GregTech Nexus Addon en tiempo real.
 - [x] **Large Steam Furnace** - 9x velocidad, 128 paralelos, 50% eficiencia
 - [x] **Large Steam Crusher** - Triturador masivo a vapor
 - [x] **Large Steam Alloy Smelter** - 64 paralelos, 43% mas rapido
-- [x] **Mega Solar Boiler** - Vapor infinito via Sol (10,000 L/s por celda)
+- [x] **Large Steam Solar Boiler** - Vapor infinito via Sol (10,000 L/s por celda)
 - [x] **Steam Cobbler** - Generador de piedra, 16 paralelos
 - [x] **Stone Superheater** - Derrite piedra en fluidos, 32 paralelos
 - [x] **Steam Manufacturer** - Ensamblador hidraulico a vapor
@@ -51,6 +51,62 @@ Sigue el progreso de desarrollo de GregTech Nexus Addon en tiempo real.
 - [ ] Plugin KubeJS registrado
 - [ ] GTNAPartAbility expuesto a scripts
 - [ ] WorkableElectricMultipleRecipesMachine via KubeJS
+
+### Estabilizacion tras reviews externas (2026-09-20)
+- [x] **BUG-EXT-001 - aislamiento del executor AE2**: las CPUs AE2 nativas conservan el
+      `CraftingCpuLogic` original; solo la CPU virtual del Nexus recibe el executor optimizado.
+      Protegido por el GameTest `nativeCraftingCpuKeepsAe2Executor`.
+- [ ] **BUG-EXT-001 - reproduccion manual**: probar autocrafting con una CPU AE2 normal y una CPU
+      virtual Nexus en una red real.
+- [x] **BUG-EXT-002 - restauracion del estado de la armadura Quantum**: la velocidad de vuelo,
+      `mayfly`, el estado de vuelo, la altura de paso y el efecto de movimiento se restauran al
+      quitar la armadura.
+- [ ] **BUG-EXT-002 - prueba interactiva**: equipar/quitar el conjunto y las botas, incluyendo
+      cambios entre survival/creative, y comprobar la visibilidad en `NORMAL` y `JOURNEY`.
+- [ ] **Visibilidad/documentacion**: aclarar en la configuracion que la armadura es restringida y
+      permanece fuera de la pestaña creativa por defecto en `NORMAL`.
+- [ ] Detalles y evidencias de validacion: [Continuity Ledger](../../CONTINUITY_LEDGER.md).
+
+### Correccion de wiring + primera capa de QA (2026-09-21)
+- [x] **Wireless Steam Input Hatch aceptado por las maquinas steam**: los patterns fijaban el slot de
+      vapor al bloque exacto del hatch del GTCEu; ahora usan la ability
+      (`abilities(PartAbility.STEAM)`), como las maquinas steam del propio GTCEu. El hatch de salida
+      dejo de declarar `STEAM`.
+- [x] **Guards nuevos**: `SteamWiringContractTest` (lint de fuente, 10º unit test) + GameTest
+      `wirelessSteamHatchIsAcceptedAsSteamSource` (7º gametest), ambos validados con prueba negativa.
+- [ ] **QA por capas**: replicar el gametest para las demas maquinas steam; mas lints de
+      registro/wiring; CI con determinismo de `runData`. Ver G-0011 en el
+      [Continuity Ledger](../../CONTINUITY_LEDGER.md).
+- [x] **Thread Hatch (G-0012)**: docs alineadas con la realidad (solo la base
+      `WorkableElectricMultipleRecipesMachine`; hoy el Duration Tester + KubeJS) y GameTest
+      `threadHatchWiresIntoMultipleRecipesMachine` fijando la fundacion.
+- [ ] **Fase 2 del manifest - migracion de los controladores** a la base multi-receta, para que el
+      Thread Hatch sea usable en una maquina de gameplay (regla 8 del
+      [manifest de port](multiblock-port-manifest.md)).
+
+### Paridad GTOCore en los hatches (2026-09-21)
+
+- [x] **Sin castigo en Accelerate**: la penalizacion ahora sigue el tier **pre-overclock de la
+      receta** (paridad GTOCore), no el tier de la maquina; funcion pura + unit test.
+- [x] **Cantidad configurable** en las hatches Accelerate, Overclock y Thread (base
+      `ConfigurableAmountPartMachine`, UI `IntInputWidget`), como el
+      `WorkableAmountConfigurationPartMachine` del GTO.
+- [x] **Tooltips estilo GTO**, explicando el efecto, la regla de penalizacion y la cantidad ajustable.
+- [x] **Test de runtime del Output Boost** (gametest completa una receta y afirma `M`, no `M^2`),
+      validado con prueba negativa.
+- [ ] Revisar in-game las nuevas UIs y traducir las claves nuevas en `pt_br.json`.
+- [ ] **Fase 2 del manifest** sigue pendiente para que el Thread Hatch sea usable en una maquina de
+      gameplay.
+
+### Ports de multibloques del GTLsupb (2026-09-21)
+
+- [x] **Universal Factory** (`gtna:universal_factory`): 32 recipe types, cross-recipe parallel +
+      threads (engine del GTNA), warmup/overload/batch con UI, casing nuevo. Base de prueba para la
+      logica multi-receta.
+- [x] **Primitive Stone Furnace** (`gtna:primitive_stone_furnace`): horno multibloque **sin energia**
+      (FURNACE_RECIPES), patron 3x3x3 de piedra.
+- [ ] Textura dedicada del casing, traducciones `pt_br.json` y revision in-game de los displays.
+- [ ] Detalles, licencia (LGPLv3) y evidencias: [Continuity Ledger](../../CONTINUITY_LEDGER.md) G-0015.
 
 ---
 

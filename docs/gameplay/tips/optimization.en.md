@@ -9,7 +9,7 @@
 
 ## Steam Efficiency
 - The **Large Steam Furnace** uses 50% less steam than normal
-- **Mega Solar Boiler** provides free infinite steam (requires sunlight)
+- **Large Steam Solar Boiler** provides free infinite steam (requires sunlight)
 - Use Steel Wireless Hatches for maximum capacity
 
 ## AE2 Tips

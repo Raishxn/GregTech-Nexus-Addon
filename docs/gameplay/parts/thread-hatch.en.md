@@ -33,10 +33,15 @@ Thread 4: 16x Bronze Rod -> Piston (16 parallels)
 All 4 recipes run AT THE SAME TIME!
 
 ## Compatibility
-Works on any multiblock using `WorkableElectricMultipleRecipesMachine`:
-- Duration Tester (GTNA)
-- Industrial Slaughterhouse (GTNA)
-- Custom multiblocks via KubeJS (future)
+The Thread Hatch is recognized by the `THREAD_HATCH` ability, which only exists on multiblocks based
+on `WorkableElectricMultipleRecipesMachine`:
+- **Duration Tester** (GTNA reference machine)
+- Custom multiblocks via KubeJS
+- :construction: Other GTNA controllers - migration onto the multiple-recipes base is **phase 2** of
+  the [port manifest](../../roadmap/multiblock-port-manifest.md) (rule 8); until it happens, the
+  existing machines do **not** accept the Thread Hatch
+- Base GTCEu multiblocks (not supported)
+- Steam machines: they use fixed threads (`FixedThreadSteamParallelMachine`) and have no hatch slot
 
 !!! tip
     Combine Thread Hatches with Accelerate Hatches for insane speed on diverse recipes!

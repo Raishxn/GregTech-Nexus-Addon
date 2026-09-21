@@ -26,7 +26,7 @@ Diga adeus ao espaguete de tubos! Transmita vapor pela rede wireless com hatches
 
 <div class="feature-card" markdown>
 ### 🏗️ Multiblocos Avançados
-8+ multiblocos a vapor para processamento em massa: Large Steam Furnace (9x velocidade!), Mega Solar Boiler (vapor infinito), Steam Woodcutter, e mais.
+8+ multiblocos a vapor para processamento em massa: Large Steam Furnace (9x velocidade!), Large Steam Solar Boiler (vapor infinito), Steam Woodcutter, e mais.
 
 [:octicons-arrow-right-24: Ver máquinas](gameplay/machines/index.md)
 </div>

@@ -31,7 +31,7 @@ Cada jogador possui sua própria **rede wireless de vapor** independente, identi
 
 ```mermaid
 graph LR
-    A[Boiler / Mega Solar] -->|Vapor| B(Wireless Steam Output Hatch)
+    A[Boiler / Large Steam Solar] -->|Vapor| B(Wireless Steam Output Hatch)
     B -->|Deposita na rede| C{Rede Wireless do Jogador}
     C -->|Retira da rede| D(Wireless Steam Input Hatch)
     D -->|Vapor| E[Máquinas a Vapor]
@@ -41,7 +41,7 @@ graph LR
 
 !!! tip "Maximize sua produção"
     - Troque para **Wireless Hatches de Steel** o mais rápido possível — a variante Bronze tem limite menor
-    - Um único **Mega Solar Boiler** com Wireless Output pode alimentar toda sua fábrica
+    - Um único **Large Steam Solar Boiler** com Wireless Output pode alimentar toda sua fábrica
     - Centralize a produção de vapor em um boiler gigante e distribua wirelessly
     - Não precisa se preocupar com distância — a rede funciona globalmente
 

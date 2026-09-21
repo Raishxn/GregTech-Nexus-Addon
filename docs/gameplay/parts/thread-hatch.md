@@ -41,12 +41,16 @@ Todas as 4 receitas rodam AO MESMO TEMPO!
 
 ## Compatibilidade
 
-A Thread Hatch funciona em qualquer multibloco que use a classe `WorkableElectricMultipleRecipesMachine`:
+A Thread Hatch é reconhecida pela ability `THREAD_HATCH`, que só existe em multiblocos baseados em
+`WorkableElectricMultipleRecipesMachine`:
 
-- ✅ Duration Tester (GTNA)
-- ✅ Industrial Slaughterhouse (GTNA)
-- ✅ Multiblocks customizados via KubeJS (futuro)
-- ❌ Multiblocks padrão do GT base (não suportado)
+- ✅ **Duration Tester** (máquina de referência do GTNA)
+- ✅ Multiblocos customizados via KubeJS
+- 🚧 Demais controladores do GTNA — a migração para a base multi-receita é a **fase 2** do
+  [manifest de port](../../roadmap/multiblock-port-manifest.md) (regra 8); enquanto ela não acontece,
+  as máquinas existentes **não** aceitam a Thread Hatch
+- ❌ Multiblocos do GTCEu base (não suportado)
+- ❌ Máquinas steam: usam threads fixas (`FixedThreadSteamParallelMachine`), sem slot para a hatch
 
 !!! tip "Dica"
     Use Thread Hatches combinados com Accelerate Hatches para velocidade insana em receitas diversas!

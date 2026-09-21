@@ -156,7 +156,7 @@ com.raishxn.gtna/
 │   │   │   │   ├── LargeSteamAlloySmelter.java
 │   │   │   │   ├── LargeSteamCrusher.java
 │   │   │   │   ├── LargeSteamFurnace.java
-│   │   │   │   ├── MegaSolarBoilerMachine.java
+│   │   │   │   ├── LargeSteamSolarBoilerMachine.java
 │   │   │   │   ├── SteamCobbler.java
 │   │   │   │   ├── SteamManufacturer.java
 │   │   │   │   ├── SteamWoodcutter.java

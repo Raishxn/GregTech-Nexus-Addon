@@ -125,12 +125,19 @@ Push beyond the limits of standard GregTech.
 * **Textures & Assets**: Based on GTCEu and Community Assets.
 * **Inspiration**: GT Odyssey, GTNH, and the GregTech Community.
 
-| Project                 | Author                                                          | License                                                               |
-|:------------------------|:----------------------------------------------------------------|:----------------------------------------------------------------------|
-| **GT Not Leisure Code** | [ABKQPO](https://github.com/ABKQPO/GT-Not-Leisure)              | [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)                    |
-| **GTO Code** | [GTO TEAM](https://github.com/GregTech-Odyssey/GTOCore)         | [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)                    |
-| **GTNH Multiblock Port**| [GTNewHorizons](https://github.com/GTNewHorizons)               | [Attribution-NonCommercial-ShareAlike 4.0 International]              |
-| **CMM Additions** | [CrystalGaming](https://github.com/CristalGaming/cmme-additions)| [Attribution-NonCommercial-ShareAlike 4.0 International]              |
+| Project | Source | License |
+|:--------|:-------|:--------|
+| **GregTech Odyssey (GTO)** | [GTOCore](https://github.com/GregTech-Odyssey/GTOCore) | Code: LGPLv3 · Original assets: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) |
+| **GTO Extended Platform Presets (GTOEPP)** | [Gto-Extended-Platform-Presets](https://github.com/GregTech-Odyssey/Gto-Extended-Platform-Presets) | All Rights Reserved — used with permission |
+| **GT: Not Leisure (GTNL)** | [ABKQPO/GT-Not-Leisure](https://github.com/ABKQPO/GT-Not-Leisure) | [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html) — used with permission |
+| **Twist Space Technology (TST)** | [Nxer/Twist-Space-Technology-Mod](https://github.com/Nxer/Twist-Space-Technology-Mod) | [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html) |
+| **GTMThings** | [liansishen/GTMThings](https://github.com/liansishen/GTMThings) | All Rights Reserved |
+| **cmme-additions → Modernity-GTNH** | [ModernityGTNH/Modernity-GTNH](https://github.com/ModernityGTNH/Modernity-GTNH) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) |
+| **GTLCore** | [nutant233/GTLCore](https://github.com/nutant233/GTLCore) | LGPLv3 |
+| **GTLsupb** | GTLsupb | LGPLv3 |
+
+> **Non-commercial notice:** GTNA includes assets licensed under CC BY-NC-SA 4.0, so the combined
+> distribution may not be used commercially. Full details: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ---
 

@@ -9,7 +9,7 @@
 
 ## Eficiencia de Vapor
 - El **Large Steam Furnace** consume 50% menos vapor de lo normal
-- El **Mega Solar Boiler** provee vapor infinito gratis (requiere luz solar)
+- El **Large Steam Solar Boiler** provee vapor infinito gratis (requiere luz solar)
 - Usa Steel Wireless Hatches para capacidad maxima
 
 ## Consejos de AE2

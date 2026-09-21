@@ -15,6 +15,12 @@ As **Wireless Steam Hatches** permitem transmitir vapor sem fio entre boilers e 
 
 Coloque em qualquer multiblocko que precisa de vapor. Ela puxa automaticamente da rede wireless.
 
+!!! note "Como o slot de vapor é reconhecido"
+    A Input Hatch conta como um **steam hatch**: declara a ability `STEAM`, então substitui o steam
+    input hatch padrão do GTCEu nos multiblocos steam do próprio GTCEu **e** do GTNA. A Output Hatch
+    é um hatch de **saída de fluido** (`EXPORT_FLUIDS`) — coloque onde o multibloco aceita um fluid
+    output hatch.
+
 ### Wireless Steam Output Hatch (Envia Vapor)
 
 | Variante | Tier | Capacidade |

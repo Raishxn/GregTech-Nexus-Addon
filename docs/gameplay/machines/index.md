@@ -9,7 +9,7 @@ Máquinas alimentadas exclusivamente por vapor — sem necessidade de eletricida
 | [Large Steam Furnace](steam/large-steam-furnace.md) | Furnace, Blast | 128 | 9x | Forno industrial gigante |
 | [Large Steam Crusher](steam/large-steam-crusher.md) | Macerator | 32 | 2x | Triturador em massa |
 | [Large Steam Alloy Smelter](steam/large-steam-alloy-smelter.md) | Alloy Smelter | 64 | 1.43x | Liga metálica a vapor |
-| [Mega Solar Boiler](steam/mega-solar-boiler.md) | Especial | - | - | Vapor infinito via sol |
+| [Large Steam Solar Boiler](steam/large-steam-solar-boiler.md) | Especial | - | - | Vapor infinito via sol |
 | [Steam Cobbler](steam/steam-cobbler.md) | Rock Breaker | 16 | 1x | Gerador de pedra |
 | [Stone Superheater](steam/stone-superheater.md) | Superheater | 32 | 1x | Derrete pedra em fluido |
 | [Steam Manufacturer](steam/steam-manufacturer.md) | Hydraulic | 16 | 1x | Assembler a vapor |

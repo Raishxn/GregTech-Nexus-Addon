@@ -37,7 +37,7 @@ Todas as receitas do GTNA aparecem no JEI. Procure por:
 
 ### 5. Próximos Passos
 
-1. Construa o **Mega Solar Boiler** para vapor infinito
+1. Construa o **Large Steam Solar Boiler** para vapor infinito
 2. Explore os **multiblocos maiores** (Large Steam Furnace, Large Steam Crusher)
 3. Considere adicionar **Huge Steam Buses** para mais itens
 

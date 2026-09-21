@@ -11,7 +11,7 @@ A: No, KubeJS is optional. The KubeJS integration (v0.2.0) will allow modpack de
 A: Yes! GTNA is licensed under LGPLv3. Feel free to include it.
 
 ## Machines
-**Q: Why is my Mega Solar Boiler not producing steam?**
+**Q: Why is my Large Steam Solar Boiler not producing steam?**
 A: Check that all Solar Boiling Cells have direct sky access (no blocks above them) and that it's daytime with clear weather.
 
 **Q: How do I switch Slaughterhouse modes?**

@@ -31,7 +31,7 @@ Each player has their own independent **wireless steam network**, identified by 
 
 ```mermaid
 graph LR
-    A[Boiler / Mega Solar] -->|Steam| B(Wireless Steam Output Hatch)
+    A[Boiler / Large Steam Solar] -->|Steam| B(Wireless Steam Output Hatch)
     B -->|Deposits to network| C{Player Wireless Network}
     C -->|Withdraws from network| D(Wireless Steam Input Hatch)
     D -->|Steam| E[Steam Machines]
@@ -41,7 +41,7 @@ graph LR
 
 !!! tip "Maximize your production"
     - Switch to **Steel Wireless Hatches** as soon as possible
-    - A single **Mega Solar Boiler** with Wireless Output can power your entire factory
+    - A single **Large Steam Solar Boiler** with Wireless Output can power your entire factory
     - Centralize steam production in one massive boiler and distribute wirelessly
     - No need to worry about distance — the network works globally
 

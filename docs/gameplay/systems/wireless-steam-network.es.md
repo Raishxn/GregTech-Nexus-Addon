@@ -13,4 +13,4 @@ Cada jugador tiene su propia red inalambrica de vapor. Usa `SteamNetworkData` (S
 
 ### Consejos
 - Cambia a Steel Wireless Hatches lo antes posible
-- Un Mega Solar Boiler con Wireless Output puede alimentar toda tu fabrica
+- Un Large Steam Solar Boiler con Wireless Output puede alimentar toda tu fabrica

@@ -11,6 +11,12 @@
 
 Place on any multiblock that needs steam. It automatically pulls from the wireless network.
 
+!!! note "How the steam slot recognizes it"
+    The Input Hatch counts as a **steam hatch**: it declares the `STEAM` ability, so it replaces the
+    stock GTCEu steam input hatch in both GTCEu's and GTNA's steam multiblocks. The Output Hatch is a
+    **fluid output** hatch (`EXPORT_FLUIDS`) - place it wherever the multiblock accepts a fluid
+    output hatch.
+
 ### Wireless Steam Output Hatch (Sends Steam)
 | Variant | Tier | Capacity |
 |---------|------|----------|
