@@ -37,7 +37,7 @@ public class GTNAHatchesRecipes {
                     .define('C', GTItems.CONVEYOR_MODULE_ZPM.asStack().getItem())
                     .define('D', GTItems.FIELD_GENERATOR_ZPM.asStack().getItem())
                     .define('E',
-                            ChemicalHelper.get(TagPrefix.cableGtQuadruple, GTMaterials.UraniumRhodiumDinaquadide)
+                            ChemicalHelper.get(TagPrefix.wireGtDouble, GTMaterials.UraniumRhodiumDinaquadide)
                                     .getItem())
                     .define('F', GTMachines.HULL[ZPM].asStack().getItem())
                     .unlockedBy("has_hull_zpm",
@@ -56,7 +56,7 @@ public class GTNAHatchesRecipes {
                     .define('C', GTItems.CONVEYOR_MODULE_UV.asStack().getItem())
                     .define('D', GTItems.FIELD_GENERATOR_UV.asStack().getItem())
                     .define('E',
-                            ChemicalHelper.get(TagPrefix.cableGtQuadruple,
+                            ChemicalHelper.get(TagPrefix.wireGtDouble,
                                     GTMaterials.EnrichedNaquadahTriniumEuropiumDuranide).getItem())
                     .define('F', GTMachines.HULL[UV].asStack().getItem())
                     .unlockedBy("has_hull_uv",

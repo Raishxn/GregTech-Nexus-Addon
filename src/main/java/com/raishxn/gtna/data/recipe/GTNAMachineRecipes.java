@@ -220,9 +220,9 @@ public class GTNAMachineRecipes {
                     .pattern("ABA")
                     .pattern("CDC")
                     .pattern("EBE")
-                    .define('A', ChemicalHelper.get(TagPrefix.foil, GTMaterials.Steel).getItem())
+                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Steel).getItem())
                     .define('B', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('C', ChemicalHelper.get(TagPrefix.rotor, GTMaterials.Aluminium).getItem())
+                    .define('C', ChemicalHelper.get(TagPrefix.rotor, GTMaterials.Steel).getItem())
                     .define('D', GTMachines.CHEMICAL_BATH[GTValues.LV].asStack().getItem())
                     .define('E', ChemicalHelper.get(TagPrefix.block, GTMaterials.Bronze).getItem())
                     .unlockedBy("has_precision_steam_component",

@@ -94,6 +94,21 @@ foi feito nem repetir os erros já pagos.
   usuário encontrar corte; o corte de emergência é `hasPlayerInventory()` → `false` em
   `GTNAMEPatternBufferPartMachine` (economiza 86 px, mas perde o inventário na GUI).
 
+### G-0029 (2026-09-21) — 3 receitas GTNA com ingrediente vazio (parse error) corrigidas
+
+- **Achado ao rodar o gametest e grepar `Parsing error loading recipe gtna:` no log** (o gate **não**
+  falha por isso — as receitas ficam simplesmente sem craft):
+  - `large_steam_bath`: usava `TagPrefix.foil, GTMaterials.Steel` (**Steel não tem
+    `GENERATE_FOIL`**) e `TagPrefix.rotor, GTMaterials.Aluminium` (**Aluminium não tem
+    `GENERATE_ROTOR`**) → ingrediente vazio. Corrigido para placa de aço + rotor de aço.
+  - `thread_hatch_zpm` / `thread_hatch_uv`: usavam `TagPrefix.cableGtQuadruple` de
+    `UraniumRhodiumDinaquadide` / `EnrichedNaquadahTriniumEuropiumDuranide`, prefixo que **não é
+    gerado** para esses materiais (o GTCEu usa `wireGtDouble`) → corrigido para `wireGtDouble`.
+- **Lição:** o `runGameTestServer` sai 0 mesmo com receitas quebradas; vale **grepar o log** por
+  `Parsing error loading recipe gtna:` ao fechar o gate.
+- **Validação:** `spotlessCheck` + `runUnitTests` (14/14) + `runGameTestServer` (25/25) + `runData`
+  (written: 0); **zero** erros de parse de receita GTNA no log.
+
 ### G-0028 (2026-09-21) — Re-port das 21 estruturas `large_steam_*` a partir dos `.mbs` do GTNL
 
 - **Forma exata:** as 21 `large_steam_*` agora usam a forma do GTNL decodificada dos `.mbs`
