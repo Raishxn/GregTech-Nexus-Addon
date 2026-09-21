@@ -36,6 +36,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
+import com.raishxn.gtna.common.data.GTNABlocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -120,10 +121,12 @@ public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine
 
     /** {@code -1} when the block is not a steam casing, otherwise the casing tier. */
     public static int casingTier(BlockState state) {
-        if (state.is(GTBlocks.CASING_BRONZE_BRICKS.get())) {
+        if (state.is(GTBlocks.CASING_BRONZE_BRICKS.get()) ||
+                state.is(GTNABlocks.INDUSTRIAL_STEAM_CASING.get())) {
             return BRONZE_TIER;
         }
-        if (state.is(GTBlocks.CASING_STEEL_SOLID.get())) {
+        if (state.is(GTBlocks.CASING_STEEL_SOLID.get()) ||
+                state.is(GTNABlocks.ADVANCED_INDUSTRIAL_STEAM_CASING.get())) {
             return STEEL_TIER;
         }
         return -1;
@@ -132,7 +135,9 @@ public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine
     private static BlockInfo[] steamCasingCandidates() {
         return new BlockInfo[] {
                 new BlockInfo(GTBlocks.CASING_BRONZE_BRICKS.get().defaultBlockState(), null),
-                new BlockInfo(GTBlocks.CASING_STEEL_SOLID.get().defaultBlockState(), null) };
+                new BlockInfo(GTBlocks.CASING_STEEL_SOLID.get().defaultBlockState(), null),
+                new BlockInfo(GTNABlocks.INDUSTRIAL_STEAM_CASING.get().defaultBlockState(), null),
+                new BlockInfo(GTNABlocks.ADVANCED_INDUSTRIAL_STEAM_CASING.get().defaultBlockState(), null) };
     }
 
     @Override

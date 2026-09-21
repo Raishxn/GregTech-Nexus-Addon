@@ -39,6 +39,17 @@ public class GTNABlocks {
             "steam_assembly_block",
             GTNACORE.id("block/steam_assembly_block"));
     public static final BlockEntry<Block> VIBRATION_SAFE_CASING = createCasingBlock("vibration_safe_casing");
+    /**
+     * GTNL {@code GTNLCasings.IndustrialSteamCasing} (metaCasing02:1). Shell of the bronze-tier
+     * large steam multiblocks; texture from the Modernity-GTNH pack (same author as GTNL).
+     */
+    public static final BlockEntry<Block> INDUSTRIAL_STEAM_CASING = createCasingBlock("industrial_steam_casing");
+    /**
+     * GTNL {@code GTNLCasings.AdvancedIndustrialSteamCasing} (metaCasing02:2). Shell of the steel-tier
+     * (high pressure) large steam multiblocks; texture from the Modernity-GTNH pack.
+     */
+    public static final BlockEntry<Block> ADVANCED_INDUSTRIAL_STEAM_CASING = createCasingBlock(
+            "advanced_industrial_steam_casing");
     public static final BlockEntry<Block> BRONZE_REINFORCED_WOOD = createCasingBlock("bronze_reinforced_wood");
     public static final BlockEntry<Block> BRASS_REINFORCED_WOODEN_CASING = createCasingBlock(
             "brass_reinforced_wooden_casing",

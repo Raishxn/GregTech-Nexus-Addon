@@ -491,10 +491,33 @@ public final class GTNAMachineGameTests {
     }
 
     /**
+     * Locks the casing-tier table that drives high pressure mode: both the stock GT casings and the
+     * ported industrial steam casings must map to the right tier, and any other block must not count.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void steamCasingTiers(GameTestHelper helper) {
+        helper.assertTrue(SteamMultiMachineBase.casingTier(GTBlocks.CASING_BRONZE_BRICKS.get().defaultBlockState()) ==
+                SteamMultiMachineBase.BRONZE_TIER, "bronze plated bricks must be tier 1");
+        helper.assertTrue(SteamMultiMachineBase.casingTier(GTBlocks.CASING_STEEL_SOLID.get().defaultBlockState()) ==
+                SteamMultiMachineBase.STEEL_TIER, "solid steel casing must be tier 2");
+        helper.assertTrue(
+                SteamMultiMachineBase.casingTier(GTNABlocks.INDUSTRIAL_STEAM_CASING.get().defaultBlockState()) ==
+                        SteamMultiMachineBase.BRONZE_TIER,
+                "the ported industrial steam casing must be tier 1");
+        helper.assertTrue(
+                SteamMultiMachineBase.casingTier(GTNABlocks.ADVANCED_INDUSTRIAL_STEAM_CASING.get()
+                        .defaultBlockState()) == SteamMultiMachineBase.STEEL_TIER,
+                "the ported advanced industrial steam casing must be tier 2");
+        helper.assertTrue(SteamMultiMachineBase.casingTier(Blocks.STONE.defaultBlockState()) == -1,
+                "a non-casing block must not have a casing tier");
+        helper.succeed();
+    }
+
+    /**
      * High pressure mode (GTNL {@code SteamMultiMachineBase#isHighPressure}, {@code tierMachine == 2}):
-     * the same structure built with <b>steel</b> solid casings instead of bronze must form, report
-     * high pressure and double the steam consumption. This is the runtime half of the tier-aware
-     * casing predicate ({@code SteamMultiMachineBase.casing()}).
+     * the same structure built with <b>advanced industrial steam casings</b> instead of bronze must
+     * form, report high pressure and double the steam consumption. This is the runtime half of the
+     * tier-aware casing predicate ({@code SteamMultiMachineBase.casing()}).
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void steelCasingEnablesHighPressure(GameTestHelper helper) {
@@ -519,7 +542,7 @@ public final class GTNAMachineGameTests {
                     }
                     switch (LARGE_STEAM_ALLOY_SMELTER_PATTERN[aisle][string].charAt(charX)) {
                         case 'B' -> helper.setBlock(pos, GTBlocks.FIREBOX_BRONZE.get());
-                        case 'A' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_SOLID.get());
+                        case 'A' -> helper.setBlock(pos, GTNABlocks.ADVANCED_INDUSTRIAL_STEAM_CASING.get());
                         default -> {
                             // '~' (controller, already placed) and space (any).
                         }

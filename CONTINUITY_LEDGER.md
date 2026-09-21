@@ -35,12 +35,12 @@ foi feito nem repetir os erros já pagos.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
 - **Gate verde em 2026-09-21:** `spotlessCheck` + `compileJava` + `runUnitTests` (**14/14**) +
-  `runGameTestServer` (**24/24**, `All 24 required tests passed`) + `runData` determinístico. A
+  `runGameTestServer` (**25/25**, `All 25 required tests passed`) + `runData` determinístico. A
   execução carregou os mixins alterados; os avisos/erros de receitas do GTCEu já conhecidos
   continuam no log.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
-- **Testes hoje:** 14 unit tests (`main()` + asserts, padrão GTLCore) e 24 gametests (`@GameTest`),
+- **Testes hoje:** 14 unit tests (`main()` + asserts, padrão GTLCore) e 25 gametests (`@GameTest`),
   ambos no gate do CI.
 - **Licenciamento (G-0019):** código do GTNA **LGPLv3**; assets do GTO em **CC BY-NC-SA 4.0**
   (o GTNA é **não-comercial**). Permissão do **GTOEPP** concedida pelo time GTO; atribuição de origem
@@ -93,6 +93,27 @@ foi feito nem repetir os erros já pagos.
 - **Pendência aberta:** conferir uma segunda escala de GUI no client (`./gradlew runClient`) se o
   usuário encontrar corte; o corte de emergência é `hasPlayerInventory()` → `false` em
   `GTNAMEPatternBufferPartMachine` (economiza 86 px, mas perde o inventário na GUI).
+
+### G-0027 (2026-09-21) — Blocos: Industrial / Advanced Industrial Steam Casing (texturas do Modernity)
+
+- **Criados** `industrial_steam_casing` e `advanced_industrial_steam_casing` — porta dos
+  `GTNLCasings.IndustrialSteamCasing` / `AdvancedIndustrialSteamCasing` (`metaCasing02` 1/2), o
+  **shell** dos large steam multiblocks. Texturas do pack **Modernity-GTNH** (`MetaCasing02/1.png`,
+  `2.png`, 16×16; mesmo autor do GTNL, conforme o autor do projeto). Sem CTM (o `_ctm` do Modernity é
+  16×16 e não casa com o layout LDLib).
+- **Receitas (paridade GTNL):** crafting `AAA/ACA/AAA` (8 placas de latão/ferro + `frameGt` de
+  bronze/aço) e SteamManufacturer (`HYDRAULIC_MANUFACTURING`): 6 placas + frame + circuito(1),
+  2 s @ 16 EU/t.
+- **Tier:** o predicado `SteamMultiMachineBase.casing()` agora reconhece os dois casings como tier 1
+  (bronze) e 2 (aço), então as estruturas re-portadas com eles entram em high pressure sem código
+  novo. O `steamCasing()` das 6 máquinas novas aceita os quatro casings.
+- **Cobertura:** gametest `steamCasingTiers` (25º) trava a tabela de tiers; o
+  `steelCasingEnablesHighPressure` agora usa o casing avançado.
+- **Decisão de escopo:** os frames/columns do GTNL (`metaBlockColumn` 4/5 = Bronze/SteelMachineFrame)
+  mapeiam para `frameGt(Bronze/Steel)` no re-port (§6 do handoff), então **não** viram blocos novos.
+- **Atribuição:** linha do Modernity no `THIRD_PARTY_NOTICES.md` atualizada.
+- **Validação:** `spotlessCheck` + `runUnitTests` (14/14) + `runGameTestServer` (25/25) + `runData`
+  (written: 0).
 
 ### G-0026 (2026-09-21) — High pressure mode (steam): tier dos casings → ×2 velocidade e ×2 steam
 

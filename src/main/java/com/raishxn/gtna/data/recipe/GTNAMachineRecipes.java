@@ -1378,6 +1378,45 @@ public class GTNAMachineRecipes {
                     .unlockedBy("has_stone", InventoryChangeTrigger.TriggerInstance.hasItems(Blocks.STONE))
                     .save(provider);
         }
+
+        // --- Large steam casings (GTNL port; textures from Modernity-GTNH) ---
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.INDUSTRIAL_STEAM_CASING.asItem())
+                .pattern("AAA")
+                .pattern("ACA")
+                .pattern("AAA")
+                .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Brass).getItem())
+                .define('C', ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Bronze).getItem())
+                .unlockedBy("has_bronze_frame", InventoryChangeTrigger.TriggerInstance
+                        .hasItems(ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Bronze).getItem()))
+                .save(provider);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.ADVANCED_INDUSTRIAL_STEAM_CASING.asItem())
+                .pattern("AAA")
+                .pattern("ACA")
+                .pattern("AAA")
+                .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Iron).getItem())
+                .define('C', ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Steel).getItem())
+                .unlockedBy("has_steel_frame", InventoryChangeTrigger.TriggerInstance
+                        .hasItems(ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Steel).getItem()))
+                .save(provider);
+        if (enabled(GTNAMachines.STEAM_MANUFACTURER)) {
+            // GTNL SteamManufacturer parity: 6 plates + frame + circuit(1) -> 1 casing, 2 s at 16 EU/t.
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("industrial_steam_casing")
+                    .inputItems(ChemicalHelper.get(TagPrefix.plate, GTMaterials.Brass).getItem(), 6)
+                    .inputItems(ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Bronze).getItem(), 1)
+                    .inputItems(IntCircuitIngredient.of(1))
+                    .outputItems(GTNABlocks.INDUSTRIAL_STEAM_CASING.asStack())
+                    .duration(40)
+                    .EUt(16)
+                    .save(provider);
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("advanced_industrial_steam_casing")
+                    .inputItems(ChemicalHelper.get(TagPrefix.plate, GTMaterials.Iron).getItem(), 6)
+                    .inputItems(ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Steel).getItem(), 1)
+                    .inputItems(IntCircuitIngredient.of(1))
+                    .outputItems(GTNABlocks.ADVANCED_INDUSTRIAL_STEAM_CASING.asStack())
+                    .duration(40)
+                    .EUt(16)
+                    .save(provider);
+        }
     }
 
     private static boolean enabled(MachineDefinition... definitions) {

@@ -219,6 +219,9 @@ public class GTNALangProvider extends LanguageProvider {
         // Universal Factory (GTLsupb port)
         add("block.gtna.universal_factory_casing", "Universal Factory Casing");
         add("block.gtna.universal_factory", "Universal Factory");
+        // Large steam casings (GTNL port; textures from Modernity-GTNH)
+        add("block.gtna.industrial_steam_casing", "Industrial Steam Casing");
+        add("block.gtna.advanced_industrial_steam_casing", "Advanced Industrial Steam Casing");
         add("gtna.machine.universal_factory.tooltip.0",
                 "Processes many different recipes at once with cross-recipe parallelism and threads.");
         add("gtna.machine.universal_factory.tooltip.1",

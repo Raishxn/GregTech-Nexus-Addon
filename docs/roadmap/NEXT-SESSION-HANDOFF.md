@@ -40,6 +40,10 @@ Source: Science Not Leisure: 狐涂重工 GT-Odyssey
 
 - **`IndustrialSteamCasing`** e **`AdvancedIndustrialSteamCasing`** (`GTNLCasings` metaCasing02 1/2),
   **bronze machine frame** (`sBlockFrames`), **column** (`metaBlockColumn`), pipe casings, casings tiered.
+  > ✅ **Feito no G-0027:** `industrial_steam_casing` e `advanced_industrial_steam_casing` criados com
+  > texturas do Modernity + receitas (crafting e SteamManufacturer) e já reconhecidos pelo predicado
+  > de tier. Os frames/columns (`metaBlockColumn` 4/5) mapeiam para `frameGt(Bronze/Steel)` (§6).
+  > Pipe/gearbox/frame/glass/material block já existem no GTCEu.
 - **Texturas:** importar do **Modernity GTNH** (`ModernityGTNH/Modernity-GTNH`) — as texturas base são
   da versão antiga; o Modernity é o pack para versões novas. **Modernity é CC BY-NC-SA 4.0** → manter
   atribuição e o aviso não-comercial (ver `THIRD_PARTY_NOTICES.md`).
@@ -200,6 +204,7 @@ Detalhe em `docs/roadmap/port-audit-2026-09-21.md` e `THIRD_PARTY_NOTICES.md`.
 
 1. **Criar os blocos faltantes** (Industrial/Advanced Industrial Steam Casing, bronze frame, column) —
    textura do **Modernity GTNH** + casing GTNA novo; atribuição no `THIRD_PARTY_NOTICES.md`.
+   ✅ **Feito (G-0027)** para os dois Industrial Steam Casings; frames → `frameGt` (§6).
 2. ~~**High pressure mode** na base steam (`SteamMultiMachineBase`): tier dos casings → ×2 velocidade e
    ×2 steam (§4), + tooltip.~~ ✅ **Feito (G-0026)** — mecanismo + 7 máquinas; as demais no passo 3.
 3. **Re-portar as estruturas das `large_steam_*`** (as 21, incluindo o furnace) a partir dos `.mbs` do
