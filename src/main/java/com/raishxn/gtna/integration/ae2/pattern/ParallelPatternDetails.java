@@ -80,7 +80,17 @@ final class ParallelPatternDetails implements IParallelPatternDetails {
 
     @Override
     public void pushInputsToExternalInventory(KeyCounter[] inputHolder, PatternInputSink sink) {
-        delegate.pushInputsToExternalInventory(inputHolder, sink);
+        if (!delegate.supportsPushInputsToExternalInventory()) {
+            return;
+        }
+        // Do NOT delegate: AE2's pattern uses its own (unscaled) input amounts for sparse patterns,
+        // which would push a single craft while the CPU already subtracted `parallel` operations.
+        // `inputHolder` was extracted with our scaled inputs, so push exactly that.
+        for (KeyCounter counter : inputHolder) {
+            for (var entry : counter) {
+                sink.pushInput(entry.getKey(), entry.getLongValue());
+            }
+        }
     }
 
     @Override

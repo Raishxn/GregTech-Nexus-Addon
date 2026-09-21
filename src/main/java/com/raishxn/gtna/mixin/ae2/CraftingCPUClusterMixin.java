@@ -1,6 +1,5 @@
 package com.raishxn.gtna.mixin.ae2;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 import appeng.api.networking.IGridNode;
@@ -17,9 +16,6 @@ import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = CraftingCPUCluster.class, remap = false)
 public abstract class CraftingCPUClusterMixin implements IGTNACraftingCPUCluster {
@@ -46,11 +42,6 @@ public abstract class CraftingCPUClusterMixin implements IGTNACraftingCPUCluster
 
     @Unique
     private GTNACraftingCPUInterfacePartMachine gtna$interfaceMachine;
-
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void gtna$useOptimizedCraftingCpuLogic(BlockPos boundsMin, BlockPos boundsMax, CallbackInfo ci) {
-        craftingLogic = new GTNAOptimizedCraftingCpuLogic((CraftingCPUCluster) (Object) this);
-    }
 
     /**
      * @author GTNA
@@ -93,6 +84,12 @@ public abstract class CraftingCPUClusterMixin implements IGTNACraftingCPUCluster
     @Override
     public void gtna$setMachine(GTNACraftingCPUInterfacePartMachine machine) {
         this.gtna$interfaceMachine = machine;
+        // Keep native AE2 crafting CPUs on AE2's own executor. The optimized executor is
+        // specific to the virtual Nexus CPU and replacing every CraftingCPUCluster here
+        // made a normal AE2 network vulnerable to GTNA-only scheduling regressions.
+        if (machine != null && !(craftingLogic instanceof GTNAOptimizedCraftingCpuLogic)) {
+            craftingLogic = new GTNAOptimizedCraftingCpuLogic((CraftingCPUCluster) (Object) this);
+        }
     }
 
     @Override

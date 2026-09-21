@@ -79,6 +79,9 @@ public class GTNABlocks {
     public static final BlockEntry<Block> MAGTECH_CASING = createCasingBlock(
             "magtech_casing",
             GTNACORE.id("block/casings/magtech_casing"));
+    public static final BlockEntry<Block> UNIVERSAL_FACTORY_CASING = createCasingBlock(
+            "universal_factory_casing",
+            GTNACORE.id("block/casings/universal_factory_casing"));
     public static final BlockEntry<Block> ABS_BLACK_CASING = createCasingBlock(
             "abs_black_casing",
             GTNACORE.id("block/casings/abs_black_casing"));

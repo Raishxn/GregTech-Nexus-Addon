@@ -185,6 +185,11 @@ tasks.register('runUnitTests') {
             'com.raishxn.gtna.PatternBufferModeSelectionTest',
             'com.raishxn.gtna.BufferModeSwitchPolicyTest',
             'com.raishxn.gtna.ConfigLangKeysTest',
+            'com.raishxn.gtna.SteamWiringContractTest',
+            'com.raishxn.gtna.PartAbilityCoverageTest',
+            'com.raishxn.gtna.RegistrationContractTest',
+            'com.raishxn.gtna.OutputBoostContractTest',
+            'com.raishxn.gtna.AccelerateHatchMathTest',
             'com.raishxn.gtna.common.machine.multiblock.part.ae.PatternBufferLayoutTest',
     ]
     doLast {

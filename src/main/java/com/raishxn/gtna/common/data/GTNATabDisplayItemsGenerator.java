@@ -119,19 +119,32 @@ public class GTNATabDisplayItemsGenerator implements CreativeModeTab.DisplayItem
                 item instanceof PipeBlockItem || isPipeItem(item)) {
             return false;
         }
+        return hasMaterialBlockPrefix(item);
+    }
 
-        if (item instanceof BlockItem && getTagPrefix(item) == null) {
+    /**
+     * A GTNA block that is neither a material block, a machine nor a pipe belongs in the GTNA Blocks
+     * tab. Previously any plain {@link BlockItem} (casings, cores, ...) was dumped into the material
+     * blocks tab, which is wrong.
+     */
+    private boolean isCustomBlockItem(Item item) {
+        if (CUSTOM_BLOCKS.contains(item)) {
             return true;
         }
+        if (!(item instanceof BlockItem)) {
+            return false;
+        }
+        if (isWirelessItem(item) || item instanceof MetaMachineItem || item instanceof PipeBlockItem) {
+            return false;
+        }
+        return !hasMaterialBlockPrefix(item);
+    }
 
+    private boolean hasMaterialBlockPrefix(Item item) {
         TagPrefix prefix = getTagPrefix(item);
         return prefix != null && (prefix.name().contains("block") || prefix.name().contains("ore") ||
                 prefix.name().contains("frame") || prefix.name().contains("planks") ||
                 prefix.name().contains("log"));
-    }
-
-    private boolean isCustomBlockItem(Item item) {
-        return CUSTOM_BLOCKS.contains(item);
     }
 
     private boolean isMaterialItem(Item item) {

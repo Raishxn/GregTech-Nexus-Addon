@@ -348,6 +348,7 @@ public class GTNAMachines2 {
                         Component.translatable("gtna.machine.accelerate_hatch.main_function"),
                         Component.translatable("gtna.machine.accelerate_hatch.range", minPercentage + "%"),
                         Component.translatable("gtna.machine.accelerate_hatch.weakness"),
+                        Component.translatable("gtna.machine.accelerate_hatch.compat"),
                         Component.translatable("gtceu.part_sharing.disabled"))
                 .register();
     }
@@ -393,6 +394,8 @@ public class GTNAMachines2 {
                     })
                     .tooltips(
                             Component.translatable("gtna.machine.thread_hatch.tooltip", threads),
+                            Component.translatable("gtna.machine.thread_hatch.range", threads),
+                            Component.translatable("gtna.machine.thread_hatch.requires"),
                             Component.translatable("gtceu.part_sharing.disabled"))
                     .register();
         }
@@ -589,6 +592,7 @@ public class GTNAMachines2 {
                             Component.translatable("gtna.machine.overclock_hatch.not_installed"),
                             Component.translatable("gtna.machine.overclock_hatch.installed", mult + "%"),
                             Component.translatable("gtna.machine.overclock_hatch.desc"),
+                            Component.translatable("gtna.machine.overclock_hatch.note"),
                             Component.translatable("gtceu.part_sharing.disabled"))
                     .register();
         }

@@ -22,10 +22,20 @@ import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.data.GTNADamageTypes;
 import com.raishxn.gtna.common.data.GTNAItems;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 @Mod.EventBusSubscriber(modid = GTNACORE.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class QuantumCosmicNexusArmorHandler {
 
     private static final double COSMIC_STEP_HEIGHT = 1.0D;
+    private static final float DEFAULT_FLYING_SPEED = 0.05F;
+    private static final float QUANTUM_FLYING_SPEED = 0.2F;
+    private static final int BOOT_EFFECT_DURATION = 300;
+    private static final int BOOT_SPEED_AMPLIFIER = 9;
+    private static final Map<UUID, FlightState> MANAGED_FLIGHT_STATES = new HashMap<>();
+    private static final Map<UUID, BootState> MANAGED_BOOT_STATES = new HashMap<>();
 
     private QuantumCosmicNexusArmorHandler() {}
 
@@ -106,7 +116,9 @@ public final class QuantumCosmicNexusArmorHandler {
     public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             disableManagedFlight(player);
-            resetStepHeight(player);
+            restoreBootState(player);
+            MANAGED_FLIGHT_STATES.remove(player.getUUID());
+            MANAGED_BOOT_STATES.remove(player.getUUID());
         }
     }
 
@@ -143,15 +155,20 @@ public final class QuantumCosmicNexusArmorHandler {
 
     private static void applyBootEffects(ServerPlayer player) {
         if (!isWearingBoots(player)) {
-            resetStepHeight(player);
+            restoreBootState(player);
             return;
         }
 
+        MANAGED_BOOT_STATES.computeIfAbsent(player.getUUID(), ignored -> new BootState(
+                player.maxUpStep(), copyEffect(player.getEffect(MobEffects.MOVEMENT_SPEED))));
         player.setMaxUpStep((float) COSMIC_STEP_HEIGHT);
-        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300, 9, false, false, false));
-        player.addEffect(new MobEffectInstance(MobEffects.JUMP, 300, 4, false, false, false));
-        player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 300, 0, false, false, false));
-        player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 300, 0, false, false, false));
+        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, BOOT_EFFECT_DURATION,
+                BOOT_SPEED_AMPLIFIER, false, false, false));
+        player.addEffect(new MobEffectInstance(MobEffects.JUMP, BOOT_EFFECT_DURATION, 4, false, false, false));
+        player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, BOOT_EFFECT_DURATION, 0, false, false,
+                false));
+        player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, BOOT_EFFECT_DURATION, 0, false, false,
+                false));
     }
 
     private static void sustainFullSet(ServerPlayer player) {
@@ -169,11 +186,20 @@ public final class QuantumCosmicNexusArmorHandler {
         boolean shouldManageFlight = isWearingFullSet(player) && !player.isSpectator() &&
                 !player.getAbilities().instabuild;
         if (shouldManageFlight) {
+            MANAGED_FLIGHT_STATES.computeIfAbsent(player.getUUID(), ignored -> captureFlightState(player));
+
+            boolean changed = false;
             if (!player.getAbilities().mayfly) {
                 player.getAbilities().mayfly = true;
+                changed = true;
             }
-            player.getAbilities().setFlyingSpeed(0.2F);
-            player.onUpdateAbilities();
+            if (Float.compare(player.getAbilities().getFlyingSpeed(), QUANTUM_FLYING_SPEED) != 0) {
+                player.getAbilities().setFlyingSpeed(QUANTUM_FLYING_SPEED);
+                changed = true;
+            }
+            if (changed) {
+                player.onUpdateAbilities();
+            }
             return;
         }
         disableManagedFlight(player);
@@ -183,17 +209,73 @@ public final class QuantumCosmicNexusArmorHandler {
         if (player.isSpectator() || player.getAbilities().instabuild) {
             return;
         }
-        if (player.getAbilities().mayfly || player.getAbilities().flying) {
+
+        FlightState previous = MANAGED_FLIGHT_STATES.remove(player.getUUID());
+        if (previous != null) {
+            boolean changed = player.getAbilities().mayfly != previous.mayfly() ||
+                    player.getAbilities().flying != previous.flying() ||
+                    Float.compare(player.getAbilities().getFlyingSpeed(), previous.flyingSpeed()) != 0;
+            player.getAbilities().mayfly = previous.mayfly();
+            player.getAbilities().flying = previous.flying();
+            player.getAbilities().setFlyingSpeed(previous.flyingSpeed());
+            if (changed) {
+                player.onUpdateAbilities();
+            }
+            return;
+        }
+
+        // Compatibility cleanup for worlds where the old handler left the exact quantum speed behind
+        // before this state tracking existed.
+        boolean legacyQuantumSpeed = Float.compare(player.getAbilities().getFlyingSpeed(), QUANTUM_FLYING_SPEED) == 0;
+        if (player.getAbilities().mayfly || player.getAbilities().flying || legacyQuantumSpeed) {
             player.getAbilities().mayfly = false;
             player.getAbilities().flying = false;
-            player.getAbilities().setFlyingSpeed(0.05F);
+            player.getAbilities().setFlyingSpeed(DEFAULT_FLYING_SPEED);
             player.onUpdateAbilities();
         }
     }
 
-    private static void resetStepHeight(ServerPlayer player) {
-        player.setMaxUpStep(0.6F);
+    private static void restoreBootState(ServerPlayer player) {
+        BootState previous = MANAGED_BOOT_STATES.remove(player.getUUID());
+        if (previous == null) {
+            removeLegacyBootSpeedEffect(player);
+            return;
+        }
+
+        player.setMaxUpStep(previous.maxUpStep());
+        player.removeEffect(MobEffects.MOVEMENT_SPEED);
+        if (previous.movementSpeed() != null) {
+            player.addEffect(new MobEffectInstance(previous.movementSpeed()));
+        }
     }
+
+    private static void removeLegacyBootSpeedEffect(ServerPlayer player) {
+        MobEffectInstance effect = player.getEffect(MobEffects.MOVEMENT_SPEED);
+        if (effect != null && effect.getAmplifier() == BOOT_SPEED_AMPLIFIER &&
+                effect.getDuration() <= BOOT_EFFECT_DURATION &&
+                !effect.isAmbient() && !effect.isVisible() && !effect.showIcon()) {
+            player.removeEffect(MobEffects.MOVEMENT_SPEED);
+        }
+    }
+
+    private static FlightState captureFlightState(ServerPlayer player) {
+        // The exact pair used by the old handler is treated as stale GTNA state when a world is
+        // upgraded while the armor was already equipped.
+        if (player.getAbilities().mayfly &&
+                Float.compare(player.getAbilities().getFlyingSpeed(), QUANTUM_FLYING_SPEED) == 0) {
+            return new FlightState(false, false, DEFAULT_FLYING_SPEED);
+        }
+        return new FlightState(player.getAbilities().mayfly, player.getAbilities().flying,
+                player.getAbilities().getFlyingSpeed());
+    }
+
+    private static MobEffectInstance copyEffect(MobEffectInstance effect) {
+        return effect == null ? null : new MobEffectInstance(effect);
+    }
+
+    private record FlightState(boolean mayfly, boolean flying, float flyingSpeed) {}
+
+    private record BootState(float maxUpStep, MobEffectInstance movementSpeed) {}
 
     private static void reflectDamage(@org.jetbrains.annotations.Nullable Entity attacker, Player defender,
                                       float amount) {

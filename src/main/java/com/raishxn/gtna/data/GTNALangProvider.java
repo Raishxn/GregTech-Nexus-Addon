@@ -133,6 +133,33 @@ public class GTNALangProvider extends LanguageProvider {
     }
 
     private void addStaticTranslations() {
+        // --- Ported-content attribution (appended to machine tooltips by GTNASources) ---
+        add("gtna.tooltip.source", "Source: %s");
+        add("gtna.source.gto", "GregTech Odyssey (GTO)");
+        add("gtna.source.gtnl", "GT: Not Leisure (GTNL)");
+        add("gtna.source.gtnh", "GT: New Horizons (GTNH)");
+        add("gtna.source.tst", "Twist Space Technology (TST)");
+        add("gtna.source.gtl", "GregTech Leisure (GTL)");
+        add("gtna.source.gtlcore", "GTLCore");
+        add("gtna.source.gtlsupb", "GTLsupb");
+        add("gtna.source.gtoepp", "GTO Extended Platform Presets");
+        add("gtna.source.gtmthings", "GTMThings");
+
+        // --- Multiple-recipes machine UI (previously hardcoded literals) ---
+        add("gtna.multiblock.max_eut", "Max EU/t: %s (%s)");
+        add("gtna.multiblock.parallels", "Parallels: %s");
+        add("gtna.multiblock.overclock_hatch", "Overclock Hatch: %s");
+        add("gtna.multiblock.overclock_hatch.value", "%.2fx duration per 4x EU");
+        add("gtna.multiblock.accelerate_hatch", "Accelerate Hatch: %s");
+        add("gtna.multiblock.accelerate_hatch.value", "%.2fx Duration");
+        add("gtna.multiblock.output_boost_hatch", "Output Boost Hatch: %s");
+        add("gtna.multiblock.output_boost_hatch.value", "%dx Outputs");
+        add("gtna.multiblock.active_threads", "Active Threads: %s");
+        add("gtna.multiblock.idle", "Idle - Waiting for inputs...");
+        add("gtna.multiblock.thread_line", "Thread %s: %s%s");
+        add("gtna.multiblock.output_line", " -> %s x%s%s");
+        add("gtna.multiblock.unknown", "Unknown");
+
         add("material.gtna.aluminium_bronze", "Aluminium Bronze");
         add("material.gtna.end_steel", "EndSteel");
         add("material.gtna.indalloy_140", "Indalloy 140");
@@ -147,22 +174,31 @@ public class GTNALangProvider extends LanguageProvider {
 
         // Accelerate Hatch
         add("gtna.machine.accelerate_hatch.main_function",
-                "Main Function: directly reduces recipe duration after normal overclocking");
-        add("gtna.machine.accelerate_hatch.range", "Final Duration adjustment Range: %s - 100%%");
+                "Main Function: reduces recipe duration on top of the normal overclock.");
+        add("gtna.machine.accelerate_hatch.range",
+                "Default duration: %s of the original - adjust it in the hatch UI, up to 100%% (no effect).");
         add("gtna.machine.accelerate_hatch.weakness",
-                "The Acceleration effect is weakened by 20% per level when the level of accelerate hatch is lower than the machine tier.");
+                "Penalty: +20%% duration per tier the RECIPE is above this hatch. A low-tier recipe in a high-tier machine is NOT penalized.");
+        add("gtna.machine.accelerate_hatch.compat",
+                "Works in any electric multiblock that accepts the hatch (GTCEu and GTNA).");
 
         // Thread Hatch
-        add("gtna.machine.thread_hatch.tooltip", "Can Provide +%s thread parallel processing for the machine.");
+        add("gtna.machine.thread_hatch.tooltip",
+                "Provides +%s threads so the machine can process different recipes at the same time.");
+        add("gtna.machine.thread_hatch.range", "Adjustable in the hatch UI (0..%s).");
+        add("gtna.machine.thread_hatch.requires",
+                "Requires a machine on the multiple-recipes base (currently the Duration Tester and KubeJS machines).");
 
         // Overclock Hatch
-        add("gtna.machine.overclock_hatch.main_function", "Main function: improves the machine overclock curve");
+        add("gtna.machine.overclock_hatch.main_function", "Main Function: improves the machine's overclock curve.");
         add("gtna.machine.overclock_hatch.not_installed",
-                "Without this hatch, every 4x EU/t overclock uses the standard machine duration factor.");
+                "Without this hatch, every 4x EU/t overclock uses the standard 50%% duration factor.");
         add("gtna.machine.overclock_hatch.installed",
-                "With this hatch, every 4x EU/t overclock can reduce recipe duration to %s of its previous value.");
+                "With this hatch, every 4x EU/t overclock reduces duration to %s - adjust it in the hatch UI, up to 100%%.");
         add("gtna.machine.overclock_hatch.desc",
-                "This changes overclock scaling itself; it is not a final duration multiplier like an Accelerate Hatch.");
+                "Changes the overclock scaling itself; it is not a final duration multiplier like the Accelerate Hatch.");
+        add("gtna.machine.overclock_hatch.note",
+                "Note: at UV the factor equals the standard overclock, so a UV hatch gives no gain - the gain starts at UHV.");
         add("gtna.machine.output_boost_hatch.main_function",
                 "Main function: multiplies only recipe outputs for compatible multiblocks");
         add("gtna.machine.output_boost_hatch.multiplier", "Output Multiplier: %sx items and fluids");
@@ -176,6 +212,29 @@ public class GTNALangProvider extends LanguageProvider {
                 "Steam multiblocks can read item inputs from this bus without consuming them");
         add("gtna.machine.output_boost_steam_output_bus.tooltip",
                 "Steam multiblocks multiply item outputs by %sx while this bus is installed");
+        // Universal Factory (GTLsupb port)
+        add("block.gtna.universal_factory_casing", "Universal Factory Casing");
+        add("block.gtna.universal_factory", "Universal Factory");
+        add("gtna.machine.universal_factory.tooltip.0",
+                "Processes many different recipes at once with cross-recipe parallelism and threads.");
+        add("gtna.machine.universal_factory.tooltip.1",
+                "Threads and parallel scale with the operating voltage tier; idle time cools the machine down.");
+        add("gtna.machine.universal_factory.tooltip.2",
+                "Warmup raises parallel while it keeps running (up to a maximum); past the overload time it stays maxed.");
+        add("gtna.machine.universal_factory.tooltip.3",
+                "Batch multiplier and AUTO batch are set in the machine UI. Accepts Thread / Accelerate / Overclock / Output Boost hatches.");
+        add("gtna.machine.universal_factory.thermal_status", "Thermal status: %s / %s (warmup %sx)");
+        add("gtna.machine.universal_factory.overload_active", "OVERLOAD ACTIVE - maximum warmup");
+        add("gtna.machine.universal_factory.dynamic_threads", "Dynamic threads: %s");
+        add("gtna.machine.batch_multiplier", "Batch multiplier: %s");
+
+        // Primitive Stone Furnace (GTLsupb port)
+        add("block.gtna.primitive_stone_furnace", "Primitive Stone Furnace");
+        add("gtna.machine.primitive_stone_furnace.tooltip.0",
+                "A primitive furnace carved from stone: smelts like a furnace, with no energy required.");
+        add("gtna.machine.primitive_stone_furnace.tooltip.1",
+                "Feed items in and take the smelted results out; no power hatch is needed.");
+
         add("block.gtna.industrial_platform_deployment_tools", "Industrial Platform Deployment Tools");
         add("gtna.machine.industrial_platform_deployment_tools.tooltip.0",
                 "Deploys prefabricated platform and factory presets directly into the world");
@@ -499,17 +558,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.infinite_steam_input_bus", "Infinite Steam Input Bus");
         add("block.gtna.output_boost_steam_output_bus", "Output Boost Steam Output Bus");
         add("gtna.tooltip.huge_steam_bus", "Input Bus with a lot of items capacity. around 3654 itens.");
-        add("gtna.tooltip.mega_solar.desc", "A massive solar thermal power plant.");
-        add("gtna.tooltip.mega_solar.expansion", "Structure is expandable! Add Solar Pipes behind and to the sides.");
-        add("gtna.tooltip.mega_solar.sunlight",
-                "REQUIREMENT: Every Solar Pipe casing must have direct access to the sky.");
-        add("gtna.tooltip.mega_solar.production", "Production: 10,000 L/s of Steam per active Pipe Block.");
-        add("gtna.tooltip.mega_solar.max_size", "Max Size: 33 Wide x 32 Deep.");
-        add("gtna.machine.mega_solar.size", "Structure Size: %s x %s");
-        add("gtna.machine.mega_solar.sunlit", "Sunlit Cells: %s");
-        add("gtna.machine.mega_solar.production", "Steam Production: %s L/t");
         add("gtna.machine.wireless_steam_hatch.tooltip", "Steam Production: %s L/t");
-        add("block.gtna.mega_pressure_solar_boiler", "Mega Pressure Solar Boiler");
         add("block.gtna.breel_pipe_casing", "Breel Pipe Casing");
         add("block.gtna.hyper_pressure_breel_casing", "Hyper Pressure Breel Casing");
         add("block.gtna.steam_compact_pipe_casing", "Steam Compact Pipe Casing");
@@ -746,6 +795,40 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.large_steam_cutting.speed", "Speed: 100% faster than singleblock.");
         add("gtna.tooltip.large_steam_cutting.efficiency", "Efficiency: consumes 50% total steam per recipe.");
         add("gtna.tooltip.large_steam_cutting.parallel", "Parallel: Processes up to 16 recipes.");
+        add("block.gtna.large_steam_bending", "Large Steam Bending Machine");
+        add("gtna.tooltip.large_steam_bending.desc", "GT-Not-Leisure style steam bending machine.");
+        add("gtna.tooltip.large_steam_bending.speed", "Speed: 100% faster than singleblock.");
+        add("gtna.tooltip.large_steam_bending.efficiency", "Efficiency: consumes 50% total steam per recipe.");
+        add("gtna.tooltip.large_steam_bending.parallel", "Parallel: Processes up to 16 recipes.");
+        add("block.gtna.large_steam_extruder", "Large Steam Extruder");
+        add("gtna.tooltip.large_steam_extruder.desc", "GT-Not-Leisure style steam extruder.");
+        add("gtna.tooltip.large_steam_extruder.speed", "Speed: 100% faster than singleblock.");
+        add("gtna.tooltip.large_steam_extruder.efficiency", "Efficiency: consumes 50% total steam per recipe.");
+        add("gtna.tooltip.large_steam_extruder.parallel", "Parallel: Processes up to 16 recipes.");
+        add("block.gtna.large_steam_wiremill", "Large Steam Wiremill");
+        add("gtna.tooltip.large_steam_wiremill.desc", "GT-Not-Leisure style steam wiremill.");
+        add("gtna.tooltip.large_steam_wiremill.speed", "Speed: 100% faster than singleblock.");
+        add("gtna.tooltip.large_steam_wiremill.efficiency", "Efficiency: consumes 50% total steam per recipe.");
+        add("gtna.tooltip.large_steam_wiremill.parallel", "Parallel: Processes up to 16 recipes.");
+        add("block.gtna.large_steam_sifter", "Large Steam Sifter");
+        add("gtna.tooltip.large_steam_sifter.desc", "GT-Not-Leisure style steam sifter.");
+        add("gtna.tooltip.large_steam_sifter.speed", "Speed: 100% faster than singleblock.");
+        add("gtna.tooltip.large_steam_sifter.efficiency", "Efficiency: consumes 50% total steam per recipe.");
+        add("gtna.tooltip.large_steam_sifter.parallel", "Parallel: Processes up to 16 recipes.");
+        add("block.gtna.steam_lava_maker", "Steam Lava Maker");
+        add("gtna.tooltip.steam_lava_maker.desc",
+                "GT-Not-Leisure style steam lava maker: melts stone into lava.");
+        add("gtna.tooltip.steam_lava_maker.speed", "Speed: 1 second per stone block.");
+        add("gtna.tooltip.steam_lava_maker.efficiency", "Efficiency: runs on steam instead of EU.");
+        add("gtna.tooltip.steam_lava_maker.parallel", "Parallel: Processes up to 16 recipes.");
+        add("block.gtna.steam_item_vault", "Steam Item Vault");
+        add("gtna.tooltip.steam_item_vault.desc",
+                "GT-Not-Leisure style steam item vault: a very large item storage for the steam era.");
+        add("gtna.tooltip.steam_item_vault.capacity", "Capacity: 256 types x 64,000 items each.");
+        add("gtna.tooltip.steam_item_vault.access",
+                "Access the stored items through the structure's item buses.");
+        add("gtna.multiblock.vault.types", "Stored types: %s / %s");
+        add("gtna.multiblock.vault.items", "Stored items: %s");
         add("block.gtna.large_steam_forming_press", "Large Steam Forming Press");
         add("gtna.tooltip.large_steam_forming_press.desc", "GT-Not-Leisure style steam forming press.");
         add("gtna.tooltip.large_steam_forming_press.speed", "Speed: 150% faster than singleblock.");
@@ -896,8 +979,6 @@ public class GTNALangProvider extends LanguageProvider {
         // Wireless Steam
         add("config.gtna.option.wirelessSteamTransferRate", "Wireless Steam Transfer Rate");
 
-        // Mega Solar Boiler
-        add("config.gtna.option.megaSolarSteamPerBlock", "Solar Steam Per Block");
         add("config.gtna.option.eyeOfWood", "Eye of Wood");
 
         // Void Miner - Tier 1 (Dense)

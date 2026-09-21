@@ -70,6 +70,7 @@ import appeng.crafting.pattern.ProcessingPatternItem;
 import appeng.helpers.patternprovider.PatternContainer;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
 import com.raishxn.gtna.api.machine.feature.ModeIdMatcher;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
@@ -509,11 +510,26 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
      */
     private boolean drainPendingNetworkOutput() {
         IGrid network = getMainNode().getGrid();
-        if (network == null || pendingNetworkOutput.isEmpty()) {
+        if (network == null) {
             return false;
         }
         MEStorage storage = network.getStorageService().getInventory();
         var energy = network.getEnergyService();
+        return drainPendingNetworkOutput(
+                (key, amount) -> StorageHelper.poweredInsert(energy, storage, key, amount, actionSource));
+    }
+
+    /**
+     * The drain algorithm, with the grid insert injected so it can be exercised without a live AE2
+     * grid (see the {@code pendingNetworkOutputRetriesUntilItFits} gametest).
+     *
+     * @param insert returns how much of {@code amount} the network accepted (0 when saturated)
+     * @return {@code true} when at least one key moved
+     */
+    boolean drainPendingNetworkOutput(NetworkInsert insert) {
+        if (pendingNetworkOutput.isEmpty()) {
+            return false;
+        }
         boolean didWork = false;
         int operations = 0;
         int consecutiveFailures = 0;
@@ -525,7 +541,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                 it.remove();
                 continue;
             }
-            long inserted = StorageHelper.poweredInsert(energy, storage, entry.getKey(), amount, actionSource);
+            long inserted = insert.insert(entry.getKey(), amount);
             operations++;
             if (inserted > 0) {
                 didWork = true;
@@ -541,6 +557,44 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             }
         }
         return didWork;
+    }
+
+    /** Injects the network insert so the drain algorithm is testable without a grid. */
+    @FunctionalInterface
+    public interface NetworkInsert {
+
+        long insert(AEKey key, long amount);
+    }
+
+    // --- Test hooks for the deferred-output path (no live AE2 grid required) ---
+
+    /** Queues a deferred output as if the network had refused it. */
+    public void gtna$bufferPendingOutput(AEKey key, long amount) {
+        bufferPendingNetworkOutput(key, amount);
+    }
+
+    /** How much of {@code key} is still waiting to enter the network (0 when none). */
+    public long gtna$pendingOutputAmount(AEKey key) {
+        return pendingNetworkOutput.getLong(key);
+    }
+
+    /** Whether nothing is waiting. */
+    public boolean gtna$pendingOutputIsEmpty() {
+        return pendingNetworkOutput.isEmpty();
+    }
+
+    /** Runs one drain pass with an injected insert. */
+    public boolean gtna$drainPendingOutput(NetworkInsert insert) {
+        return drainPendingNetworkOutput(insert);
+    }
+
+    /** Stages a slot as if AE2 had pushed this item, for the staged-content mode-request test. */
+    public void gtna$stageSlotItem(int slot, ItemStack stack) {
+        if (slot < 0 || slot >= maxPatternCount || stack.isEmpty()) {
+            return;
+        }
+        internalInventory[slot].add(AEItemKey.of(stack), stack.getCount());
+        internalInventory[slot].onContentsChanged();
     }
 
     /**
@@ -1012,9 +1066,17 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         if (slot != null) {
             slot.pushPattern(patternDetails, inputHolder);
             int logicalSlot = getInternalSlotIndex(slot);
-            if (logicalSlot >= 0) {
+            // Resolving scans thousands of recipes; only do it when the slot has no cached recipe yet
+            // (the first push), instead of on every AE2 craft push.
+            if (logicalSlot >= 0 && slotConfigs[logicalSlot].getCachedRecipeId().isBlank()) {
                 slotResolver.resolveAndCacheSlotRecipe(logicalSlot);
             }
+            // Diagnostics for AE2 autocrafting: how much the CPU actually pushed into this slot.
+            long itemTotal = slot.getItems().stream().mapToLong(net.minecraft.world.item.ItemStack::getCount).sum();
+            long fluidTotal = slot.getFluids().stream()
+                    .mapToLong(net.minecraftforge.fluids.FluidStack::getAmount).sum();
+            GTNACORE.LOGGER.info("[GTNA][PatternBuffer] pushPattern slot={} slotItems={} slotFluids={}",
+                    logicalSlot, itemTotal, fluidTotal);
             return true;
         }
         return false;

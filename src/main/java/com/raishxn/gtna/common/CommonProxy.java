@@ -121,5 +121,7 @@ public class CommonProxy {
         GTNAMachines.init();
         GTNAMachines2.init();
         GTNAEnergyHatches.init();
+        // Append the ported-content attribution line once every GTNA machine is registered.
+        GTNASources.applyAll();
     }
 }

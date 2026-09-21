@@ -1,42 +1,52 @@
 package com.raishxn.gtna.common.machine.multiblock.part;
 
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.feature.ITieredMachine;
-import com.gregtechceu.gtceu.api.machine.multiblock.part.MultiblockPartMachine;
+
+import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 
+import com.raishxn.gtna.api.machine.feature.AccelerateHatchMath;
 import com.raishxn.gtna.config.GTNABalance;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+/**
+ * Reduces the duration of recipes. The effective percentage is player-adjustable (GTOCore
+ * {@code WorkableAmountConfigurationPartMachine} parity): it defaults to the tier's best value and
+ * can be dialed up to 100% (no effect). The tier penalty follows the recipe tier, never the machine.
+ */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class AccelerateHatchPartMachine extends MultiblockPartMachine implements ITieredMachine {
+public class AccelerateHatchPartMachine extends ConfigurableAmountPartMachine {
 
-    private final int tier;
-
-    public AccelerateHatchPartMachine(IMachineBlockEntity holder, int tier, Object... args) {
-        super(holder);
-        this.tier = tier;
-    }
+    protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
+            AccelerateHatchPartMachine.class, ConfigurableAmountPartMachine.MANAGED_FIELD_HOLDER);
 
     @Override
-    public int getTier() {
-        return this.tier;
+    public ManagedFieldHolder getFieldHolder() {
+        return MANAGED_FIELD_HOLDER;
     }
 
+    public AccelerateHatchPartMachine(IMachineBlockEntity holder, int tier, Object... args) {
+        super(holder, tier,
+                GTNABalance.getAccelerateBaseMinPercent(tier),
+                GTNABalance.getAccelerateMaximumFinalPercent());
+    }
+
+    /** Best-case percentage of this tier (no recipe-tier penalty), used for UI display. */
     public int getMinDurationPercentage() {
-        return GTNABalance.getAccelerateBaseMinPercent(this.getTier());
+        return getMinAmount();
     }
 
-    public int calcDurationPercentage(int machineTier) {
-        int basePercentage = getMinDurationPercentage();
-        int tierDiff = machineTier - this.getTier();
-        if (tierDiff > 0) {
-            basePercentage += (tierDiff * GTNABalance.getAcceleratePenaltyPerTierBelowMachine());
-        }
-        return Math.min(GTNABalance.getAccelerateMaximumFinalPercent(),
-                Math.max(GTNABalance.getAccelerateMinimumFinalPercent(), basePercentage));
+    /**
+     * @param recipeTier the recipe's <b>pre-overclock</b> voltage tier (GTOCore semantics: the penalty
+     *                   is tied to the recipe, never the machine - a high-tier machine running a
+     *                   low-tier recipe is not punished)
+     */
+    public int calcDurationPercentage(int recipeTier) {
+        return AccelerateHatchMath.compute(getCurrentAmount(), getTier(), recipeTier,
+                GTNABalance.getAcceleratePenaltyPerTierBelowRecipe(), GTNABalance.getAccelerateMinimumFinalPercent(),
+                GTNABalance.getAccelerateMaximumFinalPercent());
     }
 }

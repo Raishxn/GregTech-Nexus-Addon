@@ -70,7 +70,11 @@ final class PatternBufferUI {
         addPatternColumn(group);
         addConfigPanel(group);
 
+        // A slot can still be selected when the UI is reopened: restore both the panel visibility and
+        // the state that is pushed into widgets (circuit preview, mode button) instead of starting
+        // from an empty panel.
         applySelectionState(machine.getSelectedSlot() >= 0);
+        refreshSelectedConfigPreview();
         return group;
     }
 

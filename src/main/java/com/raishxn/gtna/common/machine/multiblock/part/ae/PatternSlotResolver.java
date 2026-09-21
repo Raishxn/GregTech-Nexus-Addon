@@ -572,6 +572,9 @@ final class PatternSlotResolver {
     }
 
     static List<Ingredient> consumeVirtualItemList(List<ItemStack> virtualStacks, List<Ingredient> left) {
+        if (left == null || left.isEmpty()) {
+            return left;
+        }
         if (virtualStacks.isEmpty()) {
             return left;
         }

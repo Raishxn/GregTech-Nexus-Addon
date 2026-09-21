@@ -132,11 +132,24 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
     }
 
     // Métodos usados pelo GTNAMultipleRecipesLogic para calcular a velocidade final
-    public double getDurationMultiplier() {
+    /**
+     * @param recipeTier the recipe's pre-overclock voltage tier (GTOCore semantics: the accelerate
+     *                   penalty follows the recipe, not the machine tier)
+     */
+    public double getDurationMultiplier(int recipeTier) {
         double multiplier = 1.0;
         for (AccelerateHatchPartMachine hatch : accelerateHatches) {
-            double percentage = hatch.calcDurationPercentage(this.getTier()) / 100.0;
+            double percentage = hatch.calcDurationPercentage(recipeTier) / 100.0;
             multiplier *= percentage;
+        }
+        return Math.max(0.01, multiplier);
+    }
+
+    /** Best-case multiplier for the UI (no recipe tier penalty). */
+    public double getNominalDurationMultiplier() {
+        double multiplier = 1.0;
+        for (AccelerateHatchPartMachine hatch : accelerateHatches) {
+            multiplier *= hatch.getMinDurationPercentage() / 100.0;
         }
         return Math.max(0.01, multiplier);
     }
@@ -185,50 +198,57 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
                         storedEnergy = getEnergyContainer().getEnergyStored();
                     }
                     int tier = getTier();
-                    String tierName = GTValues.VN[tier];
-                    text.add(Component.literal("Max EU/t: ").withStyle(ChatFormatting.GRAY)
-                            .append(Component.literal(String.format(Locale.US, "%,d", storedEnergy))
-                                    .withStyle(ChatFormatting.WHITE))
-                            .append(Component.literal(" (" + tierName + ")").withStyle(ChatFormatting.GOLD)));
+                    // Electric multiblocks derive their tier from the energy container voltage, which can exceed
+                    // MAX when an over-tier energy hatch is installed; never index VN out of bounds.
+                    String tierName = tier >= 0 && tier < GTValues.VN.length ? GTValues.VN[tier] : ("T" + tier);
+                    text.add(Component.translatable("gtna.multiblock.max_eut",
+                            Component.literal(String.format(Locale.US, "%,d", storedEnergy))
+                                    .withStyle(ChatFormatting.WHITE),
+                            Component.literal(tierName).withStyle(ChatFormatting.GOLD))
+                            .withStyle(ChatFormatting.GRAY));
 
                     int parallel = getMaxParallel();
                     if (parallel > 1) {
-                        text.add(Component.literal("Parallels: ").withStyle(ChatFormatting.GRAY)
-                                .append(Component.literal(String.valueOf(parallel)).withStyle(ChatFormatting.GREEN)));
+                        text.add(Component.translatable("gtna.multiblock.parallels",
+                                Component.literal(String.valueOf(parallel)).withStyle(ChatFormatting.GREEN))
+                                .withStyle(ChatFormatting.GRAY));
                     }
 
                     // Informações de UI dos Hatches
                     if (hasOverclockHatch()) {
                         double ocMultiplier = getOverclockDurationFactor();
-                        text.add(Component.literal("Overclock Hatch: ").withStyle(ChatFormatting.GRAY)
-                                .append(Component.literal(String.format(Locale.US, "%.2fx duration per 4x EU",
-                                        ocMultiplier))
-                                        .withStyle(ChatFormatting.LIGHT_PURPLE)));
+                        text.add(Component.translatable("gtna.multiblock.overclock_hatch",
+                                Component.translatable("gtna.multiblock.overclock_hatch.value", ocMultiplier)
+                                        .withStyle(ChatFormatting.LIGHT_PURPLE))
+                                .withStyle(ChatFormatting.GRAY));
                     }
 
-                    double accMultiplier = getDurationMultiplier();
+                    double accMultiplier = getNominalDurationMultiplier();
                     if (accMultiplier < 1.0) {
-                        text.add(Component.literal("Accelerate Hatch: ").withStyle(ChatFormatting.GRAY)
-                                .append(Component.literal(String.format("%.2fx Duration", accMultiplier))
-                                        .withStyle(ChatFormatting.LIGHT_PURPLE)));
+                        text.add(Component.translatable("gtna.multiblock.accelerate_hatch",
+                                Component.translatable("gtna.multiblock.accelerate_hatch.value", accMultiplier)
+                                        .withStyle(ChatFormatting.LIGHT_PURPLE))
+                                .withStyle(ChatFormatting.GRAY));
                     }
 
                     int outputMultiplier = getOutputBoostMultiplier();
                     if (outputMultiplier > 1) {
-                        text.add(Component.literal("Output Boost Hatch: ").withStyle(ChatFormatting.GRAY)
-                                .append(Component.literal(String.format("%dx Outputs", outputMultiplier))
-                                        .withStyle(ChatFormatting.AQUA)));
+                        text.add(Component.translatable("gtna.multiblock.output_boost_hatch",
+                                Component.translatable("gtna.multiblock.output_boost_hatch.value", outputMultiplier)
+                                        .withStyle(ChatFormatting.AQUA))
+                                .withStyle(ChatFormatting.GRAY));
                     }
 
-                    text.add(Component.literal("Active Threads: ").withStyle(ChatFormatting.GRAY)
-                            .append(Component.literal(logic.getActiveRecipeCount() + " / " + logic.getMaxThreads())
-                                    .withStyle(ChatFormatting.AQUA)));
+                    text.add(Component.translatable("gtna.multiblock.active_threads",
+                            Component.literal(logic.getActiveRecipeCount() + " / " + logic.getMaxThreads())
+                                    .withStyle(ChatFormatting.AQUA))
+                            .withStyle(ChatFormatting.GRAY));
 
                     text.add(Component.empty());
                     List<Component> activeThreadsInfo = logic.getRecipeDisplayInfo();
                     if (!activeThreadsInfo.isEmpty()) text.addAll(activeThreadsInfo);
-                    else text
-                            .add(Component.literal("Idle - Waiting for inputs...").withStyle(ChatFormatting.DARK_GRAY));
+                    else text.add(Component.translatable("gtna.multiblock.idle")
+                            .withStyle(ChatFormatting.DARK_GRAY));
                 });
     }
 

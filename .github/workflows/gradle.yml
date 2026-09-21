@@ -39,6 +39,17 @@ jobs:
     - name: Code quality (spotless) + unit tests
       run: ./gradlew spotlessCheck runUnitTests
 
+    # Generated resources are tracked; if datagen produces a diff the committed en_us/assets are stale.
+    - name: Data generation is deterministic
+      run: |
+        ./gradlew runData
+        if ! git diff --quiet -- src/generated; then
+          echo "::error::runData changed generated resources; run ./gradlew runData and commit the result"
+          git --no-pager diff --stat -- src/generated
+          exit 1
+        fi
+        echo "datagen is deterministic"
+
     # runGameTestServer exits 0 even when the mod fails to load, so the log banner is the real
     # assertion. Without this guard a broken build passes silently.
     - name: Game tests

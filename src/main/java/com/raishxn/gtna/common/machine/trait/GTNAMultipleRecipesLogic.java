@@ -1,6 +1,8 @@
 package com.raishxn.gtna.common.machine.trait;
 
 import com.gregtechceu.gtceu.api.capability.IParallelHatch;
+import com.gregtechceu.gtceu.api.capability.recipe.EURecipeCapability;
+import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
@@ -19,6 +21,7 @@ import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
 import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.content.ContentModifier;
+import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import com.gregtechceu.gtceu.api.recipe.ingredient.SizedIngredient;
 import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
 import com.gregtechceu.gtceu.api.recipe.modifier.ParallelLogic;
@@ -36,8 +39,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraftforge.fluids.FluidStack;
 
+import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.IThreadModifierMachine;
+import com.raishxn.gtna.api.machine.IZeroEnergyMachine;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
 import com.raishxn.gtna.api.machine.feature.PatternBufferModeSelection;
@@ -293,7 +299,41 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
         // --- INICIO DA LÓGICA MANUAL ---
 
         GTRecipe recipeToRun;
-        if (machine instanceof AdjustableSteamParallelMachine steamMachine) {
+        if (machine instanceof IZeroEnergyMachine zeroEnergy) {
+            // No energy: strip EU, parallelise from the (stripped) inputs and force a fixed duration.
+            GTRecipe base = recipe.copy();
+            stripEnergyContents(base);
+            int cap = getMaxParallel();
+            // GTCEu's ParallelLogic.getMaxByInput returns 0 for these (vanilla-converted) furnace recipes
+            // even though the machine sees the items, so compute the input budget directly instead.
+            int byInput = cap > 1 ? computeZeroEnergyParallel(base, cap) : 1;
+            int byOutput = byInput > 0 ?
+                    ParallelLogic.limitByOutputMerging((IRecipeCapabilityHolder) machine, base, byInput,
+                            ((IRecipeLogicMachine) machine)::canVoidRecipeOutputs, java.util.Collections.emptyList()) :
+                    0;
+            int feasibleParallel = byOutput > 0 ? byOutput : Math.max(1, byInput);
+            int inLists = ((IRecipeCapabilityHolder) machine).getCapabilitiesForIO(IO.IN).size();
+            long visibleItems = 0;
+            for (var hl : ((IRecipeCapabilityHolder) machine).getCapabilitiesForIO(IO.IN)) {
+                for (var h : hl.getCapability(ItemRecipeCapability.CAP)) {
+                    for (Object c : h.getContents()) {
+                        if (c instanceof net.minecraft.world.item.ItemStack stack) visibleItems += stack.getCount();
+                    }
+                }
+            }
+            GTNACORE.LOGGER.debug(
+                    "[GTNA][ZeroEnergy] recipe={} cap={} byInput={} byOutput={} feasibleParallel={} inLists={} visibleItems={}",
+                    recipe.getId(), cap, byInput, byOutput, feasibleParallel, inLists, visibleItems);
+            recipeToRun = base;
+            if (feasibleParallel > 1) {
+                recipeToRun = ModifierFunction.builder()
+                        .modifyAllContents(ContentModifier.multiplier(feasibleParallel))
+                        .parallels(feasibleParallel)
+                        .build()
+                        .apply(recipeToRun);
+            }
+            recipeToRun.duration = zeroEnergy.gtna$recipeDuration();
+        } else if (machine instanceof AdjustableSteamParallelMachine steamMachine) {
             recipeToRun = steamMachine.createThreadedRecipe(recipe);
             if (recipeToRun == null) return false;
         } else {
@@ -326,7 +366,7 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
         }
 
         if (machine instanceof WorkableElectricMultipleRecipesMachine customMachine) {
-            double durationMultiplier = customMachine.getDurationMultiplier();
+            double durationMultiplier = customMachine.getDurationMultiplier(RecipeHelper.getRecipeEUtTier(recipe));
 
             if (durationMultiplier < 0.999) {
                 var hatchModifier = ModifierFunction.builder()
@@ -335,13 +375,11 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
                 recipeToRun = hatchModifier.apply(recipeToRun);
             }
 
-            int outputMultiplier = customMachine.getOutputBoostMultiplier();
-            if (outputMultiplier > 1) {
-                var outputModifier = ModifierFunction.builder()
-                        .outputModifier(ContentModifier.multiplier(outputMultiplier))
-                        .build();
-                recipeToRun = outputModifier.apply(recipeToRun);
-            }
+            // Output boost is intentionally NOT applied here: the RecipeHelper mixin already
+            // multiplies outputs (match and execution) from the parts implementing
+            // GTNAOutputBoostItemPart/FluidPart, and the dedicated OutputBoostHatchPartMachine
+            // implements both. Applying it here too squared the boost (M -> M^2) and made the
+            // simulated match demand M^2 free space. Single source of truth: GTNASpecialPartUtil.
         }
         // ------------------------------------------------
 
@@ -384,6 +422,57 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Zero-energy parallel budget computed directly from what the machine can see, because GTCEu's
+     * {@code ParallelLogic.getMaxByInput} returns 0 for vanilla-converted furnace recipes even when
+     * the inputs are present.
+     */
+    private int computeZeroEnergyParallel(GTRecipe recipe, int cap) {
+        IRecipeCapabilityHolder holder = (IRecipeCapabilityHolder) machine;
+        long parallel = cap;
+        for (Content content : recipe.getInputContents(ItemRecipeCapability.CAP)) {
+            Ingredient ing = ItemRecipeCapability.CAP.of(content.content);
+            if (ing == null || ing.isEmpty()) continue;
+            long perCraft = ing instanceof SizedIngredient sized ? Math.max(1, sized.getAmount()) : 1;
+            long available = 0;
+            for (var hl : holder.getCapabilitiesForIO(IO.IN)) {
+                for (var h : hl.getCapability(ItemRecipeCapability.CAP)) {
+                    for (Object c : h.getContents()) {
+                        if (c instanceof ItemStack stack && !stack.isEmpty() && ing.test(stack)) {
+                            available += stack.getCount();
+                        }
+                    }
+                }
+            }
+            parallel = Math.min(parallel, available / perCraft);
+        }
+        for (Content content : recipe.getInputContents(FluidRecipeCapability.CAP)) {
+            FluidIngredient ing = FluidRecipeCapability.CAP.of(content.content);
+            if (ing == null || ing.isEmpty()) continue;
+            long perCraft = Math.max(1, ing.getAmount());
+            long available = 0;
+            for (var hl : holder.getCapabilitiesForIO(IO.IN)) {
+                for (var h : hl.getCapability(FluidRecipeCapability.CAP)) {
+                    for (Object c : h.getContents()) {
+                        if (c instanceof FluidStack stack && !stack.isEmpty() && ing.test(stack)) {
+                            available += stack.getAmount();
+                        }
+                    }
+                }
+            }
+            parallel = Math.min(parallel, available / perCraft);
+        }
+        return (int) Math.max(0, Math.min(parallel, cap));
+    }
+
+    /** Removes every EU content so a zero-energy machine can run an electric recipe for free. */
+    private static void stripEnergyContents(GTRecipe recipe) {
+        recipe.inputs.remove(EURecipeCapability.CAP);
+        recipe.tickInputs.remove(EURecipeCapability.CAP);
+        recipe.outputs.remove(EURecipeCapability.CAP);
+        recipe.tickOutputs.remove(EURecipeCapability.CAP);
     }
 
     // ... (Métodos isRecipeAlreadyActive, completeRecipe, getRecipeDisplayInfo, save/load mantidos iguais) ...
@@ -464,14 +553,14 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
             int percentage = max > 0 ? (int) ((prog / (float) max) * 100) : 0;
             ChatFormatting percentColor = percentage < 33 ? ChatFormatting.RED :
                     (percentage < 66 ? ChatFormatting.YELLOW : ChatFormatting.GREEN);
-            MutableComponent line1 = Component.literal("Thread " + (i + 1) + ": ")
-                    .withStyle(ChatFormatting.GOLD)
-                    .append(Component.literal(String.format(Locale.US, "%.1fs / %.1fs ", currentSec, maxSec))
-                            .withStyle(ChatFormatting.WHITE))
-                    .append(Component.literal(String.format("(%d%%)", percentage))
-                            .withStyle(percentColor));
+            MutableComponent line1 = Component.translatable("gtna.multiblock.thread_line",
+                    i + 1,
+                    Component.literal(String.format(Locale.US, "%.1fs / %.1fs ", currentSec, maxSec))
+                            .withStyle(ChatFormatting.WHITE),
+                    Component.literal(String.format("(%d%%)", percentage)).withStyle(percentColor))
+                    .withStyle(ChatFormatting.GOLD);
             infoList.add(line1);
-            String outputName = "Unknown";
+            Component outputComponent = Component.translatable("gtna.multiblock.unknown");
             int totalCount = 1;
             if (active.recipe.outputs.containsKey(ItemRecipeCapability.CAP)) {
                 List<Content> itemOutputs = active.recipe.outputs.get(ItemRecipeCapability.CAP);
@@ -479,33 +568,33 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
                     Content content = itemOutputs.get(0);
                     Object inner = content.getContent();
                     if (inner instanceof ItemStack stack) {
-                        outputName = stack.getHoverName().getString();
+                        outputComponent = stack.getHoverName();
                         totalCount = stack.getCount();
                     } else if (inner instanceof SizedIngredient sized) {
                         ItemStack[] stacks = sized.getItems();
-                        if (stacks.length > 0) outputName = stacks[0].getHoverName().getString();
+                        if (stacks.length > 0) outputComponent = stacks[0].getHoverName();
                         totalCount = sized.getAmount();
                     } else if (inner instanceof Ingredient ing) {
                         ItemStack[] stacks = ing.getItems();
-                        if (stacks.length > 0) outputName = stacks[0].getHoverName().getString();
+                        if (stacks.length > 0) outputComponent = stacks[0].getHoverName();
                     }
                 }
             }
             double timePerItem = (maxSec > 0 && totalCount > 0) ? (maxSec / totalCount) : maxSec;
+            String outputName = outputComponent.getString();
             String displayName = outputName;
             int maxLength = 20;
             if (displayName.length() > maxLength) {
                 displayName = displayName.substring(0, maxLength) + "...";
             }
-            MutableComponent line2 = Component.literal(" -> ")
-                    .withStyle(ChatFormatting.DARK_GRAY)
-                    .append(Component.literal(displayName)
+            MutableComponent line2 = Component.translatable("gtna.multiblock.output_line",
+                    Component.literal(displayName)
                             .withStyle(Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE).withHoverEvent(
-                                    new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(outputName)))))
-                    .append(Component.literal(" x" + totalCount)
-                            .withStyle(ChatFormatting.AQUA))
-                    .append(Component.literal(String.format(Locale.US, " (%.2fs/item)", timePerItem))
-                            .withStyle(ChatFormatting.GRAY));
+                                    new HoverEvent(HoverEvent.Action.SHOW_TEXT, outputComponent))),
+                    totalCount,
+                    Component.literal(String.format(Locale.US, " (%.2fs/item)", timePerItem))
+                            .withStyle(ChatFormatting.GRAY))
+                    .withStyle(ChatFormatting.DARK_GRAY);
 
             infoList.add(line2);
         }

@@ -7,13 +7,8 @@ import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.fancy.FancyMachineUIWidget;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
-import com.gregtechceu.gtceu.api.machine.feature.IFancyUIMachine;
-import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDisplayUIMachine;
-import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
 import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockDisplayText;
-import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
-import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
 import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
@@ -39,7 +34,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraftforge.items.IItemHandler;
 
 import com.raishxn.gtna.common.data.GTNARecipeType;
-import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,11 +46,10 @@ import java.util.Set;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class IndustrialSlaughterhouse extends WorkableElectricMultiblockMachine
-                                      implements IDisplayUIMachine, IFancyUIMachine {
+public class IndustrialSlaughterhouse extends WorkableElectricMultipleRecipesMachine {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            IndustrialSlaughterhouse.class, WorkableElectricMultiblockMachine.MANAGED_FIELD_HOLDER);
+            IndustrialSlaughterhouse.class, WorkableElectricMultipleRecipesMachine.MANAGED_FIELD_HOLDER);
 
     @Persisted
     private final List<ItemStack> lastDrops = new ArrayList<>();
@@ -73,11 +67,6 @@ public class IndustrialSlaughterhouse extends WorkableElectricMultiblockMachine
     @Override
     public @NotNull ManagedFieldHolder getFieldHolder() {
         return MANAGED_FIELD_HOLDER;
-    }
-
-    @Override
-    public @NotNull GTRecipeType getRecipeType() {
-        return GTNARecipeType.SLAUGHTERHOUSE_RECIPES;
     }
 
     @Override
@@ -202,21 +191,6 @@ public class IndustrialSlaughterhouse extends WorkableElectricMultiblockMachine
                 slaughterhouse.getEnergyContainer().getInputVoltage());
     }
 
-    private OverclockingLogic getOverclockingLogic() {
-        double durationFactor = OverclockingLogic.STD_DURATION_FACTOR;
-        boolean hasOverclockHatch = false;
-        for (IMultiPart part : getParts()) {
-            if (part instanceof OverclockHatchPartMachine hatch) {
-                durationFactor = Math.min(durationFactor, hatch.getOverclockMultiplier());
-                hasOverclockHatch = true;
-            }
-        }
-        if (!hasOverclockHatch) {
-            return OverclockingLogic.NON_PERFECT_OVERCLOCK;
-        }
-        return OverclockingLogic.create(durationFactor, OverclockingLogic.STD_VOLTAGE_FACTOR, false);
-    }
-
     @Override
     public ModularUI createUI(Player entityPlayer) {
         return new ModularUI(198, 208, this, entityPlayer).widget(new FancyMachineUIWidget(this, 198, 208));
@@ -282,6 +256,11 @@ public class IndustrialSlaughterhouse extends WorkableElectricMultiblockMachine
 
                     text.add(Component.literal("Output Buses: " + getOutputBusCount())
                             .withStyle(getOutputBusCount() > 0 ? ChatFormatting.GREEN : ChatFormatting.RED));
+
+                    var logic = getRecipeLogic();
+                    text.add(Component.literal("Active Threads: ").withStyle(ChatFormatting.GRAY)
+                            .append(Component.literal(logic.getActiveRecipeCount() + " / " + logic.getMaxThreads())
+                                    .withStyle(ChatFormatting.AQUA)));
 
                     if (!lastDrops.isEmpty()) {
                         text.add(Component.literal("Latest Drops:").withStyle(ChatFormatting.YELLOW));

@@ -31,6 +31,7 @@ public final class GTNABalance {
     private static MachinesBalance machines = MachinesBalance.defaults();
     private static NexusFluxMatrixBalance nexusFluxMatrix = NexusFluxMatrixBalance.defaults();
     private static RestrictedItemsBalance restrictedItems = RestrictedItemsBalance.defaults();
+    private static UniversalFactoryBalance universalFactory = UniversalFactoryBalance.defaults();
 
     private GTNABalance() {}
 
@@ -47,6 +48,8 @@ public final class GTNABalance {
                 NexusFluxMatrixBalance.defaults());
         restrictedItems = load("restricted_items.json", RestrictedItemsBalance.class,
                 RestrictedItemsBalance.defaults());
+        universalFactory = load("universal_factory.json", UniversalFactoryBalance.class,
+                UniversalFactoryBalance.defaults());
     }
 
     private static <T extends DefaultsApplier<T>> T load(String fileName, Class<T> clazz, T defaults) {
@@ -104,8 +107,8 @@ public final class GTNABalance {
                 Math.max(1, 50 - (2 * (tier - 1))));
     }
 
-    public static int getAcceleratePenaltyPerTierBelowMachine() {
-        return hatches.accelerateHatch.penaltyPerTierBelowMachine;
+    public static int getAcceleratePenaltyPerTierBelowRecipe() {
+        return hatches.accelerateHatch.penaltyPerTierBelowRecipe;
     }
 
     public static int getAccelerateMinimumFinalPercent() {
@@ -125,24 +128,28 @@ public final class GTNABalance {
                 Math.max(0, (1 << Math.max(0, tier - 6)) - 1));
     }
 
-    public static long getMegaSolarSteamPerBlock() {
-        return machines.megaSolarBoiler.steamPerBlock;
+    public static int getUniversalFactoryBaseParallel() {
+        return universalFactory.baseParallel;
     }
 
-    public static int getMegaSolarTickInterval() {
-        return machines.megaSolarBoiler.tickInterval;
+    public static int getUniversalFactoryBaseThreads() {
+        return universalFactory.baseThreads;
     }
 
-    public static int getMegaSolarMaxBackDistance() {
-        return machines.megaSolarBoiler.maxBackDistance;
+    public static double getUniversalFactoryMaxWarmup() {
+        return universalFactory.maxWarmup;
     }
 
-    public static int getMegaSolarMaxSideDistance() {
-        return machines.megaSolarBoiler.maxSideDistance;
+    public static double getUniversalFactoryWarmupTau() {
+        return universalFactory.warmupTau;
     }
 
-    public static boolean isMegaSolarClearSkyRequired() {
-        return machines.megaSolarBoiler.requireClearSky;
+    public static int getUniversalFactoryOverloadTime() {
+        return universalFactory.overloadTime;
+    }
+
+    public static int getUniversalFactoryMaxBatchMultiplier() {
+        return universalFactory.maxBatchMultiplier;
     }
 
     public static VoidMinerSteamTierBalance getVoidMinerDenseSteam() {
@@ -246,6 +253,31 @@ public final class GTNABalance {
         }
     }
 
+    /** Tuning for the ported Universal Factory (GTLsupb parity). */
+    public static final class UniversalFactoryBalance implements DefaultsApplier<UniversalFactoryBalance> {
+
+        public int baseParallel = 64;
+        public int baseThreads = 16;
+        public double maxWarmup = 8.0;
+        public double warmupTau = 60.0;
+        public int overloadTime = 120;
+        public int maxBatchMultiplier = 1000;
+
+        public static UniversalFactoryBalance defaults() {
+            return new UniversalFactoryBalance();
+        }
+
+        @Override
+        public void applyDefaults(UniversalFactoryBalance defaults) {
+            if (baseParallel <= 0) baseParallel = defaults.baseParallel;
+            if (baseThreads <= 0) baseThreads = defaults.baseThreads;
+            if (maxWarmup < 1.0) maxWarmup = defaults.maxWarmup;
+            if (warmupTau <= 0) warmupTau = defaults.warmupTau;
+            if (overloadTime <= 0) overloadTime = defaults.overloadTime;
+            if (maxBatchMultiplier <= 0) maxBatchMultiplier = defaults.maxBatchMultiplier;
+        }
+    }
+
     public static final class ThreadHatchBalance implements DefaultsApplier<ThreadHatchBalance> {
 
         public Map<String, Integer> extraThreadsByTier = defaultThreadMap();
@@ -267,7 +299,8 @@ public final class GTNABalance {
     public static final class AccelerateHatchBalance implements DefaultsApplier<AccelerateHatchBalance> {
 
         public Map<String, Integer> baseMinDurationPercentByTier = defaultAccelerateMap();
-        public int penaltyPerTierBelowMachine = 20;
+        /** Percentage added per recipe tier above the hatch tier (GTOCore semantics). */
+        public int penaltyPerTierBelowRecipe = 20;
         public int minimumFinalPercent = 1;
         public int maximumFinalPercent = 100;
 
@@ -282,7 +315,7 @@ public final class GTNABalance {
             } else {
                 defaults.baseMinDurationPercentByTier.forEach(baseMinDurationPercentByTier::putIfAbsent);
             }
-            if (penaltyPerTierBelowMachine <= 0) penaltyPerTierBelowMachine = defaults.penaltyPerTierBelowMachine;
+            if (penaltyPerTierBelowRecipe <= 0) penaltyPerTierBelowRecipe = defaults.penaltyPerTierBelowRecipe;
             if (minimumFinalPercent <= 0) minimumFinalPercent = defaults.minimumFinalPercent;
             if (maximumFinalPercent <= 0) maximumFinalPercent = defaults.maximumFinalPercent;
         }
@@ -329,7 +362,6 @@ public final class GTNABalance {
 
     public static final class MachinesBalance implements DefaultsApplier<MachinesBalance> {
 
-        public MegaSolarBalance megaSolarBoiler = MegaSolarBalance.defaults();
         public VoidMinerSteamGateBalance voidMinerSteamGateAged = VoidMinerSteamGateBalance.defaults();
 
         public static MachinesBalance defaults() {
@@ -338,32 +370,8 @@ public final class GTNABalance {
 
         @Override
         public void applyDefaults(MachinesBalance defaults) {
-            if (megaSolarBoiler == null) megaSolarBoiler = defaults.megaSolarBoiler;
-            else megaSolarBoiler.applyDefaults(defaults.megaSolarBoiler);
             if (voidMinerSteamGateAged == null) voidMinerSteamGateAged = defaults.voidMinerSteamGateAged;
             else voidMinerSteamGateAged.applyDefaults(defaults.voidMinerSteamGateAged);
-        }
-    }
-
-    public static final class MegaSolarBalance implements DefaultsApplier<MegaSolarBalance> {
-
-        public boolean enabled = true;
-        public int steamPerBlock = 500;
-        public int tickInterval = 20;
-        public boolean requireClearSky = true;
-        public int maxBackDistance = 32;
-        public int maxSideDistance = 16;
-
-        public static MegaSolarBalance defaults() {
-            return new MegaSolarBalance();
-        }
-
-        @Override
-        public void applyDefaults(MegaSolarBalance defaults) {
-            if (steamPerBlock <= 0) steamPerBlock = defaults.steamPerBlock;
-            if (tickInterval <= 0) tickInterval = defaults.tickInterval;
-            if (maxBackDistance <= 0) maxBackDistance = defaults.maxBackDistance;
-            if (maxSideDistance <= 0) maxSideDistance = defaults.maxSideDistance;
         }
     }
 

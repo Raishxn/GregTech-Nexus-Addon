@@ -44,6 +44,13 @@ public class GTNARecipeType {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.FURNACE);
 
+    public static final String LAVA_MAKER = "lava_maker";
+    public static final GTRecipeType LAVA_MAKER_RECIPES = register("lava_maker", LAVA_MAKER)
+            .setMaxIOSize(1, 0, 0, 1)
+            .setEUIO(IO.IN)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.FURNACE);
+
     public static final String HIGH_PRESSURE_REACTOR = "high_pressure_reactor";
     public static final GTRecipeType HIGH_PRESSURE_REACTOR_RECIPES = register("high_pressure_reactor",
             HIGH_PRESSURE_REACTOR)

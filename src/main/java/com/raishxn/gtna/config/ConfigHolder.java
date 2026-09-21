@@ -85,7 +85,6 @@ public class ConfigHolder {
         if (INSTANCE == null) return true;
         return switch (machineId) {
             case "largeSteamCrusher" -> INSTANCE.machineToggles.largeSteamCrusher;
-            case "megaPressureSolarBoiler" -> INSTANCE.machineToggles.megaPressureSolarBoiler;
             case "largeSteamFurnace" -> INSTANCE.machineToggles.largeSteamFurnace;
             case "largeSteamAlloySmelter" -> INSTANCE.machineToggles.largeSteamAlloySmelter;
             case "largeSteamHammer" -> INSTANCE.machineToggles.largeSteamHammer;
@@ -95,6 +94,12 @@ public class ConfigHolder {
             case "primitiveDistillationTower" -> INSTANCE.machineToggles.primitiveDistillationTower;
             case "largeSteamLathe" -> INSTANCE.machineToggles.largeSteamLathe;
             case "largeSteamCutting" -> INSTANCE.machineToggles.largeSteamCutting;
+            case "largeSteamBending" -> INSTANCE.machineToggles.largeSteamBending;
+            case "largeSteamExtruder" -> INSTANCE.machineToggles.largeSteamExtruder;
+            case "largeSteamWiremill" -> INSTANCE.machineToggles.largeSteamWiremill;
+            case "largeSteamSifter" -> INSTANCE.machineToggles.largeSteamSifter;
+            case "steamLavaMaker" -> INSTANCE.machineToggles.steamLavaMaker;
+            case "steamItemVault" -> INSTANCE.machineToggles.steamItemVault;
             case "largeSteamFormingPress" -> INSTANCE.machineToggles.largeSteamFormingPress;
             case "steamCobbler" -> INSTANCE.machineToggles.steamCobbler;
             case "stoneSuperheater" -> INSTANCE.machineToggles.stoneSuperheater;
@@ -234,8 +239,6 @@ public class ConfigHolder {
         @Configurable
         public boolean largeSteamCrusher = true;
         @Configurable
-        public boolean megaPressureSolarBoiler = true;
-        @Configurable
         public boolean largeSteamFurnace = true;
         @Configurable
         public boolean largeSteamAlloySmelter = true;
@@ -253,6 +256,12 @@ public class ConfigHolder {
         public boolean largeSteamLathe = true;
         @Configurable
         public boolean largeSteamCutting = true;
+        public boolean largeSteamBending = true;
+        public boolean largeSteamExtruder = true;
+        public boolean largeSteamWiremill = true;
+        public boolean largeSteamSifter = true;
+        public boolean steamLavaMaker = true;
+        public boolean steamItemVault = true;
         @Configurable
         public boolean largeSteamFormingPress = true;
         @Configurable
@@ -366,11 +375,6 @@ public class ConfigHolder {
         @Configurable
         @Range(min = 1000, max = 1000000)
         public int wirelessSteamTransferRate = 8192;
-
-        @Configurable
-        @Range(min = 1, max = 100000)
-        @Comment("En: Steam produced per sunlit block per operation.")
-        public int megaSolarSteamPerBlock = 500;
 
         @Configurable
         @Range(min = 1, max = 64)
