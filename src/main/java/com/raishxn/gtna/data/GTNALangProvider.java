@@ -159,6 +159,10 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.multiblock.thread_line", "Thread %s: %s%s");
         add("gtna.multiblock.output_line", " -> %s x%s%s");
         add("gtna.multiblock.unknown", "Unknown");
+        add("gtna.multiblock.steam.high_pressure",
+                "High pressure mode active: 2x processing speed, 2x steam consumption");
+        add("gtna.tooltip.steam.high_pressure",
+                "High pressure mode doubles processing speed and steam consumption");
 
         add("material.gtna.aluminium_bronze", "Aluminium Bronze");
         add("material.gtna.end_steel", "EndSteel");

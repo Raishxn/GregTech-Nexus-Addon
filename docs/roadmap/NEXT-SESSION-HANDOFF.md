@@ -96,6 +96,13 @@ consumption".
 → Implementar: detectar o tier dos casings (bronze vs steel) e, se steel, aplicar **×2 velocidade** e
 **×2 consumo de steam**; refletir na tooltip.
 
+> ✅ **Feito no G-0026.** `SteamMultiMachineBase` lê o tier do match context
+> (`SteamMultiMachineBase.casing()` aceita bronze **ou** steel e grava o menor tier), aplica duração
+> ×0.5 + steam ×2 (`getEffectiveConversionRate()`), skin de aço na GUI, linha no display e tooltip
+> compartilhada (`GTNASteamTooltips`). Ligado no `steamCasing()` (6 máquinas novas) e no
+> `large_steam_alloy_smelter`; gametest `steelCasingEnablesHighPressure` (24/24). As **demais**
+> `large_steam_*` ainda usam predicado de bronze inline → ganham o tier no **passo 3** (§11.3).
+
 ---
 
 ## 5. Convenção de orientação de estrutura (CRÍTICO)
@@ -193,10 +200,11 @@ Detalhe em `docs/roadmap/port-audit-2026-09-21.md` e `THIRD_PARTY_NOTICES.md`.
 
 1. **Criar os blocos faltantes** (Industrial/Advanced Industrial Steam Casing, bronze frame, column) —
    textura do **Modernity GTNH** + casing GTNA novo; atribuição no `THIRD_PARTY_NOTICES.md`.
-2. **High pressure mode** na base steam (`SteamMultiMachineBase`): tier dos casings → ×2 velocidade e
-   ×2 steam (§4), + tooltip.
+2. ~~**High pressure mode** na base steam (`SteamMultiMachineBase`): tier dos casings → ×2 velocidade e
+   ×2 steam (§4), + tooltip.~~ ✅ **Feito (G-0026)** — mecanismo + 7 máquinas; as demais no passo 3.
 3. **Re-portar as estruturas das `large_steam_*`** (as 21, incluindo o furnace) a partir dos `.mbs` do
-   GTNL, com §5/§6 e o mapeamento de blocos certo.
+   GTNL, com §5/§6 e o mapeamento de blocos certo — **e trocar o predicado de casing inline pelo
+   `SteamMultiMachineBase.casing()`** (aceita bronze/steel) e adicionar o id em `GTNASteamTooltips`.
 4. **Portar o `LargeBronzeBoiler`** (novo) e alinhar o **`SteamManufacturer`** (§7).
 5. **Padronizar as tooltips** no estilo GTNL, com **`Source:`** e **nomes rainbow** (§1).
 6. **`VaultPortHatch`** (AE2, HV) para o `steam_item_vault` (§8).

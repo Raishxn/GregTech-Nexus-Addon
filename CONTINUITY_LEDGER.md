@@ -30,16 +30,17 @@ foi feito nem repetir os erros já pagos.
 > várias vezes; **confira no código antes de agir** e **não confie** nas estruturas das
 > `large_steam_*` antigas sem revisar contra o GTNL.
 
-- **HEAD `7c7d306`**, árvore de trabalho com quatro follow-ups intencionais (AE2, armadura
-  Quantum, UI e gametest; verificado em 2026-09-20).
+- **HEAD `9c0833a`** (o acúmulo G-0010..G-0025 foi commitado em `feat:` + `docs:`); árvore limpa
+  antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
 - **Gate verde em 2026-09-21:** `spotlessCheck` + `compileJava` + `runUnitTests` (**14/14**) +
-  `runGameTestServer` (**23/23**, `All 23 required tests passed`). A execução carregou os mixins
-  alterados; os avisos/erros de receitas do GTCEu já conhecidos continuam no log.
+  `runGameTestServer` (**24/24**, `All 24 required tests passed`) + `runData` determinístico. A
+  execução carregou os mixins alterados; os avisos/erros de receitas do GTCEu já conhecidos
+  continuam no log.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
-- **Testes hoje:** 14 unit tests (`main()` + asserts, padrão GTLCore) e 23 gametests (`@GameTest`),
+- **Testes hoje:** 14 unit tests (`main()` + asserts, padrão GTLCore) e 24 gametests (`@GameTest`),
   ambos no gate do CI.
 - **Licenciamento (G-0019):** código do GTNA **LGPLv3**; assets do GTO em **CC BY-NC-SA 4.0**
   (o GTNA é **não-comercial**). Permissão do **GTOEPP** concedida pelo time GTO; atribuição de origem
@@ -92,6 +93,32 @@ foi feito nem repetir os erros já pagos.
 - **Pendência aberta:** conferir uma segunda escala de GUI no client (`./gradlew runClient`) se o
   usuário encontrar corte; o corte de emergência é `hasPlayerInventory()` → `false` em
   `GTNAMEPatternBufferPartMachine` (economiza 86 px, mas perde o inventário na GUI).
+
+### G-0026 (2026-09-21) — High pressure mode (steam): tier dos casings → ×2 velocidade e ×2 steam
+
+- **Implementado (GTNL parity):** o `SteamMultiMachineBase` agora lê o **tier do casing** da estrutura
+  formada (`bronze = 1`, `steel = 2`) do match context e expõe `isHighPressure()`. Com high pressure:
+  **duração ×0.5** e **steam ×2** (via `getEffectiveConversionRate()`, que dobra a taxa nominal de
+  mB-por-EU — respeitando overrides como os 0.75 da distillation tower), skin de GUI em aço e linha
+  "High pressure mode active" no display.
+- **Predicado de casing com tier:** novo `SteamMultiMachineBase.casing()` aceita
+  `CASING_BRONZE_BRICKS` **ou** `CASING_STEEL_SOLID` e grava o **menor** tier encontrado no match
+  context (semântica do `ofBlocksTiered` + `checkMachineTier` do GTNL: bronze vence se presente).
+  Ligado no helper `steamCasing()` (6 máquinas novas) e no `large_steam_alloy_smelter`.
+- **Onde o bônus de duração é aplicado:** dentro de `AdjustableSteamParallelMachine.createThreadedRecipe`
+  (não só no `getRealRecipe`), porque o `GTNAMultipleRecipesLogic` chama `createThreadedRecipe`
+  direto — sem isso o `FixedThreadSteamParallelMachine` ficaria de fora. O `getRealRecipe` da base
+  cobre as máquinas que usam o modifier da definição (`LargeSteam*`, `SteamManufacturer`).
+- **Tooltip:** `GTNASteamTooltips.applyAll()` anexa a linha compartilhada
+  `gtna.tooltip.steam.high_pressure` às 7 máquinas ligadas, **antes** do `Source:` do `GTNASources`
+  (ordem stats → high pressure → Source). Lang en_us + pt_br (byte-preserving) + `runData`.
+- **Decisão de escopo (autor):** mecanismo + 7 máquinas agora; as demais `large_steam_*` ganham o
+  predicado com tier no **passo 3** (re-portar as estruturas), evitando retrabalho.
+- **Cobertura:** gametest `steelCasingEnablesHighPressure` (24º) monta o alloy smelter com casing de
+  **aço** e prova `isFormed()` + `isHighPressure()` + `getEffectiveConversionRate() == 2.0`; o teste
+  do wireless hatch ganhou a asserção oposta (bronze → sem high pressure, taxa 1.0).
+- **Validação:** `spotlessCheck` + `runUnitTests` (14/14) + `runGameTestServer` (24/24) + `runData`
+  (written: 0).
 
 ### G-0025 (2026-09-21) — correção: estruturas próprias para as 6 máquinas steam novas
 

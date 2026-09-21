@@ -39,6 +39,7 @@ import com.raishxn.gtna.common.data.multiblock.DimensionallyTranscendentPatterns
 import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyAisles;
 import com.raishxn.gtna.common.data.multiblock.EyeOfWoodAisles;
 import com.raishxn.gtna.common.data.multiblock.GTNAMultiBlockFileReader;
+import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
 import com.raishxn.gtna.common.machine.multiblock.electric.UniversalFactoryMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.ArtificialStarMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhouse;
@@ -515,7 +516,7 @@ public class GTNAMachines {
                                     "AAA",
                                     " A ")
                             .where('~', controller(blocks(definition.get())))
-                            .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+                            .where('A', SteamMultiMachineBase.casing()
                                     .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1))
                                     .or(abilities(PartAbility.STEAM).setExactLimit(1)))
@@ -1250,9 +1251,9 @@ public class GTNAMachines {
                                     .withStyle(ChatFormatting.BLUE))
                     .register());
 
-    /** Bronze casing shell that also accepts the steam and item/fluid hatches. */
+    /** Bronze/steel casing shell that also accepts the steam and item/fluid hatches. */
     private static TraceabilityPredicate steamCasing() {
-        return blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
+        return SteamMultiMachineBase.casing()
                 .or(abilities(PartAbility.STEAM).setExactLimit(1))
                 .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
                 .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))

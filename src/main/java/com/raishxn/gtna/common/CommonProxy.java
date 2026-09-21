@@ -121,6 +121,9 @@ public class CommonProxy {
         GTNAMachines.init();
         GTNAMachines2.init();
         GTNAEnergyHatches.init();
+        // Append the shared high-pressure line before the source attribution, so the tooltip reads
+        // stats -> high pressure -> Source.
+        GTNASteamTooltips.applyAll();
         // Append the ported-content attribution line once every GTNA machine is registered.
         GTNASources.applyAll();
     }

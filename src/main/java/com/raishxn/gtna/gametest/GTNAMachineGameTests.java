@@ -481,8 +481,72 @@ public final class GTNAMachineGameTests {
         helper.assertTrue(controller.isFormed(),
                 "the wireless steam input hatch must be wired as the machine's steam energy source " +
                         "(a steam-capable part was not found, so the structure invalidated itself)");
+        helper.assertTrue(!controller.isHighPressure(),
+                "a bronze-cased structure must not be in high pressure mode");
+        helper.assertTrue(controller.getEffectiveConversionRate() == 1.0,
+                "a bronze-cased structure must use the normal steam conversion rate");
         helper.assertTrue(!controller.getCapabilitiesFlat(IO.IN, EURecipeCapability.CAP).isEmpty(),
                 "the wireless hatch's steam tank must be exposed to the controller as an EU IN handler");
+        helper.succeed();
+    }
+
+    /**
+     * High pressure mode (GTNL {@code SteamMultiMachineBase#isHighPressure}, {@code tierMachine == 2}):
+     * the same structure built with <b>steel</b> solid casings instead of bronze must form, report
+     * high pressure and double the steam consumption. This is the runtime half of the tier-aware
+     * casing predicate ({@code SteamMultiMachineBase.casing()}).
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void steelCasingEnablesHighPressure(GameTestHelper helper) {
+        MultiblockMachineDefinition definition = GTNAMachines.LARGE_STEAM_ALLOY_SMELTER;
+        if (definition == null) {
+            helper.fail("large_steam_alloy_smelter is disabled by config; the high pressure test cannot run");
+            return;
+        }
+        // Fresh quadrant, wiped before building.
+        BlockPos controllerPos = new BlockPos(8, 8, 8);
+        clearArea(helper, controllerPos);
+        helper.setBlock(controllerPos, definition.getBlock());
+
+        // Same axis mapping as the wireless test; the steam hatch takes over one 'A' cell.
+        BlockPos steamPos = controllerPos.offset(1, 0, 0);
+        for (int aisle = 0; aisle < 3; aisle++) {
+            for (int string = 0; string < 4; string++) {
+                for (int charX = 0; charX < 3; charX++) {
+                    BlockPos pos = controllerPos.offset(1 - charX, string - 1, 2 - aisle);
+                    if (pos.equals(steamPos)) {
+                        continue;
+                    }
+                    switch (LARGE_STEAM_ALLOY_SMELTER_PATTERN[aisle][string].charAt(charX)) {
+                        case 'B' -> helper.setBlock(pos, GTBlocks.FIREBOX_BRONZE.get());
+                        case 'A' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_SOLID.get());
+                        default -> {
+                            // '~' (controller, already placed) and space (any).
+                        }
+                    }
+                }
+            }
+        }
+        helper.setBlock(steamPos, GTMachines.STEAM_HATCH.getBlock());
+
+        MetaMachine placed = metaMachineAt(helper, controllerPos);
+        if (!(placed instanceof SteamMultiMachineBase controller)) {
+            helper.fail("large_steam_alloy_smelter block entity is not a SteamMultiMachineBase, got " + placed);
+            return;
+        }
+        MultiblockState state = controller.getMultiblockState();
+        if (!controller.getPattern().checkPatternAt(state, false)) {
+            helper.fail("a steam multiblock must accept steel casings in its bronze casing slots: " +
+                    patternError(helper, state, controller.self().getPos()));
+            return;
+        }
+        controller.onStructureFormed();
+        helper.assertTrue(controller.isFormed(),
+                "the steel-cased structure must form and find the steam hatch as its steam source");
+        helper.assertTrue(controller.isHighPressure(),
+                "steel solid casings must put the machine in high pressure mode");
+        helper.assertTrue(controller.getEffectiveConversionRate() == 2.0,
+                "high pressure mode must double the steam consumption (conversion rate 2.0)");
         helper.succeed();
     }
 

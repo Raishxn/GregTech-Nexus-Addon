@@ -472,6 +472,8 @@
   "gtna.multiblock.thread_line": "Thread %s: %s%s",
   "gtna.multiblock.output_line": " -> %s x%s%s",
   "gtna.multiblock.unknown": "Desconhecido",
+  "gtna.multiblock.steam.high_pressure": "Modo de alta pressão ativo: 2x velocidade, 2x consumo de vapor",
+  "gtna.tooltip.steam.high_pressure": "O modo de alta pressão dobra a velocidade de processamento e o consumo de vapor",
   "gtna.machine.universal_factory.dynamic_threads": "Threads dinâmicas: %s",
   "gtna.machine.universal_factory.overload_active": "SOBRECARGA ATIVA - aquecimento máximo",
   "gtna.machine.universal_factory.thermal_status": "Status térmico: %s / %s (aquecimento %sx)",

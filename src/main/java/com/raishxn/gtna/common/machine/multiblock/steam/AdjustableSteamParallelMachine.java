@@ -67,12 +67,15 @@ public class AdjustableSteamParallelMachine extends SteamMultiMachineBase implem
         if (parallels == 0) {
             return null;
         }
-        return ModifierFunction.builder()
+        GTRecipe threaded = ModifierFunction.builder()
                 .modifyAllContents(ContentModifier.multiplier(parallels))
                 .durationMultiplier(durationMultiplier)
                 .parallels(parallels)
                 .build()
                 .apply(recipe.copy());
+        // Applied here (not only in getRealRecipe) so the multiple-recipes logic, which calls
+        // createThreadedRecipe directly, also gets the high-pressure duration bonus.
+        return applyHighPressure(threaded);
     }
 
     @Override
