@@ -135,6 +135,7 @@ public class GTNALangProvider extends LanguageProvider {
     private void addStaticTranslations() {
         // --- Ported-content attribution (appended to machine tooltips by GTNASources) ---
         add("gtna.tooltip.source", "Source: %s");
+        add("gtna.tooltip.machine_type", "Machine Type: %s");
         add("gtna.source.gto", "GregTech Odyssey (GTO)");
         add("gtna.source.gtnl", "GT: Not Leisure (GTNL)");
         add("gtna.source.gtnh", "GT: New Horizons (GTNH)");
@@ -918,6 +919,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.stone_superheater.steam", "Steam Cost: 640 L/s per active recipe.");
         add("gtna.super_heater", "Super Heating");
         add("gtna.hydraulic_manufacturing", "Hydraulic Manufacturing");
+        add("gtna.lava_maker", "Lava Maker");
+        add("gtna.cactus_wonder", "Cactus Wonder");
         add("item.gtceu.tool.vajra", "Vajra Omnitool");
         add("gtna.tooltip.steam_manufacturer.desc", "Advanced Hydraulic Assembly Line.");
         add("gtna.tooltip.steam_manufacturer.parallel", "Max Parallel: 16");

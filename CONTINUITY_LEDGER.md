@@ -59,6 +59,52 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0034 (2026-09-22) — padronização das tooltips steam (Machine Type + nome rainbow + separador)
+
+- **Contexto:** passo 5 do `NEXT-SESSION-HANDOFF.md` (§1): padronizar as tooltips das máquinas steam no
+  formato do GTNL (`nome rainbow` → `Machine Type: <receita>` → stats → high pressure → separador →
+  `Source:`). O handoff já registrava que o tooltip builder **não** controla a linha do nome do item.
+- **Centralizado no `GTNASteamTooltips`:** agora cobre **toda** máquina GTNA com registry path
+  `large_steam_*` ou `steam_*` (inclui os módulos do Steam Elevator, `steam_manufacturer/cobbler/
+  woodcutter/lava_maker/item_vault/cactus_wonder/cracking/mega_compressor/elevator`). O wrapper monta a
+  lista numa ordem fixa: (1) linha do nome rainbow, (2) `Machine Type` (se houver recipe type real),
+  (3) linhas originais (desc/speed/efficiency/parallel/structure + `GTNA_ADD`), (4) linha high pressure
+  (só as máquinas do set `HIGH_PRESSURE`, inalterado), (5) separador, e o `GTNASources` (chamado depois)
+  fecha com `Source:`. Ordem final: **stats → high pressure → separador → Source**.
+- **Nome rainbow — abordagem usada (fallback documentado):** `MachineDefinition` e `MetaMachineItem`
+  **não** expõem hook para estilizar o nome do item (a linha do nome é renderizada pela vanilla fora do
+  builder). Então a linha do nome é adicionada como **primeira linha da tooltip** com
+  `Component.translatable(definition.getDescriptionId()).withStyle(TooltipHelper.RAINBOW_HSL_SLOW)`,
+  mesmo padrão do GTCEu (`GTMultiMachines`/`GTMachines`). Fica **duplicada** com a linha de nome
+  vanilla (não tem como estilizar a original). O estilo é aplicado **só no client**
+  (`FMLEnvironment.dist.isClient()`); a linha (sem cor) continua sendo produzida no servidor, então o
+  gametest dedicado `everyGtnaMachineTooltipBuilds` continua exercitando o builder.
+- **`Machine Type`:** usa a **primeira recipe type não-DUMMY** (`getRecipeTypes()[0]`) e o lang key da
+  categoria (`recipeType.registryName.toLanguageKey()`, ex. `gtceu.macerator`, `gtceu.cracker`,
+  `gtna.hydraulic_manufacturing`), dentro de `gtna.tooltip.machine_type` = `"Machine Type: %s"`.
+  Máquinas sem recipe type real (`steam_elevator`, `large_steam_storage_tank`,
+  `large_steam_solar_boiler`, `steam_item_vault`, módulos) ficam **sem** essa linha.
+- **Separador:** `"\u2500".repeat(30)` em `DARK_GRAY`, adicionado **apenas** quando o
+  `GTNASources.hasSource(path)` é verdadeiro (novo helper), para nunca terminar em separador órfão.
+- **Atribuição:** `GTNASources` ganhou `hasSource(String)` e recebeu as máquinas GTNL que faltavam:
+  `large_steam_bending/extruder/sifter/wiremill`, `steam_lava_maker`, `steam_item_vault`,
+  `steam_cactus_wonder`, `steam_cracking`, `steam_mega_compressor` (todas confirmadas GTNL nos
+  G-0022/G-0023/G-0024/G-0031). Assim todas as `large_steam_*`/`steam_*` têm `Source:`.
+- **Lang:** `gtna.tooltip.machine_type` no `GTNALangProvider` (en_us gerado) + `pt_br.json`
+  (inserção **byte-preserving**: BOM, CRLF/LF preservados, 3 linhas adicionadas, nada mais mudou).
+  Também adicionados os nomes de recipe type que faltavam: `gtna.lava_maker` ("Lava Maker") e
+  `gtna.cactus_wonder` ("Cactus Wonder") — usados como lang key de categoria/JEI.
+- **Validação:** `spotlessApply compileJava` OK; `spotlessCheck` + `runUnitTests` (**14/14**);
+  `runGameTestServer` (**25/25**, `All 25 required tests passed`); `grep -c "Parsing error loading
+  recipe gtna:" run/logs/latest.log` = **0**; `runData` determinístico (segunda execução
+  `written: 0`). Nenhum gametest novo (o gate espera 25).
+- **Pendências abertas / verificação in-game:** (a) a tooltip é **client-side** e não é vista pelos
+  gates — validar no `runClient` a animação rainbow, o `Machine Type`, o separador e a ordem
+  stats→high pressure→separador→Source; (b) o nome aparece **duas vezes** (nome vanilla + linha
+  rainbow) porque não há hook para estilizar a linha do nome — aceito como fallback; (c) nos módulos
+  do Steam Elevator o `MetaMachineBlock` insere o `mainKey` (`gtna.machine.<id>.tooltip`) no índice 1,
+  então a linha rainbow fica abaixo dele (comportamento pré-existente do duplo `.tooltips(...)`).
+
 ### G-0033 (2026-09-22) — port dos módulos Steam Apiary + Bee Breeding (Productive Bees indisponível)
 
 - **Implementado:** `SteamApiaryModule` (tier 6) e `SteamBeeBreedingModule` (tier 8), os dois módulos

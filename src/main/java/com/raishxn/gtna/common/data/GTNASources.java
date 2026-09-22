@@ -55,6 +55,10 @@ public final class GTNASources {
             Map.entry("large_steam_crusher", GTNL),
             Map.entry("large_steam_furnace", GTNL),
             Map.entry("large_steam_alloy_smelter", GTNL),
+            Map.entry("large_steam_bending", GTNL),
+            Map.entry("large_steam_extruder", GTNL),
+            Map.entry("large_steam_sifter", GTNL),
+            Map.entry("large_steam_wiremill", GTNL),
             Map.entry("large_steam_hammer", GTNL),
             Map.entry("large_steam_compressor", GTNL),
             Map.entry("large_steam_extractor", GTNL),
@@ -69,6 +73,11 @@ public final class GTNASources {
             Map.entry("large_steam_forming_press", GTNL),
             Map.entry("large_steam_storage_tank", GTNL),
             Map.entry("steam_manufacturer", GTNL),
+            Map.entry("steam_lava_maker", GTNL),
+            Map.entry("steam_item_vault", GTNL),
+            Map.entry("steam_cactus_wonder", GTNL),
+            Map.entry("steam_cracking", GTNL),
+            Map.entry("steam_mega_compressor", GTNL),
             Map.entry("infernal_coke_oven", GTNL),
             Map.entry("nexus_molecular_forge", GTNL),
             Map.entry("hyper_pressure_reactor", GTNL),
@@ -100,6 +109,11 @@ public final class GTNASources {
             Map.entry("industrial_platform_deployment_tools", GTOEPP));
 
     private GTNASources() {}
+
+    /** Whether a GTNA machine registry path has an origin declared in {@link #SOURCES}. */
+    public static boolean hasSource(String path) {
+        return SOURCES.containsKey(path);
+    }
 
     /** The "Source: <addon>" tooltip line for a source id. */
     public static Component line(String sourceId) {
