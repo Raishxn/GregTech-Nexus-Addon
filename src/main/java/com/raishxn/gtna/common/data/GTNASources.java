@@ -2,7 +2,6 @@ package com.raishxn.gtna.common.data;
 
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
-import com.gregtechceu.gtceu.client.util.TooltipHelper;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -121,7 +120,7 @@ public final class GTNASources {
     public static Component line(String sourceId) {
         Component addon = Component.translatable("gtna.source." + sourceId);
         if (FMLEnvironment.dist.isClient()) {
-            addon = addon.copy().withStyle(TooltipHelper.RAINBOW_HSL_SLOW);
+            addon = GTNARainbowText.of(addon);
         }
         return Component.translatable("gtna.tooltip.source", addon)
                 .withStyle(ChatFormatting.DARK_GRAY);

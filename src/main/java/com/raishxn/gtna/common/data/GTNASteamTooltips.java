@@ -125,7 +125,7 @@ public final class GTNASteamTooltips {
         if (!FMLEnvironment.dist.isClient()) {
             return name;
         }
-        return name.withStyle(TooltipHelper.RAINBOW_HSL_SLOW);
+        return GTNARainbowText.of(name.getString());
     }
 
     /** The first non-dummy recipe type of the machine, or {@code null} when it has none. */
