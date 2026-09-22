@@ -1027,16 +1027,15 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.steam_elevator.modules",
                 "Install up to 12 modules in the module slots: flight, weather, greenhouse, apiary, bee breeding, oil drill, entity crusher, ore processor, monster repellent, beacon.");
         add("gtna.tooltip.steam_elevator.teleport",
-                "Travel button: lift straight up, or sneak-travel to the next Ad Astra planet.");
+                "Set out button: opens the Ad Astra planet selection, like a rocket launch.");
         add("gtna.tooltip.steam_elevator.structure",
                 "35x43x35; steel reinforced wood shell, steam compact pipe casing, solid steel machine casing.");
         add("gtna.machine.steam_elevator.energy", "Energy: %s / %s EU");
         add("gtna.machine.steam_elevator.modules", "Modules: %s");
         add("gtna.machine.steam_elevator.steam_hatches", "Steam hatches: %s");
         add("gtna.machine.steam_elevator.no_modules", "No modules installed");
-        add("gtna.machine.steam_elevator.teleport.lift", "The elevator lifts you up.");
-        add("gtna.machine.steam_elevator.teleport.planet", "Travelling to %s");
-        add("gtna.machine.steam_elevator.teleport.no_planets", "No Ad Astra planets are installed.");
+        add("gtna.machine.steam_elevator.set_out", "Set out");
+        add("gtna.machine.steam_elevator.set_out.not_running", "The elevator must be running to set out.");
 
         add("block.gtna.steam_elevator_flight_module", "Steam Flight Module");
         add("gtna.machine.steam_elevator_flight_module.tooltip",

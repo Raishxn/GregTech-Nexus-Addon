@@ -200,10 +200,10 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
     @Override
     public ModularUI createUI(Player entityPlayer) {
         ModularUI ui = IDisplayUIMachine.super.createUI(entityPlayer);
-        // GTNL exposed the planet-selection button here; GTNA wires it to the registry-based teleport.
+        // "Set out": opens the Ad Astra planet selection, exactly like GTLCore's SpaceElevatorMachine.
         ui.widget(new ButtonWidget(151, 107, 16, 16, GuiTextures.BUTTON, clickData -> {
             if (!clickData.isRemote && entityPlayer instanceof ServerPlayer serverPlayer) {
-                SteamElevatorTeleport.execute(serverPlayer, this);
+                SteamElevatorTeleport.setOut(serverPlayer, this);
             }
         }));
         return ui;
