@@ -15,13 +15,17 @@ import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
 
+import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 
+import com.raishxn.gtna.client.renderer.GTNATextures;
 import com.raishxn.gtna.common.data.GTNABlocks;
 import org.jetbrains.annotations.NotNull;
 
@@ -216,6 +220,14 @@ public class LargeSteamSolarBoilerMachine extends WorkableMultiblockMachine impl
     /** Steam the recipe dumps in one cycle (mB per {@link #TICK_INTERVAL} ticks). */
     public long getSteamPerCycle() {
         return (long) sunlit * steamPerCell();
+    }
+
+    @Override
+    public ModularUI createUI(Player entityPlayer) {
+        ModularUI ui = IDisplayUIMachine.super.createUI(entityPlayer);
+        // The addon logo in the bottom-right corner of the machine screen (GTNL convention).
+        ui.widget(GTNATextures.logo(151, 107));
+        return ui;
     }
 
     @Override

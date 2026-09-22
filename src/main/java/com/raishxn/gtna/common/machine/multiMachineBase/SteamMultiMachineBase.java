@@ -39,6 +39,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
+import com.raishxn.gtna.client.renderer.GTNATextures;
 import com.raishxn.gtna.common.data.GTNABlocks;
 import org.jetbrains.annotations.Nullable;
 
@@ -278,6 +279,8 @@ public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine
         screen.addWidget(new ComponentPanelWidget(4, 17, this::addDisplayText)
                 .setMaxWidthLimit(150)
                 .clickHandler(this::handleDisplayClick));
+        // The addon logo in the bottom-right corner of the machine screen (GTNL convention).
+        screen.addWidget(GTNATextures.logo(151, 107));
 
         return new ModularUI(176, 216, this, entityPlayer)
                 .background(GuiTextures.BACKGROUND_STEAM.get(isHighPressure()))

@@ -27,6 +27,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import com.raishxn.gtna.client.renderer.GTNATextures;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -270,6 +271,8 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
             moduleWidget.setSelfPosition(4, 58);
             screen.addWidget(moduleWidget);
         }
+        // The addon logo in the bottom-right corner of the module screen (GTNL convention).
+        screen.addWidget(GTNATextures.logo(151, 107));
         return new ModularUI(176, 216, this, player)
                 .background(GuiTextures.BACKGROUND)
                 .widget(screen)

@@ -34,7 +34,7 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-22 (G-0047):** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**) +
+- **Gate verde em 2026-09-22 (G-0049):** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**) +
   `runGameTestServer` (**29/29**, `All 29 required tests passed`) + `runData` determinístico. A
   execução carregou os mixins alterados; os avisos/erros de receitas do GTCEu já conhecidos
   continuam no log.
@@ -65,6 +65,17 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0049 (2026-09-22) — logo do addon no canto das UIs dos multiblocos (convenção GTNL)
+
+- `GTNATextures.LOGO` (`gtna:textures/logo.png`, a logo nova do autor) + helper `logo(x, y)` de 18×18,
+  desenhado no **canto inferior direito** da tela das máquinas em (151, 107):
+  `SteamMultiMachineBase`, `SteamElevatorModuleMachine` e `LargeSteamSolarBoilerMachine`. No
+  `SteamElevator` a logo fica em (151, 62) porque o botão "Set out" ocupa o canto inferior direito.
+  Mesma convenção do GTNL (`PICTURE_GTNL_STEAM_LOGO`, 18×18 em (151,62)).
+- **Validação:** `spotlessCheck` + `runUnitTests` (**17/17**); `runGameTestServer` (**29/29**);
+  `runData` determinístico.
+- **Pendências:** QA plano B (gametests de módulo); conferir a logo in-game (visual, cliente).
 
 ### G-0048 (2026-09-22) — Entity Crusher por loot table (sem EnderIO/MobInfo) + checklist de QA manual
 

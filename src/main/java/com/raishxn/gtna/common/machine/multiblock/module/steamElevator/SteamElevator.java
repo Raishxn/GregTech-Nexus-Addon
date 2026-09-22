@@ -29,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import com.raishxn.gtna.client.renderer.GTNATextures;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -255,6 +256,9 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
     @Override
     public ModularUI createUI(Player entityPlayer) {
         ModularUI ui = IDisplayUIMachine.super.createUI(entityPlayer);
+        // The addon logo in the corner of the machine screen (GTNL convention). The "Set out"
+        // button owns the bottom-right corner here, so the logo sits just above it.
+        ui.widget(GTNATextures.logo(151, 62));
         // "Set out": opens the Ad Astra planet selection, exactly like GTLCore's SpaceElevatorMachine.
         ui.widget(new ButtonWidget(151, 107, 16, 16, GuiTextures.BUTTON, clickData -> {
             if (!clickData.isRemote && entityPlayer instanceof ServerPlayer serverPlayer) {
