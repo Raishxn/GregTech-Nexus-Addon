@@ -59,6 +59,35 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0033 (2026-09-22) — port dos módulos Steam Apiary + Bee Breeding (Productive Bees indisponível)
+
+- **Implementado:** `SteamApiaryModule` (tier 6) e `SteamBeeBreedingModule` (tier 8), os dois módulos
+  que faltavam do Steam Elevator do GTNL. Ambos são part machines (`SteamElevatorModulePartMachine` +
+  `ISteamElevatorModule`) com a ability `GTNAPartAbility.STEAM_ELEVATOR_MODULE`, buffer de vapor/EU e
+  upkeep por tick, exatamente como os 12 módulos do G-0032.
+- **Productive Bees NÃO está no classpath de dev:** não há dependência no `build.gradle` nem no
+  `gradle.properties`, e não há menção a Productive Bees/Forestry no projeto. Portanto, conforme a
+  instrução, os módulos foram implementados como **aproximações GTNA-native** (sem hard dependency e
+  sem referenciar API externa):
+  - **Apiary:** abriga a colônia e consome 1 favo de mel (`minecraft:honeycomb`) + 1000 mB de água a
+    cada 200 ticks, produzindo 2 favos + 1 garrafa de mel (`minecraft:honey_bottle`). Upkeep
+    `V[4] * 8` (equivale ao `V[4] * mMaxSlots` do GTNL na colônia base de 8 abelhas).
+  - **Bee Breeding:** consome 2 favos (parentais) + 8 garrafas de mel (substituto do royal jelly) a
+    cada 12000 ticks (o `mMaxProgresstime` do GTNL), produzindo 1 ovo de abelha
+    (`minecraft:bee_spawn_egg`, análogo nativo da princess ignoble). Upkeep `V[6]` (exato do GTNL).
+  - A inserção de saída faz *dry-run* sobre uma cópia dos slots, para nunca duplicar em insert parcial.
+- **Registro/receitas/lang/config/source:** ids `steam_elevator_apiary_module` e
+  `steam_elevator_bee_breeding_module`; receitas `HYDRAULIC_MANUFACTURING` mapeadas dos
+  `AssemblerRecipes` do GTNL (alveary/royal jelly/beeswax/pollen → favo/mel/água); lang en_us gerado +
+  `pt_br.json` (inserção byte-preserving, BOM/CRLF preservados); toggles `steamApiaryModule` e
+  `steamBeeBreedingModule` (além do mestre `steamElevatorModules`, que também os gateia); atribuição
+  `Source: GTNL` em `GTNASources`. GUI mínima (slots + tanque de água no Apiary).
+- **Validação:** `spotlessApply compileJava` OK; `spotlessCheck` + `runUnitTests` (**14/14**);
+  `runGameTestServer` (**25/25**, `All 25 required tests passed`); `grep -c "Parsing error loading
+  recipe gtna:"` = 0; `runData` determinístico (written: 0). Sem gametest novo (o gate espera 25).
+- **Pendências abertas:** se Productive Bees virar dependência opcional no futuro, trocar a
+  aproximação nativa pela API real (bee cage/hive) mantendo o check de mod carregado.
+
 ### G-0032 (2026-09-22) — port do Steam Elevator + 8 módulos do GTNL (sistema modular)
 
 - **Implementado:** o `SteamElevator` (35x43x35) e os 8 módulos pedidos (`SteamFlightModule`,

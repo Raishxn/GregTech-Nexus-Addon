@@ -21,7 +21,9 @@ import net.minecraft.resources.ResourceLocation;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
+import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamApiaryModule;
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamBeaconModule;
+import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamBeeBreedingModule;
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamEntityCrusherModule;
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamFlightModule;
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamGreenhouseModule;
@@ -92,6 +94,8 @@ public class GTNAMachines2 {
     public static MachineDefinition STEAM_ELEVATOR_BEACON_MODULE_I;
     public static MachineDefinition STEAM_ELEVATOR_BEACON_MODULE_II;
     public static MachineDefinition STEAM_ELEVATOR_BEACON_MODULE_III;
+    public static MachineDefinition STEAM_ELEVATOR_APIARY_MODULE;
+    public static MachineDefinition STEAM_ELEVATOR_BEE_BREEDING_MODULE;
 
     public static void init() {
         registerPatternBuffers();
@@ -430,10 +434,11 @@ public class GTNAMachines2 {
     }
 
     /**
-     * The eight Steam Elevator modules (GTNL port, LGPLv3). Each is a part machine that declares the
+     * The Steam Elevator modules (GTNL port, LGPLv3). Each is a part machine that declares the
      * {@code steam_elevator_module} ability, so it fits exclusively in the elevator's module slots.
      * Tiers I/II/III variants follow GTNL's registration (Beacon 1/2/3, Repellent 1/2/3, Oil Drill
-     * 2/3/4); Flight/Weather are tier 1, Greenhouse tier 5 and the Ore Processor tier 8.
+     * 2/3/4); Flight/Weather are tier 1, Greenhouse tier 5, the Ore Processor and Bee Breeding tier
+     * 8 and the Apiary tier 6.
      */
     private static void registerSteamElevatorModules() {
         if (!ConfigHolder.isMachineEnabled("steamElevatorModules")) return;
@@ -467,6 +472,14 @@ public class GTNAMachines2 {
                 "Steam Beacon Module II", 2, holder -> new SteamBeaconModule(holder, 2));
         STEAM_ELEVATOR_BEACON_MODULE_III = registerElevatorModule("steam_elevator_beacon_module_iii",
                 "Steam Beacon Module III", 3, holder -> new SteamBeaconModule(holder, 3));
+        if (ConfigHolder.isMachineEnabled("steamApiaryModule")) {
+            STEAM_ELEVATOR_APIARY_MODULE = registerElevatorModule("steam_elevator_apiary_module",
+                    "Steam Apiary Module", 6, holder -> new SteamApiaryModule(holder, 6));
+        }
+        if (ConfigHolder.isMachineEnabled("steamBeeBreedingModule")) {
+            STEAM_ELEVATOR_BEE_BREEDING_MODULE = registerElevatorModule("steam_elevator_bee_breeding_module",
+                    "Steam Bee Breeding Module", 8, holder -> new SteamBeeBreedingModule(holder, 8));
+        }
     }
 
     private static MachineDefinition registerElevatorModule(String id, String name, int tier,

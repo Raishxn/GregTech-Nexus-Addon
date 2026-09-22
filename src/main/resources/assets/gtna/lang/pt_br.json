@@ -540,9 +540,11 @@
   "gtna.tooltip.mega_steam_compressor.structure": "Fabricado na Fábrica a Vapor a partir de 64 compressores a vapor grandes.",
   "config.gtna.option.steamElevator": "Elevador a Vapor",
   "config.gtna.option.steamElevatorModules": "Módulos do Elevador a Vapor",
+  "config.gtna.option.steamApiaryModule": "Módulo Apiário a Vapor",
+  "config.gtna.option.steamBeeBreedingModule": "Módulo de Reprodução de Abelhas a Vapor",
   "block.gtna.steam_elevator": "Elevador a Vapor",
   "gtna.tooltip.steam_elevator.desc": "Um elevador modular movido a vapor.",
-  "gtna.tooltip.steam_elevator.modules": "Instale até 12 módulos nos slots: voo, clima, estufa, broca de óleo, triturador de entidades, processador de minério, repelente de monstros e farol.",
+  "gtna.tooltip.steam_elevator.modules": "Instale até 12 módulos nos slots: voo, clima, estufa, apiário, reprodução de abelhas, broca de óleo, triturador de entidades, processador de minério, repelente de monstros e farol.",
   "gtna.tooltip.steam_elevator.teleport": "Botão de viagem: sobe na vertical ou, agachado, viaja para o próximo planeta do Ad Astra.",
   "gtna.tooltip.steam_elevator.structure": "35x43x35; casco de madeira reforçada com aço, tubulação compacta a vapor e casing de aço sólido.",
   "gtna.machine.steam_elevator.energy": "Energia: %s / %s EU",
@@ -580,6 +582,10 @@
   "gtna.machine.steam_elevator_beacon_module_i.tooltip": "Velocidade e Pressa para jogadores próximos.",
   "gtna.machine.steam_elevator_beacon_module_ii.tooltip": "Velocidade, Pressa, Resistência e Regeneração para jogadores próximos.",
   "gtna.machine.steam_elevator_beacon_module_iii.tooltip": "Velocidade, Pressa, Resistência, Regeneração, Força e Visão Noturna para jogadores próximos.",
+  "block.gtna.steam_elevator_apiary_module": "Módulo Apiário a Vapor",
+  "gtna.machine.steam_elevator_apiary_module.tooltip": "Abriga abelhas: consome favo de mel e água para produzir favo de mel e mel.",
+  "block.gtna.steam_elevator_bee_breeding_module": "Módulo de Reprodução de Abelhas a Vapor",
+  "gtna.machine.steam_elevator_bee_breeding_module.tooltip": "Reproduz abelhas: consome dois favos de mel e oito garrafas de mel para produzir uma nova abelha.",
   "gtna.multiblock.vault.types": "Tipos armazenados: %s / %s",
   "gtna.multiblock.vault.items": "Itens armazenados: %s"
 }

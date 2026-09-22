@@ -91,6 +91,8 @@ public final class GTNASources {
             Map.entry("steam_elevator_beacon_module_i", GTNL),
             Map.entry("steam_elevator_beacon_module_ii", GTNL),
             Map.entry("steam_elevator_beacon_module_iii", GTNL),
+            Map.entry("steam_elevator_apiary_module", GTNL),
+            Map.entry("steam_elevator_bee_breeding_module", GTNL),
             // --- GTLsupb (LGPLv3) ---
             Map.entry("universal_factory", GTLSUPB),
             Map.entry("primitive_stone_furnace", GTLSUPB),

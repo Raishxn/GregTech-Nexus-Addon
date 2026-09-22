@@ -1015,12 +1015,14 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.megaSteamCompressor", "Steam Supercompressor");
         add("config.gtna.option.steamElevator", "Steam Elevator");
         add("config.gtna.option.steamElevatorModules", "Steam Elevator Modules");
+        add("config.gtna.option.steamApiaryModule", "Steam Apiary Module");
+        add("config.gtna.option.steamBeeBreedingModule", "Steam Bee Breeding Module");
 
-        // Steam Elevator + its eight modules (GTNL port)
+        // Steam Elevator + its modules (GTNL port)
         add("block.gtna.steam_elevator", "Steam Elevator");
         add("gtna.tooltip.steam_elevator.desc", "A modular steam-powered elevator.");
         add("gtna.tooltip.steam_elevator.modules",
-                "Install up to 12 modules in the module slots: flight, weather, greenhouse, oil drill, entity crusher, ore processor, monster repellent, beacon.");
+                "Install up to 12 modules in the module slots: flight, weather, greenhouse, apiary, bee breeding, oil drill, entity crusher, ore processor, monster repellent, beacon.");
         add("gtna.tooltip.steam_elevator.teleport",
                 "Travel button: lift straight up, or sneak-travel to the next Ad Astra planet.");
         add("gtna.tooltip.steam_elevator.structure",
@@ -1074,6 +1076,12 @@ public class GTNALangProvider extends LanguageProvider {
                 "Speed, Haste, Resistance and Regeneration to nearby players.");
         add("gtna.machine.steam_elevator_beacon_module_iii.tooltip",
                 "Speed, Haste, Resistance, Regeneration, Strength and Night Vision to nearby players.");
+        add("block.gtna.steam_elevator_apiary_module", "Steam Apiary Module");
+        add("gtna.machine.steam_elevator_apiary_module.tooltip",
+                "Houses bees: consumes honeycomb and water to produce honeycomb and honey.");
+        add("block.gtna.steam_elevator_bee_breeding_module", "Steam Bee Breeding Module");
+        add("gtna.machine.steam_elevator_bee_breeding_module.tooltip",
+                "Breeds bees: consumes two honeycomb and eight honey bottles to produce a new bee.");
 
         add("config.gtna.option.eyeOfWood", "Eye of Wood");
 

@@ -581,6 +581,35 @@ public class GTNAMachineRecipes {
                     .EUt(GTValues.VA[GTValues.LV])
                     .save(provider);
         }
+        if (enabled(GTNAMachines2.STEAM_ELEVATOR_APIARY_MODULE)) {
+            // GTNL: compact pipe casing, Forestry alvearies + honey, LV.
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_apiary_module")
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
+                    .inputItems(Items.HONEYCOMB, 16)
+                    .inputItems(Items.HONEY_BLOCK, 4)
+                    .inputItems(GTNAItems.HYDRAULIC_CONVEYOR.get(), 16)
+                    .inputItems(GTNAItems.HYDRAULIC_ARM.get(), 16)
+                    .inputFluids(GTMaterials.Water.getFluid(10000))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_APIARY_MODULE.asStack())
+                    .duration(300)
+                    .EUt(GTValues.VA[GTValues.LV])
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines2.STEAM_ELEVATOR_BEE_BREEDING_MODULE)) {
+            // GTNL: compact pipe casing, Forestry royal jelly/beeswax/pollen + honey, MV.
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_bee_breeding_module")
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
+                    .inputItems(Items.HONEYCOMB, 8)
+                    .inputItems(Items.HONEY_BOTTLE, 8)
+                    .inputItems(Items.HONEY_BLOCK, 2)
+                    .inputItems(GTNAItems.HYDRAULIC_REGULATOR.get(), 8)
+                    .inputItems(GTNAItems.HYDRAULIC_ARM.get(), 8)
+                    .inputFluids(GTMaterials.Water.getFluid(10000))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_BEE_BREEDING_MODULE.asStack())
+                    .duration(300)
+                    .EUt(GTValues.VA[GTValues.MV])
+                    .save(provider);
+        }
         if (enabled(GTNAMachines.STEAM_CACTUS_WONDER)) {
             // GTNL CactusWonderFakeRecipes: GT++ cactus charcoal/coke -> steam at one recipe per
             // 20 ticks. GTNA has no cactus carbon items, so the closest GTNA fuels are used and the
