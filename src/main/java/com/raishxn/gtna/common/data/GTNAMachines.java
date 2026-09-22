@@ -1196,7 +1196,7 @@ public class GTNAMachines {
         return GTNAMultiBlockFileReader.start(definition, "steam_elevator")
                 .where('~', controller(blocks(definition.get())))
                 .where('A', blocks(GTNABlocks.STEEL_REINFORCED_WOOD.get())
-                        .or(abilities(PartAbility.STEAM).setExactLimit(1))
+                        .or(abilities(PartAbility.STEAM).setMaxGlobalLimited(1))
                         .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
                         .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1)))
                 .where('B', blocks(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get()))
