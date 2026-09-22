@@ -101,9 +101,24 @@ public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine
     }
 
     /**
-     * A casing shell that accepts bronze (tier 1) or steel (tier 2) solid casing and records the
-     * <b>lowest</b> tier found in the match context, exactly like GTNL's {@code ofBlocksTiered}
-     * casing lists. Machines whose pattern does not use this predicate simply never see a steel tier.
+     * The GTNL industrial steam casing shell ({@code metaCasing02} 1/2): bronze tier 1, steel tier 2.
+     * This is the block that defines the appearance of the large steam multiblocks.
+     */
+    public static TraceabilityPredicate industrialCasing() {
+        return tieredCasing(new Block[] { GTNABlocks.INDUSTRIAL_STEAM_CASING.get() },
+                new Block[] { GTNABlocks.ADVANCED_INDUSTRIAL_STEAM_CASING.get() });
+    }
+
+    /** The GTNL machine casing shell ({@code sBlockCasings1:10} / {@code sBlockCasings2:0}). */
+    public static TraceabilityPredicate machineCasing() {
+        return tieredCasing(new Block[] { GTBlocks.CASING_BRONZE_BRICKS.get() },
+                new Block[] { GTBlocks.CASING_STEEL_SOLID.get() });
+    }
+
+    /**
+     * A casing shell that accepts any of the machine/industrial casings and records the <b>lowest</b>
+     * tier found in the match context, exactly like GTNL's {@code ofBlocksTiered} casing lists.
+     * Machines whose pattern does not use this predicate simply never see a steel tier.
      */
     public static TraceabilityPredicate casing() {
         return tieredCasing(

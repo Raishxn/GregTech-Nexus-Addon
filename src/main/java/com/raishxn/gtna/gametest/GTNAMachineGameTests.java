@@ -542,7 +542,7 @@ public final class GTNAMachineGameTests {
                     }
                     switch (LARGE_STEAM_ALLOY_SMELTER_PATTERN[aisle][string].charAt(charX)) {
                         case 'B' -> helper.setBlock(pos, GTBlocks.FIREBOX_STEEL.get());
-                        case 'A' -> helper.setBlock(pos, GTNABlocks.ADVANCED_INDUSTRIAL_STEAM_CASING.get());
+                        case 'A' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_SOLID.get());
                         default -> {
                             // '~' (controller, already placed) and space (any).
                         }
