@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gtna:block/machine/steam_elevator_entity_crusher_module_ii",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtna:block/machine/steam_elevator_entity_crusher_module_ii"
+    },
+    "facing=south": {
+      "model": "gtna:block/machine/steam_elevator_entity_crusher_module_ii",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gtna:block/machine/steam_elevator_entity_crusher_module_ii",
+      "y": 270
+    }
+  }
+}

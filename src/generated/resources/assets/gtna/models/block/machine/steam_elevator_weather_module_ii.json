@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/block",
   "loader": "gtceu:machine",
-  "machine": "gtna:steam_elevator_entity_crusher_module",
+  "machine": "gtna:steam_elevator_weather_module_ii",
   "texture_overrides": {
     "all": "gtceu:block/casings/solid/machine_casing_solid_steel"
   },

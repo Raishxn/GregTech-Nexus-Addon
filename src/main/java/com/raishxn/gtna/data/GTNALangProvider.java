@@ -61,6 +61,23 @@ public class GTNALangProvider extends LanguageProvider {
         super.add(key, value);
     }
 
+    /**
+     * Registers a Steam Elevator module's block name, auto-inserted tooltip and numbered GTNL lines
+     * for its tier I/II/III items (ids {@code baseId_i/_ii/_iii}) from a single shared set of lines.
+     */
+    private void elevatorModuleTiers(String baseId, String name, String description, String... lines) {
+        String[] suffixes = { "_i", "_ii", "_iii" };
+        String[] romans = { " I", " II", " III" };
+        for (int tier = 0; tier < suffixes.length; tier++) {
+            String id = baseId + suffixes[tier];
+            add("block.gtna." + id, name + romans[tier]);
+            add("gtna.machine." + id + ".tooltip", description);
+            for (int i = 0; i < lines.length; i++) {
+                add("gtna.machine." + id + ".tooltip." + (i + 1), lines[i]);
+            }
+        }
+    }
+
     @Override
     protected void addTranslations() {
         addManualTranslations();
@@ -1096,22 +1113,17 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.wireless_steam.hud.toggle", "Toggle the wireless steam HUD");
         add("gtna.machine.wireless_steam.hud.editor", "Right click to move the HUD");
 
-        add("block.gtna.steam_elevator_flight_module", "Steam Flight Module");
-        add("gtna.machine.steam_elevator_flight_module.tooltip", "§a§lSteam-powered flight assistance.");
-        add("gtna.machine.steam_elevator_flight_module.tooltip.1", "Adds flight module to the Steam Stairway");
-        add("gtna.machine.steam_elevator_flight_module.tooltip.2",
-                "Consumes steam to grant you the power of free flight");
-        add("gtna.machine.steam_elevator_flight_module.tooltip.3",
-                "Adjust overclock count to consume more steam and expand the range");
-        add("gtna.machine.steam_elevator_flight_module.tooltip.4",
-                "Effective range: 64 * overclock count");
+        elevatorModuleTiers("steam_elevator_flight_module", "Steam Flight Module",
+                "§a§lSteam-powered flight assistance.",
+                "Adds flight module to the Steam Stairway",
+                "Consumes steam to grant you the power of free flight",
+                "Adjust overclock count to consume more steam and expand the range",
+                "Effective range: 64 * module tier");
 
-        add("block.gtna.steam_elevator_weather_module", "Steam Weather Module");
-        add("gtna.machine.steam_elevator_weather_module.tooltip", "§a§lControls the weather using steam.");
-        add("gtna.machine.steam_elevator_weather_module.tooltip.1",
-                "Adds weather changes module to the Steam Stairway");
-        add("gtna.machine.steam_elevator_weather_module.tooltip.2",
-                "Enter a specific material to switch weather, lasting for 1 hour");
+        elevatorModuleTiers("steam_elevator_weather_module", "Steam Weather Module",
+                "§a§lControls the weather using steam.",
+                "Adds weather changes module to the Steam Stairway",
+                "Enter a specific material to switch weather, lasting 1 hour per tier");
 
         add("block.gtna.steam_elevator_greenhouse_module", "Steam Greenhouse Planting Module");
         add("gtna.machine.steam_elevator_greenhouse_module.tooltip", "§a§lFarmer’s Secret to Fortune.");
@@ -1153,20 +1165,14 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.steam_elevator_oil_drill_module_iii.tooltip.3", "Each extraction may yield 1000~4000L.");
         add("gtna.machine.steam_elevator_oil_drill_module_iii.tooltip.4", "Base cycle time: 400 ticks");
 
-        add("block.gtna.steam_elevator_entity_crusher_module", "Steam Entity Crusher Module");
-        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip",
-                "§a§lSmelt mobs using high-temperature steam.");
-        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip.1",
-                "Adds entity crusher module to the Steam Stairway");
-        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip.2",
-                "Each operation has a 2% chance to double output.");
-        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip.3",
-                "Each additional identical spawner increases the chance by 0.5%.");
-        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip.4",
-                "Maximum chance increase is 34%.");
-        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip.5",
-                "As a trade-off, default time is doubled, power is halved.");
-        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip.6", "Cannot be overclocked");
+        elevatorModuleTiers("steam_elevator_entity_crusher_module", "Steam Entity Crusher Module",
+                "§a§lSmelt mobs using high-temperature steam.",
+                "Adds entity crusher module to the Steam Stairway",
+                "Each operation has a 2% chance to double output.",
+                "Each additional identical spawner increases the chance by 0.5%.",
+                "Maximum chance increase is 34%.",
+                "As a trade-off, default time is doubled, power is halved.",
+                "Cannot be overclocked");
 
         add("block.gtna.steam_elevator_ore_processor_module", "Steam Ore Processing Module");
         add("gtna.machine.steam_elevator_ore_processor_module.tooltip", "§a§lHigh-efficiency steam ore processor.");

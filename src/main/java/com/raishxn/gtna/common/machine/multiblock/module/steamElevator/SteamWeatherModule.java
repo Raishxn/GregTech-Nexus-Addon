@@ -32,10 +32,15 @@ public class SteamWeatherModule extends SteamElevatorModuleMachine {
     public static final int MODE_RAIN = 1;
     public static final int MODE_THUNDER = 2;
 
-    /** One in-game hour. */
+    /** One in-game hour (tier I); higher tiers hold the weather longer for the same charge. */
     public static final int WEATHER_TIME = 72000;
     /** The GTNL tooltip's "large" cost per weather change. */
     public static final long WEATHER_STEAM_COST = 1_000_000L;
+
+    /** Ticks a single charge covers at this tier: tier I = 1 h, II = 2 h, III = 3 h. */
+    private int weatherTime() {
+        return WEATHER_TIME * Math.max(1, getModuleTier());
+    }
 
     /** The weather currently being forced, or {@link #MODE_OFF} when nothing is active. */
     @Persisted
@@ -99,15 +104,15 @@ public class SteamWeatherModule extends SteamElevatorModuleMachine {
 
         apply(level, requested);
         activeMode = requested;
-        weatherTicksLeft = WEATHER_TIME;
+        weatherTicksLeft = weatherTime();
         markDirty();
     }
 
     private void apply(ServerLevel level, int mode) {
         switch (mode) {
-            case MODE_RAIN -> level.setWeatherParameters(0, WEATHER_TIME, true, false);
-            case MODE_THUNDER -> level.setWeatherParameters(0, WEATHER_TIME, true, true);
-            default -> level.setWeatherParameters(WEATHER_TIME, 0, false, false);
+            case MODE_RAIN -> level.setWeatherParameters(0, weatherTime(), true, false);
+            case MODE_THUNDER -> level.setWeatherParameters(0, weatherTime(), true, true);
+            default -> level.setWeatherParameters(weatherTime(), 0, false, false);
         }
     }
 

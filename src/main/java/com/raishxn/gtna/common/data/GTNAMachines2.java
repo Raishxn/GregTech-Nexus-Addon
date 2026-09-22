@@ -82,13 +82,19 @@ public class GTNAMachines2 {
     public static MachineDefinition DIRECTED_TESSERACT_GENERATOR;
 
     // Steam Elevator modules (GTNL port, LGPLv3)
-    public static MachineDefinition STEAM_ELEVATOR_FLIGHT_MODULE;
-    public static MachineDefinition STEAM_ELEVATOR_WEATHER_MODULE;
+    public static MachineDefinition STEAM_ELEVATOR_FLIGHT_MODULE_I;
+    public static MachineDefinition STEAM_ELEVATOR_FLIGHT_MODULE_II;
+    public static MachineDefinition STEAM_ELEVATOR_FLIGHT_MODULE_III;
+    public static MachineDefinition STEAM_ELEVATOR_WEATHER_MODULE_I;
+    public static MachineDefinition STEAM_ELEVATOR_WEATHER_MODULE_II;
+    public static MachineDefinition STEAM_ELEVATOR_WEATHER_MODULE_III;
     public static MachineDefinition STEAM_ELEVATOR_GREENHOUSE_MODULE;
     public static MachineDefinition STEAM_ELEVATOR_OIL_DRILL_MODULE_I;
     public static MachineDefinition STEAM_ELEVATOR_OIL_DRILL_MODULE_II;
     public static MachineDefinition STEAM_ELEVATOR_OIL_DRILL_MODULE_III;
-    public static MachineDefinition STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE;
+    public static MachineDefinition STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE_I;
+    public static MachineDefinition STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE_II;
+    public static MachineDefinition STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE_III;
     public static MachineDefinition STEAM_ELEVATOR_ORE_PROCESSOR_MODULE;
     public static MachineDefinition STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_I;
     public static MachineDefinition STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_II;
@@ -449,12 +455,24 @@ public class GTNAMachines2 {
         // The tooltips are the exact GTNL module tooltip lines (see GTNALangProvider): GTCEu inserts
         // gtna.machine.<id>.tooltip automatically as the first description line, and the remaining
         // GTNL lines are passed here in order. Nothing is emitted twice.
-        STEAM_ELEVATOR_FLIGHT_MODULE = registerElevatorModule("steam_elevator_flight_module", "Steam Flight Module", 1,
-                holder -> new SteamFlightModule(holder, 1),
-                moduleLines("steam_elevator_flight_module", 1, 4));
-        STEAM_ELEVATOR_WEATHER_MODULE = registerElevatorModule("steam_elevator_weather_module", "Steam Weather Module",
-                1, holder -> new SteamWeatherModule(holder, 1),
-                moduleLines("steam_elevator_weather_module", 1, 2));
+        STEAM_ELEVATOR_FLIGHT_MODULE_I = registerElevatorModule("steam_elevator_flight_module_i",
+                "Steam Flight Module I", 1, holder -> new SteamFlightModule(holder, 1),
+                moduleLines("steam_elevator_flight_module_i", 1, 4));
+        STEAM_ELEVATOR_FLIGHT_MODULE_II = registerElevatorModule("steam_elevator_flight_module_ii",
+                "Steam Flight Module II", 2, holder -> new SteamFlightModule(holder, 2),
+                moduleLines("steam_elevator_flight_module_ii", 1, 4));
+        STEAM_ELEVATOR_FLIGHT_MODULE_III = registerElevatorModule("steam_elevator_flight_module_iii",
+                "Steam Flight Module III", 3, holder -> new SteamFlightModule(holder, 3),
+                moduleLines("steam_elevator_flight_module_iii", 1, 4));
+        STEAM_ELEVATOR_WEATHER_MODULE_I = registerElevatorModule("steam_elevator_weather_module_i",
+                "Steam Weather Module I", 1, holder -> new SteamWeatherModule(holder, 1),
+                moduleLines("steam_elevator_weather_module_i", 1, 2));
+        STEAM_ELEVATOR_WEATHER_MODULE_II = registerElevatorModule("steam_elevator_weather_module_ii",
+                "Steam Weather Module II", 2, holder -> new SteamWeatherModule(holder, 2),
+                moduleLines("steam_elevator_weather_module_ii", 1, 2));
+        STEAM_ELEVATOR_WEATHER_MODULE_III = registerElevatorModule("steam_elevator_weather_module_iii",
+                "Steam Weather Module III", 3, holder -> new SteamWeatherModule(holder, 3),
+                moduleLines("steam_elevator_weather_module_iii", 1, 2));
         STEAM_ELEVATOR_GREENHOUSE_MODULE = registerElevatorModule("steam_elevator_greenhouse_module",
                 "Steam Greenhouse Planting Module", 5, holder -> new SteamGreenhouseModule(holder, 5),
                 moduleLines("steam_elevator_greenhouse_module", 1, 5));
@@ -467,9 +485,15 @@ public class GTNAMachines2 {
         STEAM_ELEVATOR_OIL_DRILL_MODULE_III = registerElevatorModule("steam_elevator_oil_drill_module_iii",
                 "Steam Oil Drill Module III", 4, holder -> new SteamOilDrillModule(holder, 4),
                 moduleLines("steam_elevator_oil_drill_module_iii", 0, 4));
-        STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE = registerElevatorModule("steam_elevator_entity_crusher_module",
-                "Steam Entity Crusher Module", 1, holder -> new SteamEntityCrusherModule(holder, 1),
-                moduleLines("steam_elevator_entity_crusher_module", 1, 6));
+        STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE_I = registerElevatorModule("steam_elevator_entity_crusher_module_i",
+                "Steam Entity Crusher Module I", 1, holder -> new SteamEntityCrusherModule(holder, 1),
+                moduleLines("steam_elevator_entity_crusher_module_i", 1, 6));
+        STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE_II = registerElevatorModule("steam_elevator_entity_crusher_module_ii",
+                "Steam Entity Crusher Module II", 2, holder -> new SteamEntityCrusherModule(holder, 2),
+                moduleLines("steam_elevator_entity_crusher_module_ii", 1, 6));
+        STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE_III = registerElevatorModule("steam_elevator_entity_crusher_module_iii",
+                "Steam Entity Crusher Module III", 3, holder -> new SteamEntityCrusherModule(holder, 3),
+                moduleLines("steam_elevator_entity_crusher_module_iii", 1, 6));
         STEAM_ELEVATOR_ORE_PROCESSOR_MODULE = registerElevatorModule("steam_elevator_ore_processor_module",
                 "Steam Ore Processing Module", 8, holder -> new SteamOreProcessorModule(holder, 8),
                 moduleLines("steam_elevator_ore_processor_module", 1, 8));

@@ -25,7 +25,7 @@ import java.util.UUID;
  */
 public class SteamFlightModule extends SteamElevatorModuleMachine {
 
-    /** GTNL {@code getMachineEffectRange()} = {@code 64 * max(overclockCount, 1)}. */
+    /** GTNL {@code getMachineEffectRange()} = {@code 64 * max(overclockCount, 1)}; GTNA scales it by tier. */
     public static final int RANGE = 64;
 
     /** Players whose {@code mayfly} this module granted and is therefore responsible for. */
@@ -37,7 +37,7 @@ public class SteamFlightModule extends SteamElevatorModuleMachine {
 
     @Override
     public int getEffectRange() {
-        return RANGE;
+        return RANGE * Math.max(1, getModuleTier());
     }
 
     @Override

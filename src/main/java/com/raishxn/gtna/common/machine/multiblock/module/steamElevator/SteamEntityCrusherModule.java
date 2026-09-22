@@ -45,9 +45,14 @@ public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
             SteamEntityCrusherModule.class, SteamElevatorModuleMachine.MANAGED_FIELD_HOLDER);
 
-    /** GTNL: the default time is doubled (nominal 200) and the power halved (nominal 1024). */
+    /** GTNL: the default time is doubled (nominal 200) and the power halved (nominal 1024). Tier I. */
     public static final int CYCLE_TICKS = 400;
     public static final long STEAM_UPKEEP = 512;
+
+    /** Higher tiers run faster and burn more steam (tier I/II/III = 400/200/100 ticks). */
+    private int cycleTicks() {
+        return Math.max(1, CYCLE_TICKS >> Math.max(0, getModuleTier() - 1));
+    }
 
     private static final double BASE_DOUBLING_CHANCE = 2.0;
     private static final double CHANCE_PER_SPAWNER = 0.5;
@@ -74,7 +79,7 @@ public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
 
     @Override
     public long getSteamUpkeep() {
-        return STEAM_UPKEEP;
+        return STEAM_UPKEEP << Math.max(0, getModuleTier() - 1);
     }
 
     @Override
@@ -84,14 +89,14 @@ public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
 
     @Override
     public int getModuleMaxProgress() {
-        return CYCLE_TICKS;
+        return cycleTicks();
     }
 
     @Override
     public void onElevatorTick(SteamElevator elevator) {
         if (!consumeSteam(getSteamUpkeep())) return;
         if (!(getLevel() instanceof ServerLevel level)) return;
-        if (++progress < CYCLE_TICKS) return;
+        if (++progress < cycleTicks()) return;
         progress = 0;
         runCycle(level);
     }
@@ -177,7 +182,7 @@ public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
         group.addWidget(new LabelWidget(5, 16, () -> "Doubling chance: §b" +
                 String.format(Locale.ROOT, "%.1f", doublingChance(findCatalyst())) + "%%"));
         group.addWidget(new LabelWidget(5, 28,
-                () -> "Progress: §b" + (progress * 100 / CYCLE_TICKS) + "%%"));
+                () -> "Progress: §b" + (progress * 100 / cycleTicks()) + "%%"));
         group.addWidget(new LabelWidget(5, 40, () -> "§7Spawner: input bus"));
         group.addWidget(new LabelWidget(5, 52, () -> "§7Drops: output bus"));
         return group;

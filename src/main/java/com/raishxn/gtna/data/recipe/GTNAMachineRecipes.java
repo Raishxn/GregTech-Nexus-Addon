@@ -423,17 +423,39 @@ public class GTNAMachineRecipes {
                     .EUt(30)
                     .save(provider);
         }
-        if (enabled(GTNAMachines2.STEAM_ELEVATOR_FLIGHT_MODULE)) {
-            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_flight_module")
+        if (enabled(GTNAMachines2.STEAM_ELEVATOR_FLIGHT_MODULE_I)) {
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_flight_module_i")
                     .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 1)
                     .inputItems(GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get(), 4)
                     .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 4)
                     .inputItems(GTNAItems.HYDRAULIC_STEAM_RECEIVER.get(), 2)
                     .inputItems(GTNAItems.PRECISION_STEAM_COMPONENT.get(), 2)
                     .inputItems(Items.FEATHER, 1)
-                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_FLIGHT_MODULE.asStack())
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_FLIGHT_MODULE_I.asStack())
                     .duration(400)
                     .EUt(100)
+                    .save(provider);
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_flight_module_ii")
+                    .inputItems(GTNAMachines2.STEAM_ELEVATOR_FLIGHT_MODULE_I.asStack())
+                    .inputItems(CustomTags.MV_CIRCUITS)
+                    .inputItems(GTNAItems.HYDRAULIC_STEAM_RECEIVER.get(), 4)
+                    .inputItems(GTNAItems.HYDRAULIC_REGULATOR.get(), 4)
+                    .inputItems(Items.FEATHER, 8)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(648))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_FLIGHT_MODULE_II.asStack())
+                    .duration(300)
+                    .EUt(GTValues.VA[GTValues.MV])
+                    .save(provider);
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_flight_module_iii")
+                    .inputItems(GTNAMachines2.STEAM_ELEVATOR_FLIGHT_MODULE_II.asStack())
+                    .inputItems(CustomTags.HV_CIRCUITS)
+                    .inputItems(GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get(), 4)
+                    .inputItems(GTNAItems.HYDRAULIC_REGULATOR.get(), 8)
+                    .inputItems(Items.ELYTRA, 1)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(1296))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_FLIGHT_MODULE_III.asStack())
+                    .duration(200)
+                    .EUt(GTValues.VA[GTValues.HV])
                     .save(provider);
         }
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_BEACON_MODULE_I)) {
@@ -508,29 +530,71 @@ public class GTNAMachineRecipes {
                     .EUt(GTValues.VA[GTValues.LV])
                     .save(provider);
         }
-        if (enabled(GTNAMachines2.STEAM_ELEVATOR_WEATHER_MODULE)) {
-            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_weather_module")
+        if (enabled(GTNAMachines2.STEAM_ELEVATOR_WEATHER_MODULE_I)) {
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_weather_module_i")
                     .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 1)
                     .inputItems(Items.SNOWBALL, 64)
                     .inputItems(Items.AMETHYST_SHARD, 2)
                     .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 4)
                     .inputItems(GTNAItems.HYDRAULIC_STEAM_RECEIVER.get(), 4)
                     .inputItems(CustomTags.LV_CIRCUITS)
-                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_WEATHER_MODULE.asStack())
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_WEATHER_MODULE_I.asStack())
                     .duration(200)
                     .EUt(GTValues.VA[GTValues.LV])
                     .save(provider);
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_weather_module_ii")
+                    .inputItems(GTNAMachines2.STEAM_ELEVATOR_WEATHER_MODULE_I.asStack())
+                    .inputItems(CustomTags.MV_CIRCUITS)
+                    .inputItems(Items.SNOWBALL, 64)
+                    .inputItems(Items.AMETHYST_SHARD, 8)
+                    .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 8)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(648))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_WEATHER_MODULE_II.asStack())
+                    .duration(200)
+                    .EUt(GTValues.VA[GTValues.MV])
+                    .save(provider);
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_weather_module_iii")
+                    .inputItems(GTNAMachines2.STEAM_ELEVATOR_WEATHER_MODULE_II.asStack())
+                    .inputItems(CustomTags.HV_CIRCUITS)
+                    .inputItems(Items.AMETHYST_SHARD, 16)
+                    .inputItems(GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get(), 4)
+                    .inputItems(GTNAItems.HYDRAULIC_REGULATOR.get(), 8)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(1296))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_WEATHER_MODULE_III.asStack())
+                    .duration(200)
+                    .EUt(GTValues.VA[GTValues.HV])
+                    .save(provider);
         }
-        if (enabled(GTNAMachines2.STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE)) {
-            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_entity_crusher_module")
+        if (enabled(GTNAMachines2.STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE_I)) {
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_entity_crusher_module_i")
                     .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
                     .inputItems(ChemicalHelper.get(TagPrefix.dust, GTMaterials.Diamond).getItem(), 9)
                     .inputItems(CustomTags.LV_CIRCUITS)
                     .inputItems(GTNAItems.HYDRAULIC_PISTON.get(), 8)
                     .inputItems(GTNAItems.HYDRAULIC_CONVEYOR.get(), 8)
-                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE.asStack())
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE_I.asStack())
                     .duration(300)
                     .EUt(GTValues.VA[GTValues.LV])
+                    .save(provider);
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_entity_crusher_module_ii")
+                    .inputItems(GTNAMachines2.STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE_I.asStack())
+                    .inputItems(CustomTags.MV_CIRCUITS)
+                    .inputItems(ChemicalHelper.get(TagPrefix.dust, GTMaterials.Diamond).getItem(), 18)
+                    .inputItems(GTNAItems.HYDRAULIC_PISTON.get(), 16)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(648))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE_II.asStack())
+                    .duration(300)
+                    .EUt(GTValues.VA[GTValues.MV])
+                    .save(provider);
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_entity_crusher_module_iii")
+                    .inputItems(GTNAMachines2.STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE_II.asStack())
+                    .inputItems(CustomTags.HV_CIRCUITS)
+                    .inputItems(GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get(), 4)
+                    .inputItems(GTNAItems.HYDRAULIC_PISTON.get(), 16)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(1296))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE_III.asStack())
+                    .duration(300)
+                    .EUt(GTValues.VA[GTValues.HV])
                     .save(provider);
         }
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_OIL_DRILL_MODULE_I)) {

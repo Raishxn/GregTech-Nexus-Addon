@@ -34,7 +34,7 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-22 (G-0052):** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**) +
+- **Gate verde em 2026-09-22 (G-0053):** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**) +
   `runGameTestServer` (**35/35**, `All 35 required tests passed`) + `runData` determinístico. A
   execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros de receitas do
   GTCEu já conhecidos continuam no log.
@@ -72,6 +72,28 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0053 (2026-09-22) — variantes I/II/III de Entity Crusher, Flight e Weather
+
+- Feedback do autor: "como aumenta o tier do mob crush, flight, weather" → **adicionar variantes I/II/III**
+  (desvio consciente do GTNL, onde esses 3 são tier 1 único).
+- **Registro**: os ids `steam_elevator_{flight,weather,entity_crusher}_module` viraram
+  `..._module_i/_ii/_iii` (tiers 1/2/3), com 9 `MachineDefinition`s, tooltips e receitas hidráulicas
+  correspondentes. O `GTNASources` ganhou as 9 entradas (atribuição GTNL).
+- **Escala por tier**:
+  - Flight: alcance `64 * tier` (I/II/III = 64/128/256); upkeep já era `tier * V[5]`.
+  - Weather: a carga cobre `1 h * tier` (I/II/III = 1/2/3 h) pelo mesmo custo de steam.
+  - Entity Crusher: ciclo `400 >> (tier-1)` e upkeep `512 << (tier-1)` (I/II/III = 400/200/100 t e
+    512/1024/2048 mB/t).
+- **Lang**: as linhas de tooltip são compartilhadas por um helper novo
+  (`GTNALangProvider.elevatorModuleTiers`), que registra nome + `.tooltip` + `.tooltip.n` para os 3
+  ids de uma vez, evitando triplicar o texto.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**, incl.
+  `ModuleTooltipContractTest` com **20 módulos**); `runGameTestServer` (**35/35**); `runData`
+  determinístico (`written: 0`, 30 arquivos escritos na 1ª passada) e 0 `Parsing error`.
+- **Pendências:** o **Ore Processor com corrente de receitas GT real** (macerator→washer→thermal→
+  centrifuge, escolha do autor) ainda **não** foi implementado — é a próxima tarefa. QA manual das
+  variantes de tier no client (`docs/roadmap/QA-MANUAL-CHECKLIST.md`).
 
 ### G-0052 (2026-09-22) — módulos do elevador usam os hatches da própria estrutura (item/fluido) e mostram o status padrão
 

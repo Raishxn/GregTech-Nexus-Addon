@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gtna:block/machine/steam_elevator_flight_module_i",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtna:block/machine/steam_elevator_flight_module_i"
+    },
+    "facing=south": {
+      "model": "gtna:block/machine/steam_elevator_flight_module_i",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gtna:block/machine/steam_elevator_flight_module_i",
+      "y": 270
+    }
+  }
+}
