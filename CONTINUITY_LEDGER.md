@@ -59,6 +59,78 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0037 (2026-09-22) — review in-game: rede de vapor sem perda, elevador/módulos sem EU, hatch no módulo e overlay do elevador
+
+- **Prioridade 1 — a rede de vapor wireless estava perdendo/entupindo vapor.** A causa medida era
+  um **gate de taxa inconsistente** em `SteamWirelessNetworkManager.consumeSteamFromGlobalMap`:
+  rejeitava qualquer valor acima de `machines.wirelessSteamTransferRate` (**8192**), enquanto o
+  hatch calculava `toPull` pela sua própria taxa (`bronze = 10000`, `steel = 1000000`). Na prática
+  o hatch **de aço nunca puxava** (toPull > 8192 sempre) e o de bronze só puxava perto de encher;
+  do ponto de vista do jogador o vapor ia para a rede e "sumia". Além disso, o hatch de entrada
+  **cobrava a rede e só depois enchia o tanque**, sem conferir o que o tanque aceitou (mismatch
+  simulado-vs-real). Correção no estilo do GTNL (`tryFetchingSteam`):
+  - `SteamNetworkData.addSteam` agora é **atômico com sinal** (aceita negativo; rejeita e não mexe
+    no saldo se for abaixo de zero) e retorna `boolean`; `addSteamToGlobalSteamMap` propaga isso.
+  - `consumeSteamFromGlobalMap`/`extractSteam` perderam o gate de `machines.wirelessSteamTransferRate`
+    (a taxa é responsabilidade do hatch, que já limita por `wirelessSteam.*TransferRate`).
+  - **Entrada:** `fill(SIMULATE)` → cobra exatamente o `accepted` → `fill(EXECUTE)`.
+  - **Saída:** `drain(SIMULATE)` → adiciona exatamente o `amount` drenado → `drain(EXECUTE)`.
+  - Gametest `wirelessSteamHatchIsAcceptedAsSteamSource` ganhou um bloco de **contabilidade em
+    runtime** (add 1000 → 1000; consume 400 → 600; overdraft rejeitado e saldo intacto; subtract
+    atômico até 0; subtract abaixo de 0 rejeitado). `SteamWiringContractTest` ganhou um lint de
+    código que exige a ordem SIMULATE→cobrar→EXECUTE nos dois hatches.
+- **Prioridade 2 — elevador e módulos sem buffer de EU.** Removido o `energyBuffer`/`MAX_ENERGY` do
+  `SteamElevator` e o `storedEnergy`/`receiveEnergy`/`consumeEnergy`/`getEnergyStored`/
+  `getEnergyCapacity` do `SteamElevatorModuleMachine`/`ISteamElevatorModule`. O elevador agora é
+  **sempre ativo quando formado** (`isWorkingEnabled()`→`true`, `isActive()`→`isFormed()`,
+  `isElevatorRunning()`→`isFormed()`); não consome receita/energia. Os módulos pagam um
+  **upkeep em mB/t** (`getSteamUpkeep`, antes `getEnergyUsage`, mesmos números do GTNL com 1 mB =
+  1 EU) drenado dos **hatches de vapor da estrutura**: primeiro os do próprio módulo, depois os do
+  host, sempre checando a disponibilidade dos dois pools **antes** de drenar (nunca paga parcial e
+  some com a diferença). Linhas de display "Energy: X / Y EU" e "Buffer: X / Y EU" trocadas por
+  "Steam: X mB" e "Upkeep: X mB/t | Own steam: Y mB".
+- **Prioridade 3 — hatch de vapor no módulo reportava "não conectado".** O pattern do módulo
+  (`steam_elevator_module`) mapeava `A` para **apenas** `blocks(CASING_STEEL_SOLID)`, então um hatch
+  colocado no casco do módulo não casava e a estrutura invalidava. `A` agora aceita, como no GTNL
+  `SteamElevatorModuleBase#getStructureDefinition`, `PartAbility.STEAM` + `STEAM_IMPORT/EXPORT_ITEMS`
+  + `IMPORT/EXPORT_ITEMS` + `IMPORT/EXPORT_FLUIDS` + `MAINTENANCE` (cada um `setMaxGlobalLimited(1)`)
+  encadeado com o casing. O módulo coleta o tanque do hatch em `onStructureFormed` (filtro
+  `isFluidValid(0, steam)`) e usa no upkeep.
+- **Prioridade 4 — overlay do Steam Elevator.** Confirmado de novo: o GTNL renderiza o elevador com
+  `gregtech:iconsets/EM_COMPUTER` (`BlockIcons.OVERLAY_FRONT_TECTECH_MULTIBLOCK`), um ícone
+  **GT5U/Tectech** referenciado do resource domain do GregTech e **NÃO vendorizado** no repositório
+  do GTNL (só há `SteamCarpenter`, `SteamLavaMaker`, `SteamItemVault`, `CactusWonder`,
+  `MegaSteamCompressor`, `SteamManufacturer`, etc. — nenhum overlay de elevador). Como não há o que
+  portar do GTNL, o ícone foi vendorizado na forma retexturizada do pack **Modernity-GTNH** (fonte
+  que o projeto já usa; mesmo autor do GTNL conforme o dono) em
+  `assets/gtna/textures/block/multiblock/steam_elevator/{overlay_front,overlay_front_active}.png`
+  (+ `.mcmeta` animado) e o `workableCasingModel` passou de `gtceu:.../steam_grinder` para
+  `gtna:.../steam_elevator`. `THIRD_PARTY_NOTICES.md` atualizado. **Re-auditoria dos demais:** as
+  `large_steam_*` do GTNL não têm textura própria (usam ícones do GT++/GT5U);
+  `hyper_pressure_reactor`/`compact_hyper_pressure_reactor` (GTNL `SteamFusionReactor`/
+  `HighPressureSteamFusionReactor`) usam `OVERLAY_TOP_STEAM_MACERATOR` do GT5U, também não
+  vendorizado — mantidos os overlays GTCEu. Nenhum outro port GTNL ficou com overlay GTCEu tendo um
+  do GTNL disponível.
+- **Arquivos:** `SteamWirelessNetworkManager.java`, `SteamNetworkData.java`,
+  `WirelessSteamInputHatch.java`, `WirelessSteamOutputHatch.java`, `ISteamElevatorModule.java`,
+  `SteamElevator.java`, `SteamElevatorModuleMachine.java`, os 10 módulos, `GTNAMachines.java`
+  (overlay do elevador), `GTNAMachines2.java` (pattern do módulo), `GTNALangProvider.java`,
+  `pt_br.json` (2 linhas trocadas, BOM/CRLF preservados), `SteamWiringContractTest.java`,
+  `GTNAMachineGameTests.java`, `THIRD_PARTY_NOTICES.md`, as texturas do overlay e o modelo gerado
+  `steam_elevator.json`.
+- **Validação:** `spotlessApply compileJava` OK; `spotlessCheck` + `runUnitTests` (**14/14**);
+  `runGameTestServer` (**25/25**, `All 25 required tests passed`); `grep -c "Parsing error loading
+  recipe gtna:" run/logs/latest.log` = **0**; `runData` determinístico (2ª execução `written: 0`).
+- **Pendências abertas / verificação in-game:** (a) montar o elevador 35x43x35 e os 12 módulos no
+  `runClient` e confirmar que cada módulo paga upkeep dos hatches (próprio e do host) e que o efeito
+  liga/desliga ao conectar/desconectar; (b) confirmar que colocar um hatch de vapor no casco do
+  módulo agora forma o módulo e que o host **não** conta esse hatch como fonte própria (as células
+  do módulo caem em `I`/`H`/`D`; se cair em `H` pode competir com o limite de 1 fonte de vapor do
+  host — validar); (c) conferir visualmente o overlay animado do elevador; (d) o
+  `machines.wirelessSteamTransferRate` (8192) ficou **sem uso** (a taxa por hatch é a que vale) —
+  remover numa limpeza futura se o autor concordar; (e) os upkeeps em mB/t são os números do GTNL
+  (1 mB = 1 EU) e podem precisar de balanceamento in-game.
+
 ### G-0036 (2026-09-22) — review in-game: Building Gadgets, orientação do módulo, casing do elevador e overlays GTNL
 
 - **Item 1 — Building Gadgets não carregava (causa raiz):** a dependência

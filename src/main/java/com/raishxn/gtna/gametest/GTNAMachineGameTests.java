@@ -38,6 +38,7 @@ import appeng.api.stacks.AEItemKey;
 import appeng.crafting.execution.CraftingCpuLogic;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
 import com.raishxn.gtna.common.data.GTNABlocks;
 import com.raishxn.gtna.common.data.GTNAMachines;
 import com.raishxn.gtna.common.data.GTNAMachines2;
@@ -52,6 +53,8 @@ import com.raishxn.gtna.common.machine.multiblock.steam.AdjustableSteamParallelM
 import com.raishxn.gtna.common.machine.multiblock.steam.SteamItemVaultMachine;
 import com.raishxn.gtna.common.machine.multiblock.steam.SteamLavaMakerMachine;
 import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
+
+import java.util.UUID;
 
 /**
  * In-game tests (Forge GameTest) for the parts the plain unit tests cannot reach: machine
@@ -487,6 +490,32 @@ public final class GTNAMachineGameTests {
                 "a bronze-cased structure must use the normal steam conversion rate");
         helper.assertTrue(!controller.getCapabilitiesFlat(IO.IN, EURecipeCapability.CAP).isEmpty(),
                 "the wireless hatch's steam tank must be exposed to the controller as an EU IN handler");
+
+        // Steam accounting: the global network must never lose or duplicate steam (GTNL
+        // add/consume balance). Exercised at runtime because it is the reported "voiding" path.
+        UUID owner = UUID.randomUUID();
+        long start = SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner);
+        helper.assertTrue(start == 0L, "a fresh network owner must start at 0 mB, was " + start);
+        helper.assertTrue(SteamWirelessNetworkManager.addSteamToGlobalSteamMap(helper.getLevel(), owner, 1000L),
+                "adding steam to the network must succeed");
+        helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == 1000L,
+                "the network must hold exactly the steam that was added");
+        helper.assertTrue(SteamWirelessNetworkManager.consumeSteamFromGlobalMap(helper.getLevel(), owner, 400L),
+                "consuming available steam must succeed");
+        helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == 600L,
+                "the network must hold exactly the steam that remains (1000 - 400)");
+        helper.assertTrue(!SteamWirelessNetworkManager.consumeSteamFromGlobalMap(helper.getLevel(), owner, 601L),
+                "an overdraft must be rejected instead of going negative");
+        helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == 600L,
+                "a rejected overdraft must leave the balance untouched");
+        helper.assertTrue(SteamWirelessNetworkManager.addSteamToGlobalSteamMap(helper.getLevel(), owner, -600L),
+                "an atomic subtract down to zero must succeed");
+        helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == 0L,
+                "the network must reach exactly zero after subtracting its whole balance");
+        helper.assertTrue(!SteamWirelessNetworkManager.addSteamToGlobalSteamMap(helper.getLevel(), owner, -1L),
+                "subtracting below zero must be rejected atomically");
+        helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == 0L,
+                "a rejected subtract must leave the balance untouched");
         helper.succeed();
     }
 

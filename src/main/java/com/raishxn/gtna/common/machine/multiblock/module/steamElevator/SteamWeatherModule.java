@@ -43,7 +43,7 @@ public class SteamWeatherModule extends SteamElevatorModuleMachine {
     }
 
     @Override
-    public long getEnergyUsage() {
+    public long getSteamUpkeep() {
         // GTNL recipe: eut 0 in the fake map, so a flat upkeep of V[3] is used here.
         return getModuleTier() * GTValues.V[3];
     }
@@ -59,7 +59,7 @@ public class SteamWeatherModule extends SteamElevatorModuleMachine {
 
     @Override
     public void onElevatorTick(SteamElevator elevator) {
-        if (!consumeEnergy(getEnergyUsage())) return;
+        if (!consumeSteam(getSteamUpkeep())) return;
         if (!(getLevel() instanceof ServerLevel level)) return;
         // Refresh the forced weather every second so it never expires while the module runs.
         if (++counter % 20 != 0) return;

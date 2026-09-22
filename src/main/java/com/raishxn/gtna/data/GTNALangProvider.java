@@ -1030,7 +1030,7 @@ public class GTNALangProvider extends LanguageProvider {
                 "Set out button: opens the Ad Astra planet selection, like a rocket launch.");
         add("gtna.tooltip.steam_elevator.structure",
                 "35x43x35; steel reinforced wood shell, steam compact pipe casing, solid steel machine casing.");
-        add("gtna.machine.steam_elevator.energy", "Energy: %s / %s EU");
+        add("gtna.machine.steam_elevator.steam", "Steam: %s mB");
         add("gtna.machine.steam_elevator.modules", "Modules: %s");
         add("gtna.machine.steam_elevator.steam_hatches", "Steam hatches: %s");
         add("gtna.machine.steam_elevator.no_modules", "No modules installed");
@@ -1038,7 +1038,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.steam_elevator.set_out.not_running", "The elevator must be running to set out.");
 
         add("gtna.machine.steam_elevator_module.tier", "Module tier: %s");
-        add("gtna.machine.steam_elevator_module.energy", "Buffer: %s / %s EU");
+        add("gtna.machine.steam_elevator_module.upkeep", "Upkeep: %s mB/t | Own steam: %s mB");
         add("gtna.machine.steam_elevator_module.connected", "Connected to the elevator");
         add("gtna.machine.steam_elevator_module.disconnected", "Not connected");
 

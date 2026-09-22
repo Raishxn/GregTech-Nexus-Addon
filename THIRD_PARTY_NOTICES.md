@@ -22,7 +22,7 @@ If you are a rightsholder and want an entry corrected or removed, please open an
 | GT: Not Leisure (GTNL) | [ABKQPO/GT-Not-Leisure](https://github.com/ABKQPO/GT-Not-Leisure) | **GPL-3.0** | Multiblock structure files (`.mb`), large steam multiblock family, per-machine controller overlay textures (`textures/blocks/iconsets/*`) | **Permission granted** (credit the source). Structures that GTNL itself took from GTO are credited to GTO |
 | Twist Space Technology (TST) | [Nxer/Twist-Space-Technology-Mod](https://github.com/Nxer/Twist-Space-Technology-Mod) | **GPL-3.0** | Overworld-only ore condenser | **Pending** — permission requested |
 | GTMThings | [liansishen/GTMThings](https://github.com/liansishen/GTMThings) | None declared (All Rights Reserved) | `AdvancedBlockPattern` (basis for `NexusBlockPattern`) | **Pending** — permission requested |
-| cmme-additions → Modernity-GTNH | [CristalGaming/cmme-additions](https://github.com/CristalGaming/cmme-additions) → [ModernityGTNH/Modernity-GTNH](https://github.com/ModernityGTNH/Modernity-GTNH) | ARR → **CC BY-NC-SA 4.0** | Plate/ingot textures (triple/quadruple/quintuple, etc.) and the **Industrial / Advanced Industrial Steam Casing** textures (`MetaCasing02/1`, `2`) | **Pending** — permission requested; same author as GTNL per the project owner |
+| cmme-additions → Modernity-GTNH | [CristalGaming/cmme-additions](https://github.com/CristalGaming/cmme-additions) → [ModernityGTNH/Modernity-GTNH](https://github.com/ModernityGTNH/Modernity-GTNH) | ARR → **CC BY-NC-SA 4.0** | Plate/ingot textures (triple/quadruple/quintuple, etc.), the **Industrial / Advanced Industrial Steam Casing** textures (`MetaCasing02/1`, `2`) and the **`EM_COMPUTER`** elevator overlay (`gregtech/textures/blocks/iconsets/EM_COMPUTER{,_ACTIVE}`) | **Pending** — permission requested; same author as GTNL per the project owner |
 | GTLCore | [nutant233/GTLCore](https://github.com/nutant233/GTLCore) | Declared LGPLv3.0 (`gradle.properties`; no `LICENSE` file found) | Textures, pattern-buffer parity code | Attribution (license to confirm) |
 | GTLsupb | GTLsupb (LGPLv3) | LGPLv3 | Universal Factory, Primitive Stone Furnace | Attribution only |
 | GregTech CEu Modern | [GregTechCEu/GregTech-Modern](https://github.com/GregTechCEu/GregTech-Modern) | LGPL-3.0 | Base API / framework | Attribution only |
@@ -45,6 +45,11 @@ If you are a rightsholder and want an entry corrected or removed, please open an
   `assets/gtna/textures/block/multiblock/*` (from GTNL `textures/blocks/iconsets/*`).
 - Structures that GTNL itself ported from GTO are credited to **GTO**, whose assets are used under
   **CC BY-NC-SA 4.0** (permission confirmed by the GTO team).
+- **Steam Elevator overlay:** GTNL renders the elevator front with `gregtech:iconsets/EM_COMPUTER`
+  (`BlockIcons.OVERLAY_FRONT_TECTECH_MULTIBLOCK`), a **GT5U/Tectech** icon that GTNL references from
+  GregTech's resource domain but does **not** vendor in its own repository. Since the GTNL repo has
+  no elevator overlay to port, GTNA uses the same icon as retextured by the Modernity-GTNH pack
+  (already a source of this project) under `assets/gtna/textures/block/multiblock/steam_elevator/`.
 
 ### Attribution in tooltips
 

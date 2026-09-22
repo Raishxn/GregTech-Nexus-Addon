@@ -60,14 +60,14 @@ public class SteamGreenhouseModule extends SteamElevatorModuleMachine {
     }
 
     @Override
-    public long getEnergyUsage() {
+    public long getSteamUpkeep() {
         // GTNL getIndustrialFarmEUt().
         return 8192L;
     }
 
     @Override
     public void onElevatorTick(SteamElevator elevator) {
-        if (!consumeEnergy(getEnergyUsage())) return;
+        if (!consumeSteam(getSteamUpkeep())) return;
         if (!(getLevel() instanceof ServerLevel level)) return;
         if (++progress < CYCLE_TICKS) return;
         progress = 0;

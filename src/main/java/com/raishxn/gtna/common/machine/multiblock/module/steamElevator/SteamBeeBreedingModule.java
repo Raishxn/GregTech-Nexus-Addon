@@ -63,14 +63,14 @@ public class SteamBeeBreedingModule extends SteamElevatorModuleMachine {
     }
 
     @Override
-    public long getEnergyUsage() {
+    public long getSteamUpkeep() {
         // GTNL: GTValues.V[6].
         return GTValues.V[6];
     }
 
     @Override
     public void onElevatorTick(SteamElevator elevator) {
-        if (!consumeEnergy(getEnergyUsage())) return;
+        if (!consumeSteam(getSteamUpkeep())) return;
         if (++progress < CYCLE_TICKS) return;
         progress = 0;
 

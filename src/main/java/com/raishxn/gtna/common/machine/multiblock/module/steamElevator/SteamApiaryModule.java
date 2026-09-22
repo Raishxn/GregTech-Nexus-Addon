@@ -28,7 +28,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
  * <b>Documented deviation:</b> GTNL drives the Forestry/Binnie bee API (queen genomes, per-species
  * product chance tables, royal-jelly boosted simulations). Forestry is not targeted for 1.20.1 and
  * Productive Bees is <b>not</b> on the GTNA dev classpath (no dependency in {@code build.gradle}), so
- * this port keeps the apiary contract — a housed colony turns brood into comb and honey at an EU
+ * this port keeps the apiary contract — a housed colony turns brood into comb and honey at a steam
  * upkeep — with vanilla bee products: honeycomb (the brood/"bee") and water are consumed every cycle
  * to produce more honeycomb plus honey bottles. No external bee mod is required or referenced.
  *
@@ -70,14 +70,14 @@ public class SteamApiaryModule extends SteamElevatorModuleMachine {
     }
 
     @Override
-    public long getEnergyUsage() {
+    public long getSteamUpkeep() {
         // GTNL: GTValues.V[4] * mMaxSlots at the base 8-bee colony.
         return GTValues.V[4] * 8L;
     }
 
     @Override
     public void onElevatorTick(SteamElevator elevator) {
-        if (!consumeEnergy(getEnergyUsage())) return;
+        if (!consumeSteam(getSteamUpkeep())) return;
         if (++progress < CYCLE_TICKS) return;
         progress = 0;
 

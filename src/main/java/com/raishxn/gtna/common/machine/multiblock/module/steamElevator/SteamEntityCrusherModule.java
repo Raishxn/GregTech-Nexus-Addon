@@ -33,13 +33,13 @@ public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
     }
 
     @Override
-    public long getEnergyUsage() {
+    public long getSteamUpkeep() {
         return getModuleTier() * GTValues.V[3];
     }
 
     @Override
     public void onElevatorTick(SteamElevator elevator) {
-        if (!consumeEnergy(getEnergyUsage())) return;
+        if (!consumeSteam(getSteamUpkeep())) return;
         if (!(getLevel() instanceof ServerLevel level)) return;
         if (++counter % 20 != 0) return;
 

@@ -22,7 +22,7 @@ import java.util.List;
  *
  * <p>
  * GTNL lets the player configure up to {@code tier + 2} effects through a dedicated window and pays
- * with an iron/gold/diamond/emerald. GTNA keeps the tier-scaled effect range, the per-effect EU
+ * with an iron/gold/diamond/emerald. GTNA keeps the tier-scaled effect range, the per-effect steam
  * upkeep and the "higher tier unlocks more effects" progression, but exposes them as a fixed,
  * documented set instead of porting GTNL's config window (whose mod-specific effects — Warp Ward,
  * Feather Feet, Vis Regen — have no 1.20.1 equivalent):
@@ -57,7 +57,7 @@ public class SteamBeaconModule extends SteamElevatorModuleMachine {
     }
 
     @Override
-    public long getEnergyUsage() {
+    public long getSteamUpkeep() {
         // GTNL: machineEffectsCount * V[3] * max(1, maxEffectLevel * 2).
         return (long) effectCount() * GTValues.V[3] * Math.max(1, getModuleTier() * 2);
     }
@@ -79,7 +79,7 @@ public class SteamBeaconModule extends SteamElevatorModuleMachine {
 
     @Override
     public void onElevatorTick(SteamElevator elevator) {
-        if (!consumeEnergy(getEnergyUsage())) return;
+        if (!consumeSteam(getSteamUpkeep())) return;
         if (!(getLevel() instanceof ServerLevel level)) return;
         if (++counter % 40 != 0) return;
 
@@ -100,7 +100,7 @@ public class SteamBeaconModule extends SteamElevatorModuleMachine {
         group.addWidget(
                 new LabelWidget(5, 5, () -> "Beacon tier: §b" + getModuleTier() + " §r| Range: §b" + getEffectRange()));
         group.addWidget(new LabelWidget(5, 18,
-                () -> "Effects: §b" + effectCount() + " §r| Upkeep: §b" + getEnergyUsage() + " EU/t"));
+                () -> "Effects: §b" + effectCount() + " §r| Upkeep: §b" + getSteamUpkeep() + " mB/t"));
         return group;
     }
 }

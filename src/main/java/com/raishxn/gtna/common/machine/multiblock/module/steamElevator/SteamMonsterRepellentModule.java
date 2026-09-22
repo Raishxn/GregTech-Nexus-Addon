@@ -32,13 +32,13 @@ public class SteamMonsterRepellentModule extends SteamElevatorModuleMachine {
     }
 
     @Override
-    public long getEnergyUsage() {
+    public long getSteamUpkeep() {
         return getModuleTier() * GTValues.V[3];
     }
 
     @Override
     public void onElevatorTick(SteamElevator elevator) {
-        if (!consumeEnergy(getEnergyUsage())) return;
+        if (!consumeSteam(getSteamUpkeep())) return;
         if (!(getLevel() instanceof ServerLevel level)) return;
         // Spawn checks are expensive; run once per two seconds.
         if (++counter % 40 != 0) return;

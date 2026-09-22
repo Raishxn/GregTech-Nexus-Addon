@@ -53,13 +53,24 @@ public class SteamNetworkData extends SavedData {
         return steamStorage.getOrDefault(owner, 0L);
     }
 
-    public void addSteam(UUID owner, long amount) {
+    /**
+     * Atomically adds {@code amount} to the owner's balance. A negative {@code amount} subtracts;
+     * if the balance would go below zero the operation is rejected and the balance is left
+     * untouched (GTNL {@code addSteamToGlobalSteamMap} semantics), so a caller can never overdraft.
+     *
+     * @return {@code true} when the balance changed, {@code false} on an overdraft.
+     */
+    public boolean addSteam(UUID owner, long amount) {
+        if (amount == 0) return false;
         long current = getSteam(owner);
         long next = current + amount;
-        if (next < 0) next = Long.MAX_VALUE;
+        // A negative result means either an overdraft (negative amount) or a positive overflow;
+        // both are rejected atomically rather than silently wrapping or voiding steam.
+        if (next < 0) return false;
 
         steamStorage.put(owner, next);
         setDirty();
+        return true;
     }
 
     public void setSteam(UUID owner, long amount) {

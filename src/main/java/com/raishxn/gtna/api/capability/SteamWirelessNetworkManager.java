@@ -12,14 +12,18 @@ public class SteamWirelessNetworkManager {
 
     private SteamWirelessNetworkManager() {}
 
+    /**
+     * Adds steam to the owner's global network. A negative amount subtracts atomically: if the
+     * balance would go below zero the operation is rejected and the balance is left untouched
+     * (GTNL {@code addSteamToGlobalSteamMap} semantics), so a caller can never overdraft or void.
+     */
     public static boolean addSteamToGlobalSteamMap(ServerLevel level, UUID userUuid, long steamAmount) {
-        if (level == null || userUuid == null || steamAmount <= 0 || !ConfigHolder.INSTANCE.wirelessSteam.enabled) {
+        if (level == null || userUuid == null || steamAmount == 0 || !ConfigHolder.INSTANCE.wirelessSteam.enabled) {
             return false;
         }
 
         SteamNetworkData data = SteamNetworkData.get(level);
-        data.addSteam(userUuid, steamAmount);
-        return true;
+        return data.addSteam(userUuid, steamAmount);
     }
 
     public static long getUserSteam(ServerLevel level, UUID userUuid) {
@@ -38,10 +42,14 @@ public class SteamWirelessNetworkManager {
         SteamNetworkData.get(level).setSteam(userUuid, steamAmount);
     }
 
+    /**
+     * Consumes exactly {@code amount} from the owner's network, or nothing. The caller caps
+     * {@code amount} (the wireless hatches cap it at their per-tick transfer rate); the network
+     * itself never silently discards a remainder.
+     */
     public static boolean consumeSteamFromGlobalMap(ServerLevel level, UUID userUuid, long amount) {
         if (level == null || userUuid == null || amount <= 0) return false;
-        if (!ConfigHolder.INSTANCE.wirelessSteam.enabled ||
-                amount > ConfigHolder.INSTANCE.machines.wirelessSteamTransferRate) {
+        if (!ConfigHolder.INSTANCE.wirelessSteam.enabled) {
             return false;
         }
 
@@ -51,8 +59,7 @@ public class SteamWirelessNetworkManager {
 
     public static boolean extractSteam(Level level, UUID userUuid, long amount, boolean simulate) {
         if (!(level instanceof ServerLevel serverLevel) || userUuid == null || amount <= 0) return false;
-        if (!ConfigHolder.INSTANCE.wirelessSteam.enabled ||
-                amount > ConfigHolder.INSTANCE.machines.wirelessSteamTransferRate) {
+        if (!ConfigHolder.INSTANCE.wirelessSteam.enabled) {
             return false;
         }
         SteamNetworkData data = SteamNetworkData.get(serverLevel);

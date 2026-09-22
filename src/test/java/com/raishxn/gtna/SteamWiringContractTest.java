@@ -31,6 +31,10 @@ public final class SteamWiringContractTest {
 
     private static final Path DATA_DIR = Path.of("src/main/java/com/raishxn/gtna/common/data");
     private static final Path MACHINES_SOURCE = DATA_DIR.resolve("GTNAMachines.java");
+    private static final Path STEAM_PART_DIR = Path
+            .of("src/main/java/com/raishxn/gtna/common/machine/multiblock/part/steam");
+    private static final Path ELEVATOR_DIR = Path
+            .of("src/main/java/com/raishxn/gtna/common/machine/multiblock/module/steamElevator");
 
     /** Pinning a steam slot to this exact block excludes any part that only has the STEAM ability. */
     private static final String EXACT_HATCH_PIN = "blocks(GTMachines.STEAM_HATCH";
@@ -50,6 +54,8 @@ public final class SteamWiringContractTest {
         checkNoExactSteamHatchPin();
         checkHatchAbilityRoles();
         checkSteamSlotsUseAbility();
+        checkWirelessSteamAccounting();
+        checkElevatorHasNoEuBuffer();
         System.out.println("[SteamWiringContractTest] all cases passed");
     }
 
@@ -96,6 +102,52 @@ public final class SteamWiringContractTest {
         if (count == 0) {
             throw new AssertionError("no machine in " + MACHINES_SOURCE + " accepts a steam source by ability (" +
                     ABILITY_PIN + "); the steam slot is pinned to exact blocks again");
+        }
+    }
+
+    /**
+     * The wireless steam hatches must simulate the tank transfer before touching the network, so a
+     * full/odd tank can never void steam (GTNL {@code tryFetchingSteam} order: simulate fill →
+     * charge exactly the accepted amount → execute fill; simulate drain → add exactly the drained
+     * amount → execute drain).
+     */
+    private static void checkWirelessSteamAccounting() throws IOException {
+        String input = Files.readString(STEAM_PART_DIR.resolve("WirelessSteamInputHatch.java"),
+                StandardCharsets.UTF_8);
+        int inputSim = input.indexOf("FluidAction.SIMULATE");
+        int inputConsume = input.indexOf("consumeSteamFromGlobalMap");
+        int inputExec = input.indexOf("FluidAction.EXECUTE");
+        if (!(inputSim >= 0 && inputConsume > inputSim && inputExec > inputConsume)) {
+            throw new AssertionError("WirelessSteamInputHatch must simulate the fill, charge the network for " +
+                    "exactly the accepted amount, then execute the fill (so it cannot void steam)");
+        }
+
+        String output = Files.readString(STEAM_PART_DIR.resolve("WirelessSteamOutputHatch.java"),
+                StandardCharsets.UTF_8);
+        int outputSim = output.indexOf("FluidAction.SIMULATE");
+        int outputAdd = output.indexOf("addSteamToGlobalSteamMap");
+        int outputExec = output.indexOf("FluidAction.EXECUTE");
+        if (!(outputSim >= 0 && outputAdd > outputSim && outputExec > outputAdd)) {
+            throw new AssertionError("WirelessSteamOutputHatch must simulate the drain, add exactly the drained " +
+                    "amount to the network, then execute the drain (so it cannot duplicate steam)");
+        }
+    }
+
+    /**
+     * The elevator and its modules must have no EU buffer: the author's model is "the elevator always
+     * runs; the modules pay a steam upkeep drawn from the structure's steam input hatches".
+     */
+    private static void checkElevatorHasNoEuBuffer() throws IOException {
+        List<String> banned = List.of("energyBuffer", "storedEnergy", "receiveEnergy", "consumeEnergy",
+                "MAX_ENERGY");
+        for (String file : List.of("SteamElevator.java", "SteamElevatorModuleMachine.java")) {
+            String source = Files.readString(ELEVATOR_DIR.resolve(file), StandardCharsets.UTF_8);
+            for (String token : banned) {
+                if (source.contains(token)) {
+                    throw new AssertionError(file + " still contains \"" + token +
+                            "\"; the elevator/modules must have no EU buffer or EU upkeep");
+                }
+            }
         }
     }
 }

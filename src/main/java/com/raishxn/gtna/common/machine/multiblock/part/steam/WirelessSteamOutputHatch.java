@@ -16,6 +16,7 @@ import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
@@ -75,11 +76,16 @@ public class WirelessSteamOutputHatch extends SteamHatchPartMachine {
 
             if (currentSteam > 0) {
                 int toPush = (int) Math.min(currentSteam, transferRate);
+                if (toPush <= 0) return;
 
-                boolean success = SteamWirelessNetworkManager.addSteamToGlobalSteamMap(serverLevel, ownerId, toPush);
+                // GTNL robustness: simulate the drain first so the network only receives what the
+                // tank can actually give up. The drain result is what gets added, never a guess.
+                FluidStack simulated = tank.drain(toPush, IFluidHandler.FluidAction.SIMULATE);
+                int amount = simulated.getAmount();
+                if (amount <= 0) return;
 
-                if (success) {
-                    tank.drain(toPush, IFluidHandler.FluidAction.EXECUTE);
+                if (SteamWirelessNetworkManager.addSteamToGlobalSteamMap(serverLevel, ownerId, amount)) {
+                    tank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
                 }
             }
         }

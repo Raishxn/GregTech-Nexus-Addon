@@ -27,7 +27,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
  * GTNL runs a configurable multi-stage ore-processing chain (macerate → wash → thermal → centrifuge,
  * chem-bath, sifter, forge-hammer …) with up to 8 parallels. Reproducing every stage in a part
  * machine is not possible with GTCEu's controller-centric recipe logic, so this port keeps the ore
- * processor's core contract — water + ore in, crushed/dust products out at a fixed EU upkeep — with
+ * processor's core contract — water + ore in, crushed/dust products out at a fixed steam upkeep — with
  * a single maceration stage using GTCEu's material registry (no external recipe lookup). The
  * documented simplification is the chain depth, not the input/output identity.
  */
@@ -36,7 +36,7 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
             SteamOreProcessorModule.class, SteamElevatorModuleMachine.MANAGED_FIELD_HOLDER);
 
-    public static final long RECIPE_EUT = 128;
+    public static final long STEAM_UPKEEP = 128;
     private static final int WATER_PER_ITEM = 1000;
     private static final int CYCLE_TICKS = 20;
 
@@ -59,13 +59,13 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
     }
 
     @Override
-    public long getEnergyUsage() {
-        return RECIPE_EUT;
+    public long getSteamUpkeep() {
+        return STEAM_UPKEEP;
     }
 
     @Override
     public void onElevatorTick(SteamElevator elevator) {
-        if (!consumeEnergy(getEnergyUsage())) return;
+        if (!consumeSteam(getSteamUpkeep())) return;
         if (++progress < CYCLE_TICKS) return;
         progress = 0;
         processOne();

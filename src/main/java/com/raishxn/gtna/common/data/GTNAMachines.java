@@ -1191,7 +1191,11 @@ public class GTNAMachines {
                     .pattern(GTNAMachines::createSteamElevatorPattern)
                     .workableCasingModel(
                             GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
-                            GTCEu.id("block/multiblock/steam_grinder"))
+                            // GTNL's elevator uses the Tectech icon gregtech:iconsets/EM_COMPUTER,
+                            // which is NOT vendored in the GTNL repo (it lives in GT5U/GregTech). The
+                            // closest available is the same icon from the Modernity-GTNH pack the
+                            // project already sources from; see THIRD_PARTY_NOTICES.md.
+                            GTNACORE.id("block/multiblock/steam_elevator"))
                     .tooltips(
                             Component.translatable("gtna.tooltip.steam_elevator.desc")
                                     .withStyle(ChatFormatting.GRAY),

@@ -12,11 +12,10 @@ import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.pattern.util.RelativeDirection;
+import com.gregtechceu.gtceu.common.data.GTMaterials;
 
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
 import com.lowdragmc.lowdraglib.gui.widget.ButtonWidget;
-import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
-import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.ChatFormatting;
@@ -39,18 +38,17 @@ import java.util.List;
  * GTNA-native port of GTNL's {@code SteamElevator} (LGPLv3, original by ScienceNotLeisure).
  *
  * <p>
- * A 35x43x35 modular multiblock: it burns steam into a large internal EU buffer and distributes that
- * buffer evenly across every {@link SteamElevatorModuleMachine} installed in its twelve fixed module
- * slots. The modules are themselves small {@code 1x5x2} multiblocks that apply their own capability
- * (flight, weather, greenhouse, ...). This replaces GTNL's module hatches ({@code mModuleHatches})
- * with GTCEu multiblock modules and a fixed slot scan, so only a fully formed module is counted.
+ * A 35x43x35 modular multiblock. Following the author's model there is <b>no EU buffer</b> and the
+ * elevator itself needs no steam/energy: it is always active once formed. The twelve fixed module
+ * slots are scanned for fully formed {@link SteamElevatorModuleMachine}s, which consume steam
+ * directly from the steam input hatches in their own structure and in the host structure.
  *
  * <p>
  * Deviations (documented):
  * <ul>
  * <li>The GTNL controller is a {@code SteamMultiMachineBase}; GTNA uses a plain
- * {@link WorkableMultiblockMachine} because the elevator does not process recipes. Steam is drained
- * directly from the structure's steam hatches at a 1 mB = 1 EU rate.</li>
+ * {@link WorkableMultiblockMachine} because the elevator does not process recipes and no longer
+ * burns steam into an internal buffer.</li>
  * <li>GTNL's wireless steam network modes (Ad Astra / GTNH wireless) are not ported; the structure
  * still requires a steam hatch (the GTNA {@code WirelessSteamInputHatch} satisfies it).</li>
  * <li>Player teleport (GTNL opened the Galacticraft celestial selection and moved the player
@@ -62,9 +60,6 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(SteamElevator.class,
             WorkableMultiblockMachine.MANAGED_FIELD_HOLDER);
-
-    /** GTNL {@code maxEUStore()}. */
-    public static final long MAX_ENERGY = 256_000_000L;
 
     /**
      * The twelve module-slot positions, expressed in the pattern's local frame relative to the
@@ -80,14 +75,8 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
             { 0, 8, -5 }, { 0, 8, -3 }, { 0, 8, -1 },
     };
 
-    @Persisted
-    @DescSynced
-    private long energyBuffer;
-
     private final List<SteamElevatorModuleMachine> modules = new ArrayList<>();
     private final List<NotifiableFluidTank> steamTanks = new ArrayList<>();
-
-    private boolean wasRunning;
 
     @Nullable
     private TickableSubscription tickSubscription;
@@ -137,7 +126,8 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
             for (var handlerList : part.getRecipeHandlers()) {
                 if (!handlerList.isValid(IO.IN)) continue;
                 for (var fluidHandler : handlerList.getCapability(FluidRecipeCapability.CAP)) {
-                    if (fluidHandler instanceof NotifiableFluidTank tank) {
+                    if (fluidHandler instanceof NotifiableFluidTank tank &&
+                            tank.isFluidValid(0, GTMaterials.Steam.getFluid(1))) {
                         steamTanks.add(tank);
                     }
                 }
@@ -154,7 +144,6 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
             module.disconnectFromHost();
         }
         modules.clear();
-        wasRunning = false;
         steamTanks.clear();
     }
 
@@ -214,59 +203,57 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
         if (getOffsetTimer() % 20 == 0) {
             scanModules();
         }
-        if (!isWorkingEnabled()) {
-            if (wasRunning) {
-                wasRunning = false;
-                for (SteamElevatorModuleMachine module : new ArrayList<>(modules)) {
-                    module.onElevatorStop();
-                }
-            }
-            return;
-        }
-        wasRunning = true;
-
-        refillFromSteam();
-
-        if (!modules.isEmpty()) {
-            long share = energyBuffer / modules.size();
-            for (SteamElevatorModuleMachine module : new ArrayList<>(modules)) {
-                long accepted = module.receiveEnergy(share);
-                energyBuffer -= accepted;
-            }
-            for (SteamElevatorModuleMachine module : new ArrayList<>(modules)) {
-                module.onElevatorTick(this);
-            }
-        }
-        if (getOffsetTimer() % 20 == 0) {
-            markDirty();
+        if (modules.isEmpty()) return;
+        // The elevator is always active; each module pays its own steam upkeep from the structure's
+        // steam input hatches (its own and the host's), exactly as GTNL charges the modules.
+        for (SteamElevatorModuleMachine module : new ArrayList<>(modules)) {
+            module.onElevatorTick(this);
         }
     }
 
-    /** Drains the structure's steam hatches at 1 mB = 1 EU into the internal buffer. */
-    private void refillFromSteam() {
-        long space = MAX_ENERGY - energyBuffer;
-        if (space <= 0) return;
+    // ------------------------------------------------------------------
+    // Steam pool shared with the connected modules.
+    // ------------------------------------------------------------------
+
+    /** Total steam currently held by the structure's steam input hatches. */
+    public long getAvailableSteam() {
+        long total = 0;
         for (NotifiableFluidTank tank : steamTanks) {
-            if (space <= 0) break;
-            long request = Math.min(space, Integer.MAX_VALUE);
-            // drainInternal bypasses the tank's capability IO gate (steam hatches are input-only).
-            FluidStack drained = tank.drainInternal((int) request, IFluidHandler.FluidAction.EXECUTE);
-            if (drained.isEmpty()) continue;
-            energyBuffer += drained.getAmount();
-            space -= drained.getAmount();
+            total += tank.getFluidInTank(0).getAmount();
         }
+        return total;
     }
 
-    public long getEnergyBuffer() {
-        return energyBuffer;
+    /** Drains up to {@code amount} from the structure's steam input hatches. */
+    public long drainSteam(long amount) {
+        long remaining = amount;
+        for (NotifiableFluidTank tank : steamTanks) {
+            if (remaining <= 0) break;
+            FluidStack drained = tank.drainInternal((int) Math.min(remaining, Integer.MAX_VALUE),
+                    IFluidHandler.FluidAction.EXECUTE);
+            remaining -= drained.getAmount();
+        }
+        return amount - remaining;
     }
 
     public int getModuleCount() {
         return modules.size();
     }
 
+    /** The elevator is always active once formed (no recipe/energy state). */
     public boolean isElevatorRunning() {
-        return isFormed() && isWorkingEnabled();
+        return isFormed();
+    }
+
+    @Override
+    public boolean isActive() {
+        return isFormed();
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        // No power switch semantics: the elevator always runs while formed.
+        return true;
     }
 
     @Override
@@ -285,7 +272,7 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
     public void addDisplayText(List<Component> textList) {
         IDisplayUIMachine.super.addDisplayText(textList);
         if (isFormed()) {
-            textList.add(Component.translatable("gtna.machine.steam_elevator.energy", energyBuffer, MAX_ENERGY)
+            textList.add(Component.translatable("gtna.machine.steam_elevator.steam", getAvailableSteam())
                     .withStyle(ChatFormatting.AQUA));
             textList.add(Component.translatable("gtna.machine.steam_elevator.modules", modules.size())
                     .withStyle(ChatFormatting.GOLD));

@@ -82,10 +82,17 @@ public class WirelessSteamInputHatch extends SteamHatchPartMachine {
 
             if (spaceNeeded > 0) {
                 int toPull = (int) Math.min(spaceNeeded, transferRate);
+                if (toPull <= 0) return;
 
-                if (SteamWirelessNetworkManager.consumeSteamFromGlobalMap(serverLevel, ownerId, toPull)) {
-                    FluidStack steamStack = GTMaterials.Steam.getFluid(toPull);
-                    tank.fill(steamStack, IFluidHandler.FluidAction.EXECUTE);
+                // GTNL robustness: simulate the fill first, charge the network for exactly what the
+                // tank can accept, then execute the fill. Never consume more than we can store, so
+                // a full/odd tank can never void steam pulled from the network.
+                FluidStack request = GTMaterials.Steam.getFluid(toPull);
+                int accepted = tank.fill(request, IFluidHandler.FluidAction.SIMULATE);
+                if (accepted <= 0) return;
+
+                if (SteamWirelessNetworkManager.consumeSteamFromGlobalMap(serverLevel, ownerId, accepted)) {
+                    tank.fill(GTMaterials.Steam.getFluid(accepted), IFluidHandler.FluidAction.EXECUTE);
                 }
             }
         }

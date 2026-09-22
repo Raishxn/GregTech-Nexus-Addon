@@ -1,11 +1,16 @@
 package com.raishxn.gtna.common.machine.multiblock.module.steamElevator;
 
+import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
+import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.UITemplate;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDisplayUIMachine;
+import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
+import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
+import com.gregtechceu.gtceu.common.data.GTMaterials;
 
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
 import com.lowdragmc.lowdraglib.gui.widget.ComponentPanelWidget;
@@ -18,19 +23,28 @@ import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Shared behaviour of the Steam Elevator modules.
  *
  * <p>
  * Mirrors GTNL {@code SteamElevatorModuleBase}: every module is itself a {@code 1x5x2} multiblock
- * (structure {@code pattern/steam_elevator_module.mbs}, decoded like the host) with an internal
- * steam/EU buffer sized {@code 640000 * (1 << tier)}. The Steam Elevator host scans its twelve
- * fixed module slots, connects the <b>formed</b> module controllers it finds there and charges their
- * buffers from the steam it burns; the module then pays its upkeep and applies its effect in
- * {@link #onElevatorTick(SteamElevator)}.
+ * (structure {@code pattern/steam_elevator_module.mbs}, decoded like the host). The Steam Elevator
+ * host scans its twelve fixed module slots, connects the <b>formed</b> module controllers it finds
+ * there and lets each module pay its steam upkeep from the formed structure's steam input hatches;
+ * the module then applies its effect in {@link #onElevatorTick(SteamElevator)}.
+ *
+ * <p>
+ * There is <b>no EU buffer</b> here. A module draws its upkeep from the steam input hatches placed in
+ * its <b>own</b> structure first (GTNL's module shell accepts steam hatches) and from the host
+ * structure's steam hatches for the remainder, draining exactly what it pays so no steam is voided.
  *
  * <p>
  * GTNL's modules are multiblocks that double as hatches inside the elevator. GTNA keeps the
@@ -47,9 +61,8 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
 
     private final int tier;
 
-    @Persisted
-    @DescSynced
-    protected long storedEnergy;
+    /** Steam input hatches placed in this module's own structure. */
+    private final List<NotifiableFluidTank> steamTanks = new ArrayList<>();
 
     @Persisted
     @DescSynced
@@ -64,15 +77,15 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
     }
 
     @Override
+    public ManagedFieldHolder getFieldHolder() {
+        return MANAGED_FIELD_HOLDER;
+    }
+
+    @Override
     protected RecipeLogic createRecipeLogic(Object... args) {
         // Module effects are driven by the host, not by recipes; keep the default logic inert so it
         // never indexes the empty recipe-type array.
         return new SteamElevator.InertRecipeLogic(this);
-    }
-
-    @Override
-    public ManagedFieldHolder getFieldHolder() {
-        return MANAGED_FIELD_HOLDER;
     }
 
     @Override
@@ -81,34 +94,28 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
     }
 
     @Override
-    public long getEnergyCapacity() {
-        // GTNL SteamElevatorModuleBase#steamBufferSize.
-        return 640000L * (1L << Math.min(30, tier));
-    }
-
-    @Override
-    public long getEnergyStored() {
-        return storedEnergy;
-    }
-
-    @Override
-    public long receiveEnergy(long amount) {
-        if (amount <= 0) return 0;
-        long accepted = Math.min(amount, getEnergyCapacity() - storedEnergy);
-        if (accepted > 0) {
-            storedEnergy += accepted;
-            markDirty();
+    public void onStructureFormed() {
+        super.onStructureFormed();
+        steamTanks.clear();
+        for (var part : getParts()) {
+            if (!PartAbility.STEAM.isApplicable(part.self().getDefinition().getBlock())) continue;
+            for (var handlerList : part.getRecipeHandlers()) {
+                if (!handlerList.isValid(IO.IN)) continue;
+                for (var fluidHandler : handlerList.getCapability(FluidRecipeCapability.CAP)) {
+                    if (fluidHandler instanceof NotifiableFluidTank tank &&
+                            tank.isFluidValid(0, GTMaterials.Steam.getFluid(1))) {
+                        steamTanks.add(tank);
+                    }
+                }
+            }
         }
-        return accepted;
     }
 
     @Override
-    public boolean consumeEnergy(long amount) {
-        if (amount <= 0) return true;
-        if (storedEnergy < amount) return false;
-        storedEnergy -= amount;
-        markDirty();
-        return true;
+    public void onStructureInvalid() {
+        super.onStructureInvalid();
+        steamTanks.clear();
+        disconnectFromHost();
     }
 
     public boolean isElevatorConnected() {
@@ -138,12 +145,6 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
     }
 
     @Override
-    public void onStructureInvalid() {
-        super.onStructureInvalid();
-        disconnectFromHost();
-    }
-
-    @Override
     public void onUnload() {
         disconnectFromHost();
         super.onUnload();
@@ -154,10 +155,55 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
         return 0;
     }
 
+    // ------------------------------------------------------------------
+    // Steam upkeep: exact, void-free accounting.
+    // ------------------------------------------------------------------
+
+    /** Total steam currently held by this module's own input hatches. */
+    public long getStoredSteam() {
+        long total = 0;
+        for (NotifiableFluidTank tank : steamTanks) {
+            total += tank.getFluidInTank(0).getAmount();
+        }
+        return total;
+    }
+
+    /** Drains up to {@code amount} from this module's own hatches; returns the amount drained. */
+    private long drainOwnSteam(long amount) {
+        long remaining = amount;
+        for (NotifiableFluidTank tank : steamTanks) {
+            if (remaining <= 0) break;
+            FluidStack drained = tank.drainInternal((int) Math.min(remaining, Integer.MAX_VALUE),
+                    IFluidHandler.FluidAction.EXECUTE);
+            remaining -= drained.getAmount();
+        }
+        return amount - remaining;
+    }
+
+    /**
+     * Pays {@code amount} of steam, drawing from this module's own hatches first and the host's
+     * steam hatches for the rest. The availability of both pools is checked <b>before</b> anything
+     * is drained, so a module can never pay a partial upkeep and void the difference.
+     */
+    protected boolean consumeSteam(long amount) {
+        if (amount <= 0) return true;
+        long own = getStoredSteam();
+        long hostAvailable = host != null ? host.getAvailableSteam() : 0L;
+        if (own + hostAvailable < amount) return false;
+
+        long fromOwn = Math.min(own, amount);
+        drainOwnSteam(fromOwn);
+        long fromHost = amount - fromOwn;
+        if (fromHost > 0 && host != null) {
+            host.drainSteam(fromHost);
+        }
+        return true;
+    }
+
     @Override
     public void onElevatorTick(SteamElevator elevator) {
         // Default: pay the upkeep; subclasses add their effect.
-        consumeEnergy(getEnergyUsage());
+        consumeSteam(getSteamUpkeep());
     }
 
     // ------------------------------------------------------------------
@@ -168,8 +214,8 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
     public void addDisplayText(java.util.List<Component> textList) {
         IDisplayUIMachine.super.addDisplayText(textList);
         textList.add(Component.translatable("gtna.machine.steam_elevator_module.tier", tier));
-        textList.add(Component.translatable("gtna.machine.steam_elevator_module.energy", storedEnergy,
-                getEnergyCapacity()));
+        textList.add(Component.translatable("gtna.machine.steam_elevator_module.upkeep", getSteamUpkeep(),
+                getStoredSteam()));
         textList.add(Component.translatable(elevatorConnected ?
                 "gtna.machine.steam_elevator_module.connected" :
                 "gtna.machine.steam_elevator_module.disconnected"));

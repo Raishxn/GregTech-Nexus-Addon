@@ -499,7 +499,19 @@ public class GTNAMachines2 {
                 .appearanceBlock(GTBlocks.CASING_STEEL_SOLID)
                 .pattern(definition -> GTNAMultiBlockFileReader.start(definition, "steam_elevator_module")
                         .where('~', controller(blocks(definition.get())))
-                        .where('A', blocks(GTBlocks.CASING_STEEL_SOLID.get()))
+                        // GTNL SteamElevatorModuleBase#getStructureDefinition: the module shell accepts
+                        // the steam input hatches (and the usual item/fluid/maintenance parts) chained
+                        // with solid steel machine casing, so a steam hatch placed in the module's own
+                        // structure is connected and can feed the module's upkeep.
+                        .where('A', blocks(GTBlocks.CASING_STEEL_SOLID.get())
+                                .or(abilities(PartAbility.STEAM).setMaxGlobalLimited(1))
+                                .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
+                                .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
+                                .or(abilities(PartAbility.IMPORT_ITEMS).setMaxGlobalLimited(1))
+                                .or(abilities(PartAbility.EXPORT_ITEMS).setMaxGlobalLimited(1))
+                                .or(abilities(PartAbility.IMPORT_FLUIDS).setMaxGlobalLimited(1))
+                                .or(abilities(PartAbility.EXPORT_FLUIDS).setMaxGlobalLimited(1))
+                                .or(abilities(PartAbility.MAINTENANCE).setMaxGlobalLimited(1)))
                         .build())
                 .workableCasingModel(
                         GTCEu.id("block/casings/solid/machine_casing_solid_steel"),

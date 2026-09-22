@@ -38,14 +38,14 @@ public class SteamFlightModule extends SteamElevatorModuleMachine {
     }
 
     @Override
-    public long getEnergyUsage() {
+    public long getSteamUpkeep() {
         // GTNL: mTier * V[5].
         return (long) getModuleTier() * GTValues.V[5];
     }
 
     @Override
     public void onElevatorTick(SteamElevator elevator) {
-        if (!consumeEnergy(getEnergyUsage())) return;
+        if (!consumeSteam(getSteamUpkeep())) return;
         if (!(getLevel() instanceof ServerLevel level)) return;
 
         Vec3 center = Vec3.atCenterOf(getPos());

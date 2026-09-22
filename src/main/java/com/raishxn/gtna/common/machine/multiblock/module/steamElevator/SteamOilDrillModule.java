@@ -51,7 +51,7 @@ public class SteamOilDrillModule extends SteamElevatorModuleMachine {
     }
 
     @Override
-    public long getEnergyUsage() {
+    public long getSteamUpkeep() {
         return GTValues.V[Math.min(GTValues.V.length - 1, getModuleTier())];
     }
 
@@ -65,7 +65,7 @@ public class SteamOilDrillModule extends SteamElevatorModuleMachine {
 
     @Override
     public void onElevatorTick(SteamElevator elevator) {
-        if (!consumeEnergy(getEnergyUsage())) return;
+        if (!consumeSteam(getSteamUpkeep())) return;
         if (!(getLevel() instanceof ServerLevel level)) return;
         if (outputTank.getFluidInTank(0).getAmount() >= outputTank.getTankCapacity(0)) return;
 
