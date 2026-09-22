@@ -1,56 +1,223 @@
 package com.raishxn.gtna.common.machine.multiblock.module.steamElevator;
 
-import com.gregtechceu.gtceu.api.GTValues;
+import com.gregtechceu.gtceu.api.capability.recipe.IO;
+import com.gregtechceu.gtceu.api.gui.GuiTextures;
+import com.gregtechceu.gtceu.api.gui.widget.SlotWidget;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
+import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 
+import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
+import com.lowdragmc.lowdraglib.gui.widget.Widget;
+import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
+import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
+import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
+import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 /**
  * GTNL {@code SteamEntityCrusherModule} port (LGPLv3, original by ScienceNotLeisure).
  *
  * <p>
- * GTNL runs the "Extreme Extreme Entity Crusher" recipe map, which turns mob drops and similar
- * organic inputs into higher outputs. GTNA has no equivalent mob-drop item chain, so this port keeps
- * the "entity crusher" identity at the source: hostile monsters inside the range are crushed,
- * dropping their normal loot (damage is credited as a generic player-like kill so loot tables run).
- * The GTNL parallel/drop-multiplier overclocks are reduced to a flat range/energy upkeep.
+ * GTNL drives the "Extreme Extreme Entity Crusher" recipe map: an EnderIO powered spawner (a
+ * <b>catalyst</b>, never consumed) is turned into that mob's drops, with a chance to double each
+ * output: 2% plus 0.5% per identical spawner, capped at 34%, at the cost of doubled time and halved
+ * power, and no overclocking. 1.20.1 has no EnderIO, so GTNA uses a vanilla spawner item carrying
+ * the mob in its block-entity NBT and rolls the mob's own loot table — no external mod needed.
  */
 public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
 
-    public static final int RANGE = 8;
+    protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
+            SteamEntityCrusherModule.class, SteamElevatorModuleMachine.MANAGED_FIELD_HOLDER);
 
-    private int counter;
+    /** GTNL: the default time is doubled (nominal 200) and the power halved (nominal 1024). */
+    public static final int CYCLE_TICKS = 400;
+    public static final long STEAM_UPKEEP = 512;
+
+    private static final double BASE_DOUBLING_CHANCE = 2.0;
+    private static final double CHANCE_PER_SPAWNER = 0.5;
+    private static final double MAX_DOUBLING_CHANCE = 34.0;
+
+    public final NotifiableItemStackHandler inputInventory;
+    public final NotifiableItemStackHandler outputInventory;
+
+    @Persisted
+    @DescSynced
+    private int progress;
 
     public SteamEntityCrusherModule(IMachineBlockEntity holder, int tier) {
         super(holder, tier);
+        this.inputInventory = new NotifiableItemStackHandler(this, 9, IO.IN);
+        this.outputInventory = new NotifiableItemStackHandler(this, 9, IO.OUT);
+    }
+
+    @Override
+    public ManagedFieldHolder getFieldHolder() {
+        return MANAGED_FIELD_HOLDER;
     }
 
     @Override
     public int getEffectRange() {
-        return RANGE;
+        // The crusher works on its stored spawner catalyst, not an area effect.
+        return 0;
     }
 
     @Override
     public long getSteamUpkeep() {
-        return getModuleTier() * GTValues.V[3];
+        return STEAM_UPKEEP;
     }
 
     @Override
     public void onElevatorTick(SteamElevator elevator) {
         if (!consumeSteam(getSteamUpkeep())) return;
         if (!(getLevel() instanceof ServerLevel level)) return;
-        if (++counter % 20 != 0) return;
+        if (++progress < CYCLE_TICKS) return;
+        progress = 0;
+        runCycle(level);
+    }
 
-        double range = getEffectRange();
-        AABB box = new AABB(getPos()).inflate(range);
-        for (Monster monster : level.getEntitiesOfClass(Monster.class, box)) {
-            if (monster.distanceToSqr(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5) >
-                    range * range) {
-                continue;
+    /** Samples the mob's loot table once and inserts the (possibly doubled) drops. */
+    private void runCycle(ServerLevel level) {
+        ItemStack catalyst = findCatalyst();
+        if (catalyst.isEmpty()) return;
+        EntityType<?> type = spawnerEntityType(catalyst);
+        if (type == null) return;
+
+        Entity probe = type.create(level);
+        if (probe == null) return;
+        probe.moveTo(Vec3.atCenterOf(getPos()));
+        LootParams params = new LootParams.Builder(level)
+                .withParameter(LootContextParams.THIS_ENTITY, probe)
+                .withParameter(LootContextParams.ORIGIN, probe.position())
+                .withParameter(LootContextParams.DAMAGE_SOURCE, level.damageSources().generic())
+                .create(LootContextParamSets.ENTITY);
+        LootTable lootTable = level.getServer().getLootData().getLootTable(type.getDefaultLootTable());
+        List<ItemStack> drops = lootTable.getRandomItems(params);
+        probe.discard();
+        if (drops.isEmpty()) return;
+
+        double chance = doublingChance(catalyst);
+        for (ItemStack drop : drops) {
+            if (level.random.nextDouble() * 100 < chance) {
+                drop.setCount(Math.min(drop.getMaxStackSize(), drop.getCount() * 2));
             }
-            monster.hurt(level.damageSources().generic(), 10_000.0F);
         }
+        if (!hasOutputRoom(drops)) return;
+        insertOutputs(drops);
+        markDirty();
+    }
+
+    /** The first spawner catalyst in the input inventory, or empty. */
+    private ItemStack findCatalyst() {
+        for (int slot = 0; slot < inputInventory.getSlots(); slot++) {
+            ItemStack stack = inputInventory.getStackInSlot(slot);
+            if (spawnerEntityType(stack) != null) return stack;
+        }
+        return ItemStack.EMPTY;
+    }
+
+    /** GTNL: 2% + 0.5% per identical stored spawner, capped at 34%. */
+    private double doublingChance(ItemStack catalyst) {
+        EntityType<?> type = spawnerEntityType(catalyst);
+        int identical = 0;
+        for (int slot = 0; slot < inputInventory.getSlots(); slot++) {
+            ItemStack stack = inputInventory.getStackInSlot(slot);
+            if (spawnerEntityType(stack) == type) {
+                identical += stack.getCount();
+            }
+        }
+        return Math.min(MAX_DOUBLING_CHANCE, BASE_DOUBLING_CHANCE + CHANCE_PER_SPAWNER * identical);
+    }
+
+    /** The mob stored in a vanilla spawner item's block-entity NBT, or {@code null}. */
+    private static EntityType<?> spawnerEntityType(ItemStack stack) {
+        if (!stack.is(Items.SPAWNER)) return null;
+        CompoundTag blockEntity = stack.getTagElement("BlockEntityTag");
+        if (blockEntity == null) return null;
+
+        if (blockEntity.contains("SpawnData", Tag.TAG_COMPOUND)) {
+            EntityType<?> type = entityFrom(blockEntity.getCompound("SpawnData"));
+            if (type != null) return type;
+        }
+        if (blockEntity.contains("SpawnPotentials", Tag.TAG_LIST)) {
+            ListTag potentials = blockEntity.getList("SpawnPotentials", Tag.TAG_COMPOUND);
+            if (!potentials.isEmpty()) {
+                return entityFrom(potentials.getCompound(0).getCompound("data"));
+            }
+        }
+        return null;
+    }
+
+    private static EntityType<?> entityFrom(CompoundTag spawnData) {
+        if (!spawnData.contains("entity", Tag.TAG_COMPOUND)) return null;
+        String id = spawnData.getCompound("entity").getString("id");
+        if (id.isEmpty()) return null;
+        return EntityType.byString(id).orElse(null);
+    }
+
+    /** Dry-run insertion against a copy so a partial insert never dupes. */
+    private boolean hasOutputRoom(List<ItemStack> outputs) {
+        ItemStack[] sim = new ItemStack[outputInventory.getSlots()];
+        for (int i = 0; i < sim.length; i++) {
+            sim[i] = outputInventory.getStackInSlot(i).copy();
+        }
+        for (ItemStack output : outputs) {
+            int remaining = output.getCount();
+            for (int slot = 0; slot < sim.length && remaining > 0; slot++) {
+                ItemStack current = sim[slot];
+                if (current.isEmpty()) {
+                    int added = Math.min(remaining, output.getMaxStackSize());
+                    sim[slot] = new ItemStack(output.getItem(), added);
+                    remaining -= added;
+                } else if (ItemStack.isSameItemSameTags(current, output)) {
+                    int added = Math.min(remaining, current.getMaxStackSize() - current.getCount());
+                    current.setCount(current.getCount() + added);
+                    remaining -= added;
+                }
+            }
+            if (remaining > 0) return false;
+        }
+        return true;
+    }
+
+    private void insertOutputs(List<ItemStack> outputs) {
+        for (ItemStack output : outputs) {
+            int remaining = output.getCount();
+            for (int slot = 0; slot < outputInventory.getSlots() && remaining > 0; slot++) {
+                ItemStack rest = outputInventory.insertItem(slot, new ItemStack(output.getItem(), remaining), false);
+                remaining = rest.getCount();
+            }
+        }
+    }
+
+    @Override
+    protected Widget createModuleUIWidget() {
+        WidgetGroup group = screenGroup(150, 80);
+        group.addWidget(new LabelWidget(5, 4, () -> "Entity Crusher tier §b" + getModuleTier()));
+        group.addWidget(new LabelWidget(5, 15, () -> "Doubling chance: §b" +
+                String.format("%.1f", doublingChance(findCatalyst())) + "% §r| §b" + getSteamUpkeep() + " mB/t"));
+        for (int i = 0; i < 3; i++) {
+            group.addWidget(new SlotWidget(inputInventory, i, 5 + i * 18, 28)
+                    .setBackgroundTexture(GuiTextures.SLOT));
+        }
+        for (int i = 0; i < 3; i++) {
+            group.addWidget(new SlotWidget(outputInventory, i, 89 + i * 18, 28)
+                    .setBackgroundTexture(GuiTextures.SLOT));
+        }
+        return group;
     }
 }

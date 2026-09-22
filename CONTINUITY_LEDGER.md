@@ -66,6 +66,24 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0048 (2026-09-22) — Entity Crusher por loot table (sem EnderIO/MobInfo) + checklist de QA manual
+
+- **Entity Crusher (desenho aprovado):** o módulo agora usa um **spawner vanilla com NBT** como
+  **catalisador** (não consumido) e rola a **loot table do mob** (`EntityType.getDefaultLootTable`) para
+  produzir os drops, sem depender de EnderIO/MobInfo. A mecânica do tooltip fica fiel: 2% de dobrar +
+  0,5% por spawner idêntico (cap 34%), tempo dobrado (`CYCLE_TICKS = 400`) e potência pela metade
+  (`STEAM_UPKEEP = 512`), sem overclock. UI mostra a chance atual; saída all-or-nothing (não voida).
+- **QA plano C:** `docs/roadmap/QA-MANUAL-CHECKLIST.md` — checklist versionado do que não dá para
+  automatizar (HUD/drag/alinhamento, Jade, tooltips renderizadas, UI das máquinas, range do voo).
+  Cada item é objetivo; regressão vira checkpoint + (quando possível) teste automatizado.
+- **Bee Breeding:** bloqueado — o Productive Bees disponível no ambiente é **1.21.1 NeoForge**,
+  incompatível com o GTNA (1.20.1 Forge); sem artefato 1.20.1 não há como compilar contra a API.
+  Fica registrado para quando existir um build 1.20.1 (soft-dependency + registro condicional).
+- **Validação:** `spotlessCheck` + `runUnitTests` (**17/17**); `runGameTestServer` (**29/29**);
+  `runData` determinístico.
+- **Pendências:** QA plano B (gametests de módulo: formar o 1×5×2 e exercitar beacon/weather/ore/etc.);
+  Bee Breeding aguardando Productive Bees 1.20.1.
+
 ### G-0047 (2026-09-22) — Weather por circuito + QA plano A (lint de dependência duplicada e de tooltips dos módulos)
 
 - **Weather (novo desenho acordado):** o circuito seleciona 1 = clear, 2 = rain, 3 = thunder (0 = off);
