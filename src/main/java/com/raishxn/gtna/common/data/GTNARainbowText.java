@@ -25,7 +25,7 @@ public final class GTNARainbowText {
     /** Degrees of hue between adjacent letters. */
     private static final float LETTER_STEP = 25f;
     /** Degrees of hue change per client tick. */
-    private static final float SPEED = 2.5f;
+    private static final float SPEED = 15f;
     private static final float SATURATION = 95f;
     private static final float BRIGHTNESS = 60f;
 

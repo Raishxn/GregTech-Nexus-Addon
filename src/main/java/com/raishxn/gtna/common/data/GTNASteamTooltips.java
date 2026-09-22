@@ -8,10 +8,8 @@ import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import com.raishxn.gtna.GTNACORE;
 
@@ -99,7 +97,6 @@ public final class GTNASteamTooltips {
                 if (original != null) {
                     original.accept(stack, base);
                 }
-                components.add(rainbowName(definition));
                 if (recipeType != null) {
                     components.add(Component.translatable("gtna.tooltip.machine_type",
                             Component.translatable(recipeType.registryName.toLanguageKey())));
@@ -113,19 +110,6 @@ public final class GTNASteamTooltips {
                 }
             });
         }
-    }
-
-    /**
-     * A copy of the machine's display name carrying GTCEu's animated rainbow style. Applied only on
-     * the client (the style lambda lives in a client package); the plain name is still returned on
-     * the server so tooltip builders stay callable there (tooltip gametests run dedicated-server).
-     */
-    private static Component rainbowName(MachineDefinition definition) {
-        MutableComponent name = Component.translatable(definition.getDescriptionId());
-        if (!FMLEnvironment.dist.isClient()) {
-            return name;
-        }
-        return GTNARainbowText.of(name.getString());
     }
 
     /** The first non-dummy recipe type of the machine, or {@code null} when it has none. */
