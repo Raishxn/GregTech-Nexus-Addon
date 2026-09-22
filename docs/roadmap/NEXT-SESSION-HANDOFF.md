@@ -63,7 +63,7 @@ Source: Science Not Leisure: 狐涂重工 GT-Odyssey
 | 3 | large steam bender | `large_steam_bending` | feito (G-0025) — conferir/re-portar |
 | 4 | large steam wiremill | `large_steam_wiremill` | feito (G-0025) — conferir/re-portar |
 | 5 | large steam mixer | `large_steam_mixer` | re-portar |
-| 6 | **large bronze boiler** | ❌ não existe | **portar (novo)** |
+| 6 | **large bronze boiler** | ❌ não existe | ⏸️ **pular**: o GTCEu já tem `LARGE_BOILER_BRONZE/STEEL/TITANIUM` com a mesma mecânica (combustível → steam). Portar seria duplicata. Confirmar com o autor se ele quer o boiler do GTNL mesmo assim. |
 | 7 | large steam sifter | `large_steam_sifter` | feito (G-0025) — conferir/re-portar |
 | 8 | large steam compressor | `large_steam_compressor` | re-portar |
 | 9 | large steam forging hammer | `large_steam_hammer` | re-portar |
@@ -164,6 +164,13 @@ No GTNL: `com/science/gtnl/common/machine/multiblock/steam/SteamManufacturer.jav
 `com/science/gtnl/common/recipe/gtnl/SteamManufacturerRecipes.java`. O GTNA já tem um
 `steam_manufacturer` (`SteamManufacturer`) — **comparar** e alinhar receitas/mecânica.
 
+> ✅ **Estrutura já é um port exato** (verificado 2026-09-21): mesma forma 9x7x7 do
+> `steam_manufacturer.mbs` e mesmos blocos (A=Breel pipe, B=Hydraulic assembler, C=Breel plated +
+> hatches, D=steel gearbox, E=steel frame). **O que falta é a mecânica/receitas:** o GTNL usa
+> `maxParallelRecipes = 4`, `V[9]` e uma recipe map própria com **932 linhas** dependentes de itens
+> GTNL (PipelessSteamHatch, HydraulicSteamReceiver, CompressedSteam, Breel…). Alinhar exige portar
+> esses itens — **pendente de decisão de escopo** com o autor.
+
 ---
 
 ## 8. `SteamItemVault` + `VaultPortHatch` 🟢
@@ -211,10 +218,31 @@ Detalhe em `docs/roadmap/port-audit-2026-09-21.md` e `THIRD_PARTY_NOTICES.md`.
    GTNL, com §5/§6 e o mapeamento de blocos certo — **e trocar o predicado de casing inline pelo
    `SteamMultiMachineBase.casing()`** (aceita bronze/steel) e adicionar o id em `GTNASteamTooltips`.
    ✅ **Feito (G-0028)** para as 21; falta **validar in-game** as que não têm gametest de formação.
-4. **Portar o `LargeBronzeBoiler`** (novo) e alinhar o **`SteamManufacturer`** (§7).
-5. **Padronizar as tooltips** no estilo GTNL, com **`Source:`** e **nomes rainbow** (§1).
+4. ~~**Portar o `LargeBronzeBoiler`** (novo) e alinhar o **`SteamManufacturer`** (§7).~~
+   ⏸️ **Boiler = duplicata** do `LARGE_BOILER_BRONZE` do GTCEu (confirmar com o autor); o
+   `SteamManufacturer` **já tem a estrutura correta** — falta a recipe map do GTNL, bloqueada em
+   itens GTNL (§7).
+5. **Padronizar as tooltips** no estilo GTNL, com **`Source:`** e **nomes rainbow** (§1). O GTCEu tem
+   `TooltipHelper.RAINBOW_HSL_SLOW`; falta o formato `Machine Type: <receita>` e decidir como
+   estilizar o **nome do item** (o tooltip builder não controla a linha do nome).
 6. **`VaultPortHatch`** (AE2, HV) para o `steam_item_vault` (§8).
-7. Rodar o gate (`spotlessCheck` + `runUnitTests` + `runGameTestServer` + `runData`) e **validar in-game**.
+7. Rodar o gate (`spotlessCheck` + `runUnitTests` + `runGameTestServer` + `runData`) e **validar
+   in-game** (checklist abaixo).
+
+### Checklist de validação in-game (client)
+
+1. **Estruturas re-portadas (G-0028):** montar no creative/estrutura as 21 `large_steam_*` e conferir
+   que **formam** e que a orientação/controller está correta (o `.mbs` foi decodificado; só o
+   alloy smelter tem gametest de formação). Prioridade: lathe, cutting, crusher, furnace, mixer,
+   centrifuge, thermal centrifuge, ore washer, bath, compressor, extractor, hammer, forming press,
+   circuit assembler.
+2. **High pressure (G-0026):** montar uma `large_steam_*` com casing **bronze** (sem high pressure) e
+   a mesma com casing **aço / Advanced Industrial** (com high pressure): a linha
+   "High pressure mode active" aparece, a GUI fica em aço e a velocidade/consumo dobram.
+3. **Blocos novos (G-0027):** `industrial_steam_casing` e `advanced_industrial_steam_casing` no
+   inventário criativo, texturas corretas e craft funcionando.
+4. **Receitas corrigidas (G-0029):** `large_steam_bath`, `thread_hatch_zpm/uv` craftáveis.
+5. **Tooltips:** a linha `Source:` e (depois do §5) o formato GTNL.
 
 ---
 
