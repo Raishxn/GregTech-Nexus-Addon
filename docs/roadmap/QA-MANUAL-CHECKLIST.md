@@ -29,6 +29,16 @@ checkpoint novo do `CONTINUITY_LEDGER.md` e, quando der, transformar em gametest
 - [ ] **Flight**: dentro de 64 blocos ganha voo (duplo pulo); **sair do alcance revoga** o voo.
 - [ ] **Monster Repellent**: mobs hostis não nascem dentro do raio enquanto roda.
 - [ ] **Apiary / Greenhouse / Oil Drill**: consomem água/steam e produzem conforme o tooltip.
+- [ ] **Bee Breeding** (só com Productive Bees): o item/módulo **não existe** sem o mod; com o mod, aceita
+      um spawn egg de abelha do PB como catalisador, consome 128 honey treats e produz uma cópia da abelha.
+
+## Bee Breeding × Productive Bees
+- [ ] Sem o Productive Bees instalado: o módulo não tem receita e não aparece no JEI/EMI.
+- [ ] Com o Productive Bees instalado: o módulo crafta e forma a estrutura 1x5x2.
+- [ ] Spawn egg do PB no slot de entrada (catalisador, **não** é consumido).
+- [ ] 128 honey treats do PB no inventário de entrada → após 10 min produz **uma** cópia da abelha.
+- [ ] Sem abelha ou sem honey treats: o progresso fica em 0% e não consome nada além do upkeep de steam.
+- [ ] Saída cheia: não voida itens (dry-run do `hasOutputRoom`).
 
 ## Estruturas
 - [ ] Elevador forma com 1 steam hatch em **cada** módulo (sem "Maximum: 1" no chat).

@@ -34,10 +34,14 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-22 (G-0050):** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**) +
+- **Gate verde em 2026-09-22 (G-0051):** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**) +
   `runGameTestServer` (**35/35**, `All 35 required tests passed`) + `runData` determinístico. A
-  execução carregou os mixins alterados; os avisos/erros de receitas do GTCEu já conhecidos
-  continuam no log.
+  execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros de receitas do
+  GTCEu já conhecidos continuam no log.
+- **Bee Breeding × Productive Bees (G-0051):** o módulo agora é integração real (spawn egg do PB como
+  catalisador, 128 honey treats, saída = cópia da abelha) e **só existe quando o PB está carregado**
+  (`ModList.isLoaded("productivebees")`). O PB 1.20.1 (`1.20.1-12.6.0`) entra como `modCompileOnly` +
+  `modRuntimeOnly` de dev (o jogador não precisa instalar). Ver G-0051.
 - **Rede wireless de vapor (G-0041/G-0042/G-0043):** o pull dos inputs é dividido por **fair share** entre
   os inputs com espaço (antes o primeiro hatch do tick drenava o pool inteiro — a rede sempre lia 0 e
   os outros 23 hatches nunca enchiam); `/gtna steam` mostra fluxo vitalício + estado por hatch, o
@@ -66,6 +70,32 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0051 (2026-09-22) — Bee Breeding vira integração real com Productive Bees (módulo só existe com o mod)
+
+- **Correção de diagnóstico:** o bloqueio anterior ("sem artefato 1.20.1") vinha de olhar só os caches
+  locais (1.21.1 NeoForge). O Modrinth tem `productivebees 1.20.1-12.6.0` (forge+neoforge) e o maven
+  `https://api.modrinth.com/maven` resolve; o artefato é bundlado com o ProductiveLib (jarjar), sem
+  dependência dura extra.
+- **build.gradle:** repositório Modrinth + `modCompileOnly` **e** `modRuntimeOnly`
+  `maven.modrinth:productivebees:1.20.1-12.6.0` (o runtime é só de dev; o jogador não é obrigado a
+  instalar). O `BuildDependencyContractTest` aceita o par compile+runtime do mesmo coordinate.
+- **`SteamBeeBreedingModule`** agora usa a API real do PB: a "rainha" é qualquer **spawn egg** do PB
+  (`cy.jdkdigital.productivebees.common.item.SpawnEgg`) no inventário de entrada e é **catalisador**
+  (não consumido), fiel ao slot do controller do GTNL; o consumível é **128 honey treats** do PB (o
+  "royal jelly"); a saída é **uma cópia da mesma abelha** (NBT incluso) após 12000 ticks. Upkeep
+  `GTValues.V[6]` e tier 8 mantidos. Sem abelha/feed o progresso fica em 0 e o ciclo idles
+  (`NO_RECIPE` no GTNL).
+- **Registro condicional:** `GTNAMachines2` só chama `registerElevatorModule("steam_elevator_bee_breeding_module"...)`
+  atrás de `ModList.get().isLoaded("productivebees")`. A classe referencia tipos do PB direto e só é
+  carregada nesse branch, então sem o mod a classe nunca carrega (sem `NoClassDefFoundError`); a receita
+  de craft e o item somem junto (`enabled()` já trata definição nula).
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**); `runGameTestServer`
+  (**35/35**, log mostra `id: gtceu:steam_elevator_bee_breeding_module` registrado e PB carregado);
+  `runData` determinístico (`written: 0`) e `grep -c "Parsing error loading recipe gtna:"` = 0.
+- **Pendências:** QA manual do Bee Breeding no client (ver a seção nova do
+  `docs/roadmap/QA-MANUAL-CHECKLIST.md`) — a lógica roda no gate, mas a UI/inventário não é exercitada
+  por ele.
+
 ### G-0050 (2026-09-22) — QA plano B: gametests de lógica dos módulos do elevador
 
 - Helpers puros extraídos dos módulos (sem montar a frágil estrutura 1×5×2):
@@ -78,8 +108,8 @@ foi feito nem repetir os erros já pagos.
   documentadas (greenhouse 16.000, flight `RANGE` 64).
 - **Validação:** `spotlessCheck` + `runUnitTests` (**17/17**); `runGameTestServer` (**35/35**);
   `runData` determinístico.
-- **Pendências:** Bee Breeding aguardando Productive Bees 1.20.1; demais itens de QA manual no
-  `docs/roadmap/QA-MANUAL-CHECKLIST.md`.
+- **Pendências:** Bee Breeding aguardando Productive Bees 1.20.1 — **resolvido no G-0051**; demais itens de
+  QA manual no `docs/roadmap/QA-MANUAL-CHECKLIST.md`.
 
 ### G-0049 (2026-09-22) — logo do addon no canto das UIs dos multiblocos (convenção GTNL)
 
@@ -102,13 +132,13 @@ foi feito nem repetir os erros já pagos.
 - **QA plano C:** `docs/roadmap/QA-MANUAL-CHECKLIST.md` — checklist versionado do que não dá para
   automatizar (HUD/drag/alinhamento, Jade, tooltips renderizadas, UI das máquinas, range do voo).
   Cada item é objetivo; regressão vira checkpoint + (quando possível) teste automatizado.
-- **Bee Breeding:** bloqueado — o Productive Bees disponível no ambiente é **1.21.1 NeoForge**,
-  incompatível com o GTNA (1.20.1 Forge); sem artefato 1.20.1 não há como compilar contra a API.
-  Fica registrado para quando existir um build 1.20.1 (soft-dependency + registro condicional).
+- **Bee Breeding (histórico):** na época o Productive Bees disponível no ambiente era **1.21.1 NeoForge**,
+  incompatível com o GTNA (1.20.1 Forge). O build **1.20.1 Forge** existe (`1.20.1-12.6.0`) e a
+  integração foi feita no **G-0051** (soft-dependency + registro condicional).
 - **Validação:** `spotlessCheck` + `runUnitTests` (**17/17**); `runGameTestServer` (**29/29**);
   `runData` determinístico.
 - **Pendências:** QA plano B (gametests de módulo: formar o 1×5×2 e exercitar beacon/weather/ore/etc.);
-  Bee Breeding aguardando Productive Bees 1.20.1.
+  Bee Breeding — **resolvido no G-0051**.
 
 ### G-0047 (2026-09-22) — Weather por circuito + QA plano A (lint de dependência duplicada e de tooltips dos módulos)
 

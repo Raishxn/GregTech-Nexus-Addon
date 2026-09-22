@@ -16,22 +16,29 @@ import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+
+import cy.jdkdigital.productivebees.common.item.SpawnEgg;
+import cy.jdkdigital.productivebees.init.ModItems;
 
 /**
- * GTNL {@code SteamBeeBreedingModule} port (LGPLv3, original by ScienceNotLeisure).
+ * GTNL {@code SteamBeeBreedingModule} port (LGPLv3, original by ScienceNotLeisure), ported onto
+ * <b>Productive Bees</b>.
  *
  * <p>
- * <b>Documented deviation:</b> GTNL reads a Forestry queen from the controller slot, consumes two
- * stacks of 64 royal jelly and returns an ignoble copy of the queen (princess). Forestry is not
- * targeted for 1.20.1 and Productive Bees is <b>not</b> on the GTNA dev classpath, so this port keeps
- * the breeding contract — two parent bees plus feed become one new bee — with vanilla items: two
- * honeycomb (the parents) and eight honey bottles (the royal-jelly substitute) are consumed over a
- * long cycle to produce a bee spawn egg (the bred bee). No external bee mod is required or
- * referenced.
+ * GTNL reads a Forestry queen from the controller slot, spends 128 royal jelly and returns an ignoble
+ * copy of the queen (a princess). Forestry is not targeted for 1.20.1, so the target is Productive Bees
+ * instead. Productive Bees has no Forestry-style queen/ignoble-princess pair: a bee is carried as a
+ * {@link SpawnEgg} item, so the GTNL "queen" is any Productive Bees bee spawn egg placed in the input
+ * inventory (a catalyst, exactly like the GTNL controller slot) and the "ignoble princess" is a new
+ * copy of that same bee. "Royal jelly" is Productive Bees' honey treat.
  *
  * <p>
- * GTNL numbers kept: tier 8, upkeep {@code V[6]} and the 12000-tick breeding cycle
+ * The class references Productive Bees types directly, so it is only loaded when the mod is present:
+ * {@code GTNAMachines2} registers this module behind a {@code ModList.get().isLoaded("productivebees")}
+ * guard, and the module item/recipe simply do not exist otherwise.
+ *
+ * <p>
+ * GTNL numbers kept: tier 8, upkeep {@code V[6]}, 128 feed per operation and the 12000-tick cycle
  * ({@code mMaxProgresstime}).
  */
 public class SteamBeeBreedingModule extends SteamElevatorModuleMachine {
@@ -41,8 +48,8 @@ public class SteamBeeBreedingModule extends SteamElevatorModuleMachine {
 
     /** GTNL {@code mMaxProgresstime}. */
     private static final int CYCLE_TICKS = 12000;
-    private static final int PARENTS_CONSUMED = 2;
-    private static final int FEED_CONSUMED = 8;
+    /** GTNL consumes 2 x 64 royal jelly; the Productive Bees equivalent is honey treats. */
+    private static final int FEED_CONSUMED = 128;
 
     public final NotifiableItemStackHandler inputInventory;
     public final NotifiableItemStackHandler outputInventory;
@@ -71,19 +78,42 @@ public class SteamBeeBreedingModule extends SteamElevatorModuleMachine {
     @Override
     public void onElevatorTick(SteamElevator elevator) {
         if (!consumeSteam(getSteamUpkeep())) return;
+
+        ItemStack queen = findQueen();
+        if (queen.isEmpty() || count(ModItems.HONEY_TREAT.get()) < FEED_CONSUMED) {
+            // GTNL reports NO_RECIPE with no queen / no royal jelly, so the cycle idles.
+            if (progress != 0) {
+                progress = 0;
+                markDirty();
+            }
+            return;
+        }
+
         if (++progress < CYCLE_TICKS) return;
         progress = 0;
 
-        if (count(Items.HONEYCOMB) < PARENTS_CONSUMED) return;
-        if (count(Items.HONEY_BOTTLE) < FEED_CONSUMED) return;
-
-        ItemStack bred = new ItemStack(Items.BEE_SPAWN_EGG);
+        // The queen is a catalyst (GTNL reads, never depletes, the controller slot); the offspring is
+        // a fresh copy of the same bee, NBT included so the bee type survives.
+        ItemStack bred = queen.copyWithCount(1);
         if (!hasOutputRoom(bred)) return;
 
-        consume(Items.HONEYCOMB, PARENTS_CONSUMED);
-        consume(Items.HONEY_BOTTLE, FEED_CONSUMED);
+        consume(ModItems.HONEY_TREAT.get(), FEED_CONSUMED);
         insertOutputs(bred);
         markDirty();
+    }
+
+    /**
+     * The first Productive Bees bee spawn egg in the input inventory (the GTNL controller queen). Every
+     * Productive Bees bee item is a {@link SpawnEgg}.
+     */
+    private ItemStack findQueen() {
+        for (int slot = 0; slot < inputInventory.getSlots(); slot++) {
+            ItemStack stack = inputInventory.getStackInSlot(slot);
+            if (!stack.isEmpty() && stack.getItem() instanceof SpawnEgg) {
+                return stack;
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     /** Total number of {@code item} across the input inventory. */

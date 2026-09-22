@@ -268,10 +268,11 @@ dependencies {
     // KubeJS soft dependency
     modCompileOnly("dev.latvian.mods:kubejs-forge:2001.6.5-build.16")
 
-    // Productive Bees soft dependency (compile-only). The Steam Bee Breeding module is registered
-    // only when Productive Bees is loaded; to test it in dev, drop the 1.20.1 Forge build of
-    // Productive Bees (and its ProductiveLib dependency) into run/mods.
+    // Productive Bees soft dependency. The Steam Bee Breeding module is registered only when
+    // Productive Bees is loaded (see GTNAMachines2), so players are never forced to install it; the
+    // dev runs load it so the integration is covered by runData/runGameTestServer.
     modCompileOnly("maven.modrinth:productivebees:1.20.1-12.6.0")
+    modRuntimeOnly("maven.modrinth:productivebees:1.20.1-12.6.0")
 
     modImplementation("curse.maven:gtceu-terminals-1423461:7787678")
 

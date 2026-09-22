@@ -17,6 +17,7 @@ import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fml.ModList;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
@@ -497,7 +498,10 @@ public class GTNAMachines2 {
                     "Steam-Powered Apiary Module", 6, holder -> new SteamApiaryModule(holder, 6),
                     moduleLines("steam_elevator_apiary_module", 1, 5));
         }
-        if (ConfigHolder.isMachineEnabled("steamBeeBreedingModule")) {
+        // The bee-breeding module is a Productive Bees integration, so it only exists when that mod is
+        // loaded. SteamBeeBreedingModule references Productive Bees types directly; the class is only
+        // touched from this guarded branch, so it is never loaded (and never fails) without the mod.
+        if (ConfigHolder.isMachineEnabled("steamBeeBreedingModule") && ModList.get().isLoaded("productivebees")) {
             STEAM_ELEVATOR_BEE_BREEDING_MODULE = registerElevatorModule("steam_elevator_bee_breeding_module",
                     "Steam Bee Breeding Module", 8, holder -> new SteamBeeBreedingModule(holder, 8),
                     moduleLines("steam_elevator_bee_breeding_module", 1, 5));
