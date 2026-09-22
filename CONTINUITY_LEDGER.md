@@ -34,7 +34,7 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-22 (G-0045):** `spotlessCheck` + `compileJava` + `runUnitTests` (**15/15**) +
+- **Gate verde em 2026-09-22 (G-0046):** `spotlessCheck` + `compileJava` + `runUnitTests` (**15/15**) +
   `runGameTestServer` (**29/29**, `All 29 required tests passed`) + `runData` determinístico. A
   execução carregou os mixins alterados; os avisos/erros de receitas do GTCEu já conhecidos
   continuam no log.
@@ -65,6 +65,24 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0046 (2026-09-22) — fidelidade GTNL dos módulos (parte 3): seletor de efeitos do Beacon na GUI e Ore Processor com os números do GTNL
+
+- **Beacon — seletor na GUI:** máscara de efeitos `@Persisted @DescSynced` (default = os primeiros
+  `tier + 2`), um botão por efeito (verde = ligado), limite de `tier + 2` e upkeep por efeitos ativos
+  (`active * V[3] * max(1, level*2)`), fechando o item "config GUI" que faltava. São 10 efeitos
+  disponíveis (os do GTNL que existem em 1.20.1) e o jogador escolhe até `tier + 2`.
+- **Ore Processor — números do GTNL:** modo pelo circuito 0–6 com os tempos do GTNL
+  (`getRecipeTickTime` = 600/300/200/400/340/640/20), parallel `8 * 2^mode` (16 no circuito 1, como o
+  tooltip "up to 16 ores at a time"), upkeep `128 * 2^circuit` e, por ore, 10 mB **distilled water** +
+  1 mB **lubricant**. A profundidade da cadeia (um único estágio de maceração) segue como simplificação
+  documentada: o processamento de receitas do GTCEu é centrado no controller.
+- **Weather / Bee Breeding:** os parâmetros (1 hora; ciclo 12000/upkeep 32768) já batem; os itens do GTNL
+  (Natura/Thaumcraft; queen do Forestry) não existem no pack 1.20.1, então o equivalente com itens vanilla
+  é o teto possível.
+- **Entity Crusher:** bloqueado (recipe map de drops de mob / MobInfo / EnderIO powered spawner).
+- **Validação:** `spotlessCheck` + `runUnitTests` (**15/15**); `runGameTestServer` (**29/29**); `runData`
+  determinístico (`written: 0`).
 
 ### G-0045 (2026-09-22) — fidelidade GTNL dos módulos (parte 1): Monster Repellent nega spawn, Oil Drill upkeep VP e Beacon com os 10 efeitos 1.20.1
 

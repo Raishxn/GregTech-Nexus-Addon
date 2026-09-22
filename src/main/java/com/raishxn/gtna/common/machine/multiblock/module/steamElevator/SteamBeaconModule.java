@@ -1,12 +1,17 @@
 package com.raishxn.gtna.common.machine.multiblock.module.steamElevator;
 
 import com.gregtechceu.gtceu.api.GTValues;
+import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 
+import com.lowdragmc.lowdraglib.gui.widget.ButtonWidget;
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
 import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
+import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
+import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -14,6 +19,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.AABB;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,6 +53,11 @@ public class SteamBeaconModule extends SteamElevatorModuleMachine {
 
     private int counter;
 
+    /** Bitmask of the enabled effects; {@code -1} means "not configured yet" (use the default). */
+    @Persisted
+    @DescSynced
+    private int effectMask = -1;
+
     public SteamBeaconModule(IMachineBlockEntity holder, int tier) {
         super(holder, tier);
     }
@@ -61,9 +72,35 @@ public class SteamBeaconModule extends SteamElevatorModuleMachine {
         };
     }
 
-    /** GTNL: {@code mTier + 2} of the configured effects are active. */
-    private int effectCount() {
+    /** GTNL: at most {@code mTier + 2} of the configured effects are active. */
+    private int maxEffects() {
         return Math.min(ALL_EFFECTS.size(), getModuleTier() + 2);
+    }
+
+    /** The default selection: the first {@link #maxEffects()} effects. */
+    private int defaultMask() {
+        return (1 << maxEffects()) - 1;
+    }
+
+    private int activeMask() {
+        return effectMask < 0 ? defaultMask() : effectMask;
+    }
+
+    private boolean isEffectOn(int index) {
+        return (activeMask() & (1 << index)) != 0;
+    }
+
+    private void setEffect(int index, boolean on) {
+        boolean currentlyOn = isEffectOn(index);
+        if (currentlyOn == on) return;
+        // Never exceed the tier limit; a click on a full selection is ignored.
+        if (on && Integer.bitCount(activeMask()) >= maxEffects()) return;
+        effectMask = on ? (activeMask() | (1 << index)) : (activeMask() & ~(1 << index));
+        markDirty();
+    }
+
+    private int effectCount() {
+        return Integer.bitCount(activeMask());
     }
 
     @Override
@@ -73,7 +110,14 @@ public class SteamBeaconModule extends SteamElevatorModuleMachine {
     }
 
     private List<MobEffect> effects() {
-        return ALL_EFFECTS.subList(0, effectCount());
+        List<MobEffect> effects = new ArrayList<>();
+        int mask = activeMask();
+        for (int i = 0; i < ALL_EFFECTS.size(); i++) {
+            if ((mask & (1 << i)) != 0) {
+                effects.add(ALL_EFFECTS.get(i));
+            }
+        }
+        return effects;
     }
 
     @Override
@@ -95,11 +139,23 @@ public class SteamBeaconModule extends SteamElevatorModuleMachine {
 
     @Override
     protected Widget createModuleUIWidget() {
-        WidgetGroup group = screenGroup(150, 52);
-        group.addWidget(
-                new LabelWidget(5, 5, () -> "Beacon tier: §b" + getModuleTier() + " §r| Range: §b" + getEffectRange()));
-        group.addWidget(new LabelWidget(5, 18,
-                () -> "Effects: §b" + effectCount() + " §r| Upkeep: §b" + getSteamUpkeep() + " mB/t"));
+        WidgetGroup group = screenGroup(150, 100);
+        group.addWidget(new LabelWidget(5, 4,
+                () -> "Beacon tier §b" + getModuleTier() + " §r| effects §b" + effectCount() + "/" + maxEffects() +
+                        " §r| §b" + getSteamUpkeep() + " mB/t"));
+        for (int i = 0; i < ALL_EFFECTS.size(); i++) {
+            final int index = i;
+            int x = 5 + (i % 2) * 72;
+            int y = 18 + (i / 2) * 13;
+            group.addWidget(new ButtonWidget(x, y, 70, 12, GuiTextures.BUTTON, clickData -> {
+                if (!clickData.isRemote) {
+                    setEffect(index, !isEffectOn(index));
+                }
+            }));
+            group.addWidget(new LabelWidget(x + 2, y + 2,
+                    () -> (isEffectOn(index) ? "§a" : "§7") +
+                            Component.translatable(ALL_EFFECTS.get(index).getDescriptionId()).getString()));
+        }
         return group;
     }
 }
