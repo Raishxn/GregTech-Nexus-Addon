@@ -14,7 +14,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.AABB;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,19 +21,29 @@ import java.util.List;
  *
  * <p>
  * GTNL lets the player configure up to {@code tier + 2} effects through a dedicated window and pays
- * with an iron/gold/diamond/emerald. GTNA keeps the tier-scaled effect range, the per-effect steam
- * upkeep and the "higher tier unlocks more effects" progression, but exposes them as a fixed,
- * documented set instead of porting GTNL's config window (whose mod-specific effects — Warp Ward,
- * Feather Feet, Vis Regen — have no 1.20.1 equivalent):
- * <ul>
- * <li>tier I: Speed, Haste</li>
- * <li>tier II: + Resistance, Regeneration</li>
- * <li>tier III: + Strength, Night Vision</li>
- * </ul>
+ * with an iron/gold/diamond/emerald. GTNA keeps the tier-scaled effect range, the
+ * {@code activeEffects * V[3] * max(1, level*2)} upkeep and the "higher tier unlocks more effects"
+ * progression, using the 10 GTNL effects that exist in 1.20.1 (Warp Ward and Vis Regen are
+ * Thaumcraft-only, and Feather Feet is mapped to Slow Falling):
+ * Speed, Strength, Jump Boost, Resistance, Regeneration, Night Vision, Haste, Fire Resistance,
+ * Water Breathing, Slow Falling. GTNL's in-GUI effect picker is not ported yet.
  */
 public class SteamBeaconModule extends SteamElevatorModuleMachine {
 
     private static final int EFFECT_DURATION = 300;
+
+    /** GTNL's 12 effects minus the three with no 1.20.1 equivalent. */
+    private static final List<MobEffect> ALL_EFFECTS = List.of(
+            MobEffects.MOVEMENT_SPEED,
+            MobEffects.DAMAGE_BOOST,
+            MobEffects.JUMP,
+            MobEffects.DAMAGE_RESISTANCE,
+            MobEffects.REGENERATION,
+            MobEffects.NIGHT_VISION,
+            MobEffects.DIG_SPEED,
+            MobEffects.FIRE_RESISTANCE,
+            MobEffects.WATER_BREATHING,
+            MobEffects.SLOW_FALLING);
 
     private int counter;
 
@@ -52,8 +61,9 @@ public class SteamBeaconModule extends SteamElevatorModuleMachine {
         };
     }
 
+    /** GTNL: {@code mTier + 2} of the configured effects are active. */
     private int effectCount() {
-        return Math.min(6, getModuleTier() * 2);
+        return Math.min(ALL_EFFECTS.size(), getModuleTier() + 2);
     }
 
     @Override
@@ -63,18 +73,7 @@ public class SteamBeaconModule extends SteamElevatorModuleMachine {
     }
 
     private List<MobEffect> effects() {
-        List<MobEffect> effects = new ArrayList<>();
-        effects.add(MobEffects.MOVEMENT_SPEED);
-        effects.add(MobEffects.DIG_SPEED);
-        if (getModuleTier() >= 2) {
-            effects.add(MobEffects.DAMAGE_RESISTANCE);
-            effects.add(MobEffects.REGENERATION);
-        }
-        if (getModuleTier() >= 3) {
-            effects.add(MobEffects.DAMAGE_BOOST);
-            effects.add(MobEffects.NIGHT_VISION);
-        }
-        return effects;
+        return ALL_EFFECTS.subList(0, effectCount());
     }
 
     @Override

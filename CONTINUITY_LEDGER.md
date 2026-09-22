@@ -34,7 +34,7 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-22 (G-0044):** `spotlessCheck` + `compileJava` + `runUnitTests` (**15/15**) +
+- **Gate verde em 2026-09-22 (G-0045):** `spotlessCheck` + `compileJava` + `runUnitTests` (**15/15**) +
   `runGameTestServer` (**29/29**, `All 29 required tests passed`) + `runData` determinístico. A
   execução carregou os mixins alterados; os avisos/erros de receitas do GTCEu já conhecidos
   continuam no log.
@@ -65,6 +65,26 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0045 (2026-09-22) — fidelidade GTNL dos módulos (parte 1): Monster Repellent nega spawn, Oil Drill upkeep VP e Beacon com os 10 efeitos 1.20.1
+
+- **Monster Repellent (fiel):** o GTNL registra um repelente de spawn com raio `1 << (5 + tier)`; o GTNA
+  removia entidades já presentes. Agora o módulo publica seu campo
+  (`SteamMonsterRepellentModule.blocksSpawn`, TTL 40t) e `SteamRepellentHandler` cancela
+  `MobSpawnEvent.FinalizeSpawn` para `Monster` dentro do raio — igual ao tooltip ("Only prevents spawns
+  while the machine is running").
+- **Oil Drill (fiel):** upkeep passa de `V[tier]` (128/512/2048) para `V*30/32` = **VP** do GTNL
+  (120/480/1920). O yield já era por extração e casa com o tooltip.
+- **Beacon (parcial):** a lista fixa de 6 efeitos virou os **10 efeitos do GTNL que existem em 1.20.1**
+  (Warp Ward/Vis Regen são Thaumcraft; Feather Feet → Slow Falling), com `tier + 2` ativos e o upkeep
+  `activeEffects * V[3] * max(1, level*2)` do GTNL. O seletor de efeitos na GUI ainda não foi portado.
+- **Entity Crusher (bloqueado):** o comportamento GTNL é dirigido por um recipe map de drops de mob
+  (MobInfo/kubatech + EnderIO powered spawner) que não existe no pack 1.20.1 — não dá para portar
+  fielmente sem inventar um sistema de receitas de mob. Fica com o "mata monstros no raio" atual.
+- **Validação:** `spotlessCheck` + `runUnitTests` (**15/15**); `runGameTestServer` (**29/29**); `runData`
+  determinístico (`written: 0`).
+- **Pendências:** Beacon (config GUI), Apiary (ciclo 300 s / slots por OC / royal jelly), Ore Processor
+  (cadeia de receitas/parallel/modos), Weather/Bee Breeding (itens do GTNL), Entity Crusher (bloqueado).
 
 ### G-0044 (2026-09-22) — crash de config (dep. duplicada), botão do HUD no hatch, módulos com tick próprio, range do voo aplicado e tooltips fiéis ao GTNL
 
