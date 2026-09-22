@@ -2,11 +2,13 @@ package com.raishxn.gtna.common.data;
 
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
+import com.gregtechceu.gtceu.client.util.TooltipHelper;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import com.raishxn.gtna.GTNACORE;
 
@@ -115,9 +117,13 @@ public final class GTNASources {
         return SOURCES.containsKey(path);
     }
 
-    /** The "Source: <addon>" tooltip line for a source id. */
+    /** The "Source: <addon>" tooltip line for a source id. The addon name is animated on the client. */
     public static Component line(String sourceId) {
-        return Component.translatable("gtna.tooltip.source", Component.translatable("gtna.source." + sourceId))
+        Component addon = Component.translatable("gtna.source." + sourceId);
+        if (FMLEnvironment.dist.isClient()) {
+            addon = addon.copy().withStyle(TooltipHelper.RAINBOW_HSL_SLOW);
+        }
+        return Component.translatable("gtna.tooltip.source", addon)
                 .withStyle(ChatFormatting.DARK_GRAY);
     }
 
