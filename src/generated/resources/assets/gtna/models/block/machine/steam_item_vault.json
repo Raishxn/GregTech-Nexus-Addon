@@ -11,8 +11,7 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/gcym/large_material_press/overlay_front",
-          "overlay_front_emissive": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_emissive"
+          "overlay_front": "gtna:block/multiblock/steam_item_vault/overlay_front"
         }
       }
     },
@@ -21,8 +20,7 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_paused",
-          "overlay_front_emissive": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_paused_emissive"
+          "overlay_front": "gtna:block/multiblock/steam_item_vault/overlay_front"
         }
       }
     },
@@ -31,8 +29,8 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_active_emissive"
+          "overlay_front": "gtna:block/multiblock/steam_item_vault/overlay_front_active",
+          "overlay_front_emissive": "gtna:block/multiblock/steam_item_vault/overlay_front_active_emissive"
         }
       }
     },
@@ -41,8 +39,8 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_active_emissive"
+          "overlay_front": "gtna:block/multiblock/steam_item_vault/overlay_front_active",
+          "overlay_front_emissive": "gtna:block/multiblock/steam_item_vault/overlay_front_active_emissive"
         }
       }
     },
@@ -51,8 +49,7 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/gcym/large_material_press/overlay_front",
-          "overlay_front_emissive": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_emissive"
+          "overlay_front": "gtna:block/multiblock/steam_item_vault/overlay_front"
         }
       }
     },
@@ -61,8 +58,7 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_paused",
-          "overlay_front_emissive": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_paused_emissive"
+          "overlay_front": "gtna:block/multiblock/steam_item_vault/overlay_front"
         }
       }
     },
@@ -71,8 +67,8 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_active_emissive"
+          "overlay_front": "gtna:block/multiblock/steam_item_vault/overlay_front_active",
+          "overlay_front_emissive": "gtna:block/multiblock/steam_item_vault/overlay_front_active_emissive"
         }
       }
     },
@@ -81,8 +77,8 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/gcym/large_material_press/overlay_front_active_emissive"
+          "overlay_front": "gtna:block/multiblock/steam_item_vault/overlay_front_active",
+          "overlay_front_emissive": "gtna:block/multiblock/steam_item_vault/overlay_front_active_emissive"
         }
       }
     }

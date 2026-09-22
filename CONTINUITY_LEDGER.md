@@ -59,6 +59,61 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0036 (2026-09-22) — review in-game: Building Gadgets, orientação do módulo, casing do elevador e overlays GTNL
+
+- **Item 1 — Building Gadgets não carregava (causa raiz):** a dependência
+  `modRuntimeOnly("curse.maven:building-gadgets-298187:6850515")` aponta para o arquivo **6850515 =
+  buildinggadgets2-1.3.9**, que é **NeoForge 1.21** (`META-INF/neoforge.mods.toml`, `neoforge`
+  `[21.0,)`, `minecraft [1.21,1.22)`), então o Forge 1.20.1 ignorava o jar silenciosamente. Trocado
+  para **6850495 = buildinggadgets2-1.0.8** (1.20.1 **Forge**; `META-INF/mods.toml` com
+  `loaderVersion="[43,)"`, `modId="forge"`, `minecraft [1.19.2,)`). Verificado: o jar é baixado e o
+  mod **aparece carregado** no log do `runGameTestServer` (registros `buildinggadgets2:*` e
+  `run/config/buildinggadgets2-common.toml`).
+- **Item 2 — orientação do módulo do Steam Elevator:** o `pattern/steam_elevator_module.mbs` (1x5x2)
+  tinha sido gerado **sem** a convenção do §5 do `NEXT-SESSION-HANDOFF` (inverter linhas **e**
+  aisles), então o controller ficava na **2ª linha de baixo** (aisle 0) e o corpo **à frente** dele
+  (a face "para dentro"). Regenerado com a convenção: aisle 0 = corpo (`A`), aisle 1 = controller
+  (`~`) na **linha 4** (2ª do topo). No frame do GTCEu isso põe o controller na 2ª linha a partir do
+  topo e o corpo **atrás** dele (a face aponta **para fora**); a faixa vertical (linhas 0..4 do host)
+  continua casando com as células `H`/`I` do `steam_elevator.mbs`. Binário gerado pela tabela do
+  `GTNAMultiBlockFileReader` (`A`=2, `~`=61). Não foi mexido no `rotationState` (NON_Y_AXIS +
+  `allowExtendedFacing(false)`/`allowFlip(false)` continuam corretos).
+- **Item 3 (já feito, preservado):** o `SteamElevator.onStructureFormed` não invalida mais quando não
+  há tanque de vapor ("o elevador não precisa de vapor/energia; só os módulos consomem"). O
+  `SteamElevator.java` já estava modificado e entrou neste commit.
+- **Item 4 — casing do elevador:** `appearanceBlock` e o casing base do `workableCasingModel` do
+  `steam_elevator` passaram de `GTNABlocks.STEEL_REINFORCED_WOOD` para **`GTBlocks.CASING_STEEL_SOLID`**
+  (GTNL `SteamElevator#getCasingTextureID()` = `SolidSteelMachineCasing`; o **shell `A` do pattern
+  continua** steel-reinforced-wood, que é o elemento `A` do GTNL).
+- **Item 5 — overlays dos ports GTNL:** portadas para `assets/gtna/textures/block/multiblock/<id>/`
+  as texturas de overlay **próprias do GTNL** (`textures/blocks/iconsets/*`) que faltavam, com
+  `overlay_front`/`overlay_front_active` e os `_GLOW` do GTNL mapeados para `_emissive` do GTCEu:
+  `steam_lava_maker` (SteamLavaMaker), `steam_item_vault` (SteamItemVault), `steam_cactus_wonder`
+  (CactusWonder) e `steam_mega_compressor` (MegaSteamCompressor). Os `.workableCasingModel` dessas
+  quatro máquinas agora apontam para `GTNACORE.id("block/multiblock/<id>")`. Corrigido também o
+  typo `overlay_front_activce.png` → `overlay_front_active.png` (+ `.mcmeta`) do
+  `largesteamfurnace` (o overlay ativo nunca carregava). **Limite encontrado:** os `large_steam_*`
+  do GTNL **não** têm textura própria no repositório do GTNL — usam ícones do **GT++**
+  (`TexturesGtBlock.oMCDIndustrial*`) ou do GT5U (`Textures.BlockIcons.OVERLAY_*`), que não estão
+  em `GTNL/src/main/resources`; os `steam_*` com iconset próprio já estavam portados
+  (`steammanufacturer`, `steamwoodcutter`/SteamCarpenter, `steaminfernalcokeoven`) ou foram agora.
+  O `steam_elevator` usa `gregtech:iconsets/EM_COMPUTER` (GT5U/Tectech), também não vendorizado.
+  Atribuição GTNL atualizada em `THIRD_PARTY_NOTICES.md`.
+- **Arquivos:** `build.gradle`, `GTNAMachines.java`, `pattern/steam_elevator_module.mbs`,
+  `steam_elevator_module` (binário), as 4 pastas novas de overlay, o rename do
+  `largesteamfurnace`, `THIRD_PARTY_NOTICES.md`, `SteamElevator.java` (item 3), os 5 modelos
+  gerados em `src/generated/resources/assets/gtna/models/block/machine/`.
+- **Validação:** `spotlessApply compileJava` OK; `spotlessCheck` + `runUnitTests` (**14/14**);
+  `runGameTestServer` (**25/25**, `All 25 required tests passed`) e
+  `grep -c "Parsing error loading recipe gtna:"` = **0**; `runData` determinístico (2ª execução
+  `written: 0`).
+- **Pendências abertas / verificação in-game:** (a) confirmar que os 12 módulos formam com o
+  controller na 2ª linha do topo e o corpo para dentro (o jogador precisa facear o módulo para fora;
+  a face do módulo é perpendicular à do host nos slots laterais); (b) conferir visualmente se
+  `large_steam_*` devem manter os overlays GTCEu/GTO ou se o autor quer os ícones do GT++ (precisam
+  ser fornecidos); (c) o overlay do `steam_elevator` continua `gtceu:block/multiblock/steam_grinder`
+  (o ícone Tectech do GTNL não está no repositório do GTNL).
+
 ### G-0035 (2026-09-22) — Steam Elevator: módulos viram multiblocos próprios (corrige a contagem de módulos)
 
 - **Bug reportado in-game:** o Steam Elevator contava **qualquer** bloco/peça nas células de módulo

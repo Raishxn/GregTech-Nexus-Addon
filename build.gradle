@@ -228,7 +228,7 @@ dependencies {
         modRuntimeOnly("curse.maven:jade-324717:5390389")
         // Dev-only building/QoL utilities requested by the author. Not required dependencies:
         // modRuntimeOnly keeps them out of the published mod's manifest.
-        modRuntimeOnly("curse.maven:building-gadgets-298187:6850515")
+        modRuntimeOnly("curse.maven:building-gadgets-298187:6850495")
         modRuntimeOnly("curse.maven:ftb-chunks-forge-314906:8216874")
         modRuntimeOnly("curse.maven:ftb-library-forge-404465:8226927")
         modRuntimeOnly("curse.maven:ftb-teams-forge-404468:7499810")

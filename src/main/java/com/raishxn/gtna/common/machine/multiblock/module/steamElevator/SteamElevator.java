@@ -143,12 +143,7 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
                 }
             }
         }
-        // GTNL's checkHatch: the elevator needs at least one steam input hatch anywhere in the
-        // structure (it is not tied to a specific cell), so enforce it here, not as a pattern limit.
-        if (steamTanks.isEmpty()) {
-            onStructureInvalid();
-            return;
-        }
+        // GTNL: the elevator itself needs no steam/power; only the modules consume steam.
         scanModules();
     }
 

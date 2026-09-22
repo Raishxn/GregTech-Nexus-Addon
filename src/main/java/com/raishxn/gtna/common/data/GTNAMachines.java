@@ -1056,9 +1056,10 @@ public class GTNAMachines {
                     .recipeModifier(SteamLavaMakerMachine::recipeModifier)
                     .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
                     .pattern(GTNAMachines::createSteamLavaMakerPattern)
+                    // Overlay ported from GTNL SteamLavaMaker (iconsets/SteamLavaMaker).
                     .workableCasingModel(
                             GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
-                            GTCEu.id("block/multiblock/gcym/large_material_press"))
+                            GTNACORE.id("block/multiblock/steam_lava_maker"))
                     .tooltips(
                             Component.translatable("gtna.tooltip.steam_lava_maker.desc")
                                     .withStyle(ChatFormatting.GRAY),
@@ -1076,9 +1077,10 @@ public class GTNAMachines {
                     .rotationState(RotationState.NON_Y_AXIS)
                     .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
                     .pattern(GTNAMachines::createSteamItemVaultPattern)
+                    // Overlay ported from GTNL SteamItemVault (iconsets/SteamItemVault).
                     .workableCasingModel(
                             GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
-                            GTCEu.id("block/multiblock/gcym/large_material_press"))
+                            GTNACORE.id("block/multiblock/steam_item_vault"))
                     .tooltips(
                             Component.translatable("gtna.tooltip.steam_item_vault.desc")
                                     .withStyle(ChatFormatting.GRAY),
@@ -1100,9 +1102,10 @@ public class GTNAMachines {
                     .recipeType(GTNARecipeType.CACTUS_WONDER_RECIPES)
                     .appearanceBlock(GTBlocks.CASING_BRONZE_BRICKS)
                     .pattern(GTNAMachines::createSteamCactusWonderPattern)
+                    // Overlay ported from GTNL SteamCactusWonder (iconsets/CactusWonder).
                     .workableCasingModel(
                             GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
-                            GTCEu.id("block/multiblock/steam_oven"))
+                            GTNACORE.id("block/multiblock/steam_cactus_wonder"))
                     .tooltips(
                             Component.translatable("gtna.tooltip.steam_cactus_wonder.desc")
                                     .withStyle(ChatFormatting.GRAY),
@@ -1150,9 +1153,10 @@ public class GTNAMachines {
                     .recipeModifier(MegaSteamCompressor::recipeModifier)
                     .appearanceBlock(GTBlocks.CASING_STEEL_SOLID)
                     .pattern(GTNAMachines::createMegaSteamCompressorPattern)
+                    // Overlay ported from GTNL MegaSteamCompressor (iconsets/MegaSteamCompressor).
                     .workableCasingModel(
                             GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
-                            GTCEu.id("block/multiblock/steam_grinder"))
+                            GTNACORE.id("block/multiblock/steam_mega_compressor"))
                     .tooltips(
                             Component.translatable("gtna.tooltip.mega_steam_compressor.desc")
                                     .withStyle(ChatFormatting.GRAY),
@@ -1180,10 +1184,13 @@ public class GTNAMachines {
                     .allowFlip(false)
                     // No real recipes: DUMMY keeps getRecipeType() safe for the inert recipe logic.
                     .recipeType(GTRecipeTypes.DUMMY_RECIPES)
-                    .appearanceBlock(GTNABlocks.STEEL_REINFORCED_WOOD)
+                    // GTNL's SteamElevator#getCasingTextureID is SolidSteelMachineCasing: the shell
+                    // is steel-reinforced wood (element A in the pattern), but the controller itself
+                    // is solid machine casing.
+                    .appearanceBlock(GTBlocks.CASING_STEEL_SOLID)
                     .pattern(GTNAMachines::createSteamElevatorPattern)
                     .workableCasingModel(
-                            GTNACORE.id("block/casings/steel_reinforced_wood"),
+                            GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
                             GTCEu.id("block/multiblock/steam_grinder"))
                     .tooltips(
                             Component.translatable("gtna.tooltip.steam_elevator.desc")

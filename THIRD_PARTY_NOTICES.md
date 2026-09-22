@@ -19,7 +19,7 @@ If you are a rightsholder and want an entry corrected or removed, please open an
 |---|---|---|---|---|
 | GregTech Odyssey (GTO) | [GregTech-Odyssey/GTOCore](https://github.com/GregTech-Odyssey/GTOCore) | Code: LGPLv3 · Original assets: **CC BY-NC-SA 4.0** | Textures (casings, hatches, storage cores, wireless energy units, overlays), machine mechanics (reimplemented) | Assets stay CC BY-NC-SA 4.0 — permitted with attribution; tooltip credit requested by the GTO team |
 | GTO Extended Platform Presets (GTOEPP) | [GregTech-Odyssey/Gto-Extended-Platform-Presets](https://github.com/GregTech-Odyssey/Gto-Extended-Platform-Presets) | All Rights Reserved | Platform presets (`platforms/epp/sy_1/*`) | **Permission granted** by the GTO team (keep attribution intact) |
-| GT: Not Leisure (GTNL) | [ABKQPO/GT-Not-Leisure](https://github.com/ABKQPO/GT-Not-Leisure) | **GPL-3.0** | Multiblock structure files (`.mb`), large steam multiblock family | **Permission granted** (credit the source). Structures that GTNL itself took from GTO are credited to GTO |
+| GT: Not Leisure (GTNL) | [ABKQPO/GT-Not-Leisure](https://github.com/ABKQPO/GT-Not-Leisure) | **GPL-3.0** | Multiblock structure files (`.mb`), large steam multiblock family, per-machine controller overlay textures (`textures/blocks/iconsets/*`) | **Permission granted** (credit the source). Structures that GTNL itself took from GTO are credited to GTO |
 | Twist Space Technology (TST) | [Nxer/Twist-Space-Technology-Mod](https://github.com/Nxer/Twist-Space-Technology-Mod) | **GPL-3.0** | Overworld-only ore condenser | **Pending** — permission requested |
 | GTMThings | [liansishen/GTMThings](https://github.com/liansishen/GTMThings) | None declared (All Rights Reserved) | `AdvancedBlockPattern` (basis for `NexusBlockPattern`) | **Pending** — permission requested |
 | cmme-additions → Modernity-GTNH | [CristalGaming/cmme-additions](https://github.com/CristalGaming/cmme-additions) → [ModernityGTNH/Modernity-GTNH](https://github.com/ModernityGTNH/Modernity-GTNH) | ARR → **CC BY-NC-SA 4.0** | Plate/ingot textures (triple/quadruple/quintuple, etc.) and the **Industrial / Advanced Industrial Steam Casing** textures (`MetaCasing02/1`, `2`) | **Pending** — permission requested; same author as GTNL per the project owner |
@@ -41,6 +41,8 @@ If you are a rightsholder and want an entry corrected or removed, please open an
 ### GT: Not Leisure (GTNL)
 
 - The GTNL author granted permission to use GTNL structures with source attribution.
+- The same permission covers GTNL's own per-machine controller overlay textures, ported under
+  `assets/gtna/textures/block/multiblock/*` (from GTNL `textures/blocks/iconsets/*`).
 - Structures that GTNL itself ported from GTO are credited to **GTO**, whose assets are used under
   **CC BY-NC-SA 4.0** (permission confirmed by the GTO team).
 
