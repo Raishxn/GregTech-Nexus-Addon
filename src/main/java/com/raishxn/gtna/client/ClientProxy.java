@@ -1,32 +1,33 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
 package com.raishxn.gtna.client;
 
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.fml.ModLoadingContext;
 
-import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.client.hud.HudEditorScreen;
+import com.raishxn.gtna.client.hud.WirelessSteamHudBridge;
+import com.raishxn.gtna.client.hud.WirelessSteamHudOverlay;
 import com.raishxn.gtna.client.renderer.machine.AnnihilateGeneratorRenderer;
 import com.raishxn.gtna.client.renderer.machine.EyeOfHarmonyRenderer;
 import com.raishxn.gtna.client.renderer.machine.EyeOfWoodRenderer;
 import com.raishxn.gtna.common.CommonProxy;
-import dev.toma.configuration.Configuration;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientProxy extends CommonProxy {
 
-    @SuppressWarnings("removal")
     public ClientProxy() {
-        // Client-only by construction (this class is loaded through DistExecutor on the client),
-        // which is what keeps ConfigScreenHandler out of the dedicated-server class path.
-        ModLoadingContext.get().registerExtensionPoint(
-                ConfigScreenHandler.ConfigScreenFactory.class,
-                () -> new ConfigScreenHandler.ConfigScreenFactory(
-                        (mc, screen) -> Configuration.getConfigScreen(GTNACORE.MOD_ID, screen)));
+        // The configuration library registers the config screen for every mod itself (see
+        // ConfigurationForge#clientInit). GTNA used to register its own factory against the old
+        // Configuration#getConfigScreen, which no longer exists in the 3.1.0 the pack runs - so that
+        // registration is gone.
+
+        // The wireless steam hatch UI is common code, so it reaches the client-only HUD through
+        // this hook instead of referencing a client class directly (dedicated-server safety).
+        WirelessSteamHudBridge.toggleHud = () -> {
+            WirelessSteamHudOverlay hud = WirelessSteamHudOverlay.INSTANCE;
+            hud.setEnabled(!hud.isEnabled());
+        };
+        WirelessSteamHudBridge.openEditor = () -> Minecraft.getInstance().setScreen(new HudEditorScreen());
 
         // Dynamic render codecs must exist before GTCEu starts baking machine models.
         // FMLClientSetupEvent runs too late for models that reference these IDs.

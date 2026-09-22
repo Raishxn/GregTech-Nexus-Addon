@@ -59,6 +59,7 @@ public final class SteamWiringContractTest {
         checkWirelessSteamFairShare();
         checkWirelessSteamHudWiring();
         checkSteamElevatorHostDoesNotLimitModuleHatches();
+        checkFlightModuleSurvivesArmorCleanup();
         checkSolarBoilerProductionIsPerSecond();
         checkElevatorHasNoEuBuffer();
         System.out.println("[SteamWiringContractTest] all cases passed");
@@ -279,10 +280,21 @@ public final class SteamWiringContractTest {
                     "them while dragging");
         }
 
-        Path keys = Path.of("src/main/java/com/raishxn/gtna/client/GTNAKeyMappings.java");
-        String keysSource = Files.readString(keys, StandardCharsets.UTF_8);
-        if (!keysSource.contains("RegisterKeyMappingsEvent") || !keysSource.contains("open_hud_editor")) {
-            throw new AssertionError("the HUD editor needs a registered keybind (GTNAKeyMappings) to open");
+        // GTOCore parity: the toggle lives in the machine UI, not on a keybind. The common hatch
+        // builds the button and calls the client-only bridge.
+        Path bridge = Path.of("src/main/java/com/raishxn/gtna/client/hud/WirelessSteamHudBridge.java");
+        String bridgeSource = Files.readString(bridge, StandardCharsets.UTF_8);
+        if (!bridgeSource.contains("toggleHud") || !bridgeSource.contains("openEditor")) {
+            throw new AssertionError("WirelessSteamHudBridge must expose the toggle and editor hooks the hatch UI " +
+                    "calls");
+        }
+        for (String file : List.of("WirelessSteamInputHatch.java", "WirelessSteamOutputHatch.java")) {
+            String hatch = Files.readString(STEAM_PART_DIR.resolve(file), StandardCharsets.UTF_8);
+            if (!hatch.contains("WirelessSteamHudBridge") || !hatch.contains("onHudButton") ||
+                    !hatch.contains("new ButtonWidget")) {
+                throw new AssertionError(file + " must carry the HUD button that calls WirelessSteamHudBridge " +
+                        "(GTOCore substation parity)");
+            }
         }
 
         Path sync = Path.of("src/main/java/com/raishxn/gtna/common/WirelessSteamHudSync.java");
@@ -318,6 +330,22 @@ public final class SteamWiringContractTest {
         if (!pattern.contains("abilities(PartAbility.STEAM)")) {
             throw new AssertionError("the Steam Elevator host pattern must still accept STEAM parts (module " +
                     "hatches land on the host shell)");
+        }
+    }
+
+    /**
+     * The Steam Elevator flight module grants creative flight by setting {@code mayfly}; the
+     * Quantum Cosmic Nexus armor handler runs every player tick and used to clear {@code mayfly}
+     * for anyone not wearing the armor, silently cancelling the module. Its legacy cleanup must only
+     * act when the armor's quantum flying speed remnant is present.
+     */
+    private static void checkFlightModuleSurvivesArmorCleanup() throws IOException {
+        Path armor = Path.of("src/main/java/com/raishxn/gtna/common/item/armor/QuantumCosmicNexusArmorHandler.java");
+        String source = Files.readString(armor, StandardCharsets.UTF_8);
+        if (!source.contains("if (legacyQuantumSpeed) {")) {
+            throw new AssertionError("QuantumCosmicNexusArmorHandler#disableManagedFlight must gate the legacy " +
+                    "mayfly cleanup on legacyQuantumSpeed; clearing mayfly unconditionally every tick cancels the " +
+                    "Steam Elevator flight module's grant");
         }
     }
 

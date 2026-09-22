@@ -16,17 +16,20 @@ import java.util.UUID;
  * GTNL {@code SteamFlightModule} port (LGPLv3, original by ScienceNotLeisure).
  *
  * <p>
- * GTNL grants a Blood Magic "flight" potion for 1000 ticks to players within range. Blood Magic does
- * not exist in 1.20.1, so the GTNA port grants vanilla creative flight ({@code mayfly}) to players
- * inside the range and revokes it when the elevator stops (the tracked-player set is the analogue
- * of the potion expiring).
+ * GTNL grants a Blood Magic "flight" potion for 1000 ticks to players inside
+ * {@code getMachineEffectRange()} (= 64 blocks at overclock count 1). Blood Magic does not exist in
+ * 1.20.1, so the GTNA port grants vanilla creative flight ({@code mayfly}) to players inside the
+ * range and — like the potion expiring — <b>revokes it as soon as they leave the range</b> (or the
+ * module stops). Only players this module actually granted flight to are tracked, so a creative
+ * player or another flight source is never touched.
  */
 public class SteamFlightModule extends SteamElevatorModuleMachine {
 
-    /** GTNL {@code getMachineEffectRange()} at tier 1 (oc-expanded in GTNL). */
+    /** GTNL {@code getMachineEffectRange()} = {@code 64 * max(overclockCount, 1)}. */
     public static final int RANGE = 64;
 
-    private final Set<UUID> flying = new HashSet<>();
+    /** Players whose {@code mayfly} this module granted and is therefore responsible for. */
+    private final Set<UUID> grantedFlight = new HashSet<>();
 
     public SteamFlightModule(IMachineBlockEntity holder, int tier) {
         super(holder, tier);
@@ -39,7 +42,7 @@ public class SteamFlightModule extends SteamElevatorModuleMachine {
 
     @Override
     public long getSteamUpkeep() {
-        // GTNL: mTier * V[5].
+        // GTNL: mTier * V[5] * max(overclockCount, 1).
         return (long) getModuleTier() * GTValues.V[5];
     }
 
@@ -51,23 +54,29 @@ public class SteamFlightModule extends SteamElevatorModuleMachine {
         Vec3 center = Vec3.atCenterOf(getPos());
         double range = getEffectRange();
         AABB box = new AABB(getPos()).inflate(range);
+        Set<UUID> inRange = new HashSet<>();
         for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, box)) {
             if (player.distanceToSqr(center) > range * range) continue;
+            inRange.add(player.getUUID());
             if (!player.getAbilities().mayfly) {
                 player.getAbilities().mayfly = true;
                 player.onUpdateAbilities();
+                // Track only the grant this module made, so leaving the range revokes exactly it.
+                grantedFlight.add(player.getUUID());
             }
-            flying.add(player.getUUID());
         }
+        // GTNL's potion expires: drop the flight of anyone who left the range.
+        revoke(grantedFlight, inRange);
     }
 
-    @Override
-    public void onElevatorStop() {
-        if (!(getLevel() instanceof ServerLevel level)) {
-            flying.clear();
-            return;
-        }
-        for (UUID id : flying) {
+    /** Removes from {@code tracked} (and revokes flight for) every player not in {@code keep}. */
+    private void revoke(Set<UUID> tracked, Set<UUID> keep) {
+        if (!(getLevel() instanceof ServerLevel level)) return;
+        var iterator = tracked.iterator();
+        while (iterator.hasNext()) {
+            UUID id = iterator.next();
+            if (keep.contains(id)) continue;
+            iterator.remove();
             ServerPlayer player = level.getServer().getPlayerList().getPlayer(id);
             if (player != null && !player.isCreative() && !player.isSpectator()) {
                 player.getAbilities().mayfly = false;
@@ -75,6 +84,11 @@ public class SteamFlightModule extends SteamElevatorModuleMachine {
                 player.onUpdateAbilities();
             }
         }
-        flying.clear();
+    }
+
+    @Override
+    public void onElevatorStop() {
+        revoke(grantedFlight, Set.of());
+        grantedFlight.clear();
     }
 }

@@ -34,7 +34,7 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-22 (G-0043):** `spotlessCheck` + `compileJava` + `runUnitTests` (**15/15**) +
+- **Gate verde em 2026-09-22 (G-0044):** `spotlessCheck` + `compileJava` + `runUnitTests` (**15/15**) +
   `runGameTestServer` (**29/29**, `All 29 required tests passed`) + `runData` determinístico. A
   execução carregou os mixins alterados; os avisos/erros de receitas do GTCEu já conhecidos
   continuam no log.
@@ -65,6 +65,50 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0044 (2026-09-22) — crash de config (dep. duplicada), botão do HUD no hatch, módulos com tick próprio, range do voo aplicado e tooltips fiéis ao GTNL
+
+- **Crash do drag do HUD:** o projeto declarava **duas** versões do `configuration`
+  (`dev.toma.configuration:...:2.2.0` no classpath de compilação e `curse.maven:configuration-444699:5840405`
+  = **3.1.0** no runtime). O `HudConfigValues` compilava contra `ConfigValue.set(...)` (2.2.0), que não existe
+  na 3.1.0 → `NoSuchMethodError` ao soltar o drag. Removi a dependência duplicada (só a 3.1.0) e migrei para a
+  API da 3.1.0 (`setValue` + `ConfigIO.saveClientValues`). Também removi o registro próprio da tela de config
+  do `ClientProxy` (a 3.1.0 registra sozinha; `Configuration.getConfigScreen` nem existe mais — crash latente).
+- **Toggle do HUD no hatch (paridade GTOCore WirelessEnergySubstation):** a UI dos wireless steam hatch
+  (input/output) ganhou um botão: **clique esquerdo** liga/desliga o HUD; **clique direito** abre o editor de
+  drag (posição persiste). O hatch (código comum) chama um bridge client-only (`WirelessSteamHudBridge`), sem
+  referenciar classe de client no server. A keybind foi removida.
+- **HUD alinhada:** o gráfico começava em `textY + LINE_HEIGHT - 2` e vazava ~2 px abaixo da borda; agora
+  começa após as linhas, com margem simétrica.
+- **Módulos do elevador (tick próprio + observabilidade):** cada módulo aplica o efeito no próprio server tick
+  enquanto formado+conectado (não depende mais do tick do host), `isActive()` = formed && connected (UI/Jade
+  mostram "Working") e linha explícita Working/Not Working no display.
+- **Voo — range de verdade:** o módulo concedia `mayfly` e nunca revogava; o jogador mantinha voo fora do
+  alcance. Agora só os jogadores que o módulo concedeu são rastreados e o `mayfly` é revogado ao sair dos 64
+  blocos (equivalente à poção do GTNL expirando) e quando o módulo para.
+- **Voo cancelado pela armadura (G-0043):** o `QuantumCosmicNexusArmorHandler` limpava `mayfly` de quem não usa
+  o set a cada tick; o cleanup legado agora só age quando o vestígio quântico (`flyingSpeed == 0.2`) está
+  presente. `checkFlightModuleSurvivesArmorCleanup` trava.
+- **Tooltips fiéis ao GTNL (todos os 10 módulos):** as descrições agora são as linhas exatas do GTNL
+  (`gtnl.machine.<module>.tooltip.0..N`, incluindo as flavors por tier de Beacon/Repellator/Oil Drill e as
+  linhas dinâmicas de range/yield/cycle já resolvidas). Novas chaves `gtna.machine.<id>.tooltip.N` no
+  `GTNALangProvider`; `registerElevatorModule` passa `moduleLines(id, from, to)`. Nomes dos blocos alinhados
+  (Repellator, Steam-Powered Apiary, Steam Greenhouse Planting, Steam Ore Processing, Steam Elevator Beacon,
+  Steam Oil Drill).
+- **Greenhouse:** o tooltip do GTNL diz 16.000L de água por crop; o módulo drenava 1.000 — agora usa
+  `WATER_PER_OPERATION` (16.000).
+- **Arquivos:** `build.gradle`, `ClientProxy.java`, `HudConfigValues.java`, `WirelessSteamHudBridge.java`
+  (novo), `WirelessSteamHudOverlay.java`, `ClientEventHandler.java`, os dois hatches, `SteamElevatorModuleMachine.java`,
+  `SteamFlightModule.java`, `SteamGreenhouseModule.java`, `GTNAMachines2.java`, `GTNALangProvider.java` +
+  `en_us.json` manual/gerado, `SteamWiringContractTest.java`.
+- **Validação:** `spotlessCheck` + `runUnitTests` (**15/15**); `runGameTestServer` (**29/29**);
+  `grep -c "Parsing error loading recipe gtna:"` = 0; `runData` determinístico.
+- **Pendências (fidelidade de comportamento GTNL ainda não portada):** weather (consome items + 36000t),
+  apiary (ciclo 6000t, slots por OC, royal jelly), bee breeding (rainha/ignoble princess), ore processor
+  (10L distilled water + 1L lubricant/ore, parallel 8×2^circuito, 7 modos, 20–640t), beacon (12 efeitos
+  configuráveis na GUI, níveis por OC), entity crusher (chance de dobrar output por spawner, sem range/upkeep),
+  monster repellent (negar spawn em vez de remover entidades), oil drill (upkeep VP 120/480/1920 e yield por
+  extração). Os tooltips já estão fiéis; falta o comportamento.
 
 ### G-0043 (2026-09-22) — review in-game do autor: HUD arrastável (HUD editor + keybind), elevador aceita 1 steam hatch por módulo, labels drain/feed, buffers input/output separados e solar boiler 20×
 

@@ -11,6 +11,8 @@ import com.gregtechceu.gtceu.common.machine.multiblock.part.SteamHatchPartMachin
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
+import com.lowdragmc.lowdraglib.gui.util.ClickData;
+import com.lowdragmc.lowdraglib.gui.widget.ButtonWidget;
 import com.lowdragmc.lowdraglib.gui.widget.ImageWidget;
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 
@@ -24,6 +26,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
+import com.raishxn.gtna.client.hud.WirelessSteamHudBridge;
 import com.raishxn.gtna.common.data.SteamNetworkData;
 import com.raishxn.gtna.config.ConfigHolder;
 
@@ -192,7 +195,26 @@ public class WirelessSteamOutputHatch extends SteamHatchPartMachine {
                 .widget(new LabelWidget(6, 6, getBlockState().getBlock().getDescriptionId()))
                 .widget(new TankWidget(tank.getStorages()[0], 90, 35, true, true)
                         .setBackground(GuiTextures.FLUID_SLOT))
+                .widget(new ButtonWidget(152, 24, 16, 16, GuiTextures.BUTTON, this::onHudButton)
+                        .setHoverTooltips(
+                                Component.translatable("gtna.machine.wireless_steam.hud.toggle"),
+                                Component.translatable("gtna.machine.wireless_steam.hud.editor")))
                 .widget(UITemplate.bindPlayerInventory(entityPlayer.getInventory(),
                         GuiTextures.SLOT_STEAM.get(isSteel), 7, 84, true));
+    }
+
+    /**
+     * The HUD button on the wireless steam hatch (GTOCore's WirelessEnergySubstation parity): left
+     * click toggles the HUD, right click opens the editor to drag it. Runs client-side only; the
+     * actual work goes through {@link WirelessSteamHudBridge} so this common class never references
+     * a client class.
+     */
+    private void onHudButton(ClickData clickData) {
+        if (!clickData.isRemote) return;
+        if (clickData.button == 1) {
+            WirelessSteamHudBridge.openEditor.run();
+        } else {
+            WirelessSteamHudBridge.toggleHud.run();
+        }
     }
 }

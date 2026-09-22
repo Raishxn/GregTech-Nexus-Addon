@@ -118,7 +118,7 @@ public final class WirelessSteamHudOverlay implements IGuiOverlay, IMoveableHud 
 
         if (drawGraph) {
             int graphX = x + PADDING;
-            int graphY = textY + LINE_HEIGHT - 2;
+            int graphY = textY + 2;
             graphics.fill(graphX, graphY, graphX + contentWidth, graphY + GRAPH_HEIGHT, COLOR_GRAPH_BACKGROUND);
             drawSparkline(graphics, graphX, graphY, contentWidth, GRAPH_HEIGHT,
                     WirelessSteamHudState.history(config.client.wirelessSteamHudHistorySeconds));

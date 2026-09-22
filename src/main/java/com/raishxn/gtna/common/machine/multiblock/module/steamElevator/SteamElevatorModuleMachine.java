@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.UITemplate;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
+import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDisplayUIMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
@@ -37,9 +38,9 @@ import java.util.List;
  * <p>
  * Mirrors GTNL {@code SteamElevatorModuleBase}: every module is itself a {@code 1x5x2} multiblock
  * (structure {@code pattern/steam_elevator_module.mbs}, decoded like the host). The Steam Elevator
- * host scans its twelve fixed module slots, connects the <b>formed</b> module controllers it finds
- * there and lets each module pay its steam upkeep from the formed structure's steam input hatches;
- * the module then applies its effect in {@link #onElevatorTick(SteamElevator)}.
+ * host scans its twelve fixed module slots and connects the <b>formed</b> module controllers it
+ * finds there; each bound module then drives its own effect every server tick and pays its steam
+ * upkeep from the formed structure's steam input hatches.
  *
  * <p>
  * There is <b>no EU buffer</b> here. A module draws its upkeep from the steam input hatches placed in
@@ -70,6 +71,8 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
 
     @Nullable
     private SteamElevator host;
+    @Nullable
+    private TickableSubscription tickSubscription;
 
     public SteamElevatorModuleMachine(IMachineBlockEntity holder, int tier) {
         super(holder);
@@ -79,6 +82,35 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
     @Override
     public ManagedFieldHolder getFieldHolder() {
         return MANAGED_FIELD_HOLDER;
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (!isRemote()) {
+            // Each module drives its own effect while it is formed and bound, instead of relying on
+            // the host's tick: a module that is connected in game must work even if the host tower
+            // is not being ticked for any reason, and the upkeep can only be charged once.
+            tickSubscription = subscribeServerTick(this::moduleTick);
+        }
+    }
+
+    @Override
+    public void onUnload() {
+        if (tickSubscription != null) {
+            tickSubscription.unsubscribe();
+            tickSubscription = null;
+        }
+        disconnectFromHost();
+        super.onUnload();
+    }
+
+    /** Applies this module's effect (and pays its upkeep) once per server tick while bound. */
+    private void moduleTick() {
+        if (isRemote() || !isFormed() || !elevatorConnected) return;
+        SteamElevator currentHost = host;
+        if (currentHost == null) return;
+        onElevatorTick(currentHost);
     }
 
     @Override
@@ -145,12 +177,6 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
     }
 
     @Override
-    public void onUnload() {
-        disconnectFromHost();
-        super.onUnload();
-    }
-
-    @Override
     public int getEffectRange() {
         return 0;
     }
@@ -206,6 +232,12 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
         consumeSteam(getSteamUpkeep());
     }
 
+    /** A module is "active" once it is formed and bound to the host (the host itself never idles). */
+    @Override
+    public boolean isActive() {
+        return isFormed() && elevatorConnected;
+    }
+
     // ------------------------------------------------------------------
     // GUI: the IDisplayUIMachine panel plus the module-specific widget.
     // ------------------------------------------------------------------
@@ -219,6 +251,10 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
         textList.add(Component.translatable(elevatorConnected ?
                 "gtna.machine.steam_elevator_module.connected" :
                 "gtna.machine.steam_elevator_module.disconnected"));
+        boolean working = isFormed() && elevatorConnected;
+        textList.add(Component.translatable(working ?
+                "gtna.machine.steam_elevator_module.working" :
+                "gtna.machine.steam_elevator_module.not_working"));
     }
 
     @Override

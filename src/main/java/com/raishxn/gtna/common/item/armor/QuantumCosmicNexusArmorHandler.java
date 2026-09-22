@@ -225,9 +225,12 @@ public final class QuantumCosmicNexusArmorHandler {
         }
 
         // Compatibility cleanup for worlds where the old handler left the exact quantum speed behind
-        // before this state tracking existed.
+        // before this state tracking existed. Only touch mayfly when that quantum speed is actually
+        // present: the armor always set it, so it is the reliable remnant signature. Clearing mayfly
+        // whenever it was true stomped every other flight source (the Steam Elevator flight module
+        // grants creative flight and was being reset here every tick).
         boolean legacyQuantumSpeed = Float.compare(player.getAbilities().getFlyingSpeed(), QUANTUM_FLYING_SPEED) == 0;
-        if (player.getAbilities().mayfly || player.getAbilities().flying || legacyQuantumSpeed) {
+        if (legacyQuantumSpeed) {
             player.getAbilities().mayfly = false;
             player.getAbilities().flying = false;
             player.getAbilities().setFlyingSpeed(DEFAULT_FLYING_SPEED);

@@ -27,9 +27,9 @@ public interface ISteamElevatorModule {
     long getSteamUpkeep();
 
     /**
-     * Called by the owning {@link SteamElevator} every server tick while the elevator is formed.
-     * Implementations should pay {@link #getSteamUpkeep()} and apply their effect here; the host
-     * only invokes this once the module is connected to it.
+     * Applies this module's effect and pays {@link #getSteamUpkeep()}. Called by the module's own
+     * server tick while it is formed and bound to a host ({@link SteamElevatorModuleMachine}), so a
+     * connected module keeps working independently of the host tower's tick.
      */
     void onElevatorTick(SteamElevator elevator);
 

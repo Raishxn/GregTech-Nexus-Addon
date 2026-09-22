@@ -72,9 +72,9 @@ public class SteamGreenhouseModule extends SteamElevatorModuleMachine {
         if (++progress < CYCLE_TICKS) return;
         progress = 0;
 
-        FluidStack drained = waterTank.drainInternal(1000, IFluidHandler.FluidAction.SIMULATE);
-        if (drained.getAmount() < 1000) return;
-        waterTank.drainInternal(1000, IFluidHandler.FluidAction.EXECUTE);
+        FluidStack drained = waterTank.drainInternal(WATER_PER_OPERATION, IFluidHandler.FluidAction.SIMULATE);
+        if (drained.getAmount() < WATER_PER_OPERATION) return;
+        waterTank.drainInternal(WATER_PER_OPERATION, IFluidHandler.FluidAction.EXECUTE);
 
         BlockPos origin = getPos();
         int grown = 0;

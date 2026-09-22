@@ -445,104 +445,72 @@ public class GTNAMachines2 {
      */
     private static void registerSteamElevatorModules() {
         if (!ConfigHolder.isMachineEnabled("steamElevatorModules")) return;
-        // The "what it does" line of every module is the definition's main tooltip key
-        // (gtna.machine.<id>.tooltip), which GTCEu inserts automatically; only the stats/upkeep
-        // lines are passed here so no line is ever emitted twice.
+        // The tooltips are the exact GTNL module tooltip lines (see GTNALangProvider): GTCEu inserts
+        // gtna.machine.<id>.tooltip automatically as the first description line, and the remaining
+        // GTNL lines are passed here in order. Nothing is emitted twice.
         STEAM_ELEVATOR_FLIGHT_MODULE = registerElevatorModule("steam_elevator_flight_module", "Steam Flight Module", 1,
                 holder -> new SteamFlightModule(holder, 1),
-                range(SteamFlightModule.RANGE),
-                upkeep(8192));
+                moduleLines("steam_elevator_flight_module", 1, 4));
         STEAM_ELEVATOR_WEATHER_MODULE = registerElevatorModule("steam_elevator_weather_module", "Steam Weather Module",
                 1, holder -> new SteamWeatherModule(holder, 1),
-                upkeep(512));
+                moduleLines("steam_elevator_weather_module", 1, 2));
         STEAM_ELEVATOR_GREENHOUSE_MODULE = registerElevatorModule("steam_elevator_greenhouse_module",
-                "Steam Greenhouse Module", 5, holder -> new SteamGreenhouseModule(holder, 5),
-                range(SteamGreenhouseModule.RANGE),
-                water(1000),
-                upkeep(8192));
+                "Steam Greenhouse Planting Module", 5, holder -> new SteamGreenhouseModule(holder, 5),
+                moduleLines("steam_elevator_greenhouse_module", 1, 5));
         STEAM_ELEVATOR_OIL_DRILL_MODULE_I = registerElevatorModule("steam_elevator_oil_drill_module_i",
                 "Steam Oil Drill Module I", 2, holder -> new SteamOilDrillModule(holder, 2),
-                yieldStat("250-1000"),
-                cycle(1200),
-                upkeep(128));
+                moduleLines("steam_elevator_oil_drill_module_i", 0, 4));
         STEAM_ELEVATOR_OIL_DRILL_MODULE_II = registerElevatorModule("steam_elevator_oil_drill_module_ii",
                 "Steam Oil Drill Module II", 3, holder -> new SteamOilDrillModule(holder, 3),
-                yieldStat("1000-4000"),
-                cycle(600),
-                upkeep(512));
+                moduleLines("steam_elevator_oil_drill_module_ii", 0, 4));
         STEAM_ELEVATOR_OIL_DRILL_MODULE_III = registerElevatorModule("steam_elevator_oil_drill_module_iii",
                 "Steam Oil Drill Module III", 4, holder -> new SteamOilDrillModule(holder, 4),
-                yieldStat("3000-12000"),
-                cycle(400),
-                upkeep(2048));
+                moduleLines("steam_elevator_oil_drill_module_iii", 0, 4));
         STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE = registerElevatorModule("steam_elevator_entity_crusher_module",
                 "Steam Entity Crusher Module", 1, holder -> new SteamEntityCrusherModule(holder, 1),
-                range(SteamEntityCrusherModule.RANGE),
-                upkeep(512));
+                moduleLines("steam_elevator_entity_crusher_module", 1, 6));
         STEAM_ELEVATOR_ORE_PROCESSOR_MODULE = registerElevatorModule("steam_elevator_ore_processor_module",
-                "Steam Ore Processor Module", 8, holder -> new SteamOreProcessorModule(holder, 8),
-                water(1000),
-                cycle(20),
-                upkeep(128));
+                "Steam Ore Processing Module", 8, holder -> new SteamOreProcessorModule(holder, 8),
+                moduleLines("steam_elevator_ore_processor_module", 1, 8));
         STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_I = registerElevatorModule("steam_elevator_monster_repellent_module_i",
-                "Steam Monster Repellent Module I", 1, holder -> new SteamMonsterRepellentModule(holder, 1),
-                range(64),
-                upkeep(512));
+                "Steam Monster Repellator Module I", 1, holder -> new SteamMonsterRepellentModule(holder, 1),
+                moduleLines("steam_elevator_monster_repellent_module_i", 0, 3));
         STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_II = registerElevatorModule(
-                "steam_elevator_monster_repellent_module_ii", "Steam Monster Repellent Module II", 2,
+                "steam_elevator_monster_repellent_module_ii", "Steam Monster Repellator Module II", 2,
                 holder -> new SteamMonsterRepellentModule(holder, 2),
-                range(128),
-                upkeep(1024));
+                moduleLines("steam_elevator_monster_repellent_module_ii", 0, 3));
         STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_III = registerElevatorModule(
-                "steam_elevator_monster_repellent_module_iii", "Steam Monster Repellent Module III", 3,
+                "steam_elevator_monster_repellent_module_iii", "Steam Monster Repellator Module III", 3,
                 holder -> new SteamMonsterRepellentModule(holder, 3),
-                range(256),
-                upkeep(1536));
+                moduleLines("steam_elevator_monster_repellent_module_iii", 0, 3));
         STEAM_ELEVATOR_BEACON_MODULE_I = registerElevatorModule("steam_elevator_beacon_module_i",
-                "Steam Beacon Module I", 1, holder -> new SteamBeaconModule(holder, 1),
-                range(64),
-                upkeep(2048));
+                "Steam Elevator Beacon Module I", 1, holder -> new SteamBeaconModule(holder, 1),
+                moduleLines("steam_elevator_beacon_module_i", 0, 4));
         STEAM_ELEVATOR_BEACON_MODULE_II = registerElevatorModule("steam_elevator_beacon_module_ii",
-                "Steam Beacon Module II", 2, holder -> new SteamBeaconModule(holder, 2),
-                range(128),
-                upkeep(8192));
+                "Steam Elevator Beacon Module II", 2, holder -> new SteamBeaconModule(holder, 2),
+                moduleLines("steam_elevator_beacon_module_ii", 0, 4));
         STEAM_ELEVATOR_BEACON_MODULE_III = registerElevatorModule("steam_elevator_beacon_module_iii",
-                "Steam Beacon Module III", 3, holder -> new SteamBeaconModule(holder, 3),
-                range(256),
-                upkeep(18432));
+                "Steam Elevator Beacon Module III", 3, holder -> new SteamBeaconModule(holder, 3),
+                moduleLines("steam_elevator_beacon_module_iii", 0, 4));
         if (ConfigHolder.isMachineEnabled("steamApiaryModule")) {
             STEAM_ELEVATOR_APIARY_MODULE = registerElevatorModule("steam_elevator_apiary_module",
-                    "Steam Apiary Module", 6, holder -> new SteamApiaryModule(holder, 6),
-                    water(1000),
-                    cycle(200),
-                    upkeep(16384));
+                    "Steam-Powered Apiary Module", 6, holder -> new SteamApiaryModule(holder, 6),
+                    moduleLines("steam_elevator_apiary_module", 1, 5));
         }
         if (ConfigHolder.isMachineEnabled("steamBeeBreedingModule")) {
             STEAM_ELEVATOR_BEE_BREEDING_MODULE = registerElevatorModule("steam_elevator_bee_breeding_module",
                     "Steam Bee Breeding Module", 8, holder -> new SteamBeeBreedingModule(holder, 8),
-                    cycle(12000),
-                    upkeep(32768));
+                    moduleLines("steam_elevator_bee_breeding_module", 1, 5));
         }
     }
 
-    private static Component range(int blocks) {
-        return Component.translatable("gtna.machine.steam_elevator_module.tooltip.range", blocks);
-    }
-
-    private static Component upkeep(long amount) {
-        return Component.translatable("gtna.machine.steam_elevator_module.tooltip.upkeep", amount);
-    }
-
-    private static Component cycle(int ticks) {
-        return Component.translatable("gtna.machine.steam_elevator_module.tooltip.cycle", ticks);
-    }
-
-    private static Component water(int amount) {
-        return Component.translatable("gtna.machine.steam_elevator_module.tooltip.water", amount);
-    }
-
-    private static Component yieldStat(String amount) {
-        return Component.translatable("gtna.machine.steam_elevator_module.tooltip.yield", amount);
+    /** The consecutive {@code gtna.machine.<id>.tooltip.<from..to>} lines, in order. */
+    private static Component[] moduleLines(String id, int from, int to) {
+        Component[] lines = new Component[to - from + 1];
+        for (int i = from; i <= to; i++) {
+            lines[i - from] = Component.translatable("gtna.machine." + id + ".tooltip." + i);
+        }
+        return lines;
     }
 
     private static MachineDefinition registerElevatorModule(String id, String name, int tier,

@@ -1054,16 +1054,13 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.steam_elevator_module.tier", "Module tier: %s");
         add("gtna.machine.steam_elevator_module.upkeep", "Upkeep: %s mB/t | Own steam: %s mB");
         add("gtna.machine.steam_elevator_module.connected", "Connected to the elevator");
+        add("gtna.machine.steam_elevator_module.working", "Working");
+        add("gtna.machine.steam_elevator_module.not_working", "Not Working");
         add("gtna.machine.steam_elevator_module.disconnected", "Not connected");
 
-        // Shared stat lines appended under each module's main description line. The description
-        // itself is gtna.machine.<module_id>.tooltip, auto-inserted by GTCEu; these keys only carry
-        // the numbers so no module ever prints the same line twice.
-        add("gtna.machine.steam_elevator_module.tooltip.range", "Range: %s blocks");
-        add("gtna.machine.steam_elevator_module.tooltip.upkeep", "Upkeep: %s mB/t");
-        add("gtna.machine.steam_elevator_module.tooltip.cycle", "Cycle: %s ticks");
-        add("gtna.machine.steam_elevator_module.tooltip.water", "Water: %s mB per operation");
-        add("gtna.machine.steam_elevator_module.tooltip.yield", "Yield: %s L per cycle");
+        // Shared stat line shown on the module's own screen (not the item tooltip): the item
+        // tooltips are the exact GTNL module lines, added per module below.
+        add("gtna.machine.steam_elevator_module.upkeep", "Upkeep: %s mB/t | Own steam: %s mB");
 
         // Wireless steam network inspection command (/gtna steam)
         add("gtna.command.steam.balance", "§b[GTNA] §fWireless steam network §7(%s)§f: §b%s§f mB");
@@ -1096,57 +1093,183 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.hud.editor.toggle", "Wireless Steam HUD: %s");
         add("gtna.hud.editor.on", "ON");
         add("gtna.hud.editor.off", "OFF");
-        add("key.gtna.category", "GTNA");
-        add("key.gtna.open_hud_editor", "Open HUD Editor");
+        add("gtna.machine.wireless_steam.hud.toggle", "Toggle the wireless steam HUD");
+        add("gtna.machine.wireless_steam.hud.editor", "Right click to move the HUD");
 
         add("block.gtna.steam_elevator_flight_module", "Steam Flight Module");
-        add("gtna.machine.steam_elevator_flight_module.tooltip",
-                "Grants creative flight to players within range while the elevator runs.");
+        add("gtna.machine.steam_elevator_flight_module.tooltip", "§a§lSteam-powered flight assistance.");
+        add("gtna.machine.steam_elevator_flight_module.tooltip.1", "Adds flight module to the Steam Stairway");
+        add("gtna.machine.steam_elevator_flight_module.tooltip.2",
+                "Consumes steam to grant you the power of free flight");
+        add("gtna.machine.steam_elevator_flight_module.tooltip.3",
+                "Adjust overclock count to consume more steam and expand the range");
+        add("gtna.machine.steam_elevator_flight_module.tooltip.4",
+                "Effective range: 64 * overclock count");
+
         add("block.gtna.steam_elevator_weather_module", "Steam Weather Module");
-        add("gtna.machine.steam_elevator_weather_module.tooltip",
-                "Forces clear, rain or thunder weather with a cycle button; each change lasts one hour.");
-        add("block.gtna.steam_elevator_greenhouse_module", "Steam Greenhouse Module");
-        add("gtna.machine.steam_elevator_greenhouse_module.tooltip",
-                "Consumes water to accelerate the growth of nearby crops.");
+        add("gtna.machine.steam_elevator_weather_module.tooltip", "§a§lControls the weather using steam.");
+        add("gtna.machine.steam_elevator_weather_module.tooltip.1",
+                "Adds weather changes module to the Steam Stairway");
+        add("gtna.machine.steam_elevator_weather_module.tooltip.2",
+                "Enter a specific material to switch weather, lasting for 1 hour");
+
+        add("block.gtna.steam_elevator_greenhouse_module", "Steam Greenhouse Planting Module");
+        add("gtna.machine.steam_elevator_greenhouse_module.tooltip", "§a§lFarmer’s Secret to Fortune.");
+        add("gtna.machine.steam_elevator_greenhouse_module.tooltip.1",
+                "Adds greenhouse module to the Steam Stairway");
+        add("gtna.machine.steam_elevator_greenhouse_module.tooltip.2",
+                "No more fertilizer or herbicide needed!");
+        add("gtna.machine.steam_elevator_greenhouse_module.tooltip.3",
+                "Consumes 16,000L of water per crop");
+        add("gtna.machine.steam_elevator_greenhouse_module.tooltip.4",
+                "Fixed operation time of 60 seconds");
+        add("gtna.machine.steam_elevator_greenhouse_module.tooltip.5", "Cannot be overclocked");
+
         add("block.gtna.steam_elevator_oil_drill_module_i", "Steam Oil Drill Module I");
         add("block.gtna.steam_elevator_oil_drill_module_ii", "Steam Oil Drill Module II");
         add("block.gtna.steam_elevator_oil_drill_module_iii", "Steam Oil Drill Module III");
-        add("gtna.machine.steam_elevator_oil_drill_module_i.tooltip",
-                "Pumps the bedrock fluid vein of its chunk into its output tank.");
-        add("gtna.machine.steam_elevator_oil_drill_module_ii.tooltip",
-                "Tier II bedrock-fluid drill: more vein types and a shorter cycle.");
-        add("gtna.machine.steam_elevator_oil_drill_module_iii.tooltip",
-                "Tier III bedrock-fluid drill: the widest yield and shortest cycle.");
+        add("gtna.machine.steam_elevator_oil_drill_module_i.tooltip", "§a§lExtracts oil with steam power.");
+        add("gtna.machine.steam_elevator_oil_drill_module_i.tooltip.0",
+                "Adds fluid drill module to the Steam Stairway");
+        add("gtna.machine.steam_elevator_oil_drill_module_i.tooltip.1",
+                "Extracts all underground fluid types in the current dimension.");
+        add("gtna.machine.steam_elevator_oil_drill_module_i.tooltip.2", "Randomly selects up to 1 types of fluids.");
+        add("gtna.machine.steam_elevator_oil_drill_module_i.tooltip.3", "Each extraction may yield 250~1000L.");
+        add("gtna.machine.steam_elevator_oil_drill_module_i.tooltip.4", "Base cycle time: 1200 ticks");
+        add("gtna.machine.steam_elevator_oil_drill_module_ii.tooltip", "§a§lAdvanced steam oil extraction.");
+        add("gtna.machine.steam_elevator_oil_drill_module_ii.tooltip.0",
+                "Adds fluid drill module to the Steam Stairway");
+        add("gtna.machine.steam_elevator_oil_drill_module_ii.tooltip.1",
+                "Extracts all underground fluid types in the current dimension.");
+        add("gtna.machine.steam_elevator_oil_drill_module_ii.tooltip.2", "Randomly selects up to 2 types of fluids.");
+        add("gtna.machine.steam_elevator_oil_drill_module_ii.tooltip.3", "Each extraction may yield 500~2000L.");
+        add("gtna.machine.steam_elevator_oil_drill_module_ii.tooltip.4", "Base cycle time: 600 ticks");
+        add("gtna.machine.steam_elevator_oil_drill_module_iii.tooltip", "§a§lElite steam oil extraction.");
+        add("gtna.machine.steam_elevator_oil_drill_module_iii.tooltip.0",
+                "Adds fluid drill module to the Steam Stairway");
+        add("gtna.machine.steam_elevator_oil_drill_module_iii.tooltip.1",
+                "Extracts all underground fluid types in the current dimension.");
+        add("gtna.machine.steam_elevator_oil_drill_module_iii.tooltip.2", "Randomly selects up to 3 types of fluids.");
+        add("gtna.machine.steam_elevator_oil_drill_module_iii.tooltip.3", "Each extraction may yield 1000~4000L.");
+        add("gtna.machine.steam_elevator_oil_drill_module_iii.tooltip.4", "Base cycle time: 400 ticks");
+
         add("block.gtna.steam_elevator_entity_crusher_module", "Steam Entity Crusher Module");
         add("gtna.machine.steam_elevator_entity_crusher_module.tooltip",
-                "Crushes hostile monsters within range, dropping their loot.");
-        add("block.gtna.steam_elevator_ore_processor_module", "Steam Ore Processor Module");
-        add("gtna.machine.steam_elevator_ore_processor_module.tooltip",
-                "Macerates ore inputs with water into crushed ore or dust.");
-        add("block.gtna.steam_elevator_monster_repellent_module_i", "Steam Monster Repellent Module I");
-        add("block.gtna.steam_elevator_monster_repellent_module_ii", "Steam Monster Repellent Module II");
-        add("block.gtna.steam_elevator_monster_repellent_module_iii", "Steam Monster Repellent Module III");
+                "§a§lSmelt mobs using high-temperature steam.");
+        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip.1",
+                "Adds entity crusher module to the Steam Stairway");
+        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip.2",
+                "Each operation has a 2% chance to double output.");
+        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip.3",
+                "Each additional identical spawner increases the chance by 0.5%.");
+        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip.4",
+                "Maximum chance increase is 34%.");
+        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip.5",
+                "As a trade-off, default time is doubled, power is halved.");
+        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip.6", "Cannot be overclocked");
+
+        add("block.gtna.steam_elevator_ore_processor_module", "Steam Ore Processing Module");
+        add("gtna.machine.steam_elevator_ore_processor_module.tooltip", "§a§lHigh-efficiency steam ore processor.");
+        add("gtna.machine.steam_elevator_ore_processor_module.tooltip.1",
+                "Adds ore processing module to the Steam Stairway");
+        add("gtna.machine.steam_elevator_ore_processor_module.tooltip.2", "Do all ore processing in one step");
+        add("gtna.machine.steam_elevator_ore_processor_module.tooltip.3", "Can process up to 16 ores at a time");
+        add("gtna.machine.steam_elevator_ore_processor_module.tooltip.4",
+                "Every ore costs 128L Steam/t, 1L lubricant, 10L distilled water");
+        add("gtna.machine.steam_elevator_ore_processor_module.tooltip.5",
+                "Processing time depends on the current mode");
+        add("gtna.machine.steam_elevator_ore_processor_module.tooltip.6",
+                "Set circuit to double both parallel and EU consumption");
+        add("gtna.machine.steam_elevator_ore_processor_module.tooltip.7", "Use a screwdriver to switch mode");
+        add("gtna.machine.steam_elevator_ore_processor_module.tooltip.8",
+                "Sneak click with screwdriver to void the stone dust");
+
+        add("block.gtna.steam_elevator_monster_repellent_module_i", "Steam Monster Repellator Module I");
+        add("block.gtna.steam_elevator_monster_repellent_module_ii", "Steam Monster Repellator Module II");
+        add("block.gtna.steam_elevator_monster_repellent_module_iii", "Steam Monster Repellator Module III");
         add("gtna.machine.steam_elevator_monster_repellent_module_i.tooltip",
-                "Removes hostile monsters so they cannot spawn nearby.");
+                "§a§lIt drives away monsters with loud noise.");
+        add("gtna.machine.steam_elevator_monster_repellent_module_i.tooltip.0",
+                "Adds mob repellent module to the Steam Stairway");
+        add("gtna.machine.steam_elevator_monster_repellent_module_i.tooltip.1",
+                "Creates a force field to prevent monster spawns");
+        add("gtna.machine.steam_elevator_monster_repellent_module_i.tooltip.2",
+                "Only prevents spawns while the machine is running");
+        add("gtna.machine.steam_elevator_monster_repellent_module_i.tooltip.3", "Effective range: 64");
         add("gtna.machine.steam_elevator_monster_repellent_module_ii.tooltip",
-                "Removes hostile monsters so they cannot spawn nearby (wider field).");
+                "§a§lYou can’t hear it, but the monsters hear it loud and clear.");
+        add("gtna.machine.steam_elevator_monster_repellent_module_ii.tooltip.0",
+                "Adds mob repellent module to the Steam Stairway");
+        add("gtna.machine.steam_elevator_monster_repellent_module_ii.tooltip.1",
+                "Creates a force field to prevent monster spawns");
+        add("gtna.machine.steam_elevator_monster_repellent_module_ii.tooltip.2",
+                "Only prevents spawns while the machine is running");
+        add("gtna.machine.steam_elevator_monster_repellent_module_ii.tooltip.3", "Effective range: 128");
         add("gtna.machine.steam_elevator_monster_repellent_module_iii.tooltip",
-                "Removes hostile monsters so they cannot spawn nearby (vast field).");
-        add("block.gtna.steam_elevator_beacon_module_i", "Steam Beacon Module I");
-        add("block.gtna.steam_elevator_beacon_module_ii", "Steam Beacon Module II");
-        add("block.gtna.steam_elevator_beacon_module_iii", "Steam Beacon Module III");
-        add("gtna.machine.steam_elevator_beacon_module_i.tooltip",
-                "Grants Speed and Haste to nearby players.");
-        add("gtna.machine.steam_elevator_beacon_module_ii.tooltip",
-                "Grants Speed, Haste, Resistance and Regeneration to nearby players.");
-        add("gtna.machine.steam_elevator_beacon_module_iii.tooltip",
-                "Grants Speed, Haste, Resistance, Regeneration, Strength and Night Vision to nearby players.");
-        add("block.gtna.steam_elevator_apiary_module", "Steam Apiary Module");
+                "§a§lThis machine makes monsters alert and run away on their own.");
+        add("gtna.machine.steam_elevator_monster_repellent_module_iii.tooltip.0",
+                "Adds mob repellent module to the Steam Stairway");
+        add("gtna.machine.steam_elevator_monster_repellent_module_iii.tooltip.1",
+                "Creates a force field to prevent monster spawns");
+        add("gtna.machine.steam_elevator_monster_repellent_module_iii.tooltip.2",
+                "Only prevents spawns while the machine is running");
+        add("gtna.machine.steam_elevator_monster_repellent_module_iii.tooltip.3", "Effective range: 256");
+
+        add("block.gtna.steam_elevator_beacon_module_i", "Steam Elevator Beacon Module I");
+        add("block.gtna.steam_elevator_beacon_module_ii", "Steam Elevator Beacon Module II");
+        add("block.gtna.steam_elevator_beacon_module_iii", "Steam Elevator Beacon Module III");
+        add("gtna.machine.steam_elevator_beacon_module_i.tooltip", "§a§lBasic Beacon.");
+        add("gtna.machine.steam_elevator_beacon_module_i.tooltip.0",
+                "Add beacon module effects into the Steam Stairway");
+        add("gtna.machine.steam_elevator_beacon_module_i.tooltip.1",
+                "Input steam to enable large-area potion effects");
+        add("gtna.machine.steam_elevator_beacon_module_i.tooltip.2", "Effective range: 64");
+        add("gtna.machine.steam_elevator_beacon_module_i.tooltip.3",
+                "Configure the potion effects to emit in the GUI");
+        add("gtna.machine.steam_elevator_beacon_module_i.tooltip.4",
+                "Adjust overclock count to increase potion effect levels");
+        add("gtna.machine.steam_elevator_beacon_module_ii.tooltip", "§a§lAdvanced Beacon.");
+        add("gtna.machine.steam_elevator_beacon_module_ii.tooltip.0",
+                "Add beacon module effects into the Steam Stairway");
+        add("gtna.machine.steam_elevator_beacon_module_ii.tooltip.1",
+                "Input steam to enable large-area potion effects");
+        add("gtna.machine.steam_elevator_beacon_module_ii.tooltip.2", "Effective range: 128");
+        add("gtna.machine.steam_elevator_beacon_module_ii.tooltip.3",
+                "Configure the potion effects to emit in the GUI");
+        add("gtna.machine.steam_elevator_beacon_module_ii.tooltip.4",
+                "Adjust overclock count to increase potion effect levels");
+        add("gtna.machine.steam_elevator_beacon_module_iii.tooltip", "§a§lElite Beacon.");
+        add("gtna.machine.steam_elevator_beacon_module_iii.tooltip.0",
+                "Add beacon module effects into the Steam Stairway");
+        add("gtna.machine.steam_elevator_beacon_module_iii.tooltip.1",
+                "Input steam to enable large-area potion effects");
+        add("gtna.machine.steam_elevator_beacon_module_iii.tooltip.2", "Effective range: 256");
+        add("gtna.machine.steam_elevator_beacon_module_iii.tooltip.3",
+                "Configure the potion effects to emit in the GUI");
+        add("gtna.machine.steam_elevator_beacon_module_iii.tooltip.4",
+                "Adjust overclock count to increase potion effect levels");
+
+        add("block.gtna.steam_elevator_apiary_module", "Steam-Powered Apiary Module");
         add("gtna.machine.steam_elevator_apiary_module.tooltip",
-                "Houses bees: consumes honeycomb and water to produce honeycomb and honey.");
+                "§a§lHigh pressure makes the bees work §0§mharder§a§l and more efficiently.");
+        add("gtna.machine.steam_elevator_apiary_module.tooltip.1", "Adds apiary module to the Steam Stairway");
+        add("gtna.machine.steam_elevator_apiary_module.tooltip.2", "The bees' (ideal?) home");
+        add("gtna.machine.steam_elevator_apiary_module.tooltip.3", "Fixed operating time: 300 seconds");
+        add("gtna.machine.steam_elevator_apiary_module.tooltip.4",
+                "Each overclock doubles the capacity, power ×4");
+        add("gtna.machine.steam_elevator_apiary_module.tooltip.5", "Base amount: 8");
+
         add("block.gtna.steam_elevator_bee_breeding_module", "Steam Bee Breeding Module");
-        add("gtna.machine.steam_elevator_bee_breeding_module.tooltip",
-                "Breeds bees: consumes two honeycomb and eight honey bottles to produce a new bee.");
+        add("gtna.machine.steam_elevator_bee_breeding_module.tooltip", "§a§lLet the bees feel the scorching♂love.");
+        add("gtna.machine.steam_elevator_bee_breeding_module.tooltip.1",
+                "Adds bee breeding module to the Steam Stairway");
+        add("gtna.machine.steam_elevator_bee_breeding_module.tooltip.2",
+                "Place a queen bee inside the controller");
+        add("gtna.machine.steam_elevator_bee_breeding_module.tooltip.3",
+                "It will slowly produce ignoble princesses");
+        add("gtna.machine.steam_elevator_bee_breeding_module.tooltip.4",
+                "Consumes 128 royal jelly per operation");
+        add("gtna.machine.steam_elevator_bee_breeding_module.tooltip.5", "Base processing time: 10 minutes");
 
         add("config.gtna.option.eyeOfWood", "Eye of Wood");
 

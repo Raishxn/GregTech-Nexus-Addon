@@ -200,14 +200,10 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
     private void elevatorTick() {
         if (isRemote() || !isFormed()) return;
         // Modules are separate multiblocks that may form after the host, so rescan the fixed slots.
+        // The modules themselves apply their effects (and pay their upkeep) on their own server
+        // tick while bound, so a module keeps working even if the host tower is not being ticked.
         if (getOffsetTimer() % 20 == 0) {
             scanModules();
-        }
-        if (modules.isEmpty()) return;
-        // The elevator is always active; each module pays its own steam upkeep from the structure's
-        // steam input hatches (its own and the host's), exactly as GTNL charges the modules.
-        for (SteamElevatorModuleMachine module : new ArrayList<>(modules)) {
-            module.onElevatorTick(this);
         }
     }
 
