@@ -34,10 +34,10 @@ import net.minecraft.world.item.Items;
  * GTNL numbers kept: tier 8, upkeep {@code V[6]} and the 12000-tick breeding cycle
  * ({@code mMaxProgresstime}).
  */
-public class SteamBeeBreedingModule extends SteamElevatorModulePartMachine {
+public class SteamBeeBreedingModule extends SteamElevatorModuleMachine {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            SteamBeeBreedingModule.class, SteamElevatorModulePartMachine.MANAGED_FIELD_HOLDER);
+            SteamBeeBreedingModule.class, SteamElevatorModuleMachine.MANAGED_FIELD_HOLDER);
 
     /** GTNL {@code mMaxProgresstime}. */
     private static final int CYCLE_TICKS = 12000;
@@ -144,7 +144,7 @@ public class SteamBeeBreedingModule extends SteamElevatorModulePartMachine {
     }
 
     @Override
-    public Widget createUIWidget() {
+    protected Widget createModuleUIWidget() {
         WidgetGroup group = screenGroup(150, 80);
         group.addWidget(new LabelWidget(5, 4, () -> "Bee Breeding tier §b" + getModuleTier()));
         for (int i = 0; i < 9; i++) {

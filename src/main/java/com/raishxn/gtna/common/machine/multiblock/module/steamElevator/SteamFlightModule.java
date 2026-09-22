@@ -21,7 +21,7 @@ import java.util.UUID;
  * inside the range and revokes it when the elevator stops (the tracked-player set is the analogue
  * of the potion expiring).
  */
-public class SteamFlightModule extends SteamElevatorModulePartMachine {
+public class SteamFlightModule extends SteamElevatorModuleMachine {
 
     /** GTNL {@code getMachineEffectRange()} at tier 1 (oc-expanded in GTNL). */
     public static final int RANGE = 64;

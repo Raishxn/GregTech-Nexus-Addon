@@ -24,7 +24,7 @@ import net.minecraft.server.level.ServerLevel;
  * toggled machine mode paid for with elevator energy; the effect is identical (the world weather is
  * forced for two in-game hours and refreshed while running).
  */
-public class SteamWeatherModule extends SteamElevatorModulePartMachine {
+public class SteamWeatherModule extends SteamElevatorModuleMachine {
 
     public static final int MODE_CLEAR = 0;
     public static final int MODE_RAIN = 1;
@@ -71,7 +71,7 @@ public class SteamWeatherModule extends SteamElevatorModulePartMachine {
     }
 
     @Override
-    public Widget createUIWidget() {
+    protected Widget createModuleUIWidget() {
         WidgetGroup group = screenGroup(150, 52);
         group.addWidget(new LabelWidget(5, 5, () -> "Weather: §b" + modeName()));
         group.addWidget(new ButtonWidget(5, 20, 60, 16,

@@ -31,10 +31,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
  * a single maceration stage using GTCEu's material registry (no external recipe lookup). The
  * documented simplification is the chain depth, not the input/output identity.
  */
-public class SteamOreProcessorModule extends SteamElevatorModulePartMachine {
+public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            SteamOreProcessorModule.class, SteamElevatorModulePartMachine.MANAGED_FIELD_HOLDER);
+            SteamOreProcessorModule.class, SteamElevatorModuleMachine.MANAGED_FIELD_HOLDER);
 
     public static final long RECIPE_EUT = 128;
     private static final int WATER_PER_ITEM = 1000;
@@ -114,7 +114,7 @@ public class SteamOreProcessorModule extends SteamElevatorModulePartMachine {
     }
 
     @Override
-    public Widget createUIWidget() {
+    protected Widget createModuleUIWidget() {
         WidgetGroup group = screenGroup(150, 80);
         group.addWidget(new LabelWidget(5, 4, () -> "Ore Processor tier §b" + getModuleTier()));
         for (int i = 0; i < 3; i++) {

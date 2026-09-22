@@ -4,12 +4,11 @@ package com.raishxn.gtna.common.machine.multiblock.module.steamElevator;
  * GTNA-native replacement for GTNL's {@code SteamElevatorModuleBase}.
  *
  * <p>
- * GTNL modules are themselves multiblocks that double as hatches inside the Steam Elevator. GTNA
- * instead makes every module a <b>part machine</b>
- * ({@link com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart})
- * installed in the elevator's module slots; the elevator charges their internal buffer from the
- * steam it consumes and then ticks the module effect. This keeps the modular system (one part per
- * capability) while staying inside GTCEu's part/controller lifecycle.
+ * Every module is itself a {@code 1x5x2} multiblock
+ * ({@link SteamElevatorModuleMachine}); the Steam Elevator host scans its twelve fixed module slots
+ * and charges the <b>formed</b> module controllers it finds there. This keeps GTNL's modular
+ * system (one multiblock per capability) while staying inside GTCEu's controller lifecycle: a stray
+ * block or part in a slot is never connected, so it cannot inflate the installed-module count.
  */
 public interface ISteamElevatorModule {
 

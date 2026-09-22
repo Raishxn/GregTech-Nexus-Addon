@@ -32,7 +32,7 @@ import java.util.List;
  * <li>tier III: + Strength, Night Vision</li>
  * </ul>
  */
-public class SteamBeaconModule extends SteamElevatorModulePartMachine {
+public class SteamBeaconModule extends SteamElevatorModuleMachine {
 
     private static final int EFFECT_DURATION = 300;
 
@@ -95,7 +95,7 @@ public class SteamBeaconModule extends SteamElevatorModulePartMachine {
     }
 
     @Override
-    public Widget createUIWidget() {
+    protected Widget createModuleUIWidget() {
         WidgetGroup group = screenGroup(150, 52);
         group.addWidget(
                 new LabelWidget(5, 5, () -> "Beacon tier: §b" + getModuleTier() + " §r| Range: §b" + getEffectRange()));

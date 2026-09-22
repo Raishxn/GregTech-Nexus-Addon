@@ -29,10 +29,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
  * ({@link BedrockFluidVeinSavedData#getFluidInChunk}) into its own output tank. Tiers I/II/III
  * (GTNL tiers 2/3/4) increase the yield and shorten the cycle.
  */
-public class SteamOilDrillModule extends SteamElevatorModulePartMachine {
+public class SteamOilDrillModule extends SteamElevatorModuleMachine {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            SteamOilDrillModule.class, SteamElevatorModulePartMachine.MANAGED_FIELD_HOLDER);
+            SteamOilDrillModule.class, SteamElevatorModuleMachine.MANAGED_FIELD_HOLDER);
 
     public final NotifiableFluidTank outputTank;
 
@@ -90,7 +90,7 @@ public class SteamOilDrillModule extends SteamElevatorModulePartMachine {
     }
 
     @Override
-    public Widget createUIWidget() {
+    protected Widget createModuleUIWidget() {
         WidgetGroup group = screenGroup(150, 52);
         group.addWidget(new LabelWidget(5, 5, () -> "Tier: §b" + getModuleTier() + " §r| Yield: §b" + baseYield()));
         group.addWidget(new TankWidget(outputTank.getStorages()[0], 5, 20, 18, 18, true, false));

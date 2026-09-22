@@ -6,8 +6,8 @@ import com.gregtechceu.gtceu.api.data.RotationState;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
+import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
-import com.gregtechceu.gtceu.api.machine.multiblock.part.MultiblockPartMachine;
 import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
+import com.raishxn.gtna.common.data.multiblock.GTNAMultiBlockFileReader;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamApiaryModule;
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamBeaconModule;
@@ -434,11 +435,13 @@ public class GTNAMachines2 {
     }
 
     /**
-     * The Steam Elevator modules (GTNL port, LGPLv3). Each is a part machine that declares the
-     * {@code steam_elevator_module} ability, so it fits exclusively in the elevator's module slots.
-     * Tiers I/II/III variants follow GTNL's registration (Beacon 1/2/3, Repellent 1/2/3, Oil Drill
-     * 2/3/4); Flight/Weather are tier 1, Greenhouse tier 5, the Ore Processor and Bee Breeding tier
-     * 8 and the Apiary tier 6.
+     * The Steam Elevator modules (GTNL port, LGPLv3). Every module is its own {@code 1x5x2}
+     * multiblock (structure {@code pattern/steam_elevator_module.mbs}) rather than a part machine:
+     * the elevator scans its fixed module slots and connects only formed module controllers, so a
+     * stray block or part in a slot can no longer count as an installed module. Tiers I/II/III
+     * variants follow GTNL's registration (Beacon 1/2/3, Repellent 1/2/3, Oil Drill 2/3/4);
+     * Flight/Weather are tier 1, Greenhouse tier 5, the Ore Processor and Bee Breeding tier 8 and
+     * the Apiary tier 6.
      */
     private static void registerSteamElevatorModules() {
         if (!ConfigHolder.isMachineEnabled("steamElevatorModules")) return;
@@ -483,29 +486,24 @@ public class GTNAMachines2 {
     }
 
     private static MachineDefinition registerElevatorModule(String id, String name, int tier,
-                                                            Function<IMachineBlockEntity, MultiblockPartMachine> factory) {
-        String tierName = GTValues.VN[Math.min(tier, GTValues.MAX)].toLowerCase(Locale.ROOT);
-        ResourceLocation hullSide = GTCEu.id("block/casings/voltage/" + tierName + "/side");
-        ResourceLocation hullTop = GTCEu.id("block/casings/voltage/" + tierName + "/top");
-        ResourceLocation hullBottom = GTCEu.id("block/casings/voltage/" + tierName + "/bottom");
-
-        return REGISTRATE.machine(id, holder -> factory.apply(holder))
-                .tier(tier)
-                .rotationState(RotationState.ALL)
-                .abilities(GTNAPartAbility.STEAM_ELEVATOR_MODULE)
-                .modelProperty(IS_FORMED, false)
-                .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
-                .model((ctx, prov, builder) -> {
-                    var model = prov.models()
-                            .withExistingParent("block/machines/steam_elevator/" + id,
-                                    GTCEu.id("block/machine/template/part/hatch_machine"))
-                            .texture("overlay", GTCEu.id("block/overlay/machine/overlay_hatch"))
-                            .texture("side", hullSide)
-                            .texture("top", hullTop)
-                            .texture("bottom", hullBottom)
-                            .texture("particle", hullSide);
-                    builder.partialState().setModel(model);
-                })
+                                                            Function<IMachineBlockEntity, ? extends MultiblockControllerMachine> factory) {
+        return REGISTRATE.multiblock(id, factory)
+                .tier(Math.min(tier, GTValues.MAX))
+                .rotationState(RotationState.NON_Y_AXIS)
+                // Keep the module's local frame aligned with the host's pattern frame.
+                .allowExtendedFacing(false)
+                .allowFlip(false)
+                // No real recipes: the module effects are driven by the host, but a dummy recipe
+                // type keeps the definition's recipe-type array non-empty.
+                .recipeType(GTRecipeTypes.DUMMY_RECIPES)
+                .appearanceBlock(GTBlocks.CASING_STEEL_SOLID)
+                .pattern(definition -> GTNAMultiBlockFileReader.start(definition, "steam_elevator_module")
+                        .where('~', controller(blocks(definition.get())))
+                        .where('A', blocks(GTBlocks.CASING_STEEL_SOLID.get()))
+                        .build())
+                .workableCasingModel(
+                        GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
+                        GTCEu.id("block/multiblock/steam_grinder"))
                 .tooltips(
                         Component.translatable("gtna.machine." + id + ".tooltip"),
                         Component.translatable("gtceu.part_sharing.disabled"))

@@ -28,10 +28,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
  * level instead: it consumes water and accelerates the growth of bone-mealable crops in its radius,
  * which is the same "irrigated greenhouse" outcome without the seed/produce bookkeeping.
  */
-public class SteamGreenhouseModule extends SteamElevatorModulePartMachine {
+public class SteamGreenhouseModule extends SteamElevatorModuleMachine {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            SteamGreenhouseModule.class, SteamElevatorModulePartMachine.MANAGED_FIELD_HOLDER);
+            SteamGreenhouseModule.class, SteamElevatorModuleMachine.MANAGED_FIELD_HOLDER);
 
     /** GTNL {@code getWaterUsage()}. */
     public static final int WATER_PER_OPERATION = 16_000;
@@ -88,7 +88,7 @@ public class SteamGreenhouseModule extends SteamElevatorModulePartMachine {
     }
 
     @Override
-    public Widget createUIWidget() {
+    protected Widget createModuleUIWidget() {
         WidgetGroup group = screenGroup(150, 60);
         group.addWidget(new LabelWidget(5, 4, () -> "Greenhouse tier §b" + getModuleTier()));
         group.addWidget(new LabelWidget(5, 18, () -> "Water: §b" + waterTank.getFluidInTank(0).getAmount() + " mB"));

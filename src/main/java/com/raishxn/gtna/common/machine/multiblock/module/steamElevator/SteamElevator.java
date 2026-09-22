@@ -4,13 +4,14 @@ import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
+import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDisplayUIMachine;
-import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
+import com.gregtechceu.gtceu.api.pattern.util.RelativeDirection;
 
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
 import com.lowdragmc.lowdraglib.gui.widget.ButtonWidget;
@@ -19,9 +20,13 @@ import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -35,10 +40,10 @@ import java.util.List;
  *
  * <p>
  * A 35x43x35 modular multiblock: it burns steam into a large internal EU buffer and distributes that
- * buffer evenly across every {@link ISteamElevatorModule} part installed in its twelve module slots.
- * The modules then apply their own capability (flight, weather, greenhouse, ...). This replaces
- * GTNL's module hatches ({@code mModuleHatches}) with GTCEu part machines and a dedicated
- * {@code steam_elevator_module} {@link PartAbility}.
+ * buffer evenly across every {@link SteamElevatorModuleMachine} installed in its twelve fixed module
+ * slots. The modules are themselves small {@code 1x5x2} multiblocks that apply their own capability
+ * (flight, weather, greenhouse, ...). This replaces GTNL's module hatches ({@code mModuleHatches})
+ * with GTCEu multiblock modules and a fixed slot scan, so only a fully formed module is counted.
  *
  * <p>
  * Deviations (documented):
@@ -61,11 +66,25 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
     /** GTNL {@code maxEUStore()}. */
     public static final long MAX_ENERGY = 256_000_000L;
 
+    /**
+     * The twelve module-slot positions, expressed in the pattern's local frame relative to the
+     * controller as {@code {up, left, forward}} (decoded from the {@code I} cells of
+     * {@code pattern/steam_elevator.mbs}). {@link RelativeDirection#offsetPos} turns them into world
+     * positions for the controller's facing, so a rotated or flipped elevator still finds its slots.
+     */
+    private static final int[][] MODULE_OFFSETS = {
+            { 0, -8, -5 }, { 0, -8, -3 }, { 0, -8, -1 },
+            { 0, -2, -11 }, { 0, -2, 5 },
+            { 0, 0, -11 }, { 0, 0, 5 },
+            { 0, 2, -11 }, { 0, 2, 5 },
+            { 0, 8, -5 }, { 0, 8, -3 }, { 0, 8, -1 },
+    };
+
     @Persisted
     @DescSynced
     private long energyBuffer;
 
-    private final List<ISteamElevatorModule> modules = new ArrayList<>();
+    private final List<SteamElevatorModuleMachine> modules = new ArrayList<>();
     private final List<NotifiableFluidTank> steamTanks = new ArrayList<>();
 
     private boolean wasRunning;
@@ -111,10 +130,7 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
         super.onStructureFormed();
         modules.clear();
         steamTanks.clear();
-        for (IMultiPart part : getParts()) {
-            if (part instanceof ISteamElevatorModule module) {
-                modules.add(module);
-            }
+        for (var part : getParts()) {
             if (!PartAbility.STEAM.isApplicable(part.self().getDefinition().getBlock())) {
                 continue;
             }
@@ -131,26 +147,82 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
         // structure (it is not tied to a specific cell), so enforce it here, not as a pattern limit.
         if (steamTanks.isEmpty()) {
             onStructureInvalid();
+            return;
         }
+        scanModules();
     }
 
     @Override
     public void onStructureInvalid() {
         super.onStructureInvalid();
-        for (ISteamElevatorModule module : modules) {
-            module.onElevatorStop();
+        for (SteamElevatorModuleMachine module : new ArrayList<>(modules)) {
+            module.disconnectFromHost();
         }
-        wasRunning = false;
         modules.clear();
+        wasRunning = false;
         steamTanks.clear();
+    }
+
+    /**
+     * The world positions of the twelve module slots, derived from the controller's position and
+     * facing. The set is the exact {@code I} cells of the host pattern (see {@link #MODULE_OFFSETS}).
+     */
+    public BlockPos[] getModuleScanPositions() {
+        Direction front = getFrontFacing();
+        Direction upwards = getUpwardsFacing();
+        boolean flipped = isFlipped();
+        BlockPos origin = getPos();
+        BlockPos[] positions = new BlockPos[MODULE_OFFSETS.length];
+        for (int i = 0; i < MODULE_OFFSETS.length; i++) {
+            int[] offset = MODULE_OFFSETS[i];
+            positions[i] = RelativeDirection.offsetPos(origin, front, upwards, flipped,
+                    offset[0], offset[1], offset[2]);
+        }
+        return positions;
+    }
+
+    /**
+     * Rebuilds the connected-module set from the fixed slots. Only a fully formed
+     * {@link SteamElevatorModuleMachine} counts; any other block or part in a slot is ignored.
+     */
+    private void scanModules() {
+        Level level = getLevel();
+        if (!(level instanceof ServerLevel)) return;
+        List<SteamElevatorModuleMachine> found = new ArrayList<>();
+        for (BlockPos pos : getModuleScanPositions()) {
+            MetaMachine machine = MetaMachine.getMachine(level, pos);
+            if (machine instanceof SteamElevatorModuleMachine module && module.isFormed() &&
+                    !found.contains(module)) {
+                found.add(module);
+            }
+        }
+        for (SteamElevatorModuleMachine module : new ArrayList<>(modules)) {
+            if (!found.contains(module)) {
+                module.disconnectFromHost();
+            }
+        }
+        for (SteamElevatorModuleMachine module : found) {
+            module.connectToHost(this);
+        }
+        modules.clear();
+        modules.addAll(found);
+    }
+
+    /** Called by a module when it unbinds; the periodic scan is the source of truth. */
+    void removeModule(SteamElevatorModuleMachine module) {
+        modules.remove(module);
     }
 
     private void elevatorTick() {
         if (isRemote() || !isFormed()) return;
+        // Modules are separate multiblocks that may form after the host, so rescan the fixed slots.
+        if (getOffsetTimer() % 20 == 0) {
+            scanModules();
+        }
         if (!isWorkingEnabled()) {
             if (wasRunning) {
                 wasRunning = false;
-                for (ISteamElevatorModule module : modules) {
+                for (SteamElevatorModuleMachine module : new ArrayList<>(modules)) {
                     module.onElevatorStop();
                 }
             }
@@ -162,11 +234,11 @@ public class SteamElevator extends WorkableMultiblockMachine implements IDisplay
 
         if (!modules.isEmpty()) {
             long share = energyBuffer / modules.size();
-            for (ISteamElevatorModule module : modules) {
+            for (SteamElevatorModuleMachine module : new ArrayList<>(modules)) {
                 long accepted = module.receiveEnergy(share);
                 energyBuffer -= accepted;
             }
-            for (ISteamElevatorModule module : modules) {
+            for (SteamElevatorModuleMachine module : new ArrayList<>(modules)) {
                 module.onElevatorTick(this);
             }
         }

@@ -37,10 +37,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
  * {@code V[4] * mMaxSlots} at the base colony size) and a 200-tick production cycle (GTNL's
  * {@code mMaxProgresstime = 6000} with drop acceleration, reduced to a per-batch cycle).
  */
-public class SteamApiaryModule extends SteamElevatorModulePartMachine {
+public class SteamApiaryModule extends SteamElevatorModuleMachine {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            SteamApiaryModule.class, SteamElevatorModulePartMachine.MANAGED_FIELD_HOLDER);
+            SteamApiaryModule.class, SteamElevatorModuleMachine.MANAGED_FIELD_HOLDER);
 
     /** GTNL apiary water feed; the greenhouse also consumes water from a tank. */
     public static final int WATER_PER_CYCLE = 1000;
@@ -152,7 +152,7 @@ public class SteamApiaryModule extends SteamElevatorModulePartMachine {
     }
 
     @Override
-    public Widget createUIWidget() {
+    protected Widget createModuleUIWidget() {
         WidgetGroup group = screenGroup(150, 80);
         group.addWidget(new LabelWidget(5, 4, () -> "Apiary tier §b" + getModuleTier()));
         for (int i = 0; i < 9; i++) {

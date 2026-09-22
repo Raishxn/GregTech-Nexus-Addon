@@ -1173,6 +1173,11 @@ public class GTNAMachines {
             () -> REGISTRATE
                     .multiblock("steam_elevator", SteamElevator::new)
                     .rotationState(RotationState.NON_Y_AXIS)
+                    // The module slots are resolved with RelativeDirection.offsetPos, which is exact
+                    // for the default upwards facing and no flip; the tower is symmetric, so locking
+                    // those two out costs nothing.
+                    .allowExtendedFacing(false)
+                    .allowFlip(false)
                     // No real recipes: DUMMY keeps getRecipeType() safe for the inert recipe logic.
                     .recipeType(GTRecipeTypes.DUMMY_RECIPES)
                     .appearanceBlock(GTNABlocks.STEEL_REINFORCED_WOOD)
@@ -1191,7 +1196,7 @@ public class GTNAMachines {
                                     .withStyle(ChatFormatting.DARK_GRAY))
                     .register());
 
-    /** Structure decoded from GTNL's steam_elevator.mbs (35x43x35); H/I are hatch/module slots. */
+    /** Structure decoded from GTNL's steam_elevator.mbs (35x43x35); H is the hatch shell and I the module slots. */
     private static BlockPattern createSteamElevatorPattern(MultiblockMachineDefinition definition) {
         return GTNAMultiBlockFileReader.start(definition, "steam_elevator")
                 .where('~', controller(blocks(definition.get())))
@@ -1214,8 +1219,7 @@ public class GTNAMachines {
                         .or(abilities(PartAbility.IMPORT_FLUIDS).setMaxGlobalLimited(1))
                         .or(abilities(PartAbility.EXPORT_FLUIDS).setMaxGlobalLimited(2))
                         .or(abilities(PartAbility.MAINTENANCE).setMaxGlobalLimited(1)))
-                .where('I', blocks(GTBlocks.CASING_STEEL_SOLID.get())
-                        .or(abilities(GTNAPartAbility.STEAM_ELEVATOR_MODULE).setMaxGlobalLimited(12)))
+                .where('I', any())
                 .where('J', blocks(Blocks.STONE_BRICKS))
                 .where(' ', any())
                 .build();

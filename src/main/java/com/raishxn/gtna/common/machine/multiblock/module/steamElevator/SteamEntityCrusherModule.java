@@ -17,7 +17,7 @@ import net.minecraft.world.phys.AABB;
  * dropping their normal loot (damage is credited as a generic player-like kill so loot tables run).
  * The GTNL parallel/drop-multiplier overclocks are reduced to a flat range/energy upkeep.
  */
-public class SteamEntityCrusherModule extends SteamElevatorModulePartMachine {
+public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
 
     public static final int RANGE = 8;
 

@@ -1037,6 +1037,11 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.steam_elevator.set_out", "Set out");
         add("gtna.machine.steam_elevator.set_out.not_running", "The elevator must be running to set out.");
 
+        add("gtna.machine.steam_elevator_module.tier", "Module tier: %s");
+        add("gtna.machine.steam_elevator_module.energy", "Buffer: %s / %s EU");
+        add("gtna.machine.steam_elevator_module.connected", "Connected to the elevator");
+        add("gtna.machine.steam_elevator_module.disconnected", "Not connected");
+
         add("block.gtna.steam_elevator_flight_module", "Steam Flight Module");
         add("gtna.machine.steam_elevator_flight_module.tooltip",
                 "Grants creative flight to players within range while the elevator runs.");

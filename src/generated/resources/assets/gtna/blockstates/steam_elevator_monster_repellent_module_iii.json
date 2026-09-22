@@ -1,9 +1,5 @@
 {
   "variants": {
-    "facing=down": {
-      "model": "gtna:block/machine/steam_elevator_monster_repellent_module_iii",
-      "x": 90
-    },
     "facing=east": {
       "model": "gtna:block/machine/steam_elevator_monster_repellent_module_iii",
       "y": 90
@@ -14,11 +10,6 @@
     "facing=south": {
       "model": "gtna:block/machine/steam_elevator_monster_repellent_module_iii",
       "y": 180
-    },
-    "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtna:block/machine/steam_elevator_monster_repellent_module_iii",
-      "x": 270
     },
     "facing=west": {
       "model": "gtna:block/machine/steam_elevator_monster_repellent_module_iii",

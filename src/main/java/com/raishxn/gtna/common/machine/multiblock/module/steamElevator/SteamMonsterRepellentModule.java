@@ -17,7 +17,7 @@ import net.minecraft.world.phys.AABB;
  * elevator runs, hostile monsters that appear inside the radius are quietly removed (no loot). The
  * radius and energy cost follow GTNL exactly.
  */
-public class SteamMonsterRepellentModule extends SteamElevatorModulePartMachine {
+public class SteamMonsterRepellentModule extends SteamElevatorModuleMachine {
 
     private int counter;
 

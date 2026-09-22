@@ -59,6 +59,54 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0035 (2026-09-22) — Steam Elevator: módulos viram multiblocos próprios (corrige a contagem de módulos)
+
+- **Bug reportado in-game:** o Steam Elevator contava **qualquer** bloco/peça nas células de módulo
+  como módulo (ex.: colocar uma steam hatch em cima de um módulo incrementava o contador). O sistema
+  era composto de **part machines** (`SteamElevatorModulePartMachine`) marcadas com a ability
+  `GTNAPartAbility.STEAM_ELEVATOR_MODULE`, e o host simplesmente somava `getParts()` que
+  implementassem `ISteamElevatorModule` — ou seja, um bloco solto no slot bastava.
+- **Correção (desenho GTNL/GTLAdditions):** cada módulo agora é um **multiblock `1x5x2` próprio**
+  (estrutura `pattern/steam_elevator_module.mbs`, decodificada com o `GTNAMultiBlockFileReader`
+  existente). O host escaneia um conjunto **fixo** de 12 slots e conecta **apenas** o controller de
+  módulo **formado** que estiver lá; um bloco/peça solto nunca é contado.
+- **Base nova `SteamElevatorModuleMachine`** (`extends WorkableMultiblockMachine`, `implements
+  ISteamElevatorModule, IDisplayUIMachine`): mantém o buffer `640000 * (1 << tier)`, o
+  `receiveEnergy`/`consumeEnergy` e o `onElevatorTick` dos antigos part machines; troca
+  `addedToController/removedFromController` por `connectToHost/disconnectFromHost`. RecipeLogic
+  inerte (o host dirige os efeitos). `createUI` monta o painel do `IDisplayUIMachine` + o widget do
+  módulo (`createModuleUIWidget`, ex-`createUIWidget`).
+- **Host (`SteamElevator`):** novo `getModuleScanPositions()` com 12 offsets `{up, left, forward}`
+  **relativos ao controller**, decodificados das células `I` do `steam_elevator.mbs`
+  (`{0,-8,-5}..{0,8,-1}`); `RelativeDirection.offsetPos(pos, front, upwards, flipped, ...)` aplica
+  facing/flip. `scanModules()` (no `onStructureFormed` e a cada 20 ticks) reconstrói o set a partir
+  dos slots: só `SteamElevatorModuleMachine` com `isFormed()` entra; os demais são desconectados.
+  Host e módulos usam `allowExtendedFacing(false)` + `allowFlip(false)` para o `offsetPos` ser
+  exato (o `I` do padrão virou `any()`; a ability `STEAM_ELEVATOR_MODULE` foi **removida** do
+  `GTNAPartAbility`).
+- **Encaixe do módulo no host:** em coordenadas locais do padrão, o módulo ocupa `j=I.j-1..I.j+3`
+  (5 de altura) e `i=I.i..I.i+1` (2 de profundidade), com controller em `j=1, i=0` (como o GTNL);
+  um script verificou que **os 12 slots** aceitam essa caixa — as células caem em `H`/`D`
+  (solid steel machine casing, que é o casing do módulo) ou em ` ` (any). O jogador deve orientar o
+  módulo com o **mesmo facing** do host.
+- **Lang:** 4 chaves novas (`gtna.machine.steam_elevator_module.{tier,energy,connected,disconnected}`)
+  no `GTNALangProvider` (en_us gerado) + `pt_br.json` (inserção **byte-preserving**: BOM e
+  CRLF/LF preservados, 4 linhas adicionadas). Tooltips/recipes existentes mantidos (os registry ids
+  não mudaram).
+- **Arquivos:** `SteamElevatorModuleMachine.java` (novo), `SteamElevatorModulePartMachine.java`
+  (removido), `ISteamElevatorModule.java`, `SteamElevator.java`, os 10 módulos, `GTNAMachines.java`
+  (padrão `I`→`any()`, allowFlip/extended), `GTNAMachines2.java` (registro `multiblock`),
+  `GTNAPartAbility.java`, `GTNALangProvider.java`, `pt_br.json`, `pattern/steam_elevator_module.mbs`
+  (novo) e os recursos gerados dos módulos.
+- **Validação:** `spotlessApply compileJava` OK; `spotlessCheck` + `runUnitTests` (**14/14**);
+  `runGameTestServer` (**25/25**, `All 25 required tests passed`); `grep -c "Parsing error loading
+  recipe gtna:" run/logs/latest.log` = **0**; `runData` determinístico (2ª execução `written: 0`).
+- **Pendências abertas / verificação in-game:** (a) os gates **não** montam o elevador 35x43x35 —
+  validar no `runClient` que os 12 módulos formam nos slots, que um bloco solto **não** conta e que
+  um módulo formado é conectado/carregado; (b) a orientação do módulo precisa coincidir com o facing
+  do host (documentado; se o jogador errar, o módulo não forma e não é contado); (c) a base antiga
+  era part machine — saves antigos com módulos-part podem virar blocos órfãos, sem migração.
+
 ### G-0034 (2026-09-22) — padronização das tooltips steam (Machine Type + nome rainbow + separador)
 
 - **Contexto:** passo 5 do `NEXT-SESSION-HANDOFF.md` (§1): padronizar as tooltips das máquinas steam no
