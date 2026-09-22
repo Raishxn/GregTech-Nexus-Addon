@@ -60,6 +60,16 @@ public class SteamGreenhouseModule extends SteamElevatorModuleMachine {
         return 8192L;
     }
 
+    @Override
+    public int getModuleProgress() {
+        return progress;
+    }
+
+    @Override
+    public int getModuleMaxProgress() {
+        return CYCLE_TICKS;
+    }
+
     private static FluidStack water() {
         return new FluidStack(Fluids.WATER, WATER_PER_OPERATION);
     }

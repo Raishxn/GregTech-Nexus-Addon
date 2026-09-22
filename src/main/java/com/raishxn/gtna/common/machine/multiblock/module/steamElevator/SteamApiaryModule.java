@@ -64,6 +64,16 @@ public class SteamApiaryModule extends SteamElevatorModuleMachine {
         return GTValues.V[4] * 8L;
     }
 
+    @Override
+    public int getModuleProgress() {
+        return progress;
+    }
+
+    @Override
+    public int getModuleMaxProgress() {
+        return CYCLE_TICKS;
+    }
+
     private static FluidStack water() {
         return new FluidStack(Fluids.WATER, WATER_PER_CYCLE);
     }

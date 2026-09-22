@@ -77,6 +77,16 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
         return upkeepFor(mode());
     }
 
+    @Override
+    public int getModuleProgress() {
+        return progress;
+    }
+
+    @Override
+    public int getModuleMaxProgress() {
+        return cycleTicks();
+    }
+
     private static int clampMode(int mode) {
         return Math.max(0, Math.min(MAX_MODE, mode));
     }

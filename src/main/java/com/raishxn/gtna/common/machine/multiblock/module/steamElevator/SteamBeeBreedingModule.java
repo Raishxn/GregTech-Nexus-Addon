@@ -67,6 +67,16 @@ public class SteamBeeBreedingModule extends SteamElevatorModuleMachine {
     }
 
     @Override
+    public int getModuleProgress() {
+        return progress;
+    }
+
+    @Override
+    public int getModuleMaxProgress() {
+        return CYCLE_TICKS;
+    }
+
+    @Override
     public void onElevatorTick(SteamElevator elevator) {
         if (!consumeSteam(getSteamUpkeep())) return;
 

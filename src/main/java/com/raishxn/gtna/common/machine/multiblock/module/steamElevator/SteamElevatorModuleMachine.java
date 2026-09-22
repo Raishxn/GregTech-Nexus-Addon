@@ -133,10 +133,18 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
 
     /** Applies this module's effect (and pays its upkeep) once per server tick while bound. */
     private void moduleTick() {
-        if (isRemote() || !isFormed() || !elevatorConnected) return;
+        if (isRemote()) return;
+        if (!isFormed() || !elevatorConnected) {
+            recipeLogic.setStatus(RecipeLogic.Status.IDLE);
+            return;
+        }
         SteamElevator currentHost = host;
         if (currentHost == null) return;
+        // Work out the active state before ticking (the tick may consume the last steam) and mirror
+        // it on the recipe logic, so the machine model lights up and Jade/GTCEu show it as running.
+        boolean active = hasUpkeepSteam();
         onElevatorTick(currentHost);
+        recipeLogic.setStatus(active ? RecipeLogic.Status.WORKING : RecipeLogic.Status.IDLE);
     }
 
     @Override
@@ -492,6 +500,29 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
     @Override
     public boolean isActive() {
         return isFormed() && elevatorConnected && hasUpkeepSteam();
+    }
+
+    /**
+     * This module's own cycle progress / duration, shown by the block progress bar (and the Jade
+     * overlay). Subclasses with a cycle override these; modules without one leave them at 0 and the
+     * overlay only reports the running state.
+     */
+    public int getModuleProgress() {
+        return 0;
+    }
+
+    public int getModuleMaxProgress() {
+        return 0;
+    }
+
+    @Override
+    public int getProgress() {
+        return getModuleProgress();
+    }
+
+    @Override
+    public int getMaxProgress() {
+        return getModuleMaxProgress();
     }
 
     // ------------------------------------------------------------------
