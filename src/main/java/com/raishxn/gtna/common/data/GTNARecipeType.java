@@ -51,6 +51,17 @@ public class GTNARecipeType {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.FURNACE);
 
+    /**
+     * GTNL {@code CactusWonderFakeRecipes} port: one carbon fuel -> one steam grade. GTNL only used
+     * this map for JEI, so GTNA promotes it to a real recipe type the Cactus Wonder can run.
+     */
+    public static final String CACTUS_WONDER = "cactus_wonder";
+    public static final GTRecipeType CACTUS_WONDER_RECIPES = register("cactus_wonder", CACTUS_WONDER)
+            .setMaxIOSize(1, 0, 0, 1)
+            .setEUIO(IO.IN)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.FURNACE);
+
     public static final String HIGH_PRESSURE_REACTOR = "high_pressure_reactor";
     public static final GTRecipeType HIGH_PRESSURE_REACTOR_RECIPES = register("high_pressure_reactor",
             HIGH_PRESSURE_REACTOR)

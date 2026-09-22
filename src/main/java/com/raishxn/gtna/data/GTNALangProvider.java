@@ -841,6 +841,29 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.large_steam_forming_press.speed", "Speed: 150% faster than singleblock.");
         add("gtna.tooltip.large_steam_forming_press.efficiency", "Efficiency: consumes 40% total steam per recipe.");
         add("gtna.tooltip.large_steam_forming_press.parallel", "Parallel: Processes up to 32 recipes.");
+        add("block.gtna.steam_cactus_wonder", "Cactus Wonder");
+        add("gtna.tooltip.steam_cactus_wonder.desc", "GT-Not-Leisure style cactus-fueled steam generator.");
+        add("gtna.tooltip.steam_cactus_wonder.offer",
+                "Burns cactus-era carbon fuels and returns their value as steam blessings.");
+        add("gtna.tooltip.steam_cactus_wonder.fuel",
+                "Fuels: charcoal/coal -> steam, coke -> superheated, coke block -> dense supercritical.");
+        add("gtna.tooltip.steam_cactus_wonder.structure",
+                "Requires fully grown cacti on the sand floor to form.");
+        add("block.gtna.steam_cracking", "Steam Cracker");
+        add("gtna.tooltip.steam_cracking.desc",
+                "GT-Not-Leisure style steam cracker: thermally cracks sulfuric hydrocarbons.");
+        add("gtna.tooltip.steam_cracking.cracking",
+                "Runs the native GTCEu cracking recipes using integrated circuits 1-3.");
+        add("gtna.tooltip.steam_cracking.parallel", "Parallel: 8 (bronze) / 16 (steel high pressure).");
+        add("gtna.tooltip.steam_cracking.structure",
+                "Structure: GTNL large steam cracking shell. Check JEI for details.");
+        add("block.gtna.steam_mega_compressor", "Steam Supercompressor");
+        add("gtna.tooltip.mega_steam_compressor.desc",
+                "GT-Not-Leisure style supercompressor: impossible jets of steam compress material.");
+        add("gtna.tooltip.mega_steam_compressor.parallel", "Parallel: processes up to 256 recipes.");
+        add("gtna.tooltip.mega_steam_compressor.speed", "Speed: 100% faster than singleblock.");
+        add("gtna.tooltip.mega_steam_compressor.structure",
+                "Crafted inside the Steam Manufacturer from 64 large steam compressors.");
         add("block.gtna.large_steam_storage_tank", "Large Steam Storage Tank");
         add("gtna.tooltip.large_steam_storage_tank.desc", "A GTOCore-style industrial steam reservoir.");
         add("gtna.tooltip.large_steam_storage_tank.capacity", "Capacity: 120,000,000 mB of Steam.");
@@ -985,6 +1008,11 @@ public class GTNALangProvider extends LanguageProvider {
 
         // Wireless Steam
         add("config.gtna.option.wirelessSteamTransferRate", "Wireless Steam Transfer Rate");
+
+        // GTNL steam machine toggles
+        add("config.gtna.option.steamCactusWonder", "Cactus Wonder");
+        add("config.gtna.option.steamCracking", "Steam Cracker");
+        add("config.gtna.option.megaSteamCompressor", "Steam Supercompressor");
 
         add("config.gtna.option.eyeOfWood", "Eye of Wood");
 

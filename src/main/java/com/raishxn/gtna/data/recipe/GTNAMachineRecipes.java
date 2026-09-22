@@ -355,6 +355,79 @@ public class GTNAMachineRecipes {
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_PISTON.get()))
                     .save(provider);
         }
+        if (enabled(GTNAMachines.STEAM_CRACKING)) {
+            // GTNL: Stronze huge pipe, hydraulic pump, precision mechanism, bronze hull.
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.STEAM_CRACKING.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("ABA")
+                    .define('A', ChemicalHelper.get(TagPrefix.pipeHugeFluid, GTNAMaterials.Stronze).getItem())
+                    .define('B', GTNAItems.HYDRAULIC_PUMP.get())
+                    .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('D', GTBlocks.BRONZE_HULL.get())
+                    .unlockedBy("has_precision_steam_component",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines.STEAM_CACTUS_WONDER)) {
+            // GTNL: cactus blocks, bronze plated bricks, hydraulic regulator.
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.STEAM_CACTUS_WONDER.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("ACA")
+                    .pattern("ABA")
+                    .define('A', Blocks.CACTUS)
+                    .define('B', GTBlocks.CASING_BRONZE_BRICKS.get())
+                    .define('C', GTNAItems.HYDRAULIC_REGULATOR.get())
+                    .unlockedBy("has_hydraulic_regulator",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_REGULATOR.get()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines.MEGA_STEAM_COMPRESSOR)) {
+            // GTNL SteamManufacturer parity: 64 steam compressor multis + 4 hydraulic pumps ->
+            // supercompressor (2400 t @ 1600 EU/t).
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_mega_compressor")
+                    .inputItems(GTNAMachines.LARGE_STEAM_COMPRESSOR.asStack().getItem(), 64)
+                    .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 4)
+                    .outputItems(GTNAMachines.MEGA_STEAM_COMPRESSOR.asStack())
+                    .duration(2400)
+                    .EUt(1600)
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines.STEAM_CACTUS_WONDER)) {
+            // GTNL CactusWonderFakeRecipes: GT++ cactus charcoal/coke -> steam at one recipe per
+            // 20 ticks. GTNA has no cactus carbon items, so the closest GTNA fuels are used and the
+            // steam grade follows the GTNL tier (regular / superheated / dense supercritical).
+            GTNARecipeType.CACTUS_WONDER_RECIPES.recipeBuilder("cactus_wonder_steam_from_charcoal")
+                    .inputItems(Items.CHARCOAL)
+                    .outputFluids(GTMaterials.Steam.getFluid(64000))
+                    .duration(20)
+                    .EUt(0)
+                    .save(provider);
+            GTNARecipeType.CACTUS_WONDER_RECIPES.recipeBuilder("cactus_wonder_steam_from_coal")
+                    .inputItems(Items.COAL)
+                    .outputFluids(GTMaterials.Steam.getFluid(64000))
+                    .duration(20)
+                    .EUt(0)
+                    .save(provider);
+            GTNARecipeType.CACTUS_WONDER_RECIPES.recipeBuilder("cactus_wonder_steam_from_coal_block")
+                    .inputItems(Items.COAL_BLOCK)
+                    .outputFluids(GTMaterials.Steam.getFluid(64000))
+                    .duration(20)
+                    .EUt(0)
+                    .save(provider);
+            GTNARecipeType.CACTUS_WONDER_RECIPES.recipeBuilder("cactus_wonder_superheated_from_coke")
+                    .inputItems(ChemicalHelper.get(TagPrefix.gem, GTMaterials.Coke).getItem())
+                    .outputFluids(GTNAMaterials.SuperHeatedSteam.getFluid(128000))
+                    .duration(20)
+                    .EUt(0)
+                    .save(provider);
+            GTNARecipeType.CACTUS_WONDER_RECIPES.recipeBuilder("cactus_wonder_supercritical_from_coke_block")
+                    .inputItems(ChemicalHelper.get(TagPrefix.block, GTMaterials.Coke).getItem())
+                    .outputFluids(GTNAMaterials.DenseSupercriticalSteam.getFluid(512000))
+                    .duration(20)
+                    .EUt(0)
+                    .save(provider);
+        }
         if (enabled(GTNAMachines.STEAM_LAVA_MAKER)) {
             // GTNL SteamManufacturer parity: StronzeWrappedCasing + 2 hydraulic motors + Stronze/Breel
             // medium pipes -> lava maker (200 t @ 200 EU/t).

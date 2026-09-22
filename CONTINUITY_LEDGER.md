@@ -179,6 +179,42 @@ foi feito nem repetir os erros já pagos.
 - **Validação:** `spotlessCheck` + `runUnitTests` (14/14) + `runGameTestServer` (25/25) + `runData`
   (written: 0).
 
+### G-0027 (2026-09-22) — port fiel de 3 multiblocks steam do GTNL (Cactus Wonder / Steam Cracking / Mega Steam Compressor)
+
+- **Implementado:** três máquinas do GTNL portadas seguindo as convenções do repo
+  (`registerMachine`, pattern helpers próprios, config toggle, lang en_us + pt_br byte-preserving):
+  - `steam_cactus_wonder` 9x11x9 (`SteamCactusWonder`);
+  - `steam_cracking` 7x4x4 (`SteamCracking`, do GTNL `large_steam_cracking`);
+  - `steam_mega_compressor` 35x33x35 (`MegaSteamCompressor`).
+  As três estruturas foram decodificadas dos `.mbs` "MBS1" **próprios** de cada máquina (não reusa
+  nenhum shape existente); o `.mb` de mesmo nome já presente em `assets/gtna/multiblock/` confere
+  com o dump do GTNL.
+- **SteamCactusWonder — divergência consciente (documentada em código):** o GTNL usa um recipe map
+  *fake* (`CactusWonderFakeRecipes`) só para JEI + um acumulador de combustível no `onPostTick` que
+  devolve o valor como vapor. O GTNA **não tem** os itens de carvão/coque de cacto do GT++ (nem o
+  `InfernalCokeRecipes` do GTNL foi portado com eles), então o port promove o mapa fake a um recipe
+  type real (`GTNARecipeType.CACTUS_WONDER_RECIPES`) e mapeia para os combustíveis de carbono mais
+  próximos: `CHARCOAL`/`COAL`/`COAL_BLOCK` → Steam, gema de `Coke` → SuperHeatedSteam, bloco de
+  `Coke` → DenseSupercriticalSteam, 20 t cada (mesma cadência do fake). A máquina é uma
+  `WorkableMultiblockMachine` (não `SteamMultiMachineBase`): ela **gera** vapor, e a base de vapor
+  do GTNA chama `onStructureInvalid()` se não achar fonte `IO.IN` de steam — o GTNL também não
+  exige hatch de steam nessa máquina.
+- **SteamCracking:** usa `GTCEu.CRACKING_RECIPES` (mesmas receitas do `SteamCrackerRecipes` do
+  GTNL). O paralelo bronze/steel do GTNL (8/16) sai de `isHighPressure()`; o bônus de ×2 velocidade
+  do high pressure cobre o `getDurationModifier()/tierMachine` do GTNL. Predicados de casing
+  tiered (`machineCasing`/`fireboxCasing`) preservam o tier.
+- **MegaSteamCompressor:** 256 paralelos (`ModifierFunction` estático) + duração ×0.5 (convenção das
+  demais large steam do GTNA); a receita do Steam Manufacturer usa 64 `LARGE_STEAM_COMPRESSOR` +
+  4 hydraulic pumps (2400 t @ 1600 EU/t), espelhando o GTNL.
+- **Receitas de crafting:** `SteamCracking` (Stronze pipeHuge + hydraulic pump + precision mechanism
+  + bronze hull) e `SteamCactusWonder` (cactus + bronze plated bricks + hydraulic regulator),
+  mapeadas dos `CraftingTableRecipes` do GTNL.
+- **Config:** toggles `steamCactusWonder`/`steamCracking`/`megaSteamCompressor` (`@Configurable` +
+  case no switch + lang `config.gtna.option.*`), sem quebrar o `ConfigLangKeysTest`.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (14/14) + `runGameTestServer`
+  (25/25, `All 25 required tests passed`) + `grep -c "Parsing error loading recipe gtna:"` = 0 +
+  `runData` (written: 0).
+
 ### G-0026 (2026-09-21) — High pressure mode (steam): tier dos casings → ×2 velocidade e ×2 steam
 
 - **Implementado (GTNL parity):** o `SteamMultiMachineBase` agora lê o **tier do casing** da estrutura
