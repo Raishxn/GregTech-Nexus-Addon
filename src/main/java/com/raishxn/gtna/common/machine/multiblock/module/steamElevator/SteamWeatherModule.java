@@ -1,17 +1,18 @@
 package com.raishxn.gtna.common.machine.multiblock.module.steamElevator;
 
-import com.gregtechceu.gtceu.api.GTValues;
+import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
+import com.gregtechceu.gtceu.api.gui.widget.SlotWidget;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
+import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
+import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 
-import com.lowdragmc.lowdraglib.gui.texture.GuiTextureGroup;
-import com.lowdragmc.lowdraglib.gui.texture.TextTexture;
-import com.lowdragmc.lowdraglib.gui.widget.ButtonWidget;
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
 import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
+import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.server.level.ServerLevel;
 
@@ -19,51 +20,95 @@ import net.minecraft.server.level.ServerLevel;
  * GTNL {@code SteamWeatherModule} port (LGPLv3, original by ScienceNotLeisure).
  *
  * <p>
- * GTNL consumes Natura clouds + Thaumcraft crystals to force clear / rain / thunder (special values
- * 1/2/3). Those mods do not exist in 1.20.1, so GTNA exposes the same three weather states as a
- * toggled machine mode paid for with elevator energy; the effect is identical (the world weather is
- * forced for two in-game hours and refreshed while running).
+ * GTNL consumes Natura clouds + Thaumcraft crystals to force clear / rain / thunder. Those mods do
+ * not exist in 1.20.1, so GTNA exposes the same three weather states selected by the controller
+ * circuit (1 = clear, 2 = rain, 3 = thunder) and pays for a change with a large one-off steam cost;
+ * the forced weather then lasts one in-game hour ({@value #WEATHER_TIME} ticks) and the module UI
+ * shows the time left. While the circuit keeps requesting the same weather, no further steam is
+ * charged until the hour runs out.
  */
 public class SteamWeatherModule extends SteamElevatorModuleMachine {
 
+    protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
+            SteamWeatherModule.class, SteamElevatorModuleMachine.MANAGED_FIELD_HOLDER);
+
+    public static final int MODE_OFF = -1;
     public static final int MODE_CLEAR = 0;
     public static final int MODE_RAIN = 1;
     public static final int MODE_THUNDER = 2;
 
-    private static final int WEATHER_TIME = 72000;
+    /** One in-game hour. */
+    public static final int WEATHER_TIME = 72000;
+    /** The GTNL tooltip's "large" cost per weather change. */
+    public static final long WEATHER_STEAM_COST = 1_000_000L;
 
+    public final NotifiableItemStackHandler circuitInventory;
+
+    /** The weather currently being forced, or {@link #MODE_OFF} when nothing is active. */
     @Persisted
     @DescSynced
-    private int weatherMode = MODE_CLEAR;
+    private int activeMode = MODE_OFF;
 
-    private int counter;
+    /** Ticks left on the forced weather; refreshed when a change is paid for. */
+    @Persisted
+    @DescSynced
+    private int weatherTicksLeft;
 
     public SteamWeatherModule(IMachineBlockEntity holder, int tier) {
         super(holder, tier);
+        this.circuitInventory = new NotifiableItemStackHandler(this, 1, IO.IN)
+                .setFilter(IntCircuitBehaviour::isIntegratedCircuit);
+    }
+
+    @Override
+    public ManagedFieldHolder getFieldHolder() {
+        return MANAGED_FIELD_HOLDER;
+    }
+
+    /** The weather selected by the circuit: 1 = clear, 2 = rain, 3 = thunder, anything else = off. */
+    public int selectedMode() {
+        return switch (IntCircuitBehaviour.getCircuitConfiguration(circuitInventory.getStackInSlot(0))) {
+            case 1 -> MODE_CLEAR;
+            case 2 -> MODE_RAIN;
+            case 3 -> MODE_THUNDER;
+            default -> MODE_OFF;
+        };
+    }
+
+    public int getActiveMode() {
+        return activeMode;
+    }
+
+    public int getWeatherTicksLeft() {
+        return weatherTicksLeft;
     }
 
     @Override
     public long getSteamUpkeep() {
-        // GTNL recipe: eut 0 in the fake map, so a flat upkeep of V[3] is used here.
-        return getModuleTier() * GTValues.V[3];
-    }
-
-    public int getWeatherMode() {
-        return weatherMode;
-    }
-
-    public void cycleWeatherMode() {
-        weatherMode = (weatherMode + 1) % 3;
-        markDirty();
+        // The weather is paid for in one lump when it is (re)applied, not per tick.
+        return 0L;
     }
 
     @Override
     public void onElevatorTick(SteamElevator elevator) {
-        if (!consumeSteam(getSteamUpkeep())) return;
         if (!(getLevel() instanceof ServerLevel level)) return;
-        // Refresh the forced weather every second so it never expires while the module runs.
-        if (++counter % 20 != 0) return;
-        switch (weatherMode) {
+        if (weatherTicksLeft > 0) {
+            weatherTicksLeft--;
+        }
+
+        int requested = selectedMode();
+        boolean needsApplication = requested != MODE_OFF && (requested != activeMode || weatherTicksLeft <= 0);
+        if (!needsApplication) return;
+        if (!consumeSteam(WEATHER_STEAM_COST)) return;
+
+        apply(level, requested);
+        activeMode = requested;
+        weatherTicksLeft = WEATHER_TIME;
+        markDirty();
+    }
+
+    private void apply(ServerLevel level, int mode) {
+        switch (mode) {
             case MODE_RAIN -> level.setWeatherParameters(0, WEATHER_TIME, true, false);
             case MODE_THUNDER -> level.setWeatherParameters(0, WEATHER_TIME, true, true);
             default -> level.setWeatherParameters(WEATHER_TIME, 0, false, false);
@@ -72,21 +117,21 @@ public class SteamWeatherModule extends SteamElevatorModuleMachine {
 
     @Override
     protected Widget createModuleUIWidget() {
-        WidgetGroup group = screenGroup(150, 52);
-        group.addWidget(new LabelWidget(5, 5, () -> "Weather: §b" + modeName()));
-        group.addWidget(new ButtonWidget(5, 20, 60, 16,
-                new GuiTextureGroup(GuiTextures.BUTTON, new TextTexture("Cycle")),
-                clickData -> {
-                    if (!clickData.isRemote) cycleWeatherMode();
-                }));
+        WidgetGroup group = screenGroup(150, 60);
+        group.addWidget(new LabelWidget(5, 4, () -> "Weather: §b" + modeName(activeMode)));
+        group.addWidget(new LabelWidget(5, 16, () -> "Circuit: §b1=clear 2=rain 3=thunder"));
+        group.addWidget(new LabelWidget(5, 28,
+                () -> weatherTicksLeft > 0 ? "Time left: §b" + (weatherTicksLeft / 20) + " s" : "§7idle"));
+        group.addWidget(new SlotWidget(circuitInventory, 0, 5, 40).setBackgroundTexture(GuiTextures.SLOT));
         return group;
     }
 
-    private String modeName() {
-        return switch (weatherMode) {
+    private static String modeName(int mode) {
+        return switch (mode) {
             case MODE_RAIN -> "Rain";
             case MODE_THUNDER -> "Thunder";
-            default -> "Clear";
+            case MODE_CLEAR -> "Clear";
+            default -> "Off";
         };
     }
 }

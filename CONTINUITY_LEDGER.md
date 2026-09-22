@@ -34,7 +34,7 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-22 (G-0046):** `spotlessCheck` + `compileJava` + `runUnitTests` (**15/15**) +
+- **Gate verde em 2026-09-22 (G-0047):** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**) +
   `runGameTestServer` (**29/29**, `All 29 required tests passed`) + `runData` determinístico. A
   execução carregou os mixins alterados; os avisos/erros de receitas do GTCEu já conhecidos
   continuam no log.
@@ -47,7 +47,7 @@ foi feito nem repetir os erros já pagos.
   módulo (G-0043). Ver G-0041..G-0043 para causa raiz, testes e pendências.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
-- **Testes hoje:** 15 unit tests (`main()` + asserts, padrão GTLCore) e 29 gametests (`@GameTest`),
+- **Testes hoje:** 17 unit tests (`main()` + asserts, padrão GTLCore) e 29 gametests (`@GameTest`),
   ambos no gate do CI.
 - **Licenciamento (G-0019):** código do GTNA **LGPLv3**; assets do GTO em **CC BY-NC-SA 4.0**
   (o GTNA é **não-comercial**). Permissão do **GTOEPP** concedida pelo time GTO; atribuição de origem
@@ -65,6 +65,25 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0047 (2026-09-22) — Weather por circuito + QA plano A (lint de dependência duplicada e de tooltips dos módulos)
+
+- **Weather (novo desenho acordado):** o circuito seleciona 1 = clear, 2 = rain, 3 = thunder (0 = off);
+  aplicar custa um **pagamento único grande** de steam (`WEATHER_STEAM_COST = 1.000.000 mB`) e o clima fica
+  por **1 hora** (`WEATHER_TIME = 72000` ticks). Enquanto o circuito pede o mesmo clima não cobra de novo
+  até expirar; a UI mostra o **tempo restante**. Substitui o botão de ciclo e o upkeep flat de 512.
+- **QA plano A:**
+  - `BuildDependencyContractTest`: agrupa as declarações de `build.gradle` por slug normalizado e falha se o
+    **mesmo mod** aparecer em **coordenadas distintas** (teria pego o `configuration` 2.2.0/3.1.0 antes do
+    crash do client). O padrão intencional `modCompileOnly + modRuntimeOnly` com a **mesma** coordenada
+    (Jade, Modern UI) continua permitido.
+  - `ModuleTooltipContractTest`: toda chamada `moduleLines(id, from, to)` e todo `registerElevatorModule`
+    precisam ter as chaves `gtna.machine.<id>.tooltip[.N]` no `en_us.json` gerado — pega tooltip faltando ou
+    fora de ordem, que em jogo renderizaria a chave crua.
+- **Validação:** `spotlessCheck` + `runUnitTests` (**17/17** agora); `runGameTestServer` (**29/29**);
+  `runData` determinístico.
+- **Pendências:** Entity Crusher (loot table) e Bee Breeding (Productive Bees 1.20.1 inexistente) — próximos;
+  QA plano B (gametests de módulo) e C (checklist manual).
 
 ### G-0046 (2026-09-22) — fidelidade GTNL dos módulos (parte 3): seletor de efeitos do Beacon na GUI e Ore Processor com os números do GTNL
 

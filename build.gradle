@@ -187,6 +187,8 @@ tasks.register('runUnitTests') {
             'com.raishxn.gtna.ConfigLangKeysTest',
             'com.raishxn.gtna.JadeLangKeysTest',
             'com.raishxn.gtna.SteamWiringContractTest',
+            'com.raishxn.gtna.ModuleTooltipContractTest',
+            'com.raishxn.gtna.BuildDependencyContractTest',
             'com.raishxn.gtna.PartAbilityCoverageTest',
             'com.raishxn.gtna.RegistrationContractTest',
             'com.raishxn.gtna.OutputBoostContractTest',
