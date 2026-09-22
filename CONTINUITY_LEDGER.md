@@ -59,6 +59,50 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0040 (2026-09-22) — boiler solar grande não alimentava a rede wireless: buffer/taxa do hatch de saída estrangulavam o ciclo; display/Jade reportavam 20× a produção
+
+- **Reprodução do autor:** `large_steam_solar_boiler` 41×42, **Wireless Steam Output Hatch** no
+  boiler não enchia a rede; **Wireless Steam Input Hatch** no chão não enchia; Jade mostrava
+  "312 B".
+- **Causa raiz #1 (buffer/taxa):** o boiler despeja o **ciclo inteiro de uma vez** no hatch de
+  saída (`sunlit * 200` mB a cada 20 ticks = 312.000 mB no campo 41×42). O hatch de bronze tinha
+  buffer de **20.000 mB** e cap de **10.000 mB/t**: o `RecipeLogic.onRecipeFinish` (que ignora o
+  resultado do `handleRecipeIO(OUT)`) aceitava só 20.000 e **descartava 292.000**, e o hatch ainda
+  limitava o push a 10.000/t. Resultado: a rede recebia ~1.000 mB/t de 15.600 mB/t reais (0,3%) —
+  o autor leu isso como "não entra vapor".
+- **Correção (paridade GTNL `WirelessSteamDynamoHatch`):** o hatch move o **tank inteiro** por tick.
+  `bronzeBuffer` 20.000 → **128.000.000** (capacidade do dynamo de bronze do GTNL); `bronzeTransferRate`
+  e `steelTransferRate` passam a default **`Integer.MAX_VALUE`** (throttle opcional, documentado no
+  config/tooltip/`/gtna steam`). O input hatch enche até o espaço livre/rede. Nada de cap fixo
+  minúsculo: o limite real passa a ser o buffer.
+- **Causa raiz #2 (display/Jade 20×):** `lastSteamOutput = steamOut * 20` era **20× maior** que a
+  produção real (o `steamOut` já é o valor do ciclo de 20 ticks = 1 s). Renomeado para
+  `steamPerSecond = steamOut * 20 / TICK_INTERVAL` e o label de `L/s` para `mB/s`. O "312 B" do Jade
+  é o **output da receita por craft** (provider stock `RecipeOutputProvider`): está correto para o
+  ciclo, mas parecia baixo contra o display errado. Novo `GTNASolarBoilerProvider` (Jade) mostra
+  "Sunlit Cells" + "Steam Production" em mB/s e uma linha de idle, alinhado ao display da máquina.
+- **Observabilidade:** tooltip dinâmica dos 4 hatches (buffer via config + taxa "unlimited" ou
+  valor), label de taxa na GUI do hatch, e `/gtna steam` agora imprime `| <taxa> mB/t` por hatch
+  (`unlimited` quando MAX).
+- **Arquivos:** `ConfigHolder.java` (defaults + comentários), `WirelessSteamOutputHatch.java`,
+  `WirelessSteamInputHatch.java` (`getTransferRate`/`isTransferLimited`/`rateText`, push/pull do
+  buffer inteiro), `GTNAMachines.java` (`wirelessSteamTooltip` dinâmica), `GTNACommands.java`
+  (taxa por hatch), `LargeSteamSolarBoilerMachine.java` (per-second + getters),
+  `GTNASolarBoilerProvider.java` (novo) + `GTNAJadePlugin.java`, `GTNALangProvider.java` +
+  `pt_br.json` + `en_us.json` manual/gerado (chaves `gtna.machine.wireless_steam.transfer_rate(.unlimited)`,
+  `gtna.machine.large_steam_solar_boiler.idle`, `gtna.command.steam.rate.unlimited`, formato de
+  `hatch_entry`), `GTNAMachineGameTests.java` (round trip com 312.000 mB + 4 ciclos sob carga),
+  `SteamWiringContractTest.java` (trava buffer/taxa e a taxa por segundo do boiler).
+- **Validação:** `spotlessApply compileJava` OK; `spotlessCheck` + `runUnitTests` (**14/14**);
+  `runGameTestServer` (**25/25**, `All 25 required tests passed`); `grep -c "Parsing error loading
+  recipe gtna:" run/logs/latest.log` = **0**; `runData` determinístico (2ª execução `written: 0`).
+- **Pendências abertas / verificação in-game:** (a) confirmar no cliente que o Jade do boiler
+  mostra "Steam Production: 312000 mB/s" (dia, campo 41×42) e que o "312 B" do provider stock
+  continua logo acima como output por craft; (b) `/gtna steam` deve listar o output hatch e o input
+  hatch com `unlimited mB/t`; (c) opcional: dividir os buffers input (GTNL 8M) e output (128M) em
+  duas chaves se o hoarding de 128M no input incomodar; (d) `machines.wirelessSteamTransferRate`
+  (8192) é config legado morto — remover numa limpeza futura.
+
 ### G-0039 (2026-09-22) — tooltip duplicado dos módulos do elevador: descrição saía duas vezes (mainKey do GTCEu + `.tooltips`); descrições fiéis ao GTNL
 
 - **Causa raiz (confirmada no fonte do GTCEu 7.5.3):** `MetaMachineBlock#appendHoverText` chama

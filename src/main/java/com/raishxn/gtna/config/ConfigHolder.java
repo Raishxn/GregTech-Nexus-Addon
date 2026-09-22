@@ -225,20 +225,27 @@ public class ConfigHolder {
         public boolean enabled = true;
 
         @Configurable
-        @Comment("En: Tank capacity for bronze wireless steam hatches.")
-        public int bronzeBuffer = 20000;
+        @Comment({ "En: Tank capacity for bronze wireless steam hatches.",
+                "En: GTNL parity: the bronze wireless dynamo holds 128,000,000 mB. The buffer is the",
+                "En: real per-tick throughput limit: a large boiler can only move what fits in the tank,",
+                "En: so it must be big enough to hold a whole recipe cycle (a 41x42 solar boiler makes",
+                "En: 312,000 mB per 20-tick cycle). A small buffer voids the rest of the cycle." })
+        public int bronzeBuffer = 128000000;
 
         @Configurable
         @Comment("En: Tank capacity for steel wireless steam hatches.")
         public int steelBuffer = Integer.MAX_VALUE;
 
         @Configurable
-        @Comment("En: Per-tick transfer limit for bronze wireless steam hatches.")
-        public int bronzeTransferRate = 10000;
+        @Comment({ "En: Optional per-tick transfer limit for bronze wireless steam hatches.",
+                "En: Integer.MAX_VALUE (the default) moves the whole buffer every tick, exactly like",
+                "En: GTNL's WirelessSteamDynamoHatch, so a boiler never strands its production. Lower",
+                "En: it only to deliberately throttle the wireless network." })
+        public int bronzeTransferRate = Integer.MAX_VALUE;
 
         @Configurable
-        @Comment("En: Per-tick transfer limit for steel wireless steam hatches.")
-        public int steelTransferRate = 1000000;
+        @Comment("En: Optional per-tick transfer limit for steel wireless steam hatches (default: whole buffer).")
+        public int steelTransferRate = Integer.MAX_VALUE;
     }
 
     public static class MachineToggles {

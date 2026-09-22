@@ -1,5 +1,7 @@
 package com.raishxn.gtna.common.command;
 
+import com.gregtechceu.gtceu.utils.FormattingUtil;
+
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -19,6 +21,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
+import com.raishxn.gtna.config.ConfigHolder;
 import com.raishxn.gtna.network.GTNANetworkHandler;
 import com.raishxn.gtna.network.packet.SStructureDetectHighlight;
 
@@ -103,13 +106,19 @@ public class GTNACommands {
         } else {
             source.sendSuccess(() -> Component.translatable("gtna.command.steam.hatches", connections.size()), false);
             for (var connection : connections) {
+                long rate = connection.isSteel ? ConfigHolder.INSTANCE.wirelessSteam.steelTransferRate :
+                        ConfigHolder.INSTANCE.wirelessSteam.bronzeTransferRate;
+                Component rateText = rate >= Integer.MAX_VALUE ?
+                        Component.translatable("gtna.command.steam.rate.unlimited") :
+                        Component.literal(FormattingUtil.formatNumbers(rate));
                 source.sendSuccess(() -> Component.translatable("gtna.command.steam.hatch_entry",
                         Component.translatable(connection.isInput ? "gtna.command.steam.type.input" :
                                 "gtna.command.steam.type.output"),
                         Component.translatable(connection.isSteel ? "gtna.command.steam.tier.steel" :
                                 "gtna.command.steam.tier.bronze"),
                         connection.pos.dimension().location().toString(),
-                        connection.pos.pos().toShortString()), false);
+                        connection.pos.pos().toShortString(),
+                        rateText), false);
             }
         }
         return connections.size() + 1;

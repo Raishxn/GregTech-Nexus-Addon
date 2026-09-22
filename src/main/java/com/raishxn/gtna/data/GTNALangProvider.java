@@ -713,6 +713,9 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.wireless_steam_output.tooltip_desc", "Sends Steam wirelessly to your Global Network.");
         add("gtna.machine.wireless_steam_output.tooltip_usage", "Usage: Place on Boilers to export Steam.");
         add("gtna.machine.wireless_steam_input.tooltip_desc", "Receives Steam wirelessly from your Global Network.");
+        add("gtna.machine.wireless_steam.transfer_rate", "Transfer Rate: %s mB/t");
+        add("gtna.machine.wireless_steam.transfer_rate.unlimited",
+                "Transfer Rate: Unlimited (moves the whole buffer every tick)");
         add("block.gtna.large_steam_furnace", "Large Steam Furnace");
         add("gtna.tooltip.large_steam_furnace.desc", "An industrial-grade steam smelting facility.");
         add("gtna.tooltip.large_steam_furnace.speed", "Speed: 900% faster than a standard Steam Furnace.");
@@ -878,7 +881,9 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.large_steam_solar_boiler.structure", "Structure: starts at 5x1x5 and expands horizontally.");
         add("gtna.machine.large_steam_solar_boiler.size", "Structure Size: %s x %s");
         add("gtna.machine.large_steam_solar_boiler.sunlit", "Sunlit Cells: %s");
-        add("gtna.machine.large_steam_solar_boiler.production", "Steam Production: %s L/s");
+        add("gtna.machine.large_steam_solar_boiler.production", "Steam Production: %s mB/s");
+        add("gtna.machine.large_steam_solar_boiler.idle",
+                "Not producing: night, rain, or no sunlit solar boiling cells.");
         add("block.gtna.dimensionally_transcendent_dirt_forge", "Dimensionally Transcendent Dirt Forge");
         add("gtna.tooltip.dimensionally_transcendent_dirt_forge.desc",
                 "GTLCore's absurd primitive forge shell, repurposed for massive primitive blast throughput.");
@@ -1054,7 +1059,8 @@ public class GTNALangProvider extends LanguageProvider {
         // Wireless steam network inspection command (/gtna steam)
         add("gtna.command.steam.balance", "§b[GTNA] §fWireless steam network §7(%s)§f: §b%s§f mB");
         add("gtna.command.steam.hatches", "§b[GTNA] §fConnected wireless steam hatches: §e%s");
-        add("gtna.command.steam.hatch_entry", "  §7- §f%s §7%s §f@ §7%s %s");
+        add("gtna.command.steam.hatch_entry", "  §7- §f%s §7%s §f@ §7%s %s §7| §e%s §7mB/t");
+        add("gtna.command.steam.rate.unlimited", "unlimited");
         add("gtna.command.steam.no_hatches", "§b[GTNA] §7No connected wireless steam hatches.");
         add("gtna.command.steam.type.input", "Input");
         add("gtna.command.steam.type.output", "Output");

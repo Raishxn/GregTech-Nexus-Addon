@@ -30,6 +30,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -534,20 +535,45 @@ public final class GTNAMachineGameTests {
         }
         outputHatch.setOwnerUUID(owner);
         inputHatch.setOwnerUUID(owner);
-        outputHatch.tank.setFluidInTank(0, GTMaterials.Steam.getFluid(4321));
+
+        // Regression for "a boiler's steam does not enter the network": a boiler dumps a whole
+        // recipe cycle into the output hatch at once (a 41x42 solar boiler makes 312,000 mB per
+        // 20-tick cycle), so the hatch must move the ENTIRE tank in a single tick. The old brick
+        // was a hardcoded bronze cap of 10,000 mB/t (plus a 20,000 mB buffer), which stranded more
+        // than 90% of the cycle behind a trickle. The amount deliberately exceeds the old cap.
+        int cycleSteam = 312_000;
+        outputHatch.tank.setFluidInTank(0, GTMaterials.Steam.getFluid(cycleSteam));
         outputHatch.serverTick();
         long afterPush = SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner);
-        helper.assertTrue(afterPush == 4321L,
-                "the output hatch must push its whole tank into the network, got " + afterPush);
+        helper.assertTrue(afterPush == cycleSteam,
+                "the output hatch must move its whole tank into the network in one tick (got " + afterPush +
+                        " of " + cycleSteam + "); a per-tick cap below the buffer strands a boiler cycle");
         helper.assertTrue(outputHatch.tank.getFluidInTank(0).isEmpty(),
-                "the output hatch tank must be drained into the network");
+                "the output hatch tank must be fully drained into the network");
         inputHatch.serverTick();
         long pulled = inputHatch.tank.getFluidInTank(0).getAmount();
         long afterPull = SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner);
-        helper.assertTrue(pulled == 4321L,
+        helper.assertTrue(pulled == cycleSteam,
                 "the input hatch must pull the steam back into its tank, got " + pulled);
         helper.assertTrue(afterPull == 0L,
                 "the network must be empty after the input hatch pulls it, got " + afterPull);
+        // Free the input buffer as if the receiving machine had consumed it, so the load loop starts
+        // from an empty tank (the single round trip above filled it).
+        inputHatch.tank.setFluidInTank(0, FluidStack.EMPTY);
+        // The same network must survive back-to-back cycles without losing or duplicating a drop.
+        for (int cycle = 0; cycle < 4; cycle++) {
+            outputHatch.tank.setFluidInTank(0, GTMaterials.Steam.getFluid(cycleSteam));
+            outputHatch.serverTick();
+            helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == cycleSteam,
+                    "cycle " + cycle + ": the output hatch must add the whole tank to the network");
+            inputHatch.serverTick();
+            helper.assertTrue(inputHatch.tank.getFluidInTank(0).getAmount() == cycleSteam,
+                    "cycle " + cycle + ": the input hatch must pull the whole network balance back");
+            helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == 0L,
+                    "cycle " + cycle + ": the network must be empty after the pull");
+            // Simulate the receiving machine consuming the buffer before the next cycle.
+            inputHatch.tank.setFluidInTank(0, FluidStack.EMPTY);
+        }
         helper.succeed();
     }
 

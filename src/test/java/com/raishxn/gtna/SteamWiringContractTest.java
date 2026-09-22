@@ -55,6 +55,8 @@ public final class SteamWiringContractTest {
         checkHatchAbilityRoles();
         checkSteamSlotsUseAbility();
         checkWirelessSteamAccounting();
+        checkWirelessSteamMovesWholeBuffer();
+        checkSolarBoilerProductionIsPerSecond();
         checkElevatorHasNoEuBuffer();
         System.out.println("[SteamWiringContractTest] all cases passed");
     }
@@ -138,6 +140,66 @@ public final class SteamWiringContractTest {
         if (!(outputSim >= 0 && outputAdd > outputSim && outputExec > outputAdd)) {
             throw new AssertionError("WirelessSteamOutputHatch must simulate the drain, add exactly the drained " +
                     "amount to the network, then execute the drain (so it cannot duplicate steam)");
+        }
+    }
+
+    /**
+     * The wireless steam hatches must move the whole buffer by default (GTNL
+     * {@code WirelessSteamDynamoHatch} parity): a boiler dumps a whole 20-tick recipe cycle at once,
+     * so a hardcoded bronze cap of 10,000 mB/t plus a 20,000 mB buffer stranded &gt;90% of it and read
+     * as "steam does not enter the network". The buffer must hold a large cycle and the transfer cap
+     * must default to unlimited (configurable downward only).
+     */
+    private static void checkWirelessSteamMovesWholeBuffer() throws IOException {
+        Path config = Path.of("src/main/java/com/raishxn/gtna/config/ConfigHolder.java");
+        String configSource = Files.readString(config, StandardCharsets.UTF_8);
+        if (!configSource.contains("public int bronzeBuffer = 128000000")) {
+            throw new AssertionError("the bronze wireless steam buffer must be large enough to hold a big " +
+                    "boiler's whole recipe cycle (GTNL parity: 128,000,000 mB); a small buffer voids the rest " +
+                    "of the cycle in ConfigHolder.WirelessSteam");
+        }
+        for (String field : List.of("bronzeTransferRate", "steelTransferRate")) {
+            if (!configSource.contains("public int " + field + " = Integer.MAX_VALUE")) {
+                throw new AssertionError(field + " must default to Integer.MAX_VALUE (move the whole buffer " +
+                        "each tick, GTNL parity); a finite default strands production behind the cap");
+            }
+        }
+
+        String output = Files.readString(STEAM_PART_DIR.resolve("WirelessSteamOutputHatch.java"),
+                StandardCharsets.UTF_8);
+        if (!(output.contains("getTransferRate()") && output.contains("Math.min(currentSteam"))) {
+            throw new AssertionError("WirelessSteamOutputHatch must cap its push by getTransferRate() clamped to " +
+                    "the current tank contents (whole buffer), not by a fixed literal");
+        }
+        if (output.contains("Math.min(currentSteam, transferRate)")) {
+            throw new AssertionError("WirelessSteamOutputHatch still caps the push at the raw transferRate field; " +
+                    "it must go through getTransferRate() so a zero/legacy value is treated as unlimited");
+        }
+        String input = Files.readString(STEAM_PART_DIR.resolve("WirelessSteamInputHatch.java"),
+                StandardCharsets.UTF_8);
+        if (!input.contains("getTransferRate()")) {
+            throw new AssertionError("WirelessSteamInputHatch must clamp its pull by getTransferRate() so the " +
+                    "whole free space/balance can be pulled by default");
+        }
+    }
+
+    /**
+     * The solar boiler's reported production must be the real per-second rate. The old
+     * {@code lastSteamOutput = steamOut * 20} was a 20x over-report (steamOut is already the amount
+     * for the whole 20-tick cycle, i.e. one second), so the machine display read 6,240,000 L/s for a
+     * field that actually makes 312,000 mB/s and disagreed with Jade's per-craft recipe output.
+     */
+    private static void checkSolarBoilerProductionIsPerSecond() throws IOException {
+        Path boiler = Path.of(
+                "src/main/java/com/raishxn/gtna/common/machine/multiblock/steam/LargeSteamSolarBoilerMachine.java");
+        String source = Files.readString(boiler, StandardCharsets.UTF_8);
+        if (source.contains("(long) steamOut * 20L;") || source.contains("lastSteamOutput = (long) steamOut")) {
+            throw new AssertionError("LargeSteamSolarBoilerMachine still multiplies the per-cycle batch by 20 to get " +
+                    "a 'per second' value; steamOut is already per cycle (= per second at the 20-tick cycle)");
+        }
+        if (!source.contains("steamPerSecond = (long) steamOut * 20L / TICK_INTERVAL")) {
+            throw new AssertionError("LargeSteamSolarBoilerMachine must scale its per-cycle batch to a per-second " +
+                    "rate (steamOut * 20 / TICK_INTERVAL) so the display and Jade agree with the actual output");
         }
     }
 

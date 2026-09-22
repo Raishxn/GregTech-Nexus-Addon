@@ -21,6 +21,7 @@ import com.gregtechceu.gtceu.common.data.GTMachines;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
+import com.gregtechceu.gtceu.utils.FormattingUtil;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -95,6 +96,34 @@ public class GTNAMachines {
             .add(Component.translatable("gtna.registry.add")
                     .withStyle(ChatFormatting.LIGHT_PURPLE));
 
+    /**
+     * Dynamic tooltip for the wireless steam hatches: attribution, the configured buffer and the
+     * effective per-tick transfer rate. The values are read lazily so the tooltip always reflects the
+     * live config (the registration runs before/around config load).
+     */
+    private static BiConsumer<ItemStack, List<Component>> wirelessSteamTooltip(boolean isSteel) {
+        return (stack, components) -> {
+            GTNA_ADD.accept(stack, components);
+            if (ConfigHolder.INSTANCE == null) {
+                return;
+            }
+            int buffer = isSteel ? ConfigHolder.INSTANCE.wirelessSteam.steelBuffer :
+                    ConfigHolder.INSTANCE.wirelessSteam.bronzeBuffer;
+            long rate = isSteel ? ConfigHolder.INSTANCE.wirelessSteam.steelTransferRate :
+                    ConfigHolder.INSTANCE.wirelessSteam.bronzeTransferRate;
+            components.add(Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", buffer)
+                    .withStyle(ChatFormatting.GRAY));
+            if (rate >= Integer.MAX_VALUE) {
+                components.add(Component.translatable("gtna.machine.wireless_steam.transfer_rate.unlimited")
+                        .withStyle(ChatFormatting.AQUA));
+            } else {
+                components.add(Component.translatable("gtna.machine.wireless_steam.transfer_rate",
+                        FormattingUtil.formatNumbers(rate))
+                        .withStyle(ChatFormatting.AQUA));
+            }
+        };
+    }
+
     // --- INPUT HATCHES (Recebe Vapor) ---
 
     public static final MachineDefinition WIRELESS_STEAM_INPUT_HATCH = registerHatch("wirelessSteamInputBronze",
@@ -108,9 +137,8 @@ public class GTNAMachines {
                     .modelProperty(IS_FORMED, false)
                     .tooltips(
                             Component.translatable("gtna.machine.wireless_steam_input.tooltip_desc")
-                                    .withStyle(ChatFormatting.GRAY),
-                            Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", 20000))
-                    .tooltipBuilder(GTNA_ADD)
+                                    .withStyle(ChatFormatting.GRAY))
+                    .tooltipBuilder(wirelessSteamTooltip(false))
                     .register());
 
     public static final MachineDefinition WIRELESS_STEAM_INPUT_HATCH_STEEL = registerHatch("wirelessSteamInputSteel",
@@ -124,9 +152,8 @@ public class GTNAMachines {
                     .modelProperty(IS_FORMED, false)
                     .tooltips(
                             Component.translatable("gtna.machine.wireless_steam_input.tooltip_desc")
-                                    .withStyle(ChatFormatting.GRAY),
-                            Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", Integer.MAX_VALUE))
-                    .tooltipBuilder(GTNA_ADD)
+                                    .withStyle(ChatFormatting.GRAY))
+                    .tooltipBuilder(wirelessSteamTooltip(true))
                     .register());
 
     // --- OUTPUT HATCHES (Envia Vapor) ---
@@ -144,9 +171,8 @@ public class GTNAMachines {
                             Component.translatable("gtna.machine.wireless_steam_output.tooltip_desc")
                                     .withStyle(ChatFormatting.GRAY),
                             Component.translatable("gtna.machine.wireless_steam_output.tooltip_usage")
-                                    .withStyle(ChatFormatting.GOLD),
-                            Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", 20000))
-                    .tooltipBuilder(GTNA_ADD)
+                                    .withStyle(ChatFormatting.GOLD))
+                    .tooltipBuilder(wirelessSteamTooltip(false))
                     .register());
 
     public static final MachineDefinition WIRELESS_STEAM_OUTPUT_HATCH_STEEL = registerHatch("wirelessSteamOutputSteel",
@@ -162,9 +188,8 @@ public class GTNAMachines {
                             Component.translatable("gtna.machine.wireless_steam_output.tooltip_desc")
                                     .withStyle(ChatFormatting.GRAY),
                             Component.translatable("gtna.machine.wireless_steam_output.tooltip_usage")
-                                    .withStyle(ChatFormatting.GOLD),
-                            Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", Integer.MAX_VALUE))
-                    .tooltipBuilder(GTNA_ADD)
+                                    .withStyle(ChatFormatting.GOLD))
+                    .tooltipBuilder(wirelessSteamTooltip(true))
                     .register());
 
     public static final MachineDefinition HUGE_STEAM_INPUT_BUS = registerHatch("hugeSteamInputBus", () -> REGISTRATE
