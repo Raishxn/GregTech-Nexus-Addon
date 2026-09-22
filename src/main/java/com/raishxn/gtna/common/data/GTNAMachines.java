@@ -1567,6 +1567,7 @@ public class GTNAMachines {
                     .where('A', blocks(GTBlocks.CASING_BRONZE_BRICKS.get())
                             .or(abilities(PartAbility.IMPORT_ITEMS).setPreviewCount(1))
                             .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1))
+                            .or(abilities(EXPORT_ITEMS).setPreviewCount(1))
                             .or(abilities(PartAbility.STEAM).setExactLimit(1)))
                     .where('B', blocks(GTBlocks.CASING_BRONZE_BRICKS.get()))
                     .where('C', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))

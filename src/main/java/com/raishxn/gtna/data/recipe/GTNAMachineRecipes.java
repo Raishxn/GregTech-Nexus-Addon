@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.common.data.*;
 
 import java.util.Objects;
@@ -157,7 +158,7 @@ public class GTNAMachineRecipes {
                     .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
                     .define('D', GTNAItems.HYDRAULIC_MOTOR.get())
                     .define('E', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
-                    .define('F', GTMachines.ORE_WASHER[GTValues.LV].asStack().getItem())
+                    .define('F', GTNABlocks.STEAM_ASSEMBLY_BLOCK.get())
                     .unlockedBy("has_hydraulic_motor",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_MOTOR.get()))
                     .save(provider);
@@ -186,7 +187,7 @@ public class GTNAMachineRecipes {
                     .define('B', ChemicalHelper.get(TagPrefix.rotor, GTMaterials.Steel).getItem())
                     .define('C', GTNAItems.HYDRAULIC_MOTOR.get())
                     .define('D', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('E', GTMachines.MIXER[GTValues.LV].asStack().getItem())
+                    .define('E', GTNABlocks.STEAM_ASSEMBLY_BLOCK.get())
                     .unlockedBy("has_hydraulic_motor",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_MOTOR.get()))
                     .save(provider);
@@ -200,7 +201,7 @@ public class GTNAMachineRecipes {
                     .define('A', GTNAItems.PRECISION_STEAM_COMPONENT.get())
                     .define('B', GTNAItems.HYDRAULIC_MOTOR.get())
                     .define('C', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
-                    .define('D', GTMachines.CENTRIFUGE[GTValues.LV].asStack().getItem())
+                    .define('D', GTNABlocks.STEAM_ASSEMBLY_BLOCK.get())
                     .unlockedBy("has_precision_steam_component",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
                     .save(provider);
@@ -317,7 +318,7 @@ public class GTNAMachineRecipes {
                     .define('C', GTNAItems.HYDRAULIC_PISTON.get())
                     .define('D', Blocks.ANVIL)
                     .define('E', GTMachines.STEAM_HAMMER.first().asStack().getItem())
-                    .define('F', ChemicalHelper.get(TagPrefix.plateDouble, GTMaterials.Steel).getItem())
+                    .define('F', ChemicalHelper.get(GTNATagPrefix.quintuplePlate, GTMaterials.Steel).getItem())
                     .define('G', GTNAItems.HYDRAULIC_CONVEYOR.get())
                     .unlockedBy("has_hydraulic_conveyor",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_CONVEYOR.get()))
@@ -497,6 +498,19 @@ public class GTNAMachineRecipes {
         }
 
         if (enabled(GTNAMachines.STONE_SUPERHEATER)) {
+            // Crafting fallback (the GTNL machine is otherwise only made in the SteamManufacturer).
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.STONE_SUPERHEATER.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("EBE")
+                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Stronze).getItem())
+                    .define('B', GTNAItems.HYDRAULIC_MOTOR.get())
+                    .define('C', ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Stronze).getItem())
+                    .define('D', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('E', GTNABlocks.STRONZE_WRAPPED_CASING.get())
+                    .unlockedBy("has_precision_steam_component",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .save(provider);
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("stone_superheater_controller")
                     .inputItems(GTNABlocks.STRONZE_WRAPPED_CASING.get(), 1)
                     .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 2)
