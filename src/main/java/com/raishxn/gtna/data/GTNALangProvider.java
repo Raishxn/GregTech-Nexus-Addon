@@ -1042,6 +1042,20 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.steam_elevator_module.connected", "Connected to the elevator");
         add("gtna.machine.steam_elevator_module.disconnected", "Not connected");
 
+        // Wireless steam network inspection command (/gtna steam)
+        add("gtna.command.steam.balance", "§b[GTNA] §fWireless steam network §7(%s)§f: §b%s§f mB");
+        add("gtna.command.steam.hatches", "§b[GTNA] §fConnected wireless steam hatches: §e%s");
+        add("gtna.command.steam.hatch_entry", "  §7- §f%s §7%s §f@ §7%s %s");
+        add("gtna.command.steam.no_hatches", "§b[GTNA] §7No connected wireless steam hatches.");
+        add("gtna.command.steam.type.input", "Input");
+        add("gtna.command.steam.type.output", "Output");
+        add("gtna.command.steam.tier.bronze", "bronze");
+        add("gtna.command.steam.tier.steel", "steel");
+        add("gtna.command.steam.not_player", "§c[GTNA] This command must be run by a player.");
+        add("gtna.command.steam.added", "§b[GTNA] §fAdded §b%s§f mB; balance is now §b%s§f mB.");
+        add("gtna.command.steam.set", "§b[GTNA] §fSet the balance to §b%s§f mB.");
+        add("gtna.command.steam.add_failed", "§c[GTNA] Could not add that amount to the network.");
+
         add("block.gtna.steam_elevator_flight_module", "Steam Flight Module");
         add("gtna.machine.steam_elevator_flight_module.tooltip",
                 "Grants creative flight to players within range while the elevator runs.");

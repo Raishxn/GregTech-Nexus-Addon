@@ -1,14 +1,19 @@
 package com.raishxn.gtna.api.capability;
 
+import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 
 import com.raishxn.gtna.common.data.SteamNetworkData;
 import com.raishxn.gtna.config.ConfigHolder;
 
+import java.util.List;
 import java.util.UUID;
 
 public class SteamWirelessNetworkManager {
+
+    /** How long (in ticks) a wireless hatch stays "connected" after its last report. */
+    public static final long CONNECTION_TTL_TICKS = 40L;
 
     private SteamWirelessNetworkManager() {}
 
@@ -71,5 +76,22 @@ public class SteamWirelessNetworkManager {
             return true;
         }
         return false;
+    }
+
+    // ------------------------------------------------------------------
+    // Inspection support (runtime only).
+    // ------------------------------------------------------------------
+
+    /** Records a live wireless steam hatch so the inspection command can list it. */
+    public static void reportConnection(ServerLevel level, UUID userUuid, GlobalPos pos, boolean isInput,
+                                        boolean isSteel) {
+        if (level == null || userUuid == null || pos == null) return;
+        SteamNetworkData.get(level).reportConnection(userUuid, pos, isInput, isSteel, level.getGameTime());
+    }
+
+    /** The wireless steam hatches that reported for {@code userUuid} within the last TTL ticks. */
+    public static List<SteamNetworkData.ConnectionInfo> getConnections(ServerLevel level, UUID userUuid) {
+        if (level == null || userUuid == null) return List.of();
+        return SteamNetworkData.get(level).getActiveConnections(userUuid, level.getGameTime(), CONNECTION_TTL_TICKS);
     }
 }

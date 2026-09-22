@@ -59,6 +59,43 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0038 (2026-09-22) — wireless steam input hatch "no steam": pull is now clamped to the network balance + `/gtna steam` inspection command
+
+- **Causa raiz medida (reproduzida em gametest):** `WirelessSteamInputHatch.updateWireless` pedia
+  `toPull = min(spaceNeeded, transferRate)` (bronze **10000**, steel **1000000** mB) e só então
+  chamava `consumeSteamFromGlobalMap`, que é **tudo-ou-nada**. Se a rede tivesse **menos** que um
+  tick da taxa (o caso comum: o hatch de saída empurra aos poucos), o consume era rejeitado
+  inteiro e o hatch **nunca puxava nada** — daí o "no steam" tanto no host quanto no módulo. O
+  bug do G-0037 (gate de 8192 removido) era real, mas não era o que travava o puxão.
+- **Correção (paridade GTNL `tryFetchingSteam`):** o pedido agora é
+  `min(spaceNeeded, transferRate, getUserSteam(network))`; como o tanque simulado aceita ≤ pedido ≤
+  saldo, o consume atômico sempre passa. Nada mais é voidado nem duplicado (mantém o
+  SIMULATE→cobrar→EXECUTE do G-0037). Vale para hatch no **host** e no **módulo** (ambos usam o
+  `getOwnerUUID()` do colocador; a rede GTNA é keyed por owner, não por time — o comando abaixo
+  mostra o saldo e os hatches para conferir).
+- **Inspeção:** novo `/gtna steam` (qualquer jogador) imprime, para o próprio dono, o saldo da rede
+  e os wireless hatches conectados (tipo, bronze/aço, dimensão e posição). `/gtna steam add <n>` e
+  `/gtna steam set <n>` (op, nível 2) para reproduzir/verificar estados; `/gtna steam <jogador>`
+  (op) para a rede de outro jogador. Os hatches agora registram-se em um mapa **transiente** (TTL 40
+  ticks, nunca persistido) em `SteamNetworkData` via `SteamWirelessNetworkManager.reportConnection`;
+  o comando é a fonte de verdade para "o vapor chegou na rede?".
+- **Testes:** `wirelessSteamHatchIsAcceptedAsSteamSource` ganhou o **round trip real** (output hatch
+  com 4321 mB → `serverTick()` → rede 4321 → input hatch `serverTick()` → tanque 4321 → rede 0, sem
+  perda) — foi ele que reproduziu o bug antes da correção. `SteamWiringContractTest` agora exige
+  `getUserSteam` **antes** do `fill(SIMULATE)` no input hatch, travando a regressão.
+- **Arquivos:** `WirelessSteamInputHatch.java`, `WirelessSteamOutputHatch.java`,
+  `SteamNetworkData.java`, `SteamWirelessNetworkManager.java`, `GTNACommands.java`,
+  `GTNALangProvider.java` (12 chaves), `pt_br.json` (12 chaves, BOM/CRLF preservados),
+  `GTNAMachineGameTests.java`, `SteamWiringContractTest.java`, `en_us.json` gerado.
+- **Validação:** `spotlessApply compileJava` OK; `spotlessCheck` + `runUnitTests` (**14/14**);
+  `runGameTestServer` (**25/25**, `All 25 required tests passed`); `grep -c "Parsing error loading
+  recipe gtna:" run/logs/latest.log` = **0**; `runData` determinístico (2ª execução `written: 0`).
+- **Pendências abertas / verificação in-game:** (a) montar o hatch de saída numa fonte de vapor e o
+  de entrada no elevador/módulo, rodar `/gtna steam` e ver o saldo subir e os hatches listados;
+  (b) a rede ainda é por **owner** (colocador), não por time — co-op com jogadores diferentes exige
+  um item/comando de vínculo (FTB Teams é só `modRuntimeOnly`, não dá para referenciar no main);
+  (c) balancear as taxas por hatch (bronze 10000/t, aço 1000000/t) contra os upkeeps dos módulos.
+
 ### G-0037 (2026-09-22) — review in-game: rede de vapor sem perda, elevador/módulos sem EU, hatch no módulo e overlay do elevador
 
 - **Prioridade 1 — a rede de vapor wireless estava perdendo/entupindo vapor.** A causa medida era

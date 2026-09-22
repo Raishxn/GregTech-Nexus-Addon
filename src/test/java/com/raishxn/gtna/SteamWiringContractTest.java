@@ -121,6 +121,14 @@ public final class SteamWiringContractTest {
             throw new AssertionError("WirelessSteamInputHatch must simulate the fill, charge the network for " +
                     "exactly the accepted amount, then execute the fill (so it cannot void steam)");
         }
+        // consumeSteamFromGlobalMap is all-or-nothing; the request must be clamped to the network's
+        // actual balance first, otherwise a network holding less than one transfer tick is never
+        // drained (the reported "input hatch shows no steam" bug).
+        int inputAvailable = input.indexOf("getUserSteam");
+        if (!(inputAvailable >= 0 && inputAvailable < inputSim)) {
+            throw new AssertionError("WirelessSteamInputHatch must clamp its pull to the network balance " +
+                    "(getUserSteam) before requesting the transfer");
+        }
 
         String output = Files.readString(STEAM_PART_DIR.resolve("WirelessSteamOutputHatch.java"),
                 StandardCharsets.UTF_8);

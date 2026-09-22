@@ -14,6 +14,7 @@ import com.lowdragmc.lowdraglib.gui.widget.ImageWidget;
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fluids.FluidStack;
@@ -71,6 +72,8 @@ public class WirelessSteamOutputHatch extends SteamHatchPartMachine {
         if (getLevel() instanceof ServerLevel serverLevel) {
             UUID ownerId = getOwnerUUID();
             if (ownerId == null) return;
+            SteamWirelessNetworkManager.reportConnection(serverLevel, ownerId,
+                    GlobalPos.of(serverLevel.dimension(), getPos()), false, isSteel);
 
             long currentSteam = tank.getFluidInTank(0).getAmount();
 

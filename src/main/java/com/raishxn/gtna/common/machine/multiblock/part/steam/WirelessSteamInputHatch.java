@@ -14,6 +14,7 @@ import com.lowdragmc.lowdraglib.gui.widget.ImageWidget;
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fluids.FluidStack;
@@ -76,12 +77,20 @@ public class WirelessSteamInputHatch extends SteamHatchPartMachine {
         if (getLevel() instanceof ServerLevel serverLevel) {
             UUID ownerId = getOwnerUUID();
             if (ownerId == null) return;
+            SteamWirelessNetworkManager.reportConnection(serverLevel, ownerId,
+                    GlobalPos.of(serverLevel.dimension(), getPos()), true, isSteel);
             long currentSteam = tank.getFluidInTank(0).getAmount();
             long capacity = tank.getTankCapacity(0);
             long spaceNeeded = capacity - currentSteam;
 
             if (spaceNeeded > 0) {
-                int toPull = (int) Math.min(spaceNeeded, transferRate);
+                // GTNL tryFetchingSteam: clamp the request to what the network actually holds. The
+                // network consume is all-or-nothing, so asking for the full transfer rate would make
+                // the pull fail whenever the network holds less than one tick's worth — the reported
+                // "input hatch shows no steam" bug.
+                long networkAvailable = SteamWirelessNetworkManager.getUserSteam(serverLevel, ownerId);
+                if (networkAvailable <= 0) return;
+                int toPull = (int) Math.min(Math.min(spaceNeeded, transferRate), networkAvailable);
                 if (toPull <= 0) return;
 
                 // GTNL robustness: simulate the fill first, charge the network for exactly what the

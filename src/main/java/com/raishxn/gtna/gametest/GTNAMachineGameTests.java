@@ -49,6 +49,8 @@ import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMulti
 import com.raishxn.gtna.common.machine.multiblock.noenergy.PrimitiveStoneFurnaceMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamInputHatch;
+import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamOutputHatch;
 import com.raishxn.gtna.common.machine.multiblock.steam.AdjustableSteamParallelMachine;
 import com.raishxn.gtna.common.machine.multiblock.steam.SteamItemVaultMachine;
 import com.raishxn.gtna.common.machine.multiblock.steam.SteamLavaMakerMachine;
@@ -516,6 +518,36 @@ public final class GTNAMachineGameTests {
                 "subtracting below zero must be rejected atomically");
         helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == 0L,
                 "a rejected subtract must leave the balance untouched");
+
+        // Round trip through the real hatches: an output hatch pushes its tank into the network and
+        // an input hatch pulls it back, with no loss. Both must share the placer's owner UUID (the
+        // network key). This is the "input hatch reports no steam" path, exercised end to end.
+        BlockPos outputPos = new BlockPos(2, 8, 8);
+        helper.setBlock(outputPos, GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH.getBlock());
+        if (!(metaMachineAt(helper, outputPos) instanceof WirelessSteamOutputHatch outputHatch)) {
+            helper.fail("the wireless steam output hatch block entity is not a WirelessSteamOutputHatch");
+            return;
+        }
+        if (!(metaMachineAt(helper, wirelessPos) instanceof WirelessSteamInputHatch inputHatch)) {
+            helper.fail("the wireless steam input hatch block entity is not a WirelessSteamInputHatch");
+            return;
+        }
+        outputHatch.setOwnerUUID(owner);
+        inputHatch.setOwnerUUID(owner);
+        outputHatch.tank.setFluidInTank(0, GTMaterials.Steam.getFluid(4321));
+        outputHatch.serverTick();
+        long afterPush = SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner);
+        helper.assertTrue(afterPush == 4321L,
+                "the output hatch must push its whole tank into the network, got " + afterPush);
+        helper.assertTrue(outputHatch.tank.getFluidInTank(0).isEmpty(),
+                "the output hatch tank must be drained into the network");
+        inputHatch.serverTick();
+        long pulled = inputHatch.tank.getFluidInTank(0).getAmount();
+        long afterPull = SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner);
+        helper.assertTrue(pulled == 4321L,
+                "the input hatch must pull the steam back into its tank, got " + pulled);
+        helper.assertTrue(afterPull == 0L,
+                "the network must be empty after the input hatch pulls it, got " + afterPull);
         helper.succeed();
     }
 
