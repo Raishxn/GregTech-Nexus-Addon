@@ -34,8 +34,8 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-22 (G-0049):** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**) +
-  `runGameTestServer` (**29/29**, `All 29 required tests passed`) + `runData` determinístico. A
+- **Gate verde em 2026-09-22 (G-0050):** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**) +
+  `runGameTestServer` (**35/35**, `All 35 required tests passed`) + `runData` determinístico. A
   execução carregou os mixins alterados; os avisos/erros de receitas do GTCEu já conhecidos
   continuam no log.
 - **Rede wireless de vapor (G-0041/G-0042/G-0043):** o pull dos inputs é dividido por **fair share** entre
@@ -47,7 +47,7 @@ foi feito nem repetir os erros já pagos.
   módulo (G-0043). Ver G-0041..G-0043 para causa raiz, testes e pendências.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
-- **Testes hoje:** 17 unit tests (`main()` + asserts, padrão GTLCore) e 29 gametests (`@GameTest`),
+- **Testes hoje:** 17 unit tests (`main()` + asserts, padrão GTLCore) e 35 gametests (`@GameTest`),
   ambos no gate do CI.
 - **Licenciamento (G-0019):** código do GTNA **LGPLv3**; assets do GTO em **CC BY-NC-SA 4.0**
   (o GTNA é **não-comercial**). Permissão do **GTOEPP** concedida pelo time GTO; atribuição de origem
@@ -65,6 +65,21 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0050 (2026-09-22) — QA plano B: gametests de lógica dos módulos do elevador
+
+- Helpers puros extraídos dos módulos (sem montar a frágil estrutura 1×5×2):
+  `SteamWeatherModule.modeForCircuit`, `SteamOreProcessorModule.{cycleTicksFor,maxParallelFor,upkeepFor}`,
+  `SteamOilDrillModule.upkeepForTier`, `SteamEntityCrusherModule.{spawnerEntityType,doublingChanceFor}` e
+  `SteamBeaconModule.toggleEffect`.
+- Novo `GTNAModuleLogicGameTests` (6 gametests): circuito do weather + duração de 1 h; tabela de
+  modos/parallel/upkeep do ore processor (incl. clamp fora da faixa); upkeep `VP` do oil drill; parsing do
+  NBT do spawner + chance de dobrar com cap 34%; cap do seletor de efeitos do beacon; constantes
+  documentadas (greenhouse 16.000, flight `RANGE` 64).
+- **Validação:** `spotlessCheck` + `runUnitTests` (**17/17**); `runGameTestServer` (**35/35**);
+  `runData` determinístico.
+- **Pendências:** Bee Breeding aguardando Productive Bees 1.20.1; demais itens de QA manual no
+  `docs/roadmap/QA-MANUAL-CHECKLIST.md`.
 
 ### G-0049 (2026-09-22) — logo do addon no canto das UIs dos multiblocos (convenção GTNL)
 

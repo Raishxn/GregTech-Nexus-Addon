@@ -67,7 +67,12 @@ public class SteamWeatherModule extends SteamElevatorModuleMachine {
 
     /** The weather selected by the circuit: 1 = clear, 2 = rain, 3 = thunder, anything else = off. */
     public int selectedMode() {
-        return switch (IntCircuitBehaviour.getCircuitConfiguration(circuitInventory.getStackInSlot(0))) {
+        return modeForCircuit(IntCircuitBehaviour.getCircuitConfiguration(circuitInventory.getStackInSlot(0)));
+    }
+
+    /** Static mapping so the circuit contract can be gametested without a formed machine. */
+    public static int modeForCircuit(int circuit) {
+        return switch (circuit) {
             case 1 -> MODE_CLEAR;
             case 2 -> MODE_RAIN;
             case 3 -> MODE_THUNDER;

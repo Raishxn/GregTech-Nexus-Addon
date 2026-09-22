@@ -140,11 +140,16 @@ public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
                 identical += stack.getCount();
             }
         }
-        return Math.min(MAX_DOUBLING_CHANCE, BASE_DOUBLING_CHANCE + CHANCE_PER_SPAWNER * identical);
+        return doublingChanceFor(identical);
+    }
+
+    /** Static doubling-chance formula so the mechanic can be gametested. */
+    public static double doublingChanceFor(int identicalSpawners) {
+        return Math.min(MAX_DOUBLING_CHANCE, BASE_DOUBLING_CHANCE + CHANCE_PER_SPAWNER * identicalSpawners);
     }
 
     /** The mob stored in a vanilla spawner item's block-entity NBT, or {@code null}. */
-    private static EntityType<?> spawnerEntityType(ItemStack stack) {
+    public static EntityType<?> spawnerEntityType(ItemStack stack) {
         if (!stack.is(Items.SPAWNER)) return null;
         CompoundTag blockEntity = stack.getTagElement("BlockEntityTag");
         if (blockEntity == null) return null;

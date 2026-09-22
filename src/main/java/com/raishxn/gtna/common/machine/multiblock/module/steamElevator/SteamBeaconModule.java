@@ -91,12 +91,19 @@ public class SteamBeaconModule extends SteamElevatorModuleMachine {
     }
 
     private void setEffect(int index, boolean on) {
-        boolean currentlyOn = isEffectOn(index);
-        if (currentlyOn == on) return;
-        // Never exceed the tier limit; a click on a full selection is ignored.
-        if (on && Integer.bitCount(activeMask()) >= maxEffects()) return;
-        effectMask = on ? (activeMask() | (1 << index)) : (activeMask() & ~(1 << index));
+        effectMask = toggleEffect(activeMask(), index, on, maxEffects());
         markDirty();
+    }
+
+    /**
+     * Returns the new effect mask after toggling {@code index}; a toggle that would exceed
+     * {@code maxEffects} is ignored. Static so the cap can be gametested.
+     */
+    public static int toggleEffect(int mask, int index, boolean on, int maxEffects) {
+        boolean currentlyOn = (mask & (1 << index)) != 0;
+        if (currentlyOn == on) return mask;
+        if (on && Integer.bitCount(mask) >= maxEffects) return mask;
+        return on ? (mask | (1 << index)) : (mask & ~(1 << index));
     }
 
     private int effectCount() {

@@ -52,9 +52,13 @@ public class SteamOilDrillModule extends SteamElevatorModuleMachine {
 
     @Override
     public long getSteamUpkeep() {
-        // GTNL uses GTValues.VP = V * 30 / 32: 120 / 480 / 1920 for tiers I/II/III.
-        int tier = Math.min(GTValues.V.length - 1, getModuleTier());
-        return GTValues.V[tier] * 30L / 32L;
+        return upkeepForTier(getModuleTier());
+    }
+
+    /** GTNL uses GTValues.VP = V * 30 / 32: 120 / 480 / 1920 for tiers I/II/III. */
+    public static long upkeepForTier(int tier) {
+        int index = Math.min(GTValues.V.length - 1, Math.max(0, tier));
+        return GTValues.V[index] * 30L / 32L;
     }
 
     private int cycleTicks() {

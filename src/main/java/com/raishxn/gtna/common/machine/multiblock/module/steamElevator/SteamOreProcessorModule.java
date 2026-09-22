@@ -84,17 +84,36 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
     }
 
     private int cycleTicks() {
-        return MODE_TICKS[mode()];
+        return cycleTicksFor(mode());
     }
 
     private int maxParallel() {
-        return 8 << mode();
+        return maxParallelFor(mode());
     }
 
     @Override
     public long getSteamUpkeep() {
         // GTNL: requiredEUt = 128 * 2^circuit.
-        return STEAM_UPKEEP << mode();
+        return upkeepFor(mode());
+    }
+
+    private static int clampMode(int mode) {
+        return Math.max(0, Math.min(MAX_MODE, mode));
+    }
+
+    /** GTNL {@code getRecipeTickTime(mode)}. Static so the contract can be gametested. */
+    public static int cycleTicksFor(int mode) {
+        return MODE_TICKS[clampMode(mode)];
+    }
+
+    /** GTNL parallel: 8 per unit of the circuit multiplier (8, 16, 32 ...). */
+    public static int maxParallelFor(int mode) {
+        return 8 << clampMode(mode);
+    }
+
+    /** GTNL steam: 128 mB/t scaled by the circuit multiplier. */
+    public static long upkeepFor(int mode) {
+        return STEAM_UPKEEP << clampMode(mode);
     }
 
     @Override
