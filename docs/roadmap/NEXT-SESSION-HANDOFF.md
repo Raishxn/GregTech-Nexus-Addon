@@ -222,9 +222,11 @@ Detalhe em `docs/roadmap/port-audit-2026-09-21.md` e `THIRD_PARTY_NOTICES.md`.
    ⏸️ **Boiler = duplicata** do `LARGE_BOILER_BRONZE` do GTCEu (confirmar com o autor); o
    `SteamManufacturer` **já tem a estrutura correta** — falta a recipe map do GTNL, bloqueada em
    itens GTNL (§7).
-5. **Padronizar as tooltips** no estilo GTNL, com **`Source:`** e **nomes rainbow** (§1). O GTCEu tem
-   `TooltipHelper.RAINBOW_HSL_SLOW`; falta o formato `Machine Type: <receita>` e decidir como
-   estilizar o **nome do item** (o tooltip builder não controla a linha do nome).
+5. ~~**Padronizar as tooltips** no estilo GTNL, com **`Source:`** e **nomes rainbow** (§1).~~
+   ✅ **Feito (G-0034):** `GTNASteamTooltips` pós-processa todas as `large_steam_*`/`steam_*`:
+   `Machine Type: <receita>` → stats → high pressure → separador → `Source:`; nome rainbow via
+   `TooltipHelper.RAINBOW_HSL_SLOW` como primeira linha do tooltip (não há hook para o nome do item).
+   **Validar in-game.**
 6. **`VaultPortHatch`** (AE2, HV) para o `steam_item_vault` (§8).
 7. Rodar o gate (`spotlessCheck` + `runUnitTests` + `runGameTestServer` + `runData`) e **validar
    in-game** (checklist abaixo).
@@ -270,3 +272,27 @@ Detalhe em `docs/roadmap/port-audit-2026-09-21.md` e `THIRD_PARTY_NOTICES.md`.
   mesmo padrão de part machine.
 - **Teleporte Ad Astra:** `SteamElevatorTeleport` descobre dimensões pelo namespace `ad_astra` na
   registry em runtime — **não** importar classes do Ad Astra (evita dependência dura).
+
+---
+
+## 14. Fechamento da era Steam (2026-09-22)
+
+Tudo o que o handoff pedia para fechar a era Steam foi implementado e **commitado** (sem push):
+
+- High pressure mode (**G-0026**), blocos Industrial/Advanced Industrial Steam Casing (**G-0027**),
+  re-port das 21 estruturas `large_steam_*` (**G-0028**), correção de 3 receitas quebradas (**G-0029**),
+  blocos exatos + receitas alinhadas ao GTNL (**G-0030**), polimento de receitas (**G-0030**).
+- **Ports novos:** `SteamCactusWonder`, `SteamCracking`, `MegaSteamCompressor` (**G-0031**);
+  `SteamElevator` + 8 módulos (**G-0032**); `SteamApiaryModule`/`SteamBeeBreedingModule` nativos
+  (**G-0033**, Productive Bees não está no classpath → aproximação nativa); tooltips estilo GTNL
+  (**G-0034**).
+- **Gate final:** `spotlessCheck` + `runUnitTests` (14/14) + `runGameTestServer` (25/25) + `runData`
+  determinístico; **zero** `Parsing error loading recipe gtna:`.
+
+**Pendências (validação in-game, client):** formação das 21 estruturas re-portadas e do Steam Elevator
+35x43x35; tooltips (rainbow / `Machine Type` / separador / ordem); teleporte Ad Astra; GUI/upkeep dos
+módulos; e o nome duplicado no tooltip (não há hook para o nome do item no 1.20.1).
+
+**Não feito / decisão pendente:** `VaultPortHatch` (AE2, §8); recipe map própria do `SteamManufacturer`
+(bloqueada em itens GTNL, §7); `LargeBronzeBoiler` pulado (duplicata do `LARGE_BOILER_BRONZE` do GTCEu).
+
