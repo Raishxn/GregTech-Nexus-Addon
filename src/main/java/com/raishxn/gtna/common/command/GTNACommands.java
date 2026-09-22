@@ -86,7 +86,11 @@ public class GTNACommands {
                                         EntityArgument.getPlayer(context, "player"))))));
     }
 
-    /** Prints the stored steam and the connected wireless hatches for a player's network. */
+    /**
+     * Prints the stored steam, the lifetime in/out flow and every connected wireless hatch with its
+     * own tank level and last transfer, so a pool that reads 0 mB can be told apart from a pool
+     * that is not moving at all.
+     */
     private static int steamReport(CommandSourceStack source, ServerPlayer target) {
         ServerPlayer player = target != null ? target : source.getPlayer();
         if (player == null) {
@@ -99,11 +103,17 @@ public class GTNACommands {
         long stored = SteamWirelessNetworkManager.getUserSteam(level, owner);
         source.sendSuccess(() -> Component.translatable("gtna.command.steam.balance", name, stored), false);
 
+        var flow = SteamWirelessNetworkManager.getFlowStats(level, owner);
+        int pulling = SteamWirelessNetworkManager.getActiveInputCount(level, owner);
+        source.sendSuccess(() -> Component.translatable("gtna.command.steam.flow",
+                FormattingUtil.formatNumbers(flow.added), FormattingUtil.formatNumbers(flow.consumed), pulling), false);
+
         List<com.raishxn.gtna.common.data.SteamNetworkData.ConnectionInfo> connections = SteamWirelessNetworkManager
                 .getConnections(level, owner);
         if (connections.isEmpty()) {
             source.sendSuccess(() -> Component.translatable("gtna.command.steam.no_hatches"), false);
         } else {
+            long now = level.getGameTime();
             source.sendSuccess(() -> Component.translatable("gtna.command.steam.hatches", connections.size()), false);
             for (var connection : connections) {
                 long rate = connection.isSteel ? ConfigHolder.INSTANCE.wirelessSteam.steelTransferRate :
@@ -111,6 +121,7 @@ public class GTNACommands {
                 Component rateText = rate >= Integer.MAX_VALUE ?
                         Component.translatable("gtna.command.steam.rate.unlimited") :
                         Component.literal(FormattingUtil.formatNumbers(rate));
+                Component lastOperation = lastOperationText(connection, now);
                 source.sendSuccess(() -> Component.translatable("gtna.command.steam.hatch_entry",
                         Component.translatable(connection.isInput ? "gtna.command.steam.type.input" :
                                 "gtna.command.steam.type.output"),
@@ -118,10 +129,25 @@ public class GTNACommands {
                                 "gtna.command.steam.tier.bronze"),
                         connection.pos.dimension().location().toString(),
                         connection.pos.pos().toShortString(),
-                        rateText), false);
+                        FormattingUtil.formatNumbers(connection.tankAmount),
+                        FormattingUtil.formatNumbers(connection.tankCapacity),
+                        rateText,
+                        lastOperation), false);
             }
         }
         return connections.size() + 1;
+    }
+
+    /** "no transfer yet", "pushed N mB (T t ago)" or "pulled N mB (T t ago)" for one hatch. */
+    private static Component lastOperationText(com.raishxn.gtna.common.data.SteamNetworkData.ConnectionInfo connection,
+                                               long now) {
+        if (connection.lastTransferTick < 0 || connection.lastTransferAmount == 0) {
+            return Component.translatable("gtna.command.steam.last.none");
+        }
+        long age = Math.max(0L, now - connection.lastTransferTick);
+        String amount = FormattingUtil.formatNumbers(Math.abs(connection.lastTransferAmount));
+        return Component.translatable(connection.lastTransferAmount > 0 ? "gtna.command.steam.last.push" :
+                "gtna.command.steam.last.pull", amount, age);
     }
 
     /** Op helper: adds steam to the sender's own network (negative values subtract atomically). */

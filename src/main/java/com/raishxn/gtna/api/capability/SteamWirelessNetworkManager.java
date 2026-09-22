@@ -6,6 +6,7 @@ import net.minecraft.world.level.Level;
 
 import com.raishxn.gtna.common.data.SteamNetworkData;
 import com.raishxn.gtna.config.ConfigHolder;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
@@ -49,8 +50,8 @@ public class SteamWirelessNetworkManager {
 
     /**
      * Consumes exactly {@code amount} from the owner's network, or nothing. The caller caps
-     * {@code amount} (the wireless hatches cap it at their per-tick transfer rate); the network
-     * itself never silently discards a remainder.
+     * {@code amount} (the wireless hatches cap it at their per-tick transfer rate and at their
+     * fair share of the balance); the network itself never silently discards a remainder.
      */
     public static boolean consumeSteamFromGlobalMap(ServerLevel level, UUID userUuid, long amount) {
         if (level == null || userUuid == null || amount <= 0) return false;
@@ -82,16 +83,37 @@ public class SteamWirelessNetworkManager {
     // Inspection support (runtime only).
     // ------------------------------------------------------------------
 
-    /** Records a live wireless steam hatch so the inspection command can list it. */
-    public static void reportConnection(ServerLevel level, UUID userUuid, GlobalPos pos, boolean isInput,
-                                        boolean isSteel) {
-        if (level == null || userUuid == null || pos == null) return;
-        SteamNetworkData.get(level).reportConnection(userUuid, pos, isInput, isSteel, level.getGameTime());
+    /**
+     * Records a live wireless steam hatch so the inspection command can list it, and returns the
+     * live entry so the caller can attach its tank level and last transfer.
+     */
+    @Nullable
+    public static SteamNetworkData.ConnectionInfo reportConnection(ServerLevel level, UUID userUuid, GlobalPos pos,
+                                                                   boolean isInput, boolean isSteel) {
+        if (level == null || userUuid == null || pos == null) return null;
+        return SteamNetworkData.get(level).reportConnection(userUuid, pos, isInput, isSteel, level.getGameTime());
     }
 
     /** The wireless steam hatches that reported for {@code userUuid} within the last TTL ticks. */
     public static List<SteamNetworkData.ConnectionInfo> getConnections(ServerLevel level, UUID userUuid) {
         if (level == null || userUuid == null) return List.of();
         return SteamNetworkData.get(level).getActiveConnections(userUuid, level.getGameTime(), CONNECTION_TTL_TICKS);
+    }
+
+    /**
+     * How many live input hatches still have free space. The input hatch divides the pool balance
+     * by this count so one hatch can never drain the whole network in a single tick and starve
+     * every other machine (the reported "network stuck at 0, other inputs never fill" bug).
+     */
+    public static int getActiveInputCount(ServerLevel level, UUID userUuid) {
+        if (level == null || userUuid == null) return 0;
+        return SteamNetworkData.get(level).countActiveInputsWithSpace(userUuid, level.getGameTime(),
+                CONNECTION_TTL_TICKS);
+    }
+
+    /** Lifetime in/out counters of the owner's pool (runtime only). */
+    public static SteamNetworkData.FlowStats getFlowStats(ServerLevel level, UUID userUuid) {
+        if (level == null || userUuid == null) return new SteamNetworkData.FlowStats();
+        return SteamNetworkData.get(level).getFlowStats(userUuid);
     }
 }

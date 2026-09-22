@@ -33,7 +33,9 @@ public final class ConfigLangKeysTest {
     /** Jade derives the key from the provider UID as {@code config.jade.plugin_<ns>.<path>}. */
     private static final List<String> JADE_PROVIDER_KEYS = List.of(
             "config.jade.plugin_gtna.multiple_recipes_provider",
-            "config.jade.plugin_gtna.me_pattern_buffer");
+            "config.jade.plugin_gtna.me_pattern_buffer",
+            "config.jade.plugin_gtna.solar_boiler_provider",
+            "config.jade.plugin_gtna.wireless_steam_network");
 
     private static final Pattern CONFIG_FIELD = Pattern
             .compile("^\\s*public\\s+[\\w<>\\[\\]., ]+?\\s+(\\w+)\\s*(?:=|;).*$");

@@ -56,6 +56,7 @@ public final class SteamWiringContractTest {
         checkSteamSlotsUseAbility();
         checkWirelessSteamAccounting();
         checkWirelessSteamMovesWholeBuffer();
+        checkWirelessSteamFairShare();
         checkSolarBoilerProductionIsPerSecond();
         checkElevatorHasNoEuBuffer();
         System.out.println("[SteamWiringContractTest] all cases passed");
@@ -180,6 +181,37 @@ public final class SteamWiringContractTest {
         if (!input.contains("getTransferRate()")) {
             throw new AssertionError("WirelessSteamInputHatch must clamp its pull by getTransferRate() so the " +
                     "whole free space/balance can be pulled by default");
+        }
+    }
+
+    /**
+     * The input hatch must share the pool: with several inputs connected, a hatch that requests
+     * the whole balance lets the first one in tick order drain everything, so the network always
+     * reads 0 and the other machines starve. The pull has to be divided over the live inputs that
+     * still have space. The runtime side is covered by
+     * {@code wirelessSteamDistributesAcrossManyInputs}.
+     */
+    private static void checkWirelessSteamFairShare() throws IOException {
+        String input = Files.readString(STEAM_PART_DIR.resolve("WirelessSteamInputHatch.java"),
+                StandardCharsets.UTF_8);
+        if (!input.contains("getActiveInputCount")) {
+            throw new AssertionError("WirelessSteamInputHatch must divide the network balance over the live " +
+                    "inputs that have space (getActiveInputCount); otherwise one hatch drains the whole pool " +
+                    "every tick and every other machine starves");
+        }
+        int fairShare = input.indexOf("fairShare");
+        int consume = input.indexOf("consumeSteamFromGlobalMap");
+        if (!(fairShare >= 0 && fairShare < consume)) {
+            throw new AssertionError("WirelessSteamInputHatch must compute its fair share before consuming from " +
+                    "the network, not after");
+        }
+        for (String file : List.of("WirelessSteamInputHatch.java", "WirelessSteamOutputHatch.java")) {
+            String source = Files.readString(STEAM_PART_DIR.resolve(file), StandardCharsets.UTF_8);
+            if (source.contains("setWorkingEnabled(false)")) {
+                throw new AssertionError(file + " still disables the GTCEu AUTO IO toggle, which makes Jade " +
+                        "report 'Working Disabled' for a working wireless hatch; keep AUTO IO off by overriding " +
+                        "updateTankSubscription() instead");
+            }
         }
     }
 

@@ -1058,14 +1058,20 @@ public class GTNALangProvider extends LanguageProvider {
 
         // Wireless steam network inspection command (/gtna steam)
         add("gtna.command.steam.balance", "§b[GTNA] §fWireless steam network §7(%s)§f: §b%s§f mB");
+        add("gtna.command.steam.flow",
+                "§b[GTNA] §7Flow since server start: §a+%s§7 mB in, §c-%s§7 mB out; §e%s§7 input hatch(es) with space");
         add("gtna.command.steam.hatches", "§b[GTNA] §fConnected wireless steam hatches: §e%s");
-        add("gtna.command.steam.hatch_entry", "  §7- §f%s §7%s §f@ §7%s %s §7| §e%s §7mB/t");
+        add("gtna.command.steam.hatch_entry",
+                "  §7- §f%s §7%s §f@ §7%s %s §7| §7tank §f%s§7/§f%s §7mB | §e%s §7mB/t | %s");
         add("gtna.command.steam.rate.unlimited", "unlimited");
         add("gtna.command.steam.no_hatches", "§b[GTNA] §7No connected wireless steam hatches.");
         add("gtna.command.steam.type.input", "Input");
         add("gtna.command.steam.type.output", "Output");
         add("gtna.command.steam.tier.bronze", "bronze");
         add("gtna.command.steam.tier.steel", "steel");
+        add("gtna.command.steam.last.none", "§7no transfer yet");
+        add("gtna.command.steam.last.push", "§apushed %s§7 mB (%s§7 t ago)");
+        add("gtna.command.steam.last.pull", "§bpulled %s§7 mB (%s§7 t ago)");
         add("gtna.command.steam.not_player", "§c[GTNA] This command must be run by a player.");
         add("gtna.command.steam.added", "§b[GTNA] §fAdded §b%s§f mB; balance is now §b%s§f mB.");
         add("gtna.command.steam.set", "§b[GTNA] §fSet the balance to §b%s§f mB.");
@@ -1148,6 +1154,12 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.jade.plugin_gtna.multiple_recipes_provider", "Multiple Recipes Machine Info");
         add("config.jade.plugin_gtna.me_pattern_buffer", "ME Pattern Buffer Info");
         add("config.jade.plugin_gtna.solar_boiler_provider", "Large Steam Solar Boiler Info");
+        add("config.jade.plugin_gtna.wireless_steam_network", "Wireless Steam Network Info");
+        add("gtna.jade.wireless_steam.balance", "Network: %s mB");
+        add("gtna.jade.wireless_steam.tank", "Hatch Tank: %s / %s mB");
+        add("gtna.jade.wireless_steam.last_push", "Last push: %s mB");
+        add("gtna.jade.wireless_steam.last_pull", "Last pull: %s mB");
+        add("gtna.jade.wireless_steam.idle", "No transfer yet");
 
         for (int i = 0; i < GTValues.V.length; i++) {
             String tierName = GTValues.VN[i];

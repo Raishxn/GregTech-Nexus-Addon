@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import com.raishxn.gtna.integration.jade.provider.GTNAMultipleRecipesProvider;
 import com.raishxn.gtna.integration.jade.provider.GTNAPatternBufferProvider;
 import com.raishxn.gtna.integration.jade.provider.GTNASolarBoilerProvider;
+import com.raishxn.gtna.integration.jade.provider.GTNAWirelessSteamProvider;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaCommonRegistration;
 import snownee.jade.api.IWailaPlugin;
@@ -19,6 +20,7 @@ public class GTNAJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(GTNAMultipleRecipesProvider.INSTANCE, BlockEntity.class);
         registration.registerBlockDataProvider(GTNAPatternBufferProvider.INSTANCE, BlockEntity.class);
         registration.registerBlockDataProvider(GTNASolarBoilerProvider.INSTANCE, BlockEntity.class);
+        registration.registerBlockDataProvider(GTNAWirelessSteamProvider.INSTANCE, BlockEntity.class);
     }
 
     @Override
@@ -26,5 +28,6 @@ public class GTNAJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(GTNAMultipleRecipesProvider.INSTANCE, Block.class);
         registration.registerBlockComponent(GTNAPatternBufferProvider.INSTANCE, Block.class);
         registration.registerBlockComponent(GTNASolarBoilerProvider.INSTANCE, Block.class);
+        registration.registerBlockComponent(GTNAWirelessSteamProvider.INSTANCE, Block.class);
     }
 }

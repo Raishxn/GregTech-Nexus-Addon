@@ -578,9 +578,208 @@ public final class GTNAMachineGameTests {
     }
 
     /**
-     * Locks the casing-tier table that drives high pressure mode: both the stock GT casings and the
-     * ported industrial steam casings must map to the right tier, and any other block must not count.
+     * The core of the "network stuck at 0 mB, 24 inputs never fill" report: with several input
+     * hatches on one network, no single hatch may drain the whole pool in a tick. The first hatch
+     * in tick order used to take everything (it requested the whole balance), so the pool always
+     * read 0 and every other machine starved. The input hatch must split the balance over the
+     * inputs that still have space, and every drop must be conserved across the round trip.
      */
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void wirelessSteamDistributesAcrossManyInputs(GameTestHelper helper) {
+        if (GTNAMachines.WIRELESS_STEAM_INPUT_HATCH == null || GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH == null) {
+            helper.fail("the wireless steam hatches are disabled by config; the distribution test cannot run");
+            return;
+        }
+        UUID owner = UUID.randomUUID();
+        int pushed = 312_000;
+        int inputCount = 5;
+
+        BlockPos outputPos = new BlockPos(1, 1, 1);
+        helper.setBlock(outputPos, GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH.getBlock());
+        if (!(metaMachineAt(helper, outputPos) instanceof WirelessSteamOutputHatch outputHatch)) {
+            helper.fail("the wireless steam output hatch block entity is not a WirelessSteamOutputHatch");
+            return;
+        }
+        outputHatch.setOwnerUUID(owner);
+
+        WirelessSteamInputHatch[] inputs = new WirelessSteamInputHatch[inputCount];
+        for (int i = 0; i < inputCount; i++) {
+            BlockPos pos = new BlockPos(3 + i, 1, 1);
+            helper.setBlock(pos, GTNAMachines.WIRELESS_STEAM_INPUT_HATCH.getBlock());
+            if (!(metaMachineAt(helper, pos) instanceof WirelessSteamInputHatch inputHatch)) {
+                helper.fail("the wireless steam input hatch block entity is not a WirelessSteamInputHatch");
+                return;
+            }
+            inputHatch.setOwnerUUID(owner);
+            inputs[i] = inputHatch;
+        }
+
+        // Warm the runtime registry the way a running server does: every hatch reports once before
+        // the pool is funded. Without this the very first tick has only one registered hatch, so the
+        // fair-share denominator cannot see its peers yet (the load-time blip, harmless in game
+        // because every later tick has the full registry).
+        for (WirelessSteamInputHatch input : inputs) {
+            input.serverTick();
+        }
+
+        outputHatch.tank.setFluidInTank(0, GTMaterials.Steam.getFluid(pushed));
+        outputHatch.serverTick();
+        helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == pushed,
+                "the output hatch must push its whole tank into the network first");
+
+        // One round: every input is ticked exactly once, in a fixed order. The old winner-takes-all
+        // pull made inputs[0] swallow the whole 312,000 and leave the rest at 0.
+        long singlePassLimit = (pushed + inputCount - 1L) / inputCount;
+        long pulledFirstPass = 0;
+        for (WirelessSteamInputHatch input : inputs) {
+            long before = input.tank.getFluidInTank(0).getAmount();
+            input.serverTick();
+            long got = input.tank.getFluidInTank(0).getAmount() - before;
+            helper.assertTrue(got <= singlePassLimit,
+                    "an input hatch pulled " + got + " mB in one pass, more than its fair share of " +
+                            singlePassLimit + " mB; one hatch is monopolising the network again");
+            pulledFirstPass += got;
+        }
+        helper.assertTrue(pulledFirstPass > 0, "no input hatch pulled anything from a funded network");
+        helper.assertTrue(pulledFirstPass < pushed,
+                "a single pass drained the whole pool (" + pulledFirstPass + " of " + pushed +
+                        "), which is the winner-takes-all behaviour");
+        helper.assertTrue(
+                SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == pushed - pulledFirstPass,
+                "the network balance must drop by exactly what the inputs pulled");
+
+        // Subsequent passes must converge to an empty network with every drop accounted for.
+        for (int pass = 0; pass < 12; pass++) {
+            for (WirelessSteamInputHatch input : inputs) {
+                input.serverTick();
+            }
+        }
+        long inHatches = 0;
+        for (WirelessSteamInputHatch input : inputs) {
+            inHatches += input.tank.getFluidInTank(0).getAmount();
+        }
+        helper.assertTrue(inHatches == pushed,
+                "every drop must end up in an input tank: expected " + pushed + ", got " + inHatches);
+        helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == 0L,
+                "the network must be empty once every input has pulled its share");
+
+        // The runtime registry behind /gtna steam must list every hatch with its live tank level.
+        var connections = SteamWirelessNetworkManager.getConnections(helper.getLevel(), owner);
+        helper.assertTrue(connections.size() == inputCount + 1,
+                "the inspection registry must list every connected hatch, got " + connections.size());
+        long reportedInputs = connections.stream().filter(c -> c.isInput).count();
+        helper.assertTrue(reportedInputs == inputCount,
+                "the inspection registry must report all " + inputCount + " inputs, got " + reportedInputs);
+        helper.assertTrue(connections.stream().anyMatch(c -> !c.isInput && c.tankAmount == 0),
+                "the inspection registry must report the output hatch with its (empty) tank");
+        helper.succeed();
+    }
+
+    /**
+     * A full input hatch must not dilute the fair share of the ones that still have space, and it
+     * must never void steam: it pulls nothing and the pool keeps every drop for the other inputs.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void wirelessSteamFullInputDoesNotDiluteOrVoid(GameTestHelper helper) {
+        if (GTNAMachines.WIRELESS_STEAM_INPUT_HATCH == null || GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH == null) {
+            helper.fail("the wireless steam hatches are disabled by config; the no-void test cannot run");
+            return;
+        }
+        UUID owner = UUID.randomUUID();
+        long pushed = 100_000L;
+
+        BlockPos outputPos = new BlockPos(1, 3, 1);
+        helper.setBlock(outputPos, GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH.getBlock());
+        if (!(metaMachineAt(helper, outputPos) instanceof WirelessSteamOutputHatch outputHatch)) {
+            helper.fail("the wireless steam output hatch block entity is not a WirelessSteamOutputHatch");
+            return;
+        }
+        outputHatch.setOwnerUUID(owner);
+
+        BlockPos fullPos = new BlockPos(3, 3, 1);
+        helper.setBlock(fullPos, GTNAMachines.WIRELESS_STEAM_INPUT_HATCH.getBlock());
+        if (!(metaMachineAt(helper, fullPos) instanceof WirelessSteamInputHatch fullInput)) {
+            helper.fail("the wireless steam input hatch block entity is not a WirelessSteamInputHatch");
+            return;
+        }
+        fullInput.setOwnerUUID(owner);
+        long fullCapacity = fullInput.tank.getTankCapacity(0);
+        fullInput.tank.setFluidInTank(0, GTMaterials.Steam.getFluid((int) fullCapacity));
+
+        BlockPos emptyPos = new BlockPos(5, 3, 1);
+        helper.setBlock(emptyPos, GTNAMachines.WIRELESS_STEAM_INPUT_HATCH.getBlock());
+        if (!(metaMachineAt(helper, emptyPos) instanceof WirelessSteamInputHatch emptyInput)) {
+            helper.fail("the wireless steam input hatch block entity is not a WirelessSteamInputHatch");
+            return;
+        }
+        emptyInput.setOwnerUUID(owner);
+
+        outputHatch.tank.setFluidInTank(0, GTMaterials.Steam.getFluid((int) pushed));
+        outputHatch.serverTick();
+        helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == pushed,
+                "the output hatch must push its whole tank into the network");
+
+        // A full hatch has no space: it must pull nothing and must not swallow a share either.
+        fullInput.serverTick();
+        helper.assertTrue(fullInput.tank.getFluidInTank(0).getAmount() == fullCapacity,
+                "a full input hatch must keep its tank untouched (no void, no duplication)");
+        helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == pushed,
+                "a full input hatch must not consume from the network; the balance must stay " + pushed);
+
+        // The only input with space therefore gets the whole pool.
+        emptyInput.serverTick();
+        helper.assertTrue(emptyInput.tank.getFluidInTank(0).getAmount() == pushed,
+                "the only input with space must receive the whole balance, got " +
+                        emptyInput.tank.getFluidInTank(0).getAmount());
+        helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == 0L,
+                "the network must be empty after the only available input pulled it");
+        helper.succeed();
+    }
+
+    /**
+     * Wiring regression for the natural server tick: the hatches must feed each other through
+     * {@code onLoad}'s tick subscription, not only through a manual {@code serverTick()} call in a
+     * test. The pool may read 0 between ticks (that is the pass-through design) but the steam must
+     * land in the input tank within a few ticks.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void wirelessSteamFeedsOnNaturalServerTick(GameTestHelper helper) {
+        if (GTNAMachines.WIRELESS_STEAM_INPUT_HATCH == null || GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH == null) {
+            helper.fail("the wireless steam hatches are disabled by config; the natural tick test cannot run");
+            return;
+        }
+        UUID owner = UUID.randomUUID();
+        int pushed = 312_000;
+
+        BlockPos outputPos = new BlockPos(1, 5, 1);
+        helper.setBlock(outputPos, GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH.getBlock());
+        if (!(metaMachineAt(helper, outputPos) instanceof WirelessSteamOutputHatch outputHatch)) {
+            helper.fail("the wireless steam output hatch block entity is not a WirelessSteamOutputHatch");
+            return;
+        }
+        outputHatch.setOwnerUUID(owner);
+
+        BlockPos inputPos = new BlockPos(3, 5, 1);
+        helper.setBlock(inputPos, GTNAMachines.WIRELESS_STEAM_INPUT_HATCH.getBlock());
+        if (!(metaMachineAt(helper, inputPos) instanceof WirelessSteamInputHatch inputHatch)) {
+            helper.fail("the wireless steam input hatch block entity is not a WirelessSteamInputHatch");
+            return;
+        }
+        inputHatch.setOwnerUUID(owner);
+        outputHatch.tank.setFluidInTank(0, GTMaterials.Steam.getFluid(pushed));
+
+        helper.runAfterDelay(10, () -> {
+            long inTank = inputHatch.tank.getFluidInTank(0).getAmount();
+            helper.assertTrue(inTank == pushed,
+                    "after 10 natural server ticks the input hatch must hold the pushed steam, got " + inTank);
+            helper.assertTrue(outputHatch.tank.getFluidInTank(0).isEmpty(),
+                    "the output hatch must have emptied into the network");
+            helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == 0L,
+                    "the network must be empty once the input pulled the steam");
+            helper.succeed();
+        });
+    }
+
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void steamCasingTiers(GameTestHelper helper) {
         helper.assertTrue(SteamMultiMachineBase.casingTier(GTBlocks.CASING_BRONZE_BRICKS.get().defaultBlockState()) ==

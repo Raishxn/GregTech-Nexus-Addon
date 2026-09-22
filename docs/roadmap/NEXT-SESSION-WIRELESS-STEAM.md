@@ -1,5 +1,12 @@
 # Handoff — Rede wireless de steam (próxima sessão)
 
+> **Resolvido em 2026-09-22 (checkpoint G-0041 do `CONTINUITY_LEDGER.md`).** A causa raiz era o pull
+> all-or-nothing: com N inputs, o **primeiro hatch do tick drenava o pool inteiro**, a rede sempre
+> lia 0 mB e os outros 23 hatches nunca enchiam (o vapor ficava preso em um único hatch idle). O
+> pull agora é dividido por **fair share** entre os inputs com espaço, o `/gtna steam` mostra fluxo
+> vitalício + estado por hatch e há provider Jade com o saldo. Este documento fica como registro
+> histórico da investigação.
+
 > Sessão dedicada. A rede wireless de steam **ainda está com bugs sérios**. Há muitas peças
 > (25 hatches na reprodução do autor) e o saldo da rede fica **0 mB** mesmo com um output hatch
 > cheio. Trate como **investigação + robustez**, não só patch.

@@ -15,15 +15,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Persisted steam pool plus the runtime view of the wireless steam hatches.
+ *
+ * <p>
+ * The pool is a plain owner -&gt; mB map: output hatches add, input hatches subtract atomically.
+ * Beyond that the class keeps <b>runtime-only</b> bookkeeping used by the {@code /gtna steam}
+ * command and by the fair-share pull of the input hatches:
+ * <ul>
+ * <li>{@link ConnectionInfo}: every wireless hatch that reported in recently, with its tank level
+ * and last transfer, so the command can show a per-hatch state and the input hatch can size its
+ * pull against the number of inputs that still need steam.</li>
+ * <li>{@link FlowStats}: lifetime counters of everything added to and consumed from an owner's
+ * pool, so "the network reads 0" can be told apart from "the network is not moving".</li>
+ * </ul>
+ * None of this is persisted: it is rebuilt from live hatches every tick.
+ */
 public class SteamNetworkData extends SavedData {
 
     private static final String DATA_NAME = "gtna_steam_network";
     private final Map<UUID, Long> steamStorage = new HashMap<>();
 
+    /** Runtime-only lifetime flow counters, keyed by network owner. Never persisted. */
+    private final Map<UUID, FlowStats> flowStats = new HashMap<>();
+
     /**
      * Runtime-only (never persisted) view of the wireless steam hatches that reported in recently,
-     * keyed by network owner. Used by the inspection command; entries expire after a short TTL so an
-     * unloaded hatch disappears on its own without an explicit unregister.
+     * keyed by network owner. Used by the inspection command and by the fair-share pull; entries
+     * expire after a short TTL so an unloaded hatch disappears on its own without an explicit
+     * unregister.
      */
     private final Map<UUID, Map<GlobalPos, ConnectionInfo>> connections = new HashMap<>();
 
@@ -34,6 +54,16 @@ public class SteamNetworkData extends SavedData {
         public final boolean isInput;
         public final boolean isSteel;
         public long lastSeenTick;
+        /** Tank level at the last report, for the command and for the fair-share denominator. */
+        public long tankAmount;
+        public long tankCapacity;
+        /**
+         * Signed amount moved by the last completed transfer: positive when the hatch pushed into
+         * the network (output), negative when it pulled from it (input). {@code 0} = no transfer
+         * since the hatch loaded.
+         */
+        public long lastTransferAmount;
+        public long lastTransferTick = -1L;
 
         public ConnectionInfo(GlobalPos pos, boolean isInput, boolean isSteel, long lastSeenTick) {
             this.pos = pos;
@@ -41,6 +71,18 @@ public class SteamNetworkData extends SavedData {
             this.isSteel = isSteel;
             this.lastSeenTick = lastSeenTick;
         }
+
+        /** Whether an input hatch has free space, i.e. can still take steam from the pool. */
+        public boolean hasSpace() {
+            return isInput && tankAmount < tankCapacity;
+        }
+    }
+
+    /** Lifetime in/out counters for one owner's pool. Runtime only. */
+    public static final class FlowStats {
+
+        public long added;
+        public long consumed;
     }
 
     public SteamNetworkData() {}
@@ -95,6 +137,12 @@ public class SteamNetworkData extends SavedData {
         if (next < 0) return false;
 
         steamStorage.put(owner, next);
+        FlowStats stats = getFlowStats(owner);
+        if (amount > 0) {
+            stats.added += amount;
+        } else {
+            stats.consumed -= amount;
+        }
         setDirty();
         return true;
     }
@@ -108,20 +156,31 @@ public class SteamNetworkData extends SavedData {
         long current = getSteam(owner);
         if (current >= amount) {
             steamStorage.put(owner, current - amount);
+            getFlowStats(owner).consumed += amount;
             setDirty();
             return true;
         }
         return false;
     }
 
+    /** Lifetime added/consumed counters for the command; creates an empty entry on demand. */
+    public FlowStats getFlowStats(UUID owner) {
+        return flowStats.computeIfAbsent(owner, ignored -> new FlowStats());
+    }
+
     // ------------------------------------------------------------------
     // Runtime hatch bookkeeping (for the inspection command). Not persisted.
     // ------------------------------------------------------------------
 
-    /** Records that a wireless steam hatch owned by {@code owner} is alive at {@code pos}. */
-    public void reportConnection(UUID owner, GlobalPos pos, boolean isInput, boolean isSteel, long tick) {
-        connections.computeIfAbsent(owner, ignored -> new HashMap<>())
-                .put(pos, new ConnectionInfo(pos, isInput, isSteel, tick));
+    /**
+     * Records that a wireless steam hatch owned by {@code owner} is alive at {@code pos} and
+     * returns its live entry so the caller can attach its tank level and last transfer.
+     */
+    public ConnectionInfo reportConnection(UUID owner, GlobalPos pos, boolean isInput, boolean isSteel, long tick) {
+        Map<GlobalPos, ConnectionInfo> map = connections.computeIfAbsent(owner, ignored -> new HashMap<>());
+        ConnectionInfo info = map.computeIfAbsent(pos, p -> new ConnectionInfo(p, isInput, isSteel, tick));
+        info.lastSeenTick = tick;
+        return info;
     }
 
     /**
@@ -142,5 +201,26 @@ public class SteamNetworkData extends SavedData {
             }
         }
         return active;
+    }
+
+    /**
+     * Number of live input hatches that still have free space, i.e. how many hatches should share
+     * one tick's network balance. Counting only hatches with space keeps a bank of full buffers
+     * from diluting the share of the ones that can actually accept steam.
+     */
+    public int countActiveInputsWithSpace(UUID owner, long nowTick, long ttl) {
+        Map<GlobalPos, ConnectionInfo> map = connections.get(owner);
+        if (map == null) return 0;
+        int count = 0;
+        var iterator = map.values().iterator();
+        while (iterator.hasNext()) {
+            ConnectionInfo info = iterator.next();
+            if (nowTick - info.lastSeenTick > ttl) {
+                iterator.remove();
+            } else if (info.hasSpace()) {
+                count++;
+            }
+        }
+        return count;
     }
 }

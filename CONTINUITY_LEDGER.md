@@ -34,13 +34,17 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-21:** `spotlessCheck` + `compileJava` + `runUnitTests` (**14/14**) +
-  `runGameTestServer` (**25/25**, `All 25 required tests passed`) + `runData` determinístico. A
+- **Gate verde em 2026-09-22 (G-0041):** `spotlessCheck` + `compileJava` + `runUnitTests` (**15/15**) +
+  `runGameTestServer` (**28/28**, `All 28 required tests passed`) + `runData` determinístico. A
   execução carregou os mixins alterados; os avisos/erros de receitas do GTCEu já conhecidos
   continuam no log.
+- **Rede wireless de vapor (G-0041):** o pull dos inputs agora é dividido por **fair share** entre os
+  inputs com espaço (antes o primeiro hatch do tick drenava o pool inteiro — a rede sempre lia 0 e
+  os outros 23 hatches nunca enchiam); `/gtna steam` mostra fluxo vitalício + estado por hatch e o
+  Jade mostra o saldo da rede. Ver G-0041 para causa raiz, testes e pendências.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
-- **Testes hoje:** 14 unit tests (`main()` + asserts, padrão GTLCore) e 25 gametests (`@GameTest`),
+- **Testes hoje:** 15 unit tests (`main()` + asserts, padrão GTLCore) e 28 gametests (`@GameTest`),
   ambos no gate do CI.
 - **Licenciamento (G-0019):** código do GTNA **LGPLv3**; assets do GTO em **CC BY-NC-SA 4.0**
   (o GTNA é **não-comercial**). Permissão do **GTOEPP** concedida pelo time GTO; atribuição de origem
@@ -58,6 +62,61 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0041 (2026-09-22) — rede wireless de vapor travada em 0 mB com 25 hatches: o primeiro input drenava o pool inteiro por tick; pull com fair share + diagnóstico por hatch
+
+- **Reprodução do autor (25 hatches):** 1 output hatch no boiler solar (312.000 mB por ciclo) + 24
+  input hatches nas máquinas grandes; `/gtna steam` lia **0 mB** em 3 leituras ao longo de ~4 min.
+  O save `New World` foi inspecionado: **21 inputs parados em exatamente 20.000 mB** (o antigo buffer
+  de bronze), **um** input (o primeiro na ordem de tick) com **47.756.000 mB**, output hatch vazio e
+  `gtna_steam_network.dat` com o UUID do Dev e saldo 0.
+- **Causa raiz medida:** o push e a chave da rede estavam certos (o vapor produzido chegava ao pool:
+  ~48M mB acumulados em um hatch). O bug era o **pull all-or-nothing**: cada input pedia
+  `min(space, rate, saldo)` e com rate default `Integer.MAX_VALUE` o **primeiro hatch do tick levava
+  o saldo inteiro**; os 23 seguintes liam 0. Nada era voidado nem duplicado — o vapor ficava **preso
+  no primeiro hatch** (idle), a rede lia 0 e todas as outras máquinas morriam de fome.
+- **Correção (fair share; desvio documentado do GTNL):** o input agora divide o saldo pelo número de
+  inputs **vivos e com espaço** (`getActiveInputCount`, registry com TTL 40t), com `ceil`:
+  `request = min(space, rate, ceil(saldo/inputs), saldo)`. Um hatch sozinho continua levando o saldo
+  inteiro (GTNL parity); com N hatches todos são servidos por tick, mantendo a ordem
+  SIMULATE→cobrar→EXECUTE (nunca voida/duplica). Os hatches se **pré-registram no `onLoad`** (com
+  nível do tanque) para o denominador ver o banco inteiro já no primeiro tick após restart.
+- **"Working Disabled" do Jade:** o `setWorkingEnabled(false)` do port desligava o **AUTO IO** do
+  GTCEu (o campo `workingEnabled` de `TieredIOPartMachine` é o toggle de auto IO, não o estado da
+  rede) e o Jade lia isso como "Working Disabled" num hatch que funcionava. Agora `isWorkingEnabled()`
+  espelha o master switch e o AUTO IO continua desligado via `updateTankSubscription()` no-op
+  (wireless-only, sem import/export por pipes).
+- **Diagnóstico `/gtna steam`:** saldo + **fluxo vitalício** (`+adicionado / -consumido`) + nº de
+  inputs com espaço + uma linha por hatch com **tanque atual/capacidade**, taxa e **última operação**
+  ("pushed/pulled N mB (T t ago)" / "no transfer yet"). Provider Jade novo
+  `wireless_steam_network` (paridade WAILA do GTNL) mostra saldo da rede, tanque do hatch e última
+  transferência; chave `config.jade.plugin_gtna.wireless_steam_network` no `GTNALangProvider`.
+- **Testes:** 3 gametests novos — `wirelessSteamDistributesAcrossManyInputs` (1 output + 5 inputs:
+  nenhum hatch leva mais que `ceil(312000/5)` por passada, todos puxam, 12 passadas zeram a rede com
+  conservação total e o registry do comando lista os 6), `wirelessSteamFullInputDoesNotDiluteOrVoid`
+  (input cheio não puxa, não dilui a share do vazio e não voida) e
+  `wirelessSteamFeedsOnNaturalServerTick` (tick natural do servidor, sem `serverTick()` manual:
+  output enche → input recebe em ≤10 ticks). `SteamWiringContractTest` trava o fair share e a remoção
+  do `setWorkingEnabled(false)`.
+- **Arquivos:** `SteamNetworkData.java` (`ConnectionInfo` com tanque/última transferência +
+  `FlowStats` + `countActiveInputsWithSpace`), `SteamWirelessNetworkManager.java`
+  (`reportConnection`→`ConnectionInfo`, `getActiveInputCount`, `getFlowStats`),
+  `WirelessSteamInputHatch.java` (fair share, pré-registro, diagnostics, AUTO IO no-op),
+  `WirelessSteamOutputHatch.java` (pré-registro, diagnostics, AUTO IO no-op), `GTNACommands.java`
+  (fluxo + linha por hatch), `GTNAWirelessSteamProvider.java` (novo) + `GTNAJadePlugin.java`,
+  `GTNALangProvider.java` + `pt_br.json` (byte-preserving: BOM/CRLF intactos) + `en_us.json` gerado,
+  `GTNAMachineGameTests.java`, `SteamWiringContractTest.java`.
+- **Validação:** `spotlessCheck` + `runUnitTests` (**15/15**); `runGameTestServer` (**28/28**,
+  `All 28 required tests passed`); `grep -c "Parsing error loading recipe gtna:" run/logs/latest.log`
+  = **0**; `runData` determinístico (2ª execução `written: 0`).
+- **Pendências abertas:** (a) verificação in-game do autor com os 25 hatches reais — a rede deve
+  parar de ler 0 assim que os buffers dos inputs encherem e os 21 inputs presos em 20.000 devem
+  subir; (b) a rede continua keyed por **owner** (não por time; FTB Teams é só `modRuntimeOnly` —
+  documentado desde o G-0038); (c) o hatch de saída continua movendo o tanque inteiro por tick sem
+  cap default (paridade GTNL); (d) no **primeiro tick** após carregar um banco de hatches recém
+  colocados ainda pode haver um hatch pegando o saldo inteiro (o `onLoad` pré-registra os carregados
+  de chunk, mas um hatch colocado com a rede já cheia só se registra no 1º tick) — blip de 1 tick,
+  documentado nos testes.
 
 ### G-0040 (2026-09-22) — boiler solar grande não alimentava a rede wireless: buffer/taxa do hatch de saída estrangulavam o ciclo; display/Jade reportavam 20× a produção
 
