@@ -179,7 +179,7 @@ foi feito nem repetir os erros já pagos.
 - **Validação:** `spotlessCheck` + `runUnitTests` (14/14) + `runGameTestServer` (25/25) + `runData`
   (written: 0).
 
-### G-0027 (2026-09-22) — port fiel de 3 multiblocks steam do GTNL (Cactus Wonder / Steam Cracking / Mega Steam Compressor)
+### G-0031 (2026-09-22) — port fiel de 3 multiblocks steam do GTNL (Cactus Wonder / Steam Cracking / Mega Steam Compressor)
 
 - **Implementado:** três máquinas do GTNL portadas seguindo as convenções do repo
   (`registerMachine`, pattern helpers próprios, config toggle, lang en_us + pt_br byte-preserving):
