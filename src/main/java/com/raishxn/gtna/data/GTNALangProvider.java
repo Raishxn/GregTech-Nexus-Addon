@@ -1042,6 +1042,15 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.steam_elevator_module.connected", "Connected to the elevator");
         add("gtna.machine.steam_elevator_module.disconnected", "Not connected");
 
+        // Shared stat lines appended under each module's main description line. The description
+        // itself is gtna.machine.<module_id>.tooltip, auto-inserted by GTCEu; these keys only carry
+        // the numbers so no module ever prints the same line twice.
+        add("gtna.machine.steam_elevator_module.tooltip.range", "Range: %s blocks");
+        add("gtna.machine.steam_elevator_module.tooltip.upkeep", "Upkeep: %s mB/t");
+        add("gtna.machine.steam_elevator_module.tooltip.cycle", "Cycle: %s ticks");
+        add("gtna.machine.steam_elevator_module.tooltip.water", "Water: %s mB per operation");
+        add("gtna.machine.steam_elevator_module.tooltip.yield", "Yield: %s L per cycle");
+
         // Wireless steam network inspection command (/gtna steam)
         add("gtna.command.steam.balance", "§b[GTNA] §fWireless steam network §7(%s)§f: §b%s§f mB");
         add("gtna.command.steam.hatches", "§b[GTNA] §fConnected wireless steam hatches: §e%s");
@@ -1061,19 +1070,19 @@ public class GTNALangProvider extends LanguageProvider {
                 "Grants creative flight to players within range while the elevator runs.");
         add("block.gtna.steam_elevator_weather_module", "Steam Weather Module");
         add("gtna.machine.steam_elevator_weather_module.tooltip",
-                "Forces clear, raining or thundering weather.");
+                "Forces clear, rain or thunder weather with a cycle button; each change lasts one hour.");
         add("block.gtna.steam_elevator_greenhouse_module", "Steam Greenhouse Module");
         add("gtna.machine.steam_elevator_greenhouse_module.tooltip",
-                "Consumes water to accelerate crop growth in a 16-block radius.");
+                "Consumes water to accelerate the growth of nearby crops.");
         add("block.gtna.steam_elevator_oil_drill_module_i", "Steam Oil Drill Module I");
         add("block.gtna.steam_elevator_oil_drill_module_ii", "Steam Oil Drill Module II");
         add("block.gtna.steam_elevator_oil_drill_module_iii", "Steam Oil Drill Module III");
         add("gtna.machine.steam_elevator_oil_drill_module_i.tooltip",
                 "Pumps the bedrock fluid vein of its chunk into its output tank.");
         add("gtna.machine.steam_elevator_oil_drill_module_ii.tooltip",
-                "Tier II oil drill: larger yield and shorter cycle.");
+                "Tier II bedrock-fluid drill: more vein types and a shorter cycle.");
         add("gtna.machine.steam_elevator_oil_drill_module_iii.tooltip",
-                "Tier III oil drill: largest yield and shortest cycle.");
+                "Tier III bedrock-fluid drill: the widest yield and shortest cycle.");
         add("block.gtna.steam_elevator_entity_crusher_module", "Steam Entity Crusher Module");
         add("gtna.machine.steam_elevator_entity_crusher_module.tooltip",
                 "Crushes hostile monsters within range, dropping their loot.");
@@ -1084,19 +1093,20 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.steam_elevator_monster_repellent_module_ii", "Steam Monster Repellent Module II");
         add("block.gtna.steam_elevator_monster_repellent_module_iii", "Steam Monster Repellent Module III");
         add("gtna.machine.steam_elevator_monster_repellent_module_i.tooltip",
-                "Removes hostile monsters within a 64-block radius.");
+                "Removes hostile monsters so they cannot spawn nearby.");
         add("gtna.machine.steam_elevator_monster_repellent_module_ii.tooltip",
-                "Removes hostile monsters within a 128-block radius.");
+                "Removes hostile monsters so they cannot spawn nearby (wider field).");
         add("gtna.machine.steam_elevator_monster_repellent_module_iii.tooltip",
-                "Removes hostile monsters within a 256-block radius.");
+                "Removes hostile monsters so they cannot spawn nearby (vast field).");
         add("block.gtna.steam_elevator_beacon_module_i", "Steam Beacon Module I");
         add("block.gtna.steam_elevator_beacon_module_ii", "Steam Beacon Module II");
         add("block.gtna.steam_elevator_beacon_module_iii", "Steam Beacon Module III");
-        add("gtna.machine.steam_elevator_beacon_module_i.tooltip", "Speed and Haste to nearby players.");
+        add("gtna.machine.steam_elevator_beacon_module_i.tooltip",
+                "Grants Speed and Haste to nearby players.");
         add("gtna.machine.steam_elevator_beacon_module_ii.tooltip",
-                "Speed, Haste, Resistance and Regeneration to nearby players.");
+                "Grants Speed, Haste, Resistance and Regeneration to nearby players.");
         add("gtna.machine.steam_elevator_beacon_module_iii.tooltip",
-                "Speed, Haste, Resistance, Regeneration, Strength and Night Vision to nearby players.");
+                "Grants Speed, Haste, Resistance, Regeneration, Strength and Night Vision to nearby players.");
         add("block.gtna.steam_elevator_apiary_module", "Steam Apiary Module");
         add("gtna.machine.steam_elevator_apiary_module.tooltip",
                 "Houses bees: consumes honeycomb and water to produce honeycomb and honey.");

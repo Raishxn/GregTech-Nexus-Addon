@@ -59,6 +59,38 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0039 (2026-09-22) — tooltip duplicado dos módulos do elevador: descrição saía duas vezes (mainKey do GTCEu + `.tooltips`); descrições fiéis ao GTNL
+
+- **Causa raiz (confirmada no fonte do GTCEu 7.5.3):** `MetaMachineBlock#appendHoverText` chama
+  `definition.getTooltipBuilder().accept(...)` (que adiciona o que foi passado em `.tooltips(...)`)
+  e depois insere `tooltip.add(1, Component.translatable("<namespace>.machine.<id>.tooltip"))`
+  **se a chave existir**. O `registerElevatorModule` passava exatamente a mesma chave
+  `gtna.machine.<id>.tooltip` em `.tooltips(...)`, então a linha saía duas vezes. O mesmo caminho
+  existe em `MetaMachine#onAddFancyInformationTooltip` (índice 0).
+- **Correção:** o `registerElevatorModule` deixou de listar a descrição; a linha única passa a vir
+  só da inserção automática do GTCEu (índice 1, logo abaixo do nome). O `.tooltips(...)` agora
+  recebe apenas as linhas de **status/upkeep** de cada módulo, terminando em
+  `gtceu.part_sharing.disabled` (que continua, é intencional).
+- **Tooltips fiéis ao GTNL:** descrição de "o que faz" em `gtna.machine.<id>.tooltip` (auto) +
+  linhas de status via chaves compartilhadas `gtna.machine.steam_elevator_module.tooltip.{range,
+  upkeep,cycle,water,yield}`. Flight: range 64/upkeep 8192; Weather: upkeep 512; Greenhouse:
+  range 16/água 1000/upkeep 8192; Oil Drill I/II/III: yield 250-1000 / 1000-4000 / 3000-12000 L
+  por ciclo, ciclo 1200/600/400 ticks, upkeep 128/512/2048; Entity Crusher: range 8/upkeep 512;
+  Ore Processor: água 1000/ciclo 20/upkeep 128; Repellent I/II/III: range 64/128/256, upkeep
+  512/1024/1536; Beacon I/II/III: range 64/128/256, upkeep 2048/8192/18432; Apiary: água
+  1000/ciclo 200/upkeep 16384; Bee Breeding: ciclo 12000/upkeep 32768.
+- **Arquivos:** `GTNAMachines2.java` (helpers `range/upkeep/cycle/water/yieldStat` + varargs de
+  tooltips no `registerElevatorModule`), `GTNALangProvider.java` (5 chaves novas + descrições),
+  `pt_br.json` (5 chaves novas + descrições; BOM + CRLF preservados byte a byte),
+  `en_us.json` gerado.
+- **Validação:** `spotlessApply compileJava` OK; `spotlessCheck` + `runUnitTests` (**14/14**);
+  `runGameTestServer` (**25/25**, `All 25 required tests passed`); `grep -c "Parsing error loading
+  recipe gtna:" run/logs/latest.log` = **0**; `runData` determinístico (2ª execução `written: 0`).
+- **Pendências abertas / verificação in-game:** conferir no cliente que cada módulo mostra **uma**
+  linha de descrição seguida das linhas de status e de "Multiblock Sharing Disabled"; os valores de
+  yield do Oil Drill são os do cálculo GTNA (`baseYield * (1..4)` somado `tier-1` vezes), não os
+  números do GTNL (o GTNL usa overclock count variável, o GTNA usa tier fixo).
+
 ### G-0038 (2026-09-22) — wireless steam input hatch "no steam": pull is now clamped to the network balance + `/gtna steam` inspection command
 
 - **Causa raiz medida (reproduzida em gametest):** `WirelessSteamInputHatch.updateWireless` pedia
