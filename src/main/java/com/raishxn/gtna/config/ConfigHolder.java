@@ -248,16 +248,29 @@ public class ConfigHolder {
         public boolean enabled = true;
 
         @Configurable
-        @Comment({ "En: Tank capacity for bronze wireless steam hatches.",
-                "En: GTNL parity: the bronze wireless dynamo holds 128,000,000 mB. The buffer is the",
-                "En: real per-tick throughput limit: a large boiler can only move what fits in the tank,",
-                "En: so it must be big enough to hold a whole recipe cycle (a 41x42 solar boiler makes",
-                "En: 312,000 mB per 20-tick cycle). A small buffer voids the rest of the cycle." })
-        public int bronzeBuffer = 128000000;
+        @Comment({ "En: Tank capacity for the bronze wireless steam INPUT hatch (network -> machine).",
+                "En: Deliberately small: a huge input buffer let a single hatch hoard the whole pool,",
+                "En: which starved every other machine and made the network read 0 mB (the reported",
+                "En: 'network always 0' bug). The input hatch only bridges the gap until its machine",
+                "En: consumes the steam. 100,000 mB = 100 buckets." })
+        public int bronzeInputBuffer = 100000;
 
         @Configurable
-        @Comment("En: Tank capacity for steel wireless steam hatches.")
-        public int steelBuffer = Integer.MAX_VALUE;
+        @Comment({ "En: Tank capacity for the steel wireless steam INPUT hatch (network -> machine).",
+                "En: Integer.MAX_VALUE = effectively unbounded, like GTNL's steel wireless energy hatch." })
+        public int steelInputBuffer = Integer.MAX_VALUE;
+
+        @Configurable
+        @Comment({ "En: Tank capacity for the bronze wireless steam OUTPUT hatch (boiler -> network).",
+                "En: GTNL parity: the bronze wireless dynamo holds 128,000,000 mB. The buffer is the",
+                "En: real per-tick throughput limit: a large boiler can only move what fits in the tank,",
+                "En: so it must hold a whole recipe cycle (a 41x42 solar boiler makes 6,240,000 mB per",
+                "En: 20-tick cycle at the current balance). A small buffer voids the rest of the cycle." })
+        public int bronzeOutputBuffer = 128000000;
+
+        @Configurable
+        @Comment("En: Tank capacity for the steel wireless steam OUTPUT hatch (boiler -> network).")
+        public int steelOutputBuffer = Integer.MAX_VALUE;
 
         @Configurable
         @Comment({ "En: Optional per-tick transfer limit for bronze wireless steam hatches.",
@@ -426,6 +439,16 @@ public class ConfigHolder {
         @Configurable
         @Range(min = 1000, max = 1000000)
         public int wirelessSteamTransferRate = 8192;
+
+        @Configurable
+        @Range(min = 1, max = 100000)
+        @Comment({ "En: Steam produced per sunlit solar boiling cell per 20-tick cycle in the",
+                "En: Large Steam Solar Boiler (mB). 20x the original 200 mB: a 41x42 field makes",
+                "En: ~6,240,000 mB per second instead of ~312,000, which matches the massive",
+                "En: structure cost.",
+                "Pt: Vapor por celula solar por ciclo de 20 ticks no Large Steam Solar Boiler (mB).",
+                "Pt: 20x o valor original de 200 mB: um campo 41x42 passa a fazer ~6.240.000 mB/s." })
+        public int solarBoilerSteamPerCell = 4000;
 
         @Configurable
         @Range(min = 1, max = 64)

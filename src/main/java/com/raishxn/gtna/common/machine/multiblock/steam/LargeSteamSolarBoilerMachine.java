@@ -35,7 +35,6 @@ public class LargeSteamSolarBoilerMachine extends WorkableMultiblockMachine impl
     private static final int MAX_SIDE = 63;
     private static final int MAX_BACK = 125;
     private static final int TICK_INTERVAL = 20;
-    private static final int STEAM_PER_CELL = 200;
 
     private int lDist;
     private int rDist;
@@ -184,7 +183,7 @@ public class LargeSteamSolarBoilerMachine extends WorkableMultiblockMachine impl
     }
 
     private GTRecipe createSolarRecipe() {
-        int steamOut = sunlit * STEAM_PER_CELL;
+        int steamOut = sunlit * steamPerCell();
         int waterIn = (int) Math.ceil((double) steamOut / ConfigHolder.INSTANCE.machines.largeBoilers.steamPerWater);
         // steamOut is produced over TICK_INTERVAL ticks; scale to a per-second rate (20 ticks/s).
         steamPerSecond = (long) steamOut * 20L / TICK_INTERVAL;
@@ -193,6 +192,15 @@ public class LargeSteamSolarBoilerMachine extends WorkableMultiblockMachine impl
                 .outputFluids(GTMaterials.Steam.getFluid(steamOut))
                 .duration(TICK_INTERVAL)
                 .buildRawRecipe();
+    }
+
+    /**
+     * mB of steam produced per sunlit cell per cycle, from the GTNA config. The original hardcoded
+     * value was 200; the default is now 4,000 (20x) because a 41x42 field only made ~312,000 mB/s,
+     * far too little for the structure's cost.
+     */
+    private static int steamPerCell() {
+        return com.raishxn.gtna.config.ConfigHolder.INSTANCE.machines.solarBoilerSteamPerCell;
     }
 
     /** Sunlit solar boiling cells counted at the last cycle; 0 at night or in the rain. */
@@ -207,7 +215,7 @@ public class LargeSteamSolarBoilerMachine extends WorkableMultiblockMachine impl
 
     /** Steam the recipe dumps in one cycle (mB per {@link #TICK_INTERVAL} ticks). */
     public long getSteamPerCycle() {
-        return (long) sunlit * STEAM_PER_CELL;
+        return (long) sunlit * steamPerCell();
     }
 
     @Override

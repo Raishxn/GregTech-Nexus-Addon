@@ -99,18 +99,24 @@ public class GTNAMachines {
     /**
      * Dynamic tooltip for the wireless steam hatches: attribution, the configured buffer and the
      * effective per-tick transfer rate. The values are read lazily so the tooltip always reflects the
-     * live config (the registration runs before/around config load).
+     * live config (the registration runs before/around config load). Input and output hatches have
+     * separate buffers: a small input buffer keeps one hatch from hoarding the pool, while the output
+     * buffer has to hold a whole boiler cycle.
      */
-    private static BiConsumer<ItemStack, List<Component>> wirelessSteamTooltip(boolean isSteel) {
+    private static BiConsumer<ItemStack, List<Component>> wirelessSteamTooltip(boolean isSteel, boolean isInput) {
         return (stack, components) -> {
             GTNA_ADD.accept(stack, components);
             if (ConfigHolder.INSTANCE == null) {
                 return;
             }
-            int buffer = isSteel ? ConfigHolder.INSTANCE.wirelessSteam.steelBuffer :
-                    ConfigHolder.INSTANCE.wirelessSteam.bronzeBuffer;
-            long rate = isSteel ? ConfigHolder.INSTANCE.wirelessSteam.steelTransferRate :
-                    ConfigHolder.INSTANCE.wirelessSteam.bronzeTransferRate;
+            var wirelessSteam = ConfigHolder.INSTANCE.wirelessSteam;
+            int buffer;
+            if (isInput) {
+                buffer = isSteel ? wirelessSteam.steelInputBuffer : wirelessSteam.bronzeInputBuffer;
+            } else {
+                buffer = isSteel ? wirelessSteam.steelOutputBuffer : wirelessSteam.bronzeOutputBuffer;
+            }
+            long rate = isSteel ? wirelessSteam.steelTransferRate : wirelessSteam.bronzeTransferRate;
             components.add(Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", buffer)
                     .withStyle(ChatFormatting.GRAY));
             if (rate >= Integer.MAX_VALUE) {
@@ -138,7 +144,7 @@ public class GTNAMachines {
                     .tooltips(
                             Component.translatable("gtna.machine.wireless_steam_input.tooltip_desc")
                                     .withStyle(ChatFormatting.GRAY))
-                    .tooltipBuilder(wirelessSteamTooltip(false))
+                    .tooltipBuilder(wirelessSteamTooltip(false, true))
                     .register());
 
     public static final MachineDefinition WIRELESS_STEAM_INPUT_HATCH_STEEL = registerHatch("wirelessSteamInputSteel",
@@ -153,7 +159,7 @@ public class GTNAMachines {
                     .tooltips(
                             Component.translatable("gtna.machine.wireless_steam_input.tooltip_desc")
                                     .withStyle(ChatFormatting.GRAY))
-                    .tooltipBuilder(wirelessSteamTooltip(true))
+                    .tooltipBuilder(wirelessSteamTooltip(true, true))
                     .register());
 
     // --- OUTPUT HATCHES (Envia Vapor) ---
@@ -172,7 +178,7 @@ public class GTNAMachines {
                                     .withStyle(ChatFormatting.GRAY),
                             Component.translatable("gtna.machine.wireless_steam_output.tooltip_usage")
                                     .withStyle(ChatFormatting.GOLD))
-                    .tooltipBuilder(wirelessSteamTooltip(false))
+                    .tooltipBuilder(wirelessSteamTooltip(false, false))
                     .register());
 
     public static final MachineDefinition WIRELESS_STEAM_OUTPUT_HATCH_STEEL = registerHatch("wirelessSteamOutputSteel",
@@ -189,7 +195,7 @@ public class GTNAMachines {
                                     .withStyle(ChatFormatting.GRAY),
                             Component.translatable("gtna.machine.wireless_steam_output.tooltip_usage")
                                     .withStyle(ChatFormatting.GOLD))
-                    .tooltipBuilder(wirelessSteamTooltip(true))
+                    .tooltipBuilder(wirelessSteamTooltip(true, false))
                     .register());
 
     public static final MachineDefinition HUGE_STEAM_INPUT_BUS = registerHatch("hugeSteamInputBus", () -> REGISTRATE
@@ -1236,10 +1242,16 @@ public class GTNAMachines {
     private static BlockPattern createSteamElevatorPattern(MultiblockMachineDefinition definition) {
         return GTNAMultiBlockFileReader.start(definition, "steam_elevator")
                 .where('~', controller(blocks(definition.get())))
+                // The elevator itself needs no steam (only the modules do), and the module slots sit
+                // inside the host volume: a module's own steam/item/fluid hatch lands on one of these
+                // shell cells. Pinning any of those abilities with setMaxGlobalLimited would count
+                // every module's hatch as the host's and fail the whole tower with "Maximum: 1"
+                // (the reported "only one module can have a steam hatch" bug), so the host accepts
+                // them unlimited; the module pattern is what limits each module to one hatch.
                 .where('A', blocks(GTNABlocks.STEEL_REINFORCED_WOOD.get())
-                        .or(abilities(PartAbility.STEAM).setMaxGlobalLimited(1))
-                        .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
-                        .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1)))
+                        .or(abilities(PartAbility.STEAM))
+                        .or(abilities(PartAbility.STEAM_IMPORT_ITEMS))
+                        .or(abilities(PartAbility.STEAM_EXPORT_ITEMS)))
                 .where('B', blocks(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get()))
                 .where('C', blocks(GTBlocks.CASING_BRONZE_BRICKS.get()))
                 .where('D', blocks(GTBlocks.CASING_STEEL_SOLID.get()))
@@ -1247,14 +1259,14 @@ public class GTNAMachines {
                 .where('F', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Steel)))
                 .where('G', blocks(Blocks.BRICKS))
                 .where('H', blocks(GTBlocks.CASING_STEEL_SOLID.get())
-                        .or(abilities(PartAbility.STEAM).setMaxGlobalLimited(1))
-                        .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
-                        .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
-                        .or(abilities(PartAbility.IMPORT_ITEMS).setMaxGlobalLimited(1))
-                        .or(abilities(PartAbility.EXPORT_ITEMS).setMaxGlobalLimited(2))
-                        .or(abilities(PartAbility.IMPORT_FLUIDS).setMaxGlobalLimited(1))
-                        .or(abilities(PartAbility.EXPORT_FLUIDS).setMaxGlobalLimited(2))
-                        .or(abilities(PartAbility.MAINTENANCE).setMaxGlobalLimited(1)))
+                        .or(abilities(PartAbility.STEAM))
+                        .or(abilities(PartAbility.STEAM_IMPORT_ITEMS))
+                        .or(abilities(PartAbility.STEAM_EXPORT_ITEMS))
+                        .or(abilities(PartAbility.IMPORT_ITEMS))
+                        .or(abilities(PartAbility.EXPORT_ITEMS))
+                        .or(abilities(PartAbility.IMPORT_FLUIDS))
+                        .or(abilities(PartAbility.EXPORT_FLUIDS))
+                        .or(abilities(PartAbility.MAINTENANCE)))
                 .where('I', any())
                 .where('J', blocks(Blocks.STONE_BRICKS))
                 .where(' ', any())

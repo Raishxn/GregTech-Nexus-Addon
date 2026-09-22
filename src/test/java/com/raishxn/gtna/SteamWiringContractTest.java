@@ -58,6 +58,7 @@ public final class SteamWiringContractTest {
         checkWirelessSteamMovesWholeBuffer();
         checkWirelessSteamFairShare();
         checkWirelessSteamHudWiring();
+        checkSteamElevatorHostDoesNotLimitModuleHatches();
         checkSolarBoilerProductionIsPerSecond();
         checkElevatorHasNoEuBuffer();
         System.out.println("[SteamWiringContractTest] all cases passed");
@@ -155,10 +156,20 @@ public final class SteamWiringContractTest {
     private static void checkWirelessSteamMovesWholeBuffer() throws IOException {
         Path config = Path.of("src/main/java/com/raishxn/gtna/config/ConfigHolder.java");
         String configSource = Files.readString(config, StandardCharsets.UTF_8);
-        if (!configSource.contains("public int bronzeBuffer = 128000000")) {
-            throw new AssertionError("the bronze wireless steam buffer must be large enough to hold a big " +
-                    "boiler's whole recipe cycle (GTNL parity: 128,000,000 mB); a small buffer voids the rest " +
-                    "of the cycle in ConfigHolder.WirelessSteam");
+        if (!configSource.contains("public int bronzeOutputBuffer = 128000000")) {
+            throw new AssertionError("the bronze wireless steam OUTPUT buffer must be large enough to hold a " +
+                    "big boiler's whole recipe cycle (GTNL parity: 128,000,000 mB); a small buffer voids the " +
+                    "rest of the cycle in ConfigHolder.WirelessSteam");
+        }
+        if (!configSource.contains("public int bronzeInputBuffer = 100000")) {
+            throw new AssertionError("the bronze wireless steam INPUT buffer must stay small (100,000 mB = " +
+                    "100 buckets): a huge input buffer let one hatch hoard the pool and starve the rest of " +
+                    "the network (the reported 'network always 0' bug)");
+        }
+        for (String field : List.of("steelInputBuffer", "steelOutputBuffer")) {
+            if (!configSource.contains("public int " + field + " = Integer.MAX_VALUE")) {
+                throw new AssertionError(field + " must default to Integer.MAX_VALUE (GTNL steel parity)");
+            }
         }
         for (String field : List.of("bronzeTransferRate", "steelTransferRate")) {
             if (!configSource.contains("public int " + field + " = Integer.MAX_VALUE")) {
@@ -177,11 +188,17 @@ public final class SteamWiringContractTest {
             throw new AssertionError("WirelessSteamOutputHatch still caps the push at the raw transferRate field; " +
                     "it must go through getTransferRate() so a zero/legacy value is treated as unlimited");
         }
+        if (!output.contains("bronzeOutputBuffer")) {
+            throw new AssertionError("WirelessSteamOutputHatch must size its tank from the OUTPUT buffer config");
+        }
         String input = Files.readString(STEAM_PART_DIR.resolve("WirelessSteamInputHatch.java"),
                 StandardCharsets.UTF_8);
         if (!input.contains("getTransferRate()")) {
             throw new AssertionError("WirelessSteamInputHatch must clamp its pull by getTransferRate() so the " +
                     "whole free space/balance can be pulled by default");
+        }
+        if (!input.contains("bronzeInputBuffer")) {
+            throw new AssertionError("WirelessSteamInputHatch must size its tank from the INPUT buffer config");
         }
     }
 
@@ -248,6 +265,25 @@ public final class SteamWiringContractTest {
         if (!overlaySource.contains("wirelessSteamHud")) {
             throw new AssertionError("WirelessSteamHudOverlay does not read the wirelessSteamHud config toggle");
         }
+        if (!overlaySource.contains("implements IGuiOverlay, IMoveableHud") ||
+                !overlaySource.contains("HudEditorScreen.register")) {
+            throw new AssertionError("WirelessSteamHudOverlay must be an IMoveableHud registered with the " +
+                    "HUD editor, so the drag system can move it");
+        }
+
+        Path editor = Path.of("src/main/java/com/raishxn/gtna/client/hud/HudEditorScreen.java");
+        String editorSource = Files.readString(editor, StandardCharsets.UTF_8);
+        if (!editorSource.contains("mouseDragged") || !editorSource.contains("mouseReleased") ||
+                !editorSource.contains("getAnchorBounds")) {
+            throw new AssertionError("HudEditorScreen must forward drag events to the moveable HUDs and outline " +
+                    "them while dragging");
+        }
+
+        Path keys = Path.of("src/main/java/com/raishxn/gtna/client/GTNAKeyMappings.java");
+        String keysSource = Files.readString(keys, StandardCharsets.UTF_8);
+        if (!keysSource.contains("RegisterKeyMappingsEvent") || !keysSource.contains("open_hud_editor")) {
+            throw new AssertionError("the HUD editor needs a registered keybind (GTNAKeyMappings) to open");
+        }
 
         Path sync = Path.of("src/main/java/com/raishxn/gtna/common/WirelessSteamHudSync.java");
         String syncSource = Files.readString(sync, StandardCharsets.UTF_8);
@@ -255,6 +291,33 @@ public final class SteamWiringContractTest {
                 !syncSource.contains("snapshot(")) {
             throw new AssertionError("WirelessSteamHudSync must sample on its interval, build a snapshot and send " +
                     "it to the player");
+        }
+    }
+
+    /**
+     * The Steam Elevator host must not limit the abilities that its own modules can carry. The
+     * module slots sit inside the host volume, so a module's steam/item/fluid hatch lands on a host
+     * shell cell; a {@code setMaxGlobalLimited(1)} there counted every module's hatch as the host's
+     * and failed the whole tower with "Maximum: 1" (the reported "only one module can have a steam
+     * hatch" bug). The module pattern is what limits each module to one hatch.
+     */
+    private static void checkSteamElevatorHostDoesNotLimitModuleHatches() throws IOException {
+        String machines = Files.readString(DATA_DIR.resolve("GTNAMachines.java"), StandardCharsets.UTF_8);
+        int start = machines.indexOf("private static BlockPattern createSteamElevatorPattern");
+        if (start < 0) {
+            throw new AssertionError("createSteamElevatorPattern not found in GTNAMachines.java");
+        }
+        int end = machines.indexOf("/**", start + 1);
+        String pattern = end < 0 ? machines.substring(start) : machines.substring(start, end);
+        if (pattern.contains("PartAbility.STEAM).setMaxGlobalLimited") ||
+                pattern.contains("PartAbility.IMPORT_FLUIDS).setMaxGlobalLimited") ||
+                pattern.contains("PartAbility.EXPORT_FLUIDS).setMaxGlobalLimited")) {
+            throw new AssertionError("the Steam Elevator host pattern still globally limits a module-facing " +
+                    "ability; module hatches inside the host volume would trip it with 'Maximum: 1'");
+        }
+        if (!pattern.contains("abilities(PartAbility.STEAM)")) {
+            throw new AssertionError("the Steam Elevator host pattern must still accept STEAM parts (module " +
+                    "hatches land on the host shell)");
         }
     }
 
@@ -275,6 +338,10 @@ public final class SteamWiringContractTest {
         if (!source.contains("steamPerSecond = (long) steamOut * 20L / TICK_INTERVAL")) {
             throw new AssertionError("LargeSteamSolarBoilerMachine must scale its per-cycle batch to a per-second " +
                     "rate (steamOut * 20 / TICK_INTERVAL) so the display and Jade agree with the actual output");
+        }
+        if (!source.contains("solarBoilerSteamPerCell")) {
+            throw new AssertionError("LargeSteamSolarBoilerMachine must read its per-cell production from the " +
+                    "solarBoilerSteamPerCell config (the hardcoded 200 was buffed 20x)");
         }
     }
 

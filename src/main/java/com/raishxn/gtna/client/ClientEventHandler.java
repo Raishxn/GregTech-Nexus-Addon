@@ -9,6 +9,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.client.hud.HudEditorScreen;
 import com.raishxn.gtna.client.hud.WirelessSteamHudState;
 import com.raishxn.gtna.config.ConfigHolder;
 
@@ -25,6 +26,18 @@ public class ClientEventHandler {
                         player.setDeltaMovement(player.getDeltaMovement().multiply(0.0, 1.0, 0.0));
                     }
                 }
+            }
+        }
+    }
+
+    /** Opens the HUD editor when the GTNA keybind is pressed in-game. */
+    @SubscribeEvent
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        Minecraft mc = Minecraft.getInstance();
+        while (GTNAKeyMappings.OPEN_HUD_EDITOR.consumeClick()) {
+            if (mc.screen == null) {
+                mc.setScreen(new HudEditorScreen());
             }
         }
     }

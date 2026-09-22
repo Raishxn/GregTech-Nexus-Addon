@@ -116,8 +116,8 @@ public class WirelessSteamInputHatch extends SteamHatchPartMachine {
     @Override
     protected NotifiableFluidTank createTank(int initialCapacity, int slots, Object... args) {
         boolean steel = args.length > 0 && args[0] instanceof Boolean value && value;
-        int configuredCapacity = steel ? ConfigHolder.INSTANCE.wirelessSteam.steelBuffer :
-                ConfigHolder.INSTANCE.wirelessSteam.bronzeBuffer;
+        int configuredCapacity = steel ? ConfigHolder.INSTANCE.wirelessSteam.steelInputBuffer :
+                ConfigHolder.INSTANCE.wirelessSteam.bronzeInputBuffer;
         return new NotifiableFluidTank(this, 1, configuredCapacity, IO.IN)
                 .setFilter(fluidStack -> fluidStack.getFluid().is(GTMaterials.Steam.getFluidTag()));
     }

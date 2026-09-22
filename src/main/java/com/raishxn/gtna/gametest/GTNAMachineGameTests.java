@@ -539,10 +539,11 @@ public final class GTNAMachineGameTests {
         inputHatch.setOwnerUUID(owner);
 
         // Regression for "a boiler's steam does not enter the network": a boiler dumps a whole
-        // recipe cycle into the output hatch at once (a 41x42 solar boiler makes 312,000 mB per
-        // 20-tick cycle), so the hatch must move the ENTIRE tank in a single tick. The old brick
-        // was a hardcoded bronze cap of 10,000 mB/t (plus a 20,000 mB buffer), which stranded more
-        // than 90% of the cycle behind a trickle. The amount deliberately exceeds the old cap.
+        // recipe cycle into the output hatch at once, so the hatch must move the ENTIRE tank in a
+        // single tick. The old brick was a hardcoded bronze cap of 10,000 mB/t (plus a 20,000 mB
+        // buffer), which stranded more than 90% of the cycle behind a trickle. The bronze INPUT
+        // hatch now has a deliberately small 100,000 mB buffer, so a 312,000 mB push arrives in the
+        // network whole but has to be pulled over several rounds; nothing may be lost.
         int cycleSteam = 312_000;
         outputHatch.tank.setFluidInTank(0, GTMaterials.Steam.getFluid(cycleSteam));
         outputHatch.serverTick();
@@ -552,29 +553,38 @@ public final class GTNAMachineGameTests {
                         " of " + cycleSteam + "); a per-tick cap below the buffer strands a boiler cycle");
         helper.assertTrue(outputHatch.tank.getFluidInTank(0).isEmpty(),
                 "the output hatch tank must be fully drained into the network");
-        inputHatch.serverTick();
-        long pulled = inputHatch.tank.getFluidInTank(0).getAmount();
-        long afterPull = SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner);
-        helper.assertTrue(pulled == cycleSteam,
-                "the input hatch must pull the steam back into its tank, got " + pulled);
-        helper.assertTrue(afterPull == 0L,
-                "the network must be empty after the input hatch pulls it, got " + afterPull);
-        // Free the input buffer as if the receiving machine had consumed it, so the load loop starts
-        // from an empty tank (the single round trip above filled it).
-        inputHatch.tank.setFluidInTank(0, FluidStack.EMPTY);
-        // The same network must survive back-to-back cycles without losing or duplicating a drop.
-        for (int cycle = 0; cycle < 4; cycle++) {
-            outputHatch.tank.setFluidInTank(0, GTMaterials.Steam.getFluid(cycleSteam));
-            outputHatch.serverTick();
-            helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == cycleSteam,
-                    "cycle " + cycle + ": the output hatch must add the whole tank to the network");
+
+        // The input pulls only what its buffer holds; free it like the receiving machine consuming
+        // the steam and keep pulling until the network is empty.
+        long inputCapacity = inputHatch.tank.getTankCapacity(0);
+        long totalPulled = 0;
+        for (int round = 0; round < 8 &&
+                SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) > 0; round++) {
+            inputHatch.tank.setFluidInTank(0, FluidStack.EMPTY);
             inputHatch.serverTick();
-            helper.assertTrue(inputHatch.tank.getFluidInTank(0).getAmount() == cycleSteam,
+            long got = inputHatch.tank.getFluidInTank(0).getAmount();
+            helper.assertTrue(got <= inputCapacity,
+                    "an input hatch can never hold more than its buffer (" + inputCapacity + "), got " + got);
+            totalPulled += got;
+        }
+        helper.assertTrue(totalPulled == cycleSteam,
+                "every drop of the boiler cycle must reach the input over the rounds, got " + totalPulled);
+        helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == 0L,
+                "the network must be empty once the input pulled the whole cycle");
+
+        // The same network must survive back-to-back cycles without losing or duplicating a drop.
+        int smallCycle = 96_000;
+        for (int cycle = 0; cycle < 4; cycle++) {
+            outputHatch.tank.setFluidInTank(0, GTMaterials.Steam.getFluid(smallCycle));
+            outputHatch.serverTick();
+            helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == smallCycle,
+                    "cycle " + cycle + ": the output hatch must add the whole tank to the network");
+            inputHatch.tank.setFluidInTank(0, FluidStack.EMPTY);
+            inputHatch.serverTick();
+            helper.assertTrue(inputHatch.tank.getFluidInTank(0).getAmount() == smallCycle,
                     "cycle " + cycle + ": the input hatch must pull the whole network balance back");
             helper.assertTrue(SteamWirelessNetworkManager.getUserSteam(helper.getLevel(), owner) == 0L,
                     "cycle " + cycle + ": the network must be empty after the pull");
-            // Simulate the receiving machine consuming the buffer before the next cycle.
-            inputHatch.tank.setFluidInTank(0, FluidStack.EMPTY);
         }
         helper.succeed();
     }
@@ -751,7 +761,7 @@ public final class GTNAMachineGameTests {
             return;
         }
         UUID owner = UUID.randomUUID();
-        int pushed = 312_000;
+        int pushed = 96_000;
 
         BlockPos outputPos = new BlockPos(1, 5, 1);
         helper.setBlock(outputPos, GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH.getBlock());
@@ -795,7 +805,7 @@ public final class GTNAMachineGameTests {
             return;
         }
         UUID owner = UUID.randomUUID();
-        int pushed = 312_000;
+        int pushed = 96_000;
 
         BlockPos outputPos = new BlockPos(1, 7, 1);
         helper.setBlock(outputPos, GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH.getBlock());

@@ -1020,6 +1020,11 @@ public class GTNALangProvider extends LanguageProvider {
 
         // Wireless Steam
         add("config.gtna.option.wirelessSteamTransferRate", "Wireless Steam Transfer Rate");
+        add("config.gtna.option.solarBoilerSteamPerCell", "Solar Boiler Steam Per Cell");
+        add("config.gtna.option.bronzeInputBuffer", "Bronze Input Hatch Buffer");
+        add("config.gtna.option.steelInputBuffer", "Steel Input Hatch Buffer");
+        add("config.gtna.option.bronzeOutputBuffer", "Bronze Output Hatch Buffer");
+        add("config.gtna.option.steelOutputBuffer", "Steel Output Hatch Buffer");
 
         // GTNL steam machine toggles
         add("config.gtna.option.steamCactusWonder", "Cactus Wonder");
@@ -1082,9 +1087,17 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.command.steam.add_failed", "§c[GTNA] Could not add that amount to the network.");
 
         // Wireless steam network HUD (client overlay, off by default; see ConfigHolder.Client)
+        add("gtna.hud.wireless_steam.name", "Wireless Steam HUD");
         add("gtna.hud.wireless_steam.balance", "§bWireless Steam§7: §f%s §7mB");
         add("gtna.hud.wireless_steam.flow", "§7Flow: §a+%s§7 / §c-%s§7 mB/s");
-        add("gtna.hud.wireless_steam.hatches", "§7Hatches: §f%s §7in / §f%s §7out");
+        add("gtna.hud.wireless_steam.hatches", "§7Hatches: §f%s §7drain / §f%s §7feed");
+        add("gtna.hud.editor.title", "HUD Editor");
+        add("gtna.hud.editor.hint", "Drag the HUD to move it; the position is saved automatically. ESC closes.");
+        add("gtna.hud.editor.toggle", "Wireless Steam HUD: %s");
+        add("gtna.hud.editor.on", "ON");
+        add("gtna.hud.editor.off", "OFF");
+        add("key.gtna.category", "GTNA");
+        add("key.gtna.open_hud_editor", "Open HUD Editor");
 
         add("block.gtna.steam_elevator_flight_module", "Steam Flight Module");
         add("gtna.machine.steam_elevator_flight_module.tooltip",

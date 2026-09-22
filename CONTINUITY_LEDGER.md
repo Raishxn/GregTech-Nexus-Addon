@@ -34,15 +34,17 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-22 (G-0042):** `spotlessCheck` + `compileJava` + `runUnitTests` (**15/15**) +
+- **Gate verde em 2026-09-22 (G-0043):** `spotlessCheck` + `compileJava` + `runUnitTests` (**15/15**) +
   `runGameTestServer` (**29/29**, `All 29 required tests passed`) + `runData` determinístico. A
   execução carregou os mixins alterados; os avisos/erros de receitas do GTCEu já conhecidos
   continuam no log.
-- **Rede wireless de vapor (G-0041/G-0042):** o pull dos inputs agora é dividido por **fair share** entre os
-  inputs com espaço (antes o primeiro hatch do tick drenava o pool inteiro — a rede sempre lia 0 e
+- **Rede wireless de vapor (G-0041/G-0042/G-0043):** o pull dos inputs é dividido por **fair share** entre
+  os inputs com espaço (antes o primeiro hatch do tick drenava o pool inteiro — a rede sempre lia 0 e
   os outros 23 hatches nunca enchiam); `/gtna steam` mostra fluxo vitalício + estado por hatch, o
-  Jade mostra o saldo da rede e um **HUD client-side** (G-0042, toggle `wirelessSteamHud`, default
-  off) mostra saldo/fluxo/hatches + gráfico. Ver G-0041/G-0042 para causa raiz, testes e pendências.
+  Jade mostra o saldo da rede e um **HUD client-side** (G-0042, arrastável desde o G-0043, toggle
+  `wirelessSteamHud`, default off) mostra saldo/fluxo/hatches + gráfico. Buffers de input/output
+  separados (input bronze 100 B), solar boiler 20× e o host do elevador aceita 1 steam hatch por
+  módulo (G-0043). Ver G-0041..G-0043 para causa raiz, testes e pendências.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
 - **Testes hoje:** 15 unit tests (`main()` + asserts, padrão GTLCore) e 29 gametests (`@GameTest`),
@@ -63,6 +65,50 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0043 (2026-09-22) — review in-game do autor: HUD arrastável (HUD editor + keybind), elevador aceita 1 steam hatch por módulo, labels drain/feed, buffers input/output separados e solar boiler 20×
+
+- **Pedido (review do autor):** (1) portar o sistema de drag/HUDScreen do GTOcore; (2) o elevador contava os
+  steam hatches de todos os módulos como seus e só aceitava 1 ("Maximum: 1" no chat), deixando os outros
+  módulos sem hatch; (3) o HUD rotulava o input hatch como IN e o output como OUT (perspectiva da máquina,
+  confusa); (4) o input hatch de bronze deveria ter só 100 B e o de steel MAX_INT, e o solar boiler foi
+  efetivamente nerfado (312 B/s é pouco para o custo massivo da estrutura).
+- **Correções:**
+  - **Elevador:** o pattern do host (`createSteamElevatorPattern`) deixou de limitar globalmente as abilities
+    que os módulos carregam (`STEAM`, `STEAM_IMPORT/EXPORT_ITEMS`, `IMPORT/EXPORT_ITEMS`, `IMPORT/EXPORT_FLUIDS`);
+    os hatches dos módulos caem nas células do casco do host e o `setMaxGlobalLimited(1)` contava cada um como
+    do host. O pattern do módulo continua limitando 1 hatch por módulo. (O host não processa receitas, então
+    não precisa de limite.)
+  - **HUD labels:** `Hatches: N drain / M feed` (drain = input hatches, tiram da rede; feed = output hatches,
+    alimentam a rede), em vez de in/out.
+  - **Buffers:** `wirelessSteam.bronzeInputBuffer = 100.000` (100 B), `steelInputBuffer = MAX`, com buffers de
+    saída separados (`bronzeOutputBuffer = 128.000.000`, `steelOutputBuffer = MAX`). O input pequeno impede um
+    hatch de açambarcar o pool; a tooltip dos 4 hatches mostra o buffer correto por papel.
+  - **Solar boiler:** `machines.solarBoilerSteamPerCell = 4.000` (20× o 200 hardcoded) → um 41×42 faz
+    ~6.240.000 mB/s.
+  - **HUD drag/HUD editor (GTOcore `HUDScreen`/`IMoveableHUD` parity, single-HUD):** `IMoveableHud`,
+    `HudEditorScreen` (arrasta, salva X/Y no config via `HudConfigValues`/`ConfigIO.saveClientValues`, botão
+    liga/desliga) e keybind `Z` (`GTNAKeyMappings`, `key.gtna.open_hud_editor`). O HUD de vapor implementa a
+    interface; a posição continua em percentuais na config.
+- **Testes:** gametests ajustados para o buffer de input de 100k (o round trip de 312.000 agora é drenado em
+  rodadas e o cap é verificado; ciclos pequenos de 96.000 continuam exatos). `SteamWiringContractTest` ganhou
+  `checkSteamElevatorHostDoesNotLimitModuleHatches`, checagens dos buffers input/output separados, do
+  `solarBoilerSteamPerCell` e do wiring do editor/keybind.
+- **Arquivos:** `GTNAMachines.java` (pattern do host + tooltip por papel), `ConfigHolder.java` (buffers +
+  `solarBoilerSteamPerCell`), `WirelessSteamInputHatch.java`/`WirelessSteamOutputHatch.java` (buffers),
+  `LargeSteamSolarBoilerMachine.java` (config), `IMoveableHud.java`/`HudEditorScreen.java`/`HudConfigValues.java`
+  (novos), `WirelessSteamHudOverlay.java` (IMoveableHud), `GTNAKeyMappings.java` (novo),
+  `ClientEventHandler.java` (tick do keybind), `GTNALangProvider.java` + `en_us.json` manual + `pt_br.json`
+  (byte-preserving) + gerado, `GTNAMachineGameTests.java`, `SteamWiringContractTest.java`.
+- **Validação:** `spotlessCheck` + `runUnitTests` (**15/15**); `runGameTestServer` (**29/29**,
+  `All 29 required tests passed`); `grep -c "Parsing error loading recipe gtna:" run/logs/latest.log` = **0**;
+  `runData` determinístico (`written: 0`).
+- **Pendências / verificação in-game:** (a) reentrar no mundo com o elevador e confirmar que ele forma com um
+  steam hatch em cada módulo; (b) abrir o editor com `Z`, arrastar o HUD e conferir que X/Y persistem no
+  `config/gtna.yaml`; (c) conferir o boiler 41×42 a ~6,24M mB/s e os inputs com buffer de 100 B; (d) o HUD
+  editor é single-HUD (sem o dropdown de múltiplos HUDs do GTOcore) e a posição é salva por percentual;
+  (e) o host do elevador ainda coleta os tanques dos módulos no seu pool (o módulo drena o próprio primeiro,
+  depois o pool do host) — refinável para excluí-los numa próxima sessão.
 
 ### G-0042 (2026-09-22) — HUD da rede wireless de vapor (paridade GTOCore `WirelessEnergyHUD`): overlay client-side com toggle na config, posição/histórico configuráveis e sync servidor→cliente
 
