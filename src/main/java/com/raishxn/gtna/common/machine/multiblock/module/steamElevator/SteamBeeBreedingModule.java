@@ -103,13 +103,14 @@ public class SteamBeeBreedingModule extends SteamElevatorModuleMachine {
 
     @Override
     protected Widget createModuleUIWidget() {
-        WidgetGroup group = screenGroup(150, 52);
+        WidgetGroup group = screenGroup(150, 64);
         group.addWidget(new LabelWidget(5, 4, () -> "Bee Breeding tier §b" + getModuleTier()));
         group.addWidget(new LabelWidget(5, 16,
                 () -> "Progress: §b" + (progress * 100 / CYCLE_TICKS) + "%%"));
         group.addWidget(new LabelWidget(5, 28,
-                () -> "Feed: §b" + countItem(ModItems.HONEY_TREAT.get()) + " §r/ " + FEED_CONSUMED + " honey treats"));
-        group.addWidget(new LabelWidget(5, 40, () -> "§7Bee + treats in the input bus, bee to the output bus"));
+                () -> "Feed: §b" + countItem(ModItems.HONEY_TREAT.get()) + " §r/ " + FEED_CONSUMED));
+        group.addWidget(new LabelWidget(5, 40, () -> "§7Bee + treats: input bus"));
+        group.addWidget(new LabelWidget(5, 52, () -> "§7Bred bee: output bus"));
         return group;
     }
 }

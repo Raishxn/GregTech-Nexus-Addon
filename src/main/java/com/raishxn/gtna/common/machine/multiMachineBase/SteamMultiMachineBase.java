@@ -279,12 +279,13 @@ public abstract class SteamMultiMachineBase extends WorkableMultiblockMachine
         screen.addWidget(new ComponentPanelWidget(4, 17, this::addDisplayText)
                 .setMaxWidthLimit(150)
                 .clickHandler(this::handleDisplayClick));
-        // The addon logo in the bottom-right corner of the machine screen (GTNL convention).
-        screen.addWidget(GTNATextures.logo(151, 107));
 
         return new ModularUI(176, 216, this, entityPlayer)
                 .background(GuiTextures.BACKGROUND_STEAM.get(isHighPressure()))
                 .widget(screen)
+                // The addon logo in the bottom-right corner (GTNL convention). Added to the ModularUI,
+                // not the scrollable screen group, whose scissor would clip its right/bottom edge.
+                .widget(GTNATextures.logo(151, 107))
                 .widget(UITemplate.bindPlayerInventory(entityPlayer.getInventory(),
                         GuiTextures.SLOT_STEAM.get(isHighPressure()), 7, 134, true));
     }

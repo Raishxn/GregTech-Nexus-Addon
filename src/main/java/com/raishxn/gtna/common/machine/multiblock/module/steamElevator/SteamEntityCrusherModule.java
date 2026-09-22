@@ -162,12 +162,14 @@ public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
 
     @Override
     protected Widget createModuleUIWidget() {
-        WidgetGroup group = screenGroup(150, 52);
+        WidgetGroup group = screenGroup(150, 64);
         group.addWidget(new LabelWidget(5, 4, () -> "Entity Crusher tier §b" + getModuleTier()));
         group.addWidget(new LabelWidget(5, 16, () -> "Doubling chance: §b" +
                 String.format(Locale.ROOT, "%.1f", doublingChance(findCatalyst())) + "%%"));
         group.addWidget(new LabelWidget(5, 28,
-                () -> "Progress: §b" + (progress * 100 / CYCLE_TICKS) + "%% §r| input bus → output bus"));
+                () -> "Progress: §b" + (progress * 100 / CYCLE_TICKS) + "%%"));
+        group.addWidget(new LabelWidget(5, 40, () -> "§7Spawner: input bus"));
+        group.addWidget(new LabelWidget(5, 52, () -> "§7Drops: output bus"));
         return group;
     }
 }

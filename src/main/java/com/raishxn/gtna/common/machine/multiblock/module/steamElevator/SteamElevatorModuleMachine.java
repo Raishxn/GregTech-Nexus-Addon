@@ -425,6 +425,17 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
         return total;
     }
 
+    /** Total fluid of any type across the module's fluid input hatches (UI diagnostics). */
+    protected int totalInputFluid() {
+        int total = 0;
+        for (NotifiableFluidTank tank : fluidInputs) {
+            for (int i = 0; i < tank.getTanks(); i++) {
+                total += tank.getFluidInTank(i).getAmount();
+            }
+        }
+        return total;
+    }
+
     /** Drains exactly {@code amount} of {@code fluid}; returns false (and drains nothing) if short. */
     protected boolean drainFluid(FluidStack fluid, int amount) {
         if (countFluid(fluid) < amount) return false;
@@ -514,11 +525,12 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
             moduleWidget.setSelfPosition(4, 58);
             screen.addWidget(moduleWidget);
         }
-        // The addon logo in the bottom-right corner of the module screen (GTNL convention).
-        screen.addWidget(GTNATextures.logo(151, 107));
         return new ModularUI(176, 216, this, player)
                 .background(GuiTextures.BACKGROUND)
                 .widget(screen)
+                // The addon logo in the bottom-right corner (GTNL convention). Added to the ModularUI,
+                // not the scrollable screen group, whose scissor would clip its right/bottom edge.
+                .widget(GTNATextures.logo(151, 107))
                 .widget(UITemplate.bindPlayerInventory(player.getInventory(), GuiTextures.SLOT, 7, 134, true));
     }
 

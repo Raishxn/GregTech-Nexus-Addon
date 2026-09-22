@@ -89,13 +89,14 @@ public class SteamApiaryModule extends SteamElevatorModuleMachine {
 
     @Override
     protected Widget createModuleUIWidget() {
-        WidgetGroup group = screenGroup(150, 52);
+        WidgetGroup group = screenGroup(150, 64);
         group.addWidget(new LabelWidget(5, 4, () -> "Apiary tier §b" + getModuleTier()));
         group.addWidget(new LabelWidget(5, 16,
                 () -> "Water in hatch: §b" + countFluid(water()) + " mB"));
         group.addWidget(new LabelWidget(5, 28,
                 () -> "Progress: §b" + (progress * 100 / CYCLE_TICKS) + "%%"));
-        group.addWidget(new LabelWidget(5, 40, () -> "§7Comb in the input bus, water in the input hatch"));
+        group.addWidget(new LabelWidget(5, 40, () -> "§7Comb: input bus"));
+        group.addWidget(new LabelWidget(5, 52, () -> "§7Water: input hatch"));
         return group;
     }
 }

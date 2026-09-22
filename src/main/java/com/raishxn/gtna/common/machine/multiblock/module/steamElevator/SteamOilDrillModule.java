@@ -97,7 +97,7 @@ public class SteamOilDrillModule extends SteamElevatorModuleMachine {
         group.addWidget(new LabelWidget(5, 5, () -> "Tier: §b" + getModuleTier() + " §r| Yield: §b" + baseYield()));
         group.addWidget(new LabelWidget(5, 18,
                 () -> "Progress: §b" + (progress * 100 / cycleTicks()) + "%%"));
-        group.addWidget(new LabelWidget(5, 31, () -> "§7Oil is pushed to the output hatch"));
+        group.addWidget(new LabelWidget(5, 31, () -> "§7Oil: output hatch"));
         return group;
     }
 }

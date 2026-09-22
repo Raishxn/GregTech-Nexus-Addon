@@ -149,14 +149,14 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
 
     @Override
     protected Widget createModuleUIWidget() {
-        WidgetGroup group = screenGroup(150, 56);
+        WidgetGroup group = screenGroup(150, 76);
         group.addWidget(new LabelWidget(5, 4, () -> "Ore Processor tier §b" + getModuleTier()));
-        group.addWidget(new LabelWidget(5, 16, () -> "Mode §b" + mode() + " §r| parallel §b" + maxParallel() +
-                " §r| §b" + getSteamUpkeep() + " mB/t"));
-        group.addWidget(new LabelWidget(5, 28,
-                () -> "Water §b" + countFluid(distilledWater()) + " §r| Lubricant §b" + countFluid(lubricant())));
-        group.addWidget(new LabelWidget(5, 40,
-                () -> "§7Circuit + ore in the input bus, fluids in the input hatch"));
+        group.addWidget(new LabelWidget(5, 16, () -> "Mode §b" + mode() + " §r| §b" + maxParallel() +
+                "x §r| §b" + getSteamUpkeep() + " mB/t"));
+        group.addWidget(new LabelWidget(5, 28, () -> "Distilled water: §b" + countFluid(distilledWater())));
+        group.addWidget(new LabelWidget(5, 40, () -> "Lubricant: §b" + countFluid(lubricant())));
+        group.addWidget(new LabelWidget(5, 52, () -> "§7Input hatch total: §b" + totalInputFluid() + " §7mB"));
+        group.addWidget(new LabelWidget(5, 64, () -> "§7Circuit + ore: input bus"));
         return group;
     }
 }

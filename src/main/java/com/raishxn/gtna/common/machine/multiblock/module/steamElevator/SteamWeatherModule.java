@@ -113,13 +113,14 @@ public class SteamWeatherModule extends SteamElevatorModuleMachine {
 
     @Override
     protected Widget createModuleUIWidget() {
-        WidgetGroup group = screenGroup(150, 56);
+        WidgetGroup group = screenGroup(150, 68);
         group.addWidget(new LabelWidget(5, 4, () -> "Weather: §b" + modeName(activeMode)));
-        group.addWidget(new LabelWidget(5, 16, () -> "Circuit in the input bus: §b1=clear 2=rain 3=thunder"));
-        group.addWidget(new LabelWidget(5, 28,
-                () -> weatherTicksLeft > 0 ? "Time left: §b" + (weatherTicksLeft / 20) + " s" : "§7idle"));
+        group.addWidget(new LabelWidget(5, 16, () -> "Circuit in input bus"));
+        group.addWidget(new LabelWidget(5, 28, () -> "1=clear 2=rain 3=thunder"));
         group.addWidget(new LabelWidget(5, 40,
-                () -> "§7Cost on change: §b" + (WEATHER_STEAM_COST / 1000) + " B §7steam"));
+                () -> weatherTicksLeft > 0 ? "Time left: §b" + (weatherTicksLeft / 20) + " s" : "§7idle"));
+        group.addWidget(new LabelWidget(5, 52,
+                () -> "§7Cost: §b" + (WEATHER_STEAM_COST / 1000) + " B §7steam"));
         return group;
     }
 

@@ -90,7 +90,7 @@ public class SteamGreenhouseModule extends SteamElevatorModuleMachine {
         group.addWidget(new LabelWidget(5, 4, () -> "Greenhouse tier §b" + getModuleTier()));
         group.addWidget(new LabelWidget(5, 16,
                 () -> "Water in hatch: §b" + countFluid(water()) + " mB"));
-        group.addWidget(new LabelWidget(5, 28, () -> "§7Water is drawn from the input hatch"));
+        group.addWidget(new LabelWidget(5, 28, () -> "§7Water: input hatch"));
         return group;
     }
 }
