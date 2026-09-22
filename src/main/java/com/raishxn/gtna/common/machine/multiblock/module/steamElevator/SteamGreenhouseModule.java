@@ -1,9 +1,6 @@
 package com.raishxn.gtna.common.machine.multiblock.module.steamElevator;
 
-import com.gregtechceu.gtceu.api.capability.recipe.IO;
-import com.gregtechceu.gtceu.api.gui.widget.TankWidget;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
@@ -16,8 +13,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 
 /**
  * GTNL {@code SteamGreenhouseModule} port (LGPLv3, original by ScienceNotLeisure).
@@ -25,8 +22,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
  * <p>
  * GTNL is a CropsNH industrial farm: it stores seeds, tracks drop tables and grows crops across mode
  * phases. CropsNH is not available in GTNA, so this port keeps the greenhouse identity at the world
- * level instead: it consumes water and accelerates the growth of bone-mealable crops in its radius,
- * which is the same "irrigated greenhouse" outcome without the seed/produce bookkeeping.
+ * level instead: it consumes water from the module structure's <b>fluid input hatch</b> and
+ * accelerates the growth of bone-mealable crops in its radius, which is the same "irrigated
+ * greenhouse" outcome without the seed/produce bookkeeping.
  */
 public class SteamGreenhouseModule extends SteamElevatorModuleMachine {
 
@@ -38,15 +36,12 @@ public class SteamGreenhouseModule extends SteamElevatorModuleMachine {
     public static final int RANGE = 16;
     private static final int CYCLE_TICKS = 100;
 
-    public final NotifiableFluidTank waterTank;
-
     @Persisted
     @DescSynced
     private int progress;
 
     public SteamGreenhouseModule(IMachineBlockEntity holder, int tier) {
         super(holder, tier);
-        this.waterTank = new NotifiableFluidTank(this, 1, 64_000, IO.IN);
     }
 
     @Override
@@ -65,6 +60,10 @@ public class SteamGreenhouseModule extends SteamElevatorModuleMachine {
         return 8192L;
     }
 
+    private static FluidStack water() {
+        return new FluidStack(Fluids.WATER, WATER_PER_OPERATION);
+    }
+
     @Override
     public void onElevatorTick(SteamElevator elevator) {
         if (!consumeSteam(getSteamUpkeep())) return;
@@ -72,9 +71,7 @@ public class SteamGreenhouseModule extends SteamElevatorModuleMachine {
         if (++progress < CYCLE_TICKS) return;
         progress = 0;
 
-        FluidStack drained = waterTank.drainInternal(WATER_PER_OPERATION, IFluidHandler.FluidAction.SIMULATE);
-        if (drained.getAmount() < WATER_PER_OPERATION) return;
-        waterTank.drainInternal(WATER_PER_OPERATION, IFluidHandler.FluidAction.EXECUTE);
+        if (!drainFluid(water(), WATER_PER_OPERATION)) return;
 
         BlockPos origin = getPos();
         int grown = 0;
@@ -89,10 +86,11 @@ public class SteamGreenhouseModule extends SteamElevatorModuleMachine {
 
     @Override
     protected Widget createModuleUIWidget() {
-        WidgetGroup group = screenGroup(150, 60);
+        WidgetGroup group = screenGroup(150, 44);
         group.addWidget(new LabelWidget(5, 4, () -> "Greenhouse tier §b" + getModuleTier()));
-        group.addWidget(new LabelWidget(5, 18, () -> "Water: §b" + waterTank.getFluidInTank(0).getAmount() + " mB"));
-        group.addWidget(new TankWidget(waterTank.getStorages()[0], 5, 32, 18, 18, true, true));
+        group.addWidget(new LabelWidget(5, 16,
+                () -> "Water in hatch: §b" + countFluid(water()) + " mB"));
+        group.addWidget(new LabelWidget(5, 28, () -> "§7Water is drawn from the input hatch"));
         return group;
     }
 }

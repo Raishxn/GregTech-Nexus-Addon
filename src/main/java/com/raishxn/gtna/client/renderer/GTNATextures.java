@@ -17,7 +17,8 @@ public class GTNATextures {
             new ResourceLocation("gtna", "block/overlay_steam_wireless_out"));
 
     /** The addon logo drawn in the corner of the multiblock screens. */
-    public static final ResourceTexture LOGO = new ResourceTexture(new ResourceLocation("gtna", "logo"));
+    public static final ResourceTexture LOGO = new ResourceTexture(
+            new ResourceLocation("gtna", "textures/logo.png"));
     /** GTNL draws its logo 18x18 in the bottom-right corner of a 176x166 machine screen. */
     public static final int LOGO_SIZE = 18;
 

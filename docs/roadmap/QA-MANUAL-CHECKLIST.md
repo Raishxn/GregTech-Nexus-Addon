@@ -25,7 +25,7 @@ checkpoint novo do `CONTINUITY_LEDGER.md` e, quando der, transformar em gametest
 - [ ] **Beacon**: botões por efeito (verde = ligado), limite `tier + 2`; upkeep muda com a seleção.
 - [ ] **Weather**: circuito 1/2/3 muda o clima; UI mostra o **tempo restante**; cobra 1.000.000 mB por troca.
 - [ ] **Ore Processor**: circuito muda modo/parallel; UI mostra modo/parallel/upkeep; consome distilled water + lubricant.
-- [ ] **Entity Crusher**: spawner com NBT no slot → drops; UI mostra a chance de dobrar.
+- [ ] **Entity Crusher**: spawner com NBT no input bus → drops no output bus; UI mostra a chance de dobrar.
 - [ ] **Flight**: dentro de 64 blocos ganha voo (duplo pulo); **sair do alcance revoga** o voo.
 - [ ] **Monster Repellent**: mobs hostis não nascem dentro do raio enquanto roda.
 - [ ] **Apiary / Greenhouse / Oil Drill**: consomem água/steam e produzem conforme o tooltip.
@@ -35,14 +35,25 @@ checkpoint novo do `CONTINUITY_LEDGER.md` e, quando der, transformar em gametest
 ## Bee Breeding × Productive Bees
 - [ ] Sem o Productive Bees instalado: o módulo não tem receita e não aparece no JEI/EMI.
 - [ ] Com o Productive Bees instalado: o módulo crafta e forma a estrutura 1x5x2.
-- [ ] Spawn egg do PB no slot de entrada (catalisador, **não** é consumido).
-- [ ] 128 honey treats do PB no inventário de entrada → após 10 min produz **uma** cópia da abelha.
+- [ ] Spawn egg do PB no **input bus** (catalisador, **não** é consumido).
+- [ ] 128 honey treats do PB no **input bus** → após 10 min produz **uma** cópia da abelha no **output bus**.
 - [ ] Sem abelha ou sem honey treats: o progresso fica em 0% e não consome nada além do upkeep de steam.
-- [ ] Saída cheia: não voida itens (dry-run do `hasOutputRoom`).
+- [ ] Saída cheia: não voida itens (dry-run do `canInsertItems`).
+
+## IO dos módulos (hatches da própria estrutura)
+- [ ] Cada módulo **não** tem mais slots/tanques internos na GUI; o IO é pelos hatches da estrutura 1x5x2.
+- [ ] **Entity Crusher**: spawner com NBT no **input bus** → drops no **output bus**; UI mostra a chance de dobrar (sem "Format error").
+- [ ] **Oil Drill**: óleo sai pelo **fluid output hatch** (com ≥1 hatch de saída colocado).
+- [ ] **Apiary**: water no **input hatch**, honeycomb no **input bus** → combs/honey no **output bus**.
+- [ ] **Bee Breeding**: spawn egg + honey treats no **input bus** → novo spawn egg no **output bus**.
+- [ ] **Greenhouse**: water no **input hatch** (a UI mostra a água do hatch).
+- [ ] **Ore Processor**: circuito + minério no **input bus**, distilled water + lubricant no **input hatch** → produtos no **output bus**.
+- [ ] **Weather**: circuito 1/2/3 no **input bus** (sem slot interno).
+- [ ] Todo módulo formado+conectado mostra o status padrão **Running Perfectly / Idling** (e fica Idle sem steam para o upkeep).
 
 ## Estruturas
 - [ ] Elevador forma com 1 steam hatch em **cada** módulo (sem "Maximum: 1" no chat).
-- [ ] Cada módulo forma e mostra **Working** (formed && connected).
+- [ ] Cada módulo forma e mostra o status (Running/Idle) + conectado; estrutura inválida mostra o aviso.
 - [ ] O host do elevador conecta/desconecta módulos ao (des)montá-los.
 
 ## Fluxo de rede

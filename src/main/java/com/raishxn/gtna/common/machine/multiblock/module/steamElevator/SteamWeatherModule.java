@@ -1,11 +1,6 @@
 package com.raishxn.gtna.common.machine.multiblock.module.steamElevator;
 
-import com.gregtechceu.gtceu.api.capability.recipe.IO;
-import com.gregtechceu.gtceu.api.gui.GuiTextures;
-import com.gregtechceu.gtceu.api.gui.widget.SlotWidget;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
-import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
@@ -21,11 +16,11 @@ import net.minecraft.server.level.ServerLevel;
  *
  * <p>
  * GTNL consumes Natura clouds + Thaumcraft crystals to force clear / rain / thunder. Those mods do
- * not exist in 1.20.1, so GTNA exposes the same three weather states selected by the controller
- * circuit (1 = clear, 2 = rain, 3 = thunder) and pays for a change with a large one-off steam cost;
- * the forced weather then lasts one in-game hour ({@value #WEATHER_TIME} ticks) and the module UI
- * shows the time left. While the circuit keeps requesting the same weather, no further steam is
- * charged until the hour runs out.
+ * not exist in 1.20.1, so GTNA exposes the same three weather states selected by a controller circuit
+ * placed in the module structure's <b>input bus</b> (1 = clear, 2 = rain, 3 = thunder) and pays for a
+ * change with a large one-off steam cost; the forced weather then lasts one in-game hour
+ * ({@value #WEATHER_TIME} ticks) and the module UI shows the time left. While the circuit keeps
+ * requesting the same weather, no further steam is charged until the hour runs out.
  */
 public class SteamWeatherModule extends SteamElevatorModuleMachine {
 
@@ -42,8 +37,6 @@ public class SteamWeatherModule extends SteamElevatorModuleMachine {
     /** The GTNL tooltip's "large" cost per weather change. */
     public static final long WEATHER_STEAM_COST = 1_000_000L;
 
-    public final NotifiableItemStackHandler circuitInventory;
-
     /** The weather currently being forced, or {@link #MODE_OFF} when nothing is active. */
     @Persisted
     @DescSynced
@@ -56,8 +49,6 @@ public class SteamWeatherModule extends SteamElevatorModuleMachine {
 
     public SteamWeatherModule(IMachineBlockEntity holder, int tier) {
         super(holder, tier);
-        this.circuitInventory = new NotifiableItemStackHandler(this, 1, IO.IN)
-                .setFilter(IntCircuitBehaviour::isIntegratedCircuit);
     }
 
     @Override
@@ -65,9 +56,9 @@ public class SteamWeatherModule extends SteamElevatorModuleMachine {
         return MANAGED_FIELD_HOLDER;
     }
 
-    /** The weather selected by the circuit: 1 = clear, 2 = rain, 3 = thunder, anything else = off. */
+    /** The weather selected by the circuit in the input bus: 1 = clear, 2 = rain, 3 = thunder, else off. */
     public int selectedMode() {
-        return modeForCircuit(IntCircuitBehaviour.getCircuitConfiguration(circuitInventory.getStackInSlot(0)));
+        return modeForCircuit(findCircuit());
     }
 
     /** Static mapping so the circuit contract can be gametested without a formed machine. */
@@ -122,12 +113,13 @@ public class SteamWeatherModule extends SteamElevatorModuleMachine {
 
     @Override
     protected Widget createModuleUIWidget() {
-        WidgetGroup group = screenGroup(150, 60);
+        WidgetGroup group = screenGroup(150, 56);
         group.addWidget(new LabelWidget(5, 4, () -> "Weather: §b" + modeName(activeMode)));
-        group.addWidget(new LabelWidget(5, 16, () -> "Circuit: §b1=clear 2=rain 3=thunder"));
+        group.addWidget(new LabelWidget(5, 16, () -> "Circuit in the input bus: §b1=clear 2=rain 3=thunder"));
         group.addWidget(new LabelWidget(5, 28,
                 () -> weatherTicksLeft > 0 ? "Time left: §b" + (weatherTicksLeft / 20) + " s" : "§7idle"));
-        group.addWidget(new SlotWidget(circuitInventory, 0, 5, 40).setBackgroundTexture(GuiTextures.SLOT));
+        group.addWidget(new LabelWidget(5, 40,
+                () -> "§7Cost on change: §b" + (WEATHER_STEAM_COST / 1000) + " B §7steam"));
         return group;
     }
 

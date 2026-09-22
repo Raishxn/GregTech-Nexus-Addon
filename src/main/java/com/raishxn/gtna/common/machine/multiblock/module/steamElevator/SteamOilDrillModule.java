@@ -1,11 +1,8 @@
 package com.raishxn.gtna.common.machine.multiblock.module.steamElevator;
 
 import com.gregtechceu.gtceu.api.GTValues;
-import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.data.worldgen.bedrockfluid.BedrockFluidVeinSavedData;
-import com.gregtechceu.gtceu.api.gui.widget.TankWidget;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
@@ -18,7 +15,6 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 
 /**
  * GTNL {@code SteamOilDrillModule} port (LGPLv3, original by ScienceNotLeisure).
@@ -26,15 +22,13 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
  * <p>
  * GTNL reads GT's per-dimension underground-oil table and outputs a random vein fluid. 1.20.1's
  * equivalent is GTCEu's bedrock fluid veins, so the module pumps the fluid of the chunk it sits in
- * ({@link BedrockFluidVeinSavedData#getFluidInChunk}) into its own output tank. Tiers I/II/III
- * (GTNL tiers 2/3/4) increase the yield and shorten the cycle.
+ * ({@link BedrockFluidVeinSavedData#getFluidInChunk}) into the module structure's <b>fluid output
+ * hatch</b>. Tiers I/II/III (GTNL tiers 2/3/4) increase the yield and shorten the cycle.
  */
 public class SteamOilDrillModule extends SteamElevatorModuleMachine {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
             SteamOilDrillModule.class, SteamElevatorModuleMachine.MANAGED_FIELD_HOLDER);
-
-    public final NotifiableFluidTank outputTank;
 
     @Persisted
     @DescSynced
@@ -42,7 +36,6 @@ public class SteamOilDrillModule extends SteamElevatorModuleMachine {
 
     public SteamOilDrillModule(IMachineBlockEntity holder, int tier) {
         super(holder, tier);
-        this.outputTank = new NotifiableFluidTank(this, 1, 64_000, IO.OUT);
     }
 
     @Override
@@ -73,7 +66,6 @@ public class SteamOilDrillModule extends SteamElevatorModuleMachine {
     public void onElevatorTick(SteamElevator elevator) {
         if (!consumeSteam(getSteamUpkeep())) return;
         if (!(getLevel() instanceof ServerLevel level)) return;
-        if (outputTank.getFluidInTank(0).getAmount() >= outputTank.getTankCapacity(0)) return;
 
         if (++progress < cycleTicks()) return;
         progress = 0;
@@ -88,18 +80,24 @@ public class SteamOilDrillModule extends SteamElevatorModuleMachine {
         for (int i = 0; i < getModuleTier() - 1; i++) {
             amount += baseYield() * (1 + level.random.nextInt(4));
         }
-        outputTank.fillInternal(new FluidStack(fluid, amount), IFluidHandler.FluidAction.EXECUTE);
+        FluidStack produced = new FluidStack(fluid, amount);
+        if (!canInsertFluid(produced)) return;
+
+        insertFluid(produced);
         // GTNL's underground oil depletes on extraction; mirror that at a gentler rate.
         if (level.random.nextInt(25) == 0) {
             data.depleteVein(chunkX, chunkZ, 0, false);
         }
+        markDirty();
     }
 
     @Override
     protected Widget createModuleUIWidget() {
-        WidgetGroup group = screenGroup(150, 52);
+        WidgetGroup group = screenGroup(150, 50);
         group.addWidget(new LabelWidget(5, 5, () -> "Tier: §b" + getModuleTier() + " §r| Yield: §b" + baseYield()));
-        group.addWidget(new TankWidget(outputTank.getStorages()[0], 5, 20, 18, 18, true, false));
+        group.addWidget(new LabelWidget(5, 18,
+                () -> "Progress: §b" + (progress * 100 / cycleTicks()) + "%%"));
+        group.addWidget(new LabelWidget(5, 31, () -> "§7Oil is pushed to the output hatch"));
         return group;
     }
 }

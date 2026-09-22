@@ -1,10 +1,6 @@
 package com.raishxn.gtna.common.machine.multiblock.module.steamElevator;
 
-import com.gregtechceu.gtceu.api.capability.recipe.IO;
-import com.gregtechceu.gtceu.api.gui.GuiTextures;
-import com.gregtechceu.gtceu.api.gui.widget.SlotWidget;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
@@ -28,6 +24,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * GTNL {@code SteamEntityCrusherModule} port (LGPLv3, original by ScienceNotLeisure).
@@ -38,6 +35,10 @@ import java.util.List;
  * output: 2% plus 0.5% per identical spawner, capped at 34%, at the cost of doubled time and halved
  * power, and no overclocking. 1.20.1 has no EnderIO, so GTNA uses a vanilla spawner item carrying
  * the mob in its block-entity NBT and rolls the mob's own loot table — no external mod needed.
+ *
+ * <p>
+ * The catalyst spawner is read from the module structure's <b>input bus</b> and the drops are pushed
+ * to its <b>output bus</b> (the module controller keeps no inventory of its own).
  */
 public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
 
@@ -52,17 +53,12 @@ public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
     private static final double CHANCE_PER_SPAWNER = 0.5;
     private static final double MAX_DOUBLING_CHANCE = 34.0;
 
-    public final NotifiableItemStackHandler inputInventory;
-    public final NotifiableItemStackHandler outputInventory;
-
     @Persisted
     @DescSynced
     private int progress;
 
     public SteamEntityCrusherModule(IMachineBlockEntity holder, int tier) {
         super(holder, tier);
-        this.inputInventory = new NotifiableItemStackHandler(this, 9, IO.IN);
-        this.outputInventory = new NotifiableItemStackHandler(this, 9, IO.OUT);
     }
 
     @Override
@@ -116,31 +112,21 @@ public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
                 drop.setCount(Math.min(drop.getMaxStackSize(), drop.getCount() * 2));
             }
         }
-        if (!hasOutputRoom(drops)) return;
-        insertOutputs(drops);
+        if (!canInsertItems(drops)) return;
+        insertItems(drops);
         markDirty();
     }
 
-    /** The first spawner catalyst in the input inventory, or empty. */
+    /** The first spawner catalyst in the module's input bus, or empty. */
     private ItemStack findCatalyst() {
-        for (int slot = 0; slot < inputInventory.getSlots(); slot++) {
-            ItemStack stack = inputInventory.getStackInSlot(slot);
-            if (spawnerEntityType(stack) != null) return stack;
-        }
-        return ItemStack.EMPTY;
+        return findItem(stack -> spawnerEntityType(stack) != null);
     }
 
     /** GTNL: 2% + 0.5% per identical stored spawner, capped at 34%. */
     private double doublingChance(ItemStack catalyst) {
         EntityType<?> type = spawnerEntityType(catalyst);
-        int identical = 0;
-        for (int slot = 0; slot < inputInventory.getSlots(); slot++) {
-            ItemStack stack = inputInventory.getStackInSlot(slot);
-            if (spawnerEntityType(stack) == type) {
-                identical += stack.getCount();
-            }
-        }
-        return doublingChanceFor(identical);
+        if (type == null) return BASE_DOUBLING_CHANCE;
+        return doublingChanceFor(countItem(stack -> spawnerEntityType(stack) == type));
     }
 
     /** Static doubling-chance formula so the mechanic can be gametested. */
@@ -174,55 +160,14 @@ public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
         return EntityType.byString(id).orElse(null);
     }
 
-    /** Dry-run insertion against a copy so a partial insert never dupes. */
-    private boolean hasOutputRoom(List<ItemStack> outputs) {
-        ItemStack[] sim = new ItemStack[outputInventory.getSlots()];
-        for (int i = 0; i < sim.length; i++) {
-            sim[i] = outputInventory.getStackInSlot(i).copy();
-        }
-        for (ItemStack output : outputs) {
-            int remaining = output.getCount();
-            for (int slot = 0; slot < sim.length && remaining > 0; slot++) {
-                ItemStack current = sim[slot];
-                if (current.isEmpty()) {
-                    int added = Math.min(remaining, output.getMaxStackSize());
-                    sim[slot] = new ItemStack(output.getItem(), added);
-                    remaining -= added;
-                } else if (ItemStack.isSameItemSameTags(current, output)) {
-                    int added = Math.min(remaining, current.getMaxStackSize() - current.getCount());
-                    current.setCount(current.getCount() + added);
-                    remaining -= added;
-                }
-            }
-            if (remaining > 0) return false;
-        }
-        return true;
-    }
-
-    private void insertOutputs(List<ItemStack> outputs) {
-        for (ItemStack output : outputs) {
-            int remaining = output.getCount();
-            for (int slot = 0; slot < outputInventory.getSlots() && remaining > 0; slot++) {
-                ItemStack rest = outputInventory.insertItem(slot, new ItemStack(output.getItem(), remaining), false);
-                remaining = rest.getCount();
-            }
-        }
-    }
-
     @Override
     protected Widget createModuleUIWidget() {
-        WidgetGroup group = screenGroup(150, 80);
+        WidgetGroup group = screenGroup(150, 52);
         group.addWidget(new LabelWidget(5, 4, () -> "Entity Crusher tier §b" + getModuleTier()));
-        group.addWidget(new LabelWidget(5, 15, () -> "Doubling chance: §b" +
-                String.format("%.1f", doublingChance(findCatalyst())) + "% §r| §b" + getSteamUpkeep() + " mB/t"));
-        for (int i = 0; i < 3; i++) {
-            group.addWidget(new SlotWidget(inputInventory, i, 5 + i * 18, 28)
-                    .setBackgroundTexture(GuiTextures.SLOT));
-        }
-        for (int i = 0; i < 3; i++) {
-            group.addWidget(new SlotWidget(outputInventory, i, 89 + i * 18, 28)
-                    .setBackgroundTexture(GuiTextures.SLOT));
-        }
+        group.addWidget(new LabelWidget(5, 16, () -> "Doubling chance: §b" +
+                String.format(Locale.ROOT, "%.1f", doublingChance(findCatalyst())) + "%%"));
+        group.addWidget(new LabelWidget(5, 28,
+                () -> "Progress: §b" + (progress * 100 / CYCLE_TICKS) + "%% §r| input bus → output bus"));
         return group;
     }
 }

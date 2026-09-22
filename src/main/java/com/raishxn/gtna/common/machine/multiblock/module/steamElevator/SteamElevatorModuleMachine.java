@@ -2,16 +2,22 @@ package com.raishxn.gtna.common.machine.multiblock.module.steamElevator;
 
 import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
+import com.gregtechceu.gtceu.api.capability.recipe.IRecipeHandler;
+import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.UITemplate;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDisplayUIMachine;
+import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
+import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockDisplayText;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
+import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
+import com.gregtechceu.gtceu.api.machine.trait.RecipeHandlerList;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
-import com.gregtechceu.gtceu.common.data.GTMaterials;
+import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
 import com.lowdragmc.lowdraglib.gui.widget.ComponentPanelWidget;
@@ -24,6 +30,9 @@ import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -32,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Shared behaviour of the Steam Elevator modules.
@@ -42,6 +52,13 @@ import java.util.List;
  * host scans its twelve fixed module slots and connects the <b>formed</b> module controllers it
  * finds there; each bound module then drives its own effect every server tick and pays its steam
  * upkeep from the formed structure's steam input hatches.
+ *
+ * <p>
+ * <b>All item and fluid IO goes through the module structure's own hatches</b> — the input bus, the
+ * output bus, the input hatch and the output hatch — exactly like a normal GT multiblock. The module
+ * controller keeps no private inventory: {@link #countItem}, {@link #consumeItem},
+ * {@link #canInsertItems}, {@link #insertItems}, {@link #countFluid}, {@link #drainFluid},
+ * {@link #canInsertFluid} and {@link #insertFluid} read and write the parts placed in the 1x5x2.
  *
  * <p>
  * There is <b>no EU buffer</b> here. A module draws its upkeep from the steam input hatches placed in
@@ -65,6 +82,14 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
 
     /** Steam input hatches placed in this module's own structure. */
     private final List<NotifiableFluidTank> steamTanks = new ArrayList<>();
+    /** Item input buses (steam or LV) placed in this module's own structure. */
+    private final List<NotifiableItemStackHandler> itemInputs = new ArrayList<>();
+    /** Item output buses placed in this module's own structure. */
+    private final List<NotifiableItemStackHandler> itemOutputs = new ArrayList<>();
+    /** Fluid input hatches placed in this module's own structure (steam excluded). */
+    private final List<NotifiableFluidTank> fluidInputs = new ArrayList<>();
+    /** Fluid output hatches placed in this module's own structure. */
+    private final List<NotifiableFluidTank> fluidOutputs = new ArrayList<>();
 
     @Persisted
     @DescSynced
@@ -130,14 +155,33 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
     public void onStructureFormed() {
         super.onStructureFormed();
         steamTanks.clear();
-        for (var part : getParts()) {
-            if (!PartAbility.STEAM.isApplicable(part.self().getDefinition().getBlock())) continue;
-            for (var handlerList : part.getRecipeHandlers()) {
-                if (!handlerList.isValid(IO.IN)) continue;
-                for (var fluidHandler : handlerList.getCapability(FluidRecipeCapability.CAP)) {
-                    if (fluidHandler instanceof NotifiableFluidTank tank &&
-                            tank.isFluidValid(0, GTMaterials.Steam.getFluid(1))) {
-                        steamTanks.add(tank);
+        itemInputs.clear();
+        itemOutputs.clear();
+        fluidInputs.clear();
+        fluidOutputs.clear();
+        for (IMultiPart part : getParts()) {
+            Block block = part.self().getDefinition().getBlock();
+            boolean steamPart = PartAbility.STEAM.isApplicable(block);
+            boolean itemInput = PartAbility.IMPORT_ITEMS.isApplicable(block) ||
+                    PartAbility.STEAM_IMPORT_ITEMS.isApplicable(block);
+            boolean itemOutput = PartAbility.EXPORT_ITEMS.isApplicable(block) ||
+                    PartAbility.STEAM_EXPORT_ITEMS.isApplicable(block);
+            boolean fluidInput = PartAbility.IMPORT_FLUIDS.isApplicable(block);
+            boolean fluidOutput = PartAbility.EXPORT_FLUIDS.isApplicable(block);
+            for (RecipeHandlerList handlerList : part.getRecipeHandlers()) {
+                if (!handlerList.isValid(IO.IN) && !handlerList.isValid(IO.OUT)) continue;
+                for (IRecipeHandler<?> handler : handlerList.getCapability(ItemRecipeCapability.CAP)) {
+                    if (!(handler instanceof NotifiableItemStackHandler items)) continue;
+                    if (itemInput && handlerList.isValid(IO.IN)) itemInputs.add(items);
+                    if (itemOutput && handlerList.isValid(IO.OUT)) itemOutputs.add(items);
+                }
+                for (IRecipeHandler<?> handler : handlerList.getCapability(FluidRecipeCapability.CAP)) {
+                    if (!(handler instanceof NotifiableFluidTank tank)) continue;
+                    if (steamPart) {
+                        if (handlerList.isValid(IO.IN)) steamTanks.add(tank);
+                    } else {
+                        if (fluidInput && handlerList.isValid(IO.IN)) fluidInputs.add(tank);
+                        if (fluidOutput && handlerList.isValid(IO.OUT)) fluidOutputs.add(tank);
                     }
                 }
             }
@@ -148,6 +192,10 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
     public void onStructureInvalid() {
         super.onStructureInvalid();
         steamTanks.clear();
+        itemInputs.clear();
+        itemOutputs.clear();
+        fluidInputs.clear();
+        fluidOutputs.clear();
         disconnectFromHost();
     }
 
@@ -227,16 +275,212 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
         return true;
     }
 
+    // ------------------------------------------------------------------
+    // Item / fluid IO through the module structure's own hatches.
+    // ------------------------------------------------------------------
+
+    /** The module's own input buses (steam or LV), read-only view for per-slot iteration. */
+    protected List<NotifiableItemStackHandler> inputItemHandlers() {
+        return itemInputs;
+    }
+
+    /** The module's own output buses, read-only view for per-slot iteration. */
+    protected List<NotifiableItemStackHandler> outputItemHandlers() {
+        return itemOutputs;
+    }
+
+    /** The module's own fluid input hatches (steam excluded). */
+    protected List<NotifiableFluidTank> fluidInputTanks() {
+        return fluidInputs;
+    }
+
+    /** The module's own fluid output hatches. */
+    protected List<NotifiableFluidTank> fluidOutputTanks() {
+        return fluidOutputs;
+    }
+
+    /** Total input items matching {@code filter} across the module's input buses. */
+    protected int countItem(Predicate<ItemStack> filter) {
+        int total = 0;
+        for (NotifiableItemStackHandler handler : itemInputs) {
+            for (int slot = 0; slot < handler.getSlots(); slot++) {
+                ItemStack stack = handler.getStackInSlot(slot);
+                if (!stack.isEmpty() && filter.test(stack)) total += stack.getCount();
+            }
+        }
+        return total;
+    }
+
+    /** Convenience for the common "N of this exact item" case. */
+    protected int countItem(Item item) {
+        return countItem(stack -> stack.is(item));
+    }
+
+    /** Removes up to {@code amount} of matching items from the module's input buses. */
+    protected void consumeItem(Predicate<ItemStack> filter, int amount) {
+        int remaining = amount;
+        for (NotifiableItemStackHandler handler : itemInputs) {
+            for (int slot = 0; slot < handler.getSlots() && remaining > 0; slot++) {
+                ItemStack stack = handler.getStackInSlot(slot);
+                if (stack.isEmpty() || !filter.test(stack)) continue;
+                int taken = Math.min(remaining, stack.getCount());
+                handler.extractItemInternal(slot, taken, false);
+                remaining -= taken;
+            }
+            if (remaining <= 0) break;
+        }
+    }
+
+    protected void consumeItem(Item item, int amount) {
+        consumeItem(stack -> stack.is(item), amount);
+    }
+
+    /** The first input-bus stack matching {@code filter}, or empty. */
+    protected ItemStack findItem(Predicate<ItemStack> filter) {
+        for (NotifiableItemStackHandler handler : itemInputs) {
+            for (int slot = 0; slot < handler.getSlots(); slot++) {
+                ItemStack stack = handler.getStackInSlot(slot);
+                if (!stack.isEmpty() && filter.test(stack)) return stack;
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
+    /** The controller circuit configuration found in the module's input buses, or 0. */
+    protected int findCircuit() {
+        for (NotifiableItemStackHandler handler : itemInputs) {
+            for (int slot = 0; slot < handler.getSlots(); slot++) {
+                ItemStack stack = handler.getStackInSlot(slot);
+                if (IntCircuitBehaviour.isIntegratedCircuit(stack)) {
+                    return IntCircuitBehaviour.getCircuitConfiguration(stack);
+                }
+            }
+        }
+        return 0;
+    }
+
+    /** Dry-run of {@link #insertItems} over the output buses; false means something would be lost. */
+    protected boolean canInsertItems(List<ItemStack> stacks) {
+        List<ItemStack[]> snapshot = new ArrayList<>();
+        for (NotifiableItemStackHandler handler : itemOutputs) {
+            ItemStack[] slots = new ItemStack[handler.getSlots()];
+            for (int slot = 0; slot < slots.length; slot++) {
+                slots[slot] = handler.getStackInSlot(slot).copy();
+            }
+            snapshot.add(slots);
+        }
+        for (ItemStack stack : stacks) {
+            int remaining = stack.getCount();
+            for (ItemStack[] slots : snapshot) {
+                for (int slot = 0; slot < slots.length && remaining > 0; slot++) {
+                    ItemStack current = slots[slot];
+                    if (current.isEmpty()) {
+                        int added = Math.min(remaining, stack.getMaxStackSize());
+                        slots[slot] = stack.copyWithCount(added);
+                        remaining -= added;
+                    } else if (ItemStack.isSameItemSameTags(current, stack)) {
+                        int added = Math.min(remaining, current.getMaxStackSize() - current.getCount());
+                        current.grow(added);
+                        remaining -= added;
+                    }
+                }
+                if (remaining <= 0) break;
+            }
+            if (remaining > 0) return false;
+        }
+        return true;
+    }
+
+    protected boolean canInsertItems(ItemStack... stacks) {
+        return canInsertItems(List.of(stacks));
+    }
+
+    /** Inserts into the module's output buses; callers should have checked {@link #canInsertItems}. */
+    protected void insertItems(List<ItemStack> stacks) {
+        for (ItemStack stack : stacks) {
+            int remaining = stack.getCount();
+            for (NotifiableItemStackHandler handler : itemOutputs) {
+                for (int slot = 0; slot < handler.getSlots() && remaining > 0; slot++) {
+                    ItemStack rest = handler.insertItemInternal(slot, stack.copyWithCount(remaining), false);
+                    remaining = rest.getCount();
+                }
+                if (remaining <= 0) break;
+            }
+        }
+    }
+
+    protected void insertItems(ItemStack... stacks) {
+        insertItems(List.of(stacks));
+    }
+
+    /** Total input fluid matching {@code fluid}'s type across the module's fluid input hatches. */
+    protected int countFluid(FluidStack fluid) {
+        int total = 0;
+        for (NotifiableFluidTank tank : fluidInputs) {
+            for (int i = 0; i < tank.getTanks(); i++) {
+                FluidStack stored = tank.getFluidInTank(i);
+                if (!stored.isEmpty() && stored.isFluidEqual(fluid)) total += stored.getAmount();
+            }
+        }
+        return total;
+    }
+
+    /** Drains exactly {@code amount} of {@code fluid}; returns false (and drains nothing) if short. */
+    protected boolean drainFluid(FluidStack fluid, int amount) {
+        if (countFluid(fluid) < amount) return false;
+        int remaining = amount;
+        for (NotifiableFluidTank tank : fluidInputs) {
+            if (remaining <= 0) break;
+            FluidStack drained = tank.drainInternal(new FluidStack(fluid, remaining),
+                    IFluidHandler.FluidAction.EXECUTE);
+            remaining -= drained.getAmount();
+        }
+        return true;
+    }
+
+    /** True when the module's fluid output hatches can take all of {@code fluid}. */
+    protected boolean canInsertFluid(FluidStack fluid) {
+        int accepted = 0;
+        for (NotifiableFluidTank tank : fluidOutputs) {
+            accepted += tank.fillInternal(fluid.copy(), IFluidHandler.FluidAction.SIMULATE);
+            if (accepted >= fluid.getAmount()) return true;
+        }
+        return accepted >= fluid.getAmount();
+    }
+
+    /** Inserts into the module's fluid output hatches; should be preceded by {@link #canInsertFluid}. */
+    protected void insertFluid(FluidStack fluid) {
+        int remaining = fluid.getAmount();
+        for (NotifiableFluidTank tank : fluidOutputs) {
+            if (remaining <= 0) break;
+            int filled = tank.fillInternal(new FluidStack(fluid, remaining), IFluidHandler.FluidAction.EXECUTE);
+            remaining -= filled;
+        }
+    }
+
     @Override
     public void onElevatorTick(SteamElevator elevator) {
         // Default: pay the upkeep; subclasses add their effect.
         consumeSteam(getSteamUpkeep());
     }
 
-    /** A module is "active" once it is formed and bound to the host (the host itself never idles). */
+    /** True when this module can pay its steam upkeep this tick. */
+    protected boolean hasUpkeepSteam() {
+        long upkeep = getSteamUpkeep();
+        if (upkeep <= 0) return true;
+        long available = getStoredSteam();
+        if (host != null) available += host.getAvailableSteam();
+        return available >= upkeep;
+    }
+
+    /**
+     * A module is "active" once it is formed, bound to the host and has the steam to pay its upkeep,
+     * so the standard multiblock "Running"/"Idling" display (and the active machine texture) match
+     * the other machines instead of always reading as working.
+     */
     @Override
     public boolean isActive() {
-        return isFormed() && elevatorConnected;
+        return isFormed() && elevatorConnected && hasUpkeepSteam();
     }
 
     // ------------------------------------------------------------------
@@ -246,16 +490,15 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
     @Override
     public void addDisplayText(java.util.List<Component> textList) {
         IDisplayUIMachine.super.addDisplayText(textList);
+        MultiblockDisplayText.builder(textList, isFormed())
+                .setWorkingStatus(true, isActive())
+                .addWorkingStatusLine();
         textList.add(Component.translatable("gtna.machine.steam_elevator_module.tier", tier));
         textList.add(Component.translatable("gtna.machine.steam_elevator_module.upkeep", getSteamUpkeep(),
                 getStoredSteam()));
         textList.add(Component.translatable(elevatorConnected ?
                 "gtna.machine.steam_elevator_module.connected" :
                 "gtna.machine.steam_elevator_module.disconnected"));
-        boolean working = isFormed() && elevatorConnected;
-        textList.add(Component.translatable(working ?
-                "gtna.machine.steam_elevator_module.working" :
-                "gtna.machine.steam_elevator_module.not_working"));
     }
 
     @Override

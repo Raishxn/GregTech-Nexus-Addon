@@ -34,10 +34,13 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-22 (G-0051):** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**) +
+- **Gate verde em 2026-09-22 (G-0052):** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**) +
   `runGameTestServer` (**35/35**, `All 35 required tests passed`) + `runData` determinístico. A
   execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros de receitas do
   GTCEu já conhecidos continuam no log.
+- **Módulos do elevador (G-0052):** o IO de item/fluido agora é sempre pelos **hatches da própria
+  estrutura** 1x5x2 (input/output bus e input/output hatch) — sem inventário interno. O status padrão
+  (Running/Idle) aparece via `MultiblockDisplayText` e `isActive()` respeita o upkeep de steam.
 - **Bee Breeding × Productive Bees (G-0051):** o módulo agora é integração real (spawn egg do PB como
   catalisador, 128 honey treats, saída = cópia da abelha) e **só existe quando o PB está carregado**
   (`ModList.isLoaded("productivebees")`). O PB 1.20.1 (`1.20.1-12.6.0`) entra como `modCompileOnly` +
@@ -69,6 +72,35 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0052 (2026-09-22) — módulos do elevador usam os hatches da própria estrutura (item/fluido) e mostram o status padrão
+
+Feedback do autor no client:
+- **Bug de UI**: os labels com `%` literal rendiam `Format error: ...` (o `LabelWidget` passa o texto
+  por `I18n.get`, que chama `String.format`; um `%` solto estoura). Corrigido escapando `%%` (Entity
+  Crusher e Bee Breeding) e usando `Locale.ROOT` no número.
+- **IO errado**: os módulos tinham inventários/tanques **internos** (slots na GUI) em vez de usar os
+  barramentos/hatches da própria estrutura 1x5x2. Agora **todo IO de item/fluido vai pelos hatches**:
+  input bus, output bus, input hatch e output hatch. A base varre os parts por ability
+  (`IMPORT_ITEMS`/`STEAM_IMPORT_ITEMS`, `EXPORT_ITEMS`/`STEAM_EXPORT_ITEMS`, `IMPORT_FLUIDS`,
+  `EXPORT_FLUIDS`, `STEAM`) em `onStructureFormed` e expõe `countItem/consumeItem/findItem/findCircuit`,
+  `canInsertItems/insertItems`, `countFluid/drainFluid/canInsertFluid/insertFluid`. Usa
+  `extractItemInternal`/`insertItemInternal`/`drainInternal`/`fillInternal` porque as checagens de
+  direção das capabilities bloqueariam o lado interno.
+- **Oil Drill**: o óleo ia para um tanque interno; agora vai para o **fluid output hatch** (o módulo
+  precisa de ≥1 hatch de saída, como o autor apontou).
+- **Apiary / Bee Breeding / Greenhouse / Ore Processor / Weather / Entity Crusher**: mesmos ajustes
+  (água/lubrificante no input hatch, comb/spawner/circuito no input bus, produtos no output bus).
+  O circuito do Weather/Ore Processor agora é lido do **input bus** (não há mais slot interno).
+- **Status "Working"**: a base agora adiciona a linha padrão do GTCEu via `MultiblockDisplayText`
+  (`Running Perfectly` / `Idling`) e `isActive()` exige steam para pagar o upkeep, então o módulo
+  para de parecer "sempre ativo" e passa a mostrar o status como as outras máquinas.
+- **Logo**: `GTNATextures.LOGO` apontava para `gtna:logo` (textura inexistente; o log do client
+  mostrava `Failed to load texture: gtna:logo`). Corrigido para `gtna:textures/logo.png`.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**); `runGameTestServer`
+  (**35/35**); `runData` determinístico (`written: 0`) e 0 `Parsing error loading recipe gtna:`.
+- **Pendências:** re-teste manual no client com os hatches (a checklist ganhou a seção "IO dos
+  módulos"); avaliar se `isActive()` deve olhar também os insumos (hoje olha só o upkeep de steam).
 
 ### G-0051 (2026-09-22) — Bee Breeding vira integração real com Productive Bees (módulo só existe com o mod)
 
