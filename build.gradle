@@ -185,6 +185,7 @@ tasks.register('runUnitTests') {
             'com.raishxn.gtna.PatternBufferModeSelectionTest',
             'com.raishxn.gtna.BufferModeSwitchPolicyTest',
             'com.raishxn.gtna.ConfigLangKeysTest',
+            'com.raishxn.gtna.JadeLangKeysTest',
             'com.raishxn.gtna.SteamWiringContractTest',
             'com.raishxn.gtna.PartAbilityCoverageTest',
             'com.raishxn.gtna.RegistrationContractTest',

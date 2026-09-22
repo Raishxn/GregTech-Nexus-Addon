@@ -1147,6 +1147,7 @@ public class GTNALangProvider extends LanguageProvider {
         // client with 'Missing config translation'. Keep these in sync with GTNAJadePlugin.
         add("config.jade.plugin_gtna.multiple_recipes_provider", "Multiple Recipes Machine Info");
         add("config.jade.plugin_gtna.me_pattern_buffer", "ME Pattern Buffer Info");
+        add("config.jade.plugin_gtna.solar_boiler_provider", "Large Steam Solar Boiler Info");
 
         for (int i = 0; i < GTValues.V.length; i++) {
             String tierName = GTValues.VN[i];
