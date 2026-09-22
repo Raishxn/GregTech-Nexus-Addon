@@ -30,6 +30,29 @@ Commits relevantes (na `main` local, **sem push**):
 4. **25 hatches** conectados — validar se isso é o esperado (25 inputs?) e se o "team/owner key"
    está certo (a rede é por **UUID de quem colocou**, não por team — GTNL usa team?).
 
+### Evidência direta do `/gtna steam` (autor, 2026-09-22)
+
+```
+[GTNA] Wireless steam network (Dev): 0 mB
+[GTNA] Connected wireless steam hatches: 25
+  - Input bronze @ minecraft:overworld -28, -59, -63 | unlimited mB/t
+  ... (24 inputs) ...
+  - Output bronze @ minecraft:overworld -52, -60, -65 | unlimited mB/t
+```
+**Repetido idêntico** em 3 leituras ao longo de ~4 min: a rede **nunca sai de 0**.
+
+Ponto importante: **o output hatch ESTÁ registrado/conectado** (aparece na lista) e o tanque dele
+mostra 312.000 mB, mas a rede continua 0. Isso **descarta** "output não conectado" e aponta para:
+- o push do output não está sendo chamado (ou falha silenciosamente), **ou**
+- o push acontece e algo **zera a rede** no mesmo tick (ex.: reset por tick, ou consumo dos 24 inputs
+  que drenam tudo imediatamente — o que explicaria a rede sempre em 0 e os inputs não encherem),
+- ou o saldo é mantido **por hatch/por dimensão** e o `getUserSteam` do comando lê outra chave.
+
+Os hatches de input também deveriam estar **consumindo** o que entra; se 24 inputs concorrem, pode
+haver corrida/round-robin que esvazia a rede a cada tick. Investigar a **ordem de tick** entre
+output/inputs e se o saldo é global ou por hatch.
+
+
 ## Arquivos-chave (GTNA)
 
 - `src/main/java/com/raishxn/gtna/common/machine/multiblock/part/steam/WirelessSteamInputHatch.java`
