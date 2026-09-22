@@ -72,19 +72,21 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_FURNACE)) {
+            // GTNL: PrecisionSteamMechanism, Stronze pipe, bronze furnace, Breel tiny pipe.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_FURNACE.asStack().getItem())
                     .pattern("ABA")
                     .pattern("BCB")
                     .pattern("DBD")
                     .define('A', GTNAItems.PRECISION_STEAM_COMPONENT.get())
                     .define('B', ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Stronze).getItem())
-                    .define('C', GTMultiMachines.STEAM_OVEN.asStack().getItem())
+                    .define('C', GTMachines.STEAM_FURNACE.first().asStack().getItem())
                     .define('D', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
                     .unlockedBy("has_precision_steam_component",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_ALLOY_SMELTER)) {
+            // GTNL: bronze plates, bronze turbine, hydraulic conveyor, cauldron, bronze pipe, alloy smelter.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_ALLOY_SMELTER.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDE")
@@ -94,57 +96,58 @@ public class GTNAMachineRecipes {
                     .define('C', GTNAItems.HYDRAULIC_CONVEYOR.get())
                     .define('D', Items.CAULDRON)
                     .define('E', ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTMaterials.Bronze).getItem())
-                    .define('F', GTMachines.STEAM_ALLOY_SMELTER.right().asStack().getItem())
+                    .define('F', GTMachines.STEAM_ALLOY_SMELTER.first().asStack().getItem())
                     .unlockedBy("has_hydraulic_conveyor",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_CONVEYOR.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_HAMMER)) {
+            // GTNL: Breel tiny pipe, hydraulic piston, precision mechanism, steam hammer, anvil.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_HAMMER.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
-                    .pattern("EAF")
+                    .pattern("AEA")
                     .define('A', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
                     .define('B', GTNAItems.HYDRAULIC_PISTON.get())
                     .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('D', Blocks.ANVIL)
-                    .define('E', ChemicalHelper.get(TagPrefix.block, GTMaterials.Iron).getItem())
-                    .define('F', GTNAItems.HYDRAULIC_MOTOR.get())
+                    .define('D', GTMachines.STEAM_HAMMER.first().asStack().getItem())
+                    .define('E', Blocks.ANVIL)
                     .unlockedBy("has_hydraulic_piston",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_PISTON.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_COMPRESSOR)) {
+            // GTNL: hydraulic piston, Stronze plates, precision mechanism, steam compressor.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_COMPRESSOR.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
-                    .pattern("EFE")
+                    .pattern("BBB")
                     .define('A', GTNAItems.HYDRAULIC_PISTON.get())
                     .define('B', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.Stronze).getItem())
                     .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('D', ChemicalHelper.get(TagPrefix.block, GTMaterials.Iron).getItem())
-                    .define('E', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
-                    .define('F', GTNAItems.HYDRAULIC_MOTOR.get())
+                    .define('D', GTMachines.STEAM_COMPRESSOR.first().asStack().getItem())
                     .unlockedBy("has_precision_steam_component",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_EXTRACTOR)) {
+            // GTNL: reinforced glass, hydraulic piston, Breel tiny pipe, hydraulic pump, steam extractor.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_EXTRACTOR.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
                     .pattern("EFE")
-                    .define('A', Items.GLASS_BOTTLE)
-                    .define('B', GTNAItems.HYDRAULIC_PUMP.get())
+                    .define('A', GTBlocks.CASING_TEMPERED_GLASS.get())
+                    .define('B', GTNAItems.HYDRAULIC_PISTON.get())
                     .define('C', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
-                    .define('D', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('E', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
-                    .define('F', GTNAItems.HYDRAULIC_PISTON.get())
+                    .define('D', GTNAItems.HYDRAULIC_PUMP.get())
+                    .define('E', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('F', GTMachines.STEAM_EXTRACTOR.first().asStack().getItem())
                     .unlockedBy("has_hydraulic_pump",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_PUMP.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_ORE_WASHER)) {
+            // GTNL: steel rotor, hydraulic pump, precision mechanism, hydraulic motor, Breel pipe, ore washer.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_ORE_WASHER.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
@@ -152,81 +155,87 @@ public class GTNAMachineRecipes {
                     .define('A', ChemicalHelper.get(TagPrefix.rotor, GTMaterials.Steel).getItem())
                     .define('B', GTNAItems.HYDRAULIC_PUMP.get())
                     .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('D', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
-                    .define('E', GTNAItems.HYDRAULIC_MOTOR.get())
-                    .define('F', Items.WATER_BUCKET)
+                    .define('D', GTNAItems.HYDRAULIC_MOTOR.get())
+                    .define('E', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
+                    .define('F', GTMachines.ORE_WASHER[GTValues.LV].asStack().getItem())
                     .unlockedBy("has_hydraulic_motor",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_MOTOR.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_CIRCUIT_ASSEMBLER)) {
+            // GTNL: bronze double plates, precision mechanism, steam assembly casing.
             ShapedRecipeBuilder
                     .shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_CIRCUIT_ASSEMBLER.asStack().getItem())
                     .pattern("ABA")
-                    .pattern("CDC")
+                    .pattern("BCB")
                     .pattern("ABA")
-                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
-                    .define('B', Blocks.COMPARATOR)
-                    .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('D', AEBlocks.MOLECULAR_ASSEMBLER.block().asItem())
+                    .define('A', ChemicalHelper.get(TagPrefix.plateDouble, GTMaterials.Bronze).getItem())
+                    .define('B', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('C', GTNABlocks.STEAM_ASSEMBLY_BLOCK.get())
                     .unlockedBy("has_precision_steam_component",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_MIXER)) {
+            // GTNL: reinforced glass, steel rotor, hydraulic motor, precision mechanism, mixer.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_MIXER.asStack().getItem())
                     .pattern("ABA")
-                    .pattern("CDC")
-                    .pattern("EBE")
-                    .define('A', ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.Steel).getItem())
-                    .define('B', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('C', ChemicalHelper.get(TagPrefix.pipeHugeFluid, GTMaterials.Copper).getItem())
-                    .define('D', GTMachines.MIXER[GTValues.LV].asStack().getItem())
-                    .define('E', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
-                    .unlockedBy("has_precision_steam_component",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .pattern("ACA")
+                    .pattern("DED")
+                    .define('A', GTBlocks.CASING_TEMPERED_GLASS.get())
+                    .define('B', ChemicalHelper.get(TagPrefix.rotor, GTMaterials.Steel).getItem())
+                    .define('C', GTNAItems.HYDRAULIC_MOTOR.get())
+                    .define('D', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('E', GTMachines.MIXER[GTValues.LV].asStack().getItem())
+                    .unlockedBy("has_hydraulic_motor",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_MOTOR.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_CENTRIFUGE)) {
+            // GTNL: precision mechanism, hydraulic motor, Breel tiny pipe, centrifuge.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_CENTRIFUGE.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
                     .pattern("ABA")
-                    .define('A', ChemicalHelper.get(TagPrefix.block, GTMaterials.Bronze).getItem())
-                    .define('B', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('C', ChemicalHelper.get(TagPrefix.gearSmall, GTMaterials.Iron).getItem())
+                    .define('A', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('B', GTNAItems.HYDRAULIC_MOTOR.get())
+                    .define('C', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
                     .define('D', GTMachines.CENTRIFUGE[GTValues.LV].asStack().getItem())
                     .unlockedBy("has_precision_steam_component",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_THERMAL_CENTRIFUGE)) {
+            // GTNL: precision mechanism, hydraulic motor, Stronze pipe, bronze hull, Breel tiny pipe.
             ShapedRecipeBuilder
                     .shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_THERMAL_CENTRIFUGE.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
-                    .pattern("ABA")
-                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
-                    .define('B', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('C', ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.Copper).getItem())
-                    .define('D', GTNAMachines.LARGE_STEAM_CENTRIFUGE.asStack().getItem())
-                    .unlockedBy("has_large_steam_centrifuge",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(
-                                    GTNAMachines.LARGE_STEAM_CENTRIFUGE.asStack().getItem()))
+                    .pattern("EBE")
+                    .define('A', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('B', GTNAItems.HYDRAULIC_MOTOR.get())
+                    .define('C', ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Stronze).getItem())
+                    .define('D', GTBlocks.BRONZE_HULL.get())
+                    .define('E', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
+                    .unlockedBy("has_hydraulic_motor",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_MOTOR.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_BATH)) {
+            // GTNL: hydraulic conveyor, reinforced glass, Breel tiny pipe, hydraulic pump,
+            // precision mechanism, bronze hull.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_BATH.asStack().getItem())
-                    .pattern("ABA")
-                    .pattern("CDC")
-                    .pattern("EBE")
-                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Steel).getItem())
-                    .define('B', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('C', ChemicalHelper.get(TagPrefix.rotor, GTMaterials.Steel).getItem())
-                    .define('D', GTMachines.CHEMICAL_BATH[GTValues.LV].asStack().getItem())
-                    .define('E', ChemicalHelper.get(TagPrefix.block, GTMaterials.Bronze).getItem())
-                    .unlockedBy("has_precision_steam_component",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .pattern("ABC")
+                    .pattern("DBA")
+                    .pattern("EFE")
+                    .define('A', GTNAItems.HYDRAULIC_CONVEYOR.get())
+                    .define('B', GTBlocks.CASING_TEMPERED_GLASS.get())
+                    .define('C', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
+                    .define('D', GTNAItems.HYDRAULIC_PUMP.get())
+                    .define('E', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('F', GTBlocks.BRONZE_HULL.get())
+                    .unlockedBy("has_hydraulic_conveyor",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_CONVEYOR.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.PRIMITIVE_DISTILLATION_TOWER)) {
@@ -246,139 +255,149 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_LATHE)) {
+            // GTNL: bronze plated bricks, precision mechanism, hydraulic pump, bronze gearbox,
+            // diamond, Breel large pipe, hydraulic piston.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_LATHE.asStack().getItem())
                     .pattern("ABA")
-                    .pattern("CDC")
-                    .pattern("EFE")
-                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
-                    .define('B', GTNAItems.HYDRAULIC_MOTOR.get())
-                    .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('D', GTMachines.LATHE[GTValues.LV].asStack().getItem())
-                    .define('E', ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.Bronze).getItem())
-                    .define('F', GTBlocks.CASING_BRONZE_PIPE.get())
+                    .pattern("CDE")
+                    .pattern("BFG")
+                    .define('A', GTBlocks.CASING_BRONZE_BRICKS.get())
+                    .define('B', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('C', GTNAItems.HYDRAULIC_PUMP.get())
+                    .define('D', GTBlocks.CASING_BRONZE_GEARBOX.get())
+                    .define('E', Items.DIAMOND)
+                    .define('F', ChemicalHelper.get(TagPrefix.pipeLargeFluid, GTNAMaterials.Breel).getItem())
+                    .define('G', GTNAItems.HYDRAULIC_PISTON.get())
                     .unlockedBy("has_precision_steam_component",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_CUTTING)) {
+            // GTNL: Breel pipe, precision mechanism, glass, hydraulic conveyor, bronze pipe casing,
+            // diamond sawblade, hydraulic arm.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_CUTTING.asStack().getItem())
-                    .pattern("ABA")
-                    .pattern("CDC")
-                    .pattern("EFE")
-                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
-                    .define('B', GTNAItems.HYDRAULIC_PUMP.get())
-                    .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('D', GTMachines.CUTTER[GTValues.LV].asStack().getItem())
-                    .define('E', ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.Bronze).getItem())
-                    .define('F', Blocks.DIAMOND_BLOCK)
+                    .pattern("ABC")
+                    .pattern("DEF")
+                    .pattern("BAG")
+                    .define('A', ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Breel).getItem())
+                    .define('B', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('C', Blocks.GLASS)
+                    .define('D', GTNAItems.HYDRAULIC_CONVEYOR.get())
+                    .define('E', GTBlocks.CASING_BRONZE_PIPE.get())
+                    .define('F', GTItems.COMPONENT_GRINDER_DIAMOND.get())
+                    .define('G', GTNAItems.HYDRAULIC_ARM.get())
                     .unlockedBy("has_precision_steam_component",
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_BENDING)) {
+            // GTNL: hydraulic motor, piston, precision mechanism, hydraulic conveyor, bronze bricks.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_BENDING.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
-                    .pattern("EFE")
-                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
-                    .define('B', GTNAItems.HYDRAULIC_PUMP.get())
+                    .pattern("EBE")
+                    .define('A', GTNAItems.HYDRAULIC_MOTOR.get())
+                    .define('B', Blocks.PISTON)
                     .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('D', GTMachines.BENDER[GTValues.LV].asStack().getItem())
-                    .define('E', ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.Bronze).getItem())
-                    .define('F', Blocks.DIAMOND_BLOCK)
-                    .unlockedBy("has_precision_steam_component",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .define('D', GTNAItems.HYDRAULIC_CONVEYOR.get())
+                    .define('E', GTBlocks.CASING_BRONZE_BRICKS.get())
+                    .unlockedBy("has_hydraulic_motor",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_MOTOR.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_EXTRUDER)) {
+            // GTNL: bronze bricks, hydraulic motor, hydraulic piston, anvil, steam hammer,
+            // steel quintuple plate, hydraulic conveyor.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_EXTRUDER.asStack().getItem())
-                    .pattern("ABA")
-                    .pattern("CDC")
-                    .pattern("EFE")
-                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
-                    .define('B', GTNAItems.HYDRAULIC_PUMP.get())
-                    .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('D', GTMachines.EXTRUDER[GTValues.LV].asStack().getItem())
-                    .define('E', ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.Bronze).getItem())
-                    .define('F', Blocks.DIAMOND_BLOCK)
-                    .unlockedBy("has_precision_steam_component",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .pattern("BCA")
+                    .pattern("DEF")
+                    .pattern("AGA")
+                    .define('A', GTBlocks.CASING_BRONZE_BRICKS.get())
+                    .define('B', GTNAItems.HYDRAULIC_MOTOR.get())
+                    .define('C', GTNAItems.HYDRAULIC_PISTON.get())
+                    .define('D', Blocks.ANVIL)
+                    .define('E', GTMachines.STEAM_HAMMER.first().asStack().getItem())
+                    .define('F', ChemicalHelper.get(TagPrefix.plateDouble, GTMaterials.Steel).getItem())
+                    .define('G', GTNAItems.HYDRAULIC_CONVEYOR.get())
+                    .unlockedBy("has_hydraulic_conveyor",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_CONVEYOR.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_WIREMILL)) {
+            // GTNL: hydraulic motor, Breel large pipe, precision mechanism, hydraulic conveyor,
+            // bronze bricks.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_WIREMILL.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
-                    .pattern("EFE")
-                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
-                    .define('B', GTNAItems.HYDRAULIC_PUMP.get())
+                    .pattern("EBE")
+                    .define('A', GTNAItems.HYDRAULIC_MOTOR.get())
+                    .define('B', ChemicalHelper.get(TagPrefix.pipeLargeFluid, GTNAMaterials.Breel).getItem())
                     .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('D', GTMachines.WIREMILL[GTValues.LV].asStack().getItem())
-                    .define('E', ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.Bronze).getItem())
-                    .define('F', Blocks.DIAMOND_BLOCK)
-                    .unlockedBy("has_precision_steam_component",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .define('D', GTNAItems.HYDRAULIC_CONVEYOR.get())
+                    .define('E', GTBlocks.CASING_BRONZE_BRICKS.get())
+                    .unlockedBy("has_hydraulic_motor",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_MOTOR.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_SIFTER)) {
+            // GTNL: Breel tiny pipe, item filter, hydraulic piston, bronze hull, precision mechanism.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_SIFTER.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
-                    .pattern("EFE")
-                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
-                    .define('B', GTNAItems.HYDRAULIC_PUMP.get())
-                    .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('D', GTMachines.SIFTER[GTValues.LV].asStack().getItem())
-                    .define('E', ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.Bronze).getItem())
-                    .define('F', Blocks.DIAMOND_BLOCK)
-                    .unlockedBy("has_precision_steam_component",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .pattern("EBE")
+                    .define('A', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
+                    .define('B', GTItems.ITEM_FILTER.get())
+                    .define('C', GTNAItems.HYDRAULIC_PISTON.get())
+                    .define('D', GTBlocks.BRONZE_HULL.get())
+                    .define('E', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .unlockedBy("has_hydraulic_piston",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_PISTON.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.STEAM_LAVA_MAKER)) {
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.STEAM_LAVA_MAKER.asStack().getItem())
-                    .pattern("ABA")
-                    .pattern("CDC")
-                    .pattern("EFE")
-                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
-                    .define('B', GTNAItems.HYDRAULIC_PUMP.get())
-                    .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('D', Blocks.MAGMA_BLOCK)
-                    .define('E', ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.Bronze).getItem())
-                    .define('F', Blocks.DIAMOND_BLOCK)
-                    .unlockedBy("has_precision_steam_component",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+            // GTNL SteamManufacturer parity: StronzeWrappedCasing + 2 hydraulic motors + Stronze/Breel
+            // medium pipes -> lava maker (200 t @ 200 EU/t).
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_lava_maker")
+                    .inputItems(GTNABlocks.STRONZE_WRAPPED_CASING.get())
+                    .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 2)
+                    .inputItems(ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Stronze).getItem(), 2)
+                    .inputItems(ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Breel).getItem(), 2)
+                    .outputItems(GTNAMachines.STEAM_LAVA_MAKER.asStack())
+                    .duration(200)
+                    .EUt(200)
                     .save(provider);
         }
         if (enabled(GTNAMachines.STEAM_ITEM_VAULT)) {
+            // GTNL assembler parity (closest GTNA items): vibration safe casing shell, hyper pressure
+            // breel core, hydraulic steam jet spewer, chest storage.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.STEAM_ITEM_VAULT.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
                     .pattern("EFE")
-                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
-                    .define('B', GTNAItems.HYDRAULIC_PUMP.get())
-                    .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
+                    .define('A', GTNABlocks.VIBRATION_SAFE_CASING.get())
+                    .define('B', GTNABlocks.HYPER_PRESSURE_BREEL_CASING.get())
+                    .define('C', GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get())
                     .define('D', Blocks.CHEST)
-                    .define('E', ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.Bronze).getItem())
-                    .define('F', Blocks.DIAMOND_BLOCK)
-                    .unlockedBy("has_precision_steam_component",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .define('E', GTNAItems.HYDRAULIC_MOTOR.get())
+                    .define('F', ChemicalHelper.get(TagPrefix.plate, GTNAMaterials.CompressedSteam).getItem())
+                    .unlockedBy("has_vibration_safe_casing",
+                            InventoryChangeTrigger.TriggerInstance
+                                    .hasItems(GTNABlocks.VIBRATION_SAFE_CASING.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_FORMING_PRESS)) {
+            // GTNL: Breel tiny pipe, hydraulic piston, precision mechanism, bronze hull.
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
                     GTNAMachines.LARGE_STEAM_FORMING_PRESS.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
-                    .pattern("EFE")
-                    .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Bronze).getItem())
+                    .pattern("ABA")
+                    .define('A', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
                     .define('B', GTNAItems.HYDRAULIC_PISTON.get())
                     .define('C', GTNAItems.PRECISION_STEAM_COMPONENT.get())
-                    .define('D', GTMachines.FORMING_PRESS[GTValues.LV].asStack().getItem())
-                    .define('E', GTBlocks.CASING_BRONZE_GEARBOX.get())
-                    .define('F', GTBlocks.CASING_BRONZE_PIPE.get())
-                    .unlockedBy("has_precision_steam_component",
-                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
+                    .define('D', GTBlocks.BRONZE_HULL.get())
+                    .unlockedBy("has_hydraulic_piston",
+                            InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.HYDRAULIC_PISTON.get()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.LARGE_STEAM_STORAGE_TANK)) {

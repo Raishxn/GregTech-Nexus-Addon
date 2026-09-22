@@ -94,6 +94,29 @@ foi feito nem repetir os erros já pagos.
   usuário encontrar corte; o corte de emergência é `hasPlayerInventory()` → `false` em
   `GTNAMEPatternBufferPartMachine` (economiza 86 px, mas perde o inventário na GUI).
 
+### G-0030 (2026-09-21) — Review in-game: blocos exatos nas estruturas + receitas alinhadas ao GTNL
+
+- **Blocos (feedback do autor):** o casing industrial não estava onde o GTNL usa, faltavam frames e o
+  item vault não usava os casings próprios. Corrigido:
+  - Predicados separados `industrialCasing()` (Industrial/Advanced Industrial Steam Casing) e
+    `machineCasing()` (bronze bricks / steel solid); `casing()` virou a união (não usada nos patterns).
+  - As 21 `large_steam_*` + as 6 novas usam as letras exatas do GTNL: industrial nos slots certos,
+    machine casing nos slots certos, gearbox/pipe/firebox/frame onde é pra ser.
+  - `steam_item_vault`: HyperPressureBreelCasing + VibrationSafeCasing + steel frame + glass.
+  - `steam_lava_maker`: StronzeWrappedCasing + glass + lava.
+- **Receitas:** reescritas a partir das originais do GTNL (`CraftingTableRecipes.java` +
+  `AssemblerRecipes.java`), mapeando GT++/GTNH → GTCEu/GTNA:
+  - `Hull_Bronze` → `BRONZE_HULL`; `ReinforcedGlass` → `CASING_TEMPERED_GLASS`;
+    `Machine_Bronze_*` → `STEAM_*.first()`; `Controller_Steam*Multi` → `STEAM_GRINDER` /
+    `STEAM_HAMMER` / `STEAM_COMPRESSOR` / singleblock LV; `PrecisionSteamMechanism` →
+    `PRECISION_STEAM_COMPONENT`; `Hydraulic*` / `Stronze` / `Breel` → itens GTNA.
+  - Lava maker virou receita `HYDRAULIC_MANUFACTURING` (paridade com o SteamManufacturer do GTNL).
+- **Pendência (confirmar com o autor):** itens GTNL sem equivalente exato usam substitutos GTNA —
+  `Super_Chest_LV`, `CompressedSteamTurbine`, `Cover_Screen`, `plateQuintuple` (GTCEu só tem
+  `plateDouble`).
+- **Validação:** `spotlessCheck` + `runUnitTests` (14/14) + `runGameTestServer` (25/25) + `runData`
+  (written: 0); zero `Parsing error loading recipe gtna:` no log.
+
 ### G-0029 (2026-09-21) — 3 receitas GTNA com ingrediente vazio (parse error) corrigidas
 
 - **Achado ao rodar o gametest e grepar `Parsing error loading recipe gtna:` no log** (o gate **não**
