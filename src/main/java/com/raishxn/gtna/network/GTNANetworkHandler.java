@@ -12,6 +12,7 @@ import com.raishxn.gtna.network.packet.CLocateConnectionPacket;
 import com.raishxn.gtna.network.packet.SRegionHighlightPacket;
 import com.raishxn.gtna.network.packet.SStructureDetectHighlight;
 import com.raishxn.gtna.network.packet.SStructureGhostPreviewPacket;
+import com.raishxn.gtna.network.packet.SWirelessSteamStats;
 
 public class GTNANetworkHandler {
 
@@ -48,6 +49,13 @@ public class GTNANetworkHandler {
                 .encoder(SStructureGhostPreviewPacket::encode)
                 .decoder(SStructureGhostPreviewPacket::decode)
                 .consumerMainThread(SStructureGhostPreviewPacket::handle)
+                .add();
+
+        // S2C – periodic wireless steam network snapshot for the HUD
+        CHANNEL.messageBuilder(SWirelessSteamStats.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SWirelessSteamStats::encode)
+                .decoder(SWirelessSteamStats::decode)
+                .consumerMainThread(SWirelessSteamStats::handle)
                 .add();
 
         // C2S – Client requests a locate highlight

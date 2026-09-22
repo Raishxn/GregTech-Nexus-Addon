@@ -181,6 +181,29 @@ public class ConfigHolder {
         @Comment({ "En: Disable fly inertia when the player stops moving in the air.",
                 "Pt: Remove a inercia do voo quando o jogador para de se mover no ar." })
         public boolean disableFlyInertia = true;
+
+        @Configurable
+        @Comment({ "En: Show the wireless steam network HUD (balance, flow and connected hatches).",
+                "Pt: Mostra o HUD da rede wireless de vapor (saldo, fluxo e hatches conectados)." })
+        public boolean wirelessSteamHud = false;
+
+        @Configurable
+        @Range(min = 0, max = 100)
+        @Comment({ "En: Wireless steam HUD horizontal position: 0 = left edge, 100 = right edge.",
+                "Pt: Posicao horizontal do HUD de vapor: 0 = esquerda, 100 = direita." })
+        public int wirelessSteamHudX = 5;
+
+        @Configurable
+        @Range(min = 0, max = 100)
+        @Comment({ "En: Wireless steam HUD vertical position: 0 = top edge, 100 = bottom edge.",
+                "Pt: Posicao vertical do HUD de vapor: 0 = topo, 100 = baixo." })
+        public int wirelessSteamHudY = 75;
+
+        @Configurable
+        @Range(min = 0, max = 600)
+        @Comment({ "En: Seconds of balance history drawn as a graph in the HUD (0 hides the graph).",
+                "Pt: Segundos de historico de saldo no grafico do HUD (0 esconde o grafico)." })
+        public int wirelessSteamHudHistorySeconds = 60;
     }
 
     public static class RestrictedItems {

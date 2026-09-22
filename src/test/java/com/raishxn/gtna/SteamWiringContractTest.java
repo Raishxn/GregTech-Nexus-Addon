@@ -57,6 +57,7 @@ public final class SteamWiringContractTest {
         checkWirelessSteamAccounting();
         checkWirelessSteamMovesWholeBuffer();
         checkWirelessSteamFairShare();
+        checkWirelessSteamHudWiring();
         checkSolarBoilerProductionIsPerSecond();
         checkElevatorHasNoEuBuffer();
         System.out.println("[SteamWiringContractTest] all cases passed");
@@ -212,6 +213,48 @@ public final class SteamWiringContractTest {
                         "report 'Working Disabled' for a working wireless hatch; keep AUTO IO off by overriding " +
                         "updateTankSubscription() instead");
             }
+        }
+    }
+
+    /**
+     * The wireless steam HUD is client-only, so neither the unit gate nor the dedicated-server
+     * gametest can exercise it: this source scan keeps its four moving parts wired together — the
+     * config toggle (off by default, GTOCore {@code wirelessEnergyHUDEnabled} parity), the packet
+     * registration, the client overlay registration and the server-side sampler. The runtime half
+     * of the sampler is covered by {@code wirelessSteamHudSnapshotReportsNetworkState}.
+     */
+    private static void checkWirelessSteamHudWiring() throws IOException {
+        Path config = Path.of("src/main/java/com/raishxn/gtna/config/ConfigHolder.java");
+        String configSource = Files.readString(config, StandardCharsets.UTF_8);
+        if (!configSource.contains("public boolean wirelessSteamHud = false")) {
+            throw new AssertionError("the wireless steam HUD must default to off in ConfigHolder.Client " +
+                    "(GTOCore wirelessEnergyHUDEnabled parity), so it never surprises a player who did not ask " +
+                    "for it");
+        }
+
+        Path network = Path.of("src/main/java/com/raishxn/gtna/network/GTNANetworkHandler.java");
+        String networkSource = Files.readString(network, StandardCharsets.UTF_8);
+        if (!networkSource.contains("SWirelessSteamStats.class")) {
+            throw new AssertionError("SWirelessSteamStats is not registered in GTNANetworkHandler; the client " +
+                    "would never receive a HUD snapshot");
+        }
+
+        Path overlay = Path.of("src/main/java/com/raishxn/gtna/client/hud/WirelessSteamHudOverlay.java");
+        String overlaySource = Files.readString(overlay, StandardCharsets.UTF_8);
+        if (!overlaySource.contains("registerAboveAll")) {
+            throw new AssertionError("WirelessSteamHudOverlay does not register itself with " +
+                    "RegisterGuiOverlaysEvent; the HUD would never render");
+        }
+        if (!overlaySource.contains("wirelessSteamHud")) {
+            throw new AssertionError("WirelessSteamHudOverlay does not read the wirelessSteamHud config toggle");
+        }
+
+        Path sync = Path.of("src/main/java/com/raishxn/gtna/common/WirelessSteamHudSync.java");
+        String syncSource = Files.readString(sync, StandardCharsets.UTF_8);
+        if (!syncSource.contains("SYNC_INTERVAL_TICKS") || !syncSource.contains("sendToPlayer") ||
+                !syncSource.contains("snapshot(")) {
+            throw new AssertionError("WirelessSteamHudSync must sample on its interval, build a snapshot and send " +
+                    "it to the player");
         }
     }
 

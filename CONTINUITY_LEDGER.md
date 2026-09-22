@@ -34,17 +34,18 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-22 (G-0041):** `spotlessCheck` + `compileJava` + `runUnitTests` (**15/15**) +
-  `runGameTestServer` (**28/28**, `All 28 required tests passed`) + `runData` determinístico. A
+- **Gate verde em 2026-09-22 (G-0042):** `spotlessCheck` + `compileJava` + `runUnitTests` (**15/15**) +
+  `runGameTestServer` (**29/29**, `All 29 required tests passed`) + `runData` determinístico. A
   execução carregou os mixins alterados; os avisos/erros de receitas do GTCEu já conhecidos
   continuam no log.
-- **Rede wireless de vapor (G-0041):** o pull dos inputs agora é dividido por **fair share** entre os
+- **Rede wireless de vapor (G-0041/G-0042):** o pull dos inputs agora é dividido por **fair share** entre os
   inputs com espaço (antes o primeiro hatch do tick drenava o pool inteiro — a rede sempre lia 0 e
-  os outros 23 hatches nunca enchiam); `/gtna steam` mostra fluxo vitalício + estado por hatch e o
-  Jade mostra o saldo da rede. Ver G-0041 para causa raiz, testes e pendências.
+  os outros 23 hatches nunca enchiam); `/gtna steam` mostra fluxo vitalício + estado por hatch, o
+  Jade mostra o saldo da rede e um **HUD client-side** (G-0042, toggle `wirelessSteamHud`, default
+  off) mostra saldo/fluxo/hatches + gráfico. Ver G-0041/G-0042 para causa raiz, testes e pendências.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
-- **Testes hoje:** 15 unit tests (`main()` + asserts, padrão GTLCore) e 28 gametests (`@GameTest`),
+- **Testes hoje:** 15 unit tests (`main()` + asserts, padrão GTLCore) e 29 gametests (`@GameTest`),
   ambos no gate do CI.
 - **Licenciamento (G-0019):** código do GTNA **LGPLv3**; assets do GTO em **CC BY-NC-SA 4.0**
   (o GTNA é **não-comercial**). Permissão do **GTOEPP** concedida pelo time GTO; atribuição de origem
@@ -62,6 +63,41 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0042 (2026-09-22) — HUD da rede wireless de vapor (paridade GTOCore `WirelessEnergyHUD`): overlay client-side com toggle na config, posição/histórico configuráveis e sync servidor→cliente
+
+- **Pedido:** o GTOCore tem um HUD para a rede wireless de energia (`client/hud/WirelessEnergyHUD`,
+  ligado por `wirelessEnergyHUDEnabled` na config do client, com posição default X/Y e segundos de
+  histórico). Fazer o equivalente para a rede de vapor do GTNA, ligado/desligado por config.
+- **Implementação (GTNA-native, reimplementada a partir do comportamento, sem copiar código):**
+  - **Config** `ConfigHolder.Client`: `wirelessSteamHud` (default **false**, igual ao GTOcore),
+    `wirelessSteamHudX` (5), `wirelessSteamHudY` (75) e `wirelessSteamHudHistorySeconds` (60; 0
+    esconde o gráfico), todos com `@Range`.
+  - **Servidor:** `WirelessSteamHudSync` (subscriber FORGE de `TickEvent.ServerTickEvent`) manda
+    `SWirelessSteamStats` 1×/s para cada jogador online: saldo, fluxo do último segundo (os
+    contadores vitalícios do `SteamNetworkData` viram deltas) e contagem de hatches in/out. As
+    amostras são descartadas no logout para não reportar produção offline como se fosse do jogador.
+  - **Cliente:** `WirelessSteamHudState` (espelho + ring buffer de 600 s) e
+    `WirelessSteamHudOverlay` (`IGuiOverlay` registrado via `RegisterGuiOverlaysEvent`, bus MOD),
+    desenhando saldo, fluxo (+/−), hatches e um sparkline do saldo. Só aparece quando há rede
+    (hatch, saldo ou fluxo) e nunca com F1/F3. Reset no `ClientPlayerNetworkEvent.LoggingOut` (via
+    `ClientEventHandler`).
+- **Testes:** gametest `wirelessSteamHudSnapshotReportsNetworkState` (baseline 0; push →
+  saldo/added; pull → consumed e saldo 0; contagens 1 in/1 out). `SteamWiringContractTest` ganhou
+  `checkWirelessSteamHudWiring` (toggle default false, packet registrado, overlay registrado,
+  sampler presente) — o gate não roda client, então o scan é a única trava automática do wiring.
+- **Arquivos:** `ConfigHolder.java`, `WirelessSteamHudSync.java` (novo), `SWirelessSteamStats.java`
+  (novo), `WirelessSteamHudState.java` (novo), `WirelessSteamHudOverlay.java` (novo),
+  `ClientEventHandler.java`, `GTNANetworkHandler.java`, `GTNALangProvider.java` + `pt_br.json`
+  (byte-preserving: BOM/CRLF intactos) + `en_us.json` gerado, `GTNAMachineGameTests.java`,
+  `SteamWiringContractTest.java`.
+- **Validação:** `spotlessCheck` + `runUnitTests` (**15/15**); `runGameTestServer` (**29/29**,
+  `All 29 required tests passed`); `grep -c "Parsing error loading recipe gtna:" run/logs/latest.log`
+  = **0**; `runData` determinístico (2ª execução `written: 0`).
+- **Pendências / verificação in-game:** (a) ligar `wirelessSteamHud` na config do client e conferir
+  saldo/fluxo/hatches + gráfico com a rede real (25 hatches); (b) o HUD **não é arrastável** (a
+  posição é por config, diferente do GTOcore, que tem drag) e só desenha in-game, não sobre telas de
+  container; (c) o gráfico usa o histórico local (1 amostra/s, até 600 s) — sem sync de histórico.
 
 ### G-0041 (2026-09-22) — rede wireless de vapor travada em 0 mB com 25 hatches: o primeiro input drenava o pool inteiro por tick; pull com fair share + diagnóstico por hatch
 

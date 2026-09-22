@@ -1006,6 +1006,10 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.modDifficulty", "Mod Difficulty");
         add("config.gtna.option.selfRestraint", "Self Restraint");
         add("config.gtna.option.disableFlyInertia", "Disable Fly Inertia");
+        add("config.gtna.option.wirelessSteamHud", "Wireless Steam HUD");
+        add("config.gtna.option.wirelessSteamHudX", "Wireless Steam HUD X Position");
+        add("config.gtna.option.wirelessSteamHudY", "Wireless Steam HUD Y Position");
+        add("config.gtna.option.wirelessSteamHudHistorySeconds", "Wireless Steam HUD History Seconds");
 
         // Accelerate Hatch
         add("config.gtna.option.accelerateHatchMultiplier", "Accelerate Hatch Speed");
@@ -1076,6 +1080,11 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.command.steam.added", "§b[GTNA] §fAdded §b%s§f mB; balance is now §b%s§f mB.");
         add("gtna.command.steam.set", "§b[GTNA] §fSet the balance to §b%s§f mB.");
         add("gtna.command.steam.add_failed", "§c[GTNA] Could not add that amount to the network.");
+
+        // Wireless steam network HUD (client overlay, off by default; see ConfigHolder.Client)
+        add("gtna.hud.wireless_steam.balance", "§bWireless Steam§7: §f%s §7mB");
+        add("gtna.hud.wireless_steam.flow", "§7Flow: §a+%s§7 / §c-%s§7 mB/s");
+        add("gtna.hud.wireless_steam.hatches", "§7Hatches: §f%s §7in / §f%s §7out");
 
         add("block.gtna.steam_elevator_flight_module", "Steam Flight Module");
         add("gtna.machine.steam_elevator_flight_module.tooltip",

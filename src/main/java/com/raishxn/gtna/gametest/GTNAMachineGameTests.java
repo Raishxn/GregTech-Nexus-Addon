@@ -40,6 +40,7 @@ import appeng.crafting.execution.CraftingCpuLogic;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
+import com.raishxn.gtna.common.WirelessSteamHudSync;
 import com.raishxn.gtna.common.data.GTNABlocks;
 import com.raishxn.gtna.common.data.GTNAMachines;
 import com.raishxn.gtna.common.data.GTNAMachines2;
@@ -56,6 +57,7 @@ import com.raishxn.gtna.common.machine.multiblock.steam.AdjustableSteamParallelM
 import com.raishxn.gtna.common.machine.multiblock.steam.SteamItemVaultMachine;
 import com.raishxn.gtna.common.machine.multiblock.steam.SteamLavaMakerMachine;
 import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
+import com.raishxn.gtna.network.packet.SWirelessSteamStats;
 
 import java.util.UUID;
 
@@ -778,6 +780,71 @@ public final class GTNAMachineGameTests {
                     "the network must be empty once the input pulled the steam");
             helper.succeed();
         });
+    }
+
+    /**
+     * Runtime coverage for the server half of the wireless steam HUD (GTOCore {@code
+     * WirelessEnergyHUD} parity): the snapshot sent once per second must report the pool balance,
+     * the connected hatch counts and the flow since the previous sample, with the lifetime
+     * counters converted to per-second deltas.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void wirelessSteamHudSnapshotReportsNetworkState(GameTestHelper helper) {
+        if (GTNAMachines.WIRELESS_STEAM_INPUT_HATCH == null || GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH == null) {
+            helper.fail("the wireless steam hatches are disabled by config; the HUD snapshot test cannot run");
+            return;
+        }
+        UUID owner = UUID.randomUUID();
+        int pushed = 312_000;
+
+        BlockPos outputPos = new BlockPos(1, 7, 1);
+        helper.setBlock(outputPos, GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH.getBlock());
+        if (!(metaMachineAt(helper, outputPos) instanceof WirelessSteamOutputHatch outputHatch)) {
+            helper.fail("the wireless steam output hatch block entity is not a WirelessSteamOutputHatch");
+            return;
+        }
+        outputHatch.setOwnerUUID(owner);
+
+        BlockPos inputPos = new BlockPos(3, 7, 1);
+        helper.setBlock(inputPos, GTNAMachines.WIRELESS_STEAM_INPUT_HATCH.getBlock());
+        if (!(metaMachineAt(helper, inputPos) instanceof WirelessSteamInputHatch inputHatch)) {
+            helper.fail("the wireless steam input hatch block entity is not a WirelessSteamInputHatch");
+            return;
+        }
+        inputHatch.setOwnerUUID(owner);
+
+        // Register both hatches (owner was set after placement, so onLoad could not report yet) and
+        // take the baseline sample the delta conversion needs.
+        outputHatch.serverTick();
+        inputHatch.serverTick();
+        SWirelessSteamStats baseline = WirelessSteamHudSync.snapshot(helper.getLevel(), owner);
+        helper.assertTrue(baseline.getBalance() == 0L && baseline.getAddedPerSecond() == 0L &&
+                baseline.getConsumedPerSecond() == 0L, "a fresh network must snapshot as all zeros");
+        helper.assertTrue(baseline.getInputHatches() == 1 && baseline.getOutputHatches() == 1,
+                "the snapshot must count the connected input and output hatches, got " +
+                        baseline.getInputHatches() + " in / " + baseline.getOutputHatches() + " out");
+
+        outputHatch.tank.setFluidInTank(0, GTMaterials.Steam.getFluid(pushed));
+        outputHatch.serverTick();
+        SWirelessSteamStats afterPush = WirelessSteamHudSync.snapshot(helper.getLevel(), owner);
+        helper.assertTrue(afterPush.getBalance() == pushed,
+                "the HUD snapshot must report the pool balance, got " + afterPush.getBalance());
+        helper.assertTrue(afterPush.getAddedPerSecond() == pushed,
+                "the HUD snapshot must report what the output pushed since the last sample, got " +
+                        afterPush.getAddedPerSecond());
+        helper.assertTrue(afterPush.getConsumedPerSecond() == 0L,
+                "nothing was consumed yet, got " + afterPush.getConsumedPerSecond());
+
+        inputHatch.serverTick();
+        SWirelessSteamStats afterPull = WirelessSteamHudSync.snapshot(helper.getLevel(), owner);
+        helper.assertTrue(afterPull.getBalance() == 0L,
+                "the HUD snapshot must report the emptied pool, got " + afterPull.getBalance());
+        helper.assertTrue(afterPull.getConsumedPerSecond() == pushed,
+                "the HUD snapshot must report what the input pulled since the last sample, got " +
+                        afterPull.getConsumedPerSecond());
+        helper.assertTrue(afterPull.getAddedPerSecond() == 0L,
+                "the push already happened in the previous interval, got " + afterPull.getAddedPerSecond());
+        helper.succeed();
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
