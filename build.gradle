@@ -56,6 +56,14 @@ repositories {
         name 'FirstDarkDev'
         url "https://maven.firstdark.dev/snapshots/"
     }
+    maven {
+        // Productive Bees (soft dependency; the bee-breeding module only registers when it loads)
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
     maven { // Registrate
         url = "https://maven.tterrag.com/"
         content {
@@ -259,6 +267,11 @@ dependencies {
 
     // KubeJS soft dependency
     modCompileOnly("dev.latvian.mods:kubejs-forge:2001.6.5-build.16")
+
+    // Productive Bees soft dependency (compile-only). The Steam Bee Breeding module is registered
+    // only when Productive Bees is loaded; to test it in dev, drop the 1.20.1 Forge build of
+    // Productive Bees (and its ProductiveLib dependency) into run/mods.
+    modCompileOnly("maven.modrinth:productivebees:1.20.1-12.6.0")
 
     modImplementation("curse.maven:gtceu-terminals-1423461:7787678")
 
