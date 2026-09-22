@@ -34,8 +34,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
  *
  * <p>
  * GTNL numbers mapped: tier 6 (the item's tier), upkeep {@code V[4] * 8} (GTNL
- * {@code V[4] * mMaxSlots} at the base colony size) and a 200-tick production cycle (GTNL's
- * {@code mMaxProgresstime = 6000} with drop acceleration, reduced to a per-batch cycle).
+ * {@code V[4] * mMaxSlots} at the base colony size of 8) and GTNL's {@code mMaxProgresstime = 6000}
+ * (the tooltip's "Fixed operating time: 300 seconds"). The per-cycle products are the vanilla
+ * analogue of the bee drop table.
  */
 public class SteamApiaryModule extends SteamElevatorModuleMachine {
 
@@ -44,7 +45,8 @@ public class SteamApiaryModule extends SteamElevatorModuleMachine {
 
     /** GTNL apiary water feed; the greenhouse also consumes water from a tank. */
     public static final int WATER_PER_CYCLE = 1000;
-    private static final int CYCLE_TICKS = 200;
+    /** GTNL {@code mMaxProgresstime}: 300 seconds. */
+    private static final int CYCLE_TICKS = 6000;
     private static final int COMBS_CONSUMED = 1;
     private static final int COMBS_PRODUCED = 2;
     private static final int HONEY_PRODUCED = 1;

@@ -81,10 +81,14 @@ foi feito nem repetir os erros já pagos.
 - **Entity Crusher (bloqueado):** o comportamento GTNL é dirigido por um recipe map de drops de mob
   (MobInfo/kubatech + EnderIO powered spawner) que não existe no pack 1.20.1 — não dá para portar
   fielmente sem inventar um sistema de receitas de mob. Fica com o "mata monstros no raio" atual.
+- **Apiary (parcial):** o ciclo passou de 200 para **6000 ticks** (os "Fixed operating time: 300 seconds"
+  do tooltip, `mMaxProgresstime` do GTNL). O consumo/produção continuam sendo o análogo vanilla
+  (honeycomb/água) porque Forestry/Binnie não está no pack; os "8 slots por OC" e o royal jelly não
+  existem em 1.20.1.
 - **Validação:** `spotlessCheck` + `runUnitTests` (**15/15**); `runGameTestServer` (**29/29**); `runData`
   determinístico (`written: 0`).
-- **Pendências:** Beacon (config GUI), Apiary (ciclo 300 s / slots por OC / royal jelly), Ore Processor
-  (cadeia de receitas/parallel/modos), Weather/Bee Breeding (itens do GTNL), Entity Crusher (bloqueado).
+- **Pendências:** Beacon (config GUI), Ore Processor (cadeia de receitas/parallel/modos), Weather/Bee
+  Breeding (itens do GTNL), Entity Crusher (bloqueado).
 
 ### G-0044 (2026-09-22) — crash de config (dep. duplicada), botão do HUD no hatch, módulos com tick próprio, range do voo aplicado e tooltips fiéis ao GTNL
 
