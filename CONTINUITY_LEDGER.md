@@ -59,6 +59,55 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0032 (2026-09-22) — port do Steam Elevator + 8 módulos do GTNL (sistema modular)
+
+- **Implementado:** o `SteamElevator` (35x43x35) e os 8 módulos pedidos (`SteamFlightModule`,
+  `SteamWeatherModule`, `SteamGreenhouseModule`, `SteamOilDrillModule`, `SteamEntityCrusherModule`,
+  `SteamOreProcessorModule`, `SteamMonsterRepellentModule`, `SteamBeaconModule`). Apiary/BeeBreeding
+  **não** foram tocados (outro agente).
+- **Arquitetura (GTNA-native):** o GTNL tem módulos que são multiblocos e também hatches
+  (`mModuleHatches`). No GTNA os módulos viraram **part machines** (`SteamElevatorModulePartMachine`
+  + `ISteamElevatorModule`) que declaram a ability `GTNAPartAbility.STEAM_ELEVATOR_MODULE`; o
+  controlador é uma `WorkableMultiblockMachine` com recipe logic inerte (`DUMMY_RECIPES` + `InertRecipeLogic`)
+  que drena vapor dos hatches STEAM a 1 mB = 1 EU para um buffer de 256 M EU e o distribui igualmente
+  entre os módulos; cada módulo paga o upkeep e aplica o efeito. 12 slots de módulo na estrutura.
+- **Estrutura:** `pattern/steam_elevator.mbs` no formato do `GTNAMultiBlockFileReader` (mesmo reader
+  do ME Hypercore), decodificado do `steam_elevator.mbs` "MBS1" do GTNL via o script
+  `gtna_aisles` (o mesmo que gerou as `large_steam_*`). `~` em aisle 20/row 3; letras A–J mapeadas
+  para `STEEL_REINFORCED_WOOD`/`STEAM_COMPACT_PIPE_CASING`/`CASING_BRONZE_BRICKS`/`CASING_STEEL_SOLID`/
+  `FIREBOX_STEEL`/frame de aço/`Blocks.BRICKS`/`Blocks.STONE_BRICKS`; H = hatches (steam/item/fluido/
+  maintenance), I = slots de módulo.
+- **Teleporte:** `SteamElevatorTeleport` (botão na UI do controlador) sobe o jogador acima da
+  estrutura e, agachado, cicla entre dimensões cujo namespace é `ad_astra` **descobertas em runtime
+  pela registry** (sem importar classe do Ad Astra). Desvio: o GTNL abria a seleção celestial do
+  Galacticraft; o GTNA usa o registry de dimensões (o classpath de dev tem Ad Astra, mas nada é
+  hard-coded).
+- **Desvios conscientes (documentados em código):** (a) os módulos não são multiblocos 1x5x2 (o
+  `steam_elevator_module.mbs` do GTNL não é usado) — são parts; (b) `wirelessMode` do GTNL (rede de
+  vapor wireless) não foi portado: a estrutura exige um hatch STEAM (o `WirelessSteamInputHatch`
+  serve); (c) Flight concede `mayfly` (Blood Magic não existe) e revoga ao parar; (d) Weather virou
+  modo limpo/chuva/trovão sem os itens Natura/Thaumcraft; (e) Greenhouse acelera plantações
+  (CropsNH não existe) com água; (f) OilDrill usa os bedrock fluid veins do GTCEu (o GTNL usa o
+  underground oil do GT); (g) EntityCrusher virou moedor de monstros (drop normal); (h) OreProcessor
+  faz uma etapa de maceração via registry de materiais do GTCEu (a cadeia de 7 etapas do GTNL não é
+  reproduzível numa part sem recipe logic de controlador); (i) Beacon tem efeitos fixos por tier em
+  vez da janela de configuração (Warp Ward/Feather Feet/Vis Regen não existem no 1.20.1);
+  (j) MonsterRepellent remove monstros no raio (sem hook global de spawn).
+- **Registro/receitas/lang/config:** 1 controlador + 14 parts de módulo (I/II/III de Beacon,
+  Repellent e OilDrill); receitas `HYDRAULIC_MANUFACTURING` (Steam Manufacturer) mapeadas dos
+  `AssemblerRecipes` do GTNL para itens GTNA; `block.gtna.*`/tooltips/config no `GTNALangProvider`
+  (en_us gerado) + `pt_br.json` (inserção byte-preserving ancorada numa linha existente, BOM e
+  CRLF/LF preservados); toggles `steamElevator`/`steamElevatorModules`; atribuição `Source: GTNL`
+  em `GTNASources`.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (14/14, incluindo o
+  `PartAbilityCoverageTest` que passou a cobrir `STEAM_ELEVATOR_MODULE`) + `runGameTestServer`
+  (**25/25**, `All 25 required tests passed`) + `grep -c "Parsing error loading recipe gtna:"` = 0 +
+  `runData` determinístico (written: 0). **Sem gametest novo** (o gate espera 25).
+- **Pendências abertas:** validar in-game a formação/orientação da estrutura 35x43x35 (só o
+  carregamento do pattern foi exercitado); conferir o balanço dos upkeeps EU dos módulos; a UI dos
+  módulos é mínima (labels/slots/tanques) — a janela de configuração do Beacon e a cadeia completa
+  do OreProcessor ficaram simplificadas.
+
 ### G-0009 (2026-09-20) — UI do pattern buffer: painel de config **docado** (o vazamento de 106 px)
 
 - **Sintoma (relatado in-game):** ao clicar com o botão do meio num slot, os widgets do painel de

@@ -1013,6 +1013,67 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.steamCactusWonder", "Cactus Wonder");
         add("config.gtna.option.steamCracking", "Steam Cracker");
         add("config.gtna.option.megaSteamCompressor", "Steam Supercompressor");
+        add("config.gtna.option.steamElevator", "Steam Elevator");
+        add("config.gtna.option.steamElevatorModules", "Steam Elevator Modules");
+
+        // Steam Elevator + its eight modules (GTNL port)
+        add("block.gtna.steam_elevator", "Steam Elevator");
+        add("gtna.tooltip.steam_elevator.desc", "A modular steam-powered elevator.");
+        add("gtna.tooltip.steam_elevator.modules",
+                "Install up to 12 modules in the module slots: flight, weather, greenhouse, oil drill, entity crusher, ore processor, monster repellent, beacon.");
+        add("gtna.tooltip.steam_elevator.teleport",
+                "Travel button: lift straight up, or sneak-travel to the next Ad Astra planet.");
+        add("gtna.tooltip.steam_elevator.structure",
+                "35x43x35; steel reinforced wood shell, steam compact pipe casing, solid steel machine casing.");
+        add("gtna.machine.steam_elevator.energy", "Energy: %s / %s EU");
+        add("gtna.machine.steam_elevator.modules", "Modules: %s");
+        add("gtna.machine.steam_elevator.steam_hatches", "Steam hatches: %s");
+        add("gtna.machine.steam_elevator.no_modules", "No modules installed");
+        add("gtna.machine.steam_elevator.teleport.lift", "The elevator lifts you up.");
+        add("gtna.machine.steam_elevator.teleport.planet", "Travelling to %s");
+        add("gtna.machine.steam_elevator.teleport.no_planets", "No Ad Astra planets are installed.");
+
+        add("block.gtna.steam_elevator_flight_module", "Steam Flight Module");
+        add("gtna.machine.steam_elevator_flight_module.tooltip",
+                "Grants creative flight to players within range while the elevator runs.");
+        add("block.gtna.steam_elevator_weather_module", "Steam Weather Module");
+        add("gtna.machine.steam_elevator_weather_module.tooltip",
+                "Forces clear, raining or thundering weather.");
+        add("block.gtna.steam_elevator_greenhouse_module", "Steam Greenhouse Module");
+        add("gtna.machine.steam_elevator_greenhouse_module.tooltip",
+                "Consumes water to accelerate crop growth in a 16-block radius.");
+        add("block.gtna.steam_elevator_oil_drill_module_i", "Steam Oil Drill Module I");
+        add("block.gtna.steam_elevator_oil_drill_module_ii", "Steam Oil Drill Module II");
+        add("block.gtna.steam_elevator_oil_drill_module_iii", "Steam Oil Drill Module III");
+        add("gtna.machine.steam_elevator_oil_drill_module_i.tooltip",
+                "Pumps the bedrock fluid vein of its chunk into its output tank.");
+        add("gtna.machine.steam_elevator_oil_drill_module_ii.tooltip",
+                "Tier II oil drill: larger yield and shorter cycle.");
+        add("gtna.machine.steam_elevator_oil_drill_module_iii.tooltip",
+                "Tier III oil drill: largest yield and shortest cycle.");
+        add("block.gtna.steam_elevator_entity_crusher_module", "Steam Entity Crusher Module");
+        add("gtna.machine.steam_elevator_entity_crusher_module.tooltip",
+                "Crushes hostile monsters within range, dropping their loot.");
+        add("block.gtna.steam_elevator_ore_processor_module", "Steam Ore Processor Module");
+        add("gtna.machine.steam_elevator_ore_processor_module.tooltip",
+                "Macerates ore inputs with water into crushed ore or dust.");
+        add("block.gtna.steam_elevator_monster_repellent_module_i", "Steam Monster Repellent Module I");
+        add("block.gtna.steam_elevator_monster_repellent_module_ii", "Steam Monster Repellent Module II");
+        add("block.gtna.steam_elevator_monster_repellent_module_iii", "Steam Monster Repellent Module III");
+        add("gtna.machine.steam_elevator_monster_repellent_module_i.tooltip",
+                "Removes hostile monsters within a 64-block radius.");
+        add("gtna.machine.steam_elevator_monster_repellent_module_ii.tooltip",
+                "Removes hostile monsters within a 128-block radius.");
+        add("gtna.machine.steam_elevator_monster_repellent_module_iii.tooltip",
+                "Removes hostile monsters within a 256-block radius.");
+        add("block.gtna.steam_elevator_beacon_module_i", "Steam Beacon Module I");
+        add("block.gtna.steam_elevator_beacon_module_ii", "Steam Beacon Module II");
+        add("block.gtna.steam_elevator_beacon_module_iii", "Steam Beacon Module III");
+        add("gtna.machine.steam_elevator_beacon_module_i.tooltip", "Speed and Haste to nearby players.");
+        add("gtna.machine.steam_elevator_beacon_module_ii.tooltip",
+                "Speed, Haste, Resistance and Regeneration to nearby players.");
+        add("gtna.machine.steam_elevator_beacon_module_iii.tooltip",
+                "Speed, Haste, Resistance, Regeneration, Strength and Night Vision to nearby players.");
 
         add("config.gtna.option.eyeOfWood", "Eye of Wood");
 

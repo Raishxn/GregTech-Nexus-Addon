@@ -103,6 +103,8 @@ public class ConfigHolder {
             case "steamCactusWonder" -> INSTANCE.machineToggles.steamCactusWonder;
             case "steamCracking" -> INSTANCE.machineToggles.steamCracking;
             case "megaSteamCompressor" -> INSTANCE.machineToggles.megaSteamCompressor;
+            case "steamElevator" -> INSTANCE.machineToggles.steamElevator;
+            case "steamElevatorModules" -> INSTANCE.machineToggles.steamElevatorModules;
             case "largeSteamFormingPress" -> INSTANCE.machineToggles.largeSteamFormingPress;
             case "steamCobbler" -> INSTANCE.machineToggles.steamCobbler;
             case "stoneSuperheater" -> INSTANCE.machineToggles.stoneSuperheater;
@@ -271,6 +273,10 @@ public class ConfigHolder {
         public boolean steamCracking = true;
         @Configurable
         public boolean megaSteamCompressor = true;
+        @Configurable
+        public boolean steamElevator = true;
+        @Configurable
+        public boolean steamElevatorModules = true;
         @Configurable
         public boolean largeSteamFormingPress = true;
         @Configurable

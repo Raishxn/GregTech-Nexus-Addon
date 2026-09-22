@@ -46,6 +46,7 @@ import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhous
 import com.raishxn.gtna.common.machine.multiblock.energy.MEStorageMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.NexusMEHyperCoreMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.NexusMolecularForgeMachine;
+import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamElevator;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.DimensionallyTranscendentDirtForgeMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.EyeOfHarmonyMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.EyeOfWoodMachine;
@@ -1162,6 +1163,63 @@ public class GTNAMachines {
                             Component.translatable("gtna.tooltip.mega_steam_compressor.structure")
                                     .withStyle(ChatFormatting.DARK_GRAY))
                     .register());
+
+    // ------------------------------------------------------------------
+    // Steam Elevator (GTNL port, LGPLv3) - modular multiblock: burns steam into an internal EU
+    // buffer and powers module parts (one part ability per capability). The 35x43x35 structure is
+    // read from pattern/steam_elevator.mbs (same runtime reader as the ME Hypercore).
+    // ------------------------------------------------------------------
+    public static final MultiblockMachineDefinition STEAM_ELEVATOR = registerMachine("steamElevator",
+            () -> REGISTRATE
+                    .multiblock("steam_elevator", SteamElevator::new)
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    // No real recipes: DUMMY keeps getRecipeType() safe for the inert recipe logic.
+                    .recipeType(GTRecipeTypes.DUMMY_RECIPES)
+                    .appearanceBlock(GTNABlocks.STEEL_REINFORCED_WOOD)
+                    .pattern(GTNAMachines::createSteamElevatorPattern)
+                    .workableCasingModel(
+                            GTNACORE.id("block/casings/steel_reinforced_wood"),
+                            GTCEu.id("block/multiblock/steam_grinder"))
+                    .tooltips(
+                            Component.translatable("gtna.tooltip.steam_elevator.desc")
+                                    .withStyle(ChatFormatting.GRAY),
+                            Component.translatable("gtna.tooltip.steam_elevator.modules")
+                                    .withStyle(ChatFormatting.GOLD),
+                            Component.translatable("gtna.tooltip.steam_elevator.teleport")
+                                    .withStyle(ChatFormatting.AQUA),
+                            Component.translatable("gtna.tooltip.steam_elevator.structure")
+                                    .withStyle(ChatFormatting.DARK_GRAY))
+                    .register());
+
+    /** Structure decoded from GTNL's steam_elevator.mbs (35x43x35); H/I are hatch/module slots. */
+    private static BlockPattern createSteamElevatorPattern(MultiblockMachineDefinition definition) {
+        return GTNAMultiBlockFileReader.start(definition, "steam_elevator")
+                .where('~', controller(blocks(definition.get())))
+                .where('A', blocks(GTNABlocks.STEEL_REINFORCED_WOOD.get())
+                        .or(abilities(PartAbility.STEAM).setExactLimit(1))
+                        .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
+                        .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1)))
+                .where('B', blocks(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get()))
+                .where('C', blocks(GTBlocks.CASING_BRONZE_BRICKS.get()))
+                .where('D', blocks(GTBlocks.CASING_STEEL_SOLID.get()))
+                .where('E', blocks(GTBlocks.FIREBOX_STEEL.get()))
+                .where('F', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Steel)))
+                .where('G', blocks(Blocks.BRICKS))
+                .where('H', blocks(GTBlocks.CASING_STEEL_SOLID.get())
+                        .or(abilities(PartAbility.STEAM).setExactLimit(1))
+                        .or(abilities(PartAbility.STEAM_IMPORT_ITEMS).setMaxGlobalLimited(1))
+                        .or(abilities(PartAbility.STEAM_EXPORT_ITEMS).setMaxGlobalLimited(1))
+                        .or(abilities(PartAbility.IMPORT_ITEMS).setMaxGlobalLimited(1))
+                        .or(abilities(PartAbility.EXPORT_ITEMS).setMaxGlobalLimited(2))
+                        .or(abilities(PartAbility.IMPORT_FLUIDS).setMaxGlobalLimited(1))
+                        .or(abilities(PartAbility.EXPORT_FLUIDS).setMaxGlobalLimited(2))
+                        .or(abilities(PartAbility.MAINTENANCE).setExactLimit(1)))
+                .where('I', blocks(GTBlocks.CASING_STEEL_SOLID.get())
+                        .or(abilities(GTNAPartAbility.STEAM_ELEVATOR_MODULE).setMaxGlobalLimited(12)))
+                .where('J', blocks(Blocks.STONE_BRICKS))
+                .where(' ', any())
+                .build();
+    }
 
     /** Structure decoded from GTNL's large_steam_bending (5x4x5). */
     private static BlockPattern createLargeSteamBendingPattern(MultiblockMachineDefinition definition) {

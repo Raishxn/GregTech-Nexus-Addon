@@ -3,9 +3,11 @@ package com.raishxn.gtna.common.data;
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.RotationState;
+import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
+import com.gregtechceu.gtceu.api.machine.multiblock.part.MultiblockPartMachine;
 import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
@@ -19,6 +21,14 @@ import net.minecraft.resources.ResourceLocation;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
+import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamBeaconModule;
+import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamEntityCrusherModule;
+import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamFlightModule;
+import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamGreenhouseModule;
+import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamMonsterRepellentModule;
+import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamOilDrillModule;
+import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamOreProcessorModule;
+import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamWeatherModule;
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AdvancedParallelHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.InfiniteInputBusPartMachine;
@@ -37,6 +47,7 @@ import com.raishxn.gtna.common.machine.tesseract.DirectedTesseractMachine;
 import com.raishxn.gtna.config.ConfigHolder;
 
 import java.util.Locale;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
@@ -66,6 +77,22 @@ public class GTNAMachines2 {
     public static MachineDefinition ME_IO_PORT_HATCH;
     public static MachineDefinition DIRECTED_TESSERACT_GENERATOR;
 
+    // Steam Elevator modules (GTNL port, LGPLv3)
+    public static MachineDefinition STEAM_ELEVATOR_FLIGHT_MODULE;
+    public static MachineDefinition STEAM_ELEVATOR_WEATHER_MODULE;
+    public static MachineDefinition STEAM_ELEVATOR_GREENHOUSE_MODULE;
+    public static MachineDefinition STEAM_ELEVATOR_OIL_DRILL_MODULE_I;
+    public static MachineDefinition STEAM_ELEVATOR_OIL_DRILL_MODULE_II;
+    public static MachineDefinition STEAM_ELEVATOR_OIL_DRILL_MODULE_III;
+    public static MachineDefinition STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE;
+    public static MachineDefinition STEAM_ELEVATOR_ORE_PROCESSOR_MODULE;
+    public static MachineDefinition STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_I;
+    public static MachineDefinition STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_II;
+    public static MachineDefinition STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_III;
+    public static MachineDefinition STEAM_ELEVATOR_BEACON_MODULE_I;
+    public static MachineDefinition STEAM_ELEVATOR_BEACON_MODULE_II;
+    public static MachineDefinition STEAM_ELEVATOR_BEACON_MODULE_III;
+
     public static void init() {
         registerPatternBuffers();
         registerCraftingCpuInterface();
@@ -78,6 +105,7 @@ public class GTNAMachines2 {
         registerParallelHatch(GTValues.OpV, 262144);
         registerOverclockHatches();
         registerThreadHatches();
+        registerSteamElevatorModules();
         for (int i = GTValues.LV; i <= GTValues.MAX; i++) {
             registerAccelerateHatch(i);
             registerOutputBoostHatch(i);
@@ -399,6 +427,76 @@ public class GTNAMachines2 {
                             Component.translatable("gtceu.part_sharing.disabled"))
                     .register();
         }
+    }
+
+    /**
+     * The eight Steam Elevator modules (GTNL port, LGPLv3). Each is a part machine that declares the
+     * {@code steam_elevator_module} ability, so it fits exclusively in the elevator's module slots.
+     * Tiers I/II/III variants follow GTNL's registration (Beacon 1/2/3, Repellent 1/2/3, Oil Drill
+     * 2/3/4); Flight/Weather are tier 1, Greenhouse tier 5 and the Ore Processor tier 8.
+     */
+    private static void registerSteamElevatorModules() {
+        if (!ConfigHolder.isMachineEnabled("steamElevatorModules")) return;
+        STEAM_ELEVATOR_FLIGHT_MODULE = registerElevatorModule("steam_elevator_flight_module", "Steam Flight Module", 1,
+                holder -> new SteamFlightModule(holder, 1));
+        STEAM_ELEVATOR_WEATHER_MODULE = registerElevatorModule("steam_elevator_weather_module", "Steam Weather Module",
+                1, holder -> new SteamWeatherModule(holder, 1));
+        STEAM_ELEVATOR_GREENHOUSE_MODULE = registerElevatorModule("steam_elevator_greenhouse_module",
+                "Steam Greenhouse Module", 5, holder -> new SteamGreenhouseModule(holder, 5));
+        STEAM_ELEVATOR_OIL_DRILL_MODULE_I = registerElevatorModule("steam_elevator_oil_drill_module_i",
+                "Steam Oil Drill Module I", 2, holder -> new SteamOilDrillModule(holder, 2));
+        STEAM_ELEVATOR_OIL_DRILL_MODULE_II = registerElevatorModule("steam_elevator_oil_drill_module_ii",
+                "Steam Oil Drill Module II", 3, holder -> new SteamOilDrillModule(holder, 3));
+        STEAM_ELEVATOR_OIL_DRILL_MODULE_III = registerElevatorModule("steam_elevator_oil_drill_module_iii",
+                "Steam Oil Drill Module III", 4, holder -> new SteamOilDrillModule(holder, 4));
+        STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE = registerElevatorModule("steam_elevator_entity_crusher_module",
+                "Steam Entity Crusher Module", 1, holder -> new SteamEntityCrusherModule(holder, 1));
+        STEAM_ELEVATOR_ORE_PROCESSOR_MODULE = registerElevatorModule("steam_elevator_ore_processor_module",
+                "Steam Ore Processor Module", 8, holder -> new SteamOreProcessorModule(holder, 8));
+        STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_I = registerElevatorModule("steam_elevator_monster_repellent_module_i",
+                "Steam Monster Repellent Module I", 1, holder -> new SteamMonsterRepellentModule(holder, 1));
+        STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_II = registerElevatorModule(
+                "steam_elevator_monster_repellent_module_ii", "Steam Monster Repellent Module II", 2,
+                holder -> new SteamMonsterRepellentModule(holder, 2));
+        STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_III = registerElevatorModule(
+                "steam_elevator_monster_repellent_module_iii", "Steam Monster Repellent Module III", 3,
+                holder -> new SteamMonsterRepellentModule(holder, 3));
+        STEAM_ELEVATOR_BEACON_MODULE_I = registerElevatorModule("steam_elevator_beacon_module_i",
+                "Steam Beacon Module I", 1, holder -> new SteamBeaconModule(holder, 1));
+        STEAM_ELEVATOR_BEACON_MODULE_II = registerElevatorModule("steam_elevator_beacon_module_ii",
+                "Steam Beacon Module II", 2, holder -> new SteamBeaconModule(holder, 2));
+        STEAM_ELEVATOR_BEACON_MODULE_III = registerElevatorModule("steam_elevator_beacon_module_iii",
+                "Steam Beacon Module III", 3, holder -> new SteamBeaconModule(holder, 3));
+    }
+
+    private static MachineDefinition registerElevatorModule(String id, String name, int tier,
+                                                            Function<IMachineBlockEntity, MultiblockPartMachine> factory) {
+        String tierName = GTValues.VN[Math.min(tier, GTValues.MAX)].toLowerCase(Locale.ROOT);
+        ResourceLocation hullSide = GTCEu.id("block/casings/voltage/" + tierName + "/side");
+        ResourceLocation hullTop = GTCEu.id("block/casings/voltage/" + tierName + "/top");
+        ResourceLocation hullBottom = GTCEu.id("block/casings/voltage/" + tierName + "/bottom");
+
+        return REGISTRATE.machine(id, holder -> factory.apply(holder))
+                .tier(tier)
+                .rotationState(RotationState.ALL)
+                .abilities(GTNAPartAbility.STEAM_ELEVATOR_MODULE)
+                .modelProperty(IS_FORMED, false)
+                .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
+                .model((ctx, prov, builder) -> {
+                    var model = prov.models()
+                            .withExistingParent("block/machines/steam_elevator/" + id,
+                                    GTCEu.id("block/machine/template/part/hatch_machine"))
+                            .texture("overlay", GTCEu.id("block/overlay/machine/overlay_hatch"))
+                            .texture("side", hullSide)
+                            .texture("top", hullTop)
+                            .texture("bottom", hullBottom)
+                            .texture("particle", hullSide);
+                    builder.partialState().setModel(model);
+                })
+                .tooltips(
+                        Component.translatable("gtna.machine." + id + ".tooltip"),
+                        Component.translatable("gtceu.part_sharing.disabled"))
+                .register();
     }
 
     private static void registerOutputBoostHatch(int tier) {

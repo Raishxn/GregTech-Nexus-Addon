@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:block/block",
+  "loader": "gtceu:machine",
+  "machine": "gtna:steam_elevator_flight_module",
+  "variants": {
+    "": {
+      "model": "gtna:block/machines/steam_elevator/steam_elevator_flight_module"
+    }
+  }
+}

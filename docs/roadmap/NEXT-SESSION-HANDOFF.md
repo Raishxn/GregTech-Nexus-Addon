@@ -253,3 +253,20 @@ Detalhe em `docs/roadmap/port-audit-2026-09-21.md` e `THIRD_PARTY_NOTICES.md`.
 - Client: `./gradlew runClient` (Ad Astra e Stargate **já estão** no classpath de dev).
 - O `runGameTestServer` sai 0 mesmo se o mod não carregar — confira o banner `GAME TESTS COMPLETE`.
 - Flakiness conhecida: `runningSecondRecipeTypeMirrorsControllerMode` (~1/7).
+
+---
+
+## 13. Steam Elevator + módulos (G-0032)
+
+- **Estrutura:** o `SteamElevator` 35x43x35 é lido em runtime de
+  `src/main/resources/pattern/steam_elevator.mbs` pelo `GTNAMultiBlockFileReader` (mesmo formato do
+  `me_cpu.mbs`), **não** inline no `GTNAMachines.java`. Para re-gerar: decodificar o `.mbs` "MBS1"
+  do GTNL com `gtna_aisles` e re-codificar com a tabela de símbolos do reader (0=C, 1=B, 2=A, 3=J,
+  4=G, 5=F, 6=E, 7=D, 10=I, 11=H, 19=espaço, 61=~). Validar in-game a formação (nenhum gametest novo,
+  o gate espera 25).
+- **Módulos = parts, não multiblocos:** cada módulo implementa `ISteamElevatorModule` e declara
+  `GTNAPartAbility.STEAM_ELEVATOR_MODULE`; o controlador coleta via `getParts()` e chama
+  `onElevatorTick` depois de distribuir o EU. Se for portar Apiary/BeeBreeding (outro agente), siga o
+  mesmo padrão de part machine.
+- **Teleporte Ad Astra:** `SteamElevatorTeleport` descobre dimensões pelo namespace `ad_astra` na
+  registry em runtime — **não** importar classes do Ad Astra (evita dependência dura).

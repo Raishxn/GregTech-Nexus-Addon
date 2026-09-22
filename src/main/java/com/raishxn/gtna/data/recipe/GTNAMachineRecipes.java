@@ -393,6 +393,194 @@ public class GTNAMachineRecipes {
                     .EUt(1600)
                     .save(provider);
         }
+        // ------------------------------------------------------------------
+        // Steam Elevator + its eight modules (GTNL assembler recipes, mapped to GTNA items).
+        // ------------------------------------------------------------------
+        if (enabled(GTNAMachines.STEAM_ELEVATOR)) {
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator")
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
+                    .inputItems(Blocks.BRICKS, 64)
+                    .inputItems(ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Steel).getItem(), 48)
+                    .inputItems(GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get(), 8)
+                    .inputItems(GTNAItems.PRECISION_STEAM_COMPONENT.get(), 16)
+                    .inputFluids(GTNAMaterials.Stronze.getFluid(1296))
+                    .outputItems(GTNAMachines.STEAM_ELEVATOR.asStack())
+                    .duration(600)
+                    .EUt(30)
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines2.STEAM_ELEVATOR_ORE_PROCESSOR_MODULE)) {
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_ore_processor_module")
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
+                    .inputItems(ChemicalHelper.get(TagPrefix.dust, GTMaterials.Diamond).getItem(), 16)
+                    .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 32)
+                    .inputItems(GTNAItems.HYDRAULIC_PISTON.get(), 32)
+                    .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 32)
+                    .inputItems(GTNAItems.HYDRAULIC_CONVEYOR.get(), 32)
+                    .inputFluids(GTNAMaterials.Breel.getFluid(1296))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_ORE_PROCESSOR_MODULE.asStack())
+                    .duration(600)
+                    .EUt(30)
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines2.STEAM_ELEVATOR_FLIGHT_MODULE)) {
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_flight_module")
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 1)
+                    .inputItems(GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get(), 4)
+                    .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 4)
+                    .inputItems(GTNAItems.HYDRAULIC_STEAM_RECEIVER.get(), 2)
+                    .inputItems(GTNAItems.PRECISION_STEAM_COMPONENT.get(), 2)
+                    .inputItems(Items.FEATHER, 1)
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_FLIGHT_MODULE.asStack())
+                    .duration(400)
+                    .EUt(100)
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines2.STEAM_ELEVATOR_BEACON_MODULE_I)) {
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_beacon_module_i")
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 1)
+                    .inputItems(Items.BREWING_STAND, 1)
+                    .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 4)
+                    .inputItems(GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get(), 8)
+                    .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 8)
+                    .inputItems(Items.GUNPOWDER, 64)
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_BEACON_MODULE_I.asStack())
+                    .duration(400)
+                    .EUt(16)
+                    .save(provider);
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_beacon_module_ii")
+                    .inputItems(GTNAMachines2.STEAM_ELEVATOR_BEACON_MODULE_I.asStack())
+                    .inputItems(IntCircuitIngredient.of(1))
+                    .inputItems(GTNAItems.HYDRAULIC_STEAM_RECEIVER.get(), 4)
+                    .inputItems(GTNAItems.HYDRAULIC_REGULATOR.get(), 8)
+                    .inputItems(Items.ENDER_PEARL, 16)
+                    .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 8)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(648))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_BEACON_MODULE_II.asStack())
+                    .duration(300)
+                    .EUt(28)
+                    .save(provider);
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_beacon_module_iii")
+                    .inputItems(GTNAMachines2.STEAM_ELEVATOR_BEACON_MODULE_II.asStack())
+                    .inputItems(IntCircuitIngredient.of(2))
+                    .inputItems(GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get(), 4)
+                    .inputItems(GTNAItems.HYDRAULIC_REGULATOR.get(), 8)
+                    .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 8)
+                    .inputItems(Items.BLAZE_POWDER, 8)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(1296))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_BEACON_MODULE_III.asStack())
+                    .duration(200)
+                    .EUt(100)
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines2.STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_I)) {
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_monster_repellent_module_i")
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 1)
+                    .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 8)
+                    .inputItems(Items.TORCH, 64)
+                    .inputItems(GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get(), 2)
+                    .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 2)
+                    .inputItems(IntCircuitIngredient.of(1))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_I.asStack())
+                    .duration(200)
+                    .EUt(GTValues.VA[GTValues.LV])
+                    .save(provider);
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_monster_repellent_module_ii")
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 2)
+                    .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 8)
+                    .inputItems(Items.SOUL_TORCH, 32)
+                    .inputItems(GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get(), 2)
+                    .inputItems(GTNAItems.HYDRAULIC_STEAM_RECEIVER.get(), 2)
+                    .inputItems(IntCircuitIngredient.of(2))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_II.asStack())
+                    .duration(200)
+                    .EUt(GTValues.VA[GTValues.LV])
+                    .save(provider);
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_monster_repellent_module_iii")
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
+                    .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 8)
+                    .inputItems(Items.SOUL_TORCH, 64)
+                    .inputItems(GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get(), 2)
+                    .inputItems(GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get(), 2)
+                    .inputItems(IntCircuitIngredient.of(3))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_III.asStack())
+                    .duration(200)
+                    .EUt(GTValues.VA[GTValues.LV])
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines2.STEAM_ELEVATOR_WEATHER_MODULE)) {
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_weather_module")
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 1)
+                    .inputItems(Items.SNOWBALL, 64)
+                    .inputItems(Items.AMETHYST_SHARD, 2)
+                    .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 4)
+                    .inputItems(GTNAItems.HYDRAULIC_STEAM_RECEIVER.get(), 4)
+                    .inputItems(IntCircuitIngredient.of(1))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_WEATHER_MODULE.asStack())
+                    .duration(200)
+                    .EUt(GTValues.VA[GTValues.LV])
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines2.STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE)) {
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_entity_crusher_module")
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
+                    .inputItems(ChemicalHelper.get(TagPrefix.dust, GTMaterials.Diamond).getItem(), 9)
+                    .inputItems(IntCircuitIngredient.of(1))
+                    .inputItems(GTNAItems.HYDRAULIC_PISTON.get(), 8)
+                    .inputItems(GTNAItems.HYDRAULIC_CONVEYOR.get(), 8)
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE.asStack())
+                    .duration(300)
+                    .EUt(GTValues.VA[GTValues.LV])
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines2.STEAM_ELEVATOR_OIL_DRILL_MODULE_I)) {
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_oil_drill_module_i")
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
+                    .inputItems(GTNABlocks.BREEL_PLATED_CASING.get(), 12)
+                    .inputItems(IntCircuitIngredient.of(1))
+                    .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 8)
+                    .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 12)
+                    .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 12)
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_OIL_DRILL_MODULE_I.asStack())
+                    .duration(300)
+                    .EUt(28)
+                    .save(provider);
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_oil_drill_module_ii")
+                    .inputItems(GTNAMachines2.STEAM_ELEVATOR_OIL_DRILL_MODULE_I.asStack())
+                    .inputItems(GTNABlocks.HYPER_PRESSURE_BREEL_CASING.get(), 12)
+                    .inputItems(IntCircuitIngredient.of(2))
+                    .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 4)
+                    .inputItems(GTNAItems.HYDRAULIC_REGULATOR.get(), 6)
+                    .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 12)
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_OIL_DRILL_MODULE_II.asStack())
+                    .duration(300)
+                    .EUt(80)
+                    .save(provider);
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_oil_drill_module_iii")
+                    .inputItems(GTNAMachines2.STEAM_ELEVATOR_OIL_DRILL_MODULE_II.asStack())
+                    .inputItems(GTNABlocks.HYPER_PRESSURE_BREEL_CASING.get(), 16)
+                    .inputItems(IntCircuitIngredient.of(3))
+                    .inputItems(GTNAItems.HYDRAULIC_REGULATOR.get(), 8)
+                    .inputItems(GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get(), 3)
+                    .inputItems(ChemicalHelper.get(TagPrefix.gear, GTMaterials.StainlessSteel).getItem(), 12)
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_OIL_DRILL_MODULE_III.asStack())
+                    .duration(300)
+                    .EUt(300)
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines2.STEAM_ELEVATOR_GREENHOUSE_MODULE)) {
+            GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_greenhouse_module")
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
+                    .inputItems(Blocks.DIRT, 64)
+                    .inputItems(Items.STICK, 64)
+                    .inputItems(GTNAItems.HYDRAULIC_CONVEYOR.get(), 16)
+                    .inputItems(GTNAItems.HYDRAULIC_ARM.get(), 16)
+                    .inputFluids(GTMaterials.Water.getFluid(16000))
+                    .outputItems(GTNAMachines2.STEAM_ELEVATOR_GREENHOUSE_MODULE.asStack())
+                    .duration(200)
+                    .EUt(GTValues.VA[GTValues.LV])
+                    .save(provider);
+        }
         if (enabled(GTNAMachines.STEAM_CACTUS_WONDER)) {
             // GTNL CactusWonderFakeRecipes: GT++ cactus charcoal/coke -> steam at one recipe per
             // 20 ticks. GTNA has no cactus carbon items, so the closest GTNA fuels are used and the
