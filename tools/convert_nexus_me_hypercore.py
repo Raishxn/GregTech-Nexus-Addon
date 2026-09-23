@@ -1,7 +1,7 @@
 """Build the Nexus ME Hypercore .mbs from the author's packet.txt export.
 
 The export has no controller or CPU Interface markers. Both replace adjacent
-Laminated Glass blocks in the center of the glass cylinder's final face.
+Laminated Glass blocks on the glass cylinder's final face.
 """
 
 from pathlib import Path
@@ -18,8 +18,8 @@ SYMBOLS = {
     "h": 4, "i": 11, "j": 10, "k": 3, "l": 8, "m": 9,
     "n": 14, "o": 13, "p": 15, "q": 18,
 }
-CONTROLLER = (30, 10, 21)  # aisle, row, column
-CPU_INTERFACE = (30, 10, 22)
+CONTROLLER = (30, 18, 21)  # aisle, row (top to bottom), column
+CPU_INTERFACE = (30, 18, 22)
 
 
 def main() -> None:
