@@ -399,7 +399,7 @@ public final class GTNAMachineGameTests {
             return;
         }
         helper.assertTrue(controller.checkPattern(), "liquefaction_furnace combined pattern must match");
-        helper.assertTrue(state.isPosInCache(energyPos),
+        helper.assertTrue(state.isPosInCache(helper.absolutePos(energyPos)),
                 "checking the module must preserve the main structure's block change cache");
         controller.onStructureFormed();
         helper.assertTrue(controller.isFormed(), "liquefaction_furnace must form");

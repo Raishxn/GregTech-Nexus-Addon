@@ -38,7 +38,7 @@ foi feito nem repetir os erros já pagos.
 - Desenvolvimento na branch `main`; o histórico anterior a G-0026 está preservado no ledger.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0070):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+- **Gate verde em 2026-09-23 (G-0071):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
   `runGameTestServer` (**44/44**, `All 44 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
@@ -89,6 +89,21 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0071 (2026-09-23) — correção de crash ao carregar mundo no client
+
+- O `runClient` de G-0070 abriu o menu, mas caiu ao entrar no mundo:
+  `GTNAMachineRecipes.registerMEStorageCoreRecipes` chamou
+  `ChemicalHelper.getTag(cableGtDouble, Nickel)`, que retorna `null` para o cabo nessa versão do
+  GTCEu. A shaped mantém o cabo duplo de Níquel, agora pelo item de
+  `ChemicalHelper.get(cableGtDouble, Nickel)`.
+- O gametest adicionado em G-0070 inicialmente comparava uma posição relativa com o cache de
+  posições absolutas. A asserção agora usa `helper.absolutePos(energyPos)`.
+- **Validação:** gate offline completo verde após ambas as correções: `spotlessCheck`, `compileJava`,
+  `runUnitTests` (18/18), `runGameTestServer` (44/44), `runData` (`written: 0`). `runClient` foi
+  relançado e o log confirmou `Dev joined the game` sem repetir o crash da receita.
+- **Pendências:** comparar o print/lista do módulo EBF quando chegar; confirmar a latência do
+  liquefaction no client.
 
 ### G-0070 (2026-09-23) — liquefaction original, IO do módulo EBF e cache de posições dos módulos
 

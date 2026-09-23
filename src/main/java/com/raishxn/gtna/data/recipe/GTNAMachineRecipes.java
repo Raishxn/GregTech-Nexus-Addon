@@ -1787,8 +1787,7 @@ public class GTNAMachineRecipes {
                     .pattern("CDC")
                     .pattern("ABA")
                     .define('A', Objects.requireNonNull(ChemicalHelper.getTag(TagPrefix.plate, GTMaterials.Invar)))
-                    .define('B',
-                            Objects.requireNonNull(ChemicalHelper.getTag(TagPrefix.cableGtDouble, GTMaterials.Nickel)))
+                    .define('B', ChemicalHelper.get(TagPrefix.cableGtDouble, GTMaterials.Nickel).getItem())
                     .define('C', Blocks.BLAST_FURNACE)
                     .define('D', GTMachines.EXTRACTOR[GTValues.LV].asStack().getItem())
                     .unlockedBy("has_invar_plate", InventoryChangeTrigger.TriggerInstance
