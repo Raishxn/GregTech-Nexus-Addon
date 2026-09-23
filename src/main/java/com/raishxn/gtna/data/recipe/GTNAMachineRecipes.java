@@ -1650,8 +1650,9 @@ public class GTNAMachineRecipes {
      */
     private static void registerOreProcessingRecipes(Consumer<FinishedRecipe> provider) {
         for (Material material : GTCEuAPI.materialManager.getRegisteredMaterials()) {
-            ItemStack crushed = ChemicalHelper.get(TagPrefix.crushed, material);
-            if (crushed.isEmpty()) continue;
+            ItemStack input = ChemicalHelper.get(TagPrefix.rawOre, material);
+            if (input.isEmpty()) input = ChemicalHelper.get(TagPrefix.crushed, material);
+            if (input.isEmpty()) continue;
             ItemStack dust = ChemicalHelper.get(TagPrefix.dust, material);
             if (dust.isEmpty()) continue;
             ItemStack dustSmall = ChemicalHelper.get(TagPrefix.dustSmall, material);
@@ -1662,7 +1663,7 @@ public class GTNAMachineRecipes {
                 GTRecipeBuilder builder = GTNARecipeType.ORE_PROCESSING_RECIPES
                         .recipeBuilder("integrated_ore_processing_" + material.getName() + "_" + circuit)
                         .circuitMeta(circuit)
-                        .inputItems(crushed)
+                        .inputItems(input)
                         .outputItems(dust.copyWithCount(2))
                         .duration(200)
                         .EUt(GTValues.VA[GTValues.LV]);

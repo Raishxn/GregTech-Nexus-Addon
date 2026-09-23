@@ -51,7 +51,7 @@ public final class GTNASources {
             Map.entry("large_steam_solar_boiler", GTO),
             // --- Twist Space Technology (GPL-3.0) ---
             Map.entry("eye_of_wood", TST),
-            Map.entry("industrial_slaughterhouse", TST),
+            Map.entry("industrial_slaughterhouse", GTO),
             // --- GT: Not Leisure ---
             Map.entry("large_steam_crusher", GTNL),
             Map.entry("large_steam_furnace", GTNL),
