@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 ### Added
+- **Sub-pattern (module/extension) mechanic** (`ISubPatternMachine` + a `MultiblockControllerMachine`
+  mixin): a multiblock can be extended by additional structures attached to the same controller, whose
+  parts are merged in to unlock new abilities (e.g. Parallel / Accelerate hatches). Ported in the
+  spirit of GTOCore's `addSubPattern`.
+- **Liquefaction Furnace** (GTOCore port, LGPLv3): a coil multiblock that melts an item into a fluid,
+  with a stainless-steel extension tower as its sub-pattern.
 - **Thermal Power Pump** (GTOCore port, LGPLv3): a primitive no-energy multiblock that condenses
   steam into water at a biome-dependent rate (rain +50%; the Nether produces nothing).
 - **Brick Kiln** (GTOCore port, LGPLv3): a primitive no-energy multiblock that fires bricks and

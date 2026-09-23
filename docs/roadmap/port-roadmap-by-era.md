@@ -140,11 +140,14 @@ LGPLv3 — código/render portável), **TST** (1.7.10, GPL-3.0 — só mecânica
   `advanced_integrated_ore_processor`.
 
 ### Lacuna 🎯 (confirmada pelas quests do GTO — ver `era-mapping-gto-quests.md`)
-- Multiblocos GTOCore de **LV**: `liquefaction_furnace`, `lava_furnace`, `generator_array`,
-  `tree_growth_simulator`, `thermal_power_pump`, `gas_compressor`.
-- Próximo passo: portar um desses (sugestão: **`liquefaction_furnace`** ou **`lava_furnace`**, os mais
-  "early" do bloco), e então subir para o MV (`reaction_furnace`, `greenhouse`,
-  `crystallization_chamber`, `component_assembler`, `processing_plant`).
+- Multiblocos GTOCore de **LV**: `liquefaction_furnace` (portado, G-0063 ✅), `lava_furnace`,
+  `generator_array`, `tree_growth_simulator`, `thermal_power_pump` (portado, G-0062 ✅),
+  `gas_compressor` (fora por ora, decisão do autor).
+- Próximo passo: **`lava_furnace`** ou **`generator_array`**, e então subir para o MV
+  (`reaction_furnace`, `greenhouse`, `crystallization_chamber`, `component_assembler`,
+  `processing_plant`).
+- **Mecânica de sub-pattern** (módulo/extensão, G-0063) já disponível para o EBF e os demais
+  multiblocos futuros.
 
 ## Eras seguintes (MV → UHV+)
 

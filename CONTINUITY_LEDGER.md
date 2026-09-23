@@ -77,6 +77,38 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0063 (2026-09-23) — mecânica de sub-pattern (módulo/extensão) + `liquefaction_furnace` (GTOCore)
+
+Atende ao pedido do autor: **portar o `liquefaction_furnace` e criar a mecânica de módulo/extensão**
+que libera novas habilidades (vai ser usada no EBF e em outros multiblocos).
+
+- **Mecânica de sub-pattern GTNA-native** (equivalente ao `addSubPattern` do GTOCore, que é nativo
+  no gtolib e não existe no GTCEu 7.5.3):
+  - `ISubPatternMachine` (interface GTNA): `List<BlockPattern> gtna$getSubPatterns()`.
+  - `MultiblockControllerMachineMixin`: adiciona um `checkPattern()` ao
+    `MultiblockControllerMachine` que roda o pattern principal (como o default) e, se a máquina
+    implementa `ISubPatternMachine`, checa cada extensão **no mesmo controller** e **funde as partes**
+    (hatches/buses) no match context — assim a extensão libera habilidades (Parallel/Accelerate/etc.).
+    O context do pattern principal é snapshotado/restaurado porque checar um sub-pattern o reseta.
+  - Cobre **qualquer** multibloco (mixin de classe), sem depender da base.
+- **`liquefaction_furnace`** (GTOCore, LGPLv3):
+  - Recipe type `gtna:liquefaction_furnace` (1 item in / 1 fluid out, EU in, temperatura/coil nos
+    data infos, barra EXTRACT, som ARC).
+  - `LiquefactionFurnaceMachine extends CoilWorkableElectricMultipleRecipesMachine` (o `beforeWorking`
+    já rejeita receitas acima da temperatura das coils) + `ISubPatternMachine`.
+  - Pattern principal 5×3×5 (heatproof casing + coils + steel casing/pipe + muffler).
+  - Sub-pattern (a torre de aço inox do GTOCore) definido via a mecânica nova.
+- **Sem receitas fixas** (decisão A do autor): o GTOCore usa materiais que o GTNA não tem
+  (cryotheum/antimatter/vidros do GTOCore); a máquina fica disponível para datapacks/modpacks.
+- **Infra:** config toggle `liquefactionFurnace`, lang, atribuição `GTNASources` → `gto`, receita de
+  craft do controller.
+- **Teste:** gametest `liquefactionFurnaceForms` (pattern principal forma). → **40/40**.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**40/40**) + `runData` determinístico (`written: 0`).
+- **Pendências:** validar no client a **geometria/ancoragem exata do sub-pattern** do GTOCore (o
+  GTNA ancora o sub-pattern no controller; o GTOCore usa um offset próprio no gtolib). O mechanic
+  está pronto; se a torre não casar in-game, ajustar o sub-pattern/ancoragem.
+
 ### G-0062 (2026-09-23) — `thermal_power_pump` (GTOCore) portado
 
 Segundo alvo do mapeamento por eras (G-0061). Port do **`thermal_power_pump`** do GTOCore (LGPLv3):

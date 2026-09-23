@@ -128,6 +128,7 @@ public class ConfigHolder {
             case "advancedIntegratedOreProcessor" -> INSTANCE.machineToggles.advancedIntegratedOreProcessor;
             case "brickKiln" -> INSTANCE.machineToggles.brickKiln;
             case "thermalPowerPump" -> INSTANCE.machineToggles.thermalPowerPump;
+            case "liquefactionFurnace" -> INSTANCE.machineToggles.liquefactionFurnace;
             case "durationTester" -> INSTANCE.machineToggles.durationTester;
             default -> true;
         };
@@ -372,6 +373,8 @@ public class ConfigHolder {
         public boolean brickKiln = true;
         @Configurable
         public boolean thermalPowerPump = true;
+        @Configurable
+        public boolean liquefactionFurnace = true;
         @Configurable
         public boolean durationTester = true;
     }

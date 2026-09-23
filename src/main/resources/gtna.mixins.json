@@ -12,6 +12,7 @@
     "ae2.PatternProviderLogicMixin",
     "ae2.TooltipsMixin",
     "gtceu.GTNAPlateDoubleMixin",
+    "gtceu.MultiblockControllerMachineMixin",
     "gtceu.PredicatesMixin",
     "gtceu.GTRecipeLogicMixin",
     "gtceu.RecipeHelperMixin"

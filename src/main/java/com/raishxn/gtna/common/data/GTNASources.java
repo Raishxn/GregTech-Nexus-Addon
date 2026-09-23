@@ -58,6 +58,7 @@ public final class GTNASources {
             // --- GTOCore (LGPLv3) ---
             Map.entry("brick_kiln", GTO),
             Map.entry("thermal_power_pump", GTO),
+            Map.entry("liquefaction_furnace", GTO),
             // --- GT: Not Leisure ---
             Map.entry("large_steam_crusher", GTNL),
             Map.entry("large_steam_furnace", GTNL),

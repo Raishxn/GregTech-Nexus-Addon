@@ -53,6 +53,7 @@ import com.raishxn.gtna.common.data.GTNAMachines;
 import com.raishxn.gtna.common.data.GTNAMachines2;
 import com.raishxn.gtna.common.data.GTNARecipeType;
 import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
+import com.raishxn.gtna.common.machine.multiblock.electric.LiquefactionFurnaceMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.UniversalFactoryMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamOreProcessorModule;
@@ -323,6 +324,79 @@ public final class GTNAMachineGameTests {
         }
         controller.onStructureFormed();
         helper.assertTrue(controller.isFormed(), "thermal_power_pump must form from the decoded structure");
+        helper.succeed();
+    }
+
+    /**
+     * Formation test for the GTOCore Liquefaction Furnace port (G-0063): the 5x3x5 coil pattern must
+     * match and form.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 40)
+    public static void liquefactionFurnaceForms(GameTestHelper helper) {
+        if (GTNAMachines.LIQUEFACTION_FURNACE == null) {
+            helper.fail("liquefaction_furnace is disabled by config; the formation test cannot run");
+            return;
+        }
+        BlockPos controllerPos = new BlockPos(4, 2, 4);
+        for (int dx = -2; dx <= 6; dx++) {
+            for (int dy = -2; dy <= 4; dy++) {
+                for (int dz = -4; dz <= 4; dz++) {
+                    helper.setBlock(controllerPos.offset(dx, dy, dz), Blocks.AIR);
+                }
+            }
+        }
+        helper.setBlock(controllerPos, GTNAMachines.LIQUEFACTION_FURNACE.getBlock());
+
+        String[][] pattern = {
+                { "AAAAA", " BBB ", " AAA " },
+                { "AAAAA", "B B B", "ACCCA" },
+                { "AAAA~", "BBEBB", "ACFCA" },
+                { "AAAAA", "B B B", "ACCCA" },
+                { "AAAAA", " BBB ", " AAA " },
+        };
+        BlockPos maintenancePos = controllerPos.offset(-4, 0, 2);
+        BlockPos energyPos = controllerPos.offset(-4, 0, 1);
+        BlockPos inputBusPos = controllerPos.offset(-4, 0, 0);
+        BlockPos outputHatchPos = controllerPos.offset(-4, 0, -1);
+        for (int aisle = 0; aisle < pattern.length; aisle++) {
+            for (int y = 0; y < 3; y++) {
+                for (int x = 0; x < 5; x++) {
+                    char c = pattern[aisle][y].charAt(x);
+                    if (c == '~' || c == ' ') continue;
+                    BlockPos pos = controllerPos.offset(x - 4, y, 2 - aisle);
+                    if (pos.equals(maintenancePos) || pos.equals(energyPos) || pos.equals(inputBusPos) ||
+                            pos.equals(outputHatchPos)) {
+                        continue;
+                    }
+                    switch (c) {
+                        case 'A' -> helper.setBlock(pos, GTBlocks.CASING_INVAR_HEATPROOF.get());
+                        case 'B' -> helper.setBlock(pos, GTBlocks.COIL_CUPRONICKEL.get());
+                        case 'C' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_SOLID.get());
+                        case 'E' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_PIPE.get());
+                        case 'F' -> helper.setBlock(pos, GTMachines.MUFFLER_HATCH[GTValues.LV].getBlock());
+                        default -> {}
+                    }
+                }
+            }
+        }
+        helper.setBlock(maintenancePos, GTMachines.MAINTENANCE_HATCH.getBlock());
+        helper.setBlock(energyPos, GTMachines.ENERGY_INPUT_HATCH[GTValues.LV].getBlock());
+        helper.setBlock(inputBusPos, GTMachines.ITEM_IMPORT_BUS[GTValues.LV].getBlock());
+        helper.setBlock(outputHatchPos, GTMachines.FLUID_EXPORT_HATCH[GTValues.LV].getBlock());
+
+        MetaMachine placed = metaMachineAt(helper, controllerPos);
+        if (!(placed instanceof LiquefactionFurnaceMachine controller)) {
+            helper.fail("liquefaction_furnace block entity is not a LiquefactionFurnaceMachine, got " + placed);
+            return;
+        }
+        MultiblockState state = controller.getMultiblockState();
+        if (!controller.getPattern().checkPatternAt(state, false)) {
+            helper.fail("liquefaction_furnace pattern did not match: " +
+                    patternError(helper, state, controller.self().getPos()));
+            return;
+        }
+        controller.onStructureFormed();
+        helper.assertTrue(controller.isFormed(), "liquefaction_furnace must form");
         helper.succeed();
     }
 

@@ -6,6 +6,9 @@ import com.gregtechceu.gtceu.api.recipe.GTRecipeSerializer;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.common.data.GTSoundEntries;
+import com.gregtechceu.gtceu.utils.FormattingUtil;
+
+import com.lowdragmc.lowdraglib.utils.LocalizationUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -86,6 +89,21 @@ public class GTNARecipeType {
             .setMaxIOSize(3, 1, 1, 0)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.FURNACE);
+
+    /**
+     * GTOCore {@code liquefaction_furnace} recipe type (LGPLv3): melts an item into a fluid using a
+     * coil machine's heat (1 item in / 1 fluid out, EU in). The recipe's {@code ebf_temp} is the coil
+     * temperature requirement, shown like the EBF's.
+     */
+    public static final String LIQUEFACTION_FURNACE = "liquefaction_furnace";
+    public static final GTRecipeType LIQUEFACTION_FURNACE_RECIPES = register("liquefaction_furnace",
+            LIQUEFACTION_FURNACE)
+            .setMaxIOSize(1, 0, 0, 1)
+            .setEUIO(IO.IN)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, LEFT_TO_RIGHT)
+            .addDataInfo(data -> LocalizationUtils.format("gtceu.recipe.temperature",
+                    FormattingUtil.formatTemperature(data.getInt("ebf_temp"))))
+            .setSound(GTSoundEntries.ARC);
 
     public static final String HIGH_PRESSURE_REACTOR = "high_pressure_reactor";
     public static final GTRecipeType HIGH_PRESSURE_REACTOR_RECIPES = register("high_pressure_reactor",

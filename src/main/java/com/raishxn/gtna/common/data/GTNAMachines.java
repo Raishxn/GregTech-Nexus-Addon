@@ -43,6 +43,7 @@ import com.raishxn.gtna.common.data.multiblock.GTNAMultiBlockFileReader;
 import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
 import com.raishxn.gtna.common.machine.multiblock.electric.AdvancedIntegratedOreProcessorMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.IntegratedOreProcessorMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.LiquefactionFurnaceMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.UniversalFactoryMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.ArtificialStarMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhouse;
@@ -4240,6 +4241,47 @@ public class GTNAMachines {
                                     .withStyle(ChatFormatting.GOLD),
                             Component.translatable("gtna.machine.thermal_power_pump.tooltip.1")
                                     .withStyle(ChatFormatting.GRAY))
+                    .tooltipBuilder(GTNA_ADD)
+                    .register());
+
+    // ------------------------------------------------------------------
+    // Liquefaction Furnace (GTOCore port, LGPLv3) - see G-0063.
+    // Coil multiblock that melts an item into a fluid. It carries a GTNA sub-pattern (extension)
+    // tower that adds Parallel / Accelerate hatches.
+    // ------------------------------------------------------------------
+    public static final MultiblockMachineDefinition LIQUEFACTION_FURNACE = registerMachine("liquefactionFurnace",
+            () -> REGISTRATE
+                    .multiblock("liquefaction_furnace", LiquefactionFurnaceMachine::new)
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .recipeType(GTNARecipeType.LIQUEFACTION_FURNACE_RECIPES)
+                    .appearanceBlock(GTBlocks.CASING_INVAR_HEATPROOF)
+                    .pattern(definition -> FactoryBlockPattern.start()
+                            .aisle("AAAAA", " BBB ", " AAA ")
+                            .aisle("AAAAA", "B B B", "ACCCA")
+                            .aisle("AAAA~", "BBEBB", "ACFCA")
+                            .aisle("AAAAA", "B B B", "ACCCA")
+                            .aisle("AAAAA", " BBB ", " AAA ")
+                            .where('~', controller(blocks(definition.get())))
+                            .where('B', Predicates.heatingCoils())
+                            .where('C', blocks(GTBlocks.CASING_STEEL_SOLID.get()))
+                            .where('E', blocks(GTBlocks.CASING_STEEL_PIPE.get()))
+                            .where('A', blocks(GTBlocks.CASING_INVAR_HEATPROOF.get())
+                                    .setMinGlobalLimited(20)
+                                    .or(autoAbilities(definition.getRecipeTypes()))
+                                    .or(abilities(PartAbility.MAINTENANCE).setExactLimit(1)))
+                            .where('F', abilities(PartAbility.MUFFLER))
+                            .where(' ', any())
+                            .build())
+                    .workableCasingModel(
+                            GTCEu.id("block/casings/solid/machine_casing_heatproof"),
+                            GTCEu.id("block/multiblock/multi_furnace"))
+                    .tooltips(
+                            Component.translatable("gtna.machine.liquefaction_furnace.tooltip.0")
+                                    .withStyle(ChatFormatting.GOLD),
+                            Component.translatable("gtna.machine.liquefaction_furnace.tooltip.1")
+                                    .withStyle(ChatFormatting.GRAY),
+                            Component.translatable("gtna.machine.liquefaction_furnace.tooltip.2")
+                                    .withStyle(ChatFormatting.AQUA))
                     .tooltipBuilder(GTNA_ADD)
                     .register());
 
