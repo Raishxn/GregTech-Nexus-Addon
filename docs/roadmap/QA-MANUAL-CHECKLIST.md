@@ -24,7 +24,7 @@ checkpoint novo do `CONTINUITY_LEDGER.md` e, quando der, transformar em gametest
 - [ ] Módulos do elevador: tooltip com as linhas fiéis ao GTNL (cabeçalho colorido + linhas na ordem).
 - [ ] **Beacon**: botões por efeito (verde = ligado), limite `tier + 2`; upkeep muda com a seleção.
 - [ ] **Weather**: circuito 1/2/3 muda o clima; UI mostra o **tempo restante**; cobra 1.000.000 mB por troca.
-- [ ] **Ore Processor**: circuito muda modo/parallel; UI mostra modo/parallel/upkeep; consome distilled water + lubricant.
+- [ ] **Ore Processor**: circuito muda modo/parallel; UI mostra modo/parallel/upkeep e o **fluido exigido** (circuito 1 não pede; 2/3/4 distilled water; 5/6/7 o fluido do minério).
 - [ ] **Entity Crusher**: spawner com NBT no input bus → drops no output bus; UI mostra a chance de dobrar.
 - [ ] **Flight**: dentro de 64 blocos ganha voo (duplo pulo); **sair do alcance revoga** o voo.
 - [ ] **Monster Repellent**: mobs hostis não nascem dentro do raio enquanto roda.
@@ -47,7 +47,7 @@ checkpoint novo do `CONTINUITY_LEDGER.md` e, quando der, transformar em gametest
 - [ ] **Apiary**: water no **input hatch**, honeycomb no **input bus** → combs/honey no **output bus**.
 - [ ] **Bee Breeding**: spawn egg + honey treats no **input bus** → novo spawn egg no **output bus**.
 - [ ] **Greenhouse**: water no **input hatch** (a UI mostra a água do hatch).
-- [ ] **Ore Processor**: circuito + minério no **input bus**, distilled water + lubricant no **input hatch** → produtos no **output bus**.
+- [ ] **Ore Processor**: circuito + minério no **input bus**, o **fluido da receita** no **input hatch** (sem lubricant) → produtos no **output bus**.
 - [ ] **Weather**: circuito 1/2/3 no **input bus** (sem slot interno).
 - [ ] Todo módulo formado+conectado mostra o status padrão **Running Perfectly / Idling** (e fica Idle sem steam para o upkeep).
 

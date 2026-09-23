@@ -34,7 +34,7 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0055):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+- **Gate verde em 2026-09-23 (G-0056):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
   `runGameTestServer` (**36/36**, `All 36 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
@@ -72,6 +72,37 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0056 (2026-09-23) — feedback do client: lang do recipe type, receitas de craft e módulo sem lubricant
+
+Feedback do autor testando o client depois do G-0055:
+
+- **Lang do recipe type:** o JEI mostrava a chave crua `gtna.ore_processing` como título da categoria.
+  O GTCEu deriva o nome da categoria de `recipeType.registryName.toLanguageKey()` (ponto, não
+  underscore), então a chave certa é `gtna.ore_processing` (não `gtna.recipe_type.ore_processing`).
+  Corrigido no `GTNALangProvider` e o tooltip `available_recipe_map` passou a usar a mesma chave.
+- **Receitas de craft dos multiblocos:** o GTLCore não define craft para eles; o GTNA ganhou as suas
+  em `GTNAMachineRecipes`:
+  - `integrated_ore_processor` no **Assembler** (EV): 4× stainless clean casing, 4× frame BlueSteel,
+    2× gearbox + 2× pipe de tungstensteel, 4× motor EV, 2× pump EV, 4× circuito EV, soldering 288;
+  - `advanced_integrated_ore_processor` na **Assembly Line** (UHV): 8× tungstensteel robust casing,
+    8× frame HSSS, 4× `RESTRAINT_DEVICE`, 8× `BOROSILICATE_GLASS_BLOCK`, 4× emitter/sensor/field
+    generator UHV, 4× circuito UHV, 4× plateDouble NaquadahAlloy, soldering 1296, com station research
+    (CWUt 1024).
+- **Steam Ore Processing Module — sem lubricant:** o módulo ficava **Idle** com só distilled water
+  porque o `isModuleWorking()` (G-0052/GTNL) exigia 1 mB de lubricant por minério além de 10 mB de
+  água. Decisão do autor: **consumir só o fluido da receita integrada**, sem lubricant. Agora:
+  - o módulo lê a receita `gtna:ore_processing` do minério no circuito atual e exige/consome o fluido
+    dela (circuito 1 não precisa de fluido; 2/3/4 distilled water; 5/6/7 o fluido do minério, ex.
+    mercúrio);
+  - `isOre` foi **endurecido**: só aceita prefixos de minério (`ORES`, `rawOre`, `crushed`,
+    `crushedPurified`, `crushedRefined`) — antes um lingote passava como "ore" e o módulo o
+    "processava" à toa;
+  - a UI mostra `Fluid: <fluido> <tem>/<precisa>` em vez de `Water/Lubricant`; tooltip atualizado.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**36/36**) + `runData` determinístico.
+- **Pendências:** re-teste manual do módulo no client (fluido por circuito) e da formação/GUI dos dois
+  multiblocos.
 
 ### G-0055 (2026-09-23) — Integrated / Advanced Integrated Ore Processor portados do GTLCore + receitas fiéis
 

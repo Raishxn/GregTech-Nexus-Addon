@@ -11,9 +11,14 @@
   stone ore, with the real per-stage byproducts, the material's own washing fluid (distilled water,
   mercury, sodium persulfate, ...) and GTLCore's durations/EUt. The multiplier is configurable
   (`gtna/balance/machines.json` → `integratedOreMultiplier`, default 4 = GTLCore parity).
+- **Craft recipes** for the two new multiblocks: Assembler (EV) for the Integrated Ore Processor and
+  Assembly Line (UHV) for the Advanced Integrated Ore Processor.
 
 ### Changed
 - `gtna:ore_processing` now uses GTLCore's IO sizes (2 item in / 9 item out / 1 fluid in).
+- **Steam Ore Processing Module**: no longer consumes lubricant; it consumes the washing fluid of the
+  matching integrated recipe (circuit 1 needs none; 2/3/4 distilled water; 5/6/7 the ore's fluid).
+  Its input filter now only accepts ore/crushed prefixes, not ingots.
 
 ## [0.4.0] - 2026-09-21
 

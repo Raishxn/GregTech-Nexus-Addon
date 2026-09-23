@@ -1,16 +1,19 @@
 package com.raishxn.gtna.common.machine.multiblock.module.steamElevator;
 
+import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
-import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialStack;
+import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialEntry;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
-import com.gregtechceu.gtceu.common.data.GTMaterials;
+import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
+import com.gregtechceu.gtceu.api.recipe.ingredient.IntCircuitIngredient;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
+import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
@@ -19,7 +22,6 @@ import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.raishxn.gtna.common.data.GTNARecipeType;
@@ -41,7 +43,9 @@ import java.util.Map;
  * time (600/300/200/400/340/640/20 ticks);</li>
  * <li>up to {@code 8 * 2^mode} ores per batch ("Can process up to 16 ores at a time" at circuit 1);</li>
  * <li>every ore costs 128L steam/t scaled by the circuit ("Set circuit to double both parallel and
- * EU consumption"), 10L distilled water and 1L lubricant, both drawn from the <b>input hatch</b>;</li>
+ * EU consumption") and the <b>washing fluid of the matching integrated recipe</b> (circuit 1 needs
+ * none; circuits 2/3/4 distilled water; circuits 5/6/7 the ore's own fluid, e.g. mercury), drawn from
+ * the <b>input hatch</b>;</li>
  * <li>the products are the ore's macerated drops inserted into the <b>output bus</b> (the chain depth
  * is the documented simplification).</li>
  * </ul>
@@ -53,8 +57,6 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
 
     /** GTNL {@code RECIPE_EUT}. */
     public static final long STEAM_UPKEEP = 128;
-    private static final int WATER_PER_ORE = 10;
-    private static final int LUBRICANT_PER_ORE = 1;
     private static final int MAX_MODE = 6;
     /** GTNL {@code getRecipeTickTime(mode)}: modes 0..6. */
     private static final int[] MODE_TICKS = { 600, 300, 200, 400, 340, 640, 20 };
@@ -86,7 +88,7 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
 
     @Override
     public long getSteamUpkeep() {
-        // GTNL: requiredEUt = 128 * 2^circuit.
+        // GTNL: requiredEUT = 128 * 2^circuit.
         return upkeepFor(mode());
     }
 
@@ -102,10 +104,18 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
 
     @Override
     protected boolean isModuleWorking() {
-        return hasUpkeepSteam() &&
-                waterAmount() >= WATER_PER_ORE &&
-                countFluid(lubricant()) >= LUBRICANT_PER_ORE &&
-                countItem(SteamOreProcessorModule::isOre) > 0;
+        if (!hasUpkeepSteam()) return false;
+        for (NotifiableItemStackHandler handler : inputItemHandlers()) {
+            for (int slot = 0; slot < handler.getSlots(); slot++) {
+                ItemStack input = handler.getStackInSlot(slot);
+                if (!isOre(input)) continue;
+                FluidStack required = requiredFluidFor(input);
+                if (required.isEmpty() || countFluid(required) >= required.getAmount()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static int clampMode(int mode) {
@@ -127,32 +137,6 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
         return STEAM_UPKEEP << clampMode(mode);
     }
 
-    private static FluidStack distilledWater() {
-        return GTMaterials.DistilledWater.getFluid(WATER_PER_ORE);
-    }
-
-    /** GTNL uses distilled water; vanilla water is accepted too so the module is usable early. */
-    private static FluidStack vanillaWater() {
-        return new FluidStack(Fluids.WATER, WATER_PER_ORE);
-    }
-
-    private int waterAmount() {
-        return countFluid(distilledWater()) + countFluid(vanillaWater());
-    }
-
-    /** Drains one ore's worth of water, preferring distilled water. */
-    private boolean drainWater() {
-        if (waterAmount() < WATER_PER_ORE) return false;
-        int distilled = Math.min(countFluid(distilledWater()), WATER_PER_ORE);
-        if (distilled > 0) drainFluid(distilledWater(), distilled);
-        if (distilled < WATER_PER_ORE) drainFluid(vanillaWater(), WATER_PER_ORE - distilled);
-        return true;
-    }
-
-    private static FluidStack lubricant() {
-        return GTMaterials.Lubricant.getFluid(LUBRICANT_PER_ORE);
-    }
-
     @Override
     public void onElevatorTick(SteamElevator elevator) {
         if (!consumeSteam(getSteamUpkeep())) return;
@@ -161,7 +145,7 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
         processBatch();
     }
 
-    /** Processes up to {@link #maxParallel()} ores, each paying distilled water and lubricant. */
+    /** Processes up to {@link #maxParallel()} ores, each paying the washing fluid of its recipe. */
     private void processBatch() {
         int parallel = 0;
         outer:
@@ -172,8 +156,7 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
                 if (!isOre(input)) continue;
                 List<ItemStack> outputs = refine(input, chainCircuit());
                 if (outputs.isEmpty()) continue;
-                if (!drainWater()) break outer;
-                if (!drainFluid(lubricant(), LUBRICANT_PER_ORE)) break outer;
+                if (!drainRequiredFluid(input)) break outer;
                 if (!canInsertItems(outputs)) break outer;
                 handler.extractItemInternal(slot, 1, false);
                 insertItems(outputs);
@@ -185,40 +168,58 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
         }
     }
 
-    /**
-     * The first refined product for {@code input}: the GTNA {@code ore_processing} type first, then the
-     * GTCEu macerator's real recipes, and finally the material-derived crushed/dust fallback. The full
-     * multi-stage chain is still the documented simplification.
-     */
-    private ItemStack macerate(ItemStack input) {
-        ItemStack processed = recipeOutput(GTNARecipeType.ORE_PROCESSING_RECIPES, input);
-        if (!processed.isEmpty()) return processed;
-        processed = recipeOutput(GTRecipeTypes.MACERATOR_RECIPES, input);
-        if (!processed.isEmpty()) return processed;
-
-        MaterialStack stack = ChemicalHelper.getMaterialStack(input);
-        if (stack == null || stack.isEmpty()) return ItemStack.EMPTY;
-        var material = stack.material();
-        // Already-dust inputs are not ore; skip them so the module is an ore processor, not a duper.
-        if (ItemStack.isSameItem(input, ChemicalHelper.get(TagPrefix.dust, material))) return ItemStack.EMPTY;
-        ItemStack crushed = ChemicalHelper.get(TagPrefix.crushed, material, 2);
-        if (!crushed.isEmpty()) return crushed;
-        return ChemicalHelper.get(TagPrefix.dust, material, 1);
+    /** Drains the washing fluid of the integrated recipe for {@code ore} + the current circuit. */
+    private boolean drainRequiredFluid(ItemStack ore) {
+        FluidStack required = requiredFluidFor(ore);
+        return required.isEmpty() || drainFluid(required, required.getAmount());
     }
 
-    /** The first item output of a recipe of {@code type} matching {@code input}, or empty. */
-    private static ItemStack recipeOutput(GTRecipeType type, ItemStack input) {
-        if (input.isEmpty()) return ItemStack.EMPTY;
-        GTRecipe recipe = type.db().find(
-                Map.of(ItemRecipeCapability.CAP, List.of(Ingredient.of(input))),
-                r -> true);
-        if (recipe == null) return ItemStack.EMPTY;
-        for (Content content : recipe.getOutputContents(ItemRecipeCapability.CAP)) {
-            if (content.content instanceof Ingredient ingredient && ingredient.getItems().length > 0) {
-                return ingredient.getItems()[0].copy();
+    /** The fluid input of the integrated recipe matching {@code ore} on the current circuit, or empty. */
+    private FluidStack requiredFluidFor(ItemStack ore) {
+        return requiredFluid(recipeFor(ore, chainCircuit()));
+    }
+
+    /** The required fluid for the first processable ore, for the module UI (may be empty). */
+    private FluidStack requiredFluidForFirstOre() {
+        for (NotifiableItemStackHandler handler : inputItemHandlers()) {
+            for (int slot = 0; slot < handler.getSlots(); slot++) {
+                ItemStack input = handler.getStackInSlot(slot);
+                if (isOre(input)) return requiredFluidFor(input);
             }
         }
-        return ItemStack.EMPTY;
+        return FluidStack.EMPTY;
+    }
+
+    /** The integrated recipe for {@code ore} on {@code circuit} (1..7), or {@code null}. */
+    private static GTRecipe recipeFor(ItemStack ore, int circuit) {
+        if (ore.isEmpty()) return null;
+        return GTNARecipeType.ORE_PROCESSING_RECIPES.db().find(
+                Map.of(ItemRecipeCapability.CAP, List.of(Ingredient.of(ore))),
+                recipe -> circuitOf(recipe) == circuit);
+    }
+
+    private static int circuitOf(GTRecipe recipe) {
+        for (Content content : recipe.getInputContents(ItemRecipeCapability.CAP)) {
+            if (content.content instanceof IntCircuitIngredient circuit) {
+                ItemStack[] items = circuit.getItems();
+                if (items.length > 0) {
+                    return IntCircuitBehaviour.getCircuitConfiguration(items[0]);
+                }
+            }
+        }
+        return -1;
+    }
+
+    /** The first fluid input of {@code recipe} (with its amount), or empty. */
+    private static FluidStack requiredFluid(GTRecipe recipe) {
+        if (recipe == null) return FluidStack.EMPTY;
+        for (Content content : recipe.getInputContents(FluidRecipeCapability.CAP)) {
+            if (content.content instanceof FluidIngredient ingredient) {
+                FluidStack[] stacks = ingredient.getStacks();
+                if (stacks.length > 0) return stacks[0];
+            }
+        }
+        return FluidStack.EMPTY;
     }
 
     /**
@@ -296,11 +297,17 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
         return outputs;
     }
 
-    /** True for an ore/crushed input the processor can work (not an already-pure dust). */
+    /** True for an ore/crushed/raw-ore input the processor can work (not an ingot or a pure dust). */
     private static boolean isOre(ItemStack stack) {
-        MaterialStack material = ChemicalHelper.getMaterialStack(stack);
-        if (material == null || material.isEmpty()) return false;
-        return !ItemStack.isSameItem(stack, ChemicalHelper.get(TagPrefix.dust, material.material()));
+        if (stack.isEmpty()) return false;
+        MaterialEntry entry = ChemicalHelper.getMaterialEntry(stack.getItem());
+        if (entry.isEmpty()) return false;
+        TagPrefix prefix = entry.tagPrefix();
+        return TagPrefix.ORES.containsKey(prefix) ||
+                prefix == TagPrefix.rawOre ||
+                prefix == TagPrefix.crushed ||
+                prefix == TagPrefix.crushedPurified ||
+                prefix == TagPrefix.crushedRefined;
     }
 
     @Override
@@ -309,8 +316,12 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
         group.addWidget(new LabelWidget(5, 4, () -> "Ore Processor tier §b" + getModuleTier()));
         group.addWidget(new LabelWidget(5, 16, () -> "Mode §b" + mode() + " §r| §b" + maxParallel() +
                 "x §r| §b" + getSteamUpkeep() + " mB/t"));
-        group.addWidget(new LabelWidget(5, 28, () -> "Water: §b" + waterAmount() + " §r| Lubricant: §b" +
-                countFluid(lubricant())));
+        group.addWidget(new LabelWidget(5, 28, () -> {
+            FluidStack required = requiredFluidForFirstOre();
+            if (required.isEmpty()) return "Fluid: §bnot required";
+            String name = required.getDisplayName().getString().replace("%", "%%");
+            return "Fluid: §b" + name + " §r" + countFluid(required) + " / " + required.getAmount();
+        }));
         group.addWidget(new LabelWidget(5, 40, () -> "§7Input hatch total: §b" + totalInputFluid() + " §7mB"));
         group.addWidget(new LabelWidget(5, 52, () -> "§7Circuit + ore: input bus"));
         return group;

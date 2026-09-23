@@ -256,7 +256,7 @@ public class GTNALangProvider extends LanguageProvider {
         // Integrated Ore Processors (GTLCore port, LGPLv3)
         add("block.gtna.integrated_ore_processor", "Integrated Ore Processor");
         add("block.gtna.advanced_integrated_ore_processor", "Advanced Integrated Ore Processor");
-        add("gtna.recipe_type.ore_processing", "Integrated Ore Processing");
+        add("gtna.ore_processing", "Integrated Ore Processing");
         add("gtna.machine.integrated_ore_processor.tooltip.0", "Complete ore processing in one step");
         add("gtna.machine.integrated_ore_processor.tooltip.1", "Circuit 1: Grinding-Grinding-Centrifuge");
         add("gtna.machine.integrated_ore_processor.tooltip.2",
@@ -1202,7 +1202,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.steam_elevator_ore_processor_module.tooltip.2", "Do all ore processing in one step");
         add("gtna.machine.steam_elevator_ore_processor_module.tooltip.3", "Can process up to 16 ores at a time");
         add("gtna.machine.steam_elevator_ore_processor_module.tooltip.4",
-                "Every ore costs 128L Steam/t, 1L lubricant, 10L distilled water");
+                "Every ore costs 128L Steam/t and the washing fluid of the selected circuit (circuit 1 needs none)");
         add("gtna.machine.steam_elevator_ore_processor_module.tooltip.5",
                 "Processing time depends on the current mode");
         add("gtna.machine.steam_elevator_ore_processor_module.tooltip.6",

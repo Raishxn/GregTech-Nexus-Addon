@@ -3548,7 +3548,7 @@ public class GTNAMachines {
                             Component.translatable("gtna.machine.integrated_ore_processor.tooltip.7"),
                             Component.translatable("gtceu.multiblock.parallelizable.tooltip"),
                             Component.translatable("gtceu.machine.available_recipe_map_1.tooltip",
-                                    Component.translatable("gtna.recipe_type.ore_processing")))
+                                    Component.translatable("gtna.ore_processing")))
                     .tooltipBuilder(GTNA_ADD)
                     .register());
 
@@ -3690,7 +3690,7 @@ public class GTNAMachines {
                             Component.translatable("gtna.machine.advanced_integrated_ore_processor.laser"),
                             Component.translatable("gtna.machine.advanced_integrated_ore_processor.multiple_recipes"),
                             Component.translatable("gtceu.machine.available_recipe_map_1.tooltip",
-                                    Component.translatable("gtna.recipe_type.ore_processing")))
+                                    Component.translatable("gtna.ore_processing")))
                     .tooltipBuilder(GTNA_ADD)
                     .register());
 

@@ -1767,6 +1767,45 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
 
+        // Integrated Ore Processors (GTLCore port, G-0055). GTLCore registers the blocks without a
+        // craft recipe; these are GTNA's own, built from the materials of each structure.
+        if (enabled(GTNAMachines.INTEGRATED_ORE_PROCESSOR)) {
+            GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("integrated_ore_processor")
+                    .inputItems(GTBlocks.CASING_STAINLESS_CLEAN.asItem(), 4)
+                    .inputItems(ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.BlueSteel).getItem(), 4)
+                    .inputItems(GTBlocks.CASING_TUNGSTENSTEEL_GEARBOX.asItem(), 2)
+                    .inputItems(GTBlocks.CASING_TUNGSTENSTEEL_PIPE.asItem(), 2)
+                    .inputItems(GTItems.ELECTRIC_MOTOR_EV, 4)
+                    .inputItems(GTItems.ELECTRIC_PUMP_EV, 2)
+                    .inputItems(CustomTags.EV_CIRCUITS, 4)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(288))
+                    .outputItems(GTNAMachines.INTEGRATED_ORE_PROCESSOR.asStack())
+                    .duration(600)
+                    .EUt(GTValues.VA[GTValues.EV])
+                    .save(provider);
+        }
+
+        if (enabled(GTNAMachines.ADVANCED_INTEGRATED_ORE_PROCESSOR)) {
+            GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("advanced_integrated_ore_processor")
+                    .inputItems(GTBlocks.CASING_TUNGSTENSTEEL_ROBUST.asItem(), 8)
+                    .inputItems(ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.HSSS).getItem(), 8)
+                    .inputItems(GTNABlocks.RESTRAINT_DEVICE.asItem(), 4)
+                    .inputItems(GTNABlocks.BOROSILICATE_GLASS_BLOCK.asItem(), 8)
+                    .inputItems(GTItems.EMITTER_UHV, 4)
+                    .inputItems(GTItems.SENSOR_UHV, 4)
+                    .inputItems(GTItems.FIELD_GENERATOR_UHV, 4)
+                    .inputItems(CustomTags.UHV_CIRCUITS, 4)
+                    .inputItems(ChemicalHelper.get(TagPrefix.plateDouble, GTMaterials.NaquadahAlloy).getItem(), 4)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(1296))
+                    .outputItems(GTNAMachines.ADVANCED_INTEGRATED_ORE_PROCESSOR.asStack())
+                    .duration(1200)
+                    .EUt(GTValues.VA[GTValues.UHV])
+                    .stationResearch(b -> b.researchStack(GTNABlocks.RESTRAINT_DEVICE.asStack())
+                            .CWUt(1024)
+                            .EUt(GTValues.VA[GTValues.UHV]))
+                    .save(provider);
+        }
+
         // --- Large steam casings (GTNL port; textures from Modernity-GTNH) ---
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.INDUSTRIAL_STEAM_CASING.asItem())
                 .pattern("AAA")
