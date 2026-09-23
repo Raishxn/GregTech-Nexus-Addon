@@ -73,6 +73,29 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0054 (2026-09-23) — Integrated Ore Processing: receitas aparecem no JEI; plano de portar os multiblocos do GTLCore
+
+- **Estado:** as receitas do `gtna:ore_processing` **aparecem no JEI** (o input agora é o **raw ore**,
+  fallback crushed). O log de startup confirma `[GTNA] registered 770 integrated ore processing recipes`
+  e o EMI subiu de 61068 → 61838.
+- **O que está fiel:** o **recipe type** (`gtna:ore_processing`, no modelo do `gtlcore:integrated_ore_processor`),
+  os **7 circuitos** (chains 1..7 do tooltip do GTLCore) e o input raw ore + circuito + água nos modos de wash.
+- **O que ainda diverge do GTLCore:** as receitas são geradas **estaticamente e simplificadas**
+  (`dust` principal + stone + dustSmall). O GTLCore gera **variantes por fluido** (mercúrio / água /
+  distilled water) com **byproducts reais por estágio** (`property.getOreByProducts()`), durações e
+  chances próprias — via `OreRecipeHandlerMixin` (mixin no `OreRecipeHandler` do GT, que roda quando os
+  maps do GT já estão prontos). Referência: `~/MineProjects/GTLCore`
+  (`.../mixin/gtm/recipe/OreRecipeHandlerMixin.java`, `.../data/GTLRecipeTypes.java`
+  `INTEGRATED_ORE_PROCESSOR`, `.../data/machines/MultiBlockMachineA.java`).
+- **Decisão do autor (2026-09-23):** portar **100%** os multiblocos **Integrated Ore Processor** e
+  **Advanced Integrated Ore Processor** do GTLCore para termos a base completa (estrutura, GUI,
+  parallel/overclock hatch, receitas integradas fiéis).
+- **Pendência aberta:** o port dos dois multiblocos acima + trocar a geração simplificada pela fiel
+  (variantes de fluido e byproducts). TST: atribuição só no `eye_of_wood`; `industrial_slaughterhouse`
+  é **GTO** (corrigido em `2269542`).
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**); `runGameTestServer`
+  (**35/35**).
+
 ### G-0053 (2026-09-22) — variantes I/II/III de Entity Crusher, Flight e Weather
 
 - Feedback do autor: "como aumenta o tier do mob crush, flight, weather" → **adicionar variantes I/II/III**
