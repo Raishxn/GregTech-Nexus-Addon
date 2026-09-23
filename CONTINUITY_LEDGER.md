@@ -28,7 +28,8 @@ foi feito nem repetir os erros já pagos.
 > autor com a geometria e orientação do gametest `ebfModuleForms`. O liquefaction agora verifica o
 > módulo a cada 5 ticks quando formado; confirmar a latência e o botão no client. Conferir
 > visualmente o arco-íris e a tradução do tooltip do EBF, o destaque do bloco errado e o módulo
-> KubeJS do Integrated Ore Processor na interface.
+> KubeJS do Integrated Ore Processor na interface. Conferir a formação e a posição dos 480 cores
+> do Nexus ME Hypercore na nova geometria 41×43×41.
 
 > ⚠️ **LEIA PRIMEIRO:** `docs/roadmap/NEXT-SESSION-HANDOFF.md` — handoff da sessão de 2026-09-21
 > (Steam/large steam, formato de tooltip com source, blocos faltantes como o Industrial Steam
@@ -39,8 +40,8 @@ foi feito nem repetir os erros já pagos.
 - Desenvolvimento na branch `main`; o histórico anterior a G-0026 está preservado no ledger.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0073):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
-  `runGameTestServer` (**44/44**, `All 44 required tests passed`) + `runData` determinístico
+- **Gate verde em 2026-09-23 (G-0074):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**45/45**, `All 45 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
 - **Módulos (sub-patterns) na UI/preview/tooltip (G-0066..G-0068):** todo multibloco mostra **"Formed
@@ -58,6 +59,11 @@ foi feito nem repetir os erros já pagos.
   reavalia o módulo a cada 5 ticks. Hatches Parallel, Accelerate, Thread, Overclock e Output Boost
   são limitados a um de cada tipo no conjunto base + módulo. A origem GTOCore do módulo EBF é
   adicionada no momento em que o tooltip aparece, preservando idioma e animação.
+- **Tooltip auxiliar e Hypercore (G-0074):** EBF e liquefaction compartilham as quatro linhas de
+  tooltip de módulo auxiliar; só a lista localizada de hatches muda. O Nexus ME Hypercore usa o
+  layout 41×43×41 fornecido pelo autor, com controller no centro do vidro da face final, Interface
+  de CPU ao lado e 480 posições H/I que aceitam cores ou os casings originais. O gametest valida
+  que o padrão carrega; a formação completa ainda requer QA in-game.
 - **Era Steam Elevator fechada (G-0058):** o módulo de ore processing do elevador está 100% (G-0057);
   os 8 módulos, o host 35×43×35 e a rede wireless estão no gate. Restam só itens de **QA manual
   visual** (`docs/roadmap/QA-MANUAL-CHECKLIST.md`). A logo do mod agora aparece em **todas** as UIs de
@@ -78,7 +84,7 @@ foi feito nem repetir os erros já pagos.
   módulo (G-0043). Ver G-0041..G-0043 para causa raiz, testes e pendências.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
-- **Testes hoje:** 18 unit tests (`main()` + asserts, padrão GTLCore) e 44 gametests (`@GameTest`),
+- **Testes hoje:** 18 unit tests (`main()` + asserts, padrão GTLCore) e 45 gametests (`@GameTest`),
   ambos no gate do CI.
 - **Steam Cracker:** o autor confirmou em 2026-09-23 que a implementação deve continuar sendo a do
   GTNL; estrutura, comportamento e atribuição `GTNASources` atuais seguem essa origem.
@@ -98,6 +104,30 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0074 (2026-09-23) — tooltip auxiliar uniforme e novo Nexus ME Hypercore
+
+- **Tooltip dos módulos:** EBF e liquefaction agora usam o mesmo cabeçalho, explicação e linha
+  `Hatch types unlocked...`; apenas os hatches mudam (EBF: Accelerate + Extra Energy;
+  liquefaction: Parallel + Accelerate). Os nomes são traduzíveis e foram incluídos em inglês e
+  português. A origem GTOCore do módulo EBF continua via `GTNASources`, com rainbow dinâmico.
+- **Integrated Ore Processor:** o exemplo KubeJS de G-0073 é uma coluna de três Clean Stainless
+  Steel Casings; a posição central também aceita um Item Import Bus. Não mudou neste checkpoint.
+- **Nexus ME Hypercore:** o arquivo fornecido pelo autor foi preservado em
+  `docs/structures/nexus_me_hypercore_source.txt` e convertido para
+  `src/main/resources/pattern/nexus_me_hypercore.mbs` pelo script reproduzível em `tools/`.
+  Dimensões 41×43×41, controller na posição `(aisle 40, row 21, column 20)` substituindo o vidro
+  central, Interface de CPU na posição adjacente `(40,21,19)` substituindo o grating. As 200 posições
+  H e 280 posições I permitem os Matrix Crafting Modules ou o AE2 Crafting Unit no lugar dos
+  computer casings; o limiar de Transcendent Mode passou de 481 para 480. O modelo do controller
+  usa Advanced Computer Casing. A origem dessa nova geometria é o arquivo do autor, não um port
+  externo; o tooltip descritivo foi atualizado.
+- **Validação:** o conversor confirmou um controller, uma interface e 480 posições H/I. Gate offline
+  completo verde: `spotlessCheck`, `compileJava`, `runUnitTests` (18/18), `runGameTestServer`
+  (45/45, incluindo `nexusHypercoreNewPatternLoads`) e `runData` (`written: 0`). Código no commit
+  `7331687`.
+- **Pendências:** conferir no client a formação completa, o preview do JEI e o encaixe dos cores;
+  manter as pendências visuais de G-0073.
 
 ### G-0073 (2026-09-23) — EBF auxiliar, diagnóstico de estrutura e módulo KubeJS
 
