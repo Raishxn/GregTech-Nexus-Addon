@@ -795,13 +795,15 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.large_steam_circuit_assembler.desc",
                 "Steam-era circuit assembly line with engraved-circuit targeting.");
         add("gtna.tooltip.large_steam_circuit_assembler.mode",
-                "Supports a multiply mode after engraving the target circuit.");
+                "Engrave 16 of a circuit in the input bus to target it: the machine then only runs circuit-assembler recipes that output that circuit. Multiply Mode (toggle in the UI) doubles the output but quadruples the duration.");
         add("gtna.tooltip.large_steam_circuit_assembler.parallel", "Parallel: Processes up to 64 recipes.");
         add("gtna.tooltip.large_steam_circuit_assembler.structure", "Structure: 3x4x10 steam assembly tunnel.");
         add("gtna.machine.large_steam_circuit_assembler.engrave_circuit", "Engrave Circuit");
         add("gtna.machine.large_steam_circuit_assembler.circuit", "Engraved Circuit: %s");
         add("gtna.machine.large_steam_circuit_assembler.remaining", "Circuits Needed: %s");
         add("gtna.machine.large_steam_circuit_assembler.multiply_mode", "Multiply Mode: %s");
+        add("gtna.machine.on", "On");
+        add("gtna.machine.off", "Off");
         add("block.gtna.large_steam_mixer", "Large Steam Mixer");
         add("gtna.tooltip.large_steam_mixer.desc", "Bulk steam mixing for dusts and fluids.");
         add("gtna.tooltip.large_steam_mixer.speed", "Speed: 100% faster than singleblock.");

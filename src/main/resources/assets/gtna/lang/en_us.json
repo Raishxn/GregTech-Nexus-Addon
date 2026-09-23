@@ -166,7 +166,7 @@
   "gtna.tooltip.large_steam_alloy.structure": "Structure: 3x4x3 (WxHxD). Fireboxes at bottom.",
   "block.gtna.large_steam_circuit_assembler": "Large Steam Circuit Assembler",
   "gtna.tooltip.large_steam_circuit_assembler.desc": "Steam-era circuit assembly line with engraved-circuit targeting.",
-  "gtna.tooltip.large_steam_circuit_assembler.mode": "Supports a multiply mode after engraving the target circuit.",
+  "gtna.tooltip.large_steam_circuit_assembler.mode": "Engrave 16 of a circuit in the input bus to target it: the machine then only runs circuit-assembler recipes that output that circuit. Multiply Mode (toggle in the UI) doubles the output but quadruples the duration.",
   "gtna.tooltip.large_steam_circuit_assembler.structure": "Structure: 3x4x10 steam assembly tunnel.",
   "gtna.machine.large_steam_circuit_assembler.engrave_circuit": "Engrave Circuit",
   "gtna.machine.large_steam_circuit_assembler.circuit": "Engraved Circuit: %s",

@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.api.gui.fancy.IFancyUIProvider;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 
+import com.lowdragmc.lowdraglib.gui.widget.Widget;
 import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 
 import com.raishxn.gtna.GTNACORE;
@@ -42,16 +43,25 @@ public abstract class FancyMachineUIWidgetMixin {
             at = @At("RETURN"),
             remap = false)
     private void gtna$addLogo(IFancyUIProvider fancyUI, boolean showInventory, CallbackInfo ci) {
-        // setupFancyUI() is called on every page navigation, but it clears the page container first,
-        // so this always leaves exactly one logo.
+        // setupFancyUI() is called on every page navigation, but it clears the page container and
+        // creates a fresh page widget first, so this always leaves exactly one logo.
         if (!(mainPage instanceof MetaMachine machine) || !(machine instanceof MultiblockControllerMachine)) {
             return;
         }
         if (!GTNACORE.MOD_ID.equals(machine.getDefinition().getId().getNamespace())) {
             return;
         }
-        int x = Math.max(0, pageContainer.getSize().width - GTNATextures.LOGO_SIZE - 2);
-        int y = Math.max(0, pageContainer.getSize().height - GTNATextures.LOGO_SIZE - 2);
-        pageContainer.addWidget(GTNATextures.logo(x, y));
+        // Put the logo in the page (content) widget, flush with its bottom-right corner, so it sits
+        // inside the machine's display area instead of on the padding above the player inventory.
+        WidgetGroup target = pageContainer;
+        if (!pageContainer.widgets.isEmpty()) {
+            Widget page = pageContainer.widgets.get(pageContainer.widgets.size() - 1);
+            if (page instanceof WidgetGroup pageGroup) {
+                target = pageGroup;
+            }
+        }
+        int x = Math.max(0, target.getSize().width - GTNATextures.LOGO_SIZE - 2);
+        int y = Math.max(0, target.getSize().height - GTNATextures.LOGO_SIZE - 2);
+        target.addWidget(GTNATextures.logo(x, y));
     }
 }

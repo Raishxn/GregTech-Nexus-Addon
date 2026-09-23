@@ -24,7 +24,6 @@ import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
@@ -110,9 +109,8 @@ public class SteamManufacturer extends SteamMultiMachineBase implements IDisplay
     @Override
     public void addDisplayText(List<Component> textList) {
         if (isFormed()) {
-            textList.add(Component.translatable("gtna.multiblock.parallel_amount", this.targetParallel)
-                    .withStyle(ChatFormatting.BLUE));
-
+            // Only the interactive parallel line: the fancy UI already shows the target parallel, so a
+            // second static "Parallels: N" line was a duplicate.
             textList.add(Component.literal("Parallels: ")
                     .append(ComponentPanelWidget.withButton(Component.literal("[-] "), "parallelSub"))
                     .append(ComponentPanelWidget.withButton(Component.literal("[+]"), "parallelAdd")));
