@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 ### Added
+- **KubeJS support for sub-patterns**: the `GTNAServerEvents.subPatterns` server event lets modpack
+  creators add module/extension structures to any multiblock (new or existing), unlocking new
+  abilities (see `docs/roadmap/sub-patterns.md`).
 - **Sub-pattern (module/extension) mechanic** (`ISubPatternMachine` + a `MultiblockControllerMachine`
   mixin): a multiblock can be extended by additional structures attached to the same controller, whose
   parts are merged in to unlock new abilities (e.g. Parallel / Accelerate hatches). Ported in the

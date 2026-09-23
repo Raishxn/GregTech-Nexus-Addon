@@ -507,3 +507,28 @@ têm descrição, só o ícone `gregtech:gt.blockmachines:<meta>`). Também tem 
 `Tier 0.75 - Superheated` e `Tier 0.999... - Supercritical`. O **TST** segue o mesmo padrão (a config
 habilita a aba de quests), mas os dados de quest **não estão no repo** do TST — usamos o GTO como mapa
 principal e o GTNL como confirmação das eras steam.
+
+---
+
+## TST (Twist Space Technology) — quests em `AdityaVG13/Twist-Stuff`
+
+As quests do TST (BetterQuesting, versões 2.8.4/2.9) confirmam a **mesma ordem de eras**, com UMV no
+topo:
+
+`Tier 0 Stone Age` → `Tier 0.5 Steam` → `Tier 1 LV` → `Tier 2 MV` → `Tier 3 HV` → `Tier 4 EV` →
+`Tier 5 IV` → `Tier 6 LuV` → `Tier 7 ZPM` → `Tier 8 UV` → `Tier 9 UHV` → `Tier 10 UEV` →
+`Tier 11 UIV` → `Tier 12 UMV` → `Endgame Goals` (+ linhas laterais: power, AE, multiblocks, space,
+thaumaturgy, bees...).
+
+A quest line `Twist Space Technology` lista os multiblocos próprios do TST (high-tier): `Vacuum Filter
+Extractor`, `Universal Generator`, `The Tower of Abstraction`, `The Mini Mixer`, `The Largest Fluid
+Heater`, `The Disassembler`, `Molecular Deconstructor`, `Mega Solar Panel Factory`, `Mega Naquadah
+Reactor`, `Mega Bricked Blast Furnace`, `Magnetic Drive Pressure Former`, `Lightning Spire`, `Large
+Solar Boiler`, `Large Neutron Oscillator`, `Large Industrial Coking Factory`, `Integrated Assembly
+Matrix`, `Industrial Magnetar Separator`, `Industrial Magic Matrix`, `Industrial Alchemy Tower`,
+`Crystalline Infinitier`, `Elven Workshop`, `Bloody Hell`, `Basic Steam Generator`, `Advanced Mega
+Oil Cracker`, `Advanced Circuit Assembly Line`, `Astral Computing Array`, `Aquatic Farm`,
+`Constraintor T1/T2`, `Merger T1/T2`, etc.
+
+> O manifesto do GTNA não lista esses TST machines (só `eye_of_wood`); ficam como referência de era,
+> não como alvos do port.

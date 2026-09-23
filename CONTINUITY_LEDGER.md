@@ -77,6 +77,28 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0064 (2026-09-23) — KubeJS para sub-patterns; quests do TST; `lava_furnace` pulado
+
+Feedback do autor: pular o `lava_furnace` (o GTNA já tem um multibloco equivalente); expor os
+sub-patterns ao **KubeJS** para criadores de modpack; e as quests do TST estão em
+`AdityaVG13/Twist-Stuff`.
+
+- **`lava_furnace` pulado** (decisão do autor). Atualizado no `port-roadmap-by-era.md`.
+- **KubeJS para sub-patterns:**
+  - `GTNASubPatterns` (registry estático, chave = id da máquina): o KubeJS registra extensões para
+    máquinas **novas ou já existentes**; o mixin lê o registry **e** a interface `ISubPatternMachine`.
+  - `GTNAServerEvents` + `SubPatternEventJS` (evento de servidor `GTNAServerEvents.subPatterns`):
+    `event.add(machineId, definition => FactoryBlockPattern...)`. O `FactoryBlockPattern`/`Predicates`
+    já são expostos pelo GTCEu; o evento foi registrado no `GTNAKubeJSPlugin.registerEvents()`.
+  - Doc novo `docs/roadmap/sub-patterns.md` com o API e um exemplo.
+- **Quests do TST** (`Twist-Stuff`, BetterQuesting 2.8.4/2.9): confirmam a ordem de eras
+  (`Tier 0 Stone → Tier 0.5 Steam → Tier 1 LV → … → Tier 12 UMV → Endgame`) e listam os multiblocos
+  próprios do TST (high-tier). Registrado em `era-mapping-gto-quests.md`.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**40/40**) + `runData` determinístico. (KubeJS é `modCompileOnly`; o caminho
+  KubeJS não roda no server dedicado — validar in-game com KubeJS instalado.)
+- **Pendências:** validar o evento KubeJS in-game; a ancoragem do sub-pattern (ver G-0063).
+
 ### G-0063 (2026-09-23) — mecânica de sub-pattern (módulo/extensão) + `liquefaction_furnace` (GTOCore)
 
 Atende ao pedido do autor: **portar o `liquefaction_furnace` e criar a mecânica de módulo/extensão**

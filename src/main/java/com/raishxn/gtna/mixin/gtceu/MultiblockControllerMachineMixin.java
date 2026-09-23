@@ -6,9 +6,11 @@ import com.gregtechceu.gtceu.api.pattern.BlockPattern;
 import com.gregtechceu.gtceu.api.pattern.MultiblockState;
 import com.gregtechceu.gtceu.api.pattern.util.PatternMatchContext;
 
+import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
 import com.raishxn.gtna.api.machine.multiblock.ISubPatternMachine;
 import org.spongepowered.asm.mixin.Mixin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,11 +41,15 @@ public abstract class MultiblockControllerMachineMixin {
         if (pattern == null || !pattern.checkPatternAt(state, false)) {
             return false;
         }
-        if (!(self instanceof ISubPatternMachine host)) {
-            return true;
+        List<BlockPattern> subPatterns = new ArrayList<>();
+        if (self instanceof ISubPatternMachine host) {
+            List<BlockPattern> fromMachine = host.gtna$getSubPatterns();
+            if (fromMachine != null) {
+                subPatterns.addAll(fromMachine);
+            }
         }
-        List<BlockPattern> subPatterns = host.gtna$getSubPatterns();
-        if (subPatterns == null || subPatterns.isEmpty()) {
+        subPatterns.addAll(GTNASubPatterns.get(self.getDefinition()));
+        if (subPatterns.isEmpty()) {
             return true;
         }
 
