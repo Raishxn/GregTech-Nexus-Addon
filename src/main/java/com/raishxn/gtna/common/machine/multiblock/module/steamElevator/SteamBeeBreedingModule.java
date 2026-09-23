@@ -77,6 +77,12 @@ public class SteamBeeBreedingModule extends SteamElevatorModuleMachine {
     }
 
     @Override
+    protected boolean isModuleWorking() {
+        return hasUpkeepSteam() && !findQueen().isEmpty() &&
+                countItem(ModItems.HONEY_TREAT.get()) >= FEED_CONSUMED;
+    }
+
+    @Override
     public void onElevatorTick(SteamElevator elevator) {
         if (!consumeSteam(getSteamUpkeep())) return;
 

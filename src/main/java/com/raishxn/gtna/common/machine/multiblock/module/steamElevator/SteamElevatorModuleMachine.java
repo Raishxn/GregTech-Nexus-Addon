@@ -140,9 +140,9 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
         }
         SteamElevator currentHost = host;
         if (currentHost == null) return;
-        // Work out the active state before ticking (the tick may consume the last steam) and mirror
+        // Work out the active state before ticking (the tick may consume the inputs/steam) and mirror
         // it on the recipe logic, so the machine model lights up and Jade/GTCEu show it as running.
-        boolean active = hasUpkeepSteam();
+        boolean active = isModuleWorking();
         onElevatorTick(currentHost);
         recipeLogic.setStatus(active ? RecipeLogic.Status.WORKING : RecipeLogic.Status.IDLE);
     }
@@ -499,7 +499,16 @@ public abstract class SteamElevatorModuleMachine extends WorkableMultiblockMachi
      */
     @Override
     public boolean isActive() {
-        return isFormed() && elevatorConnected && hasUpkeepSteam();
+        return isFormed() && elevatorConnected && isModuleWorking();
+    }
+
+    /**
+     * Whether the module has what it needs to work this tick: at least the steam for its upkeep and,
+     * for modules that consume something, the required inputs. Subclasses narrow this so an idle
+     * module reads as idle instead of always working.
+     */
+    protected boolean isModuleWorking() {
+        return hasUpkeepSteam();
     }
 
     /**

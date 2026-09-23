@@ -74,6 +74,12 @@ public class SteamApiaryModule extends SteamElevatorModuleMachine {
         return CYCLE_TICKS;
     }
 
+    @Override
+    protected boolean isModuleWorking() {
+        return hasUpkeepSteam() && countItem(Items.HONEYCOMB) >= COMBS_CONSUMED &&
+                countFluid(water()) >= WATER_PER_CYCLE;
+    }
+
     private static FluidStack water() {
         return new FluidStack(Fluids.WATER, WATER_PER_CYCLE);
     }

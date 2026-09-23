@@ -87,6 +87,14 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
         return cycleTicks();
     }
 
+    @Override
+    protected boolean isModuleWorking() {
+        return hasUpkeepSteam() &&
+                countFluid(distilledWater()) >= WATER_PER_ORE &&
+                countFluid(lubricant()) >= LUBRICANT_PER_ORE &&
+                countItem(stack -> !macerate(stack).isEmpty()) > 0;
+    }
+
     private static int clampMode(int mode) {
         return Math.max(0, Math.min(MAX_MODE, mode));
     }

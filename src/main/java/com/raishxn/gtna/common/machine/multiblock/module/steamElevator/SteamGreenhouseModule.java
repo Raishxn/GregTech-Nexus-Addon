@@ -34,7 +34,8 @@ public class SteamGreenhouseModule extends SteamElevatorModuleMachine {
     /** GTNL {@code getWaterUsage()}. */
     public static final int WATER_PER_OPERATION = 16_000;
     public static final int RANGE = 16;
-    private static final int CYCLE_TICKS = 100;
+    /** GTNL tooltip: "Fixed operation time of 60 seconds". */
+    private static final int CYCLE_TICKS = 1200;
 
     @Persisted
     @DescSynced
@@ -68,6 +69,11 @@ public class SteamGreenhouseModule extends SteamElevatorModuleMachine {
     @Override
     public int getModuleMaxProgress() {
         return CYCLE_TICKS;
+    }
+
+    @Override
+    protected boolean isModuleWorking() {
+        return hasUpkeepSteam() && countFluid(water()) >= WATER_PER_OPERATION;
     }
 
     private static FluidStack water() {

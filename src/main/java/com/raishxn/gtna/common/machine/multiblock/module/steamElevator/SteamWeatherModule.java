@@ -91,6 +91,11 @@ public class SteamWeatherModule extends SteamElevatorModuleMachine {
     }
 
     @Override
+    protected boolean isModuleWorking() {
+        return activeMode != MODE_OFF && weatherTicksLeft > 0;
+    }
+
+    @Override
     public void onElevatorTick(SteamElevator elevator) {
         if (!(getLevel() instanceof ServerLevel level)) return;
         if (weatherTicksLeft > 0) {

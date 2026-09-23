@@ -93,6 +93,11 @@ public class SteamEntityCrusherModule extends SteamElevatorModuleMachine {
     }
 
     @Override
+    protected boolean isModuleWorking() {
+        return hasUpkeepSteam() && !findCatalyst().isEmpty();
+    }
+
+    @Override
     public void onElevatorTick(SteamElevator elevator) {
         if (!consumeSteam(getSteamUpkeep())) return;
         if (!(getLevel() instanceof ServerLevel level)) return;
