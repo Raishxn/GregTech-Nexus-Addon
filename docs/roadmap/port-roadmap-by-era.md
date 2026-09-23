@@ -139,15 +139,18 @@ LGPLv3 — código/render portável), **TST** (1.7.10, GPL-3.0 — só mecânica
 - **GTNA:** `universal_factory`, `industrial_slaughterhouse`, `integrated_ore_processor`,
   `advanced_integrated_ore_processor`.
 
-### Lacuna 🎯
-- Nenhuma específica de LV. A continuação é o **port GTO/GTOCore** (manifest, ordem de entrega passo
-  3: "Low/mid-tier GTO processing and generators"), ex.: `chemical_plant`, `recycler`,
-  `mass_fabricator`, `decay_hastener`, `engraving_laser_plant`.
+### Lacuna 🎯 (confirmada pelas quests do GTO — ver `era-mapping-gto-quests.md`)
+- Multiblocos GTOCore de **LV**: `liquefaction_furnace`, `lava_furnace`, `generator_array`,
+  `tree_growth_simulator`, `thermal_power_pump`, `gas_compressor`.
+- Próximo passo: portar um desses (sugestão: **`liquefaction_furnace`** ou **`lava_furnace`**, os mais
+  "early" do bloco), e então subir para o MV (`reaction_furnace`, `greenhouse`,
+  `crystallization_chamber`, `component_assembler`, `processing_plant`).
 
 ## Eras seguintes (MV → UHV+)
 
-_(a inventariar por era)_ — usar o mesmo processo: listar multiblocos/mecânicas da era nas fontes,
-marcar o que já existe, e priorizar por valor para criadores de modpack e jogadores.
+**Mapeadas** em `era-mapping-gto-quests.md` (quests do modpack GTO, um capítulo por tier). Use esse
+doc para saber **em que era** cada conteúdo entra; a lista de multiblocos a portar continua no
+`multiblock-port-manifest.md`. Resumo dos multiblocos GTOCore por era está no topo do doc.
 
 ---
 

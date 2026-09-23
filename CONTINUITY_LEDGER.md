@@ -77,6 +77,34 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0061 (2026-09-23) — mapeamento de eras pelas quests do GTO (fim do "chute cego")
+
+Dica do autor: o modpack **GregTech Odyssey** tem **FTB Quests por tier**, o que dá o mapa real de
+eras sem adivinhar.
+
+- **Fonte:** `.../instances/GregTech.Odyssey-0.6.0-dev1/minecraft/config/ftbquests/quests/chapters/*.snbt`
+  — um capítulo por tier, cada quest com o item-alvo em `tasks[].item`. O GTNL tem BetterQuesting só
+  com as eras steam (`Tier 0.75 Superheated`, `Tier 0.999 Supercritical`); o TST não tem dados de
+  quest no repo. Logo, o GTO é a fonte de mapeamento.
+- **Ordem das eras (order_index):** stoneage → steam → ulv → lv → mv → hv → ev → iv → luv → zpm → uv
+  → uhv → uev → uiv → uxv → opv (confere com o roadmap).
+- **Novo doc:** `docs/roadmap/era-mapping-gto-quests.md` — lista, por era, os itens
+  `gtocore:`/`gtmthings:` (com marca ✅ quando o GTNA já tem), a ordem das eras e um **resumo dos
+  multiblocos GTOCore por era** (confirmados no código do GTOCore).
+- **Achados que corrigem o inventário:**
+  - A era **ULV** do GTO é dominada por **singleblocks** do GTOCore (`ulv_assembler`, `ulv_lathe`,
+    `ulv_wiremill`, `ulv_chemical_reactor`, `ulv_packer`, `ulv_fluid_solidifier`, `ulv_loom`,
+    `ulv_electric_*`); de multibloco só `primitive_distillation_tower` (✅) e `digital_miner`. →
+    a era ULV **fecha** (com o `brick_kiln`, G-0060); o autor tinha razão que o `chemical_plant` não é
+    early.
+  - **LV** tem multiblocos GTOCore genuínos: `liquefaction_furnace`, `lava_furnace`, `generator_array`,
+    `tree_growth_simulator`, `thermal_power_pump`, `gas_compressor`.
+  - **MV**: `reaction_furnace`, `greenhouse`, `crystallization_chamber`, `component_assembler`,
+    `processing_plant`.
+- **Próximo passo:** portar um multibloco **LV** do GTOCore (sugestão: `liquefaction_furnace` ou
+  `lava_furnace`), seguindo o `era-mapping-gto-quests.md`.
+- **Validação:** mudança só de documentação (doc novo + roadmap + ledger); gate de código não afetado.
+
 ### G-0060 (2026-09-23) — `brick_kiln` (GTOCore) portado; era ULV fechada
 
 Fecha a lacuna ULV do inventário (G-0059) com o port do **`brick_kiln`** do GTOCore (LGPLv3):
