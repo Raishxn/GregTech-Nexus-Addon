@@ -24,6 +24,9 @@
 - **Steam Ore Processing Module** returned the raw ore unchanged: the recipe lookup passed
   `Ingredient.of(stack)` to GT's recipe DB, which does not expand the item's tags, so tag-based ore
   recipes were never found. It now passes the `ItemStack` (like GT's own `SmartItemFilter`).
+- **Addon logo** now shows in every GTNA multiblock UI: a client-only mixin on GTCEu's
+  `FancyMachineUIWidget` covers the electric/no-energy/fancy-steam controllers, and the two custom
+  310×270 UIs (Nexus ME Hypercore, Nexus Flux Matrix) got an explicit logo.
 
 ## [0.4.0] - 2026-09-21
 

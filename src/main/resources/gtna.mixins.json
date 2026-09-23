@@ -17,6 +17,7 @@
     "gtceu.RecipeHelperMixin"
   ],
   "client": [
+    "client.FancyMachineUIWidgetMixin"
   ],
   "injectors": {
     "defaultRequire": 1

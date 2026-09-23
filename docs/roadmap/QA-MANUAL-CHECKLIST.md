@@ -76,3 +76,10 @@ checkpoint novo do `CONTINUITY_LEDGER.md` e, quando der, transformar em gametest
       roda múltiplas receitas em paralelo (base `WorkableElectricMultipleRecipesMachine`).
 - [ ] Ajustar `config/gtna/balance/machines.json` → `integratedOreMultiplier` muda a quantidade de dust
       por minério (default 4 = GTLCore).
+
+## Logo do mod nas UIs (G-0058)
+- [ ] A logo GTNA aparece no **canto inferior-direito** de todas as UIs de multibloco:
+      steam custom, fancy (elétricos/no-energy) e as duas 310×270 (Nexus ME Hypercore / Nexus Flux Matrix).
+- [ ] Ela **não sobrepõe** conteúdo nas telas cheias (ex.: ME Storage, Nexus ME Hypercore) nem a
+      inventário do jogador.
+- [ ] Navegar entre as abas laterais (fancy UI) mantém **uma única** logo (não duplica).

@@ -34,10 +34,14 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0057):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+- **Gate verde em 2026-09-23 (G-0058):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
   `runGameTestServer` (**37/37**, `All 37 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
+- **Era Steam Elevator fechada (G-0058):** o módulo de ore processing do elevador está 100% (G-0057);
+  os 8 módulos, o host 35×43×35 e a rede wireless estão no gate. Restam só itens de **QA manual
+  visual** (`docs/roadmap/QA-MANUAL-CHECKLIST.md`). A logo do mod agora aparece em **todas** as UIs de
+  multibloco (mixin client-only `FancyMachineUIWidgetMixin` + logos explícitas nas UIs custom).
 - **Módulos do elevador (G-0052):** o IO de item/fluido agora é sempre pelos **hatches da própria
   estrutura** 1x5x2 (input/output bus e input/output hatch) — sem inventário interno. O status padrão
   (Running/Idle) aparece via `MultiblockDisplayText` e `isActive()` respeita o upkeep de steam.
@@ -72,6 +76,33 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0058 (2026-09-23) — fecha a era Steam Elevator; logo do mod em todas as UIs de multibloco
+
+Feedback do autor: **o módulo do elevador está 100%** — "podemos finalizar essa etapa do steam
+elevator de fato". Aproveitado para corrigir a logo.
+
+- **Era Steam Elevator fechada:** o `SteamOreProcessorModule` (G-0052/G-0056/G-0057) refina
+  raw/stone ore e consome o fluido da receita integrada por circuito; os 8 módulos, o host 35×43×35,
+  a rede wireless de steam e os tooltips estão no gate. Pendências restantes são só **QA manual
+  visual** (checklist).
+- **Logo do mod em todas as UIs de multibloco:** antes só as UIs steam custom
+  (`SteamMultiMachineBase`, `LargeSteamSolarBoiler`, `SteamElevator`, `SteamElevatorModuleMachine`)
+  desenhavam a `GTNATextures.LOGO`; os multiblocos "fancy" (elétricos, no-energy e o
+  `SteamManufacturer`/`VoidMinerSteamGateAged`, que trocam para `FancyMachineUIWidget`) e as duas
+  UIs custom 310×270 (`NexusMEHyperCore`, `NexusFluxMatrix`) ficavam sem.
+  - **Mixin client-only `FancyMachineUIWidgetMixin`** (`gtna.mixins.json` → `client`): no `RETURN` de
+    `setupFancyUI(IFancyUIProvider, boolean)`, se o `mainPage` é um `MultiblockControllerMachine` do
+    namespace `gtna`, adiciona a logo no canto inferior-direito do `pageContainer` (o
+    `clearUI()` do próprio setup garante uma única logo por navegação). Cobre **todos** os fancy de
+    uma vez, inclusive máquinas futuras.
+  - Logo explícita adicionada nas duas UIs custom (`NexusMEHyperCore`, `NexusFluxMatrix`, em
+    `(281,161)`).
+  - A logo é uma textura 512² desenhada em 18×18 (o `ResourceTexture` escala pela UV 0..1).
+- **Validação:** `spotlessCheck` + `compileJava` (0 warnings de mixin) + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**37/37**, mixin é client-only e não entra no server dedicado).
+- **Pendências:** QA manual visual no client (logo nas UIs fancy/custom; conferir se não sobrepõe
+  conteúdo em telas cheias).
 
 ### G-0057 (2026-09-23) — fix urgente: módulo devolvia o minério cru; fluido da receita pelo material
 

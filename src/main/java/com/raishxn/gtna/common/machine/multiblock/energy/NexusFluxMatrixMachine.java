@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 
 import com.raishxn.gtna.client.renderer.BlockHighlightHandler;
+import com.raishxn.gtna.client.renderer.GTNATextures;
 import com.raishxn.gtna.common.block.NexusCapacitorBlock;
 import com.raishxn.gtna.common.data.NexusEnergyNetwork;
 import com.raishxn.gtna.config.ConfigHolder;
@@ -173,6 +174,8 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         return new ModularUI(310, 270, this, entityPlayer)
                 .background(GuiTextures.BACKGROUND)
                 .widget(screen)
+                // The addon logo in the bottom-right corner of the content area (GTNL convention).
+                .widget(GTNATextures.logo(281, 161))
                 .widget(UITemplate.bindPlayerInventory(entityPlayer.getInventory(), GuiTextures.SLOT, 74, 188, true));
     }
 
