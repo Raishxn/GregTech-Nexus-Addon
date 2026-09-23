@@ -32,7 +32,7 @@ import java.util.Locale;
 
 public class NexusMEHyperCoreMachine extends WorkableMultiblockMachine implements IDisplayUIMachine {
 
-    public static final int TOTAL_MODULE_SLOTS = 480;
+    public static final int TOTAL_MODULE_SLOTS = 320;
 
     private static final long MODULE_I_STORAGE = 4L * 1024L * 1024L;
     private static final long MODULE_II_STORAGE = 64L * 1024L * 1024L;

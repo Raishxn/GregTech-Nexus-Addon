@@ -3803,20 +3803,20 @@ public class GTNAMachines {
                     .rotationState(RotationState.NON_Y_AXIS)
                     .allowExtendedFacing(false)
                     .recipeType(GTRecipeTypes.DUMMY_RECIPES)
-                    .appearanceBlock(GTBlocks.ADVANCED_COMPUTER_CASING)
+                    .appearanceBlock(GCYMBlocks.CASING_NONCONDUCTING)
                     .pattern(GTNAMachines::createNexusMEHyperCorePattern)
-                    .sidedWorkableCasingModel(
-                            GTCEu.id("block/casings/hpca/advanced_computer_casing"),
+                    .workableCasingModel(
+                            GTCEu.id("block/casings/gcym/nonconducting_casing"),
                             GTCEu.id("block/multiblock/assembly_line"))
                     .tooltips(
                             Component.literal(
-                                    "A 41×43×41 computer lattice with glass and steel framing.")
+                                    "A 44×22×44 ME computer lattice surrounding a laminated-glass core.")
                                     .withStyle(ChatFormatting.AQUA),
                             Component.literal(
-                                    "Computer casings inside the frame can hold up to 480 Matrix Crafting Modules.")
+                                    "The core holds up to 320 Matrix Crafting Modules or AE2 Crafting Units.")
                                     .withStyle(ChatFormatting.GRAY),
                             Component.literal(
-                                    "Place the Crafting CPU Interface beside the controller on the glass face.")
+                                    "The Crafting CPU Interface sits beside the controller on the glass cylinder.")
                                     .withStyle(ChatFormatting.GRAY))
                     .tooltipBuilder(GTNA_ADD)
                     .register());
@@ -3959,19 +3959,22 @@ public class GTNAMachines {
 
     private static BlockPattern createNexusMEHyperCorePattern(MultiblockMachineDefinition definition) {
         return GTNAMultiBlockFileReader.start(definition, "nexus_me_hypercore")
-                .where('B', blocks(GTBlocks.FUSION_GLASS.get()))
-                .where('C', blocks(GTBlocks.CASING_GRATE.get()))
-                .where('D', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.BlackSteel)))
-                .where('E', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.HSLASteel)))
-                .where('F', blocks(GTBlocks.CASING_ASSEMBLY_CONTROL.get()))
-                .where('G', blocks(GTBlocks.HIGH_POWER_CASING.get()))
-                .where('H', blocks(GTBlocks.ADVANCED_COMPUTER_CASING.get())
-                        .or(craftingStorageCorePredicate())
+                .where('A', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.StainlessSteel)))
+                .where('B', any()) // two isolated export bounds markers, not machine components
+                .where('C', blocks(GTNABlocks.HIGH_STRENGTH_CONCRETE.get()))
+                .where('D', blocks(GTBlocks.CASING_PALLADIUM_SUBSTATION.get()))
+                .where('E', blocks(GTBlocks.CASING_EXTREME_ENGINE_INTAKE.get()))
+                .where('F', blocks(GCYMBlocks.CASING_NONCONDUCTING.get())
+                        .or(abilities(PARALLEL_HATCH).setMaxGlobalLimited(1)))
+                .where('G', blocks(GCYMBlocks.CASING_LASER_SAFE_ENGRAVING.get()))
+                .where('H', blocks(GTNABlocks.COBALT_OXIDE_CERAMIC_STRONG_THERMALLY_CONDUCTIVE_MECHANICAL_BLOCK.get()))
+                .where('I', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.BlackSteel)))
+                .where('J', blocks(GTBlocks.CASING_LAMINATED_GLASS.get()))
+                .where('K', blocks(GTBlocks.FILTER_CASING.get()))
+                .where('L', craftingStorageCorePredicate()
                         .or(blocks(Registries.getBlock("ae2:crafting_unit"))))
-                .where('I', blocks(GTBlocks.COMPUTER_CASING.get())
-                        .or(craftingStorageCorePredicate())
-                        .or(blocks(Registries.getBlock("ae2:crafting_unit"))))
-                .where('J', blocks(GCYMBlocks.CASING_STRESS_PROOF.get()))
+                .where('M', blocks(GCYMBlocks.MOLYBDENUM_DISILICIDE_COIL_BLOCK.get()))
+                .where('N', blocks(GTBlocks.HIGH_POWER_CASING.get()))
                 .where('P', blocks(GTNAMachines2.CRAFTING_CPU_INTERFACE.getBlock()))
                 .where('Q', controller(blocks(definition.get())))
                 .where(' ', air())

@@ -3,104 +3,86 @@
   "loader": "gtceu:machine",
   "machine": "gtna:nexus_me_hypercore",
   "texture_overrides": {
-    "bottom": "gtceu:block/casings/hpca/advanced_computer_casing/bottom",
-    "side": "gtceu:block/casings/hpca/advanced_computer_casing/side",
-    "top": "gtceu:block/casings/hpca/advanced_computer_casing/top"
+    "all": "gtceu:block/casings/gcym/nonconducting_casing"
   },
   "variants": {
     "is_formed=false,recipe_logic_status=idle": {
       "model": {
-        "parent": "gtceu:block/machine/template/sided/sided",
+        "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "bottom": "gtceu:block/casings/hpca/advanced_computer_casing/bottom",
+          "all": "gtceu:block/casings/gcym/nonconducting_casing",
           "overlay_front": "gtceu:block/multiblock/assembly_line/overlay_front",
-          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_emissive",
-          "side": "gtceu:block/casings/hpca/advanced_computer_casing/side",
-          "top": "gtceu:block/casings/hpca/advanced_computer_casing/top"
+          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_emissive"
         }
       }
     },
     "is_formed=false,recipe_logic_status=suspend": {
       "model": {
-        "parent": "gtceu:block/machine/template/sided/sided",
+        "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "bottom": "gtceu:block/casings/hpca/advanced_computer_casing/bottom",
+          "all": "gtceu:block/casings/gcym/nonconducting_casing",
           "overlay_front": "gtceu:block/multiblock/assembly_line/overlay_front_paused",
-          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_paused_emissive",
-          "side": "gtceu:block/casings/hpca/advanced_computer_casing/side",
-          "top": "gtceu:block/casings/hpca/advanced_computer_casing/top"
+          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_paused_emissive"
         }
       }
     },
     "is_formed=false,recipe_logic_status=waiting": {
       "model": {
-        "parent": "gtceu:block/machine/template/sided/sided",
+        "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "bottom": "gtceu:block/casings/hpca/advanced_computer_casing/bottom",
+          "all": "gtceu:block/casings/gcym/nonconducting_casing",
           "overlay_front": "gtceu:block/multiblock/assembly_line/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_active_emissive",
-          "side": "gtceu:block/casings/hpca/advanced_computer_casing/side",
-          "top": "gtceu:block/casings/hpca/advanced_computer_casing/top"
+          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_active_emissive"
         }
       }
     },
     "is_formed=false,recipe_logic_status=working": {
       "model": {
-        "parent": "gtceu:block/machine/template/sided/sided",
+        "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "bottom": "gtceu:block/casings/hpca/advanced_computer_casing/bottom",
+          "all": "gtceu:block/casings/gcym/nonconducting_casing",
           "overlay_front": "gtceu:block/multiblock/assembly_line/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_active_emissive",
-          "side": "gtceu:block/casings/hpca/advanced_computer_casing/side",
-          "top": "gtceu:block/casings/hpca/advanced_computer_casing/top"
+          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_active_emissive"
         }
       }
     },
     "is_formed=true,recipe_logic_status=idle": {
       "model": {
-        "parent": "gtceu:block/machine/template/sided/sided",
+        "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "bottom": "gtceu:block/casings/hpca/advanced_computer_casing/bottom",
+          "all": "gtceu:block/casings/gcym/nonconducting_casing",
           "overlay_front": "gtceu:block/multiblock/assembly_line/overlay_front",
-          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_emissive",
-          "side": "gtceu:block/casings/hpca/advanced_computer_casing/side",
-          "top": "gtceu:block/casings/hpca/advanced_computer_casing/top"
+          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_emissive"
         }
       }
     },
     "is_formed=true,recipe_logic_status=suspend": {
       "model": {
-        "parent": "gtceu:block/machine/template/sided/sided",
+        "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "bottom": "gtceu:block/casings/hpca/advanced_computer_casing/bottom",
+          "all": "gtceu:block/casings/gcym/nonconducting_casing",
           "overlay_front": "gtceu:block/multiblock/assembly_line/overlay_front_paused",
-          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_paused_emissive",
-          "side": "gtceu:block/casings/hpca/advanced_computer_casing/side",
-          "top": "gtceu:block/casings/hpca/advanced_computer_casing/top"
+          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_paused_emissive"
         }
       }
     },
     "is_formed=true,recipe_logic_status=waiting": {
       "model": {
-        "parent": "gtceu:block/machine/template/sided/sided",
+        "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "bottom": "gtceu:block/casings/hpca/advanced_computer_casing/bottom",
+          "all": "gtceu:block/casings/gcym/nonconducting_casing",
           "overlay_front": "gtceu:block/multiblock/assembly_line/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_active_emissive",
-          "side": "gtceu:block/casings/hpca/advanced_computer_casing/side",
-          "top": "gtceu:block/casings/hpca/advanced_computer_casing/top"
+          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_active_emissive"
         }
       }
     },
     "is_formed=true,recipe_logic_status=working": {
       "model": {
-        "parent": "gtceu:block/machine/template/sided/sided",
+        "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "bottom": "gtceu:block/casings/hpca/advanced_computer_casing/bottom",
+          "all": "gtceu:block/casings/gcym/nonconducting_casing",
           "overlay_front": "gtceu:block/multiblock/assembly_line/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_active_emissive",
-          "side": "gtceu:block/casings/hpca/advanced_computer_casing/side",
-          "top": "gtceu:block/casings/hpca/advanced_computer_casing/top"
+          "overlay_front_emissive": "gtceu:block/multiblock/assembly_line/overlay_front_active_emissive"
         }
       }
     }

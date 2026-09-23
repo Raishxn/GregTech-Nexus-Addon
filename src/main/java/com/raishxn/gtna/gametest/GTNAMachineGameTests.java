@@ -1951,11 +1951,11 @@ public final class GTNAMachineGameTests {
         helper.succeed();
     }
 
-    /** The supplied Hypercore layout must decode and build at its full 41×43×41 size. */
+    /** The author's Hypercore layout must decode and build at its full 44×22×44 size. */
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void nexusHypercoreNewPatternLoads(GameTestHelper helper) {
+    public static void nexusHypercorePatternLoads(GameTestHelper helper) {
         int[] dimensions = GTNAMachines.NEXUS_ME_HYPERCORE.getPatternFactory().get().getDimensions();
-        helper.assertTrue(java.util.Arrays.equals(dimensions, new int[] { 41, 43, 41 }),
+        helper.assertTrue(java.util.Arrays.equals(dimensions, new int[] { 44, 22, 44 }),
                 "Nexus ME Hypercore pattern dimensions: " + java.util.Arrays.toString(dimensions));
         helper.succeed();
     }
