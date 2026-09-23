@@ -13,6 +13,7 @@ import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
@@ -90,7 +91,7 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
     @Override
     protected boolean isModuleWorking() {
         return hasUpkeepSteam() &&
-                countFluid(distilledWater()) >= WATER_PER_ORE &&
+                waterAmount() >= WATER_PER_ORE &&
                 countFluid(lubricant()) >= LUBRICANT_PER_ORE &&
                 countItem(stack -> !macerate(stack).isEmpty()) > 0;
     }
@@ -118,6 +119,24 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
         return GTMaterials.DistilledWater.getFluid(WATER_PER_ORE);
     }
 
+    /** GTNL uses distilled water; vanilla water is accepted too so the module is usable early. */
+    private static FluidStack vanillaWater() {
+        return new FluidStack(Fluids.WATER, WATER_PER_ORE);
+    }
+
+    private int waterAmount() {
+        return countFluid(distilledWater()) + countFluid(vanillaWater());
+    }
+
+    /** Drains one ore's worth of water, preferring distilled water. */
+    private boolean drainWater() {
+        if (waterAmount() < WATER_PER_ORE) return false;
+        int distilled = Math.min(countFluid(distilledWater()), WATER_PER_ORE);
+        if (distilled > 0) drainFluid(distilledWater(), distilled);
+        if (distilled < WATER_PER_ORE) drainFluid(vanillaWater(), WATER_PER_ORE - distilled);
+        return true;
+    }
+
     private static FluidStack lubricant() {
         return GTMaterials.Lubricant.getFluid(LUBRICANT_PER_ORE);
     }
@@ -141,7 +160,7 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
                 if (input.isEmpty()) continue;
                 ItemStack output = macerate(input);
                 if (output.isEmpty()) continue;
-                if (!drainFluid(distilledWater(), WATER_PER_ORE)) break outer;
+                if (!drainWater()) break outer;
                 if (!drainFluid(lubricant(), LUBRICANT_PER_ORE)) break outer;
                 if (!canInsertItems(output)) break outer;
                 handler.extractItemInternal(slot, 1, false);
@@ -171,10 +190,10 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
         group.addWidget(new LabelWidget(5, 4, () -> "Ore Processor tier §b" + getModuleTier()));
         group.addWidget(new LabelWidget(5, 16, () -> "Mode §b" + mode() + " §r| §b" + maxParallel() +
                 "x §r| §b" + getSteamUpkeep() + " mB/t"));
-        group.addWidget(new LabelWidget(5, 28, () -> "Distilled water: §b" + countFluid(distilledWater())));
-        group.addWidget(new LabelWidget(5, 40, () -> "Lubricant: §b" + countFluid(lubricant())));
-        group.addWidget(new LabelWidget(5, 52, () -> "§7Input hatch total: §b" + totalInputFluid() + " §7mB"));
-        group.addWidget(new LabelWidget(5, 64, () -> "§7Circuit + ore: input bus"));
+        group.addWidget(new LabelWidget(5, 28, () -> "Water: §b" + waterAmount() + " §r| Lubricant: §b" +
+                countFluid(lubricant())));
+        group.addWidget(new LabelWidget(5, 40, () -> "§7Input hatch total: §b" + totalInputFluid() + " §7mB"));
+        group.addWidget(new LabelWidget(5, 52, () -> "§7Circuit + ore: input bus"));
         return group;
     }
 }
