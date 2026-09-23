@@ -29,7 +29,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
@@ -3804,20 +3803,20 @@ public class GTNAMachines {
                     .rotationState(RotationState.NON_Y_AXIS)
                     .allowExtendedFacing(false)
                     .recipeType(GTRecipeTypes.DUMMY_RECIPES)
-                    .appearanceBlock(GCYMBlocks.CASING_NONCONDUCTING)
+                    .appearanceBlock(GTBlocks.ADVANCED_COMPUTER_CASING)
                     .pattern(GTNAMachines::createNexusMEHyperCorePattern)
-                    .workableCasingModel(
-                            GTCEu.id("block/casings/gcym/nonconducting_casing"),
+                    .sidedWorkableCasingModel(
+                            GTCEu.id("block/casings/hpca/advanced_computer_casing"),
                             GTCEu.id("block/multiblock/assembly_line"))
                     .tooltips(
                             Component.literal(
-                                    "Original ME Super Computer Core structure, renamed as the Nexus ME Hypercore.")
+                                    "A 41×43×41 computer lattice with glass and steel framing.")
                                     .withStyle(ChatFormatting.AQUA),
                             Component.literal(
-                                    "Uses the GTOCore ME CPU frame with Matrix Crafting Modules inside.")
+                                    "Computer casings inside the frame can hold up to 480 Matrix Crafting Modules.")
                                     .withStyle(ChatFormatting.GRAY),
                             Component.literal(
-                                    "Accepts the AE2 Crafting Unit fallback where the original structure allows it.")
+                                    "Place the Crafting CPU Interface beside the controller on the glass face.")
                                     .withStyle(ChatFormatting.GRAY))
                     .tooltipBuilder(GTNA_ADD)
                     .register());
@@ -3959,31 +3958,23 @@ public class GTNAMachines {
     }
 
     private static BlockPattern createNexusMEHyperCorePattern(MultiblockMachineDefinition definition) {
-        var bPredicate = blocks(GCYMBlocks.CASING_NONCONDUCTING.get())
-                .or(abilities(PARALLEL_HATCH).setMaxGlobalLimited(1))
-                .or(blocks(GTNAMachines2.CRAFTING_CPU_INTERFACE.getBlock()).setExactLimit(1));
-
-        return GTNAMultiBlockFileReader.start(definition, "me_cpu")
-                .where('A', blocks(GTNABlocks.HIGH_STRENGTH_CONCRETE.get()))
-                .where('B', bPredicate)
-                .where('C', blocks(GCYMBlocks.MOLYBDENUM_DISILICIDE_COIL_BLOCK.get()))
-                .where('D', blocks(GCYMBlocks.CASING_NONCONDUCTING.get()))
-                .where('E', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.BlackSteel)))
-                .where('F',
-                        blocks(GTNABlocks.COBALT_OXIDE_CERAMIC_STRONG_THERMALLY_CONDUCTIVE_MECHANICAL_BLOCK.get()))
-                .where('G', blocks(GCYMBlocks.ELECTROLYTIC_CELL.get()))
-                .where('H', blocks(GTBlocks.CASING_PALLADIUM_SUBSTATION.get()))
-                .where('I', blocks(GCYMBlocks.CASING_LASER_SAFE_ENGRAVING.get()))
-                .where('J', blocks(GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.get()))
-                .where('K', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.StainlessSteel)))
-                .where('L', blocks(GTBlocks.CASING_EXTREME_ENGINE_INTAKE.get()))
-                .where('M', blocks(GTBlocks.HIGH_POWER_CASING.get()))
-                .where('N', blockTag(Tags.Blocks.GLASS))
-                .where('O', craftingStorageCorePredicate()
-                        .or(blocks(Registries.getBlock("ae2:crafting_unit")).setMaxGlobalLimited(480)))
-                .where('P', blocks(GTBlocks.FILTER_CASING.get()))
+        return GTNAMultiBlockFileReader.start(definition, "nexus_me_hypercore")
+                .where('B', blocks(GTBlocks.FUSION_GLASS.get()))
+                .where('C', blocks(GTBlocks.CASING_GRATE.get()))
+                .where('D', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.BlackSteel)))
+                .where('E', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.HSLASteel)))
+                .where('F', blocks(GTBlocks.CASING_ASSEMBLY_CONTROL.get()))
+                .where('G', blocks(GTBlocks.HIGH_POWER_CASING.get()))
+                .where('H', blocks(GTBlocks.ADVANCED_COMPUTER_CASING.get())
+                        .or(craftingStorageCorePredicate())
+                        .or(blocks(Registries.getBlock("ae2:crafting_unit"))))
+                .where('I', blocks(GTBlocks.COMPUTER_CASING.get())
+                        .or(craftingStorageCorePredicate())
+                        .or(blocks(Registries.getBlock("ae2:crafting_unit"))))
+                .where('J', blocks(GCYMBlocks.CASING_STRESS_PROOF.get()))
+                .where('P', blocks(GTNAMachines2.CRAFTING_CPU_INTERFACE.getBlock()))
                 .where('Q', controller(blocks(definition.get())))
-                .where(' ', any())
+                .where(' ', air())
                 .build();
     }
 

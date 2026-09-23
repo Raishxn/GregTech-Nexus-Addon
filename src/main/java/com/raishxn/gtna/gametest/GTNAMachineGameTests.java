@@ -1951,6 +1951,15 @@ public final class GTNAMachineGameTests {
         helper.succeed();
     }
 
+    /** The supplied Hypercore layout must decode and build at its full 41×43×41 size. */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void nexusHypercoreNewPatternLoads(GameTestHelper helper) {
+        int[] dimensions = GTNAMachines.NEXUS_ME_HYPERCORE.getPatternFactory().get().getDimensions();
+        helper.assertTrue(java.util.Arrays.equals(dimensions, new int[] { 41, 43, 41 }),
+                "Nexus ME Hypercore pattern dimensions: " + java.util.Arrays.toString(dimensions));
+        helper.succeed();
+    }
+
     /**
      * QA smoke: every GTNA machine's item-tooltip builder must run without throwing. Catches the
      * "tooltip crash" class of bug (tier index out of bounds, null display, missing key) for all

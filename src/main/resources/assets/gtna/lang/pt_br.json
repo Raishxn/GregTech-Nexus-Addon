@@ -106,6 +106,14 @@
   "gtna.machine.nexus_me_hypercore.ui.on": "Active",
   "gtna.machine.nexus_me_hypercore.ui.off": "Inactive",
 
+  "gtna.machine.auxiliary_module": "- Módulo auxiliar: ✔",
+  "gtna.machine.auxiliary_module.description": "  Permite expandir a estrutura para melhorar a eficiência da máquina.",
+  "gtna.machine.auxiliary_module.hatches": "  A expansão permite instalar hatches adicionais com novos benefícios.",
+  "gtna.machine.auxiliary_module.unlocked": "Hatches liberados pelo módulo auxiliar: %s",
+  "gtna.machine.auxiliary_module.hatch.accelerate": "Hatch de Aceleração",
+  "gtna.machine.auxiliary_module.hatch.extra_energy": "Hatch de Energia Extra",
+  "gtna.machine.auxiliary_module.hatch.parallel": "Hatch de Paralelismo",
+
   "item.gtna.nexus_linker": "Nexus Linker",
   "item.gtna.nexus_linker.tooltip": "\u00A77Shift+Right Click on Nexus Flux Matrix to bind.\n\u00A77Right Click on Wireless Hatch/Dynamo to link.",
   "item.gtna.quantum_network_terminal": "Quantum Network Terminal",

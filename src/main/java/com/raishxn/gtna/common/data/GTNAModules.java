@@ -13,6 +13,7 @@ import com.gregtechceu.gtceu.common.data.GTMaterials;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 
@@ -71,12 +72,7 @@ public final class GTNAModules {
                         .where('E', controller(blocks(definition.getBlock())))
                         .where(' ', any())
                         .build(),
-                Component.translatable("gtna.machine.auxiliary_module").withStyle(ChatFormatting.GOLD),
-                Component.translatable("gtna.machine.auxiliary_module.description"),
-                Component.translatable("gtna.machine.auxiliary_module.hatches"),
-                Component.translatable("gtna.machine.electric_blast_furnace.module",
-                        Component.literal("Accelerate Hatch").withStyle(ChatFormatting.AQUA),
-                        Component.literal("Extra Energy Hatch").withStyle(ChatFormatting.AQUA)));
+                moduleTooltips("accelerate", "extra_energy"));
     }
 
     /** GTCEu's wired 2A/4A/16A hatches, excluding GTNA wireless hatches with the same ability. */
@@ -104,7 +100,23 @@ public final class GTNAModules {
     private static void registerLiquefactionFurnaceModule() {
         GTNASubPatterns.register(new ResourceLocation("gtna", "liquefaction_furnace"),
                 GTNAModules::buildLiquefactionExtension,
-                Component.translatable("gtna.machine.liquefaction_furnace.module").withStyle(ChatFormatting.GOLD));
+                moduleTooltips("parallel", "accelerate"));
+    }
+
+    /** The auxiliary-module text stays the same; each machine supplies only its unlocked hatches. */
+    private static Component[] moduleTooltips(String... hatchIds) {
+        MutableComponent hatchList = Component.empty();
+        for (int i = 0; i < hatchIds.length; i++) {
+            if (i > 0) hatchList.append(", ");
+            hatchList.append(Component.translatable("gtna.machine.auxiliary_module.hatch." + hatchIds[i])
+                    .withStyle(ChatFormatting.AQUA));
+        }
+        return new Component[] {
+                Component.translatable("gtna.machine.auxiliary_module").withStyle(ChatFormatting.GOLD),
+                Component.translatable("gtna.machine.auxiliary_module.description"),
+                Component.translatable("gtna.machine.auxiliary_module.hatches"),
+                Component.translatable("gtna.machine.auxiliary_module.unlocked", hatchList)
+        };
     }
 
     private static BlockPattern buildLiquefactionExtension(MultiblockMachineDefinition definition) {

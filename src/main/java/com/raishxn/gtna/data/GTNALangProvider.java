@@ -176,10 +176,11 @@ public class GTNALangProvider extends LanguageProvider {
                 "  Allows the expansion of structures to improve machine efficiency.");
         add("gtna.machine.auxiliary_module.hatches",
                 "  Expansion structures can install additional hatches to bring additional bonuses.");
-        add("gtna.machine.electric_blast_furnace.module",
-                "Hatch types unlocked by installing auxiliary modules : %s, %s");
-        add("gtna.machine.liquefaction_furnace.module",
-                "Module: adds a Parallel Hatch and an Accelerate Hatch");
+        add("gtna.machine.auxiliary_module.unlocked",
+                "Hatch types unlocked by installing auxiliary modules : %s");
+        add("gtna.machine.auxiliary_module.hatch.accelerate", "Accelerate Hatch");
+        add("gtna.machine.auxiliary_module.hatch.extra_energy", "Extra Energy Hatch");
+        add("gtna.machine.auxiliary_module.hatch.parallel", "Parallel Hatch");
         add("gtna.multiblock.max_eut", "Max EU/t: %s (%s)");
         add("gtna.multiblock.parallels", "Parallels: %s");
         add("gtna.multiblock.overclock_hatch", "Overclock Hatch: %s");
