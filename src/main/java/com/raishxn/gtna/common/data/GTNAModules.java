@@ -55,7 +55,7 @@ public final class GTNAModules {
                         .aisle("A   A", "B   B", "B   B", "C   C")
                         .aisle("A E A", "     ", "     ", "     ")
                         .where('A', blocks(GTBlocks.CASING_INVAR_HEATPROOF.get())
-                                .or(autoAbilities(definition.getRecipeTypes()))
+                                .or(autoAbilities(definition.getRecipeTypes(), false, false, true, true, true, true))
                                 .or(abilities(PartAbility.INPUT_ENERGY).setMaxGlobalLimited(2))
                                 .or(abilities(GTNAPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1)))
                         .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.StainlessSteel)))
@@ -64,7 +64,8 @@ public final class GTNAModules {
                         .where('E', controller(blocks(definition.getBlock())))
                         .where(' ', any())
                         .build(),
-                Component.translatable("gtna.machine.electric_blast_furnace.module").withStyle(ChatFormatting.GOLD));
+                Component.translatable("gtna.machine.electric_blast_furnace.module").withStyle(ChatFormatting.GOLD),
+                GTNASources.line(GTNASources.GTO));
     }
 
     /**

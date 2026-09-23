@@ -24,10 +24,10 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
-> ⚠️ **PRÓXIMA SESSÃO:** comece pelo **G-0069** (handoff). Há **6 pendências** do feedback in-game
-> (receita shaped do controller do `liquefaction`, receitas por prefixo de material, módulo do EBF que
-> não forma in-game apesar do gametest passar, EBF aceitando 2 Overclock Hatch, delay do módulo no
-> `liquefaction`). O Nexus Terminal já foi consertado (G-0068).
+> ⚠️ **PENDENTE DO FEEDBACK IN-GAME:** comparar o print/lista de blocos do módulo do EBF enviado pelo
+> autor com a geometria e orientação do gametest `ebfModuleForms`. A receita shaped, as receitas por
+> prefixo e o predicado do EBF foram corrigidos em G-0070. O cache de posições do módulo foi
+> consertado para eliminar o delay; ainda falta confirmar a latência no client.
 
 > ⚠️ **LEIA PRIMEIRO:** `docs/roadmap/NEXT-SESSION-HANDOFF.md` — handoff da sessão de 2026-09-21
 > (Steam/large steam, formato de tooltip com source, blocos faltantes como o Industrial Steam
@@ -35,11 +35,10 @@ foi feito nem repetir os erros já pagos.
 > várias vezes; **confira no código antes de agir** e **não confie** nas estruturas das
 > `large_steam_*` antigas sem revisar contra o GTNL.
 
-- **HEAD `9c0833a`** (o acúmulo G-0010..G-0025 foi commitado em `feat:` + `docs:`); árvore limpa
-  antes do G-0026.
+- Desenvolvimento na branch `main`; o histórico anterior a G-0026 está preservado no ledger.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0068):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+- **Gate verde em 2026-09-23 (G-0070):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
   `runGameTestServer` (**44/44**, `All 44 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
@@ -72,7 +71,7 @@ foi feito nem repetir os erros já pagos.
   módulo (G-0043). Ver G-0041..G-0043 para causa raiz, testes e pendências.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
-- **Testes hoje:** 17 unit tests (`main()` + asserts, padrão GTLCore) e 35 gametests (`@GameTest`),
+- **Testes hoje:** 18 unit tests (`main()` + asserts, padrão GTLCore) e 44 gametests (`@GameTest`),
   ambos no gate do CI.
 - **Licenciamento (G-0019):** código do GTNA **LGPLv3**; assets do GTO em **CC BY-NC-SA 4.0**
   (o GTNA é **não-comercial**). Permissão do **GTOEPP** concedida pelo time GTO; atribuição de origem
@@ -90,6 +89,31 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0070 (2026-09-23) — liquefaction original, IO do módulo EBF e cache de posições dos módulos
+
+- **Controller do liquefaction:** removida a receita Assembler; a shaped `ABA/CDC/ABA` agora usa
+  placas de Invar, cabos duplos de Níquel, blast furnaces vanilla e LV Extractor, conforme
+  `GTOCore/data/recipe/classified/Vanilla.java:425`.
+- **Liquefaction por prefixo:** cada material registrado percorre `TagPrefix.values()` com
+  `generateRecycling()`. O item vem de `ChemicalHelper.get(prefix, material)`; apenas materiais
+  com fluido entram, e o dust de material com `PropertyKey.BLAST` é excluído. Quantidade de fluido,
+  duração e temperatura seguem `GTORecyclingRecipeHandler.processCrushing`. O multiplicador de
+  voltagem segue o cálculo de GTCEu para material (`blastTemp >= 2800` → LV, senão ULV), usado no
+  lugar do método nativo de `GTOUtils` do GTOCore.
+- **Módulo EBF:** o predicado `A` usa `autoAbilities(..., false, false, true, true, true, true)` para
+  aceitar somente IO de item/fluido nessa parte, sem a injeção de Overclock/Accelerate que ocorre
+  com energia habilitada. Continua aceitando o Energy Hatch extra e um Accelerate Hatch. A linha
+  de origem GTOCore do módulo usa `GTNASources.line` no tooltip.
+- **Delay do liquefaction:** `BlockPattern.checkPatternAt` chama `MultiblockState.clean()` para cada
+  subpattern e apagava o cache de posições da base. O mixin agora une os caches da base e de cada
+  módulo, inclusive posições visitadas por módulos incompletos, para que alterações de blocos
+  disparem a checagem imediatamente. O gametest de formação verifica que uma posição da base
+  continua no cache após a checagem combinada.
+- **Validação:** gate offline completo verde: `spotlessCheck`, `compileJava`, `runUnitTests` (18/18),
+  `runGameTestServer` (44/44) e `runData` (`written: 0`).
+- **Pendências:** o módulo EBF ainda precisa de comparação com o print/lista de blocos do autor;
+  a latência do liquefaction precisa de confirmação manual in-game.
 
 ### G-0069 (2026-09-23) — handoff: pendências do feedback in-game (4) — continuar em sessão nova
 

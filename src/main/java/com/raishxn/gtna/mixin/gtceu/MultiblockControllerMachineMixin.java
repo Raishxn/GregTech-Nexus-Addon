@@ -9,6 +9,7 @@ import com.gregtechceu.gtceu.api.pattern.util.PatternMatchContext;
 import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
 import com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost;
 import com.raishxn.gtna.api.machine.multiblock.ISubPatternMachine;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -80,6 +81,10 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
         for (Map.Entry<String, Object> entry : context.entrySet()) {
             snapshot.put(entry.getKey(), entry.getValue());
         }
+        // Each sub-pattern check calls MultiblockState.clean(), replacing the position cache. Keep
+        // the main positions and every module position reached, including the first missing block.
+        // GTCEu uses this cache to dispatch block changes to formed controllers.
+        LongOpenHashSet positionCache = new LongOpenHashSet(state.cache);
         Set<IMultiPart> parts = new HashSet<>();
         Object mainParts = snapshot.get("parts");
         if (mainParts instanceof Set<?> set) {
@@ -106,6 +111,7 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
                 }
                 matched++;
             }
+            positionCache.addAll(state.cache);
         }
         boolean moduleSetChanged = matched != gtna$formedModuleCount;
         gtna$formedModuleCount = matched;
@@ -115,6 +121,7 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
         for (Map.Entry<String, Object> entry : snapshot.entrySet()) {
             context.set(entry.getKey(), entry.getValue());
         }
+        state.cache = positionCache;
         if (matched > 0) {
             context.set("parts", parts);
         }
