@@ -34,17 +34,19 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0067):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
-  `runGameTestServer` (**43/43**, `All 43 required tests passed`) + `runData` determinístico
+- **Gate verde em 2026-09-23 (G-0068):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**44/44**, `All 44 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
-- **Módulos (sub-patterns) na UI/preview/tooltip (G-0066/G-0067):** todo multibloco mostra **"Formed
+- **Módulos (sub-patterns) na UI/preview/tooltip (G-0066..G-0068):** todo multibloco mostra **"Formed
   modules: n / total"** (`IGTNAModuleHost` + `WorkableElectricMultiblockMachineMixin`), cada módulo
   registrado vira uma **página extra no preview do JEI** (`MultiblockMachineDefinitionMixin`) e o
   **tooltip do item** lista o que o módulo libera (`MetaMachineBlockMixin` + `GTNASubPatterns`). O
-  **Terminal Nexus** ("Module Build = N") constrói a base + os N primeiros módulos. O
-  `liquefaction_furnace` é uma máquina **normal** (Parallel/Accelerate só com o módulo). Pendentes: um
-  botão dedicado a módulos no preview.
+  **Terminal Nexus** ("Module Build = N") constrói a base + os N primeiros módulos, inclusive com a
+  máquina já formada. Adicionar/remover um módulo **re-forma** a máquina (não precisa quebrar o
+  controller). O `liquefaction_furnace` é uma máquina **normal** (Parallel/Accelerate só com o
+  módulo). A geometria do módulo do EBF (GTOCore) é validada pelo gametest `ebfModuleForms`.
+  Pendente: um botão dedicado a módulos no preview.
 - **Era Steam Elevator fechada (G-0058):** o módulo de ore processing do elevador está 100% (G-0057);
   os 8 módulos, o host 35×43×35 e a rede wireless estão no gate. Restam só itens de **QA manual
   visual** (`docs/roadmap/QA-MANUAL-CHECKLIST.md`). A logo do mod agora aparece em **todas** as UIs de
@@ -83,6 +85,39 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0068 (2026-09-23) — feedback in-game (3): módulo do EBF validado por gametest, terminal constrói módulo em máquina formada, refresh de partes do módulo e receitas do `liquefaction`
+
+Terceira rodada de feedback:
+
+- **Módulo do EBF** "não funciona ainda".
+- **Terminal Nexus** não constrói o módulo se o multibloco **já estiver formado** (shift+botão direito no
+  controller abre a UI em vez de construir).
+- **Remover o módulo** não tira os efeitos (o Parallel Hatch acoplado continua contando) até **quebrar o
+  controller** — mesma coisa ao construir o módulo depois. Precisa "resetar".
+- **`liquefaction_furnace`**: faltam muitas receitas e a receita do controller.
+
+Correções:
+
+- **Módulo do EBF validado:** novo gametest `ebfModuleForms` monta o EBF stock (3×4×3) **+** a casca
+  GTOCore e afirma que `formedModuleCount == 1` — a geometria do GTOCore **casa** com a ancoragem GTNA.
+  (O teste também revelou que o EBF exige os hatches de IO: energy in, item in/out e maintenance.)
+- **Terminal Nexus:** `NexusTerminalBehavior.useOn` agora constrói também quando `Module Build > 0` com
+  o controller **formado** (e devolve SUCCESS, então a UI do multibloco não abre).
+- **Refresh de partes do módulo:** `MultiblockControllerMachineMixin` compara a contagem de módulos
+  casados com a anterior; se mudou e a máquina está formada, chama `onPartUnload()` — que remove as
+  partes inválidas e agenda o re-check assíncrono que reconstrói a lista de partes. Assim
+  adicionar/remover um módulo **não** exige mais quebrar o controller.
+- **`liquefaction_furnace` — receitas:** geradas por material (bloco → 1152 mB do próprio fluido, 200
+  ticks, `temp = max(800, blastTemp * 0.6)`, `EUt` pela blast temperature), no espírito do `GlassRecipe`
+  do GTOCore; e uma receita de **controller** no Assembler (invar heatproof + steel casing/pipe +
+  cupronickel coils + EV pump + HV circuits).
+
+- **Testes:** gametest novo `ebfModuleForms`. → **44/44**.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**44/44**) + `runData` determinístico (`written: 0`).
+- **Pendências:** validar in-game (EBF + módulo, terminal com máquina formada, remover/adicionar módulo
+  sem quebrar o controller).
 
 ### G-0067 (2026-09-23) — feedback in-game (2): módulo do EBF fiel ao GTOCore, tooltips de módulo, build de módulo no terminal e receitas do `liquefaction`
 

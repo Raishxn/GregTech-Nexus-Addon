@@ -677,15 +677,12 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
         if (enabled(GTNAMachines.LIQUEFACTION_FURNACE)) {
-            // GTOCore's liquefaction furnace melts a solid into the material's own fluid. GTNA has no
-            // borosilicate-glass blocks, so the closest faithful port melts the material's block into
-            // its fluid, using GTOCore's GlassRecipe math (200 ticks, temp = max(800, blastTemp*0.6)).
-            addLiquefactionRecipe(provider, GTMaterials.Titanium, GTValues.EV);
-            addLiquefactionRecipe(provider, GTMaterials.Tungsten, GTValues.IV);
-            addLiquefactionRecipe(provider, GTMaterials.HSSS, GTValues.LuV);
-            addLiquefactionRecipe(provider, GTMaterials.Naquadah, GTValues.ZPM);
-            addLiquefactionRecipe(provider, GTMaterials.Tritanium, GTValues.UV);
-            addLiquefactionRecipe(provider, GTMaterials.Neutronium, GTValues.UHV);
+            // GTOCore generates a liquefaction recipe per material (see its GlassRecipe): melt the
+            // material's block into 1152 mB of its own fluid. GTNA generates the same for every
+            // registered material that has a block, a fluid and a blast temperature.
+            for (Material material : com.gregtechceu.gtceu.api.GTCEuAPI.materialManager.getRegisteredMaterials()) {
+                addLiquefactionRecipe(provider, material);
+            }
         }
         if (enabled(GTNAMachines.STEAM_CACTUS_WONDER)) {
             // GTNL CactusWonderFakeRecipes: GT++ cactus charcoal/coke -> steam at one recipe per
@@ -1779,6 +1776,23 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
 
+        // Liquefaction Furnace (GTOCore port, G-0063). GTOCore's own recipe is not portable, so this is
+        // GTNA's own, built from the materials of the structure.
+        if (enabled(GTNAMachines.LIQUEFACTION_FURNACE)) {
+            GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("liquefaction_furnace")
+                    .inputItems(GTBlocks.CASING_INVAR_HEATPROOF.asItem(), 8)
+                    .inputItems(GTBlocks.CASING_STEEL_SOLID.asItem(), 4)
+                    .inputItems(GTBlocks.CASING_STEEL_PIPE.asItem(), 4)
+                    .inputItems(GTBlocks.COIL_CUPRONICKEL.asItem(), 4)
+                    .inputItems(GTItems.ELECTRIC_PUMP_HV, 2)
+                    .inputItems(CustomTags.HV_CIRCUITS, 4)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(288))
+                    .outputItems(GTNAMachines.LIQUEFACTION_FURNACE.asStack())
+                    .duration(600)
+                    .EUt(GTValues.VA[GTValues.HV])
+                    .save(provider);
+        }
+
         // Integrated Ore Processors (GTLCore port, G-0055). GTLCore registers the blocks without a
         // craft recipe; these are GTNA's own, built from the materials of each structure.
         if (enabled(GTNAMachines.INTEGRATED_ORE_PROCESSOR)) {
@@ -1881,23 +1895,29 @@ public class GTNAMachineRecipes {
     }
 
     /**
-     * One GTOCore-style liquefaction recipe: the material's block melts into 1152 mB of its own fluid.
-     * Guarded so a material without a block or fluid is silently skipped.
+     * One GTOCore-style liquefaction recipe: the material's block melts into 1152 mB of its own fluid
+     * (200 ticks, {@code temp = max(800, blastTemp * 0.6)}). Guarded so a material without a block, a
+     * fluid or a blast temperature is silently skipped; the EU tier follows the blast temperature.
      */
-    private static void addLiquefactionRecipe(Consumer<FinishedRecipe> provider, Material material, int tier) {
+    private static void addLiquefactionRecipe(Consumer<FinishedRecipe> provider, Material material) {
         if (!material.hasFluid()) {
+            return;
+        }
+        int blastTemp = material.getBlastTemperature();
+        if (blastTemp <= 0) {
             return;
         }
         var block = ChemicalHelper.get(TagPrefix.block, material);
         if (block.isEmpty()) {
             return;
         }
+        int tier = Math.max(GTValues.LV, Math.min(GTValues.MAX, blastTemp / 1000));
         GTNARecipeType.LIQUEFACTION_FURNACE_RECIPES.recipeBuilder("liquefy_" + material.getName())
                 .inputItems(block.getItem())
                 .outputFluids(material.getFluid(1152))
                 .duration(200)
                 .EUt(GTValues.VA[tier])
-                .blastFurnaceTemp(Math.max(800, (int) (material.getBlastTemperature() * 0.6)))
+                .blastFurnaceTemp(Math.max(800, (int) (blastTemp * 0.6)))
                 .save(provider);
     }
 

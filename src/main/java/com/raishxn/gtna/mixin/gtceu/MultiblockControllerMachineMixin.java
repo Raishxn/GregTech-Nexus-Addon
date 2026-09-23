@@ -107,6 +107,7 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
                 matched++;
             }
         }
+        boolean moduleSetChanged = matched != gtna$formedModuleCount;
         gtna$formedModuleCount = matched;
 
         // Restore the main context and, when a module matched, add its parts.
@@ -116,6 +117,13 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
         }
         if (matched > 0) {
             context.set("parts", parts);
+        }
+        // GTCEu only rebuilds the controller's part list on an invalid -> valid transition. If the set
+        // of matched modules changed while the machine is already formed (a module was added or
+        // removed), ask for a re-check: onPartUnload drops the now-invalid parts and schedules the
+        // async re-form that rebuilds the list from the fresh match context.
+        if (moduleSetChanged && self.isFormed()) {
+            self.onPartUnload();
         }
         return true;
     }

@@ -82,22 +82,24 @@ public class NexusTerminalBehavior implements IItemUIFactory, IAddInformation {
             }
         }
 
-        // ── Shift+Click on controller: auto-build / replace ───────────────────
+        // ── Shift+Click on controller: auto-build / replace / build module ────
         if (player.isShiftKeyDown()) {
             if (MetaMachine.getMachine(level, blockPos) instanceof IMultiController controller) {
-                if (!controller.isFormed()) {
+                NexusTerminalUIFactory.AutoBuildSetting setting = NexusTerminalUIFactory.AutoBuildSetting
+                        .getSetting(terminalStack);
+                // Build when the controller is unformed, when replace mode is on, or when a module
+                // build is requested (the module must be addable to an already-formed multiblock).
+                boolean buildModule = setting.getModuleBuild() > 0;
+                if (!controller.isFormed() || buildModule || setting.isReplaceMode()) {
                     if (!level.isClientSide()) {
                         NexusAutoBuilder.autoBuild(player, controller, terminalStack);
+                        if (setting.isReplaceMode() &&
+                                controller instanceof WorkableMultiblockMachine workableMultiblockMachine) {
+                            workableMultiblockMachine.onPartUnload();
+                        }
                     }
                     return InteractionResult.sidedSuccess(level.isClientSide);
-                } else if (controller instanceof WorkableMultiblockMachine workableMultiblockMachine &&
-                        NexusTerminalUIFactory.AutoBuildSetting.getSetting(terminalStack).isReplaceMode()) {
-                            if (!level.isClientSide()) {
-                                NexusAutoBuilder.autoBuild(player, controller, terminalStack);
-                                workableMultiblockMachine.onPartUnload();
-                            }
-                            return InteractionResult.sidedSuccess(level.isClientSide);
-                        }
+                }
             }
         }
         return InteractionResult.PASS;

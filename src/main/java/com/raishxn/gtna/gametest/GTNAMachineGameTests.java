@@ -440,6 +440,113 @@ public final class GTNAMachineGameTests {
         helper.succeed();
     }
 
+    /**
+     * Formation test for the GTOCore Electric Blast Furnace module (G-0068): builds the stock 3x4x3
+     * EBF plus the invar shell module at the controller and checks the module matches (so the extra
+     * Energy / Accelerate hatches are merged into the controller).
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 40)
+    public static void ebfModuleForms(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(6, 2, 6);
+        for (int dx = -6; dx <= 6; dx++) {
+            for (int dy = -2; dy <= 8; dy++) {
+                for (int dz = -6; dz <= 8; dz++) {
+                    helper.setBlock(controllerPos.offset(dx, dy, dz), Blocks.AIR);
+                }
+            }
+        }
+        helper.setBlock(controllerPos, GTMultiMachines.ELECTRIC_BLAST_FURNACE.getBlock());
+
+        // Stock EBF: 3 aisles (z), 4 rows (y), 3 chars (x); controller 'S' at (char 1, row 0, aisle 2).
+        // Default directions + facing NORTH: world = (1 - char, row, 2 - aisle).
+        String[][] main = {
+                { "XXX", "CCC", "CCC", "XXX" },
+                { "XXX", "C#C", "C#C", "XMX" },
+                { "XSX", "CCC", "CCC", "XXX" },
+        };
+        BlockPos energyPos = controllerPos.offset(1, 0, 0);
+        BlockPos inputBusPos = controllerPos.offset(-1, 0, 0);
+        BlockPos outputBusPos = controllerPos.offset(1, 0, 2);
+        BlockPos maintPos = controllerPos.offset(-1, 0, 2);
+        for (int aisle = 0; aisle < main.length; aisle++) {
+            for (int row = 0; row < 4; row++) {
+                for (int ch = 0; ch < 3; ch++) {
+                    char c = main[aisle][row].charAt(ch);
+                    if (c == 'S' || c == '#') continue;
+                    BlockPos pos = controllerPos.offset(1 - ch, row, 2 - aisle);
+                    if (pos.equals(energyPos) || pos.equals(inputBusPos) || pos.equals(outputBusPos) ||
+                            pos.equals(maintPos)) {
+                        continue;
+                    }
+                    switch (c) {
+                        case 'X' -> helper.setBlock(pos, GTBlocks.CASING_INVAR_HEATPROOF.get());
+                        case 'C' -> helper.setBlock(pos, GTBlocks.COIL_CUPRONICKEL.get());
+                        case 'M' -> helper.setBlock(pos, GTMachines.MUFFLER_HATCH[GTValues.LV].getBlock());
+                        default -> {}
+                    }
+                }
+            }
+        }
+        helper.setBlock(energyPos, GTMachines.ENERGY_INPUT_HATCH[GTValues.LV].getBlock());
+        helper.setBlock(inputBusPos, GTMachines.ITEM_IMPORT_BUS[GTValues.LV].getBlock());
+        helper.setBlock(outputBusPos, GTMachines.ITEM_EXPORT_BUS[GTValues.LV].getBlock());
+        helper.setBlock(maintPos, GTMachines.MAINTENANCE_HATCH.getBlock());
+
+        // GTOCore module: 5 aisles, 4 rows, 5 chars; controller 'E' at (char 2, row 0, aisle 4).
+        // Default directions + facing NORTH: world = (2 - char, row, 4 - aisle).
+        String[][] module = {
+                { "AAAAA", " DBD ", " DBD ", " CCC " },
+                { "ACCCA", "BD DB", "BD DB", "CCCCC" },
+                { "A   A", "     ", "     ", "C   C" },
+                { "A   A", "B   B", "B   B", "C   C" },
+                { "A E A", "     ", "     ", "     " },
+        };
+        for (int aisle = 0; aisle < module.length; aisle++) {
+            for (int row = 0; row < 4; row++) {
+                for (int ch = 0; ch < 5; ch++) {
+                    char c = module[aisle][row].charAt(ch);
+                    if (c == 'E' || c == ' ') continue;
+                    BlockPos pos = controllerPos.offset(2 - ch, row, 4 - aisle);
+                    switch (c) {
+                        case 'A' -> helper.setBlock(pos, GTBlocks.CASING_INVAR_HEATPROOF.get());
+                        case 'B' -> helper.setBlock(pos, ChemicalHelper
+                                .getBlock(TagPrefix.frameGt, GTMaterials.StainlessSteel));
+                        case 'C' -> helper.setBlock(pos, GTBlocks.CASING_INVAR_HEATPROOF.get());
+                        case 'D' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_PIPE.get());
+                        default -> {}
+                    }
+                }
+            }
+        }
+        // Put the module's extra Energy Hatch and Accelerate Hatch on two of its 'A' cells.
+        helper.setBlock(controllerPos.offset(2, 0, 4), GTMachines.ENERGY_INPUT_HATCH[GTValues.LV].getBlock());
+        helper.setBlock(controllerPos.offset(1, 0, 4), GTNAMachines2.ACCELERATE_HATCHES[GTValues.LV].getBlock());
+
+        MetaMachine placed = metaMachineAt(helper, controllerPos);
+        if (!(placed instanceof com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine controller)) {
+            helper.fail("electric_blast_furnace block entity is not a MultiblockControllerMachine, got " + placed);
+            return;
+        }
+        var state = controller.getMultiblockState();
+        if (!controller.getPattern().checkPatternAt(state, false)) {
+            helper.fail("electric_blast_furnace main pattern did not match: " +
+                    patternError(helper, state, controllerPos));
+            return;
+        }
+        var sub = GTNASubPatterns.get(GTMultiMachines.ELECTRIC_BLAST_FURNACE).get(0);
+        if (!sub.checkPatternAt(state, false)) {
+            helper.fail("electric_blast_furnace module pattern did not match");
+            return;
+        }
+        if (!controller.checkPattern()) {
+            helper.fail("electric_blast_furnace + module combined checkPattern() did not match");
+            return;
+        }
+        int formed = ((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller).gtna$formedModuleCount();
+        helper.assertTrue(formed == 1, "expected 1 formed module, got " + formed);
+        helper.succeed();
+    }
+
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void nativeCraftingCpuKeepsAe2Executor(GameTestHelper helper) {
         CraftingCPUCluster cluster = new CraftingCPUCluster(BlockPos.ZERO, BlockPos.ZERO);
