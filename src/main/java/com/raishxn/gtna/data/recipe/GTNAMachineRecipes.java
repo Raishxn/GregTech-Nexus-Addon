@@ -10,6 +10,7 @@ import com.gregtechceu.gtceu.api.recipe.ingredient.IntCircuitIngredient;
 import com.gregtechceu.gtceu.common.data.*;
 import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
+import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
 
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -28,7 +29,9 @@ import appeng.core.definitions.AEItems;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.common.data.*;
+import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamOreProcessorModule;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -1643,23 +1646,30 @@ public class GTNAMachineRecipes {
     }
 
     /**
-     * GTNA ore-processing recipes: each material's crushed ore is washed into purified crushed ore
-     * with distilled water, exposing the {@code gtna:ore_processing} category in JEI. The Steam Ore
-     * Processor module consumes these (and the GTCEu maps) in its macerate → wash → thermal chain.
+     * Integrated Ore Processing recipes (GTLCore's Integrated Ore Processor model): for every material
+     * with a crushed ore, one recipe per circuit 1..7 whose outputs are that chain's final products,
+     * so JEI shows the integrated result and the module's circuit selects the chain.
      */
     private static void registerOreProcessingRecipes(Consumer<FinishedRecipe> provider) {
         for (Material material : GTCEuAPI.materialManager.getRegisteredMaterials()) {
             ItemStack crushed = ChemicalHelper.get(TagPrefix.crushed, material);
             if (crushed.isEmpty()) continue;
-            ItemStack purified = ChemicalHelper.get(TagPrefix.crushedPurified, material);
-            if (purified.isEmpty()) continue;
-            GTNARecipeType.ORE_PROCESSING_RECIPES.recipeBuilder("ore_processing_" + material.getName())
-                    .inputItems(crushed)
-                    .inputFluids(GTMaterials.DistilledWater.getFluid(100))
-                    .outputItems(purified)
-                    .duration(200)
-                    .EUt(GTValues.VA[GTValues.LV])
-                    .save(provider);
+            for (int circuit = 1; circuit <= 7; circuit++) {
+                List<ItemStack> products = SteamOreProcessorModule.refine(crushed, circuit);
+                if (products.isEmpty()) continue;
+                if (products.size() == 1 && ItemStack.isSameItemSameTags(products.get(0), crushed)) continue;
+                GTRecipeBuilder builder = GTNARecipeType.ORE_PROCESSING_RECIPES
+                        .recipeBuilder("ore_processing_" + material.getName() + "_" + circuit)
+                        .inputItems(IntCircuitIngredient.of(circuit))
+                        .inputItems(crushed)
+                        .inputFluids(GTMaterials.DistilledWater.getFluid(100))
+                        .duration(200)
+                        .EUt(GTValues.VA[GTValues.LV]);
+                for (ItemStack product : products) {
+                    builder.outputItems(product);
+                }
+                builder.save(provider);
+            }
         }
     }
 

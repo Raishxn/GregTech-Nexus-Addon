@@ -170,7 +170,7 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
                 if (parallel >= maxParallel()) break outer;
                 ItemStack input = handler.getStackInSlot(slot);
                 if (!isOre(input)) continue;
-                List<ItemStack> outputs = refine(input);
+                List<ItemStack> outputs = refine(input, chainCircuit());
                 if (outputs.isEmpty()) continue;
                 if (!drainWater()) break outer;
                 if (!drainFluid(lubricant(), LUBRICANT_PER_ORE)) break outer;
@@ -222,17 +222,46 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
     }
 
     /**
-     * GTNL's chain, simplified to macerate → wash → thermal → centrifuge and driven by the GTCEu
-     * recipe maps (each stage replaces an item with the matching recipe's outputs; an item with no
-     * recipe passes through). The distilled water/lubricant are charged once per ore, not per stage.
+     * GTLCore/GTNL's seven integrated chains (circuit 1..7), indexed from 0:
+     * <ol>
+     * <li>Grinding-Grinding-Centrifuge</li>
+     * <li>Grinding-Ore Wash-Thermal Centrifuge-Grinding</li>
+     * <li>Grinding-Ore Wash-Grinding-Centrifuge</li>
+     * <li>Grinding-Ore Wash-Sifting-Centrifuge</li>
+     * <li>Grinding-Chemical Bath-Thermal Centrifuge-Grinding</li>
+     * <li>Grinding-Chemical Bath-Grinding-Centrifuge</li>
+     * <li>Grinding-Chemical Bath-Sifting-Centrifuge</li>
+     * </ol>
      */
-    private static List<ItemStack> refine(ItemStack input) {
+    private static final GTRecipeType[][] CHAINS = {
+            { GTRecipeTypes.MACERATOR_RECIPES, GTRecipeTypes.MACERATOR_RECIPES, GTRecipeTypes.CENTRIFUGE_RECIPES },
+            { GTRecipeTypes.MACERATOR_RECIPES, GTRecipeTypes.ORE_WASHER_RECIPES,
+                    GTRecipeTypes.THERMAL_CENTRIFUGE_RECIPES, GTRecipeTypes.MACERATOR_RECIPES },
+            { GTRecipeTypes.MACERATOR_RECIPES, GTRecipeTypes.ORE_WASHER_RECIPES,
+                    GTRecipeTypes.MACERATOR_RECIPES, GTRecipeTypes.CENTRIFUGE_RECIPES },
+            { GTRecipeTypes.MACERATOR_RECIPES, GTRecipeTypes.ORE_WASHER_RECIPES,
+                    GTRecipeTypes.SIFTER_RECIPES, GTRecipeTypes.CENTRIFUGE_RECIPES },
+            { GTRecipeTypes.MACERATOR_RECIPES, GTRecipeTypes.CHEMICAL_BATH_RECIPES,
+                    GTRecipeTypes.THERMAL_CENTRIFUGE_RECIPES, GTRecipeTypes.MACERATOR_RECIPES },
+            { GTRecipeTypes.MACERATOR_RECIPES, GTRecipeTypes.CHEMICAL_BATH_RECIPES,
+                    GTRecipeTypes.MACERATOR_RECIPES, GTRecipeTypes.CENTRIFUGE_RECIPES },
+            { GTRecipeTypes.MACERATOR_RECIPES, GTRecipeTypes.CHEMICAL_BATH_RECIPES,
+                    GTRecipeTypes.SIFTER_RECIPES, GTRecipeTypes.CENTRIFUGE_RECIPES },
+    };
+
+    /** The circuit 1..7 chain applied to {@code input}, each stage a GTCEu recipe map. */
+    public static List<ItemStack> refine(ItemStack input, int circuit) {
+        int index = Math.max(0, Math.min(CHAINS.length - 1, circuit - 1));
         List<ItemStack> current = List.of(input.copyWithCount(1));
-        current = applyMap(GTRecipeTypes.MACERATOR_RECIPES, current);
-        current = applyMap(GTRecipeTypes.ORE_WASHER_RECIPES, current);
-        current = applyMap(GTRecipeTypes.THERMAL_CENTRIFUGE_RECIPES, current);
-        current = applyMap(GTRecipeTypes.CENTRIFUGE_RECIPES, current);
+        for (GTRecipeType stage : CHAINS[index]) {
+            current = applyMap(stage, current);
+        }
         return current;
+    }
+
+    /** The chain selected by the circuit in the input bus (circuit 0 falls back to chain 1). */
+    private int chainCircuit() {
+        return Math.max(1, Math.min(CHAINS.length, findCircuit()));
     }
 
     private static List<ItemStack> applyMap(GTRecipeType type, List<ItemStack> inputs) {
