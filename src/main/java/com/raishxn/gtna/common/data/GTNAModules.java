@@ -2,19 +2,26 @@ package com.raishxn.gtna.common.data;
 
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.pattern.BlockPattern;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
+import com.gregtechceu.gtceu.common.data.GTMachines;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
+
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static com.gregtechceu.gtceu.api.pattern.Predicates.*;
 
@@ -39,8 +46,8 @@ public final class GTNAModules {
      * Module for GTCEu's Electric Blast Furnace, ported from GTOCore
      * ({@code GTMachineModify#ELECTRIC_BLAST_FURNACE.setSubPatternFactory}): an invar heatproof shell
      * that wraps the front and sides of the furnace, made of heatproof casing, stainless-steel frames
-     * and steel pipe casing. Its heatproof-casing cells accept the furnace's IO plus a <b>second
-     * Energy Hatch</b> and one <b>Accelerate Hatch</b> — exactly what GTOCore's
+     * and steel pipe casing. Its heatproof-casing cells accept the furnace's IO plus one
+     * additional Energy Hatch and one Accelerate Hatch — what GTOCore's
      * {@code moduleTooltips(ACCELERATE_HATCH, EXTRA_ENERGY_HATCH)} advertises.
      *
      * <p>
@@ -56,7 +63,7 @@ public final class GTNAModules {
                         .aisle("A E A", "     ", "     ", "     ")
                         .where('A', blocks(GTBlocks.CASING_INVAR_HEATPROOF.get())
                                 .or(autoAbilities(definition.getRecipeTypes(), false, false, true, true, true, true))
-                                .or(abilities(PartAbility.INPUT_ENERGY).setMaxGlobalLimited(2))
+                                .or(wiredEnergyHatches().setMaxGlobalLimited(1))
                                 .or(abilities(GTNAPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1)))
                         .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.StainlessSteel)))
                         .where('C', blocks(GTBlocks.CASING_INVAR_HEATPROOF.get()))
@@ -64,7 +71,23 @@ public final class GTNAModules {
                         .where('E', controller(blocks(definition.getBlock())))
                         .where(' ', any())
                         .build(),
-                Component.translatable("gtna.machine.electric_blast_furnace.module").withStyle(ChatFormatting.GOLD));
+                Component.translatable("gtna.machine.auxiliary_module").withStyle(ChatFormatting.GOLD),
+                Component.translatable("gtna.machine.auxiliary_module.description"),
+                Component.translatable("gtna.machine.auxiliary_module.hatches"),
+                Component.translatable("gtna.machine.electric_blast_furnace.module",
+                        Component.literal("Accelerate Hatch").withStyle(ChatFormatting.AQUA),
+                        Component.literal("Extra Energy Hatch").withStyle(ChatFormatting.AQUA)));
+    }
+
+    /** GTCEu's wired 2A/4A/16A hatches, excluding GTNA wireless hatches with the same ability. */
+    private static com.gregtechceu.gtceu.api.pattern.TraceabilityPredicate wiredEnergyHatches() {
+        Block[] blocks = Stream.of(GTMachines.ENERGY_INPUT_HATCH, GTMachines.ENERGY_INPUT_HATCH_4A,
+                GTMachines.ENERGY_INPUT_HATCH_16A)
+                .flatMap(Arrays::stream)
+                .filter(Objects::nonNull)
+                .map(MachineDefinition::getBlock)
+                .toArray(Block[]::new);
+        return blocks(blocks);
     }
 
     /**

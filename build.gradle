@@ -268,6 +268,10 @@ dependencies {
 
     // KubeJS soft dependency
     modCompileOnly("dev.latvian.mods:kubejs-forge:2001.6.5-build.16")
+    modRuntimeOnly("dev.latvian.mods:kubejs-forge:2001.6.5-build.16")
+    modCompileOnly("dev.latvian.mods:rhino-forge:2001.2.2-build.17")
+    modRuntimeOnly("dev.latvian.mods:rhino-forge:2001.2.2-build.17")
+    modRuntimeOnly("dev.architectury:architectury-forge:9.1.12")
 
     // Productive Bees soft dependency. The Steam Bee Breeding module is registered only when
     // Productive Bees is loaded (see GTNAMachines2), so players are never forced to install it; the
@@ -354,4 +358,13 @@ tasks.withType(JavaCompile).configureEach {
 tasks.withType(JavaExec).configureEach {
     environment 'XDG_SESSION_TYPE', 'x11'
     environment 'GDK_BACKEND', 'x11'
+}
+
+tasks.register('installIntegratedOreKubeJSExample', Copy) {
+    description = 'Installs the Integrated Ore Processor KubeJS example in the local dev run.'
+    from('examples/kubejs/server_scripts/gtna_integrated_ore_module.js')
+    into('run/kubejs/server_scripts')
+}
+tasks.named('runClient').configure {
+    dependsOn 'installIntegratedOreKubeJSExample'
 }

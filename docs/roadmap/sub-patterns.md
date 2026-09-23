@@ -21,20 +21,21 @@ novas habilidades**: Parallel/Accelerate hatches, IO extra, etc. É a versão GT
 
 Evento de **servidor** `GTNAServerEvents.subPatterns`. O factory recebe o
 `MultiblockMachineDefinition` e devolve um `BlockPattern` montado com o `FactoryBlockPattern` e o
-`Predicates` (já expostos pelo GTCEu ao KubeJS).
+`Predicates` (já expostos pelo GTCEu ao KubeJS). O evento é disparado após o carregamento dos
+scripts de servidor. O exemplo executável está em
+[`examples/kubejs/server_scripts/gtna_integrated_ore_module.js`](../../examples/kubejs/server_scripts/gtna_integrated_ore_module.js);
+`runClient` o instala automaticamente no diretório local `run/kubejs/server_scripts`.
 
 ```js
-// kubejs/server_scripts/gtna_sub_patterns.js
+// kubejs/server_scripts/gtna_integrated_ore_module.js
 GTNAServerEvents.subPatterns(event => {
-  // Adiciona uma torre de módulo ao Integrated Ore Processor (máquina já registrada).
+  // Coluna auxiliar de três blocos ao lado do Integrated Ore Processor.
   event.add('gtna:integrated_ore_processor', definition => FactoryBlockPattern.start()
-    .aisle('AAA', 'A~A', 'AAA')
-    .aisle('AAA', 'AAA', 'AAA')
-    .aisle('AAA', 'AAA', 'AAA')
-    .where('~', Predicates.controller(Predicates.blocks(definition.get())))
-    .where('A', Predicates.blocks('gtceu:stainless_steel_casing')
-      .or(Predicates.abilities('gtceu:parallel_hatch').setMaxGlobalLimited(1))
-      .or(Predicates.abilities('gtna:accelerate_hatch').setMaxGlobalLimited(1)))
+    .aisle('   A', 'C  A', '   A')
+    .where('C', Predicates.controller(Predicates.blocks(definition.get())))
+    .where('A', Predicates.blocks(GTBlocks.CASING_STAINLESS_CLEAN.get())
+      .or(Predicates.abilities(PartAbility.IMPORT_ITEMS).setMaxGlobalLimited(1)))
+    .where(' ', Predicates.any())
     .build())
 })
 ```
@@ -42,8 +43,9 @@ GTNAServerEvents.subPatterns(event => {
 Notas:
 - O sub-pattern é **opcional**: se não casar, a máquina continua formando com o pattern principal.
 - A âncora é o **controller** (o sub-pattern é checado na posição/facing do controller).
-- As abilidades disponíveis incluem as do GTCEu (`gtceu:parallel_hatch`, `gtceu:maintenance`, ...) e
-  as do GTNA (`gtna:accelerate_hatch`, `gtna:overclock_hatch`, `gtna:thread_hatch`, ...).
+- As abilities disponíveis incluem as do GTCEu (`PartAbility.IMPORT_ITEMS`,
+  `PartAbility.PARALLEL_HATCH`, ...) e as do GTNA (`GTNAPartAbility.ACCELERATE_HATCH`,
+  `GTNAPartAbility.THREAD_HATCH`, ...).
 - Máquinas Java usam a interface `ISubPatternMachine` (ver `LiquefactionFurnaceMachine` como
   exemplo); o registry é o caminho para KubeJS/datapacks.
 
@@ -59,8 +61,8 @@ Notas:
   pattern principal. Só o registry (`GTNASubPatterns`) alimenta o preview — módulos declarados só via
   `ISubPatternMachine` (por máquina) não aparecem.
 - **Tooltip do item:** `GTNASubPatterns.register(id, factory, Component...)` guarda linhas de tooltip e
-  o `MetaMachineBlockMixin` as anexa ao item da máquina (ex.: o EBF anuncia "2nd Energy Hatch +
-  Accelerate Hatch", como o `moduleTooltips` do GTOCore).
+  o `MetaMachineBlockMixin` as anexa ao item da máquina (ex.: o EBF anuncia Accelerate Hatch e um
+  Energy Hatch adicional, como o `moduleTooltips` do GTOCore).
 - **Terminal Nexus:** a opção **"Module Build = N"** faz o auto-build construir a base **e** os N
   primeiros módulos registrados (registry + `ISubPatternMachine`), cada um via
   `NexusBlockPattern.fromBlockPattern` — como o advanced terminal do GTMThings/GTO.

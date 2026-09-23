@@ -167,8 +167,17 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.modules_amount", "Formed modules: %s / %s");
         add("gtna.machine.structure_check", "Update structure check");
         add("gtna.machine.structure_check.shift", "Shift+click to force a full structure rebuild");
+        add("gtna.machine.structure_check.formed", "Structure formed. Auxiliary modules: %s / %s.");
+        add("gtna.machine.structure_check.missing", "Structure incomplete at %s: found %s; expected %s.");
+        add("gtna.machine.structure_check.generic", "Structure incomplete: %s");
+        add("gtna.machine.structure_check.rejected", "Auxiliary module rejected: duplicate performance hatch.");
+        add("gtna.machine.auxiliary_module", "- Auxiliary Module: ✔");
+        add("gtna.machine.auxiliary_module.description",
+                "  Allows the expansion of structures to improve machine efficiency.");
+        add("gtna.machine.auxiliary_module.hatches",
+                "  Expansion structures can install additional hatches to bring additional bonuses.");
         add("gtna.machine.electric_blast_furnace.module",
-                "Module: adds a 2nd Energy Hatch and an Accelerate Hatch");
+                "Hatch types unlocked by installing auxiliary modules : %s, %s");
         add("gtna.machine.liquefaction_furnace.module",
                 "Module: adds a Parallel Hatch and an Accelerate Hatch");
         add("gtna.multiblock.max_eut", "Max EU/t: %s (%s)");

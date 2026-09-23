@@ -33,6 +33,7 @@ import java.util.function.Function;
 public final class GTNASubPatterns {
 
     private static final Map<ResourceLocation, List<Function<MultiblockMachineDefinition, BlockPattern>>> FACTORIES = new HashMap<>();
+    private static final Map<ResourceLocation, List<Function<MultiblockMachineDefinition, BlockPattern>>> KUBE_FACTORIES = new HashMap<>();
     private static final Map<ResourceLocation, List<BlockPattern>> CACHE = new HashMap<>();
     private static final Map<ResourceLocation, List<Component>> TOOLTIPS = new HashMap<>();
 
@@ -42,6 +43,25 @@ public final class GTNASubPatterns {
     public static void register(ResourceLocation machineId,
                                 Function<MultiblockMachineDefinition, BlockPattern> factory) {
         register(machineId, factory, new Component[0]);
+    }
+
+    /** Registers a server-script extension so it can be replaced on the next server start. */
+    public static void registerKubeJS(ResourceLocation machineId,
+                                      Function<MultiblockMachineDefinition, BlockPattern> factory) {
+        KUBE_FACTORIES.computeIfAbsent(machineId, id -> new ArrayList<>()).add(factory);
+        register(machineId, factory);
+    }
+
+    public static void clearKubeJS() {
+        KUBE_FACTORIES.forEach((id, factories) -> {
+            List<Function<MultiblockMachineDefinition, BlockPattern>> registered = FACTORIES.get(id);
+            if (registered != null) {
+                registered.removeAll(factories);
+                if (registered.isEmpty()) FACTORIES.remove(id);
+            }
+            CACHE.remove(id);
+        });
+        KUBE_FACTORIES.clear();
     }
 
     /**

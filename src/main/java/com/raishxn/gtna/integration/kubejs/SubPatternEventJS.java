@@ -26,6 +26,6 @@ public class SubPatternEventJS extends EventJS {
         if (id == null) {
             throw new IllegalArgumentException("Invalid machine id: " + machineId);
         }
-        GTNASubPatterns.register(id, factory);
+        GTNASubPatterns.registerKubeJS(id, factory);
     }
 }

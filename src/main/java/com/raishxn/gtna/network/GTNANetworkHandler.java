@@ -9,6 +9,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.network.packet.CLocateConnectionPacket;
+import com.raishxn.gtna.network.packet.CStructureRefreshPacket;
 import com.raishxn.gtna.network.packet.SRegionHighlightPacket;
 import com.raishxn.gtna.network.packet.SStructureDetectHighlight;
 import com.raishxn.gtna.network.packet.SStructureGhostPreviewPacket;
@@ -63,6 +64,12 @@ public class GTNANetworkHandler {
                 .encoder(CLocateConnectionPacket::encode)
                 .decoder(CLocateConnectionPacket::decode)
                 .consumerMainThread(CLocateConnectionPacket::handle)
+                .add();
+
+        CHANNEL.messageBuilder(CStructureRefreshPacket.class, packetId++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(CStructureRefreshPacket::encode)
+                .decoder(CStructureRefreshPacket::decode)
+                .consumerMainThread(CStructureRefreshPacket::handle)
                 .add();
     }
 

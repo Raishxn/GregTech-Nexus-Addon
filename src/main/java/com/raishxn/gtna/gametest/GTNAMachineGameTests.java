@@ -551,8 +551,32 @@ public final class GTNAMachineGameTests {
                 "forced structure refresh must form the EBF and its module");
         helper.assertTrue(controller.isFormed(), "EBF must remain formed after the forced refresh");
 
+        // The base allows two Energy Hatches; the auxiliary shell contributes exactly one more.
+        BlockPos secondBaseEnergy = controllerPos.offset(1, 0, 1);
+        helper.setBlock(secondBaseEnergy, GTMachines.ENERGY_INPUT_HATCH[GTValues.LV].getBlock());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
+                "EBF must form with two base Energy Hatches and one auxiliary Energy Hatch");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
+                .gtna$formedModuleCount() == 1, "third Energy Hatch must be supplied by the module");
+
+        BlockPos secondModuleEnergy = controllerPos.offset(-2, 0, 4);
+        helper.setBlock(secondModuleEnergy, GTMachines.ENERGY_INPUT_HATCH[GTValues.LV].getBlock());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
+                "EBF base must remain formed with a second auxiliary Energy Hatch");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
+                .gtna$formedModuleCount() == 0, "module must reject its second Energy Hatch");
+        helper.setBlock(secondModuleEnergy, GTBlocks.CASING_INVAR_HEATPROOF.get());
+
+        helper.setBlock(secondModuleEnergy,
+                com.raishxn.gtna.common.data.GTNAEnergyHatches.WIRELESS_ENERGY_HATCHES[GTValues.LV][0].getBlock());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
+                "EBF base must remain formed with a wireless hatch in the module shell");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
+                .gtna$formedModuleCount() == 0, "module must reject wireless Energy Hatches");
+        helper.setBlock(secondModuleEnergy, GTBlocks.CASING_INVAR_HEATPROOF.get());
+
         // A second Accelerate Hatch in the base must not be counted with the one in the module.
-        BlockPos baseCasing = controllerPos.offset(1, 0, 1);
+        BlockPos baseCasing = controllerPos.offset(-1, 0, 1);
         helper.setBlock(baseCasing, GTNAMachines2.ACCELERATE_HATCHES[GTValues.LV].getBlock());
         helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
                 "EBF base must still form with one Accelerate Hatch");
