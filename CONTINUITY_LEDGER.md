@@ -24,6 +24,11 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
+> ⚠️ **PRÓXIMA SESSÃO:** comece pelo **G-0069** (handoff). Há **6 pendências** do feedback in-game
+> (receita shaped do controller do `liquefaction`, receitas por prefixo de material, módulo do EBF que
+> não forma in-game apesar do gametest passar, EBF aceitando 2 Overclock Hatch, delay do módulo no
+> `liquefaction`). O Nexus Terminal já foi consertado (G-0068).
+
 > ⚠️ **LEIA PRIMEIRO:** `docs/roadmap/NEXT-SESSION-HANDOFF.md` — handoff da sessão de 2026-09-21
 > (Steam/large steam, formato de tooltip com source, blocos faltantes como o Industrial Steam
 > Casing, convenção de orientação de estrutura e o `VaultPortHatch`). A sessão estourou o contexto
@@ -85,6 +90,64 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0069 (2026-09-23) — handoff: pendências do feedback in-game (4) — continuar em sessão nova
+
+Quarta rodada de feedback. O autor pediu para **continuar em uma sessão nova** (o contexto foi
+compactado várias vezes). Este checkpoint é o handoff: **nada foi corrigido aqui**, só registrado.
+O gate segue verde (44/44, `written: 0`).
+
+Itens pendentes, com as referências exatas do GTOCore:
+
+1. **Receita do controller do `liquefaction_furnace` — usar a original do GTOCore** (shaped, não
+   assembler). Referência: `GTOCore-Main/.../data/recipe/classified/Vanilla.java:425`:
+   ```java
+   VanillaRecipeHelper.addShapedRecipe(true, GTOCore.id("liquefaction_furnace"),
+       MultiBlockB.LIQUEFACTION_FURNACE.asItem(),
+       "ABA", "CDC", "ABA",
+       'A', new MaterialEntry(TagPrefix.plate, GTMaterials.Invar),
+       'B', new MaterialEntry(TagPrefix.cableGtDouble, GTMaterials.Nickel),
+       'C', new ItemStack(Blocks.BLAST_FURNACE.asItem()),
+       'D', GTMachines.EXTRACTOR[GTValues.LV].asItem());
+   ```
+   Trocar a receita atual (ASSEMBLER em `GTNAMachineRecipes`) por essa shaped.
+
+2. **Receitas do `liquefaction` por prefixo de material** (não só bloco): o GTOCore gera para todo
+   `TagPrefix` com `generateRecycling()` — ingot, rod, dust, etc. — cada um virando o próprio fluido.
+   Referência: `GTOCore-Main/.../data/recipe/generated/GTORecyclingRecipeHandler.java` (`processCrushing`):
+   ```java
+   if (!material.hasProperty(PropertyKey.FLUID) || material.getFluid() == null ||
+           (prefix == TagPrefix.dust && material.hasProperty(PropertyKey.BLAST))) return;
+   LIQUEFACTION_FURNACE_RECIPES.recipeBuilder("extract_" + itemPath)
+       .outputFluids(material.getFluid((int) (amount * L / M)))   // amount = prefix.getMaterialAmount(material)
+       .duration((int) Math.max(1, amount * material.getMass() / M))
+       .blastFurnaceTemp(Math.max(800, (int) (material.getBlastTemperature() * 0.6)))
+       .EUt(GTOUtils.getVoltageMultiplier(material))
+       .inputItems(stack)
+       .save();
+   ```
+   Ou seja: iterar `TagPrefix.values()` filtrando `generateRecycling()`, pegar
+   `ChemicalHelper.get(prefix, material)`, e converter a quantidade de material para mB (`* L / M`).
+
+3. **Nexus Terminal** — ✅ consertado (G-0068), confirmado pelo autor.
+
+4. **Módulo do EBF ainda não forma in-game**, apesar do gametest `ebfModuleForms` (G-0068) passar com a
+   geometria do GTOCore. Investigar: (a) orientação/facing com que o autor colocou o EBF; (b) os blocos
+   exatos usados; (c) se a casca foi montada como o gametest. **Pedir print/lista de blocos.**
+
+5. **EBF aceita 2 Overclock Hatch** — um no módulo e um na base. Causa: o `A` do módulo usa
+   `autoAbilities(definition.getRecipeTypes())`, e o `PredicatesMixin` do GTNA injeta
+   OVERCLOCK/ACCELERATE em `autoAbilities`. Corrigir usando **IO explícito** no módulo (sem
+   overclock), deixando o módulo liberar só o **2º Energy Hatch + Accelerate Hatch** (como o GTOCore).
+
+6. **Delay do módulo no `liquefaction`** — no EBF o refresh (G-0068, `onPartUnload` no mixin) ficou bom,
+   mas no `liquefaction` ainda há delay. Investigar por que a diferença (o `liquefaction` é
+   `CoilWorkableElectricMultiblockMachine`; o EBF é `CoilWorkableElectricMultiblockMachine` também —
+   verificar se o `asyncCheckPattern` do `liquefaction` realmente dispara e se o `onPartUnload` está
+   sendo chamado; talvez precise de um re-check imediato em vez de esperar o ciclo de 1 s).
+
+**Estado do gate:** `spotlessCheck` + `compileJava` + `runUnitTests` (18/18) +
+`runGameTestServer` (44/44) + `runData` determinístico (`written: 0`). Árvore limpa.
 
 ### G-0068 (2026-09-23) — feedback in-game (3): módulo do EBF validado por gametest, terminal constrói módulo em máquina formada, refresh de partes do módulo e receitas do `liquefaction`
 
