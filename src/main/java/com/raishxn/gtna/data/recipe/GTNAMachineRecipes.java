@@ -29,9 +29,7 @@ import appeng.core.definitions.AEItems;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.common.data.*;
-import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamOreProcessorModule;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -1654,19 +1652,26 @@ public class GTNAMachineRecipes {
         for (Material material : GTCEuAPI.materialManager.getRegisteredMaterials()) {
             ItemStack crushed = ChemicalHelper.get(TagPrefix.crushed, material);
             if (crushed.isEmpty()) continue;
+            ItemStack dust = ChemicalHelper.get(TagPrefix.dust, material);
+            if (dust.isEmpty()) continue;
+            ItemStack dustSmall = ChemicalHelper.get(TagPrefix.dustSmall, material);
             for (int circuit = 1; circuit <= 7; circuit++) {
-                List<ItemStack> products = SteamOreProcessorModule.refine(crushed, circuit);
-                if (products.isEmpty()) continue;
-                if (products.size() == 1 && ItemStack.isSameItemSameTags(products.get(0), crushed)) continue;
+                boolean wash = circuit == 2 || circuit == 3 || circuit == 4;
+                boolean sifter = circuit == 4 || circuit == 7;
+                boolean bath = circuit >= 5;
                 GTRecipeBuilder builder = GTNARecipeType.ORE_PROCESSING_RECIPES
-                        .recipeBuilder("ore_processing_" + material.getName() + "_" + circuit)
-                        .inputItems(IntCircuitIngredient.of(circuit))
+                        .recipeBuilder("integrated_ore_processing_" + material.getName() + "_" + circuit)
+                        .circuitMeta(circuit)
                         .inputItems(crushed)
-                        .inputFluids(GTMaterials.DistilledWater.getFluid(100))
+                        .outputItems(dust.copyWithCount(2))
                         .duration(200)
                         .EUt(GTValues.VA[GTValues.LV]);
-                for (ItemStack product : products) {
-                    builder.outputItems(product);
+                if (wash) {
+                    builder.inputFluids(GTMaterials.DistilledWater.getFluid(100));
+                    builder.outputItems(ChemicalHelper.get(TagPrefix.dust, GTMaterials.Stone));
+                }
+                if ((bath || sifter) && !dustSmall.isEmpty()) {
+                    builder.outputItems(dustSmall.copyWithCount(2));
                 }
                 builder.save(provider);
             }
