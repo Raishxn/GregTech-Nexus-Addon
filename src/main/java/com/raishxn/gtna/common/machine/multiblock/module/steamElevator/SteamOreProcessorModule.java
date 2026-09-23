@@ -24,6 +24,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.raishxn.gtna.common.data.GTNARecipeType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -168,14 +169,14 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
             for (int slot = 0; slot < handler.getSlots(); slot++) {
                 if (parallel >= maxParallel()) break outer;
                 ItemStack input = handler.getStackInSlot(slot);
-                if (input.isEmpty()) continue;
-                ItemStack output = macerate(input);
-                if (output.isEmpty()) continue;
+                if (!isOre(input)) continue;
+                List<ItemStack> outputs = refine(input);
+                if (outputs.isEmpty()) continue;
                 if (!drainWater()) break outer;
                 if (!drainFluid(lubricant(), LUBRICANT_PER_ORE)) break outer;
-                if (!canInsertItems(output)) break outer;
+                if (!canInsertItems(outputs)) break outer;
                 handler.extractItemInternal(slot, 1, false);
-                insertItems(output);
+                insertItems(outputs);
                 parallel++;
             }
         }
@@ -218,6 +219,52 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    /**
+     * GTNL's chain, simplified to macerate → wash → thermal → centrifuge and driven by the GTCEu
+     * recipe maps (each stage replaces an item with the matching recipe's outputs; an item with no
+     * recipe passes through). The distilled water/lubricant are charged once per ore, not per stage.
+     */
+    private static List<ItemStack> refine(ItemStack input) {
+        List<ItemStack> current = List.of(input.copyWithCount(1));
+        current = applyMap(GTRecipeTypes.MACERATOR_RECIPES, current);
+        current = applyMap(GTRecipeTypes.ORE_WASHER_RECIPES, current);
+        current = applyMap(GTRecipeTypes.THERMAL_CENTRIFUGE_RECIPES, current);
+        current = applyMap(GTRecipeTypes.CENTRIFUGE_RECIPES, current);
+        return current;
+    }
+
+    private static List<ItemStack> applyMap(GTRecipeType type, List<ItemStack> inputs) {
+        List<ItemStack> result = new ArrayList<>();
+        for (ItemStack stack : inputs) {
+            List<ItemStack> products = recipeOutputs(type, stack);
+            if (products.isEmpty()) {
+                result.add(stack);
+            } else {
+                for (ItemStack product : products) {
+                    result.add(product.copyWithCount(product.getCount() * stack.getCount()));
+                }
+            }
+            if (result.size() > 64) break; // safety cap on the intermediate chain
+        }
+        return result;
+    }
+
+    /** All item outputs of a recipe of {@code type} matching {@code input}, or an empty list. */
+    private static List<ItemStack> recipeOutputs(GTRecipeType type, ItemStack input) {
+        if (input.isEmpty()) return List.of();
+        GTRecipe recipe = type.db().find(
+                Map.of(ItemRecipeCapability.CAP, List.of(Ingredient.of(input))),
+                r -> true);
+        if (recipe == null) return List.of();
+        List<ItemStack> outputs = new ArrayList<>();
+        for (Content content : recipe.getOutputContents(ItemRecipeCapability.CAP)) {
+            if (content.content instanceof Ingredient ingredient && ingredient.getItems().length > 0) {
+                outputs.add(ingredient.getItems()[0].copy());
+            }
+        }
+        return outputs;
     }
 
     /** True for an ore/crushed input the processor can work (not an already-pure dust). */
