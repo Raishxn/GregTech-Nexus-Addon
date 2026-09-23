@@ -39,6 +39,7 @@ public class GTNAGTAddon implements IGTAddon {
     public void initializeAddon() {
         GTNAItems.init();
         GTNAMachines.init();
+        GTNAModules.init();
     }
 
     @Override

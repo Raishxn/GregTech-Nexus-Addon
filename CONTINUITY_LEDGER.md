@@ -77,6 +77,25 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0065 (2026-09-23) — módulo do EBF (sub-pattern Java) pronto para teste in-game
+
+O autor pediu para deixar tudo pronto para testar in-game (generator array, pump, módulo do EBF,
+KubeJS).
+
+- **Módulo do Electric Blast Furnace:** `GTNAModules` registra um sub-pattern para
+  `gtceu:electric_blast_furnace` via `GTNASubPatterns` — um bloco de heatproof casing atrás do forno
+  com **1 Parallel Hatch + Overclock/Accelerate/Thread hatches** (os três últimos já agem em
+  multiblocos GTCEu pelo `GTRecipeLogicMixin` do GTNA). As células que sobrepõem o forno são `any()`.
+  `GTNAModules.init()` chamado no `GTNAGTAddon.initializeAddon()`.
+- **Teste:** gametest `ebfModuleIsRegistered` (o módulo está no registry). A **geometria** do módulo
+  é para validar in-game (o teste de formação completo ficou de fora por ora).
+- **`thermal_power_pump`** (G-0062) e o **KubeJS** (G-0064) já estão prontos; o **`generator_array`**
+  ficou para depois (é um *storage multiblock* que lê geradores singleblock internos + modo wireless —
+  port maior).
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**41/41**) + `runData` determinístico (`written: 0`).
+- **Pendências:** validar in-game a geometria do módulo do EBF; portar o `generator_array`.
+
 ### G-0064 (2026-09-23) — KubeJS para sub-patterns; quests do TST; `lava_furnace` pulado
 
 Feedback do autor: pular o `lava_furnace` (o GTNA já tem um multibloco equivalente); expor os

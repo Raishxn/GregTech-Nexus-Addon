@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 ### Added
+- **Electric Blast Furnace module**: a GTNA sub-pattern registered for `gtceu:electric_blast_furnace`
+  that adds Parallel / Overclock / Accelerate / Thread hatches to the furnace.
 - **KubeJS support for sub-patterns**: the `GTNAServerEvents.subPatterns` server event lets modpack
   creators add module/extension structures to any multiblock (new or existing), unlocking new
   abilities (see `docs/roadmap/sub-patterns.md`).

@@ -47,6 +47,7 @@ import appeng.crafting.execution.CraftingCpuLogic;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
+import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
 import com.raishxn.gtna.common.WirelessSteamHudSync;
 import com.raishxn.gtna.common.data.GTNABlocks;
 import com.raishxn.gtna.common.data.GTNAMachines;
@@ -397,6 +398,18 @@ public final class GTNAMachineGameTests {
         }
         controller.onStructureFormed();
         helper.assertTrue(controller.isFormed(), "liquefaction_furnace must form");
+        helper.succeed();
+    }
+
+    /**
+     * The GTNA module registered for GTCEu's Electric Blast Furnace (G-0064) must be present in the
+     * sub-pattern registry; the geometry is validated in game.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void ebfModuleIsRegistered(GameTestHelper helper) {
+        MultiblockMachineDefinition ebf = GTMultiMachines.ELECTRIC_BLAST_FURNACE;
+        helper.assertTrue(!GTNASubPatterns.get(ebf).isEmpty(),
+                "the electric_blast_furnace module must be registered in GTNASubPatterns");
         helper.succeed();
     }
 
