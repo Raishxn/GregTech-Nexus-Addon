@@ -77,6 +77,26 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0059 (2026-09-23) — inventário das eras ULV e LV (pós-Steam)
+
+Com a era Steam fechada (G-0058), o roadmap manda inventariar a próxima era. Feito:
+
+- **ULV:** quase toda coberta pelo **GTCEu base** (`primitive_blast_furnace`, `primitive_pump`,
+  `charcoal_pile_igniter`, `coke_oven`, `multi_smelter`) + primitivos do GTNA. **Uma** lacuna
+  genuína: **`brick_kiln`** (GTOCore, no-energy, paralelo 4, `BRICK_FURNACE_RECIPES`) — coze
+  `bricks`/`coke_bricks`/`primitive_bricks` a partir de `compressed_clay`/`compressed_coke_clay`/
+  `compressed_fireclay` + carvão; distinto do `primitive_stone_furnace` (que só faz `FURNACE_RECIPES`).
+  Estrutura minúscula (`brick_kiln.mbs`, ~213 B).
+- **LV:** **nenhuma lacuna genuína** — os multiblocos LV vêm com o GTCEu/GCYM (`large_chemical_reactor`,
+  `multi_smelter`, `large_maceration_tower`, `large_*`, `alloy_blast_smelter`, ...) e o GTNA cobre os
+  específicos. A continuação é o **port GTO/GTOCore de tier médio/alto** (manifest, ordem de entrega
+  passo 3).
+- Detalhe/evidência nas seções `## ⚡ Era ULV` e `## 🔌 Era LV` de `docs/roadmap/port-roadmap-by-era.md`.
+- **Próximo passo recomendado:** portar o **`brick_kiln`** (fecha a era ULV, baixo custo: base
+  no-energy + recipe type + 3 receitas + estrutura) e então seguir para o port GTO (ex.: `chemical_plant`,
+  `recycler`, `mass_fabricator`).
+- **Validação:** mudança só de documentação (roadmap + ledger); gate de código não afetado.
+
 ### G-0058 (2026-09-23) — fecha a era Steam Elevator; logo do mod em todas as UIs de multibloco
 
 Feedback do autor: **o módulo do elevador está 100%** — "podemos finalizar essa etapa do steam

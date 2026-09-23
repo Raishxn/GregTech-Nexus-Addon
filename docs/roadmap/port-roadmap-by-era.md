@@ -97,14 +97,57 @@ LGPLv3 — código/render portável), **TST** (1.7.10, GPL-3.0 — só mecânica
 
 ## ⚡ Era ULV
 
-_(a inventariar quando o Steam fechar)_ — inventário dos multiblocos ULV das fontes, comparando com o
-GTNA. ULV costuma ser singleblocks, então aqui entram mais **mecânicas** (processamento primitivo,
-energia manual) do que multiblocos.
+> **Inventariada em 2026-09-23 (G-0059).** Conclusão: a era ULV é **quase toda coberta** pelo GTCEu
+> base e pelos primitivos já portados. Resta **um** candidato genuíno.
+
+### Já disponível ✅
+- **GTCEu base:** `primitive_blast_furnace`, `primitive_pump`, `charcoal_pile_igniter`, `coke_oven`,
+  `multi_smelter` (o núcleo primitivo do próprio GTCEu).
+- **GTNA (primitivo/steam):** `primitive_stone_furnace`, `primitive_distillation_tower`,
+  `leap_forward_one_blast_furnace`, `infernal_coke_oven`, `hyper_pressure_reactor`,
+  `compact_hyper_pressure_reactor`, `steam_cobbler`, `stone_superheater`, `steam_lava_maker`.
+
+### Lacuna genuína 🎯
+- **`brick_kiln`** (GTOCore `MultiBlockH.BRICK_KILN`, LGPLv3): multibloco **no-energy** primitivo
+  (`NoEnergyMultiblockMachine`), **paralelo 4**, recipe type próprio (`BRICK_FURNACE_RECIPES`,
+  IO 3/1/1/0) que **coze tijolos**: `compressed_clay`/`compressed_coke_clay`/`compressed_fireclay`
+  (×8) + carvão → `bricks`/`coke_bricks`/`primitive_bricks` (×2). Estrutura minúscula
+  (`brick_kiln.mbs`, ~213 B descomprimido) com `CASING_PRIMITIVE_BRICKS` + `Blocks.BRICKS` +
+  `Blocks.STONE_BRICKS`. **Distinto do `primitive_stone_furnace`** (que só faz `FURNACE_RECIPES`):
+  aqui são receitas de tijolo próprias. Custo baixo, fecha a era.
+
+### Redundante / fora de escopo ⛔
+- GTNL `BrickedBlastFurnace` = `leap_forward_one_blast_furnace`; `FurnaceArray` =
+  `primitive_stone_furnace`; `PrimitiveBrickKiln` ≈ `primitive_stone_furnace`.
+- TST `TST_SteamBasicGenerator` (gerador a vapor; o GTNA cobre com boiler), `TST_LargeSolarBoiler` =
+  `large_steam_solar_boiler`, `MegaBrickedBlastFurnace` (redundante).
+- GTOCore `large_coke_oven` → era industrial (ver manifesto), não ULV.
+
+### Prioridade sugerida (ULV)
+1. **`brick_kiln`** — fecha a era com baixo custo (base no-energy + recipe type + 3 receitas +
+   estrutura minúscula). Depois, seguir para o LV / port GTO.
 
 ## 🔌 Era LV
 
-_(a inventariar)_ — primeiros multiblocks elétricos; comparar com o que o GTNA já tem
-(`universal_factory`, `industrial_slaughterhouse`, etc.).
+> **Inventariada em 2026-09-23 (G-0059).** Conclusão: os multiblocos LV **já vêm com o GTCEu/GCYM**;
+> o GTNA cobre os específicos. Não há lacuna LV genuína — o que falta é o **port GTO/GTOCore de tier
+> médio/alto** (ver `multiblock-port-manifest.md`).
+
+### Já disponível ✅
+- **GTCEu/GCYM (LV..):** `large_chemical_reactor`, `multi_smelter`, `large_maceration_tower`,
+  `large_chemical_bath`, `large_centrifuge`, `large_electrolyzer`, `large_mixer`, `large_packer`,
+  `large_assembler`, `large_circuit_assembler`, `large_arc_smelter`, `large_engraving_laser`,
+  `large_sifting_funnel`, `alloy_blast_smelter`, `large_autoclave`, `large_material_press`,
+  `large_brewer`, `large_cutter`, `large_distillery`, `large_extractor`, `large_extruder`,
+  `large_solidifier`, `large_wiremill`, `large_bender`, `large_rolling`, `large_forming` (lista
+  completa no `multiblock-port-manifest.md`, seção "Not ported as new controllers").
+- **GTNA:** `universal_factory`, `industrial_slaughterhouse`, `integrated_ore_processor`,
+  `advanced_integrated_ore_processor`.
+
+### Lacuna 🎯
+- Nenhuma específica de LV. A continuação é o **port GTO/GTOCore** (manifest, ordem de entrega passo
+  3: "Low/mid-tier GTO processing and generators"), ex.: `chemical_plant`, `recycler`,
+  `mass_fabricator`, `decay_hastener`, `engraving_laser_plant`.
 
 ## Eras seguintes (MV → UHV+)
 
