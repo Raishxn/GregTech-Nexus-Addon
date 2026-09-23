@@ -58,6 +58,7 @@ import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMulti
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamOreProcessorModule;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.BrickKilnMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.PrimitiveStoneFurnaceMachine;
+import com.raishxn.gtna.common.machine.multiblock.noenergy.ThermalPowerPumpMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamInputHatch;
@@ -245,6 +246,83 @@ public final class GTNAMachineGameTests {
                 ChemicalHelper.getMaterialEntry(rawGold.getItem()) + ")");
         helper.assertTrue(circuit2.getFluid() == GTMaterials.DistilledWater.getFluid(),
                 "circuit 2 of raw gold must require distilled water, got " + circuit2);
+        helper.succeed();
+    }
+
+    /**
+     * Formation test for the GTOCore Thermal Power Pump port (G-0062): the decoded 3x3x8 structure
+     * (from GTOCore's {@code pattern/thermal_power_pump.mbs}) must match and form, with its one
+     * fluid import hatch, one fluid export hatch and one maintenance hatch.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 40)
+    public static void thermalPowerPumpForms(GameTestHelper helper) {
+        if (GTNAMachines.THERMAL_POWER_PUMP == null) {
+            helper.fail("thermal_power_pump is disabled by config; the formation test cannot run");
+            return;
+        }
+        BlockPos controllerPos = new BlockPos(4, 2, 2);
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dy = -2; dy <= 2; dy++) {
+                for (int dz = -1; dz <= 8; dz++) {
+                    helper.setBlock(controllerPos.offset(dx, dy, dz), Blocks.AIR);
+                }
+            }
+        }
+        helper.setBlock(controllerPos, GTNAMachines.THERMAL_POWER_PUMP.getBlock());
+
+        String[][] pattern = {
+                { "FFF", "G G", "FFF" },
+                { "FHF", "HHH", "FFF" },
+                { "FFF", "GEG", "FFF" },
+                { "DDD", "DED", "DDD" },
+                { "CDC", "AEA", "CAC" },
+                { "CDC", "AEA", "CAC" },
+                { "CDC", "AEA", "CAC" },
+                { "AAA", "A~A", "AAA" },
+        };
+        // The A cells that carry the three exact-limit parts.
+        BlockPos importPos = controllerPos.offset(1, -1, 0);
+        BlockPos exportPos = controllerPos.offset(-1, -1, 0);
+        BlockPos maintenancePos = controllerPos.offset(0, 1, 0);
+        for (int aisle = 0; aisle < pattern.length; aisle++) {
+            for (int y = 0; y < 3; y++) {
+                for (int x = 0; x < 3; x++) {
+                    char c = pattern[aisle][y].charAt(x);
+                    if (c == '~' || c == ' ') continue;
+                    BlockPos pos = controllerPos.offset(1 - x, y - 1, 7 - aisle);
+                    if (pos.equals(importPos) || pos.equals(exportPos) || pos.equals(maintenancePos)) {
+                        continue;
+                    }
+                    switch (c) {
+                        case 'A', 'D' -> helper.setBlock(pos, GTNABlocks.BRASS_REINFORCED_WOODEN_CASING.get());
+                        case 'C' -> helper.setBlock(pos, GTBlocks.CASING_BRONZE_BRICKS.get());
+                        case 'E' -> helper.setBlock(pos, GTBlocks.CASING_BRONZE_PIPE.get());
+                        case 'F' -> helper.setBlock(pos, GTNABlocks.BRONZE_REINFORCED_WOOD.get());
+                        case 'G' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.TreatedWood));
+                        case 'H' -> helper.setBlock(pos, GTBlocks.CASING_BRONZE_GEARBOX.get());
+                        default -> {}
+                    }
+                }
+            }
+        }
+        helper.setBlock(importPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.LV].getBlock());
+        helper.setBlock(exportPos, GTMachines.FLUID_EXPORT_HATCH[GTValues.LV].getBlock());
+        helper.setBlock(maintenancePos, GTMachines.MAINTENANCE_HATCH.getBlock());
+
+        MetaMachine placed = metaMachineAt(helper, controllerPos);
+        if (!(placed instanceof ThermalPowerPumpMachine controller)) {
+            helper.fail("thermal_power_pump block entity is not a ThermalPowerPumpMachine, got " + placed);
+            return;
+        }
+        MultiblockState state = controller.getMultiblockState();
+        if (!controller.getPattern().checkPatternAt(state, false)) {
+            helper.fail("thermal_power_pump pattern did not match: " +
+                    patternError(helper, state, controller.self().getPos()));
+            return;
+        }
+        controller.onStructureFormed();
+        helper.assertTrue(controller.isFormed(), "thermal_power_pump must form from the decoded structure");
         helper.succeed();
     }
 

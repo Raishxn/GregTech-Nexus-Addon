@@ -495,3 +495,15 @@ Ordem das eras (order_index): stoneage → steam → ulv → lv → mv → hv �
 - `gtocore:all_fluids_cell` 🎯
 - `gtocore:degassed_water_bucket` 🎯
 
+
+---
+
+## GTNL e TST: era-quests (marcadores)
+
+Além do GTO, o **GTNL** (BetterQuesting) tem **um quest por era** com a máquina representativa como
+ícone: *Your LV Age*, *Your HV Age*, *Your EV Age*, *Your IV Age*, *Your LuV Age*, *Your ZPM Age*,
+*Your UV Age*, *Your UHV Age*, *Your UEV Age* (lang `betterquesting.quest.<id>.name`; os quests não
+têm descrição, só o ícone `gregtech:gt.blockmachines:<meta>`). Também tem as quest lines de era steam
+`Tier 0.75 - Superheated` e `Tier 0.999... - Supercritical`. O **TST** segue o mesmo padrão (a config
+habilita a aba de quests), mas os dados de quest **não estão no repo** do TST — usamos o GTO como mapa
+principal e o GTNL como confirmação das eras steam.

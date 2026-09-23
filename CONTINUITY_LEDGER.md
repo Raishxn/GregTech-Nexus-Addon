@@ -77,6 +77,30 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0062 (2026-09-23) — `thermal_power_pump` (GTOCore) portado
+
+Segundo alvo do mapeamento por eras (G-0061). Port do **`thermal_power_pump`** do GTOCore (LGPLv3):
+
+- **Máquina `ThermalPowerPumpMachine`** (`noenergy`): base `WorkableElectricMultipleRecipesMachine` no
+  ramo zero-energy (`IZeroEnergyMachine`), `DUMMY_RECIPES`, sem energy hatch. Replica a mecânica do
+  GTOCore com um **tick GTNA-native**: `production = biomeModifier << 8` (via
+  `GTUtil.getPumpBiomeModifier`), `×3/2` se chove no bioma, ciclo de 20 t; drena steam dos hatches de
+  input e enche água nos de output (nada é voidado — só o que o output aceita é produzido).
+- **Estrutura** decodificada de `pattern/thermal_power_pump.mbs` do GTOCore: 3 largura × 3 altura ×
+  8 profundidade, com `BRASS_REINFORCED_WOODEN_CASING` (A/D, A com 1 import fluid + 1 export fluid +
+  1 maintenance), `CASING_BRONZE_BRICKS` (C), `CASING_BRONZE_PIPE` (E), `BRONZE_REINFORCED_WOOD` (F,
+  aproximação do `REINFORCED_WOOD_CASING` do GTOCore), frame de TreatedWood (G) e
+  `CASING_BRONZE_GEARBOX` (H).
+- **Infra:** config toggle `thermalPowerPump`, lang (nome, tooltips, produção/chuva), atribuição
+  `GTNASources` → `gto`, receita de craft do controller.
+- **Teste:** gametest `thermalPowerPumpForms` (monta e forma a estrutura decodificada, com os 3
+  hatches exatos). → **39/39**.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**39/39**) + `runData` determinístico (`written: 0`).
+- **Pendências:** QA manual (formação/GUI/produção no client). Próximo: **`liquefaction_furnace`**
+  (máquina de bobina; tem `addSubPattern` do GTOCore e receitas que usam materiais do GTOCore —
+  decidir adaptação).
+
 ### G-0061 (2026-09-23) — mapeamento de eras pelas quests do GTO (fim do "chute cego")
 
 Dica do autor: o modpack **GregTech Odyssey** tem **FTB Quests por tier**, o que dá o mapa real de

@@ -58,6 +58,7 @@ import com.raishxn.gtna.common.machine.multiblock.noenergy.HyperPressureReactor;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.InfernalCokeOven;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.LeapForwardBlastFurnace;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.PrimitiveStoneFurnaceMachine;
+import com.raishxn.gtna.common.machine.multiblock.noenergy.ThermalPowerPumpMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.HugeSteamInputBus;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.HugeSteamOutputBus;
@@ -4197,6 +4198,50 @@ public class GTNAMachines {
                             .withStyle(ChatFormatting.GRAY))
             .tooltipBuilder(GTNA_ADD)
             .register());
+
+    // ------------------------------------------------------------------
+    // Thermal Power Pump (GTOCore port, LGPLv3) - see G-0062.
+    // Primitive no-energy multiblock that condenses steam into water at a rate set by the biome.
+    // Structure decoded from GTOCore's pattern/thermal_power_pump.mbs (3 wide x 3 tall x 8 deep).
+    // ------------------------------------------------------------------
+    public static final MultiblockMachineDefinition THERMAL_POWER_PUMP = registerMachine("thermalPowerPump",
+            () -> REGISTRATE
+                    .multiblock("thermal_power_pump", ThermalPowerPumpMachine::new)
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .recipeType(GTRecipeTypes.DUMMY_RECIPES)
+                    .appearanceBlock(GTNABlocks.BRASS_REINFORCED_WOODEN_CASING)
+                    .pattern(definition -> FactoryBlockPattern.start()
+                            .aisle("FFF", "G G", "FFF")
+                            .aisle("FHF", "HHH", "FFF")
+                            .aisle("FFF", "GEG", "FFF")
+                            .aisle("DDD", "DED", "DDD")
+                            .aisle("CDC", "AEA", "CAC")
+                            .aisle("CDC", "AEA", "CAC")
+                            .aisle("CDC", "AEA", "CAC")
+                            .aisle("AAA", "A~A", "AAA")
+                            .where('~', controller(blocks(definition.get())))
+                            .where('A', blocks(GTNABlocks.BRASS_REINFORCED_WOODEN_CASING.get())
+                                    .or(abilities(PartAbility.IMPORT_FLUIDS).setExactLimit(1))
+                                    .or(abilities(PartAbility.EXPORT_FLUIDS).setExactLimit(1))
+                                    .or(abilities(PartAbility.MAINTENANCE).setExactLimit(1)))
+                            .where('C', blocks(GTBlocks.CASING_BRONZE_BRICKS.get()))
+                            .where('D', blocks(GTNABlocks.BRASS_REINFORCED_WOODEN_CASING.get()))
+                            .where('E', blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
+                            .where('F', blocks(GTNABlocks.BRONZE_REINFORCED_WOOD.get()))
+                            .where('G', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.TreatedWood)))
+                            .where('H', blocks(GTBlocks.CASING_BRONZE_GEARBOX.get()))
+                            .where(' ', any())
+                            .build())
+                    .workableCasingModel(
+                            GTNACORE.id("block/casings/brass_reinforced_wooden_casing"),
+                            GTCEu.id("block/multiblock/multiblock_tank"))
+                    .tooltips(
+                            Component.translatable("gtna.machine.thermal_power_pump.tooltip.0")
+                                    .withStyle(ChatFormatting.GOLD),
+                            Component.translatable("gtna.machine.thermal_power_pump.tooltip.1")
+                                    .withStyle(ChatFormatting.GRAY))
+                    .tooltipBuilder(GTNA_ADD)
+                    .register());
 
     private static <T extends MachineDefinition> T registerHatch(String hatchId, Supplier<T> supplier) {
         return ConfigHolder.isHatchEnabled(hatchId) ? supplier.get() : null;

@@ -286,6 +286,15 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.brick_kiln.tooltip.1",
                 "Fires bricks and ceramics from compressed clay and coal. No energy required.");
 
+        // Thermal Power Pump (GTOCore port, G-0062)
+        add("block.gtna.thermal_power_pump", "Thermal Power Pump");
+        add("gtna.machine.thermal_power_pump.tooltip.0",
+                "Condenses steam back into water using the ambient biome.");
+        add("gtna.machine.thermal_power_pump.tooltip.1",
+                "Oceans and rivers produce the most, the Nether produces nothing; rain boosts the output by 50%.");
+        add("gtna.machine.thermal_power_pump.production", "Water production: %s mB/t");
+        add("gtna.machine.thermal_power_pump.rain", "Raining: +50% output");
+
         add("block.gtna.industrial_platform_deployment_tools", "Industrial Platform Deployment Tools");
         add("gtna.machine.industrial_platform_deployment_tools.tooltip.0",
                 "Deploys prefabricated platform and factory presets directly into the world");
@@ -1082,6 +1091,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.integratedOreProcessor", "Integrated Ore Processor");
         add("config.gtna.option.advancedIntegratedOreProcessor", "Advanced Integrated Ore Processor");
         add("config.gtna.option.brickKiln", "Brick Kiln");
+        add("config.gtna.option.thermalPowerPump", "Thermal Power Pump");
 
         // Steam Elevator + its modules (GTNL port)
         add("block.gtna.steam_elevator", "Steam Elevator");

@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 ### Added
+- **Thermal Power Pump** (GTOCore port, LGPLv3): a primitive no-energy multiblock that condenses
+  steam into water at a biome-dependent rate (rain +50%; the Nether produces nothing).
 - **Brick Kiln** (GTOCore port, LGPLv3): a primitive no-energy multiblock that fires bricks and
   ceramics from compressed clay + coal (parallel 4), closing the ULV era.
 - **Integrated Ore Processor** (GTLCore port, LGPLv3): the 6×12×11 stainless/HSSE multiblock that
