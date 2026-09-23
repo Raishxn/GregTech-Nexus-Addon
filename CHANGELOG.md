@@ -20,6 +20,11 @@
   matching integrated recipe (circuit 1 needs none; 2/3/4 distilled water; 5/6/7 the ore's fluid).
   Its input filter now only accepts ore/crushed prefixes, not ingots.
 
+### Fixed
+- **Steam Ore Processing Module** returned the raw ore unchanged: the recipe lookup passed
+  `Ingredient.of(stack)` to GT's recipe DB, which does not expand the item's tags, so tag-based ore
+  recipes were never found. It now passes the `ItemStack` (like GT's own `SmartItemFilter`).
+
 ## [0.4.0] - 2026-09-21
 
 ### Added

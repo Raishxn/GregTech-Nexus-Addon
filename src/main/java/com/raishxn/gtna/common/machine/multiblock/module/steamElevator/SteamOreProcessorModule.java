@@ -1,8 +1,10 @@
 package com.raishxn.gtna.common.machine.multiblock.module.steamElevator;
 
-import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
+import com.gregtechceu.gtceu.api.data.chemical.material.Material;
+import com.gregtechceu.gtceu.api.data.chemical.material.properties.OreProperty;
+import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
 import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialEntry;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
@@ -10,10 +12,8 @@ import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
-import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
-import com.gregtechceu.gtceu.api.recipe.ingredient.IntCircuitIngredient;
+import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
-import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
@@ -24,7 +24,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidStack;
 
-import com.raishxn.gtna.common.data.GTNARecipeType;
+import com.raishxn.gtna.config.GTNABalance;
+import com.raishxn.gtna.data.recipe.IntegratedOreMath;
+import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -176,7 +178,33 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
 
     /** The fluid input of the integrated recipe matching {@code ore} on the current circuit, or empty. */
     private FluidStack requiredFluidFor(ItemStack ore) {
-        return requiredFluid(recipeFor(ore, chainCircuit()));
+        return requiredFluidFor(ore, chainCircuit());
+    }
+
+    /**
+     * The washing fluid the integrated recipe for {@code ore} on {@code circuit} consumes, or empty.
+     * Mirrors {@code IntegratedOreRecipes}: circuits 1 need nothing, 2/3/4 distilled water, 5/6/7 the
+     * material's own {@code OreProperty#getWashedIn()} fluid; the amount is the recipe's
+     * {@code 100 * crushedAmount} (or {@code washedAmount * crushedAmount} for 5/6/7).
+     */
+    public static FluidStack requiredFluidFor(ItemStack ore, int circuit) {
+        if (circuit < 2 || circuit > 7) return FluidStack.EMPTY;
+        MaterialEntry entry = ChemicalHelper.getMaterialEntry(ore.getItem());
+        if (entry.isEmpty()) return FluidStack.EMPTY;
+        OreProperty property = entry.material().getProperty(PropertyKey.ORE);
+        if (property == null) return FluidStack.EMPTY;
+        int mult = GTNABalance.getIntegratedOreMultiplier();
+        int crushed = entry.tagPrefix() == TagPrefix.rawOre ?
+                IntegratedOreMath.rawCrushedAmount(property.getOreMultiplier(), mult) :
+                IntegratedOreMath.stoneCrushedAmount(property.getOreMultiplier(), mult);
+        if (crushed <= 0) return FluidStack.EMPTY;
+        if (circuit <= 4) {
+            return GTMaterials.DistilledWater.getFluid(IntegratedOreMath.washFluidAmount(crushed));
+        }
+        ObjectIntPair<Material> washedIn = property.getWashedIn();
+        if (washedIn.first().isNull()) return FluidStack.EMPTY;
+        int amount = (int) Math.min(Integer.MAX_VALUE, (long) washedIn.secondInt() * crushed);
+        return washedIn.first().getFluid(amount);
     }
 
     /** The required fluid for the first processable ore, for the module UI (may be empty). */
@@ -185,38 +213,6 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
             for (int slot = 0; slot < handler.getSlots(); slot++) {
                 ItemStack input = handler.getStackInSlot(slot);
                 if (isOre(input)) return requiredFluidFor(input);
-            }
-        }
-        return FluidStack.EMPTY;
-    }
-
-    /** The integrated recipe for {@code ore} on {@code circuit} (1..7), or {@code null}. */
-    private static GTRecipe recipeFor(ItemStack ore, int circuit) {
-        if (ore.isEmpty()) return null;
-        return GTNARecipeType.ORE_PROCESSING_RECIPES.db().find(
-                Map.of(ItemRecipeCapability.CAP, List.of(Ingredient.of(ore))),
-                recipe -> circuitOf(recipe) == circuit);
-    }
-
-    private static int circuitOf(GTRecipe recipe) {
-        for (Content content : recipe.getInputContents(ItemRecipeCapability.CAP)) {
-            if (content.content instanceof IntCircuitIngredient circuit) {
-                ItemStack[] items = circuit.getItems();
-                if (items.length > 0) {
-                    return IntCircuitBehaviour.getCircuitConfiguration(items[0]);
-                }
-            }
-        }
-        return -1;
-    }
-
-    /** The first fluid input of {@code recipe} (with its amount), or empty. */
-    private static FluidStack requiredFluid(GTRecipe recipe) {
-        if (recipe == null) return FluidStack.EMPTY;
-        for (Content content : recipe.getInputContents(FluidRecipeCapability.CAP)) {
-            if (content.content instanceof FluidIngredient ingredient) {
-                FluidStack[] stacks = ingredient.getStacks();
-                if (stacks.length > 0) return stacks[0];
             }
         }
         return FluidStack.EMPTY;
@@ -284,8 +280,10 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
     /** All item outputs of a recipe of {@code type} matching {@code input}, or an empty list. */
     private static List<ItemStack> recipeOutputs(GTRecipeType type, ItemStack input) {
         if (input.isEmpty()) return List.of();
+        // Pass the ItemStack itself (not Ingredient.of(...)): ore recipes are tag-based, and only the
+        // ItemStack lookup expands the item's tags into the ItemTagMapIngredient the DB indexes on.
         GTRecipe recipe = type.db().find(
-                Map.of(ItemRecipeCapability.CAP, List.of(Ingredient.of(input))),
+                Map.of(ItemRecipeCapability.CAP, List.of(input.copyWithCount(1))),
                 r -> true);
         if (recipe == null) return List.of();
         List<ItemStack> outputs = new ArrayList<>();

@@ -55,6 +55,7 @@ import com.raishxn.gtna.common.data.GTNARecipeType;
 import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
 import com.raishxn.gtna.common.machine.multiblock.electric.UniversalFactoryMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
+import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamOreProcessorModule;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.PrimitiveStoneFurnaceMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
@@ -68,6 +69,7 @@ import com.raishxn.gtna.network.packet.SWirelessSteamStats;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -215,6 +217,34 @@ public final class GTNAMachineGameTests {
             return fluids;
         }
         return List.of();
+    }
+
+    /**
+     * Regression for the ore processor module returning the raw ore unchanged: the module's chain
+     * lookup must find GTCEu's recipes for a raw ore. The bug was passing {@code Ingredient.of(stack)}
+     * to {@code db().find} — ore recipes are tag-based and only the {@code ItemStack} lookup expands
+     * the item's tags into the {@code ItemTagMapIngredient} the recipe DB indexes on.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void oreProcessorModuleRefinesRawOre(GameTestHelper helper) {
+        ItemStack rawGold = ChemicalHelper.get(TagPrefix.rawOre, GTMaterials.Gold);
+        helper.assertFalse(rawGold.isEmpty(), "raw gold must exist for the refine test");
+        List<ItemStack> outputs = SteamOreProcessorModule.refine(rawGold, 2);
+        helper.assertFalse(outputs.isEmpty(), "the ore processor chain must produce output for raw gold");
+        helper.assertFalse(outputs.size() == 1 && ItemStack.isSameItem(outputs.get(0), rawGold),
+                "the module must not return the raw ore unchanged: " + outputs);
+        boolean goldDust = outputs.stream()
+                .anyMatch(s -> ItemStack.isSameItem(s, ChemicalHelper.get(TagPrefix.dust, GTMaterials.Gold)));
+        helper.assertTrue(goldDust, "circuit 2 of raw gold must end in gold dust, got " + outputs);
+
+        FluidStack circuit1 = SteamOreProcessorModule.requiredFluidFor(rawGold, 1);
+        helper.assertTrue(circuit1.isEmpty(), "circuit 1 must not require a fluid, got " + circuit1);
+        FluidStack circuit2 = SteamOreProcessorModule.requiredFluidFor(rawGold, 2);
+        helper.assertFalse(circuit2.isEmpty(), "circuit 2 of raw gold must require distilled water (entry=" +
+                ChemicalHelper.getMaterialEntry(rawGold.getItem()) + ")");
+        helper.assertTrue(circuit2.getFluid() == GTMaterials.DistilledWater.getFluid(),
+                "circuit 2 of raw gold must require distilled water, got " + circuit2);
+        helper.succeed();
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)

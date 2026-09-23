@@ -34,8 +34,8 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0056):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
-  `runGameTestServer` (**36/36**, `All 36 required tests passed`) + `runData` determinístico
+- **Gate verde em 2026-09-23 (G-0057):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**37/37**, `All 37 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
 - **Módulos do elevador (G-0052):** o IO de item/fluido agora é sempre pelos **hatches da própria
@@ -72,6 +72,31 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0057 (2026-09-23) — fix urgente: módulo devolvia o minério cru; fluido da receita pelo material
+
+Feedback do autor: com o módulo já rodando (G-0056), ele **pegava raw gold e devolvia raw gold**
+(não refinava) e a UI mostrava `Fluid: not required` no modo 2.
+
+- **Causa raiz do "não refina":** o `recipeOutputs`/`recipeFor` passavam `Ingredient.of(stack)` para
+  `GTRecipeType.db().find(...)`. As receitas de minério usam **tag** (`forge:raw_materials/gold`), e só
+  o lookup por **ItemStack** expande as tags do item em `ItemTagMapIngredient` (o nó que o DB indexa);
+  `Ingredient.of(ItemStack)` vira um `ItemValue` e não gera nó de tag → lookup vazio → o `refine`
+  devolvia o input. Corrigido passando o **ItemStack** (`ore.copyWithCount(1)`) — igual ao
+  `SmartItemFilter` do GTCEu.
+- **Causa raiz do fluido:** o DB de um recipe type **multi-input** não acha a receita buscando só o
+  minério (a 1ª entrada é o circuito; a árvore é ordenada), e `ChemicalHelper.getMaterialStack(rawOre)`
+  volta com `amount = 0` (o `MaterialStack.isEmpty()` é true). Solução: o fluido exigido é calculado do
+  próprio `OreProperty` via `ChemicalHelper.getMaterialEntry(item)` (que devolve
+  `forge:raw_materials/gold` corretamente) — mesma regra do `IntegratedOreRecipes` (circuito 1 sem
+  fluido; 2/3/4 distilled water; 5/6/7 o `getWashedIn()` do minério; amount `100*crushed` ou
+  `washed*crushed`).
+- **Teste:** o gametest `oreProcessorModuleRefinesRawOre` agora checa `refine(rawGold, 2)` termina em
+  **gold dust** (não raw gold) e que `requiredFluidFor(rawGold, 1)` é vazio e `(rawGold, 2)` é
+  **distilled water**. → **37/37**.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**37/37**).
+- **Pendências:** re-teste manual do módulo no client (output = dust + byproducts; fluido por circuito).
 
 ### G-0056 (2026-09-23) — feedback do client: lang do recipe type, receitas de craft e módulo sem lubricant
 
