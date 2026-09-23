@@ -1,11 +1,16 @@
 package com.raishxn.gtna.common.machine.multiblock.module.steamElevator;
 
+import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialStack;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
+import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
+import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
+import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
@@ -13,8 +18,14 @@ import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
+
+import com.raishxn.gtna.common.data.GTNARecipeType;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * GTNL {@code SteamOreProcessorModule} port (LGPLv3, original by ScienceNotLeisure).
@@ -93,7 +104,7 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
         return hasUpkeepSteam() &&
                 waterAmount() >= WATER_PER_ORE &&
                 countFluid(lubricant()) >= LUBRICANT_PER_ORE &&
-                countItem(stack -> !macerate(stack).isEmpty()) > 0;
+                countItem(SteamOreProcessorModule::isOre) > 0;
     }
 
     private static int clampMode(int mode) {
@@ -173,7 +184,17 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
         }
     }
 
+    /**
+     * The first refined product for {@code input}: the GTNA {@code ore_processing} type first, then the
+     * GTCEu macerator's real recipes, and finally the material-derived crushed/dust fallback. The full
+     * multi-stage chain is still the documented simplification.
+     */
     private ItemStack macerate(ItemStack input) {
+        ItemStack processed = recipeOutput(GTNARecipeType.ORE_PROCESSING_RECIPES, input);
+        if (!processed.isEmpty()) return processed;
+        processed = recipeOutput(GTRecipeTypes.MACERATOR_RECIPES, input);
+        if (!processed.isEmpty()) return processed;
+
         MaterialStack stack = ChemicalHelper.getMaterialStack(input);
         if (stack == null || stack.isEmpty()) return ItemStack.EMPTY;
         var material = stack.material();
@@ -182,6 +203,28 @@ public class SteamOreProcessorModule extends SteamElevatorModuleMachine {
         ItemStack crushed = ChemicalHelper.get(TagPrefix.crushed, material, 2);
         if (!crushed.isEmpty()) return crushed;
         return ChemicalHelper.get(TagPrefix.dust, material, 1);
+    }
+
+    /** The first item output of a recipe of {@code type} matching {@code input}, or empty. */
+    private static ItemStack recipeOutput(GTRecipeType type, ItemStack input) {
+        if (input.isEmpty()) return ItemStack.EMPTY;
+        GTRecipe recipe = type.db().find(
+                Map.of(ItemRecipeCapability.CAP, List.of(Ingredient.of(input))),
+                r -> true);
+        if (recipe == null) return ItemStack.EMPTY;
+        for (Content content : recipe.getOutputContents(ItemRecipeCapability.CAP)) {
+            if (content.content instanceof Ingredient ingredient && ingredient.getItems().length > 0) {
+                return ingredient.getItems()[0].copy();
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
+    /** True for an ore/crushed input the processor can work (not an already-pure dust). */
+    private static boolean isOre(ItemStack stack) {
+        MaterialStack material = ChemicalHelper.getMaterialStack(stack);
+        if (material == null || material.isEmpty()) return false;
+        return !ItemStack.isSameItem(stack, ChemicalHelper.get(TagPrefix.dust, material.material()));
     }
 
     @Override
