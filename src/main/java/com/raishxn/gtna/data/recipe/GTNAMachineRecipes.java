@@ -1,7 +1,9 @@
 package com.raishxn.gtna.data.recipe;
 
+import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
+import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.recipe.ingredient.IntCircuitIngredient;
@@ -17,6 +19,7 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
@@ -597,6 +600,7 @@ public class GTNAMachineRecipes {
                     .EUt(GTValues.VA[GTValues.HV])
                     .save(provider);
         }
+        registerOreProcessingRecipes(provider);
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_OIL_DRILL_MODULE_I)) {
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_oil_drill_module_i")
                     .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
@@ -1635,6 +1639,27 @@ public class GTNAMachineRecipes {
                             .save(provider);
                 }
             }
+        }
+    }
+
+    /**
+     * GTNA ore-processing recipes: each material's crushed ore is washed into purified crushed ore
+     * with distilled water, exposing the {@code gtna:ore_processing} category in JEI. The Steam Ore
+     * Processor module consumes these (and the GTCEu maps) in its macerate → wash → thermal chain.
+     */
+    private static void registerOreProcessingRecipes(Consumer<FinishedRecipe> provider) {
+        for (Material material : GTCEuAPI.materialManager.getRegisteredMaterials()) {
+            ItemStack crushed = ChemicalHelper.get(TagPrefix.crushed, material);
+            if (crushed.isEmpty()) continue;
+            ItemStack purified = ChemicalHelper.get(TagPrefix.crushedPurified, material);
+            if (purified.isEmpty()) continue;
+            GTNARecipeType.ORE_PROCESSING_RECIPES.recipeBuilder("ore_processing_" + material.getName())
+                    .inputItems(crushed)
+                    .inputFluids(GTMaterials.DistilledWater.getFluid(100))
+                    .outputItems(purified)
+                    .duration(200)
+                    .EUt(GTValues.VA[GTValues.LV])
+                    .save(provider);
         }
     }
 

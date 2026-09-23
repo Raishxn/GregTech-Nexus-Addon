@@ -12,6 +12,7 @@ import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
 import com.gregtechceu.gtceu.api.pattern.Predicates;
+import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 
@@ -495,7 +496,8 @@ public class GTNAMachines2 {
                 "Steam Entity Crusher Module III", 3, holder -> new SteamEntityCrusherModule(holder, 3),
                 moduleLines("steam_elevator_entity_crusher_module_iii", 1, 6));
         STEAM_ELEVATOR_ORE_PROCESSOR_MODULE = registerElevatorModule("steam_elevator_ore_processor_module",
-                "Steam Ore Processing Module", 8, holder -> new SteamOreProcessorModule(holder, 8),
+                "Steam Ore Processing Module", 8, GTNARecipeType.ORE_PROCESSING_RECIPES,
+                holder -> new SteamOreProcessorModule(holder, 8),
                 moduleLines("steam_elevator_ore_processor_module", 1, 8));
         STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_I = registerElevatorModule("steam_elevator_monster_repellent_module_i",
                 "Steam Monster Repellator Module I", 1, holder -> new SteamMonsterRepellentModule(holder, 1),
@@ -544,6 +546,16 @@ public class GTNAMachines2 {
     private static MachineDefinition registerElevatorModule(String id, String name, int tier,
                                                             Function<IMachineBlockEntity, ? extends MultiblockControllerMachine> factory,
                                                             Component... extraTooltips) {
+        return registerElevatorModule(id, name, tier, GTRecipeTypes.DUMMY_RECIPES, factory, extraTooltips);
+    }
+
+    /**
+     * Module definition with an explicit recipe type (the Ore Processor uses
+     * {@code gtna:ore_processing} so JEI shows its real category instead of the dummy one).
+     */
+    private static MachineDefinition registerElevatorModule(String id, String name, int tier, GTRecipeType recipeType,
+                                                            Function<IMachineBlockEntity, ? extends MultiblockControllerMachine> factory,
+                                                            Component... extraTooltips) {
         return REGISTRATE.multiblock(id, factory)
                 .tier(Math.min(tier, GTValues.MAX))
                 .rotationState(RotationState.NON_Y_AXIS)
@@ -552,7 +564,7 @@ public class GTNAMachines2 {
                 .allowFlip(false)
                 // No real recipes: the module effects are driven by the host, but a dummy recipe
                 // type keeps the definition's recipe-type array non-empty.
-                .recipeType(GTRecipeTypes.DUMMY_RECIPES)
+                .recipeType(recipeType)
                 .appearanceBlock(GTBlocks.CASING_STEEL_SOLID)
                 .pattern(definition -> GTNAMultiBlockFileReader.start(definition, "steam_elevator_module")
                         .where('~', controller(blocks(definition.get())))
