@@ -28,8 +28,8 @@ foi feito nem repetir os erros já pagos.
 > autor com a geometria e orientação do gametest `ebfModuleForms`. O liquefaction agora verifica o
 > módulo a cada 5 ticks quando formado; confirmar a latência e o botão no client. Conferir
 > visualmente o arco-íris e a tradução do tooltip do EBF, o destaque do bloco errado e o módulo
-> KubeJS do Integrated Ore Processor na interface. Conferir a formação e a posição dos 480 cores
-> do Nexus ME Hypercore na nova geometria 41×43×41.
+> KubeJS do Integrated Ore Processor na interface. Conferir a formação e a posição dos 320 cores
+> do Nexus ME Hypercore na geometria 44×22×44 do `packet.txt`.
 
 > ⚠️ **LEIA PRIMEIRO:** `docs/roadmap/NEXT-SESSION-HANDOFF.md` — handoff da sessão de 2026-09-21
 > (Steam/large steam, formato de tooltip com source, blocos faltantes como o Industrial Steam
@@ -40,7 +40,7 @@ foi feito nem repetir os erros já pagos.
 - Desenvolvimento na branch `main`; o histórico anterior a G-0026 está preservado no ledger.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0074):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+- **Gate verde em 2026-09-23 (G-0075):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
   `runGameTestServer` (**45/45**, `All 45 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
@@ -59,11 +59,12 @@ foi feito nem repetir os erros já pagos.
   reavalia o módulo a cada 5 ticks. Hatches Parallel, Accelerate, Thread, Overclock e Output Boost
   são limitados a um de cada tipo no conjunto base + módulo. A origem GTOCore do módulo EBF é
   adicionada no momento em que o tooltip aparece, preservando idioma e animação.
-- **Tooltip auxiliar e Hypercore (G-0074):** EBF e liquefaction compartilham as quatro linhas de
-  tooltip de módulo auxiliar; só a lista localizada de hatches muda. O Nexus ME Hypercore usa o
-  layout 41×43×41 fornecido pelo autor, com controller no centro do vidro da face final, Interface
-  de CPU ao lado e 480 posições H/I que aceitam cores ou os casings originais. O gametest valida
-  que o padrão carrega; a formação completa ainda requer QA in-game.
+- **Tooltip auxiliar e Hypercore (G-0074/G-0075):** EBF e liquefaction compartilham as quatro linhas
+  de tooltip de módulo auxiliar; só a lista localizada de hatches muda. O Nexus ME Hypercore usa
+  o layout 44×22×44 de `packet.txt`, com controller e Interface de CPU lado a lado no cilindro de
+  vidro laminado e 320 posições de cores. O padrão 41×43×41 de G-0074 pertence a outro multibloco
+  ainda sem nome e está preservado em `docs/structures/unassigned_41x43x41_source.txt`; ele não é
+  carregado pelo jogo. O gametest valida o padrão novo; a formação completa requer QA in-game.
 - **Era Steam Elevator fechada (G-0058):** o módulo de ore processing do elevador está 100% (G-0057);
   os 8 módulos, o host 35×43×35 e a rede wireless estão no gate. Restam só itens de **QA manual
   visual** (`docs/roadmap/QA-MANUAL-CHECKLIST.md`). A logo do mod agora aparece em **todas** as UIs de
@@ -105,7 +106,33 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0075 (2026-09-23) — correção da estrutura do Nexus ME Hypercore
+
+- **Correção de origem:** o autor informou que a estrutura 41×43×41 de G-0074 pertence a outro
+  multibloco. O texto original foi preservado como `unassigned_41x43x41_source.txt`; seu recurso
+  binário e conversor especulativo foram removidos. O Hypercore usa exclusivamente o `packet.txt`
+  fornecido em seguida, copiado sem alteração para `docs/structures/nexus_me_hypercore_source.txt`.
+- **Novo padrão:** 44 aisles de 22×44, convertidos de forma reproduzível por
+  `tools/convert_nexus_me_hypercore.py` para `pattern/nexus_me_hypercore.mbs`. O controller substitui
+  vidro laminado em `(aisle 30, row 10, column 21)` e a Interface de CPU fica ao lado em
+  `(30,10,22)`, interpretando a indicação do autor de "no meio do vidro" e "do lado do controller".
+  Os 320 blocos `m` aceitam os cinco tiers de Matrix Crafting Storage Core e o AE2 Crafting Unit;
+  o limiar de Transcendent Mode é 320. A base `g` conserva um Parallel Hatch opcional. Os dois
+  `grass_block` isolados (`c`) são tratados como marcadores de limite, sem exigência de bloco.
+- **Modelo e tooltip:** a aparência do controller voltou ao Nonconducting Casing; o texto agora
+  descreve a geometria 44×22×44 e a capacidade de 320 cores. A tooltip auxiliar uniforme de
+  G-0074 permanece.
+- **Validação:** o conversor confirmou um controller, uma Interface e 320 posições de cores. Gate
+  offline completo verde: `spotlessCheck`, `compileJava`, `runUnitTests` (18/18),
+  `runGameTestServer` (45/45, incluindo `nexusHypercorePatternLoads`) e `runData` (`written: 0`).
+  Código no commit `2b88508`.
+- **Pendências:** confirmar a posição exata de controller/interface e os dois marcadores de grama;
+  verificar formação completa e preview no client.
+
 ### G-0074 (2026-09-23) — tooltip auxiliar uniforme e novo Nexus ME Hypercore
+
+> **Substituído por G-0075:** o arquivo 41×43×41 era de outro multibloco; os detalhes de Hypercore
+> abaixo documentam o estado do commit histórico, não a implementação atual.
 
 - **Tooltip dos módulos:** EBF e liquefaction agora usam o mesmo cabeçalho, explicação e linha
   `Hatch types unlocked...`; apenas os hatches mudam (EBF: Accelerate + Extra Energy;
