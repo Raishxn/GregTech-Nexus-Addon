@@ -62,6 +62,18 @@ public class GTNARecipeType {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.FURNACE);
 
+    /**
+     * GTNA ore-processing chain (macerate → wash → thermal → centrifuge). Registered as a real
+     * {@link GTRecipeType} so the Steam Ore Processor module and future multiblocks can run datapack
+     * recipes against it, in the spirit of GTLAdditions/GTLCore's ore processors.
+     */
+    public static final String ORE_PROCESSING = "ore_processing";
+    public static final GTRecipeType ORE_PROCESSING_RECIPES = register("ore_processing", ORE_PROCESSING)
+            .setMaxIOSize(3, 6, 2, 0)
+            .setEUIO(IO.IN)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.MACERATOR);
+
     public static final String HIGH_PRESSURE_REACTOR = "high_pressure_reactor";
     public static final GTRecipeType HIGH_PRESSURE_REACTOR_RECIPES = register("high_pressure_reactor",
             HIGH_PRESSURE_REACTOR)
