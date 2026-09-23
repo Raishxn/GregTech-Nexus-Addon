@@ -115,10 +115,11 @@ foi feito nem repetir os erros já pagos.
 - **Novo padrão:** 44 aisles de 22×44, convertidos de forma reproduzível por
   `tools/convert_nexus_me_hypercore.py` para `pattern/nexus_me_hypercore.mbs`. O controller substitui
   vidro laminado em `(aisle 30, row 10, column 21)` e a Interface de CPU fica ao lado em
-  `(30,10,22)`, interpretando a indicação do autor de "no meio do vidro" e "do lado do controller".
+  `(30,10,22)`, posição confirmada pelo autor em 2026-09-23.
   Os 320 blocos `m` aceitam os cinco tiers de Matrix Crafting Storage Core e o AE2 Crafting Unit;
   o limiar de Transcendent Mode é 320. A base `g` conserva um Parallel Hatch opcional. Os dois
-  `grass_block` isolados (`c`) são tratados como marcadores de limite, sem exigência de bloco.
+  `grass_block` isolados (`c`) são marcadores de limite do exportador, sem exigência de bloco,
+  conforme confirmação do autor em 2026-09-23.
 - **Modelo e tooltip:** a aparência do controller voltou ao Nonconducting Casing; o texto agora
   descreve a geometria 44×22×44 e a capacidade de 320 cores. A tooltip auxiliar uniforme de
   G-0074 permanece.
@@ -126,8 +127,7 @@ foi feito nem repetir os erros já pagos.
   offline completo verde: `spotlessCheck`, `compileJava`, `runUnitTests` (18/18),
   `runGameTestServer` (45/45, incluindo `nexusHypercorePatternLoads`) e `runData` (`written: 0`).
   Código no commit `2b88508`.
-- **Pendências:** confirmar a posição exata de controller/interface e os dois marcadores de grama;
-  verificar formação completa e preview no client.
+- **Pendências:** verificar formação completa e preview no client.
 
 ### G-0074 (2026-09-23) — tooltip auxiliar uniforme e novo Nexus ME Hypercore
 
