@@ -427,6 +427,19 @@ public final class GTNAMachineGameTests {
         helper.succeed();
     }
 
+    /**
+     * A machine with modules must advertise them on its item tooltip (G-0067), so players learn what
+     * an attachable module unlocks — GTOCore does this with {@code moduleTooltips}.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void moduleTooltipsAreRegistered(GameTestHelper helper) {
+        helper.assertTrue(!GTNASubPatterns.getTooltips(GTMultiMachines.ELECTRIC_BLAST_FURNACE).isEmpty(),
+                "the electric_blast_furnace module must carry a tooltip");
+        helper.assertTrue(!GTNASubPatterns.getTooltips(GTNAMachines.LIQUEFACTION_FURNACE).isEmpty(),
+                "the liquefaction_furnace module must carry a tooltip");
+        helper.succeed();
+    }
+
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void nativeCraftingCpuKeepsAe2Executor(GameTestHelper helper) {
         CraftingCPUCluster cluster = new CraftingCPUCluster(BlockPos.ZERO, BlockPos.ZERO);

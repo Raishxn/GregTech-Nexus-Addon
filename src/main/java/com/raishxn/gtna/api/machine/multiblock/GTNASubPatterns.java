@@ -3,6 +3,7 @@ package com.raishxn.gtna.api.machine.multiblock;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.pattern.BlockPattern;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -23,20 +24,38 @@ import java.util.function.Function;
  * (Parallel / Accelerate hatches, extra IO, ...).
  *
  * <p>
+ * A registration can carry tooltip lines describing what the module unlocks; they are appended to the
+ * machine item's tooltip by {@code MetaMachineBlockMixin}.
+ *
+ * <p>
  * This class is safe to load without KubeJS on the classpath: it only stores pattern factories.
  */
 public final class GTNASubPatterns {
 
     private static final Map<ResourceLocation, List<Function<MultiblockMachineDefinition, BlockPattern>>> FACTORIES = new HashMap<>();
     private static final Map<ResourceLocation, List<BlockPattern>> CACHE = new HashMap<>();
+    private static final Map<ResourceLocation, List<Component>> TOOLTIPS = new HashMap<>();
 
     private GTNASubPatterns() {}
 
     /** Registers one extension structure for the machine {@code machineId}. */
     public static void register(ResourceLocation machineId,
                                 Function<MultiblockMachineDefinition, BlockPattern> factory) {
+        register(machineId, factory, new Component[0]);
+    }
+
+    /**
+     * Registers one extension structure for the machine {@code machineId}, plus tooltip lines
+     * describing what the module unlocks (shown on the machine item).
+     */
+    public static void register(ResourceLocation machineId,
+                                Function<MultiblockMachineDefinition, BlockPattern> factory,
+                                Component... tooltips) {
         FACTORIES.computeIfAbsent(machineId, id -> new ArrayList<>()).add(factory);
         CACHE.remove(machineId);
+        if (tooltips.length > 0) {
+            TOOLTIPS.computeIfAbsent(machineId, id -> new ArrayList<>()).addAll(List.of(tooltips));
+        }
     }
 
     /** The built extension structures for {@code definition} (cached), or an empty list. */
@@ -56,5 +75,10 @@ public final class GTNASubPatterns {
             }
             return patterns;
         });
+    }
+
+    /** Tooltip lines describing the modules of {@code definition}, or an empty list. */
+    public static List<Component> getTooltips(MultiblockMachineDefinition definition) {
+        return TOOLTIPS.getOrDefault(definition.getId(), List.of());
     }
 }

@@ -3,17 +3,19 @@ package com.raishxn.gtna.common.data;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
+import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.pattern.BlockPattern;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
 
-import static com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.PARALLEL_HATCH;
 import static com.gregtechceu.gtceu.api.pattern.Predicates.*;
 
 /**
@@ -34,29 +36,35 @@ public final class GTNAModules {
     }
 
     /**
-     * Module for GTCEu's Electric Blast Furnace: a heatproof-casing block on the back of the furnace
-     * that carries one Parallel Hatch plus GTNA's Overclock / Accelerate / Thread hatches (the latter
-     * three already act on GTCEu multiblocks through GTNA's recipe-logic mixin). The cells overlapping
-     * the furnace itself are {@code any()}.
+     * Module for GTCEu's Electric Blast Furnace, ported from GTOCore
+     * ({@code GTMachineModify#ELECTRIC_BLAST_FURNACE.setSubPatternFactory}): an invar heatproof shell
+     * that wraps the front and sides of the furnace, made of heatproof casing, stainless-steel frames
+     * and steel pipe casing. Its heatproof-casing cells accept the furnace's IO plus a <b>second
+     * Energy Hatch</b> and one <b>Accelerate Hatch</b> — exactly what GTOCore's
+     * {@code moduleTooltips(ACCELERATE_HATCH, EXTRA_ENERGY_HATCH)} advertises.
+     *
+     * <p>
+     * Cells that overlap the furnace itself are {@code any()}.
      */
     private static void registerElectricBlastFurnaceModule() {
         GTNASubPatterns.register(new ResourceLocation("gtceu", "electric_blast_furnace"),
                 definition -> FactoryBlockPattern.start()
-                        .aisle("   ", "   ", "   ", "   ")
-                        .aisle("   ", "   ", "   ", "   ")
-                        .aisle(" ~ ", "   ", "   ", "   ")
-                        .aisle("XXX", "XXX", "XXX", "XXX")
-                        .aisle("XXX", "XXX", "XXX", "XXX")
-                        .aisle("XXX", "XXX", "XXX", "XXX")
-                        .where('~', controller(blocks(definition.getBlock())))
-                        .where('X', blocks(GTBlocks.CASING_INVAR_HEATPROOF.get())
-                                .or(abilities(PARALLEL_HATCH).setMaxGlobalLimited(1))
-                                .or(abilities(GTNAPartAbility.OVERCLOCK_HATCH).setMaxGlobalLimited(1))
-                                .or(abilities(GTNAPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1))
-                                .or(abilities(GTNAPartAbility.THREAD_HATCH).setMaxGlobalLimited(1))
-                                .or(blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Invar))))
+                        .aisle("AAAAA", " DBD ", " DBD ", " CCC ")
+                        .aisle("ACCCA", "BD DB", "BD DB", "CCCCC")
+                        .aisle("A   A", "     ", "     ", "C   C")
+                        .aisle("A   A", "B   B", "B   B", "C   C")
+                        .aisle("A E A", "     ", "     ", "     ")
+                        .where('A', blocks(GTBlocks.CASING_INVAR_HEATPROOF.get())
+                                .or(autoAbilities(definition.getRecipeTypes()))
+                                .or(abilities(PartAbility.INPUT_ENERGY).setMaxGlobalLimited(2))
+                                .or(abilities(GTNAPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1)))
+                        .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.StainlessSteel)))
+                        .where('C', blocks(GTBlocks.CASING_INVAR_HEATPROOF.get()))
+                        .where('D', blocks(GTBlocks.CASING_STEEL_PIPE.get()))
+                        .where('E', controller(blocks(definition.get())))
                         .where(' ', any())
-                        .build());
+                        .build(),
+                Component.translatable("gtna.machine.electric_blast_furnace.module").withStyle(ChatFormatting.GOLD));
     }
 
     /**
@@ -72,7 +80,8 @@ public final class GTNAModules {
      */
     private static void registerLiquefactionFurnaceModule() {
         GTNASubPatterns.register(new ResourceLocation("gtna", "liquefaction_furnace"),
-                GTNAModules::buildLiquefactionExtension);
+                GTNAModules::buildLiquefactionExtension,
+                Component.translatable("gtna.machine.liquefaction_furnace.module").withStyle(ChatFormatting.GOLD));
     }
 
     private static BlockPattern buildLiquefactionExtension(MultiblockMachineDefinition definition) {
@@ -85,7 +94,7 @@ public final class GTNAModules {
                 .aisle("BBB   C", "BDB    ", "BBB    ")
                 .aisle("AAA    ", "AAA    ", "AAA    ")
                 .where('A', blocks(GTBlocks.CASING_INVAR_HEATPROOF.get())
-                        .or(abilities(PARALLEL_HATCH).setMaxGlobalLimited(1))
+                        .or(abilities(PartAbility.PARALLEL_HATCH).setMaxGlobalLimited(1))
                         .or(abilities(GTNAPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1)))
                 .where('B', blocks(GTBlocks.CASING_STAINLESS_TURBINE.get()))
                 .where('C', controller(blocks(definition.get())))

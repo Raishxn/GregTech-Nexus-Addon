@@ -34,15 +34,17 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0066):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
-  `runGameTestServer` (**42/42**, `All 42 required tests passed`) + `runData` determinístico
+- **Gate verde em 2026-09-23 (G-0067):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**43/43**, `All 43 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
-- **Módulos (sub-patterns) na UI/preview (G-0066):** todo multibloco mostra **"Formed modules: n /
-  total"** (`IGTNAModuleHost` + `WorkableElectricMultiblockMachineMixin`) e cada módulo registrado
-  vira uma **página extra no preview do JEI** (`MultiblockMachineDefinitionMixin`). O
-  `liquefaction_furnace` é uma máquina **normal** (Parallel/Accelerate só com o módulo). Pendentes:
-  o **Nexus Terminal "module build"** e um botão dedicado a módulos.
+- **Módulos (sub-patterns) na UI/preview/tooltip (G-0066/G-0067):** todo multibloco mostra **"Formed
+  modules: n / total"** (`IGTNAModuleHost` + `WorkableElectricMultiblockMachineMixin`), cada módulo
+  registrado vira uma **página extra no preview do JEI** (`MultiblockMachineDefinitionMixin`) e o
+  **tooltip do item** lista o que o módulo libera (`MetaMachineBlockMixin` + `GTNASubPatterns`). O
+  **Terminal Nexus** ("Module Build = N") constrói a base + os N primeiros módulos. O
+  `liquefaction_furnace` é uma máquina **normal** (Parallel/Accelerate só com o módulo). Pendentes: um
+  botão dedicado a módulos no preview.
 - **Era Steam Elevator fechada (G-0058):** o módulo de ore processing do elevador está 100% (G-0057);
   os 8 módulos, o host 35×43×35 e a rede wireless estão no gate. Restam só itens de **QA manual
   visual** (`docs/roadmap/QA-MANUAL-CHECKLIST.md`). A logo do mod agora aparece em **todas** as UIs de
@@ -81,6 +83,44 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0067 (2026-09-23) — feedback in-game (2): módulo do EBF fiel ao GTOCore, tooltips de módulo, build de módulo no terminal e receitas do `liquefaction`
+
+Segunda rodada de feedback do autor:
+
+- **Terminal Nexus:** com "Module Build = 1" ele construiu a **base** do multibloco, não o módulo.
+- **`liquefaction_furnace`**: "ainda não tem recipe type".
+- **Módulo do EBF** não estava como no GTOCore: saiu um bloco **4×3 na frente** do controller.
+- Pedido: um **mixin de tooltip** no EBF dizendo o que o módulo libera (no GTOCore: Accelerate Hatch +
+  Energy Hatch extra).
+
+Correções:
+
+- **Módulo do EBF fiel ao GTOCore** (`GTMachineModify#ELECTRIC_BLAST_FURNACE.setSubPatternFactory`):
+  substituído o bloco 3×4×3 por uma **casca de invar 5×4×5** (5 aisles × 4 linhas × 5 chars) com
+  heatproof casing, frames de aço inox e steel pipe casing. As células de heatproof aceitam o IO do
+  forno + um **2º Energy Hatch** (`INPUT_ENERGY`, máx. 2) + 1 **Accelerate Hatch** — exatamente o que
+  o `moduleTooltips(ACCELERATE_HATCH, EXTRA_ENERGY_HATCH)` do GTOCore anuncia. As células que
+  sobrepõem o forno são `any()`.
+- **Tooltips de módulo:** `GTNASubPatterns.register(id, factory, Component...)` agora guarda linhas de
+  tooltip; `MetaMachineBlockMixin` (novo, injeta no TAIL de `MetaMachineBlock.appendHoverText`) as
+  anexa ao item da máquina. Lang: `gtna.machine.electric_blast_furnace.module` e
+  `gtna.machine.liquefaction_furnace.module`.
+- **Terminal Nexus — "Module Build":** `NexusBlockPattern.autoBuild` virou um seletor que chama
+  `buildThisPattern` (o pattern principal) e, se `ModuleBuild > 0`, também constrói os **N primeiros
+  módulos** registrados (registry + `ISubPatternMachine`), cada um via `NexusBlockPattern.fromBlockPattern`.
+  Mesma ideia do advanced terminal do GTMThings/GTO.
+- **`liquefaction_furnace` — receitas fixas:** o recipe type já estava registrado, mas vazio (categoria
+  sem receita não aparece no JEI). Adicionadas receitas fiéis ao `GlassRecipe` do GTOCore (bloco do
+  material → 1152 mB do próprio fluido, 200 ticks, `temp = max(800, blastTemp * 0.6)`, `EUt = VA[tier]`)
+  para Titânio/Tungstênio/HSSS/Naquadah/Tritanium/Neutrônio, com guarda `hasFluid()`/bloco vazio.
+
+- **Testes:** gametest novo `moduleTooltipsAreRegistered`. → **43/43**.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**43/43**) + `runData` determinístico (`written: 0`).
+- **Pendências:** validar in-game a casca do módulo do EBF (a geometria é a do GTOCore com a ancoragem
+  GTNA no controller); confirmar se a categoria do `liquefaction` aparece no JEI; o "Module Build" do
+  terminal constrói os N primeiros módulos (se o autor quiser escolher um índice específico, ajustar).
 
 ### G-0066 (2026-09-23) — feedback in-game: orientação/hatches do `liquefaction_furnace`, preview do módulo no JEI e contagem de módulos na UI
 

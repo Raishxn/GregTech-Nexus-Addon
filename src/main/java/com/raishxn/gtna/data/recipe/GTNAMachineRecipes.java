@@ -2,6 +2,7 @@ package com.raishxn.gtna.data.recipe;
 
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
+import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.recipe.ingredient.IntCircuitIngredient;
@@ -674,6 +675,17 @@ public class GTNAMachineRecipes {
                     .duration(300)
                     .EUt(GTValues.VA[GTValues.MV])
                     .save(provider);
+        }
+        if (enabled(GTNAMachines.LIQUEFACTION_FURNACE)) {
+            // GTOCore's liquefaction furnace melts a solid into the material's own fluid. GTNA has no
+            // borosilicate-glass blocks, so the closest faithful port melts the material's block into
+            // its fluid, using GTOCore's GlassRecipe math (200 ticks, temp = max(800, blastTemp*0.6)).
+            addLiquefactionRecipe(provider, GTMaterials.Titanium, GTValues.EV);
+            addLiquefactionRecipe(provider, GTMaterials.Tungsten, GTValues.IV);
+            addLiquefactionRecipe(provider, GTMaterials.HSSS, GTValues.LuV);
+            addLiquefactionRecipe(provider, GTMaterials.Naquadah, GTValues.ZPM);
+            addLiquefactionRecipe(provider, GTMaterials.Tritanium, GTValues.UV);
+            addLiquefactionRecipe(provider, GTMaterials.Neutronium, GTValues.UHV);
         }
         if (enabled(GTNAMachines.STEAM_CACTUS_WONDER)) {
             // GTNL CactusWonderFakeRecipes: GT++ cactus charcoal/coke -> steam at one recipe per
@@ -1866,6 +1878,27 @@ public class GTNAMachineRecipes {
                     .EUt(16)
                     .save(provider);
         }
+    }
+
+    /**
+     * One GTOCore-style liquefaction recipe: the material's block melts into 1152 mB of its own fluid.
+     * Guarded so a material without a block or fluid is silently skipped.
+     */
+    private static void addLiquefactionRecipe(Consumer<FinishedRecipe> provider, Material material, int tier) {
+        if (!material.hasFluid()) {
+            return;
+        }
+        var block = ChemicalHelper.get(TagPrefix.block, material);
+        if (block.isEmpty()) {
+            return;
+        }
+        GTNARecipeType.LIQUEFACTION_FURNACE_RECIPES.recipeBuilder("liquefy_" + material.getName())
+                .inputItems(block.getItem())
+                .outputFluids(material.getFluid(1152))
+                .duration(200)
+                .EUt(GTValues.VA[tier])
+                .blastFurnaceTemp(Math.max(800, (int) (material.getBlastTemperature() * 0.6)))
+                .save(provider);
     }
 
     private static boolean enabled(MachineDefinition... definitions) {

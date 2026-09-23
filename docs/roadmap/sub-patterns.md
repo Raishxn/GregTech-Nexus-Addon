@@ -58,6 +58,12 @@ Notas:
   uma **página extra** do preview de multibloco (`getMatchingShapes()`), ao lado das páginas do
   pattern principal. Só o registry (`GTNASubPatterns`) alimenta o preview — módulos declarados só via
   `ISubPatternMachine` (por máquina) não aparecem.
+- **Tooltip do item:** `GTNASubPatterns.register(id, factory, Component...)` guarda linhas de tooltip e
+  o `MetaMachineBlockMixin` as anexa ao item da máquina (ex.: o EBF anuncia "2nd Energy Hatch +
+  Accelerate Hatch", como o `moduleTooltips` do GTOCore).
+- **Terminal Nexus:** a opção **"Module Build = N"** faz o auto-build construir a base **e** os N
+  primeiros módulos registrados (registry + `ISubPatternMachine`), cada um via
+  `NexusBlockPattern.fromBlockPattern` — como o advanced terminal do GTMThings/GTO.
 
 ## Regra de design: a base não ganha threads/parallel por acidente
 
@@ -77,6 +83,4 @@ Cuidados:
 A ancoragem GTNA é no controller; o GTOCore usa um offset próprio no gtolib. Ao portar um sub-pattern
 do GTOCore, validar in-game se a geometria casa; se não, ajustar o offset/geometria.
 
-Ainda **não** implementado (pedido do autor, G-0066): o **Nexus Terminal "module build"** (construir a
-estrutura do **módulo** — não a do multibloco — igual ao advanced terminal do GTMThings/GTO) e um
-**botão dedicado a módulos** no preview.
+Ainda **não** implementado (pedido do autor, G-0066): um **botão dedicado a módulos** no preview.

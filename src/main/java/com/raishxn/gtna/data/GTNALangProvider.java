@@ -165,6 +165,10 @@ public class GTNALangProvider extends LanguageProvider {
 
         // --- Multiple-recipes machine UI (previously hardcoded literals) ---
         add("gtna.machine.modules_amount", "Formed modules: %s / %s");
+        add("gtna.machine.electric_blast_furnace.module",
+                "Module: adds a 2nd Energy Hatch and an Accelerate Hatch");
+        add("gtna.machine.liquefaction_furnace.module",
+                "Module: adds a Parallel Hatch and an Accelerate Hatch");
         add("gtna.multiblock.max_eut", "Max EU/t: %s (%s)");
         add("gtna.multiblock.parallels", "Parallels: %s");
         add("gtna.multiblock.overclock_hatch", "Overclock Hatch: %s");

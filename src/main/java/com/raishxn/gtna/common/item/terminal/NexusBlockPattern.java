@@ -34,6 +34,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import com.mojang.datafixers.util.Pair;
+import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
+import com.raishxn.gtna.api.machine.multiblock.ISubPatternMachine;
 import com.raishxn.gtna.common.item.terminal.ui.NexusTerminalUIFactory;
 import it.unimi.dsi.fastutil.ints.IntObjectPair;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -116,6 +118,34 @@ public class NexusBlockPattern extends BlockPattern {
 
     public void autoBuild(Player player, MultiblockState worldState, NexusTerminalUIFactory.AutoBuildSetting setting,
                           ItemStack terminalStack) {
+        buildThisPattern(player, worldState, setting, terminalStack);
+
+        // "Module Build" > 0: after the main structure, also build the first N modules (sub-patterns)
+        // registered for this machine — mirroring the GTMThings/GTO advanced terminal.
+        int moduleCount = setting.getModuleBuild();
+        if (moduleCount <= 0) {
+            return;
+        }
+        IMultiController controller = worldState.getController();
+        if (controller == null) {
+            return;
+        }
+        List<BlockPattern> modules = new ArrayList<>(GTNASubPatterns.get(controller.self().getDefinition()));
+        if (controller.self() instanceof ISubPatternMachine host) {
+            modules.addAll(host.gtna$getSubPatterns());
+        }
+        int limit = Math.min(moduleCount, modules.size());
+        for (int i = 0; i < limit; i++) {
+            NexusBlockPattern sub = NexusBlockPattern.fromBlockPattern(modules.get(i));
+            if (sub != null) {
+                sub.buildThisPattern(player, worldState, setting, terminalStack);
+            }
+        }
+    }
+
+    private void buildThisPattern(Player player, MultiblockState worldState,
+                                  NexusTerminalUIFactory.AutoBuildSetting setting,
+                                  ItemStack terminalStack) {
         Level world = player.level();
         int minZ = -centerOffset[4];
         clearWorldState(worldState);
