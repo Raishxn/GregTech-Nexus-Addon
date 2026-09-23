@@ -76,6 +76,17 @@ public class GTNARecipeType {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.MACERATOR);
 
+    /**
+     * GTOCore {@code brick_kiln} recipe type (LGPLv3): fires bricks/ceramics from compressed clay +
+     * coal. No EU (the kiln is a primitive no-energy multiblock). IO 3 item in / 1 item out /
+     * 1 fluid in, matching GTOCore's {@code BRICK_FURNACE_RECIPES}.
+     */
+    public static final String BRICK_FURNACE = "brick_furnace";
+    public static final GTRecipeType BRICK_FURNACE_RECIPES = register("brick_furnace", BRICK_FURNACE)
+            .setMaxIOSize(3, 1, 1, 0)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.FURNACE);
+
     public static final String HIGH_PRESSURE_REACTOR = "high_pressure_reactor";
     public static final GTRecipeType HIGH_PRESSURE_REACTOR_RECIPES = register("high_pressure_reactor",
             HIGH_PRESSURE_REACTOR)

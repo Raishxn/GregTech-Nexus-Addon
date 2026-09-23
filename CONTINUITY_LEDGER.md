@@ -77,6 +77,29 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0060 (2026-09-23) — `brick_kiln` (GTOCore) portado; era ULV fechada
+
+Fecha a lacuna ULV do inventário (G-0059) com o port do **`brick_kiln`** do GTOCore (LGPLv3):
+
+- **Recipe type `gtna:brick_furnace`**: `setMaxIOSize(3, 1, 1, 0)`, sem EU, som `FURNACE`.
+- **`BrickKilnMachine`** (`noenergy`): base `WorkableElectricMultipleRecipesMachine` no ramo
+  zero-energy (`IZeroEnergyMachine`), `getMaxParallel() = 4` (GTOCore `accurateParallel(4)`), sem
+  energy hatch. O `IZeroEnergyMachine` ganhou o sentinel **`gtna$recipeDuration() <= 0` = manter a
+  duração da receita** (o kiln usa 150 t; o `PrimitiveStoneFurnace`/Dirt Forge continuam forçando 1).
+- **Estrutura** decodificada de `pattern/brick_kiln.mbs` do GTOCore (formato nativo JNI, sem reader
+  em Java): 5 largura × 4 altura × 7 profundidade, oca, com `CASING_PRIMITIVE_BRICKS` (A/C, A com IO),
+  `Blocks.BRICKS` (B), `Blocks.STONE_BRICKS` (D) e o controller na última aisle.
+- **Receitas** (fiéis ao GTOCore): `bricks`, `coke_bricks` e `primitive_bricks` ×2 de
+  `compressed_clay`/`compressed_coke_clay`/`compressed_fireclay` ×8 + carvão, 150 t cada.
+- **Infra:** config toggle `brickKiln`, lang (`gtna.brick_furnace`, nome, tooltips), atribuição
+  `GTNASources` → `gto`, receita de craft do controller.
+- **Teste:** novo template de gametest `empty_16` (a estrutura 7-de-fundo não cabe num quadrante
+  disjunto do `empty_12`) + gametest `brickKilnForms` (monta e forma a estrutura decodificada).
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**38/38**) + `runData` determinístico (`written: 0`).
+- **Pendências:** QA manual visual (formação/GUI no client). **Era ULV fechada** — a próxima é o
+  **port GTO/GTOCore de tier médio/alto** (mapear tiers/eras pelas quests — ver G-0061).
+
 ### G-0059 (2026-09-23) — inventário das eras ULV e LV (pós-Steam)
 
 Com a era Steam fechada (G-0058), o roadmap manda inventariar a próxima era. Feito:

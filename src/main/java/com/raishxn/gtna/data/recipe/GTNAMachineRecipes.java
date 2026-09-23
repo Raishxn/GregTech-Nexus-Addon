@@ -1806,6 +1806,28 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
 
+        // Brick Kiln (GTOCore port, G-0060): fires bricks/ceramics from compressed clay + coal.
+        if (enabled(GTNAMachines.BRICK_KILN)) {
+            GTNARecipeType.BRICK_FURNACE_RECIPES.recipeBuilder("brick")
+                    .inputItems(Items.COAL)
+                    .inputItems(GTItems.COMPRESSED_CLAY, 8)
+                    .outputItems(Blocks.BRICKS.asItem(), 2)
+                    .duration(150)
+                    .save(provider);
+            GTNARecipeType.BRICK_FURNACE_RECIPES.recipeBuilder("coke_oven_brick")
+                    .inputItems(Items.COAL)
+                    .inputItems(GTItems.COMPRESSED_COKE_CLAY, 8)
+                    .outputItems(GTBlocks.CASING_COKE_BRICKS.asItem(), 2)
+                    .duration(150)
+                    .save(provider);
+            GTNARecipeType.BRICK_FURNACE_RECIPES.recipeBuilder("firebrick")
+                    .inputItems(Items.COAL)
+                    .inputItems(GTItems.COMPRESSED_FIRECLAY, 8)
+                    .outputItems(GTBlocks.CASING_PRIMITIVE_BRICKS.asItem(), 2)
+                    .duration(150)
+                    .save(provider);
+        }
+
         // --- Large steam casings (GTNL port; textures from Modernity-GTNH) ---
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.INDUSTRIAL_STEAM_CASING.asItem())
                 .pattern("AAA")

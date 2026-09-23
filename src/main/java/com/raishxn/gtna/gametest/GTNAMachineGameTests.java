@@ -56,6 +56,7 @@ import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
 import com.raishxn.gtna.common.machine.multiblock.electric.UniversalFactoryMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamOreProcessorModule;
+import com.raishxn.gtna.common.machine.multiblock.noenergy.BrickKilnMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.PrimitiveStoneFurnaceMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
@@ -252,6 +253,70 @@ public final class GTNAMachineGameTests {
         CraftingCPUCluster cluster = new CraftingCPUCluster(BlockPos.ZERO, BlockPos.ZERO);
         helper.assertTrue(cluster.craftingLogic.getClass() == CraftingCpuLogic.class,
                 "a native AE2 CPU must keep CraftingCpuLogic, got " + cluster.craftingLogic.getClass().getName());
+        helper.succeed();
+    }
+
+    /**
+     * Formation test for the GTOCore Brick Kiln port (G-0060): the decoded 5x4x7 primitive structure
+     * (from GTOCore's {@code pattern/brick_kiln.mbs}) must match and form. Uses the larger
+     * {@code empty_16} template because the 7-deep shape does not fit a disjoint quadrant of
+     * {@code empty_12}.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 40)
+    public static void brickKilnForms(GameTestHelper helper) {
+        if (GTNAMachines.BRICK_KILN == null) {
+            helper.fail("brick_kiln is disabled by config; the formation test cannot run");
+            return;
+        }
+        BlockPos controllerPos = new BlockPos(4, 2, 2);
+        // Wipe the 5x4x7 volume plus a margin (clearArea's fixed radius is too small for this shape).
+        for (int dx = -3; dx <= 3; dx++) {
+            for (int dy = -1; dy <= 4; dy++) {
+                for (int dz = -1; dz <= 7; dz++) {
+                    helper.setBlock(controllerPos.offset(dx, dy, dz), Blocks.AIR);
+                }
+            }
+        }
+        helper.setBlock(controllerPos, GTNAMachines.BRICK_KILN.getBlock());
+
+        String[][] pattern = {
+                { " AAA ", " BBB ", " BBB ", "  B  " },
+                { "ACDCA", "BB BB", "BB BB", " BBB " },
+                { "ADDDA", "B   B", "B   B", " BBB " },
+                { "ADDDA", "B   B", "B   B", " BBB " },
+                { "ADDDA", "B   B", "B   B", " BBB " },
+                { "ACDCA", "BB BB", "BB BB", " BBB " },
+                { " A~A ", " BBB ", " BBB ", "  B  " },
+        };
+        for (int aisle = 0; aisle < pattern.length; aisle++) {
+            for (int y = 0; y < 4; y++) {
+                for (int x = 0; x < 5; x++) {
+                    char c = pattern[aisle][y].charAt(x);
+                    if (c == '~' || c == ' ') continue;
+                    BlockPos pos = controllerPos.offset(2 - x, y, 6 - aisle);
+                    switch (c) {
+                        case 'A', 'C' -> helper.setBlock(pos, GTBlocks.CASING_PRIMITIVE_BRICKS.get());
+                        case 'B' -> helper.setBlock(pos, Blocks.BRICKS);
+                        case 'D' -> helper.setBlock(pos, Blocks.STONE_BRICKS);
+                        default -> {}
+                    }
+                }
+            }
+        }
+
+        MetaMachine placed = metaMachineAt(helper, controllerPos);
+        if (!(placed instanceof BrickKilnMachine controller)) {
+            helper.fail("brick_kiln block entity is not a BrickKilnMachine, got " + placed);
+            return;
+        }
+        MultiblockState state = controller.getMultiblockState();
+        if (!controller.getPattern().checkPatternAt(state, false)) {
+            helper.fail(
+                    "brick_kiln pattern did not match: " + patternError(helper, state, controller.self().getPos()));
+            return;
+        }
+        controller.onStructureFormed();
+        helper.assertTrue(controller.isFormed(), "brick_kiln must form from the decoded structure");
         helper.succeed();
     }
 

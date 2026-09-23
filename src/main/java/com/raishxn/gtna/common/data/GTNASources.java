@@ -55,6 +55,8 @@ public final class GTNASources {
             // --- GTLCore (LGPLv3) ---
             Map.entry("integrated_ore_processor", GTLCORE),
             Map.entry("advanced_integrated_ore_processor", GTLCORE),
+            // --- GTOCore (LGPLv3) ---
+            Map.entry("brick_kiln", GTO),
             // --- GT: Not Leisure ---
             Map.entry("large_steam_crusher", GTNL),
             Map.entry("large_steam_furnace", GTNL),

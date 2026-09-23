@@ -50,6 +50,7 @@ import com.raishxn.gtna.common.machine.multiblock.energy.MEStorageMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.NexusMEHyperCoreMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.NexusMolecularForgeMachine;
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamElevator;
+import com.raishxn.gtna.common.machine.multiblock.noenergy.BrickKilnMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.DimensionallyTranscendentDirtForgeMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.EyeOfHarmonyMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.EyeOfWoodMachine;
@@ -4157,6 +4158,45 @@ public class GTNAMachines {
                                     .withStyle(ChatFormatting.GRAY))
                     .tooltipBuilder(GTNA_ADD)
                     .register());
+
+    // ------------------------------------------------------------------
+    // Brick Kiln (GTOCore port, LGPLv3) - see G-0060.
+    // Primitive no-energy multiblock that fires bricks/ceramics from compressed clay + coal.
+    // Structure decoded from GTOCore's pattern/brick_kiln.mbs (5 wide x 4 tall x 7 deep).
+    // ------------------------------------------------------------------
+    public static final MultiblockMachineDefinition BRICK_KILN = registerMachine("brickKiln", () -> REGISTRATE
+            .multiblock("brick_kiln", BrickKilnMachine::new)
+            .rotationState(RotationState.NON_Y_AXIS)
+            .recipeType(GTNARecipeType.BRICK_FURNACE_RECIPES)
+            .appearanceBlock(GTBlocks.CASING_PRIMITIVE_BRICKS)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle(" AAA ", " BBB ", " BBB ", "  B  ")
+                    .aisle("ACDCA", "BB BB", "BB BB", " BBB ")
+                    .aisle("ADDDA", "B   B", "B   B", " BBB ")
+                    .aisle("ADDDA", "B   B", "B   B", " BBB ")
+                    .aisle("ADDDA", "B   B", "B   B", " BBB ")
+                    .aisle("ACDCA", "BB BB", "BB BB", " BBB ")
+                    .aisle(" A~A ", " BBB ", " BBB ", "  B  ")
+                    .where('~', controller(blocks(definition.get())))
+                    .where('A', blocks(GTBlocks.CASING_PRIMITIVE_BRICKS.get())
+                            .or(abilities(PartAbility.IMPORT_ITEMS).setPreviewCount(1))
+                            .or(abilities(PartAbility.EXPORT_ITEMS).setPreviewCount(1))
+                            .or(abilities(PartAbility.IMPORT_FLUIDS).setPreviewCount(1)))
+                    .where('B', blocks(Blocks.BRICKS))
+                    .where('C', blocks(GTBlocks.CASING_PRIMITIVE_BRICKS.get()))
+                    .where('D', blocks(Blocks.STONE_BRICKS))
+                    .where(' ', any())
+                    .build())
+            .workableCasingModel(
+                    GTCEu.id("block/casings/solid/machine_primitive_bricks"),
+                    GTCEu.id("block/multiblock/primitive_blast_furnace"))
+            .tooltips(
+                    Component.translatable("gtna.machine.brick_kiln.tooltip.0")
+                            .withStyle(ChatFormatting.GOLD),
+                    Component.translatable("gtna.machine.brick_kiln.tooltip.1")
+                            .withStyle(ChatFormatting.GRAY))
+            .tooltipBuilder(GTNA_ADD)
+            .register());
 
     private static <T extends MachineDefinition> T registerHatch(String hatchId, Supplier<T> supplier) {
         return ConfigHolder.isHatchEnabled(hatchId) ? supplier.get() : null;

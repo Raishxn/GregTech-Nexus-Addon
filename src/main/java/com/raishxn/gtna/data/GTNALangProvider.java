@@ -279,6 +279,13 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.primitive_stone_furnace.tooltip.1",
                 "Feed items in and take the smelted results out; no power hatch is needed.");
 
+        // Brick Kiln (GTOCore port, G-0060)
+        add("block.gtna.brick_kiln", "Brick Kiln");
+        add("gtna.brick_furnace", "Brick Firing");
+        add("gtna.machine.brick_kiln.tooltip.0", "Ancient kiln, primitive craftsmanship.");
+        add("gtna.machine.brick_kiln.tooltip.1",
+                "Fires bricks and ceramics from compressed clay and coal. No energy required.");
+
         add("block.gtna.industrial_platform_deployment_tools", "Industrial Platform Deployment Tools");
         add("gtna.machine.industrial_platform_deployment_tools.tooltip.0",
                 "Deploys prefabricated platform and factory presets directly into the world");
@@ -1074,6 +1081,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.steamBeeBreedingModule", "Steam Bee Breeding Module");
         add("config.gtna.option.integratedOreProcessor", "Integrated Ore Processor");
         add("config.gtna.option.advancedIntegratedOreProcessor", "Advanced Integrated Ore Processor");
+        add("config.gtna.option.brickKiln", "Brick Kiln");
 
         // Steam Elevator + its modules (GTNL port)
         add("block.gtna.steam_elevator", "Steam Elevator");

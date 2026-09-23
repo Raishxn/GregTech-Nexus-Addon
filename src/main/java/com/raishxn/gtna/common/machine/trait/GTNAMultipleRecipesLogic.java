@@ -332,7 +332,10 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
                         .build()
                         .apply(recipeToRun);
             }
-            recipeToRun.duration = zeroEnergy.gtna$recipeDuration();
+            int forcedDuration = zeroEnergy.gtna$recipeDuration();
+            if (forcedDuration > 0) {
+                recipeToRun.duration = forcedDuration;
+            }
         } else if (machine instanceof AdjustableSteamParallelMachine steamMachine) {
             recipeToRun = steamMachine.createThreadedRecipe(recipe);
             if (recipeToRun == null) return false;

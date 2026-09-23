@@ -108,13 +108,8 @@ LGPLv3 — código/render portável), **TST** (1.7.10, GPL-3.0 — só mecânica
   `compact_hyper_pressure_reactor`, `steam_cobbler`, `stone_superheater`, `steam_lava_maker`.
 
 ### Lacuna genuína 🎯
-- **`brick_kiln`** (GTOCore `MultiBlockH.BRICK_KILN`, LGPLv3): multibloco **no-energy** primitivo
-  (`NoEnergyMultiblockMachine`), **paralelo 4**, recipe type próprio (`BRICK_FURNACE_RECIPES`,
-  IO 3/1/1/0) que **coze tijolos**: `compressed_clay`/`compressed_coke_clay`/`compressed_fireclay`
-  (×8) + carvão → `bricks`/`coke_bricks`/`primitive_bricks` (×2). Estrutura minúscula
-  (`brick_kiln.mbs`, ~213 B descomprimido) com `CASING_PRIMITIVE_BRICKS` + `Blocks.BRICKS` +
-  `Blocks.STONE_BRICKS`. **Distinto do `primitive_stone_furnace`** (que só faz `FURNACE_RECIPES`):
-  aqui são receitas de tijolo próprias. Custo baixo, fecha a era.
+- ~~**`brick_kiln`** (GTOCore `MultiBlockH.BRICK_KILN`, LGPLv3)~~ → **portado no G-0060** ✅.
+  Era ULV **fechada**; seguir para o port GTO/GTOCore de tier médio/alto.
 
 ### Redundante / fora de escopo ⛔
 - GTNL `BrickedBlastFurnace` = `leap_forward_one_blast_furnace`; `FurnaceArray` =

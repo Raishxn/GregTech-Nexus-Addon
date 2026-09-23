@@ -7,7 +7,10 @@ package com.raishxn.gtna.api.machine;
  */
 public interface IZeroEnergyMachine {
 
-    /** Fixed processing time in ticks (GTLsupb default is 1). */
+    /**
+     * Fixed processing time in ticks (GTLsupb default is 1). Return a value {@code <= 0} to keep the
+     * recipe's own duration instead (used by the brick kiln, whose recipes carry their own times).
+     */
     default int gtna$recipeDuration() {
         return 1;
     }
