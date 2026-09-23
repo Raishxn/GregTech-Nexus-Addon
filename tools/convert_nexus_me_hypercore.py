@@ -18,8 +18,8 @@ SYMBOLS = {
     "h": 4, "i": 11, "j": 10, "k": 3, "l": 8, "m": 9,
     "n": 14, "o": 13, "p": 15, "q": 18,
 }
-CONTROLLER = (30, 18, 21)  # aisle, row (top to bottom), column
-CPU_INTERFACE = (30, 18, 22)
+CONTROLLER = (30, 2, 21)  # aisle, row (increases upward in game), column
+CPU_INTERFACE = (30, 2, 22)
 
 
 def main() -> None:

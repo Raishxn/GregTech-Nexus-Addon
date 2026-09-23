@@ -40,7 +40,7 @@ foi feito nem repetir os erros já pagos.
 - Desenvolvimento na branch `main`; o histórico anterior a G-0026 está preservado no ledger.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0076):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+- **Gate verde em 2026-09-23 (G-0077):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
   `runGameTestServer` (**45/45**, `All 45 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
@@ -59,10 +59,10 @@ foi feito nem repetir os erros já pagos.
   reavalia o módulo a cada 5 ticks. Hatches Parallel, Accelerate, Thread, Overclock e Output Boost
   são limitados a um de cada tipo no conjunto base + módulo. A origem GTOCore do módulo EBF é
   adicionada no momento em que o tooltip aparece, preservando idioma e animação.
-- **Tooltip auxiliar e Hypercore (G-0074..G-0076):** EBF e liquefaction compartilham as quatro linhas
+- **Tooltip auxiliar e Hypercore (G-0074..G-0077):** EBF e liquefaction compartilham as quatro linhas
   de tooltip de módulo auxiliar; só a lista localizada de hatches muda. O Nexus ME Hypercore usa
   o layout 44×22×44 de `packet.txt`, com controller e Interface de CPU lado a lado no cilindro de
-  vidro laminado, agora na linha 18 do padrão (oito blocos abaixo da posição anterior), e 320
+  vidro laminado, agora na linha 2 do padrão (oito blocos abaixo da posição original), e 320
   posições de cores. O padrão 41×43×41 de G-0074 pertence a outro multibloco
   ainda sem nome e está preservado em `docs/structures/unassigned_41x43x41_source.txt`; ele não é
   carregado pelo jogo. O gametest valida o padrão novo; a formação completa requer QA in-game.
@@ -107,13 +107,28 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
-### G-0076 (2026-09-23) — controller e Interface do Hypercore oito blocos abaixo
+### G-0077 (2026-09-23) — correção da direção vertical do Hypercore
+
+- **Feedback in-game:** o autor confirmou que a mudança de `row 10` para `row 18` de G-0076
+  **subiu** o controller e a Interface. A interpretação anterior da ordem vertical estava errada:
+  neste padrão o índice da linha aumenta para cima no jogo.
+- **Correção:** o conversor agora posiciona os blocos em `(aisle 30, row 2, column 21)` e
+  `(30,2,22)`, oito blocos abaixo da posição original. Ambos substituem `k` (Laminated Glass) no
+  `packet.txt`; as linhas 10 e 18 voltaram a `k`. O `.mbs` foi regenerado, com um controller e
+  uma Interface.
+- **Validação:** gate offline completo verde: `spotlessCheck`, `compileJava`, `runUnitTests`
+  (18/18), `runGameTestServer` (45/45) e `runData` (`written: 0`). A posição visual corrigida
+  aguarda confirmação no client.
+
+### G-0076 (2026-09-23) — tentativa de descer controller e Interface do Hypercore
+
+> **Corrigido por G-0077:** `row 18` subiu os blocos no jogo, conforme feedback do autor.
 
 - **Pedido do autor:** deslocar controller e Interface de CPU oito blocos para baixo, mantendo-os
   adjacentes na mesma face do cilindro de vidro laminado.
-- **Padrão:** `tools/convert_nexus_me_hypercore.py` agora substitui vidro nas coordenadas
-  `(aisle 30, row 18, column 21)` e `(30,18,22)`. As linhas do padrão são ordenadas de cima para
-  baixo; ambas as novas posições eram `k` no `packet.txt`. O recurso `.mbs` foi regenerado. A
+- **Padrão histórico:** `tools/convert_nexus_me_hypercore.py` substituía vidro nas coordenadas
+  `(aisle 30, row 18, column 21)` e `(30,18,22)`. A suposição de que as linhas eram ordenadas de
+  cima para baixo estava errada. Ambas as posições eram `k` no `packet.txt`. A
   origem do padrão permanece o arquivo original do autor, com atribuição existente em
   `GTNASources`.
 - **Validação:** o `.mbs` contém um controller e uma Interface nas novas posições; as antigas
