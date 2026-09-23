@@ -34,10 +34,15 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0058):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
-  `runGameTestServer` (**37/37**, `All 37 required tests passed`) + `runData` determinístico
+- **Gate verde em 2026-09-23 (G-0066):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**42/42**, `All 42 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
+- **Módulos (sub-patterns) na UI/preview (G-0066):** todo multibloco mostra **"Formed modules: n /
+  total"** (`IGTNAModuleHost` + `WorkableElectricMultiblockMachineMixin`) e cada módulo registrado
+  vira uma **página extra no preview do JEI** (`MultiblockMachineDefinitionMixin`). O
+  `liquefaction_furnace` é uma máquina **normal** (Parallel/Accelerate só com o módulo). Pendentes:
+  o **Nexus Terminal "module build"** e um botão dedicado a módulos.
 - **Era Steam Elevator fechada (G-0058):** o módulo de ore processing do elevador está 100% (G-0057);
   os 8 módulos, o host 35×43×35 e a rede wireless estão no gate. Restam só itens de **QA manual
   visual** (`docs/roadmap/QA-MANUAL-CHECKLIST.md`). A logo do mod agora aparece em **todas** as UIs de
@@ -76,6 +81,45 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0066 (2026-09-23) — feedback in-game: orientação/hatches do `liquefaction_furnace`, preview do módulo no JEI e contagem de módulos na UI
+
+Feedback do autor testando o client:
+
+- **"P:0 não mostra o módulo"** (igual ao GTOCore): o preview de multibloco não expunha a
+  estrutura do módulo.
+- **`liquefaction_furnace`** com o **controller virado para a direita** e **sem o módulo**.
+- **"Não é todo multibloco que tem Thread"**: o `liquefaction_furnace` é uma máquina **normal** —
+  não aceita Parallel nem Accelerate na base; só ganha esses hatches **com o módulo instalado**
+  (no GTO só `liquefaction_furnace` e `high_temperature_reaction_hub` usam o recipe type, e só o
+  segundo aceita Thread Hatch).
+
+Correções:
+
+- **Orientação do `liquefaction_furnace`:** o pattern principal agora usa as direções do GTOCore
+  (`FactoryBlockPattern.start(FRONT, UP, RIGHT)`) — o controller deixa de ficar "de lado".
+- **Base normal:** `LiquefactionFurnaceMachine` voltou a ser `CoilWorkableElectricMultiblockMachine`
+  (sem a base multi-receita, logo **sem threads**) e o pattern base usa **IO explícito** (energy in,
+  item in, fluid out, maintenance, muffler) em vez de `autoAbilities(recipeTypes)` — assim o
+  `PredicatesMixin` não injeta Parallel/Accelerate na base. Os hatches de performance só vêm do
+  módulo.
+- **Módulo do `liquefaction_furnace`** movido para `GTNAModules` (registry `GTNASubPatterns`), para
+  aparecer no preview e ser o único caminho para Parallel/Accelerate.
+- **Preview do módulo no JEI:** `MultiblockMachineDefinitionMixin` injeta em `getMatchingShapes()` e
+  anexa cada sub-pattern registrado como **página extra** (o "P:1" do preview).
+- **Contagem de módulos na UI:** o `MultiblockControllerMachineMixin` agora implementa
+  `IGTNAModuleHost` (campo `gtna$formedModuleCount`, atualizado no `checkPattern()`), e
+  `WorkableElectricMultiblockMachineMixin` adiciona **"Formed modules: n / total"** no
+  `addDisplayText` (lang `gtna.machine.modules_amount`) — como o "Formed modules: 1" do GTO.
+
+- **Testes:** `liquefactionFurnaceForms` atualizado para a nova orientação (mapa char→-Z, row→+Y,
+  aisle→+X) e novo gametest `liquefactionModuleIsRegistered`. → **42/42**.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**42/42**) + `runData` determinístico (`written: 0`).
+- **Pendências (features maiores, não feitas):** o **Nexus Terminal "module build"** (construir a
+  estrutura do módulo, não a do multibloco — igual ao advanced terminal do GTMThings/GTO) e um
+  **botão dedicado a módulos** no preview. Validar in-game a geometria do módulo do `liquefaction`
+  (a torre fica à direita do controller, direções default do GTOCore).
 
 ### G-0065 (2026-09-23) — módulo do EBF (sub-pattern Java) pronto para teste in-game
 

@@ -13,6 +13,8 @@
     "ae2.TooltipsMixin",
     "gtceu.GTNAPlateDoubleMixin",
     "gtceu.MultiblockControllerMachineMixin",
+    "gtceu.MultiblockMachineDefinitionMixin",
+    "gtceu.WorkableElectricMultiblockMachineMixin",
     "gtceu.PredicatesMixin",
     "gtceu.GTRecipeLogicMixin",
     "gtceu.RecipeHelperMixin"

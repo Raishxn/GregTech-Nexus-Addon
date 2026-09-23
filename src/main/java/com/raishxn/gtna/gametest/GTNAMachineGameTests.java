@@ -355,16 +355,18 @@ public final class GTNAMachineGameTests {
                 { "AAAAA", "B B B", "ACCCA" },
                 { "AAAAA", " BBB ", " AAA " },
         };
-        BlockPos maintenancePos = controllerPos.offset(-4, 0, 2);
-        BlockPos energyPos = controllerPos.offset(-4, 0, 1);
-        BlockPos inputBusPos = controllerPos.offset(-4, 0, 0);
-        BlockPos outputHatchPos = controllerPos.offset(-4, 0, -1);
+        // The pattern is built with FRONT/UP/RIGHT directions, so for a controller facing NORTH:
+        // char -> -Z, row -> +Y, aisle -> +X. The controller sits at (char 4, row 0, aisle 2).
+        BlockPos maintenancePos = controllerPos.offset(-2, 0, 1);
+        BlockPos energyPos = controllerPos.offset(-2, 0, 4);
+        BlockPos inputBusPos = controllerPos.offset(-2, 0, 3);
+        BlockPos outputHatchPos = controllerPos.offset(-2, 0, 2);
         for (int aisle = 0; aisle < pattern.length; aisle++) {
             for (int y = 0; y < 3; y++) {
                 for (int x = 0; x < 5; x++) {
                     char c = pattern[aisle][y].charAt(x);
                     if (c == '~' || c == ' ') continue;
-                    BlockPos pos = controllerPos.offset(x - 4, y, 2 - aisle);
+                    BlockPos pos = controllerPos.offset(aisle - 2, y, 4 - x);
                     if (pos.equals(maintenancePos) || pos.equals(energyPos) || pos.equals(inputBusPos) ||
                             pos.equals(outputHatchPos)) {
                         continue;
@@ -410,6 +412,18 @@ public final class GTNAMachineGameTests {
         MultiblockMachineDefinition ebf = GTMultiMachines.ELECTRIC_BLAST_FURNACE;
         helper.assertTrue(!GTNASubPatterns.get(ebf).isEmpty(),
                 "the electric_blast_furnace module must be registered in GTNASubPatterns");
+        helper.succeed();
+    }
+
+    /**
+     * The Liquefaction Furnace (GTOCore port, G-0063) must expose its stainless tower module in the
+     * sub-pattern registry so it shows up in the JEI preview and unlocks Parallel / Accelerate
+     * hatches.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void liquefactionModuleIsRegistered(GameTestHelper helper) {
+        helper.assertTrue(!GTNASubPatterns.get(GTNAMachines.LIQUEFACTION_FURNACE).isEmpty(),
+                "the liquefaction_furnace module must be registered in GTNASubPatterns");
         helper.succeed();
     }
 

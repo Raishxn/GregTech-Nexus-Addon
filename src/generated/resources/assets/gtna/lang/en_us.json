@@ -893,6 +893,7 @@
   "gtna.machine.me_storage_access_hatch.mode": "Storage Access",
   "gtna.machine.me_storage_access_hatch.network": "The ME Storage multiblock accepts exactly one of these access hatches.",
   "gtna.machine.me_storage_access_hatch.tooltip": "Connects ME Storage to an AE2 network.",
+  "gtna.machine.modules_amount": "Formed modules: %s / %s",
   "gtna.machine.nexus_flux_matrix.tooltip_1": "§7Massive wireless energy storage and distribution hub.",
   "gtna.machine.nexus_flux_matrix.tooltip_2": "§7Generates a global energy network accessible from anywhere.",
   "gtna.machine.nexus_me_hypercore.ui.coprocessors": "Co-Processors: ",

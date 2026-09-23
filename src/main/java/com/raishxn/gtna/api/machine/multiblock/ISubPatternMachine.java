@@ -16,13 +16,20 @@ import java.util.List;
  * e.g. a tower that adds Parallel or Accelerate hatches to the machine.
  *
  * <p>
- * The merge is applied by {@code IMultiControllerMixin} at the end of
+ * The merge is applied by {@code MultiblockControllerMachineMixin} at the end of
  * {@code IMultiController#checkPattern()}, so any machine implementing this interface gets it
  * regardless of its base class. A sub-pattern that does not match is simply absent; the machine
  * still forms with the main structure.
+ *
+ * <p>
+ * Machines that do not ship their own sub-patterns do not need to implement this interface; they can
+ * still receive modules registered in {@link GTNASubPatterns} (Java or KubeJS). Every multiblock
+ * exposes the number of formed modules through {@link IGTNAModuleHost}.
  */
-public interface ISubPatternMachine {
+public interface ISubPatternMachine extends IGTNAModuleHost {
 
     /** The additional structures attached to this machine (may be empty). */
-    List<BlockPattern> gtna$getSubPatterns();
+    default List<BlockPattern> gtna$getSubPatterns() {
+        return List.of();
+    }
 }
