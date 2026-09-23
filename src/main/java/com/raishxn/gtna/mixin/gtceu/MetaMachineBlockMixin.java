@@ -10,6 +10,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 
 import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
+import com.raishxn.gtna.common.data.GTNASources;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -38,5 +39,9 @@ public abstract class MetaMachineBlockMixin {
         }
         tooltip.add(Component.empty());
         tooltip.addAll(moduleTooltips);
+        Component source = GTNASources.moduleLine(multiblock);
+        if (source != null) {
+            tooltip.add(source);
+        }
     }
 }

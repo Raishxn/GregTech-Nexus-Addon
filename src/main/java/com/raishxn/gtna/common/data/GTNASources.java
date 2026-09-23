@@ -1,6 +1,7 @@
 package com.raishxn.gtna.common.data;
 
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
+import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 
 import net.minecraft.ChatFormatting;
@@ -122,6 +123,10 @@ public final class GTNASources {
             // --- GTO Extended Platform Presets (permission granted by the GTO team) ---
             Map.entry("industrial_platform_deployment_tools", GTOEPP));
 
+    /** Sources for modules added to machines owned by another mod. */
+    private static final Map<ResourceLocation, String> MODULE_SOURCES = Map.of(
+            ResourceLocation.parse("gtceu:electric_blast_furnace"), GTO);
+
     private GTNASources() {}
 
     /** Whether a GTNA machine registry path has an origin declared in {@link #SOURCES}. */
@@ -137,6 +142,12 @@ public final class GTNASources {
         }
         return Component.translatable("gtna.tooltip.source", addon)
                 .withStyle(ChatFormatting.DARK_GRAY);
+    }
+
+    /** Built when the tooltip is displayed so language and rainbow timing are current. */
+    public static Component moduleLine(MultiblockMachineDefinition definition) {
+        String sourceId = MODULE_SOURCES.get(definition.getId());
+        return sourceId == null ? null : line(sourceId);
     }
 
     /**

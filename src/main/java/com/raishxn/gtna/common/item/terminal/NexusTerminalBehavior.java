@@ -4,7 +4,7 @@ import com.gregtechceu.gtceu.api.item.component.IAddInformation;
 import com.gregtechceu.gtceu.api.item.component.IItemUIFactory;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
-import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
+import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 
 import com.lowdragmc.lowdraglib.gui.factory.HeldItemUIFactory;
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 
+import com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh;
 import com.raishxn.gtna.client.ClientPlayerLookup;
 import com.raishxn.gtna.common.item.terminal.ui.NexusTerminalUIFactory;
 import com.raishxn.gtna.integration.ae2.NexusAE2Link;
@@ -93,9 +94,8 @@ public class NexusTerminalBehavior implements IItemUIFactory, IAddInformation {
                 if (!controller.isFormed() || buildModule || setting.isReplaceMode()) {
                     if (!level.isClientSide()) {
                         NexusAutoBuilder.autoBuild(player, controller, terminalStack);
-                        if (setting.isReplaceMode() &&
-                                controller instanceof WorkableMultiblockMachine workableMultiblockMachine) {
-                            workableMultiblockMachine.onPartUnload();
+                        if (controller instanceof MultiblockControllerMachine multiblockController) {
+                            GTNAStructureRefresh.refresh(multiblockController, true);
                         }
                     }
                     return InteractionResult.sidedSuccess(level.isClientSide);

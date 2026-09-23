@@ -547,6 +547,22 @@ public final class GTNAMachineGameTests {
         }
         int formed = ((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller).gtna$formedModuleCount();
         helper.assertTrue(formed == 1, "expected 1 formed module, got " + formed);
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
+                "forced structure refresh must form the EBF and its module");
+        helper.assertTrue(controller.isFormed(), "EBF must remain formed after the forced refresh");
+
+        // A second Accelerate Hatch in the base must not be counted with the one in the module.
+        BlockPos baseCasing = controllerPos.offset(1, 0, 1);
+        helper.setBlock(baseCasing, GTNAMachines2.ACCELERATE_HATCHES[GTValues.LV].getBlock());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
+                "EBF base must still form with one Accelerate Hatch");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
+                .gtna$formedModuleCount() == 0, "module must reject a second Accelerate Hatch");
+        helper.setBlock(baseCasing, GTBlocks.CASING_INVAR_HEATPROOF.get());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
+                "EBF module must form again after removing the duplicate hatch");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
+                .gtna$formedModuleCount() == 1, "module must be restored with one Accelerate Hatch");
         helper.succeed();
     }
 

@@ -15,6 +15,9 @@ public class GTNATextures {
             new ResourceLocation("gtna", "block/overlay_steam_wireless_in"));
     public static final ResourceTexture OVERLAY_STEAM_WIRELESS_OUT = new ResourceTexture(
             new ResourceLocation("gtna", "block/overlay_steam_wireless_out"));
+    /** GTOCore structure-check icon (top half of the 18x36 texture). */
+    public static final ResourceTexture STRUCTURE_CHECK = new ResourceTexture(
+            new ResourceLocation("gtna", "textures/gui/overlay/structure_check.png"));
 
     /** The addon logo drawn in the corner of the multiblock screens. */
     public static final ResourceTexture LOGO = new ResourceTexture(

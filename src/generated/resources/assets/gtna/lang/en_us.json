@@ -1142,6 +1142,8 @@
   "gtna.machine.steam_elevator_weather_module_iii.tooltip": "§a§lControls the weather using steam.",
   "gtna.machine.steam_elevator_weather_module_iii.tooltip.1": "Adds weather changes module to the Steam Stairway",
   "gtna.machine.steam_elevator_weather_module_iii.tooltip.2": "Enter a specific material to switch weather, lasting 1 hour per tier",
+  "gtna.machine.structure_check": "Update structure check",
+  "gtna.machine.structure_check.shift": "Shift+click to force a full structure rebuild",
   "gtna.machine.thermal_power_pump.production": "Water production: %s mB/t",
   "gtna.machine.thermal_power_pump.rain": "Raining: +50% output",
   "gtna.machine.thermal_power_pump.tooltip.0": "Condenses steam back into water using the ambient biome.",

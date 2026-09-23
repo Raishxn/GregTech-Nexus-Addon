@@ -25,9 +25,9 @@ foi feito nem repetir os erros já pagos.
 ## Estado atual
 
 > ⚠️ **PENDENTE DO FEEDBACK IN-GAME:** comparar o print/lista de blocos do módulo do EBF enviado pelo
-> autor com a geometria e orientação do gametest `ebfModuleForms`. A receita shaped, as receitas por
-> prefixo e o predicado do EBF foram corrigidos em G-0070. O cache de posições do módulo foi
-> consertado para eliminar o delay; ainda falta confirmar a latência no client.
+> autor com a geometria e orientação do gametest `ebfModuleForms`. O liquefaction agora verifica o
+> módulo a cada 5 ticks quando formado; confirmar a latência e o novo botão no client. Conferir
+> visualmente o arco-íris e a tradução do tooltip do EBF.
 
 > ⚠️ **LEIA PRIMEIRO:** `docs/roadmap/NEXT-SESSION-HANDOFF.md` — handoff da sessão de 2026-09-21
 > (Steam/large steam, formato de tooltip com source, blocos faltantes como o Industrial Steam
@@ -38,7 +38,7 @@ foi feito nem repetir os erros já pagos.
 - Desenvolvimento na branch `main`; o histórico anterior a G-0026 está preservado no ledger.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0071):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+- **Gate verde em 2026-09-23 (G-0072):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
   `runGameTestServer` (**44/44**, `All 44 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
@@ -51,6 +51,11 @@ foi feito nem repetir os erros já pagos.
   controller). O `liquefaction_furnace` é uma máquina **normal** (Parallel/Accelerate só com o
   módulo). A geometria do módulo do EBF (GTOCore) é validada pelo gametest `ebfModuleForms`.
   Pendente: um botão dedicado a módulos no preview.
+- **Atualização de estrutura (G-0072):** máquinas elétricas com módulo têm um botão de rechecagem na
+  UI (Shift força reconstrução); o Terminal força a atualização após construir. O liquefaction
+  reavalia o módulo a cada 5 ticks. Hatches Parallel, Accelerate, Thread, Overclock e Output Boost
+  são limitados a um de cada tipo no conjunto base + módulo. A origem GTOCore do módulo EBF é
+  adicionada no momento em que o tooltip aparece, preservando idioma e animação.
 - **Era Steam Elevator fechada (G-0058):** o módulo de ore processing do elevador está 100% (G-0057);
   os 8 módulos, o host 35×43×35 e a rede wireless estão no gate. Restam só itens de **QA manual
   visual** (`docs/roadmap/QA-MANUAL-CHECKLIST.md`). A logo do mod agora aparece em **todas** as UIs de
@@ -89,6 +94,31 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0072 (2026-09-23) — atualização de módulos, tooltip, documentação e referências locais
+
+- **Liquefaction:** rechecagem periódica do padrão a cada 5 ticks enquanto formado, seguida de
+  reconstrução das partes e do mapeamento de blocos quando o módulo muda. O Terminal Nexus força a
+  mesma atualização após construir. A UI de multiblocos elétricos com módulos ganhou o botão
+  `Update structure check` com Shift para reconstrução forçada; ícone do GTOCore atribuído em
+  `THIRD_PARTY_NOTICES.md`.
+- **Hatches:** o match do módulo é rejeitado se base + módulo tiverem mais de um hatch da mesma
+  ability Parallel, Accelerate, Thread, Overclock ou Output Boost. O gametest do EBF exercita o
+  segundo Accelerate Hatch e a restauração após removê-lo.
+- **Tooltip EBF:** a linha de origem GTOCore agora é criada no hover via `GTNASources`, evitando
+  congelar a tradução e as cores do arco-íris durante o registro da máquina.
+- **Documentação:** README reescrito com a proposta do GTNA, funções atuais, licenças e permissões
+  registradas. `AGENTS.md` local foi criado e ignorado pelo Git, com caminhos dos repositórios de
+  referência e a regra de usar texturas Modernity-GTNH quando a licença permitir. GTLCore
+  `AaAdoniSsS/GTLCore` (`gtl-1431-skyblock`, `18c7814`) e GTLAdditions
+  `Dragonators/GTLAdditions` (`master`, `8caff5e`) atualizados via `git pull --ff-only` e listados
+  no arquivo local.
+- **Validação:** gate offline completo verde: `spotlessCheck`, `compileJava`, `runUnitTests` (18/18),
+  `runGameTestServer` (44/44) e `runData` (`written: 0`). Houve uma falha isolada de
+  `brick_kiln_forms` na primeira execução e uma falha de registro de renderer no `runData` da
+  segunda; ambos passaram na execução completa final, sem alteração nesses componentes.
+- **Pendências:** testar no client a latência do liquefaction, o botão e o tooltip; receber o
+  print/lista de blocos do módulo EBF para conferir sua geometria real.
 
 ### G-0071 (2026-09-23) — correção de crash ao carregar mundo no client
 

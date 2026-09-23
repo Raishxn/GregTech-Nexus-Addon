@@ -165,6 +165,8 @@ public class GTNALangProvider extends LanguageProvider {
 
         // --- Multiple-recipes machine UI (previously hardcoded literals) ---
         add("gtna.machine.modules_amount", "Formed modules: %s / %s");
+        add("gtna.machine.structure_check", "Update structure check");
+        add("gtna.machine.structure_check.shift", "Shift+click to force a full structure rebuild");
         add("gtna.machine.electric_blast_furnace.module",
                 "Module: adds a 2nd Energy Hatch and an Accelerate Hatch");
         add("gtna.machine.liquefaction_furnace.module",

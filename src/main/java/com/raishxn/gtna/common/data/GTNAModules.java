@@ -64,8 +64,7 @@ public final class GTNAModules {
                         .where('E', controller(blocks(definition.getBlock())))
                         .where(' ', any())
                         .build(),
-                Component.translatable("gtna.machine.electric_blast_furnace.module").withStyle(ChatFormatting.GOLD),
-                GTNASources.line(GTNASources.GTO));
+                Component.translatable("gtna.machine.electric_blast_furnace.module").withStyle(ChatFormatting.GOLD));
     }
 
     /**

@@ -2,10 +2,12 @@ package com.raishxn.gtna.mixin.gtceu;
 
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
 import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
+import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.pattern.BlockPattern;
 import com.gregtechceu.gtceu.api.pattern.MultiblockState;
 import com.gregtechceu.gtceu.api.pattern.util.PatternMatchContext;
 
+import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
 import com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost;
 import com.raishxn.gtna.api.machine.multiblock.ISubPatternMachine;
@@ -40,6 +42,14 @@ import java.util.Set;
  */
 @Mixin(MultiblockControllerMachine.class)
 public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHost {
+
+    @Unique
+    private static final List<PartAbility> GTNA$SINGLE_PER_CONTROLLER = List.of(
+            PartAbility.PARALLEL_HATCH,
+            GTNAPartAbility.ACCELERATE_HATCH,
+            GTNAPartAbility.THREAD_HATCH,
+            GTNAPartAbility.OVERCLOCK_HATCH,
+            GTNAPartAbility.OUTPUT_BOOST_HATCH);
 
     @Unique
     private int gtna$formedModuleCount = 0;
@@ -102,18 +112,21 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
             }
             if (sub.checkPatternAt(state, false)) {
                 Object subParts = state.getMatchContext().get("parts");
+                Set<IMultiPart> candidateParts = new HashSet<>(parts);
                 if (subParts instanceof Set<?> set) {
                     for (Object value : set) {
                         if (value instanceof IMultiPart part) {
-                            parts.add(part);
+                            candidateParts.add(part);
                         }
                     }
                 }
-                matched++;
+                if (!gtna$hasDuplicatePerformanceHatch(candidateParts)) {
+                    parts = candidateParts;
+                    matched++;
+                }
             }
             positionCache.addAll(state.cache);
         }
-        boolean moduleSetChanged = matched != gtna$formedModuleCount;
         gtna$formedModuleCount = matched;
 
         // Restore the main context and, when a module matched, add its parts.
@@ -125,13 +138,19 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
         if (matched > 0) {
             context.set("parts", parts);
         }
-        // GTCEu only rebuilds the controller's part list on an invalid -> valid transition. If the set
-        // of matched modules changed while the machine is already formed (a module was added or
-        // removed), ask for a re-check: onPartUnload drops the now-invalid parts and schedules the
-        // async re-form that rebuilds the list from the fresh match context.
-        if (moduleSetChanged && self.isFormed()) {
-            self.onPartUnload();
-        }
         return true;
+    }
+
+    @Unique
+    private static boolean gtna$hasDuplicatePerformanceHatch(Set<IMultiPart> parts) {
+        for (PartAbility ability : GTNA$SINGLE_PER_CONTROLLER) {
+            int count = 0;
+            for (IMultiPart part : parts) {
+                if (ability.isApplicable(part.self().getBlockState().getBlock()) && ++count > 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

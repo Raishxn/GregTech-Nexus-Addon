@@ -4,6 +4,9 @@ import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.multiblock.CoilWorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 
+import net.minecraft.server.level.ServerLevel;
+
+import com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -21,6 +24,20 @@ public class LiquefactionFurnaceMachine extends CoilWorkableElectricMultiblockMa
 
     public LiquefactionFurnaceMachine(IMachineBlockEntity holder, Object... args) {
         super(holder);
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (getLevel() instanceof ServerLevel) {
+            // The tower extends beyond the base pattern's cached positions. Check it while the
+            // controller is formed so adding a module never requires breaking a base casing.
+            subscribeServerTick(() -> {
+                if (isFormed() && getOffsetTimer() % 5 == 0) {
+                    GTNAStructureRefresh.refresh(this, false);
+                }
+            });
+        }
     }
 
     @Override

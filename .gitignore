@@ -36,6 +36,7 @@ run-data/
 
 .agent/
 .agents/
+/AGENTS.md
 .gemini/
 
 # reference files
