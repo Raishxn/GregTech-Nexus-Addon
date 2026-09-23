@@ -26,8 +26,9 @@ foi feito nem repetir os erros já pagos.
 
 > ⚠️ **PENDENTE DO FEEDBACK IN-GAME:** comparar o print/lista de blocos do módulo do EBF enviado pelo
 > autor com a geometria e orientação do gametest `ebfModuleForms`. O liquefaction agora verifica o
-> módulo a cada 5 ticks quando formado; confirmar a latência e o novo botão no client. Conferir
-> visualmente o arco-íris e a tradução do tooltip do EBF.
+> módulo a cada 5 ticks quando formado; confirmar a latência e o botão no client. Conferir
+> visualmente o arco-íris e a tradução do tooltip do EBF, o destaque do bloco errado e o módulo
+> KubeJS do Integrated Ore Processor na interface.
 
 > ⚠️ **LEIA PRIMEIRO:** `docs/roadmap/NEXT-SESSION-HANDOFF.md` — handoff da sessão de 2026-09-21
 > (Steam/large steam, formato de tooltip com source, blocos faltantes como o Industrial Steam
@@ -38,7 +39,7 @@ foi feito nem repetir os erros já pagos.
 - Desenvolvimento na branch `main`; o histórico anterior a G-0026 está preservado no ledger.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0072):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+- **Gate verde em 2026-09-23 (G-0073):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
   `runGameTestServer` (**44/44**, `All 44 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
@@ -51,8 +52,9 @@ foi feito nem repetir os erros já pagos.
   controller). O `liquefaction_furnace` é uma máquina **normal** (Parallel/Accelerate só com o
   módulo). A geometria do módulo do EBF (GTOCore) é validada pelo gametest `ebfModuleForms`.
   Pendente: um botão dedicado a módulos no preview.
-- **Atualização de estrutura (G-0072):** máquinas elétricas com módulo têm um botão de rechecagem na
-  UI (Shift força reconstrução); o Terminal força a atualização após construir. O liquefaction
+- **Atualização de estrutura (G-0072/G-0073):** máquinas elétricas têm um botão de rechecagem na
+  UI que envia a ação ao servidor e mostra o primeiro bloco incorreto com destaque no mundo
+  (Shift força reconstrução); o Terminal força a atualização após construir. O liquefaction
   reavalia o módulo a cada 5 ticks. Hatches Parallel, Accelerate, Thread, Overclock e Output Boost
   são limitados a um de cada tipo no conjunto base + módulo. A origem GTOCore do módulo EBF é
   adicionada no momento em que o tooltip aparece, preservando idioma e animação.
@@ -78,6 +80,8 @@ foi feito nem repetir os erros já pagos.
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
 - **Testes hoje:** 18 unit tests (`main()` + asserts, padrão GTLCore) e 44 gametests (`@GameTest`),
   ambos no gate do CI.
+- **Steam Cracker:** o autor confirmou em 2026-09-23 que a implementação deve continuar sendo a do
+  GTNL; estrutura, comportamento e atribuição `GTNASources` atuais seguem essa origem.
 - **Licenciamento (G-0019):** código do GTNA **LGPLv3**; assets do GTO em **CC BY-NC-SA 4.0**
   (o GTNA é **não-comercial**). Permissão do **GTOEPP** concedida pelo time GTO; atribuição de origem
   nos tooltips via `GTNASources`. Matriz completa em `THIRD_PARTY_NOTICES.md`.
@@ -94,6 +98,31 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0073 (2026-09-23) — EBF auxiliar, diagnóstico de estrutura e módulo KubeJS
+
+- **EBF:** o casco auxiliar aceita exatamente mais um Energy Hatch com fio (total de três, somado
+  aos dois permitidos pela base) e rejeita Energy Hatch wireless. O gametest cobre dois hatches na
+  base, um no módulo, a rejeição do segundo no módulo e a rejeição do wireless. O tooltip agora
+  usa a redação `Auxiliary Module` e descreve `Accelerate Hatch` e `Extra Energy Hatch`, mantendo
+  a origem GTOCore via `GTNASources` e o texto rainbow do GTCEu.
+- **Botão de estrutura:** o clique client envia um pacote C2S, força uma rechecagem quando Shift
+  está pressionado, informa no chat a posição e os blocos encontrado/esperado do primeiro erro e
+  destaca essa posição no mundo por 15 segundos. A UI fecha para revelar o destaque. O botão está
+  disponível nas máquinas elétricas, inclusive sem módulo registrado. Verificação visual in-game
+  ainda pendente.
+- **Integrated Ore Processor:** a integração KubeJS agora publica o evento de sub-patterns no
+  início do servidor depois que os scripts são carregados, limpa os registros de scripts entre
+  reinícios e inclui um exemplo em `examples/kubejs/server_scripts`. O ambiente de desenvolvimento
+  carrega KubeJS/Rhino/Architectury e instala esse exemplo antes de `runClient`. O log do gametest
+  confirmou `Integrated Ore Processor has 1 auxiliary modules`; presença visual no JEI/client
+  ainda pendente. `runData` encerra o executor de scripts do KubeJS depois da geração.
+- **Steam Cracker:** por confirmação explícita do autor, permanece o port do GTNL, inclusive
+  estrutura, lógica, tooltip e atribuição de origem. Não houve alteração nele neste checkpoint.
+- **Validação:** gate offline completo verde: `spotlessCheck`, `compileJava`, `runUnitTests` (18/18),
+  `runGameTestServer` (44/44), `runData` (`written: 0`). Código: commit `02acc50`.
+- **Pendências:** testar visualmente o botão e o destaque, o módulo KubeJS no client, o tooltip do
+  EBF e a latência do liquefaction; comparar a geometria do EBF quando o autor enviar a lista.
 
 ### G-0072 (2026-09-23) — atualização de módulos, tooltip, documentação e referências locais
 
