@@ -52,6 +52,9 @@ public final class GTNASources {
             // --- Twist Space Technology (GPL-3.0) ---
             Map.entry("eye_of_wood", TST),
             Map.entry("industrial_slaughterhouse", GTO),
+            // --- GTLCore (LGPLv3) ---
+            Map.entry("integrated_ore_processor", GTLCORE),
+            Map.entry("advanced_integrated_ore_processor", GTLCORE),
             // --- GT: Not Leisure ---
             Map.entry("large_steam_crusher", GTNL),
             Map.entry("large_steam_furnace", GTNL),

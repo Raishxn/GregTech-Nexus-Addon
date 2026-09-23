@@ -34,10 +34,10 @@ foi feito nem repetir os erros já pagos.
   antes do G-0026.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-22 (G-0053):** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**) +
-  `runGameTestServer` (**35/35**, `All 35 required tests passed`) + `runData` determinístico. A
-  execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros de receitas do
-  GTCEu já conhecidos continuam no log.
+- **Gate verde em 2026-09-23 (G-0055):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**36/36**, `All 36 required tests passed`) + `runData` determinístico
+  (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
+  de receitas do GTCEu já conhecidos continuam no log.
 - **Módulos do elevador (G-0052):** o IO de item/fluido agora é sempre pelos **hatches da própria
   estrutura** 1x5x2 (input/output bus e input/output hatch) — sem inventário interno. O status padrão
   (Running/Idle) aparece via `MultiblockDisplayText` e `isActive()` respeita o upkeep de steam.
@@ -73,6 +73,55 @@ foi feito nem repetir os erros já pagos.
 
 ## Checkpoints
 
+### G-0055 (2026-09-23) — Integrated / Advanced Integrated Ore Processor portados do GTLCore + receitas fiéis
+
+- **Port completo dos dois multiblocos do GTLCore (decisão do autor no G-0054):**
+  - **`gtna:integrated_ore_processor`** (`IntegratedOreProcessorMachine`, base
+    `WorkableElectricMultipleRecipesMachine`): estrutura 6×12×11 idêntica à do GTLCore
+    (`CASING_HSSE_STURDY` + `CASING_STAINLESS_CLEAN` (mín. 60) + `CASING_LAMINATED_GLASS` +
+    `frameGt BlueSteel` + gearbox/pipe de tungstensteel + muffler ZPM), `NON_Y_AXIS`,
+    `allowExtendedFacing(false)`. Aceita Parallel Hatch (autoAbilities), Maintenance, Thread/Overclock/
+    Accelerate (mixin `PredicatesMixin` cobre overclock/accelerate).
+  - **`gtna:advanced_integrated_ore_processor`** (`AdvancedIntegratedOreProcessorMachine`,
+    `getMaxParallel() = Integer.MAX_VALUE`): estrutura 32×12×15 idêntica à do GTLCore, laser-only
+    (`INPUT_LASER` + item/fluid IO) e Thread/Overclock/Accelerate. Blocos de outro mod substituídos por
+    equivalentes GTNA (regra do manifesto): `kubejs:restraint_device` →
+    `GTNABlocks.RESTRAINT_DEVICE`; `GTLBlocks.HSSS_REINFORCED_BOROSILICATE_GLASS` →
+    `GTNABlocks.BOROSILICATE_GLASS_BLOCK`. `~` na última aisle (convenção §5).
+  - As duas estruturas foram **verificadas programaticamente** contra o GTLCore (comparação exata das
+    32/6 aisles) antes de compilar.
+- **Receitas fiéis (substituem a geração simplificada):** novo `IntegratedOreRecipes` (datagen hook,
+  sem mixin) replica o `OreRecipeHandlerMixin` do GTLCore — **um recipe por circuito 1..7** para
+  **raw ore** e **stone ore**, com:
+  - os **byproducts reais por estágio** (`property.getOreByProduct(i, material)`), inclusive os
+    secundários do prefixo `ore` (67% no stone, 5% só no circuito 3 do raw) e os "1/9"/"1/3" chanced;
+  - o **fluido de lavagem real** de cada material (`property.getWashedIn()`): **distilled water** nos
+    circuitos 2/3/4, e **mercúrio / sodium persulfate / etc.** nos circuitos 5/6/7 (depende do minério);
+  - durações por estágio (`IntegratedOreMath`) e EUt 30, iguais ao GTLCore;
+  - `crushedAmount` = GTLCore (`integratedOreMultiplier` config, default **4** em `GTNABalance`).
+  - Circuitos condicionais como no GTLCore: 2/5 exigem `crushedRefined`; 4/7 exigem `GEM`; 5/6/7
+    exigem `washedIn`.
+  - **Recipe type** `gtna:ore_processing` ajustado para `setMaxIOSize(2, 9, 1, 0)` (paridade
+    `integrated_ore_processor` do GTLCore).
+- **Verificação das receitas:** com `dev.dumpRecipes=true` (temporário) o dump gerou **818** receitas
+  (`409` raw + `409` stone), circuitos 1..7 presentes, fluidos `forge:distilled_water` (500),
+  `forge:sodium_persulfate` (54) e `forge:mercury` (44) — ex. `raw_5_cooperite` consome 400 mB de
+  mercúrio e devolve cooperite dust ×4 + nickel byproduct. Sem `Parsing error loading recipe gtna:`,
+  sem warning de max-IO para `ore_processing`.
+- **Registro/infra:** toggles `integratedOreProcessor` / `advancedIntegratedOreProcessor` no
+  `ConfigHolder`; lang (nome, tooltips fiéis, `gtna.recipe_type.ore_processing`, opções de config);
+  atribuição `GTNASources` → `gtlcore` (decisão do autor: TST só no `eye_of_wood`); `GTNABalance`
+  ganhou `machines.integratedOreMultiplier`.
+- **Testes:** novo unit test `IntegratedOreMathTest` (crushedAmount/wash/duration/clamp) → **18/18**;
+  novo gametest `integratedOreProcessingIsFaithful` (carrega o recipe manager e checa raw+stone,
+  circuitos 1..7, distilled water, mercúrio, circuito 1 sem fluido, ≥2 outputs) → **36/36**.
+- **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+  `runGameTestServer` (**36/36**, `All 36 required tests passed`) + `runData` determinístico
+  (`written: 0`).
+- **Pendências:** QA manual in-game (formação das duas estruturas — a Advanced é enorme; GUI dos
+  hatches de performance; JEI mostrando as variantes por fluido). Sem receita de craft definida
+  ainda (o GTLCore registra os itens via registrate; o GTNA precisa decidir a receita/era das duas).
+
 ### G-0054 (2026-09-23) — Integrated Ore Processing: receitas aparecem no JEI; plano de portar os multiblocos do GTLCore
 
 - **Estado:** as receitas do `gtna:ore_processing` **aparecem no JEI** (o input agora é o **raw ore**,
@@ -90,9 +139,9 @@ foi feito nem repetir os erros já pagos.
 - **Decisão do autor (2026-09-23):** portar **100%** os multiblocos **Integrated Ore Processor** e
   **Advanced Integrated Ore Processor** do GTLCore para termos a base completa (estrutura, GUI,
   parallel/overclock hatch, receitas integradas fiéis).
-- **Pendência aberta:** o port dos dois multiblocos acima + trocar a geração simplificada pela fiel
-  (variantes de fluido e byproducts). TST: atribuição só no `eye_of_wood`; `industrial_slaughterhouse`
-  é **GTO** (corrigido em `2269542`).
+- **Pendência aberta:** ~~o port dos dois multiblocos acima + trocar a geração simplificada pela fiel
+  (variantes de fluido e byproducts)~~ → **resolvido no G-0055**. TST: atribuição só no `eye_of_wood`;
+  `industrial_slaughterhouse` é **GTO** (corrigido em `2269542`).
 - **Validação:** `spotlessCheck` + `compileJava` + `runUnitTests` (**17/17**); `runGameTestServer`
   (**35/35**).
 

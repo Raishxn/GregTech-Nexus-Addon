@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gtna:block/machine/integrated_ore_processor",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtna:block/machine/integrated_ore_processor"
+    },
+    "facing=south": {
+      "model": "gtna:block/machine/integrated_ore_processor",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gtna:block/machine/integrated_ore_processor",
+      "y": 270
+    }
+  }
+}

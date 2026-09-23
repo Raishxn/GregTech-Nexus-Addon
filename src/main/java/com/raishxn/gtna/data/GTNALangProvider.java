@@ -253,6 +253,25 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.universal_factory.dynamic_threads", "Dynamic threads: %s");
         add("gtna.machine.batch_multiplier", "Batch multiplier: %s");
 
+        // Integrated Ore Processors (GTLCore port, LGPLv3)
+        add("block.gtna.integrated_ore_processor", "Integrated Ore Processor");
+        add("block.gtna.advanced_integrated_ore_processor", "Advanced Integrated Ore Processor");
+        add("gtna.recipe_type.ore_processing", "Integrated Ore Processing");
+        add("gtna.machine.integrated_ore_processor.tooltip.0", "Complete ore processing in one step");
+        add("gtna.machine.integrated_ore_processor.tooltip.1", "Circuit 1: Grinding-Grinding-Centrifuge");
+        add("gtna.machine.integrated_ore_processor.tooltip.2",
+                "Circuit 2: Grinding-Ore Wash-Thermal Centrifuge-Grinding");
+        add("gtna.machine.integrated_ore_processor.tooltip.3", "Circuit 3: Grinding-Ore Wash-Grinding-Centrifuge");
+        add("gtna.machine.integrated_ore_processor.tooltip.4", "Circuit 4: Grinding-Ore Wash-Sifting-Centrifuge");
+        add("gtna.machine.integrated_ore_processor.tooltip.5",
+                "Circuit 5: Grinding-Chemical Bath-Thermal Centrifuge-Grinding");
+        add("gtna.machine.integrated_ore_processor.tooltip.6", "Circuit 6: Grinding-Chemical Bath-Grinding-Centrifuge");
+        add("gtna.machine.integrated_ore_processor.tooltip.7", "Circuit 7: Grinding-Chemical Bath-Sifting-Centrifuge");
+        add("gtna.machine.advanced_integrated_ore_processor.tooltip.0", "Max Parallel: 2147483647");
+        add("gtna.machine.advanced_integrated_ore_processor.laser", "Only accepts Laser Energy Hatches.");
+        add("gtna.machine.advanced_integrated_ore_processor.multiple_recipes",
+                "Processes multiple different recipes at the same time.");
+
         // Primitive Stone Furnace (GTLsupb port)
         add("block.gtna.primitive_stone_furnace", "Primitive Stone Furnace");
         add("gtna.machine.primitive_stone_furnace.tooltip.0",
@@ -1051,6 +1070,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.steamElevatorModules", "Steam Elevator Modules");
         add("config.gtna.option.steamApiaryModule", "Steam Apiary Module");
         add("config.gtna.option.steamBeeBreedingModule", "Steam Bee Breeding Module");
+        add("config.gtna.option.integratedOreProcessor", "Integrated Ore Processor");
+        add("config.gtna.option.advancedIntegratedOreProcessor", "Advanced Integrated Ore Processor");
 
         // Steam Elevator + its modules (GTNL port)
         add("block.gtna.steam_elevator", "Steam Elevator");

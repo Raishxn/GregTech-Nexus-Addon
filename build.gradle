@@ -201,6 +201,7 @@ tasks.register('runUnitTests') {
             'com.raishxn.gtna.RegistrationContractTest',
             'com.raishxn.gtna.OutputBoostContractTest',
             'com.raishxn.gtna.AccelerateHatchMathTest',
+            'com.raishxn.gtna.IntegratedOreMathTest',
             'com.raishxn.gtna.common.machine.multiblock.part.ae.PatternBufferLayoutTest',
     ]
     doLast {

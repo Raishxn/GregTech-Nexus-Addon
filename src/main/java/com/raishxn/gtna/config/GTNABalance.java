@@ -152,6 +152,14 @@ public final class GTNABalance {
         return universalFactory.maxBatchMultiplier;
     }
 
+    /**
+     * GTLCore's {@code oreMultiplier} (default 4): scales the crushed-ore amount the integrated ore
+     * processors consume per ore, and therefore every output, byproduct and duration.
+     */
+    public static int getIntegratedOreMultiplier() {
+        return machines.integratedOreMultiplier;
+    }
+
     public static VoidMinerSteamTierBalance getVoidMinerDenseSteam() {
         return machines.voidMinerSteamGateAged.denseSteam;
     }
@@ -363,6 +371,11 @@ public final class GTNABalance {
     public static final class MachinesBalance implements DefaultsApplier<MachinesBalance> {
 
         public VoidMinerSteamGateBalance voidMinerSteamGateAged = VoidMinerSteamGateBalance.defaults();
+        /**
+         * GTLCore's {@code oreMultiplier}: the crushed-ore amount (and so every output) of the
+         * integrated ore processing recipes. 4 = GTLCore parity.
+         */
+        public int integratedOreMultiplier = 4;
 
         public static MachinesBalance defaults() {
             return new MachinesBalance();
@@ -372,6 +385,7 @@ public final class GTNABalance {
         public void applyDefaults(MachinesBalance defaults) {
             if (voidMinerSteamGateAged == null) voidMinerSteamGateAged = defaults.voidMinerSteamGateAged;
             else voidMinerSteamGateAged.applyDefaults(defaults.voidMinerSteamGateAged);
+            if (integratedOreMultiplier <= 0) integratedOreMultiplier = defaults.integratedOreMultiplier;
         }
     }
 

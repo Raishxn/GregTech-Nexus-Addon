@@ -64,12 +64,14 @@ public class GTNARecipeType {
 
     /**
      * GTNA ore-processing chain (macerate → wash → thermal → centrifuge). Registered as a real
-     * {@link GTRecipeType} so the Steam Ore Processor module and future multiblocks can run datapack
-     * recipes against it, in the spirit of GTLAdditions/GTLCore's ore processors.
+     * {@link GTRecipeType} so the Steam Ore Processor module and the Integrated / Advanced Integrated
+     * Ore Processors can run datapack recipes against it, in the spirit of GTLAdditions/GTLCore's ore
+     * processors. IO sizes match GTLCore's {@code integrated_ore_processor}: 2 item in (ore + circuit),
+     * 9 item out (product + byproducts), 1 fluid in (water / mercury / distilled water).
      */
     public static final String ORE_PROCESSING = "ore_processing";
     public static final GTRecipeType ORE_PROCESSING_RECIPES = register("ore_processing", ORE_PROCESSING)
-            .setMaxIOSize(3, 6, 2, 0)
+            .setMaxIOSize(2, 9, 1, 0)
             .setEUIO(IO.IN)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.MACERATOR);

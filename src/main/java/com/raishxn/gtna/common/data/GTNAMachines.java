@@ -41,6 +41,8 @@ import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyAisles;
 import com.raishxn.gtna.common.data.multiblock.EyeOfWoodAisles;
 import com.raishxn.gtna.common.data.multiblock.GTNAMultiBlockFileReader;
 import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
+import com.raishxn.gtna.common.machine.multiblock.electric.AdvancedIntegratedOreProcessorMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.IntegratedOreProcessorMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.UniversalFactoryMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.ArtificialStarMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhouse;
@@ -3483,6 +3485,213 @@ public class GTNAMachines {
                             Component.translatable("gtna.machine.slaughterhouse.circuit4").withStyle(
                                     ChatFormatting.DARK_RED,
                                     ChatFormatting.BOLD))
+                    .register());
+
+    // ------------------------------------------------------------------
+    // Integrated Ore Processor (GTLCore port, LGPLv3) - see G-0054.
+    // Structure, casings and tooltips copied from GTLCore's
+    // MultiBlockMachineA.INTEGRATED_ORE_PROCESSOR.
+    // ------------------------------------------------------------------
+    public static final MultiblockMachineDefinition INTEGRATED_ORE_PROCESSOR = registerMachine(
+            "integratedOreProcessor", () -> REGISTRATE
+                    .multiblock("integrated_ore_processor", IntegratedOreProcessorMachine::new)
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .allowExtendedFacing(false)
+                    .recipeType(GTNARecipeType.ORE_PROCESSING_RECIPES)
+                    .appearanceBlock(GTBlocks.CASING_STAINLESS_CLEAN)
+                    .pattern(definition -> FactoryBlockPattern.start()
+                            .aisle("aaaaaa     ", "abbbba     ", "abbbba     ", "abbbba     ", "abbbba     ",
+                                    "aaaaaa     ", "           ", "           ", "           ", "           ",
+                                    "           ", "           ")
+                            .aisle("aaaaaaaaaaa", "bd  d accca", "bd  d accca", "bd  d accca", "bd  d accca",
+                                    "aaaaaaaccca", "       ccc ", "       ccc ", "       ccc ", "       ccc ",
+                                    "       ccc ", "           ")
+                            .aisle("aaaaaaaaaaa", "b ee  c   c", "b ee  ffffc", "b ee  c   c", "b ee  ffffc",
+                                    "aaaaaac   c", "      cfffc", "      c   c", "      cfffc", "      c   c",
+                                    "      cfffc", "       gcc ")
+                            .aisle("aaaaaaaaaaa", "b ee  c   c", "b ee  ffffc", "b ee  c   c", "b ee  ffffc",
+                                    "aaaaaac   c", "      cfffc", "      c   c", "      cfffc", "      c   c",
+                                    "      cfffc", "       ccc ")
+                            .aisle("aaaaaaaaaaa", "bd  d accca", "bd  d ac~ca", "bd  d accca", "bd  d accca",
+                                    "aaaaaaaccca", "       ccc ", "       ccc ", "       ccc ", "       ccc ",
+                                    "       ccc ", "           ")
+                            .aisle("aaaaaa     ", "abbbba     ", "abbbba     ", "abbbba     ", "abbbba     ",
+                                    "aaaaaa     ", "           ", "           ", "           ", "           ",
+                                    "           ", "           ")
+                            .where("~", Predicates.controller(Predicates.blocks(definition.get())))
+                            .where("a", Predicates.blocks(GTBlocks.CASING_HSSE_STURDY.get()))
+                            .where("c", Predicates.blocks(GTBlocks.CASING_STAINLESS_CLEAN.get())
+                                    .setMinGlobalLimited(60)
+                                    .or(Predicates.abilities(PartAbility.PARALLEL_HATCH).setMaxGlobalLimited(1))
+                                    .or(Predicates.autoAbilities(definition.getRecipeTypes()))
+                                    .or(Predicates.abilities(PartAbility.MAINTENANCE).setExactLimit(1))
+                                    .or(Predicates.abilities(GTNAPartAbility.THREAD_HATCH).setMaxGlobalLimited(1)))
+                            .where("b", Predicates.blocks(GTBlocks.CASING_LAMINATED_GLASS.get()))
+                            .where("d", Predicates.blocks(
+                                    ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.BlueSteel)))
+                            .where("e", Predicates.blocks(GTBlocks.CASING_TUNGSTENSTEEL_GEARBOX.get()))
+                            .where("f", Predicates.blocks(GTBlocks.CASING_TUNGSTENSTEEL_PIPE.get()))
+                            .where("g", Predicates.blocks(GTMachines.MUFFLER_HATCH[GTValues.ZPM].getBlock()))
+                            .where(" ", Predicates.any())
+                            .build())
+                    .workableCasingModel(
+                            GTCEu.id("block/casings/solid/machine_casing_clean_stainless_steel"),
+                            GTCEu.id("block/multiblock/gcym/large_maceration_tower"))
+                    .tooltips(
+                            Component.translatable("gtna.machine.integrated_ore_processor.tooltip.0"),
+                            Component.translatable("gtna.machine.integrated_ore_processor.tooltip.1"),
+                            Component.translatable("gtna.machine.integrated_ore_processor.tooltip.2"),
+                            Component.translatable("gtna.machine.integrated_ore_processor.tooltip.3"),
+                            Component.translatable("gtna.machine.integrated_ore_processor.tooltip.4"),
+                            Component.translatable("gtna.machine.integrated_ore_processor.tooltip.5"),
+                            Component.translatable("gtna.machine.integrated_ore_processor.tooltip.6"),
+                            Component.translatable("gtna.machine.integrated_ore_processor.tooltip.7"),
+                            Component.translatable("gtceu.multiblock.parallelizable.tooltip"),
+                            Component.translatable("gtceu.machine.available_recipe_map_1.tooltip",
+                                    Component.translatable("gtna.recipe_type.ore_processing")))
+                    .tooltipBuilder(GTNA_ADD)
+                    .register());
+
+    // ------------------------------------------------------------------
+    // Advanced Integrated Ore Processor (GTLCore/TST port, LGPLv3) - see G-0054.
+    // Structure copied from GTLCore's MultiBlockMachineA.ADVANCED_INTEGRATED_ORE_PROCESSOR.
+    // The KubeJS "restraint_device" and the GTL "HSSS reinforced borosilicate glass" are replaced by
+    // the equivalent GTNA blocks (GTNABlocks.RESTRAINT_DEVICE / BOROSILICATE_GLASS_BLOCK), so the port
+    // carries no unrelated mod dependency.
+    // ------------------------------------------------------------------
+    public static final MultiblockMachineDefinition ADVANCED_INTEGRATED_ORE_PROCESSOR = registerMachine(
+            "advancedIntegratedOreProcessor", () -> REGISTRATE
+                    .multiblock("advanced_integrated_ore_processor", AdvancedIntegratedOreProcessorMachine::new)
+                    .rotationState(RotationState.ALL)
+                    .recipeType(GTNARecipeType.ORE_PROCESSING_RECIPES)
+                    .appearanceBlock(GTBlocks.CASING_TUNGSTENSTEEL_ROBUST)
+                    .pattern(definition -> FactoryBlockPattern.start()
+                            .aisle("    AAAAAAAAAA ", "    AAAGGGGAAA ", "    AAAGHHGAAA ", "    AAAGHHGAAA ",
+                                    "    AAAGHHGAAA ", "    AAAGHHGAAA ", "    AAAGHHGAAA ", "    AAAGHHGAAA ",
+                                    "    AAAGHHGAAA ", "   AAAAGHHGAAAA", "     AAGHHGAA  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("   AAAAAAAAAAAA", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "    A        A ", "    A        A ", "    A        A ",
+                                    "    A        A ", "   AAA      AAA", "     A      A  ", "      AGGGGA   ")
+                            .aisle("IIIAAAAAAAAAAAA", "IIIBADEE  EEDAB", "IIIBADEE  EEDAB", "IIIBADEE  EEDAB",
+                                    "IIIBADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("IIIAAAAAAAAAAAA", "IDIBADEE  EEDAB", "IDIBADEE  EEDAB", "IDIBADEE  EEDAB",
+                                    "IIIBADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB", "   BADEE  EEDAB",
+                                    "   BADEE  EEDAB", "   AAAFF  FFAAA", "     AFF  FFA  ", "      AGCCGA   ")
+                            .aisle("III AAAAAAAAAA ", "III AAAGGGGAAA ", "I~I AAAGHHGAAA ", "III AAAGHHGAAA ",
+                                    "III AAAGHHGAAA ", "    AAAGHHGAAA ", "    AAAGHHGAAA ", "    AAAGHHGAAA ",
+                                    "    AAAGHHGAAA ", "   AAAAGHHGAAAA", "     AAGHHGAA  ", "      AGGGGA   ")
+                            .where("~", Predicates.controller(Predicates.blocks(definition.get())))
+                            .where("A", Predicates.blocks(GTBlocks.CASING_TUNGSTENSTEEL_ROBUST.get()))
+                            .where("B", Predicates.blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.HSSS)))
+                            .where("C", Predicates.blocks(GTNABlocks.RESTRAINT_DEVICE.get()))
+                            .where("D", Predicates.blocks(GTBlocks.CASING_TUNGSTENSTEEL_PIPE.get()))
+                            .where("E", Predicates.blocks(GTBlocks.CASING_TUNGSTENSTEEL_GEARBOX.get()))
+                            .where("F", Predicates.blocks(GTBlocks.CASING_GRATE.get()))
+                            .where("G", Predicates.blocks(GTBlocks.CASING_HSSE_STURDY.get()))
+                            .where("H", Predicates.blocks(GTNABlocks.BOROSILICATE_GLASS_BLOCK.get()))
+                            .where("I", Predicates.blocks(GTBlocks.CASING_TUNGSTENSTEEL_ROBUST.get())
+                                    .or(Predicates.abilities(PartAbility.INPUT_LASER))
+                                    .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
+                                    .or(Predicates.abilities(PartAbility.EXPORT_ITEMS))
+                                    .or(Predicates.abilities(PartAbility.IMPORT_FLUIDS))
+                                    .or(Predicates.abilities(GTNAPartAbility.THREAD_HATCH).setMaxGlobalLimited(1))
+                                    .or(Predicates.abilities(GTNAPartAbility.OVERCLOCK_HATCH).setMaxGlobalLimited(1))
+                                    .or(Predicates.abilities(GTNAPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1)))
+                            .where(" ", Predicates.any())
+                            .build())
+                    .workableCasingModel(
+                            GTCEu.id("block/casings/solid/machine_casing_robust_tungstensteel"),
+                            GTCEu.id("block/multiblock/gcym/large_maceration_tower"))
+                    .tooltips(
+                            Component.translatable("gtna.machine.integrated_ore_processor.tooltip.0"),
+                            Component.translatable("gtna.machine.advanced_integrated_ore_processor.tooltip.0"),
+                            Component.translatable("gtna.machine.advanced_integrated_ore_processor.laser"),
+                            Component.translatable("gtna.machine.advanced_integrated_ore_processor.multiple_recipes"),
+                            Component.translatable("gtceu.machine.available_recipe_map_1.tooltip",
+                                    Component.translatable("gtna.recipe_type.ore_processing")))
+                    .tooltipBuilder(GTNA_ADD)
                     .register());
 
     public static final MultiblockMachineDefinition ARTIFICIAL_STAR = registerMachine("artificialStar", () -> REGISTRATE

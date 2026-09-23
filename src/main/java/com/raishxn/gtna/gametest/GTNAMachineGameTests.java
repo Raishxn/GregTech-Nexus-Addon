@@ -4,7 +4,9 @@ import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.blockentity.MetaMachineBlockEntity;
 import com.gregtechceu.gtceu.api.capability.IEnergyContainer;
 import com.gregtechceu.gtceu.api.capability.recipe.EURecipeCapability;
+import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
+import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
@@ -13,11 +15,15 @@ import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMa
 import com.gregtechceu.gtceu.api.pattern.MultiblockState;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
+import com.gregtechceu.gtceu.api.recipe.content.Content;
+import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
+import com.gregtechceu.gtceu.api.recipe.ingredient.IntCircuitIngredient;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTMachines;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
+import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.EnergyHatchPartMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.ItemBusPartMachine;
 
@@ -30,6 +36,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
@@ -59,6 +66,8 @@ import com.raishxn.gtna.common.machine.multiblock.steam.SteamLavaMakerMachine;
 import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
 import com.raishxn.gtna.network.packet.SWirelessSteamStats;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -132,6 +141,80 @@ public final class GTNAMachineGameTests {
                 holder.getMetaMachine() instanceof WorkableElectricMultipleRecipesMachine,
                 "placing duration_tester must create a WorkableElectricMultipleRecipesMachine, got " + placed);
         helper.succeed();
+    }
+
+    /**
+     * Locks the GTLCore-parity of the integrated ore processing recipes (G-0054): one recipe per
+     * circuit 1..7 for both the raw-ore and the stone-ore input, with the real per-stage byproducts
+     * and the material's own washing fluid. The recipe type is a real registered type, so this runs
+     * against the loaded recipe manager.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void integratedOreProcessingIsFaithful(GameTestHelper helper) {
+        var recipes = helper.getLevel().getRecipeManager().getAllRecipesFor(GTNARecipeType.ORE_PROCESSING_RECIPES);
+        helper.assertTrue(recipes.size() >= 700,
+                "expected the integrated ore processing recipes to be loaded, got " + recipes.size());
+
+        boolean raw = false;
+        boolean stone = false;
+        boolean distilledWater = false;
+        boolean mercury = false;
+        boolean circuitOneHasFluid = false;
+        boolean outputTooSmall = false;
+        boolean[] circuitSeen = new boolean[8];
+        for (GTRecipe recipe : recipes) {
+            if (recipe.id.getPath().contains("_raw_")) raw = true;
+            else stone = true;
+
+            int circuit = circuitOf(recipe);
+            if (circuit >= 1 && circuit <= 7) circuitSeen[circuit] = true;
+
+            List<Content> fluidInputs = recipe.getInputContents(FluidRecipeCapability.CAP);
+            if (circuit == 1 && !fluidInputs.isEmpty()) circuitOneHasFluid = true;
+            for (Content content : fluidInputs) {
+                for (Fluid fluid : fluidsOf(content)) {
+                    if (fluid == GTMaterials.DistilledWater.getFluid()) distilledWater = true;
+                    if (fluid == GTMaterials.Mercury.getFluid()) mercury = true;
+                }
+            }
+
+            // The base dust plus at least one byproduct; a lone output means the chain was simplified.
+            if (recipe.getOutputContents(ItemRecipeCapability.CAP).size() < 2) outputTooSmall = true;
+        }
+
+        helper.assertTrue(raw, "the raw-ore variants must be generated");
+        helper.assertTrue(stone, "the stone-ore variants must be generated");
+        for (int circuit = 1; circuit <= 7; circuit++) {
+            helper.assertTrue(circuitSeen[circuit], "circuit " + circuit + " recipes are missing");
+        }
+        helper.assertTrue(distilledWater, "circuits 2/3/4 must wash in distilled water");
+        helper.assertTrue(mercury, "materials washed in mercury (e.g. cooperite) must use mercury");
+        helper.assertFalse(circuitOneHasFluid, "circuit 1 (grind-grind-centrifuge) must not take a fluid");
+        helper.assertFalse(outputTooSmall, "every integrated recipe must output the product plus byproducts");
+        helper.succeed();
+    }
+
+    private static int circuitOf(GTRecipe recipe) {
+        for (Content content : recipe.getInputContents(ItemRecipeCapability.CAP)) {
+            if (content.content instanceof IntCircuitIngredient circuit) {
+                ItemStack[] items = circuit.getItems();
+                if (items.length > 0) {
+                    return IntCircuitBehaviour.getCircuitConfiguration(items[0]);
+                }
+            }
+        }
+        return -1;
+    }
+
+    private static List<Fluid> fluidsOf(Content content) {
+        if (content.content instanceof FluidIngredient ingredient) {
+            List<Fluid> fluids = new ArrayList<>();
+            for (FluidIngredient.Value value : ingredient.values) {
+                fluids.addAll(value.getFluids());
+            }
+            return fluids;
+        }
+        return List.of();
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)

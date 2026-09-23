@@ -124,6 +124,8 @@ public class ConfigHolder {
             case "nexusMolecularForge" -> INSTANCE.machineToggles.nexusMolecularForge;
             case "nexusMeHypercore" -> INSTANCE.machineToggles.nexusMeHypercore;
             case "meStorage" -> INSTANCE.machineToggles.meStorage;
+            case "integratedOreProcessor" -> INSTANCE.machineToggles.integratedOreProcessor;
+            case "advancedIntegratedOreProcessor" -> INSTANCE.machineToggles.advancedIntegratedOreProcessor;
             case "durationTester" -> INSTANCE.machineToggles.durationTester;
             default -> true;
         };
@@ -360,6 +362,10 @@ public class ConfigHolder {
         public boolean nexusMeHypercore = true;
         @Configurable
         public boolean meStorage = true;
+        @Configurable
+        public boolean integratedOreProcessor = true;
+        @Configurable
+        public boolean advancedIntegratedOreProcessor = true;
         @Configurable
         public boolean durationTester = true;
     }

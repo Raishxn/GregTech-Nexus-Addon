@@ -1,16 +1,13 @@
 package com.raishxn.gtna.data.recipe;
 
-import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
-import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.recipe.ingredient.IntCircuitIngredient;
 import com.gregtechceu.gtceu.common.data.*;
 import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
-import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
 
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,7 +17,6 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
@@ -601,7 +597,7 @@ public class GTNAMachineRecipes {
                     .EUt(GTValues.VA[GTValues.HV])
                     .save(provider);
         }
-        registerOreProcessingRecipes(provider);
+        IntegratedOreRecipes.register(provider);
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_OIL_DRILL_MODULE_I)) {
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_oil_drill_module_i")
                     .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
@@ -1639,42 +1635,6 @@ public class GTNAMachineRecipes {
                             .duration(400).EUt(euCost)
                             .save(provider);
                 }
-            }
-        }
-    }
-
-    /**
-     * Integrated Ore Processing recipes (GTLCore's Integrated Ore Processor model): for every material
-     * with a crushed ore, one recipe per circuit 1..7 whose outputs are that chain's final products,
-     * so JEI shows the integrated result and the module's circuit selects the chain.
-     */
-    private static void registerOreProcessingRecipes(Consumer<FinishedRecipe> provider) {
-        for (Material material : GTCEuAPI.materialManager.getRegisteredMaterials()) {
-            ItemStack input = ChemicalHelper.get(TagPrefix.rawOre, material);
-            if (input.isEmpty()) input = ChemicalHelper.get(TagPrefix.crushed, material);
-            if (input.isEmpty()) continue;
-            ItemStack dust = ChemicalHelper.get(TagPrefix.dust, material);
-            if (dust.isEmpty()) continue;
-            ItemStack dustSmall = ChemicalHelper.get(TagPrefix.dustSmall, material);
-            for (int circuit = 1; circuit <= 7; circuit++) {
-                boolean wash = circuit == 2 || circuit == 3 || circuit == 4;
-                boolean sifter = circuit == 4 || circuit == 7;
-                boolean bath = circuit >= 5;
-                GTRecipeBuilder builder = GTNARecipeType.ORE_PROCESSING_RECIPES
-                        .recipeBuilder("integrated_ore_processing_" + material.getName() + "_" + circuit)
-                        .circuitMeta(circuit)
-                        .inputItems(input)
-                        .outputItems(dust.copyWithCount(2))
-                        .duration(200)
-                        .EUt(GTValues.VA[GTValues.LV]);
-                if (wash) {
-                    builder.inputFluids(GTMaterials.DistilledWater.getFluid(100));
-                    builder.outputItems(ChemicalHelper.get(TagPrefix.dust, GTMaterials.Stone));
-                }
-                if ((bath || sifter) && !dustSmall.isEmpty()) {
-                    builder.outputItems(dustSmall.copyWithCount(2));
-                }
-                builder.save(provider);
             }
         }
     }

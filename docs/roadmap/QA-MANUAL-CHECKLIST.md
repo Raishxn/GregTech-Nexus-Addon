@@ -60,3 +60,19 @@ checkpoint novo do `CONTINUITY_LEDGER.md` e, quando der, transformar em gametest
 - [ ] Um boiler enchendo um output hatch alimenta vários input hatches (fair share; não monopoliza).
 - [ ] Input bronze satura em 100.000 mB; output cabe o ciclo do boiler.
 - [ ] `/gtna steam` mostra saldo, fluxo vitalício e a última operação por hatch.
+
+## Integrated / Advanced Integrated Ore Processor (G-0055)
+- [ ] `integrated_ore_processor` **forma** com a estrutura do GTLCore (stainless clean + HSSE +
+      laminated glass + frame de BlueSteel + gearbox/pipe de tungstensteel + muffler ZPM) e orienta certo.
+- [ ] `advanced_integrated_ore_processor` **forma** com a estrutura 32×12×15 (tungstensteel robust +
+      HSSS frame + restraint device + borosilicate glass) — checar com o **Structure Detect/Write**.
+- [ ] Advanced: só aceita **laser hatch** de energia; não forma com energy hatch normal.
+- [ ] Ambas mostram `Source: GTLCore` no tooltip e as linhas de circuito 1..7.
+- [ ] JEI/EMI: `gtna:ore_processing` mostra as variantes por **fluido** (distilled water nos circuitos
+      2/3/4; mercúrio/sodium persulfate nos 5/6/7) e os **byproducts** reais (não mais só dust + stone).
+- [ ] Circuito 1 roda sem fluido; circuito 2 exige crushedRefined; 4 exige gema; 5/6/7 exigem fluido de lavagem.
+- [ ] Um minério de **raw ore** e o mesmo minério em **stone ore** geram receitas distintas no JEI.
+- [ ] Hatches de performance (Thread/Overclock/Accelerate) encaixam nos dois controladores; a Advanced
+      roda múltiplas receitas em paralelo (base `WorkableElectricMultipleRecipesMachine`).
+- [ ] Ajustar `config/gtna/balance/machines.json` → `integratedOreMultiplier` muda a quantidade de dust
+      por minério (default 4 = GTLCore).

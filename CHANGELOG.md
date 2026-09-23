@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **Integrated Ore Processor** (GTLCore port, LGPLv3): the 6×12×11 stainless/HSSE multiblock that
+  collapses the macerate → wash → thermal/sift/centrifuge chain into one recipe per circuit.
+- **Advanced Integrated Ore Processor** (GTLCore/TST port, LGPLv3): the 32×12×15 laser-powered,
+  effectively unlimited-parallel endgame version.
+- **Faithful integrated ore processing recipes**: one recipe per circuit 1..7 for both raw ore and
+  stone ore, with the real per-stage byproducts, the material's own washing fluid (distilled water,
+  mercury, sodium persulfate, ...) and GTLCore's durations/EUt. The multiplier is configurable
+  (`gtna/balance/machines.json` → `integratedOreMultiplier`, default 4 = GTLCore parity).
+
+### Changed
+- `gtna:ore_processing` now uses GTLCore's IO sizes (2 item in / 9 item out / 1 fluid in).
+
 ## [0.4.0] - 2026-09-21
 
 ### Added
