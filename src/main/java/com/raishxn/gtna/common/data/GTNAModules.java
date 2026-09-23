@@ -61,7 +61,7 @@ public final class GTNAModules {
                         .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.StainlessSteel)))
                         .where('C', blocks(GTBlocks.CASING_INVAR_HEATPROOF.get()))
                         .where('D', blocks(GTBlocks.CASING_STEEL_PIPE.get()))
-                        .where('E', controller(blocks(definition.get())))
+                        .where('E', controller(blocks(definition.getBlock())))
                         .where(' ', any())
                         .build(),
                 Component.translatable("gtna.machine.electric_blast_furnace.module").withStyle(ChatFormatting.GOLD));
@@ -97,7 +97,7 @@ public final class GTNAModules {
                         .or(abilities(PartAbility.PARALLEL_HATCH).setMaxGlobalLimited(1))
                         .or(abilities(GTNAPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1)))
                 .where('B', blocks(GTBlocks.CASING_STAINLESS_TURBINE.get()))
-                .where('C', controller(blocks(definition.get())))
+                .where('C', controller(blocks(definition.getBlock())))
                 .where('D', blocks(GTBlocks.CASING_STAINLESS_STEEL_GEARBOX.get()))
                 .where('E', blocks(GTBlocks.CASING_STAINLESS_CLEAN.get()))
                 .where('F', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.StainlessSteel)))
