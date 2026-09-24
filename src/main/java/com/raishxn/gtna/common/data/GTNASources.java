@@ -28,6 +28,7 @@ import java.util.function.BiConsumer;
 public final class GTNASources {
 
     public static final String GTO = "gto";
+    public static final String RAISHXCORE = "raishxcore";
     public static final String GTNL = "gtnl";
     public static final String GTNH = "gtnh";
     public static final String TST = "tst";
@@ -43,6 +44,8 @@ public final class GTNASources {
             Map.entry("annihilate_generator", GTO),
             Map.entry("eye_of_harmony", GTO),
             Map.entry("me_storage", GTO),
+            Map.entry("nexus_me_hypercore", GTO),
+            Map.entry("crafting_cpu_interface", GTO),
             Map.entry("dimensionally_transcendent_dirt_forge", GTO),
             Map.entry("dimensionally_transcendent_steam_boiler", GTO),
             Map.entry("dimensionally_transcendent_steam_oven", GTO),
@@ -123,6 +126,9 @@ public final class GTNASources {
             // --- GTO Extended Platform Presets (permission granted by the GTO team) ---
             Map.entry("industrial_platform_deployment_tools", GTOEPP));
 
+    /** Additional origin for mechanics added to an existing port. */
+    private static final Map<String, String> EXTRA_SOURCES = Map.of("nexus_me_hypercore", RAISHXCORE);
+
     /** Sources for modules added to machines owned by another mod. */
     private static final Map<ResourceLocation, String> MODULE_SOURCES = Map.of(
             ResourceLocation.parse("gtceu:electric_blast_furnace"), GTO);
@@ -170,6 +176,8 @@ public final class GTNASources {
                     original.accept(stack, components);
                 }
                 components.add(line(sourceId));
+                String extraSource = EXTRA_SOURCES.get(id.getPath());
+                if (extraSource != null) components.add(line(extraSource));
             });
         }
     }

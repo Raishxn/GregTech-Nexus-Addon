@@ -1,12 +1,12 @@
 package com.raishxn.gtna.common.block;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 
+import com.raishxn.gtna.common.data.GTNASources;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -45,9 +45,8 @@ public class MEStorageCoreBlock extends Block {
     public void appendHoverText(@NotNull ItemStack stack, @Nullable BlockGetter level,
                                 @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         super.appendHoverText(stack, level, tooltip, flag);
-        tooltip.add(Component.literal("Tier " + tier + " Matrix " + (craftingCore ? "Crafting" : "Storage") + " Module")
-                .withStyle(ChatFormatting.AQUA));
-        tooltip.add(Component.literal("Capacity: " + formatBytes(capacity)).withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("gtna.block.me_storage_core.capacity", formatBytes(capacity)));
+        tooltip.add(GTNASources.line(GTNASources.GTO));
     }
 
     private static String formatBytes(long bytes) {

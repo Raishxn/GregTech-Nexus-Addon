@@ -292,6 +292,7 @@
   "config.gtna.option.nexusMolecularForge": "Nexus Molecular Forge",
   "config.gtna.option.eyeOfWood": "Eye of Wood",
   "config.gtna.option.nexusMeHypercore": "Nexus ME Hypercore",
+  "config.gtna.option.nexusPlannerEnabled": "Nexus ME Hypercore Planner",
   "config.gtna.option.durationTester": "Duration Tester",
   "config.gtna.option.wirelessSteamInputBronze": "Wireless Steam Input Bronze",
   "config.gtna.option.wirelessSteamInputSteel": "Wireless Steam Input Steel",

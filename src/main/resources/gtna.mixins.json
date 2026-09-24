@@ -8,6 +8,8 @@
     "ae2.CPUSelectionListMixin",
     "ae2.CraftingCPUClusterMixin",
     "ae2.CraftingServiceMixin",
+    "ae2.CoreCraftingPlannerServiceMixin",
+    "ae2.CraftingPatternRevisionMixin",
     "ae2.ElapsedTimeTrackerMixin",
     "ae2.PatternProviderLogicMixin",
     "ae2.TooltipsMixin",

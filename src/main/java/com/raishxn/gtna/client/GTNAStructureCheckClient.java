@@ -1,6 +1,5 @@
 package com.raishxn.gtna.client;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 
 import com.raishxn.gtna.network.GTNANetworkHandler;
@@ -13,6 +12,5 @@ public final class GTNAStructureCheckClient {
 
     public static void request(BlockPos controllerPos, boolean force) {
         GTNANetworkHandler.INSTANCE.sendToServer(new CStructureRefreshPacket(controllerPos, force));
-        Minecraft.getInstance().setScreen(null);
     }
 }

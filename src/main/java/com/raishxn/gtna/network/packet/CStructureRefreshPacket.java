@@ -45,6 +45,9 @@ public record CStructureRefreshPacket(BlockPos pos, boolean force) {
                     !(holder.getMetaMachine() instanceof MultiblockControllerMachine controller)) {
                 return;
             }
+            if (controller.isFormed() && !msg.force) {
+                return;
+            }
 
             GTNAStructureRefresh.refresh(controller, msg.force);
             if (!controller.isFormed()) {
@@ -65,8 +68,7 @@ public record CStructureRefreshPacket(BlockPos pos, boolean force) {
                 player.displayClientMessage(Component.translatable("gtna.machine.structure_check.rejected"), false);
                 return;
             }
-            player.displayClientMessage(Component.translatable("gtna.machine.structure_check.formed", formed, total),
-                    false);
+            // A successful check is reflected in the button state; repeated clicks should not spam chat.
         });
         ctx.get().setPacketHandled(true);
     }

@@ -186,6 +186,7 @@ tasks.register('runUnitTests') {
     dependsOn 'compileJava', 'compileTestJava'
     def testClasses = [
             'com.raishxn.gtna.Int128Test',
+            'com.raishxn.gtna.NexusPlannerTest',
             'com.raishxn.gtna.ModeIdMatcherTest',
             'com.raishxn.gtna.NumberUtilsTest',
             'com.raishxn.gtna.StructureSlicerTest',

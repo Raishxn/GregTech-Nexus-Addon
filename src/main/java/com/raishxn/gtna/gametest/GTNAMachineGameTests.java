@@ -57,11 +57,13 @@ import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
 import com.raishxn.gtna.common.machine.multiblock.electric.LiquefactionFurnaceMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.UniversalFactoryMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
+import com.raishxn.gtna.common.machine.multiblock.energy.NexusMEHyperCoreMachine.CpuSpec;
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamOreProcessorModule;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.BrickKilnMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.PrimitiveStoneFurnaceMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.ThermalPowerPumpMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftingCPUInterfacePartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamInputHatch;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamOutputHatch;
@@ -595,6 +597,31 @@ public final class GTNAMachineGameTests {
         CraftingCPUCluster cluster = new CraftingCPUCluster(BlockPos.ZERO, BlockPos.ZERO);
         helper.assertTrue(cluster.craftingLogic.getClass() == CraftingCpuLogic.class,
                 "a native AE2 CPU must keep CraftingCpuLogic, got " + cluster.craftingLogic.getClass().getName());
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void hypercoreInterfaceHasIndependentCpusAndNoInventory(GameTestHelper helper) {
+        if (GTNAMachines2.CRAFTING_CPU_INTERFACE == null) {
+            helper.fail("Crafting CPU Interface is disabled by config");
+            return;
+        }
+        BlockPos pos = new BlockPos(2, 2, 2);
+        helper.setBlock(pos, GTNAMachines2.CRAFTING_CPU_INTERFACE.getBlock());
+        if (!(helper.getBlockEntity(pos) instanceof MetaMachineBlockEntity holder) ||
+                !(holder.getMetaMachine() instanceof GTNACraftingCPUInterfacePartMachine machine)) {
+            helper.fail("Crafting CPU Interface did not create its machine");
+            return;
+        }
+        helper.assertTrue(machine.getInventory().getSlots() == 0,
+                "the network interface must not expose item slots");
+        machine.configureCpus(List.of(new CpuSpec(1024, 2), new CpuSpec(2048, 4), new CpuSpec(4096, 8)));
+        helper.assertTrue(machine.getConfiguredCpuCount() == 3,
+                "three storage modules must create three independent CPUs");
+        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+        machine.saveCustomPersistedData(tag, false);
+        helper.assertTrue(tag.getList("NexusCraftingCpus", net.minecraft.nbt.Tag.TAG_COMPOUND).size() == 3,
+                "all three CPU jobs must have their own persisted state");
         helper.succeed();
     }
 

@@ -154,6 +154,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.source", "Source: %s");
         add("gtna.tooltip.machine_type", "Machine Type: %s");
         add("gtna.source.gto", "GregTech Odyssey (GTO)");
+        add("gtna.source.raishxcore", "RaishxCore");
         add("gtna.source.gtnl", "GT: Not Leisure (GTNL)");
         add("gtna.source.gtnh", "GT: New Horizons (GTNH)");
         add("gtna.source.tst", "Twist Space Technology (TST)");
@@ -166,6 +167,7 @@ public class GTNALangProvider extends LanguageProvider {
         // --- Multiple-recipes machine UI (previously hardcoded literals) ---
         add("gtna.machine.modules_amount", "Formed modules: %s / %s");
         add("gtna.machine.structure_check", "Update structure check");
+        add("gtna.machine.structure_check.up_to_date", "Structure formed");
         add("gtna.machine.structure_check.shift", "Shift+click to force a full structure rebuild");
         add("gtna.machine.structure_check.formed", "Structure formed. Auxiliary modules: %s / %s.");
         add("gtna.machine.structure_check.missing", "Structure incomplete at %s: found %s; expected %s.");
@@ -346,6 +348,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.crafting_cpu_interface", "Crafting CPU Interface");
         add("block.gtna.nexus_me_hypercore", "Nexus ME Hypercore");
         add("item.gtna.infinite_cell_component", "Infinite Cell Component");
+        add("gtna.block.me_storage_core.capacity", "Capacity: %s");
         add("gtna.ae2.cpu.nexus_hypercore", "N-ME CPU");
         add("gtna.machine.nexus_me_hypercore.ui.title", "Nexus ME Hypercore");
         add("gtna.machine.nexus_me_hypercore.ui.tier", "Tier: ");
@@ -353,6 +356,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.machine.nexus_me_hypercore.ui.storage", "Storage: ");
         add("gtna.machine.nexus_me_hypercore.ui.coprocessors", "Co-Processors: ");
         add("gtna.machine.nexus_me_hypercore.ui.threads", "Threads: ");
+        add("gtna.machine.nexus_me_hypercore.ui.cpus", "Crafting CPUs: %s (%s busy)");
         add("gtna.machine.nexus_me_hypercore.ui.transcendent", "Transcendent Mode: ");
         add("gtna.machine.nexus_me_hypercore.ui.on", "Active");
         add("gtna.machine.nexus_me_hypercore.ui.off", "Inactive");
@@ -452,6 +456,7 @@ public class GTNALangProvider extends LanguageProvider {
                 "Connects the Nexus ME Hypercore to the AE2 crafting CPU network");
         add("gtna.machine.crafting_cpu_interface.network",
                 "The Nexus ME Hypercore structure requires exactly one interface");
+        add("gtna.machine.crafting_cpu_interface.connection_only", "AE2 network connection only");
         add("item.gtna.pattern_buffer_upgrade_21", "Pattern Buffer Expansion Card");
         add("item.gtna.pattern_buffer_upgrade_32", "Pattern Buffer Precision Card");
         add("item.gtna.pattern_buffer_upgrade_72", "Pattern Buffer Ascension Card");

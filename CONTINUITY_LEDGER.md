@@ -40,7 +40,11 @@ foi feito nem repetir os erros já pagos.
 - Desenvolvimento na branch `main`; o histórico anterior a G-0026 está preservado no ledger.
 - Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0077):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
+- **Gate verde em 2026-09-23 (G-0078):** `spotlessCheck` + `compileJava` + `runUnitTests` (**19/19**) +
+  `runGameTestServer` (**46/46**) + `runData` determinístico (`written: 0`). Planner RaishxCore portado
+  para AE2 1.20.1, limitado às redes com Interface do Hypercore. Integração de crafting real ainda
+  requer QA in-game.
+- **Gate anterior em 2026-09-23 (G-0077):** `spotlessCheck` + `compileJava` + `runUnitTests` (**18/18**) +
   `runGameTestServer` (**45/45**, `All 45 required tests passed`) + `runData` determinístico
   (`written: 0`). A execução carregou os mixins alterados e o Productive Bees de dev; os avisos/erros
   de receitas do GTCEu já conhecidos continuam no log.
@@ -86,7 +90,7 @@ foi feito nem repetir os erros já pagos.
   módulo (G-0043). Ver G-0041..G-0043 para causa raiz, testes e pendências.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
-- **Testes hoje:** 18 unit tests (`main()` + asserts, padrão GTLCore) e 45 gametests (`@GameTest`),
+- **Testes hoje:** 19 unit tests (`main()` + asserts, padrão GTLCore) e 46 gametests (`@GameTest`),
   ambos no gate do CI.
 - **Steam Cracker:** o autor confirmou em 2026-09-23 que a implementação deve continuar sendo a do
   GTNL; estrutura, comportamento e atribuição `GTNASources` atuais seguem essa origem.
@@ -106,6 +110,27 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0078 (2026-09-23) — Hypercore multi-CPU, planner e UI
+
+- A Interface de CPU agora tem `IO.NONE`, nenhum slot interno e serve apenas como ligação AE2.
+  Cada Crafting Storage Core forma uma CPU AE2 independente (até 320), com nome estável e NBT
+  próprio; o NBT antigo de CPU única é migrado. A UI mostra CPUs totais/ocupadas. A capacidade
+  de cada CPU acompanha o tooltip do core instalado; Transcendent Mode usa os limites máximos.
+- O planner iterativo completo do RaishxCore foi portado de AE2 1.21.1 para AE2 15.4.10/Java 17:
+  grafo imutável, escolha de rotas, subprodutos, captura cooperativa em fatias, cache por revisão,
+  workers limitados, cancelamento, circuit breaker e fallback AE2. O hook atua somente em redes
+  com Interface do Hypercore; `nexusPlannerEnabled` o desliga. Origem RaishxCore creditada via
+  `GTNASources` no tooltip do Hypercore e em `THIRD_PARTY_NOTICES.md`.
+- O botão de rechecagem não fecha mais a UI; formado fica com visual desativado e só Shift força
+  a ação; o servidor não envia mais spam para clique normal no formado. Foi removida a linha
+  redundante do tooltip do Crafting Storage Core. As receitas do controller, dos cinco Crafting
+  Storage Cores e cinco ME Storage Cores seguem o GTOCore, com componentes de célula 1M–256M
+  e seus assets atribuídos à GTO.
+- Validação: gate offline completo verde, 19/19 unit tests (inclui casos de planner) e 46/46
+  gametests (inclui CPUs independentes e Interface sem inventário), `runData` determinístico.
+  A formação do Hypercore, craftings simultâneos reais, planner na rede e interação visual do
+  botão ainda precisam de QA no client pelo autor.
 
 ### G-0077 (2026-09-23) — correção da direção vertical do Hypercore
 

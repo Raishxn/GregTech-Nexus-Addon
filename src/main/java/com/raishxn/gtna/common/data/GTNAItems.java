@@ -66,6 +66,11 @@ public class GTNAItems {
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_COPY_CARD;
     public static ItemEntry<ComponentItem> PATTERN_BUFFER_CUT_CARD;
     public static ItemEntry<ComponentItem> INFINITE_CELL_COMPONENT;
+    public static ItemEntry<ComponentItem> CELL_COMPONENT_1M;
+    public static ItemEntry<ComponentItem> CELL_COMPONENT_4M;
+    public static ItemEntry<ComponentItem> CELL_COMPONENT_16M;
+    public static ItemEntry<ComponentItem> CELL_COMPONENT_64M;
+    public static ItemEntry<ComponentItem> CELL_COMPONENT_256M;
     public static ItemEntry<ComponentItem> ANNIHILATION_CONSTRAINER;
     public static ItemEntry<ComponentItem> NEUTRONIUM_ANTIMATTER_FUEL_ROD;
     public static ItemEntry<ComponentItem> DRACONIUM_ANTIMATTER_FUEL_ROD;
@@ -76,6 +81,11 @@ public class GTNAItems {
     public static ItemEntry<ComponentItem> INFINITE_ELECTRIC_SINGLEBLOCK_COVER;
 
     public static void init() {
+        CELL_COMPONENT_1M = registerCellComponent(1);
+        CELL_COMPONENT_4M = registerCellComponent(4);
+        CELL_COMPONENT_16M = registerCellComponent(16);
+        CELL_COMPONENT_64M = registerCellComponent(64);
+        CELL_COMPONENT_256M = registerCellComponent(256);
         STRUCTURE_DETECT = REGISTRATE
                 .item("structure_detect", ComponentItem::create)
                 .lang("Structure Detector")
@@ -287,6 +297,15 @@ public class GTNAItems {
                 .onRegister(attach(new CoverPlaceBehavior(GTNACovers.INFINITE_ELECTRIC_SINGLEBLOCK_COVER)))
                 .model((ctx, provider) -> provider.generated(ctx,
                         GTNACORE.id("item/733")))
+                .register();
+    }
+
+    private static ItemEntry<ComponentItem> registerCellComponent(int capacityM) {
+        String name = "cell_component_" + capacityM + "m";
+        return REGISTRATE.item(name, ComponentItem::create)
+                .lang(capacityM + "M Cell Component")
+                .onRegister(attach(new TooltipBehavior(lines -> lines.add(GTNASources.line(GTNASources.GTO)))))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + name)))
                 .register();
     }
 

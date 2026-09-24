@@ -452,6 +452,11 @@ public class ConfigHolder {
         public boolean bufferDrivenMachineMode = true;
 
         @Configurable
+        @Comment({ "En: Enable RaishxCore crafting planner for Nexus ME Hypercore grids",
+                "Pt: Ativar planner RaishxCore nas redes do Nexus ME Hypercore" })
+        public boolean nexusPlannerEnabled = true;
+
+        @Configurable
         @Range(min = 1000, max = 1000000)
         public int wirelessSteamTransferRate = 8192;
 

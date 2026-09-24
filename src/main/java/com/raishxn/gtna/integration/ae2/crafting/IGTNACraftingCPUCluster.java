@@ -23,14 +23,15 @@ public interface IGTNACraftingCPUCluster {
     }
 
     static CraftingCPUCluster create(GTNACraftingCPUInterfacePartMachine machine, MachineSource source, long storage,
-                                     int accelerator) {
+                                     int accelerator, int index) {
         CraftingCPUCluster cluster = new CraftingCPUCluster(machine.getPos(), machine.getPos());
         IGTNACraftingCPUCluster bridge = of(cluster);
         bridge.gtna$setMachine(machine);
         bridge.gtna$setMachineSource(source);
         bridge.gtna$setStorage(storage);
         bridge.gtna$setAccelerator(accelerator);
-        bridge.gtna$setName(Component.translatable("gtna.ae2.cpu.nexus_hypercore"));
+        bridge.gtna$setName(Component.translatable("gtna.ae2.cpu.nexus_hypercore")
+                .append(Component.literal(" #" + (index + 1))));
         return cluster;
     }
 }

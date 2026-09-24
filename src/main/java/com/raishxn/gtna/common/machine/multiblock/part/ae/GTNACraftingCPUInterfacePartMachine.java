@@ -6,7 +6,13 @@ import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
 import com.gregtechceu.gtceu.integration.ae2.machine.MEBusPartMachine;
 
+import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
+import com.lowdragmc.lowdraglib.gui.widget.Widget;
+import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
+
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IGridNodeListener;
@@ -15,32 +21,49 @@ import appeng.api.networking.security.IActionHost;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.me.helpers.MachineSource;
 import com.raishxn.gtna.common.machine.multiblock.energy.NexusMEHyperCoreMachine;
+import com.raishxn.gtna.common.machine.multiblock.energy.NexusMEHyperCoreMachine.CpuSpec;
 import com.raishxn.gtna.integration.ae2.crafting.IGTNACraftingCPUCluster;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GTNACraftingCPUInterfacePartMachine extends MEBusPartMachine implements IActionHost {
 
-    private static final String CPU_TAG = "NexusCraftingCpu";
-    private static final String STORAGE_TAG = "NexusCpuStorage";
-    private static final String COPROCESSORS_TAG = "NexusCpuCoProcessors";
+    private static final String CPUS_TAG = "NexusCraftingCpus";
+    private static final String LEGACY_CPU_TAG = "NexusCraftingCpu";
 
     private final MachineSource machineSource = new MachineSource(this);
-    private CraftingCPUCluster cluster;
-    private CompoundTag pendingClusterTag;
-    private long storageBytes;
-    private int coProcessors;
+    private final List<CraftingCPUCluster> clusters = new ArrayList<>();
+    private List<CompoundTag> pendingClusterTags = List.of();
+    private List<CpuSpec> cpuSpecs = List.of();
     private TickableSubscription reconnectSubscription;
     private int reconnectTicks;
 
     public GTNACraftingCPUInterfacePartMachine(IMachineBlockEntity holder, Object... args) {
-        super(holder, IO.IN, args);
+        super(holder, IO.NONE, args);
+    }
+
+    @Override
+    protected int getInventorySize() {
+        return 0;
+    }
+
+    @Override
+    protected boolean shouldSubscribe() {
+        return false;
+    }
+
+    @Override
+    public Widget createUIWidget() {
+        var group = new WidgetGroup(0, 0, 154, 32);
+        group.addWidget(new LabelWidget(5, 10, "gtna.machine.crafting_cpu_interface.connection_only"));
+        return group;
     }
 
     @Override
     public void onLoad() {
         super.onLoad();
-        rebuildCluster();
+        rebuildClusters();
         scheduleCpuReconnect();
     }
 
@@ -62,49 +85,73 @@ public class GTNACraftingCPUInterfacePartMachine extends MEBusPartMachine implem
     @Override
     public void removedFromController(IMultiController controller) {
         super.removedFromController(controller);
-        configureCpu(0L, 0);
+        configureCpus(List.of());
     }
 
     @Override
     public void onMainNodeStateChanged(IGridNodeListener.State reason) {
         super.onMainNodeStateChanged(reason);
-        rebuildCluster();
+        rebuildClusters();
         scheduleCpuReconnect();
     }
 
     @Override
     public void saveCustomPersistedData(CompoundTag tag, boolean forDrop) {
         super.saveCustomPersistedData(tag, forDrop);
-        tag.putLong(STORAGE_TAG, storageBytes);
-        tag.putInt(COPROCESSORS_TAG, coProcessors);
-        if (cluster != null) {
+        ListTag cpuTags = new ListTag();
+        for (CraftingCPUCluster cluster : clusters) {
             CompoundTag cpuTag = new CompoundTag();
             cluster.writeToNBT(cpuTag);
-            tag.put(CPU_TAG, cpuTag);
+            cpuTags.add(cpuTag);
         }
+        for (int i = clusters.size(); i < pendingClusterTags.size(); i++) {
+            cpuTags.add(pendingClusterTags.get(i).copy());
+        }
+        tag.put(CPUS_TAG, cpuTags);
     }
 
     @Override
     public void loadCustomPersistedData(CompoundTag tag) {
         super.loadCustomPersistedData(tag);
-        storageBytes = tag.getLong(STORAGE_TAG);
-        coProcessors = tag.getInt(COPROCESSORS_TAG);
-        pendingClusterTag = tag.contains(CPU_TAG) ? tag.getCompound(CPU_TAG) : null;
+        List<CompoundTag> saved = new ArrayList<>();
+        if (tag.contains(CPUS_TAG, Tag.TAG_LIST)) {
+            ListTag cpuTags = tag.getList(CPUS_TAG, Tag.TAG_COMPOUND);
+            for (int i = 0; i < cpuTags.size(); i++) {
+                saved.add(cpuTags.getCompound(i));
+            }
+        } else if (tag.contains(LEGACY_CPU_TAG, Tag.TAG_COMPOUND)) {
+            saved.add(tag.getCompound(LEGACY_CPU_TAG));
+        }
+        pendingClusterTags = saved;
     }
 
-    public void configureCpu(long storageBytes, long coProcessors) {
-        this.storageBytes = Math.max(0L, storageBytes);
-        this.coProcessors = (int) Math.min(Integer.MAX_VALUE, Math.max(0L, coProcessors));
-        rebuildCluster();
+    public void configureCpus(List<CpuSpec> specs) {
+        if (cpuSpecs.equals(specs)) {
+            return;
+        }
+        cpuSpecs = List.copyOf(specs);
+        rebuildClusters();
         notifyCpuChanged();
         scheduleCpuReconnect();
     }
 
     public List<CraftingCPUCluster> getClusters() {
-        if (!isFormed() || !getMainNode().isActive() || cluster == null || storageBytes <= 0L || coProcessors <= 0) {
+        if (!isFormed() || !getMainNode().isActive() || clusters.size() < cpuSpecs.size()) {
             return List.of();
         }
-        return List.of(cluster);
+        return List.copyOf(clusters.subList(0, cpuSpecs.size()));
+    }
+
+    public int getConfiguredCpuCount() {
+        return cpuSpecs.size();
+    }
+
+    public int getBusyCpuCount() {
+        int busy = 0;
+        for (CraftingCPUCluster cluster : getClusters()) {
+            if (cluster.craftingLogic.hasJob()) busy++;
+        }
+        return busy;
     }
 
     public void onChanged() {
@@ -118,7 +165,7 @@ public class GTNACraftingCPUInterfacePartMachine extends MEBusPartMachine implem
 
     private void configureFromController(IMultiController controller) {
         if (controller instanceof NexusMEHyperCoreMachine hyperCore) {
-            configureCpu(hyperCore.getAeStorageBytes(), hyperCore.getAeCoProcessors());
+            configureCpus(hyperCore.getCpuSpecs());
         }
     }
 
@@ -138,7 +185,7 @@ public class GTNACraftingCPUInterfacePartMachine extends MEBusPartMachine implem
                 break;
             }
         }
-        rebuildCluster();
+        rebuildClusters();
         notifyCpuChanged();
 
         IGridNode node = getMainNode().getNode();
@@ -150,24 +197,30 @@ public class GTNACraftingCPUInterfacePartMachine extends MEBusPartMachine implem
         }
     }
 
-    private void rebuildCluster() {
-        if (isRemote() || storageBytes <= 0L || coProcessors <= 0) {
-            cluster = null;
+    private void rebuildClusters() {
+        if (isRemote()) {
             return;
         }
-        if (cluster == null) {
-            cluster = IGTNACraftingCPUCluster.create(this, machineSource, storageBytes, coProcessors);
-            if (pendingClusterTag != null) {
-                cluster.readFromNBT(pendingClusterTag);
-                pendingClusterTag = null;
+        for (int i = 0; i < cpuSpecs.size(); i++) {
+            CpuSpec spec = cpuSpecs.get(i);
+            CraftingCPUCluster cluster;
+            if (i >= clusters.size()) {
+                cluster = IGTNACraftingCPUCluster.create(this, machineSource, spec.storageBytes(),
+                        spec.coProcessors(), i);
+                clusters.add(cluster);
+                if (i < pendingClusterTags.size()) {
+                    cluster.readFromNBT(pendingClusterTags.get(i));
+                }
+            } else {
+                cluster = clusters.get(i);
+                IGTNACraftingCPUCluster bridge = IGTNACraftingCPUCluster.of(cluster);
+                bridge.gtna$setMachine(this);
+                bridge.gtna$setMachineSource(machineSource);
+                bridge.gtna$setStorage(spec.storageBytes());
+                bridge.gtna$setAccelerator(spec.coProcessors());
             }
-        } else {
-            IGTNACraftingCPUCluster bridge = IGTNACraftingCPUCluster.of(cluster);
-            bridge.gtna$setMachine(this);
-            bridge.gtna$setMachineSource(machineSource);
-            bridge.gtna$setStorage(storageBytes);
-            bridge.gtna$setAccelerator(coProcessors);
         }
+        if (clusters.size() >= pendingClusterTags.size()) pendingClusterTags = List.of();
     }
 
     private void notifyCpuChanged() {

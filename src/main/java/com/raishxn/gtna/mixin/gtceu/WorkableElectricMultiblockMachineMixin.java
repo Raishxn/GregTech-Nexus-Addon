@@ -2,7 +2,7 @@ package com.raishxn.gtna.mixin.gtceu;
 
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.fancy.ConfiguratorPanel;
-import com.gregtechceu.gtceu.api.machine.fancyconfigurator.ButtonConfigurator;
+import com.gregtechceu.gtceu.api.gui.fancy.IFancyConfiguratorButton;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 
 import com.lowdragmc.lowdraglib.gui.texture.GuiTextureGroup;
@@ -34,14 +34,18 @@ public abstract class WorkableElectricMultiblockMachineMixin {
     @Inject(method = "attachConfigurators", at = @At("TAIL"), remap = false)
     private void gtna$addStructureCheck(ConfiguratorPanel panel, CallbackInfo ci) {
         WorkableElectricMultiblockMachine machine = (WorkableElectricMultiblockMachine) (Object) this;
-        panel.attachConfigurators(new ButtonConfigurator(
+        panel.attachConfigurators(new IFancyConfiguratorButton.Toggle(
                 new GuiTextureGroup(GuiTextures.BUTTON, GTNATextures.STRUCTURE_CHECK.getSubTexture(0, 0, 1, 0.5)),
-                click -> {
-                    if (click.isRemote) {
+                new GuiTextureGroup(GuiTextures.BUTTON, GTNATextures.STRUCTURE_CHECK.getSubTexture(0, 0.5, 1, 0.5)),
+                machine::isFormed,
+                (click, pressed) -> {
+                    if (click.isRemote && (!machine.isFormed() || click.isShiftClick)) {
                         GTNAStructureCheckClient.request(machine.self().getPos(), click.isShiftClick);
                     }
-                }).setTooltips(List.of(
-                        Component.translatable("gtna.machine.structure_check"),
-                        Component.translatable("gtna.machine.structure_check.shift"))));
+                }).setTooltipsSupplier(formed -> formed ?
+                        List.of(Component.translatable("gtna.machine.structure_check.up_to_date"),
+                                Component.translatable("gtna.machine.structure_check.shift")) :
+                        List.of(Component.translatable("gtna.machine.structure_check"),
+                                Component.translatable("gtna.machine.structure_check.shift"))));
     }
 }
