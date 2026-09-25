@@ -25,6 +25,10 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
+> **Release GitHub 0.5.1 (G-0100):** a tag `v0.5.1` aponta para o commit corrigido
+> `9808c5037e255522fae21139f35b7b80a6286d9d`; o release público contém o changelog
+> completo e o JAR de SHA-256 `afc79d801e00cb7e1974a4f6b843ed7f89a19a86e1641c3bdab97fb4458e4585`.
+
 > **Hotfix local após 0.5.1 (G-0097):** corrigido o crash de carregamento do
 > `MetaMachineBlockMixin` no GTCEu 7.5.3 distribuído. O alvo em produção é `m_5871_`,
 > enquanto no ambiente de desenvolvimento é `appendHoverText`. A injeção agora aceita ambos
@@ -181,6 +185,19 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0100 (2026-09-25) — GitHub Release v0.5.1 publicado
+
+- Após o push de G-0099 (`9808c5037e255522fae21139f35b7b80a6286d9d`), o autor esclareceu
+  que esperava também o GitHub Release. Publicado
+  `https://github.com/Raishxn/GregTech-Nexus-Addon/releases/tag/v0.5.1` com as notas de
+  `docs/curseforge-changelog-0.5.1.md` e o arquivo `gtna-0.5.1.jar`.
+- A tag aponta para o commit corrigido; o release não é draft nem prerelease. O JAR do anexo foi
+  baixado novamente e seu SHA-256 coincide com o build local e o JAR da instância Prism:
+  `afc79d801e00cb7e1974a4f6b843ed7f89a19a86e1641c3bdab97fb4458e4585`.
+- Java CI e MkDocs do commit de release passaram no GitHub. Permanecem os checks manuais do
+  Hypercore, tooltip de módulos e planner AE2 anotados em G-0099. O upload no CurseForge
+  continua com o autor; em 2026-09-25 a página pública ainda mostrava 0.5.0 como principal.
 
 ### G-0099 (2026-09-25) — JAR 0.5.1 corrigido autorizado para a main
 
