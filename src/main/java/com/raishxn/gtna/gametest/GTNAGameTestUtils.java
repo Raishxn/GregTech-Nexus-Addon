@@ -1,6 +1,10 @@
 package com.raishxn.gtna.gametest;
 
+import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
+
 import net.minecraft.gametest.framework.GameTestHelper;
+
+import com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh;
 
 /**
  * Small helpers for the GameTest harness.
@@ -21,6 +25,7 @@ public final class GTNAGameTestUtils {
      */
     public static void assertEveryTickUntilTimeout(GameTestHelper helper, int timeoutTicks, String name,
                                                    Runnable assertion) {
+        assertion.run();
         helper.onEachTick(() -> {
             try {
                 assertion.run();
@@ -29,5 +34,13 @@ public final class GTNAGameTestUtils {
             }
         });
         helper.runAtTickTime(Math.max(1, timeoutTicks - 1), helper::succeed);
+    }
+
+    /** Forces the first structure check, then rejects even a single tick of accidental formation. */
+    public static void assertNeverForms(GameTestHelper helper, MultiblockControllerMachine controller,
+                                        int observationTicks, String name) {
+        GTNAStructureRefresh.refresh(controller, true);
+        assertEveryTickUntilTimeout(helper, observationTicks, name,
+                () -> helper.assertFalse(controller.isFormed(), "controller formed"));
     }
 }

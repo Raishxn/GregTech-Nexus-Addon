@@ -17,6 +17,7 @@ import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeHandlerList;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import com.gregtechceu.gtceu.api.recipe.ingredient.SizedIngredient;
 import com.gregtechceu.gtceu.api.transfer.item.CustomItemStackHandler;
@@ -176,6 +177,20 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
      */
     private final Object2LongOpenHashMap<AEKey> pendingNetworkOutput = new Object2LongOpenHashMap<>();
 
+    /**
+     * Diagnostics for QA: how many AE2 {@code pushPattern} calls each slot has accepted. Never
+     * persisted or synced; it only exists so a GameTest can assert that AE2 actually dispatched every
+     * pattern instead of inferring it from recipe output.
+     */
+    private final int[] pushedPatternsBySlot;
+
+    /**
+     * Diagnostics for QA: the recipe types that have actually started through this buffer. Also never
+     * persisted; it exists because the controller's displayed active type can be overwritten when
+     * several threads start in one tick, so a GameTest cannot rely on polling it.
+     */
+    private final Set<GTRecipeType> startedRecipeTypes = new LinkedHashSet<>();
+
     /** Fase 3 extraction: recipe-type mode discovery + labels; the synced cache stays here. */
     @Getter
     private final PatternBufferModeRegistry modeRegistry = new PatternBufferModeRegistry(this);
@@ -271,6 +286,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         this.patternInventory.setFilter(stack -> stack.getItem() instanceof ProcessingPatternItem);
         this.internalInventory = new InternalSlot[this.maxPatternCount];
         this.slotConfigs = new GTNAPatternBufferSlotConfig[this.maxPatternCount];
+        this.pushedPatternsBySlot = new int[this.maxPatternCount];
         this.detailsSlotMap = HashBiMap.create(this.maxPatternCount);
         for (int i = 0; i < this.maxPatternCount; i++) {
             this.internalInventory[i] = new InternalSlot();
@@ -776,7 +792,17 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         }
         GTNAPatternBufferSlotConfig config = slotConfigs[slot];
         if (!config.getPreferredModeId().isBlank()) {
-            return PatternSlotResolver.matchesPreferredMode(config, recipe);
+            if (!PatternSlotResolver.matchesPreferredMode(config, recipe)) return false;
+        }
+        // A staged processing pattern is a request for a specific output, not a generic pool of
+        // ingredients. Several recipe types can consume the same items (for example cobblestone in
+        // the Universal Factory); accepting by inputs alone lets the wrong type consume AE2's
+        // reserved resources and produce an output the crafting CPU never requested.
+        if (!internalInventory[slot].isItemEmpty() || !internalInventory[slot].isFluidEmpty()) {
+            IPatternDetails details = slotResolver.getPatternDetailsForSlot(slot);
+            if (details == null || !slotResolver.matchesPatternDetails(slot, recipe, details)) {
+                return false;
+            }
         }
         // Auto is deliberately not constrained by the previous recipe. Processing
         // patterns already identify their machine recipe type, so retaining the
@@ -829,6 +855,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
 
     @Override
     public void gtna$onRecipeStarted(GTRecipe recipe) {
+        startedRecipeTypes.add(recipe.getType());
         PatternSlotResolver.SlotMatch match = slotResolver.findMatchingSlot(recipe);
         if (match == null) {
             return;
@@ -1066,6 +1093,9 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         if (slot != null) {
             slot.pushPattern(patternDetails, inputHolder);
             int logicalSlot = getInternalSlotIndex(slot);
+            if (logicalSlot >= 0) {
+                pushedPatternsBySlot[logicalSlot]++;
+            }
             // Resolving scans thousands of recipes; only do it when the slot has no cached recipe yet
             // (the first push), instead of on every AE2 craft push.
             if (logicalSlot >= 0 && slotConfigs[logicalSlot].getCachedRecipeId().isBlank()) {
@@ -1094,6 +1124,21 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
     @Override
     public boolean isBusy() {
         return false;
+    }
+
+    /** Test/diagnostic hook: number of AE2 pattern pushes this slot has accepted. */
+    public int gtna$getPushedPatternCount(int slot) {
+        return slot >= 0 && slot < pushedPatternsBySlot.length ? pushedPatternsBySlot[slot] : 0;
+    }
+
+    /** Test/diagnostic hook: recipe types that have started through this buffer. */
+    public Set<GTRecipeType> gtna$getStartedRecipeTypes() {
+        return Set.copyOf(startedRecipeTypes);
+    }
+
+    /** Test/diagnostic hook: clears the started-recipe-type set between requests. */
+    public void gtna$clearStartedRecipeTypes() {
+        startedRecipeTypes.clear();
     }
 
     private boolean checkInput(KeyCounter[] inputHolder) {

@@ -38,11 +38,16 @@ public abstract class ConfigurableAmountPartMachine extends MultiblockPartMachin
     private int currentAmount;
 
     protected ConfigurableAmountPartMachine(IMachineBlockEntity holder, int tier, int minAmount, int maxAmount) {
+        this(holder, tier, minAmount, maxAmount, minAmount);
+    }
+
+    protected ConfigurableAmountPartMachine(IMachineBlockEntity holder, int tier, int minAmount, int maxAmount,
+                                            int defaultAmount) {
         super(holder);
         this.tier = tier;
         this.minAmount = Math.min(minAmount, maxAmount);
         this.maxAmount = Math.max(minAmount, maxAmount);
-        this.currentAmount = this.minAmount;
+        this.currentAmount = Math.max(this.minAmount, Math.min(this.maxAmount, defaultAmount));
     }
 
     @Override
@@ -79,10 +84,15 @@ public abstract class ConfigurableAmountPartMachine extends MultiblockPartMachin
     /** Hook for subclasses that cache something derived from the amount. */
     protected void onAmountChanged() {}
 
+    /** Label shown above the amount input; subclasses may name the unit (percentage, divisor, ...). */
+    protected String getAmountLabel() {
+        return getBlockState().getBlock().getDescriptionId();
+    }
+
     @Override
     public Widget createUIWidget() {
         var group = new WidgetGroup(0, 0, 120, 42);
-        group.addWidget(new LabelWidget(4, 4, () -> getBlockState().getBlock().getDescriptionId()));
+        group.addWidget(new LabelWidget(4, 4, this::getAmountLabel));
         group.addWidget(new IntInputWidget(4, 20, 60, 14, this::getCurrentAmount, this::setCurrentAmount)
                 .setMin(minAmount)
                 .setMax(maxAmount));

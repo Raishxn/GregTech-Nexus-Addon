@@ -12,7 +12,6 @@ import com.gregtechceu.gtceu.api.machine.multiblock.part.TieredPartMachine;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
-import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
 import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.content.ContentModifier;
@@ -20,6 +19,7 @@ import com.gregtechceu.gtceu.api.recipe.content.ContentModifier;
 import com.raishxn.gtna.api.machine.feature.BufferModeSwitchPolicy;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
 import com.raishxn.gtna.api.machine.feature.ModeIdMatcher;
+import com.raishxn.gtna.api.machine.feature.OverclockHatchMath;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.common.machine.multiblock.energy.IndustrialSlaughterhouse;
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
@@ -101,18 +101,18 @@ public abstract class GTRecipeLogicMixin {
             return recipe;
         }
 
-        double durationFactor = OverclockingLogic.STD_DURATION_FACTOR;
+        int divisor = OverclockHatchMath.MIN_DIVISOR;
         for (var part : multiMachine.getParts()) {
             if (part instanceof OverclockHatchPartMachine hatch) {
-                durationFactor = Math.min(durationFactor, hatch.getOverclockMultiplier());
+                divisor = Math.max(divisor, hatch.getOverclockDivisor());
             }
         }
-        if (durationFactor >= OverclockingLogic.STD_DURATION_FACTOR) {
+        if (divisor <= OverclockHatchMath.MIN_DIVISOR) {
             return recipe;
         }
 
         GTRecipe adjusted = recipe.copy();
-        double additionalMultiplier = Math.pow(durationFactor / OverclockingLogic.STD_DURATION_FACTOR, recipe.ocLevel);
+        double additionalMultiplier = OverclockHatchMath.additionalDurationMultiplier(divisor, recipe.ocLevel);
         adjusted.duration = Math.max(1, (int) Math.floor(adjusted.duration * additionalMultiplier));
         return adjusted;
     }

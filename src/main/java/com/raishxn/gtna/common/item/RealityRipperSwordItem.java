@@ -55,8 +55,8 @@ public class RealityRipperSwordItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(GTNATooltips.warningLiteral("Reality-ripping strike."));
-        tooltip.add(GTNATooltips.importantLiteral("Kills through armor, invulnerability and creative mode."));
+        tooltip.add(GTNATooltips.warning("item.gtna.reality_ripper_sword.tooltip.strike"));
+        tooltip.add(GTNATooltips.important("item.gtna.reality_ripper_sword.tooltip.kill"));
     }
 
     private static void realityRip(Entity target, LivingEntity attacker) {

@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.api.machine.feature.OverclockHatchMath;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -24,7 +25,6 @@ public final class GTNABalance {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Type STRING_INT_MAP = new TypeToken<LinkedHashMap<String, Integer>>() {}.getType();
-    private static final Type STRING_DOUBLE_MAP = new TypeToken<LinkedHashMap<String, Double>>() {}.getType();
     private static final Path BASE_DIR = FMLPaths.CONFIGDIR.get().resolve("gtna").resolve("balance");
 
     private static HatchesBalance hatches = HatchesBalance.defaults();
@@ -119,8 +119,9 @@ public final class GTNABalance {
         return hatches.accelerateHatch.maximumFinalPercent;
     }
 
-    public static double getOverclockDurationMultiplier(int tier) {
-        return getDoubleForTier(hatches.overclockHatch.durationMultiplierByTier, tier, 1.0);
+    public static int getOverclockDivisor(int tier) {
+        return getIntForTier(hatches.overclockHatch.divisorByTier, tier,
+                Math.max(OverclockHatchMath.MIN_DIVISOR, tier - 6));
     }
 
     public static int getThreadCount(int tier) {
@@ -201,11 +202,6 @@ public final class GTNABalance {
 
     private static int getIntForTier(Map<String, Integer> map, int tier, int fallback) {
         Integer value = map.get(tierKey(tier));
-        return value != null ? value : fallback;
-    }
-
-    private static double getDoubleForTier(Map<String, Double> map, int tier, double fallback) {
-        Double value = map.get(tierKey(tier));
         return value != null ? value : fallback;
     }
 
@@ -331,7 +327,11 @@ public final class GTNABalance {
 
     public static final class OverclockHatchBalance implements DefaultsApplier<OverclockHatchBalance> {
 
-        public Map<String, Double> durationMultiplierByTier = defaultOverclockMap();
+        /**
+         * Best (largest) duration divisor per tier: the tier's {@code tier - 6} in GTOCore terms
+         * (UV 2 ... MAX 8). The hatch can be dialed down to {@code 2} (standard overclock).
+         */
+        public Map<String, Integer> divisorByTier = defaultOverclockDivisorMap();
 
         public static OverclockHatchBalance defaults() {
             return new OverclockHatchBalance();
@@ -339,10 +339,10 @@ public final class GTNABalance {
 
         @Override
         public void applyDefaults(OverclockHatchBalance defaults) {
-            if (durationMultiplierByTier == null) {
-                durationMultiplierByTier = defaults.durationMultiplierByTier;
+            if (divisorByTier == null) {
+                divisorByTier = defaults.divisorByTier;
             } else {
-                defaults.durationMultiplierByTier.forEach(durationMultiplierByTier::putIfAbsent);
+                defaults.divisorByTier.forEach(divisorByTier::putIfAbsent);
             }
         }
     }
@@ -584,15 +584,15 @@ public final class GTNABalance {
         return values;
     }
 
-    private static Map<String, Double> defaultOverclockMap() {
-        LinkedHashMap<String, Double> values = new LinkedHashMap<>();
-        values.put("UV", 0.50);
-        values.put("UHV", 0.3333);
-        values.put("UEV", 0.25);
-        values.put("UIV", 0.20);
-        values.put("UXV", 0.1667);
-        values.put("OpV", 0.1429);
-        values.put("MAX", 0.125);
+    private static Map<String, Integer> defaultOverclockDivisorMap() {
+        LinkedHashMap<String, Integer> values = new LinkedHashMap<>();
+        values.put("UV", 2);
+        values.put("UHV", 3);
+        values.put("UEV", 4);
+        values.put("UIV", 5);
+        values.put("UXV", 6);
+        values.put("OpV", 7);
+        values.put("MAX", 8);
         return values;
     }
 

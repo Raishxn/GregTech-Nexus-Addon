@@ -2,6 +2,8 @@ package com.raishxn.gtna;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 
@@ -9,6 +11,7 @@ import com.raishxn.gtna.client.ClientProxy;
 import com.raishxn.gtna.common.CommonProxy;
 import com.raishxn.gtna.common.data.condition.RestrictedItemsEnabledForgeCondition;
 import com.raishxn.gtna.config.GTNAConfigBootstrap;
+import com.raishxn.gtna.planner.neoforge.crafting.Ae2PlannerBridge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,5 +34,10 @@ public class GTNACORE {
 
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MOD_ID, path);
+    }
+
+    @SubscribeEvent
+    public void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) Ae2PlannerBridge.tick();
     }
 }

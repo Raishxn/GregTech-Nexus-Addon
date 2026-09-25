@@ -22,10 +22,16 @@ import java.util.function.Function;
 public class SubPatternEventJS extends EventJS {
 
     public void add(String machineId, Function<MultiblockMachineDefinition, BlockPattern> factory) {
+        add(machineId, factory, "gtna.machine.auxiliary_module.kubejs.generic");
+    }
+
+    /** The optional key is resolved by the client's language pack when the controller tooltip opens. */
+    public void add(String machineId, Function<MultiblockMachineDefinition, BlockPattern> factory,
+                    String descriptionKey) {
         ResourceLocation id = ResourceLocation.tryParse(machineId);
         if (id == null) {
             throw new IllegalArgumentException("Invalid machine id: " + machineId);
         }
-        GTNASubPatterns.registerKubeJS(id, factory);
+        GTNASubPatterns.registerKubeJS(id, factory, descriptionKey);
     }
 }

@@ -43,7 +43,7 @@ in-game checks. Features under development may change before a release.
 ## Version and dependencies
 
 Development currently targets **Minecraft 1.20.1**, **Forge 47.4.1**, **GTCEu 7.5.3** and
-**GTNA 0.4.0**. See [gradle.properties](gradle.properties) and [build.gradle](build.gradle) for the
+**GTNA 0.5.0**. See [gradle.properties](gradle.properties) and [build.gradle](build.gradle) for the
 exact dependency versions used by this checkout. Download builds from
 [GitHub Releases](https://github.com/raishxn/GregTech-Nexus-Addon/releases).
 

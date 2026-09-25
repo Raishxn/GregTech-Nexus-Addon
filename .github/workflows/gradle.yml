@@ -59,11 +59,15 @@ jobs:
         echo "eula=true" > run/eula.txt
         ./gradlew runGameTestServer
 
-    - name: Assert game tests actually ran
-      run: |
-        if ! grep -q "GAME TESTS COMPLETE" run/logs/latest.log; then
-          echo "::error::runGameTestServer finished without running any GameTest"
-          tail -n 200 run/logs/latest.log
-          exit 1
-        fi
-        grep -E "All [0-9]+ required tests passed|GAME TESTS COMPLETE" run/logs/latest.log
+    - name: Verify GameTest results and JUnit report
+      run: python3 tools/check_gametest_report.py
+
+    - name: Upload GameTest diagnostics
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: gametest-results
+        if-no-files-found: warn
+        path: |
+          build/test-results/gametest/TEST-gtna.xml
+          run/logs/latest.log

@@ -96,9 +96,6 @@ public class GTNAMachines {
             "block/overlay/machine/overlay_item_hatch_input");
     private static final ResourceLocation OVERLAY_STEAM_OUT = new ResourceLocation("gtceu",
             "block/overlay/machine/overlay_item_hatch_output");
-    public static final BiConsumer<ItemStack, List<Component>> GTNA_ADD = (stack, components) -> components
-            .add(Component.translatable("gtna.registry.add")
-                    .withStyle(ChatFormatting.LIGHT_PURPLE));
 
     /**
      * Dynamic tooltip for the wireless steam hatches: attribution, the configured buffer and the
@@ -109,7 +106,6 @@ public class GTNAMachines {
      */
     private static BiConsumer<ItemStack, List<Component>> wirelessSteamTooltip(boolean isSteel, boolean isInput) {
         return (stack, components) -> {
-            GTNA_ADD.accept(stack, components);
             if (ConfigHolder.INSTANCE == null) {
                 return;
             }
@@ -210,8 +206,7 @@ public class GTNAMachines {
             .modelProperty(IS_FORMED, false)
             .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, false)
             .colorOverlaySteamHullModel(OVERLAY_STEAM_IN)
-            .tooltipBuilder(GTNA_ADD)
-            .tooltips(Component.translatable("gtna.tooltip.huge_steam_bus").withStyle(ChatFormatting.GREEN))
+            .tooltips(Component.translatable("gtna.tooltip.huge_steam_input_bus").withStyle(ChatFormatting.GREEN))
             .register());
 
     public static final MachineDefinition HUGE_STEAM_OUTPUT_BUS = registerHatch("hugeSteamOutputBus", () -> REGISTRATE
@@ -222,8 +217,7 @@ public class GTNAMachines {
             .modelProperty(IS_FORMED, false)
             .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, false)
             .colorOverlaySteamHullModel(OVERLAY_STEAM_OUT)
-            .tooltips(Component.translatable("gtna.tooltip.huge_steam_bus").withStyle(ChatFormatting.GREEN))
-            .tooltipBuilder(GTNA_ADD)
+            .tooltips(Component.translatable("gtna.tooltip.huge_steam_output_bus").withStyle(ChatFormatting.GREEN))
             .register());
 
     public static final MachineDefinition INFINITE_STEAM_INPUT_BUS = registerHatch("infiniteSteamInputBus",
@@ -235,8 +229,6 @@ public class GTNAMachines {
                     .modelProperty(IS_FORMED, false)
                     .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, false)
                     .colorOverlaySteamHullModel(OVERLAY_STEAM_IN)
-                    .tooltips(Component.translatable("gtna.machine.infinite_steam_input_bus.tooltip"))
-                    .tooltipBuilder(GTNA_ADD)
                     .register());
 
     public static final MachineDefinition OUTPUT_BOOST_STEAM_OUTPUT_BUS = registerHatch("outputBoostSteamOutputBus",
@@ -248,9 +240,8 @@ public class GTNAMachines {
                     .modelProperty(IS_FORMED, false)
                     .modelProperty(GTMachineModelProperties.IS_STEEL_MACHINE, false)
                     .colorOverlaySteamHullModel(OVERLAY_STEAM_OUT)
-                    .tooltips(Component.translatable("gtna.machine.output_boost_steam_output_bus.tooltip",
+                    .tooltips(Component.translatable("gtna.machine.output_boost_steam_output_bus.boost",
                             OutputBoostHatchPartMachine.getMultiplierForTier(GTValues.ULV)))
-                    .tooltipBuilder(GTNA_ADD)
                     .register());
 
     public static final MachineDefinition INDUSTRIAL_PLATFORM_DEPLOYMENT_TOOLS = registerMachine(
@@ -265,7 +256,6 @@ public class GTNAMachines {
                     .tooltips(
                             Component.translatable("gtna.machine.industrial_platform_deployment_tools.tooltip.0"),
                             Component.translatable("gtna.machine.industrial_platform_deployment_tools.tooltip.1"))
-                    .tooltipBuilder(GTNA_ADD)
                     .register());
 
     // --- MULTIBLOCKS ---
@@ -299,7 +289,6 @@ public class GTNAMachines {
                             .where('E', SteamMultiMachineBase.machineCasing())
                             .where(' ', Predicates.any())
                             .build())
-                    .tooltipBuilder(GTNA_ADD)
                     .tooltips(
                             Component.translatable("gtna.tooltip.large_steam_crusher.speed")
                                     .withStyle(ChatFormatting.GOLD),
@@ -371,8 +360,8 @@ public class GTNAMachines {
                                             "Structure: GTOCore large steam furnace shell. Check JEI for details.")
                                     .withStyle(ChatFormatting.DARK_GRAY),
 
-                            Component.literal(
-                                    "Warning: Do not attempt to bake cookies inside. They will vaporize instantly.")
+                            Component
+                                    .translatable("gtna.tooltip.large_steam_furnace.warning")
                                     .withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD))
                     .register());
 
@@ -3548,10 +3537,10 @@ public class GTNAMachines {
                             Component.translatable("gtna.machine.integrated_ore_processor.tooltip.5"),
                             Component.translatable("gtna.machine.integrated_ore_processor.tooltip.6"),
                             Component.translatable("gtna.machine.integrated_ore_processor.tooltip.7"),
+                            Component.translatable("gtna.machine.integrated_ore_processor.tooltip.8"),
                             Component.translatable("gtceu.multiblock.parallelizable.tooltip"),
                             Component.translatable("gtceu.machine.available_recipe_map_1.tooltip",
                                     Component.translatable("gtna.ore_processing")))
-                    .tooltipBuilder(GTNA_ADD)
                     .register());
 
     // ------------------------------------------------------------------
@@ -3693,7 +3682,6 @@ public class GTNAMachines {
                             Component.translatable("gtna.machine.advanced_integrated_ore_processor.multiple_recipes"),
                             Component.translatable("gtceu.machine.available_recipe_map_1.tooltip",
                                     Component.translatable("gtna.ore_processing")))
-                    .tooltipBuilder(GTNA_ADD)
                     .register());
 
     public static final MultiblockMachineDefinition ARTIFICIAL_STAR = registerMachine("artificialStar", () -> REGISTRATE
@@ -3706,8 +3694,7 @@ public class GTNAMachines {
                     Component.translatable("gtna.machine.artificial_star.output"),
                     Component.translatable("gtceu.machine.available_recipe_map_1.tooltip",
                             Component.translatable("gtceu.annihilate_generator")),
-                    Component.literal("Artificial Star"))
-            .tooltipBuilder(GTNA_ADD)
+                    Component.translatable("block.gtna.annihilate_generator"))
             .generator(true)
             .recipeModifier(ArtificialStarMachine::recipeModifier)
             .appearanceBlock(GTBlocks.HIGH_POWER_CASING)
@@ -3734,7 +3721,6 @@ public class GTNAMachines {
                     Component.translatable("gtna.machine.eye_of_harmony.tooltip.7"),
                     Component.translatable("gtceu.machine.available_recipe_map_1.tooltip",
                             Component.translatable("gtna.cosmos_simulation")))
-            .tooltipBuilder(GTNA_ADD)
             .recipeModifier(EyeOfHarmonyMachine::recipeModifier)
             .appearanceBlock(GTBlocks.HIGH_POWER_CASING)
             .pattern(GTNAMachines::createEyeOfHarmonyPattern)
@@ -3765,7 +3751,6 @@ public class GTNAMachines {
                     Component.translatable("gtna.machine.eye_of_wood.tooltip.5").withStyle(ChatFormatting.BLUE),
                     Component.translatable("gtna.machine.eye_of_wood.tooltip.6").withStyle(ChatFormatting.RED),
                     Component.translatable("gtna.machine.eye_of_wood.tooltip.7").withStyle(ChatFormatting.DARK_GRAY))
-            .tooltipBuilder(GTNA_ADD)
             .register());
 
     public static final MultiblockMachineDefinition NEXUS_MOLECULAR_FORGE = registerMachine("nexusMolecularForge",
@@ -3793,7 +3778,6 @@ public class GTNAMachines {
                                     .withStyle(ChatFormatting.GOLD),
                             Component.translatable("gtna.machine.nexus_molecular_forge.tooltip.5")
                                     .withStyle(ChatFormatting.GRAY))
-                    .tooltipBuilder(GTNA_ADD)
                     .register());
 
     public static final MultiblockMachineDefinition NEXUS_ME_HYPERCORE = registerMachine("nexusMeHypercore",
@@ -3809,16 +3793,9 @@ public class GTNAMachines {
                             GTCEu.id("block/casings/gcym/nonconducting_casing"),
                             GTCEu.id("block/multiblock/assembly_line"))
                     .tooltips(
-                            Component.literal(
-                                    "A 44×22×44 ME computer lattice surrounding a laminated-glass core.")
-                                    .withStyle(ChatFormatting.AQUA),
-                            Component.literal(
-                                    "The core holds up to 320 Matrix Crafting Modules or AE2 Crafting Units.")
-                                    .withStyle(ChatFormatting.GRAY),
-                            Component.literal(
-                                    "The Crafting CPU Interface sits beside the controller on the glass cylinder.")
-                                    .withStyle(ChatFormatting.GRAY))
-                    .tooltipBuilder(GTNA_ADD)
+                            Component.translatable("gtna.machine.nexus_me_hypercore.tooltip.0"),
+                            Component.translatable("gtna.machine.nexus_me_hypercore.tooltip.1"),
+                            Component.translatable("gtna.machine.nexus_me_hypercore.tooltip.2"))
                     .register());
 
     public static final MultiblockMachineDefinition ME_STORAGE = registerMachine("meStorage",
@@ -3834,14 +3811,9 @@ public class GTNAMachines {
                             GTCEu.id("block/casings/hpca/computer_casing/back"),
                             GTCEu.id("block/multiblock/fusion_reactor"))
                     .tooltips(
-                            Component.literal("Expandable GTO-style ME storage multiblock.")
-                                    .withStyle(ChatFormatting.AQUA),
-                            Component.literal("Repeat the core slice to install up to 128 storage sections.")
-                                    .withStyle(ChatFormatting.GRAY),
-                            Component.literal(
-                                    "Requires exactly one ME Storage Access, Big Storage Access, or IO Port Hatch.")
-                                    .withStyle(ChatFormatting.GRAY))
-                    .tooltipBuilder(GTNA_ADD)
+                            Component.translatable("gtna.machine.me_storage.tooltip.0"),
+                            Component.translatable("gtna.machine.me_storage.tooltip.1"),
+                            Component.translatable("gtna.machine.me_storage.tooltip.2"))
                     .register());
 
     private static BlockPattern createArtificialStarPattern(MultiblockMachineDefinition definition) {
@@ -3977,7 +3949,7 @@ public class GTNAMachines {
                 .where('N', blocks(GTBlocks.HIGH_POWER_CASING.get()))
                 .where('P', blocks(GTNAMachines2.CRAFTING_CPU_INTERFACE.getBlock()))
                 .where('Q', controller(blocks(definition.get())))
-                .where(' ', air())
+                .where(' ', any()) // Open space around the lattice may contain AE2 cables.
                 .build();
     }
 
@@ -4115,7 +4087,6 @@ public class GTNAMachines {
                                     .withStyle(ChatFormatting.AQUA),
                             Component.translatable("gtna.machine.universal_factory.tooltip.3")
                                     .withStyle(ChatFormatting.DARK_GRAY))
-                    .tooltipBuilder(GTNA_ADD)
                     .register());
 
     // ------------------------------------------------------------------
@@ -4152,7 +4123,6 @@ public class GTNAMachines {
                                     .withStyle(ChatFormatting.GOLD),
                             Component.translatable("gtna.machine.primitive_stone_furnace.tooltip.1")
                                     .withStyle(ChatFormatting.GRAY))
-                    .tooltipBuilder(GTNA_ADD)
                     .register());
 
     // ------------------------------------------------------------------
@@ -4191,7 +4161,6 @@ public class GTNAMachines {
                             .withStyle(ChatFormatting.GOLD),
                     Component.translatable("gtna.machine.brick_kiln.tooltip.1")
                             .withStyle(ChatFormatting.GRAY))
-            .tooltipBuilder(GTNA_ADD)
             .register());
 
     // ------------------------------------------------------------------
@@ -4235,7 +4204,6 @@ public class GTNAMachines {
                                     .withStyle(ChatFormatting.GOLD),
                             Component.translatable("gtna.machine.thermal_power_pump.tooltip.1")
                                     .withStyle(ChatFormatting.GRAY))
-                    .tooltipBuilder(GTNA_ADD)
                     .register());
 
     // ------------------------------------------------------------------
@@ -4281,7 +4249,6 @@ public class GTNAMachines {
                                     .withStyle(ChatFormatting.GRAY),
                             Component.translatable("gtna.machine.liquefaction_furnace.tooltip.2")
                                     .withStyle(ChatFormatting.AQUA))
-                    .tooltipBuilder(GTNA_ADD)
                     .register());
 
     private static <T extends MachineDefinition> T registerHatch(String hatchId, Supplier<T> supplier) {

@@ -21,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 
+import com.raishxn.gtna.client.GTNAStructureCheckButton;
 import com.raishxn.gtna.client.renderer.GTNATextures;
 import com.raishxn.gtna.common.block.MEStorageCoreBlock;
 import com.raishxn.gtna.common.data.GTNABlocks;
@@ -57,7 +58,6 @@ public class NexusMEHyperCoreMachine extends WorkableMultiblockMachine implement
     private long totalStorageBytes;
     private long totalCoProcessors;
     private long totalThreads;
-    private List<CpuSpec> cpuSpecs = List.of();
     private int highestModuleTier;
     private boolean transcendentMode;
     private TickableSubscription interfaceSyncSubscription;
@@ -106,7 +106,6 @@ public class NexusMEHyperCoreMachine extends WorkableMultiblockMachine implement
         totalStorageBytes = 0L;
         totalCoProcessors = 0L;
         totalThreads = 0L;
-        cpuSpecs = List.of();
         highestModuleTier = 0;
         transcendentMode = false;
     }
@@ -120,7 +119,6 @@ public class NexusMEHyperCoreMachine extends WorkableMultiblockMachine implement
         List<BlockPos> corePositions = new ArrayList<>(getMultiblockState().getCache());
         corePositions.sort(Comparator.comparingInt((BlockPos pos) -> pos.getX())
                 .thenComparingInt(pos -> pos.getY()).thenComparingInt(pos -> pos.getZ()));
-        List<CpuSpec> modules = new ArrayList<>();
         for (BlockPos pos : corePositions) {
             int moduleTier = getModuleTier(getLevel().getBlockState(pos).getBlock());
             if (moduleTier <= 0) {
@@ -131,12 +129,6 @@ public class NexusMEHyperCoreMachine extends WorkableMultiblockMachine implement
                     core.getCapacity() : MODULE_I_STORAGE;
             installedModules++;
             highestModuleTier = Math.max(highestModuleTier, moduleTier);
-            modules.add(switch (moduleTier) {
-                case 2 -> new CpuSpec(moduleStorage, (int) MODULE_II_COPROCESSORS);
-                case 3 -> new CpuSpec(moduleStorage, (int) MODULE_III_COPROCESSORS);
-                case 4 -> new CpuSpec(moduleStorage, (int) MODULE_IV_COPROCESSORS);
-                default -> new CpuSpec(moduleStorage, (int) MODULE_I_COPROCESSORS);
-            });
             switch (moduleTier) {
                 case 1 -> addModule(1, moduleStorage, MODULE_I_COPROCESSORS, MODULE_I_THREADS);
                 case 2 -> addModule(2, moduleStorage, MODULE_II_COPROCESSORS, MODULE_II_THREADS);
@@ -147,16 +139,10 @@ public class NexusMEHyperCoreMachine extends WorkableMultiblockMachine implement
         }
 
         transcendentMode = matrixIV == TOTAL_MODULE_SLOTS;
-        cpuSpecs = List.copyOf(modules);
     }
 
-    public record CpuSpec(long storageBytes, int coProcessors) {}
-
-    public List<CpuSpec> getCpuSpecs() {
-        if (!transcendentMode) {
-            return cpuSpecs;
-        }
-        return cpuSpecs.stream().map(ignored -> new CpuSpec(Long.MAX_VALUE, Integer.MAX_VALUE)).toList();
+    public boolean isTranscendentMode() {
+        return transcendentMode;
     }
 
     private void addModule(int tier, long storage, long coProcessors, long threads) {
@@ -200,10 +186,10 @@ public class NexusMEHyperCoreMachine extends WorkableMultiblockMachine implement
         if (getLevel() == null || isRemote()) {
             return;
         }
-        List<CpuSpec> specs = isFormed() ? getCpuSpecs() : List.of();
         for (IMultiPart part : getParts()) {
             if (part instanceof GTNACraftingCPUInterfacePartMachine cpuInterface) {
-                cpuInterface.configureCpus(specs);
+                cpuInterface.configurePool(isFormed() ? getAeStorageBytes() : 0L,
+                        isFormed() ? getAeCoProcessors() : 0L, isFormed() && transcendentMode);
             }
         }
     }
@@ -322,6 +308,7 @@ public class NexusMEHyperCoreMachine extends WorkableMultiblockMachine implement
         return new ModularUI(310, 270, this, entityPlayer)
                 .background(GuiTextures.BACKGROUND)
                 .widget(screen)
+                .widget(GTNAStructureCheckButton.widget(this, 282, 6))
                 // The addon logo in the bottom-right corner of the content area (GTNL convention).
                 .widget(GTNATextures.logo(281, 161))
                 .widget(UITemplate.bindPlayerInventory(entityPlayer.getInventory(),
@@ -349,7 +336,7 @@ public class NexusMEHyperCoreMachine extends WorkableMultiblockMachine implement
                 .append(Component.literal(formatStat(totalCoProcessors)).withStyle(ChatFormatting.LIGHT_PURPLE)));
         textList.add(Component.translatable("gtna.machine.nexus_me_hypercore.ui.threads")
                 .append(Component.literal(formatStat(totalThreads)).withStyle(ChatFormatting.AQUA)));
-        textList.add(Component.translatable("gtna.machine.nexus_me_hypercore.ui.cpus", cpuSpecs.size(),
+        textList.add(Component.translatable("gtna.machine.nexus_me_hypercore.ui.cpus", installedModules > 0 ? 1 : 0,
                 getBusyCpuCount())
                 .withStyle(ChatFormatting.GREEN));
         textList.add(Component.translatable("gtna.machine.nexus_me_hypercore.ui.transcendent")

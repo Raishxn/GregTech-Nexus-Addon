@@ -21,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.api.machine.feature.OverclockHatchMath;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.common.data.multiblock.GTNAMultiBlockFileReader;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
@@ -50,6 +51,7 @@ import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPro
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEStorageAccessPartMachine;
 import com.raishxn.gtna.common.machine.tesseract.DirectedTesseractMachine;
 import com.raishxn.gtna.config.ConfigHolder;
+import com.raishxn.gtna.config.GTNABalance;
 
 import java.util.Locale;
 import java.util.function.Function;
@@ -156,7 +158,7 @@ public class GTNAMachines2 {
             .workableCasingModel(
                     GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
                     GTCEu.id("block/multiblock/implosion_compressor"))
-            .tooltips(Component.literal("§6Machine for testing Duration & Accelerate Hatches"))
+            .tooltips(Component.translatable("gtna.machine.duration_tester.desc"))
             .register());
 
     private static void registerPatternBuffers() {
@@ -266,8 +268,8 @@ public class GTNAMachines2 {
                 .tier(GTValues.HV)
                 .rotationState(RotationState.ALL)
                 .colorOverlayTieredHullModel(GTCEu.id("block/overlay/appeng/me_buffer_hatch"))
+                // MetaMachineBlock adds gtna.machine.crafting_cpu_interface.tooltip automatically.
                 .tooltips(
-                        Component.translatable("gtna.machine.crafting_cpu_interface.tooltip"),
                         Component.translatable("gtna.machine.crafting_cpu_interface.network"),
                         Component.translatable("gtceu.part_sharing.disabled"))
                 .register();
@@ -278,36 +280,33 @@ public class GTNAMachines2 {
                 registerMEStorageAccessHatch(
                         "me_storage_access_hatch",
                         GTValues.EV,
-                        GTNAMEStorageAccessPartMachine.Mode.STORAGE,
-                        "gtna.machine.me_storage_access_hatch.tooltip") :
+                        GTNAMEStorageAccessPartMachine.Mode.STORAGE) :
                 null;
         ME_BIG_STORAGE_ACCESS_HATCH = ConfigHolder.isHatchEnabled("meBigStorageAccessHatch") ?
                 registerMEStorageAccessHatch(
                         "me_big_storage_access_hatch",
                         GTValues.IV,
-                        GTNAMEStorageAccessPartMachine.Mode.BIG_STORAGE,
-                        "gtna.machine.me_big_storage_access_hatch.tooltip") :
+                        GTNAMEStorageAccessPartMachine.Mode.BIG_STORAGE) :
                 null;
         ME_IO_PORT_HATCH = ConfigHolder.isHatchEnabled("meIOPortHatch") ?
                 registerMEStorageAccessHatch(
                         "me_io_port_hatch",
                         GTValues.EV,
-                        GTNAMEStorageAccessPartMachine.Mode.IO_PORT,
-                        "gtna.machine.me_io_port_hatch.tooltip") :
+                        GTNAMEStorageAccessPartMachine.Mode.IO_PORT) :
                 null;
     }
 
     private static MachineDefinition registerMEStorageAccessHatch(
                                                                   String id, int tier,
-                                                                  GTNAMEStorageAccessPartMachine.Mode mode,
-                                                                  String tooltipKey) {
+                                                                  GTNAMEStorageAccessPartMachine.Mode mode) {
         return REGISTRATE.machine(id, holder -> new GTNAMEStorageAccessPartMachine(holder, mode))
                 .tier(tier)
                 .rotationState(RotationState.ALL)
                 .abilities(GTNAPartAbility.ME_STORAGE_ACCESS)
                 .colorOverlayTieredHullModel(GTCEu.id("block/overlay/appeng/me_buffer_hatch"))
+                // The description comes from the auto <namespace>.machine.<path>.tooltip line that
+                // MetaMachineBlock inserts; listing it here as well printed it twice.
                 .tooltips(
-                        Component.translatable(tooltipKey),
                         Component.translatable("gtna.machine.me_storage_access_hatch.network"),
                         Component.translatable("gtceu.part_sharing.disabled"))
                 .register();
@@ -315,7 +314,6 @@ public class GTNAMachines2 {
 
     private static void registerParallelHatch(int tier, int parallelAmount) {
         if (!ConfigHolder.isHatchEnabled("advancedParallelHatches")) return;
-        GTNACORE.LOGGER.info("TENTANDO REGISTRAR PARALLEL HATCH: " + tier);
         String tierName = GTValues.VN[tier].toLowerCase(Locale.ROOT);
         int mkLevel = tier - 8;
         var texturePath = GTNACORE.id("block/machines/parallel_hatch/parallel_hatch_mk" + mkLevel + "/overlay_front");
@@ -701,6 +699,7 @@ public class GTNAMachines2 {
                     builder.partialState().setModel(model);
                 })
                 .tooltips(
+                        Component.translatable("gtna.machine.output_boost_hatch.main_function"),
                         Component.translatable("gtna.machine.output_boost_bus.tooltip", multiplier),
                         Component.translatable("gtceu.part_sharing.disabled"))
                 .register();
@@ -728,6 +727,7 @@ public class GTNAMachines2 {
                     builder.partialState().setModel(model);
                 })
                 .tooltips(
+                        Component.translatable("gtna.machine.output_boost_hatch.main_function"),
                         Component.translatable("gtna.machine.output_boost_hatch.multiplier", multiplier),
                         Component.translatable("gtceu.part_sharing.disabled"))
                 .register();
@@ -751,16 +751,9 @@ public class GTNAMachines2 {
             ResourceLocation hullTop = GTCEu.id("block/casings/voltage/" + tierName + "/top");
             ResourceLocation hullBottom = GTCEu.id("block/casings/voltage/" + tierName + "/bottom");
 
-            double mult = switch (tier) {
-                case GTValues.UV -> 50.0;
-                case GTValues.UHV -> 33.33;
-                case GTValues.UEV -> 25.0;
-                case GTValues.UIV -> 20.0;
-                case GTValues.UXV -> 16.67;
-                case GTValues.OpV -> 14.29;
-                case GTValues.MAX -> 12.5;
-                default -> 100.0;
-            };
+            int divisor = OverclockHatchMath.clampDivisor(GTNABalance.getOverclockDivisor(tier), tier);
+            String percent = String.format(Locale.ROOT, "%.2f",
+                    OverclockHatchMath.stepFactor(divisor) * 100.0);
             OVERCLOCK_HATCHES[tier] = REGISTRATE
                     .machine(regName, holder -> new OverclockHatchPartMachine(holder, tier))
                     .tier(tier)
@@ -783,7 +776,7 @@ public class GTNAMachines2 {
                     .tooltips(
                             Component.translatable("gtna.machine.overclock_hatch.main_function"),
                             Component.translatable("gtna.machine.overclock_hatch.not_installed"),
-                            Component.translatable("gtna.machine.overclock_hatch.installed", mult + "%"),
+                            Component.translatable("gtna.machine.overclock_hatch.installed", percent, divisor),
                             Component.translatable("gtna.machine.overclock_hatch.desc"),
                             Component.translatable("gtna.machine.overclock_hatch.note"),
                             Component.translatable("gtceu.part_sharing.disabled"))

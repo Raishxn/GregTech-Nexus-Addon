@@ -202,6 +202,7 @@ tasks.register('runUnitTests') {
             'com.raishxn.gtna.RegistrationContractTest',
             'com.raishxn.gtna.OutputBoostContractTest',
             'com.raishxn.gtna.AccelerateHatchMathTest',
+            'com.raishxn.gtna.OverclockHatchMathTest',
             'com.raishxn.gtna.IntegratedOreMathTest',
             'com.raishxn.gtna.common.machine.multiblock.part.ae.PatternBufferLayoutTest',
     ]
@@ -214,6 +215,16 @@ tasks.register('runUnitTests') {
             println "[runUnitTests] ${cls} OK"
         }
     }
+}
+
+tasks.register('plannerQa', JavaExec) {
+    group = 'verification'
+    description = 'Measures Nexus Planner p50/p95 latency and plan replay on reproducible graphs.'
+    dependsOn 'compileTestJava'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.raishxn.gtna.planner.benchmark.PlannerBenchmark'
+    args layout.buildDirectory.file('reports/planner/benchmark.csv').get().asFile.absolutePath
+    jvmArgs '-Xms256m', '-Xmx1g'
 }
 
 tasks.named('check').configure { dependsOn 'runUnitTests' }

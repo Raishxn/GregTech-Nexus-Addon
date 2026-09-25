@@ -6,7 +6,6 @@ import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.client.util.TooltipHelper;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -27,8 +26,6 @@ import java.util.function.BiConsumer;
  * Machine Type: &lt;recipe type&gt;
  * &lt;speed / efficiency / parallel stats&gt;
  * High pressure mode doubles processing speed and steam consumption
- * ──────────────────────────────
- * Source: &lt;addon&gt;                                     (appended afterwards by {@link GTNASources})
  * </pre>
  *
  * <p>
@@ -40,10 +37,11 @@ import java.util.function.BiConsumer;
  * {@code everyGtnaMachineTooltipBuilds} gametest can still exercise the builder.
  *
  * <p>
- * The {@code Machine Type} line is only added when the machine has a real (non-dummy) recipe type,
- * and the separator only when {@link GTNASources} will actually append a {@code Source} line, so the
- * tooltip never ends with a dangling separator. The high-pressure line is only added to the machines
- * whose pattern uses {@code SteamMultiMachineBase.casing()} (tier-aware bronze/steel casings).
+ * The {@code Machine Type} line is only added when the machine has a real (non-dummy) recipe type.
+ * The attribution separator and the {@code Source} line are appended afterwards by
+ * {@link GTNASources} for every sourced machine, not only the steam ones. The high-pressure line is
+ * only added to the machines whose pattern uses {@code SteamMultiMachineBase.casing()} (tier-aware
+ * bronze/steel casings).
  */
 public final class GTNASteamTooltips {
 
@@ -71,9 +69,6 @@ public final class GTNASteamTooltips {
             "steam_lava_maker",
             "steam_item_vault");
 
-    /** GTNL draws ~30 box-drawing characters between the stats and the attribution line. */
-    private static final String SEPARATOR = "\u2500".repeat(30);
-
     private GTNASteamTooltips() {}
 
     public static void applyAll() {
@@ -89,7 +84,6 @@ public final class GTNASteamTooltips {
 
             GTRecipeType recipeType = firstRealRecipeType(definition);
             boolean highPressure = HIGH_PRESSURE.contains(path);
-            boolean sourced = GTNASources.hasSource(path);
 
             BiConsumer<ItemStack, List<Component>> original = definition.getTooltipBuilder();
             definition.setTooltipBuilder((stack, components) -> {
@@ -104,9 +98,6 @@ public final class GTNASteamTooltips {
                 components.addAll(base);
                 if (highPressure) {
                     components.add(Component.translatable("gtna.tooltip.steam.high_pressure"));
-                }
-                if (sourced) {
-                    components.add(Component.literal(SEPARATOR).withStyle(ChatFormatting.DARK_GRAY));
                 }
             });
         }

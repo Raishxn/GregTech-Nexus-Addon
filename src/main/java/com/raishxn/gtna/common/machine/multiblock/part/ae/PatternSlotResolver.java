@@ -265,6 +265,7 @@ final class PatternSlotResolver {
     @Nullable
     GTRecipe findResolvedRecipeForSlot(int slot, IRecipeCapabilityHolder holder, GTRecipeType[] recipeTypes) {
         String cachedRecipeId = config(slot).getCachedRecipeId();
+        IPatternDetails details = getPatternDetailsForSlot(slot);
         GTRecipe fallback = null;
         for (GTRecipeType recipeType : recipeTypes) {
             if (recipeType == null) {
@@ -274,7 +275,11 @@ final class PatternSlotResolver {
             int searchLimit = 256;
             while (iterator.hasNext() && searchLimit-- > 0) {
                 GTRecipe recipe = iterator.next();
-                if (recipe == null || !matchesSlot(slot, recipe)) {
+                // An input-only match may resolve a different recipe type that consumes the same
+                // ingredients but produces another output. Never cache that as the AE2 pattern's
+                // recipe: the machine would keep the wrong mode and could consume the request.
+                if (recipe == null || details == null || !matchesPatternDetails(slot, recipe, details) ||
+                        !matchesSlot(slot, recipe)) {
                     continue;
                 }
                 if (recipe.id != null && recipe.id.toString().equals(cachedRecipeId)) {
@@ -435,6 +440,17 @@ final class PatternSlotResolver {
     }
 
     boolean matchesPatternDetails(int slotIndex, GTRecipe recipe, IPatternDetails details) {
+        // The machine may pass a copy multiplied for parallel execution (and modified by other
+        // hatches) to the buffer's input handlers. The encoded AE2 pattern describes ONE craft.
+        // Compare its identity with the registered recipe, while RecipeHelper still consumes the
+        // scaled recipe against the actual staged quantities.
+        if (recipe.id != null && machine.getLevel() != null) {
+            var registered = machine.getLevel().getRecipeManager().byKey(recipe.id);
+            if (registered.isPresent() && registered.get() instanceof GTRecipe base &&
+                    base.getType() == recipe.getType()) {
+                recipe = base;
+            }
+        }
         List<Ingredient> itemInputs = copyItemInputs(recipe);
         List<FluidIngredient> fluidInputs = copyFluidInputs(recipe);
         List<ItemStack> itemOutputs = copyItemOutputs(recipe);
@@ -442,6 +458,7 @@ final class PatternSlotResolver {
 
         GTNAPatternBufferSlotConfig config = config(slotIndex);
         itemInputs = consumeConfiguredCircuit(config, itemInputs);
+        itemInputs = machine.consumeCircuitInventory(itemInputs);
         itemInputs = consumeVirtualItems(config, itemInputs);
         fluidInputs = consumeVirtualFluids(config, fluidInputs);
         itemInputs = consumePatternItems(collectPatternItemInputs(details), itemInputs);

@@ -24,6 +24,8 @@ import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
 import com.raishxn.gtna.config.ConfigHolder;
 import com.raishxn.gtna.network.GTNANetworkHandler;
 import com.raishxn.gtna.network.packet.SStructureDetectHighlight;
+import com.raishxn.gtna.planner.neoforge.crafting.Ae2PlannerBridge;
+import com.raishxn.gtna.planner.neoforge.crafting.PlannerDiagnosticsReport;
 
 import java.util.List;
 import java.util.UUID;
@@ -84,6 +86,19 @@ public class GTNACommands {
                                 .requires(source -> source.hasPermission(2))
                                 .executes(context -> steamReport(context.getSource(),
                                         EntityArgument.getPlayer(context, "player"))))));
+
+        dispatcher.register(Commands.literal("gtna")
+                .then(Commands.literal("planner")
+                        .executes(context -> plannerReport(context.getSource()))));
+    }
+
+    private static int plannerReport(CommandSourceStack source) {
+        List<Ae2PlannerBridge.Diagnostics> diagnostics = Ae2PlannerBridge.activeDiagnostics();
+        source.sendSuccess(() -> Component.literal("Nexus Planner: " + diagnostics.size() + " active grid(s)"), false);
+        for (Ae2PlannerBridge.Diagnostics diagnostic : diagnostics.stream().limit(4).toList()) {
+            source.sendSuccess(() -> Component.literal(PlannerDiagnosticsReport.toJson(diagnostic)), false);
+        }
+        return diagnostics.size();
     }
 
     /**

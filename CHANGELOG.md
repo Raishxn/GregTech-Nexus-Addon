@@ -1,6 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [0.5.0] - 2026-09-25
+
+This release expands steam and ore processing, adds multiblock modules and strengthens AE2
+autocrafting. It also includes the Structure Terminal improvements, ME Pattern Buffer fixes,
+tooltips and automated tests recorded in the continuity ledger.
 
 ### Added
 - **Electric Blast Furnace module**: a GTNA sub-pattern registered for `gtceu:electric_blast_furnace`

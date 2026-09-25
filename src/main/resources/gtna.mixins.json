@@ -8,12 +8,15 @@
     "ae2.CPUSelectionListMixin",
     "ae2.CraftingCPUClusterMixin",
     "ae2.CraftingServiceMixin",
+    "ae2.CoreCraftConfirmMenuMixin",
     "ae2.CoreCraftingPlannerServiceMixin",
     "ae2.CraftingPatternRevisionMixin",
     "ae2.ElapsedTimeTrackerMixin",
     "ae2.PatternProviderLogicMixin",
     "ae2.TooltipsMixin",
     "gtceu.GTNAPlateDoubleMixin",
+    "gtceu.BlockPatternAccessor",
+    "gtceu.FancyMachineUIWidgetStructureMixin",
     "gtceu.MetaMachineBlockMixin",
     "gtceu.MultiblockControllerMachineMixin",
     "gtceu.MultiblockMachineDefinitionMixin",
@@ -24,7 +27,8 @@
     "kubejs.DataGeneratorMixin"
   ],
   "client": [
-    "client.FancyMachineUIWidgetMixin"
+    "client.FancyMachineUIWidgetMixin",
+    "client.CoreCraftConfirmScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

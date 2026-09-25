@@ -6,15 +6,21 @@ import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 
+import com.raishxn.gtna.api.machine.feature.OverclockHatchMath;
 import com.raishxn.gtna.config.GTNABalance;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
- * Improves the machine's overclock so the duration falls to {@code amount}% per overclock step
- * instead of the standard 50%. The amount is player-adjustable (GTOCore
- * {@code WorkableAmountConfigurationPartMachine} parity): it defaults to the tier's best value and
- * can be dialed up to 100% (no effect). Values match GTOCore's {@code 100 / (tier - 6) %}.
+ * Improves the machine's overclock so the duration falls to {@code 1/divisor} per overclock step
+ * instead of the standard {@code 0.5}. The divisor is player-adjustable (GTOCore
+ * {@code OverclockPartMachine} parity, UI label "Divisor of duration"): it defaults to the tier's
+ * best value ({@code tier - 6}) and can be dialed back to {@link OverclockHatchMath#MIN_DIVISOR}
+ * (the standard overclock, i.e. no gain).
+ *
+ * <p>
+ * The value is an integer divisor, never a rounded percentage, so the factor used by the recipe logic
+ * and the percentage shown by the tooltip always agree exactly.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -29,14 +35,25 @@ public class OverclockHatchPartMachine extends ConfigurableAmountPartMachine {
     }
 
     public OverclockHatchPartMachine(IMachineBlockEntity holder, int tier, Object... args) {
-        super(holder, tier, tierPercent(tier), 100);
+        super(holder, tier, OverclockHatchMath.MIN_DIVISOR, maxDivisor(tier), maxDivisor(tier));
     }
 
-    private static int tierPercent(int tier) {
-        return (int) Math.round(GTNABalance.getOverclockDurationMultiplier(tier) * 100.0);
+    private static int maxDivisor(int tier) {
+        return OverclockHatchMath.clampDivisor(GTNABalance.getOverclockDivisor(tier), tier);
     }
 
+    /** The active duration divisor ({@code 2} = standard overclock, {@code tier - 6} = best). */
+    public int getOverclockDivisor() {
+        return getCurrentAmount();
+    }
+
+    /** Per-overclock-step duration factor, exactly {@code 1/divisor}. */
     public double getOverclockMultiplier() {
-        return getCurrentAmount() / 100.0;
+        return OverclockHatchMath.stepFactor(getOverclockDivisor());
+    }
+
+    @Override
+    protected String getAmountLabel() {
+        return "gtna.machine.overclock_hatch.divisor";
     }
 }

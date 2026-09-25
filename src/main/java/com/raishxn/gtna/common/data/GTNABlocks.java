@@ -272,6 +272,14 @@ public class GTNABlocks {
                 .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models().cubeAll(ctx.getName(), texture)))
                 .tag(GTToolType.WRENCH.harvestTags.get(0), BlockTags.MINEABLE_WITH_PICKAXE)
                 .item(BlockItem::new)
+                .model((ctx, prov) -> {
+                    if ("borosilicate_glass".equals(ctx.getName())) {
+                        prov.withExistingParent(ctx.getName(), new ResourceLocation("minecraft", "block/cube_all"))
+                                .texture("all", prov.modLoc("block/casings/borosilicate_glass_inventory"));
+                    } else {
+                        prov.withExistingParent(ctx.getName(), prov.modLoc("block/" + ctx.getName()));
+                    }
+                })
                 .build()
                 .register();
     }
@@ -290,7 +298,7 @@ public class GTNABlocks {
                             prov.modLoc("block/casings/" + name), // south
                             prov.modLoc("block/casings/" + name), // east
                             prov.modLoc("block/casings/" + name)  // west
-                    ));
+                    ).texture("particle", prov.modLoc("block/casings/" + name)));
                 })
                 .tag(GTToolType.WRENCH.harvestTags.get(0), BlockTags.MINEABLE_WITH_PICKAXE)
                 .item(BlockItem::new)

@@ -11,6 +11,7 @@ import com.gregtechceu.gtceu.common.machine.multiblock.part.SteamHatchPartMachin
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
+import com.lowdragmc.lowdraglib.gui.texture.GuiTextureGroup;
 import com.lowdragmc.lowdraglib.gui.util.ClickData;
 import com.lowdragmc.lowdraglib.gui.widget.ButtonWidget;
 import com.lowdragmc.lowdraglib.gui.widget.ImageWidget;
@@ -195,7 +196,8 @@ public class WirelessSteamOutputHatch extends SteamHatchPartMachine {
                 .widget(new LabelWidget(6, 6, getBlockState().getBlock().getDescriptionId()))
                 .widget(new TankWidget(tank.getStorages()[0], 90, 35, true, true)
                         .setBackground(GuiTextures.FLUID_SLOT))
-                .widget(new ButtonWidget(152, 24, 16, 16, GuiTextures.BUTTON, this::onHudButton)
+                .widget(new ButtonWidget(152, 24, 16, 16,
+                        new GuiTextureGroup(GuiTextures.BUTTON, GuiTextures.LIGHT_ON), this::onHudButton)
                         .setHoverTooltips(
                                 Component.translatable("gtna.machine.wireless_steam.hud.toggle"),
                                 Component.translatable("gtna.machine.wireless_steam.hud.editor")))

@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
+import com.raishxn.gtna.api.machine.multiblock.GTNAPatternDiagnostics;
 import com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh;
 import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
 import com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost;
@@ -51,7 +52,10 @@ public record CStructureRefreshPacket(BlockPos pos, boolean force) {
 
             GTNAStructureRefresh.refresh(controller, msg.force);
             if (!controller.isFormed()) {
-                reportError(player, controller.getMultiblockState().error);
+                GTNAPatternDiagnostics.Mismatch mismatch = GTNAPatternDiagnostics.firstMismatch(controller,
+                        controller.getPattern());
+                if (mismatch != null) reportMismatch(player, mismatch);
+                else reportError(player, controller.getMultiblockState().error);
                 return;
             }
 
@@ -61,7 +65,10 @@ public record CStructureRefreshPacket(BlockPos pos, boolean force) {
                 for (BlockPattern module : GTNASubPatterns.get(controller.getDefinition())) {
                     MultiblockState state = new MultiblockState(player.serverLevel(), msg.pos);
                     if (!module.checkPatternAt(state, false)) {
-                        reportError(player, state.error);
+                        GTNAPatternDiagnostics.Mismatch mismatch = GTNAPatternDiagnostics.firstMismatch(controller,
+                                module);
+                        if (mismatch != null) reportMismatch(player, mismatch);
+                        else reportError(player, state.error);
                         return;
                     }
                 }
@@ -98,6 +105,16 @@ public record CStructureRefreshPacket(BlockPos pos, boolean force) {
         player.displayClientMessage(Component.translatable("gtna.machine.structure_check.missing",
                 errorPos.toShortString(), actualName, expectedName), false);
         highlight(player, errorPos);
+    }
+
+    private static void reportMismatch(ServerPlayer player, GTNAPatternDiagnostics.Mismatch mismatch) {
+        BlockPos pos = mismatch.pos();
+        Component expected = mismatch.expected().isEmpty() ?
+                Component.translatable("gtna.machine.structure_check.expected") : mismatch.expected().getHoverName();
+        Component actual = player.serverLevel().getBlockState(pos).getBlock().getName();
+        player.displayClientMessage(Component.translatable("gtna.machine.structure_check.missing",
+                pos.toShortString(), actual, expected), false);
+        highlight(player, pos);
     }
 
     private static void highlight(ServerPlayer player, BlockPos errorPos) {

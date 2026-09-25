@@ -20,11 +20,12 @@ O princípio é: **cada classe de bug tem um gate que a pega**, e o teste é pro
 | **L0 — Lint estático/contrato** | `runUnitTests` com testes que fazem *source scan* | Registro/wiring: predicado de máquina × ability de peça, chave de lang, fonte única de um efeito | Comportamento em runtime |
 | **L1 — Unit puro** | `runUnitTests` (main + asserts, padrão GTLCore) | Lógica pura: matemática, matching, políticas, geometria de UI | Qualquer coisa que precise bootar Minecraft |
 | **L2 — GameTest de integração** | `runGameTestServer` (servidor dedicado) | Estrutura/registro/API do GTCEu, receita ponta-a-ponta, AE2/CPU, pattern buffer | Client (render, UI, config do Jade), e só cobre cenários escritos |
-| **L3 — CI** | `.github/workflows/gradle.yml` | Regressão de build/formatação/testes + banner de gametest | Determinismo de datagen (pendente) |
+| **L3 — CI** | `.github/workflows/gradle.yml` | Regressão de build/formatação/testes, datagen determinístico e resultado individual de GameTest | Só cobre cenários escritos |
 | **L4 — Manual + observabilidade** | `runClient` + logs de diagnóstico | Render/UI/config de client, e **bugs de integração que precisam de log** | Automatizável por definição |
 
-Regra de ouro do gate: **`runGameTestServer` sai com código 0 mesmo quando o mod falha ao carregar** —
-o CI tem que exigir o banner `GAME TESTS COMPLETE`.
+Regra de ouro do gate: **`runGameTestServer` pode sair com código 0 mesmo quando o mod falha ao
+carregar**. O CI exige um lote completo, contagem positiva de testes aprovados e um caso JUnit sem
+falha por teste; o XML e o log são publicados como artefatos do job.
 
 ---
 
@@ -40,6 +41,11 @@ o CI tem que exigir o banner `GAME TESTS COMPLETE`.
 | Servidor cai (NPE) ao empurrar pattern sem item inputs | `null` não tratado num caminho raro | L4 (crash log) → unit testável | sessão 09-21 |
 | Zero-energy parallel sempre 1 | **API do framework não faz o esperado** (`ParallelLogic.getMaxByInput`=0) | L4 (log de diagnóstico) | sessão 09-21 |
 | UI do pattern buffer vazando 106 px | Geometria sem fonte de verdade | L1 (`PatternBufferLayoutTest`) | G-0009 |
+| Universal Factory consumia pedido AE2 na receita errada quando dois tipos aceitavam o mesmo insumo | Slot do Pattern Buffer validava insumo, mas não a saída codificada | L2 (`universalFactoryProcessesRepeatedPatternFromAnotherMode`): dois pedidos sequenciais e duas receitas simultâneas, com quantidade de saída exata | G-0083 |
+| Universal Factory deixava pedidos de laminated glass presos após acumular insumos para paralelo | A validação comparava a receita já multiplicada com o pattern de uma unidade | L2 (`universalFactoryProcessesAccumulatedLaminatedGlass`): receita real, buffer avançado, três pedidos acumulados, consumo e três saídas | G-0084 |
+| Universal Factory precisa alternar recipe type ao longo de um craft com subcamadas | A cadeia pode parar após uma troca tardia, mesmo quando cada receita funciona isoladamente | L2 (`universalFactoryProcessesLayeredPatternCrafts`): quatro pedidos separados, seis etapas em três ramos, dois joins e seis recipe types; o harness entrega cada pattern ao buffer e verifica saída e modo em cada etapa. Planejamento e envio pela CPU AE2 ainda requerem teste de integração próprio. | G-0085 |
+| Autocrafting AE2 real (planejamento, despacho, retorno) nunca testado ponta a ponta | Integração AE2 (CPU × provider × buffer × controlador) não coberta por testes que injetam patterns direto no buffer | L2 (`universalFactoryAutocraftsThroughAe2Network`): rede ME real (célula criativa, drive + célula 1K, CPU nativa), pedido de 3 camadas/6 recipe types, 2 pedidos; confere planejamento, despacho por slot, consumo, retorno e conclusão | G-0086 |
+| Tooltip do Overclock Hatch mostrava 33,33% enquanto o hatch usava o inteiro 33% | Valor guardado como porcentagem arredondada, divergindo do fator real; GTOCore usa um divisor inteiro | L1 (`OverclockHatchMathTest`) + L2 (`overclockHatchUsesIntegerDivisor`): divisor inteiro, fator exato 1/divisor, tooltip derivado do divisor | G-0086 |
 | Jade/config sem tradução (crash no client) | Config do client não coberta por gates server-only | L0 (`ConfigLangKeysTest`) | G-0007/G-0008 |
 
 **Lição central:** os bugs de *wiring* e de *integração* são os que mais escapam. L0 (contratos de
@@ -80,15 +86,15 @@ conceitos do GT5-Unofficial (`helper.gtnh()`, EU, manutenção, time-warp).
 
 ### Adotar (as ideias) ✅
 
-1. **Asserção por tick com janela (`onEachTick` + `succeedAtTimeout`).** Em vez de checar uma
+1. **Asserção por tick com janela (`onEachTick` + sucesso no fim da janela).** Em vez de checar uma
    invariante uma vez, re-checar a cada tick por N ticks. Pega **falhas transitórias** (ex.: uma
    máquina que forma e desforma, um estado que pisca). Dá para implementar como um helper nosso sobre
    o `GameTestHelper` do Forge.
 2. **Teste negativo como categoria explícita.** Ex.: "não forma sem a coil", "não aceita a peça
    errada", "não duplica o boost". Já usamos pontualmente; formalizar.
-3. **Relatório JUnit no CI.** Horizon-QA gera XML compatível com JUnit. Nosso `runGameTestServer`
-   deve ter relatório equivalente (`build/.../test-results`); vale **converter/parsear** para o CI
-   publicar os testes no job.
+3. **Relatório JUnit no CI.** O servidor de GameTest instala o `JUnitLikeTestReporter` nativo do
+   Minecraft e grava `build/test-results/gametest/TEST-gtna.xml`. O verificador do CI compara seus
+   casos com o lote concluído no log; ambos são guardados como artefatos para diagnóstico.
 4. **Autoria de estrutura in-game.** Eles exportam a estrutura com um wand. Nosso caminho barato
    equivalente é **structure block** (exportar `.nbt` de dentro do jogo) em vez de gerar NBT à mão,
    que foi o que fizemos (`empty_12.nbt`).
@@ -108,7 +114,11 @@ conceitos do GT5-Unofficial (`helper.gtnh()`, EU, manutenção, time-warp).
       Horizon-QA) + 2 gametests usando-o (negativo e invariante). Ver G-0016.
 - [x] Rodar `runData` no CI e falhar se `git diff` em `src/generated` não estiver vazio (determinismo).
       Ver `.github/workflows/gradle.yml`.
-- [ ] Publicar relatório JUnit do `runGameTestServer` no CI.
+- [x] Publicar relatório JUnit do `runGameTestServer` no CI e verificar a contagem/casos individuais.
+      Ver G-0082.
+- [x] Autocrafting AE2 real ponta a ponta: rede ME com CPU nativa, armazenamento, despacho por slot,
+      consumo, retorno e conclusão, em dois pedidos. Ver G-0086.
+- [ ] QA in-game do mesmo pedido AE2 no mundo salvo do autor (rede real dele, não GameTest).
 - [ ] Gametest matriz para as demais máquinas steam (hoje só o alloy smelter).
 - [ ] Lint "ability declarada × máquina que aceita × doc que promete" generalizado.
 - [ ] Teste de runtime do Output Boost (feito) → replicar padrão para outros bônus.

@@ -12,6 +12,7 @@ foi feito nem repetir os erros já pagos.
 3. Para o detalhe de um tema, os documentos de referência são:
    - `docs/roadmap/technical-audit-pattern-buffer.md` — auditoria técnica, fases, plano de testes.
    - `docs/roadmap/pattern-buffer-fidelity-gap.md` — tabela de fidelidade GTNA ↔ GTLCore/GTOCore.
+   - `docs/roadmap/tooltip-standard.md` — convenção de tooltips (GTOCore-adaptada) e pendências.
 4. Ao concluir qualquer etapa, **acrescente um checkpoint** aqui (ID `G-####` + data + o que mudou
    + validação + commits + pendências que abriu).
 
@@ -38,9 +39,59 @@ foi feito nem repetir os erros já pagos.
 > `large_steam_*` antigas sem revisar contra o GTNL.
 
 - Desenvolvimento na branch `main`; o histórico anterior a G-0026 está preservado no ledger.
-- Versão `mod_version=0.4.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
+- Versão `mod_version=0.5.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
-- **Gate verde em 2026-09-23 (G-0078):** `spotlessCheck` + `compileJava` + `runUnitTests` (**19/19**) +
+- **Tooltips em padronização (G-0087):** auditoria das 84 tooltips feita; a linha genérica `Added by
+  GregTech Nexus Addon` saiu (atribuição só com `Source:` no conteúdo portado), 5 descrições
+  duplicadas corrigidas, literais hardcoded viraram chaves e o esquema GTOCore-adaptado
+  (`§6Main Function:§r` + cores semânticas) foi aplicado como piloto (Integrated/Advanced Ore
+  Processor e hatches de performance). Convenção em `docs/roadmap/tooltip-standard.md`; o restante
+  (~70 máquinas/hatches), a atribuição da família ME e o `pt_br` ficam pendentes.
+- **Gate verde em 2026-09-24 (G-0086):** `spotlessCheck` + `compileJava` + `runUnitTests`
+  (**20/20**, inclui `OverclockHatchMathTest`) + `runGameTestServer` (**53/53**) + `runData`
+  determinístico (`written: 0` na segunda execução). O GameTest novo
+  `universalFactoryAutocraftsThroughAe2Network` monta uma rede ME real (célula criativa, drive +
+  célula 1K, CPU nativa de crafting), forma a Universal Factory com o ME Advanced Pattern Buffer e
+  resolve **dois** pedidos de uma árvore de três camadas e seis recipe types, um de cada vez;
+  confere planejamento, despacho por slot, consumo dos insumos, retorno das saídas e conclusão. O
+  **Overclock Hatch** passou a usar um **divisor inteiro de duração** (fator exato `1/divisor`,
+  tooltip derivado do divisor), eliminando a divergência entre o tooltip percentual e o inteiro
+  usado; coberto por `OverclockHatchMathTest` (L1) e `overclockHatchUsesIntegerDivisor` (L2). O HUD
+  do Flux Matrix, os hatches wireless de alta vazão e a revisão geral de tooltips ficam para as
+  próximas sessões.
+- **Gate verde em 2026-09-24 (G-0085):** `spotlessCheck` + `compileJava` + `runUnitTests`
+  (**19/19**) + `runGameTestServer` (**51/51**) + `runData` determinístico (`written: 0`). O GameTest
+  novo percorre quatro pedidos separados de uma cadeia de seis etapas, com três ramos, duas junções
+  e trocas sucessivas entre Bender, Compressor, Forge Hammer, Lathe, Cutter e Forming Press. O
+  harness entrega patterns ao ME Advanced Pattern Buffer e confere modo e saída a cada etapa;
+  planejamento e envio dos pedidos por uma CPU/rede AE2 real continuam fora desse teste.
+- **Gate verde em 2026-09-24 (G-0084):** `spotlessCheck` + `compileJava` + `runUnitTests`
+  (**19/19**) + `runGameTestServer` (**50/50**) + `runData` determinístico (`written: 0`). O
+  GameTest novo reproduziu os três pedidos de laminated glass presos (6 tempered glass + 3 placas
+  PVB) no ME Advanced Pattern Buffer e passou após identificar o pattern pela receita original,
+  antes do multiplicador de paralelo. O autor reportou reteste in-game aparentemente perfeito com
+  a rede AE2 real; a cobertura automática dessa integração ainda está pendente.
+- **Gate verde em 2026-09-24 (G-0083):** `spotlessCheck` + `compileJava` + `runUnitTests`
+  (**19/19**) + `runGameTestServer` (**49/49**) + `runData` determinístico (`written: 0`). O
+  GameTest novo da Universal Factory reproduziu o consumo de um pattern pelo recipe type errado
+  (stone pedido, gravel produzido), depois passou com a correção; cobre dois pedidos sequenciais
+  e duas receitas de tipos diferentes em threads simultâneas. Resta QA no mundo com a rede AE2.
+- **Gate verde em 2026-09-24 (G-0082):** `spotlessCheck` + `compileJava` + `runUnitTests`
+  (**19/19**) + `runGameTestServer` (**48/48**) + `runData` determinístico (`written: 0`). O servidor
+  gera relatório JUnit individual em `build/test-results/gametest/TEST-gtna.xml`; o CI valida o
+  lote completo e publica XML/log. Um teste negativo de formação verifica o estado a cada tick.
+- **Gate verde em 2026-09-23 (G-0081):** `spotlessCheck` + `compileJava` + `runUnitTests` (**19/19**) +
+  `runGameTestServer` (**48/48**) + `runData` determinístico (`written: 0`). A checagem de estrutura
+  usa a posição ancorada ao controller para padrões fixos, com gametests no Large Cutting Saw e
+  Large Material Press. O botão está nas UIs fancy de controladores e na UI própria do Hypercore.
+  Módulos KubeJS sincronizam chaves de tooltip localizadas aos clientes. Os ajustes visuais de HUD,
+  Borosilicate Glass e Solar Boiling Cell e o tooltip do Brick Kiln aguardam QA visual do autor.
+- **Gate anterior em 2026-09-23 (G-0080):** `spotlessCheck` + `compileJava` + `runUnitTests` (**19/19**) +
+  `runGameTestServer` (**46/46**) + `runData` determinístico (`written: 0`). O Hypercore agora oferece uma CPU compartilhada e
+  cria CPUs temporárias por pedido. O planner recebe ticks de servidor e mostra a origem no menu de
+  confirmação. `plannerQa` comparou 18 cenários com o baseline RaishxCore; faltam QA visual e
+  medição ponta a ponta no mundo do autor. Mudanças locais, sem commit/push.
+- **Gate anterior em 2026-09-23 (G-0078):** `spotlessCheck` + `compileJava` + `runUnitTests` (**19/19**) +
   `runGameTestServer` (**46/46**) + `runData` determinístico (`written: 0`). Planner RaishxCore portado
   para AE2 1.20.1, limitado às redes com Interface do Hypercore. Integração de crafting real ainda
   requer QA in-game.
@@ -90,8 +141,9 @@ foi feito nem repetir os erros já pagos.
   módulo (G-0043). Ver G-0041..G-0043 para causa raiz, testes e pendências.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
-- **Testes hoje:** 19 unit tests (`main()` + asserts, padrão GTLCore) e 46 gametests (`@GameTest`),
-  ambos no gate do CI.
+- **Testes hoje:** 20 unit tests (`main()` + asserts, padrão GTLCore) e 53 gametests (`@GameTest`),
+  ambos no gate do CI; os GameTests geram relatório JUnit, verificado por
+  `tools/check_gametest_report.py`.
 - **Steam Cracker:** o autor confirmou em 2026-09-23 que a implementação deve continuar sendo a do
   GTNL; estrutura, comportamento e atribuição `GTNASources` atuais seguem essa origem.
 - **Licenciamento (G-0019):** código do GTNA **LGPLv3**; assets do GTO em **CC BY-NC-SA 4.0**
@@ -110,6 +162,299 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0088 (2026-09-25) — preparação da versão 0.5.0
+
+- O autor confirmou teste in-game das mudanças locais e aprovou a publicação na `main`.
+- Versão alterada para `0.5.0`; README, changelog e texto de listagem do CurseForge atualizados.
+  A descrição usa a logo animada versionada em `docs/assets/logo.gif` via URL pública do GitHub.
+- Validação: `spotlessCheck`, `compileJava`, `runUnitTests`, `runGameTestServer` (53/53) e
+  `runData` determinístico (`written: 0`) passaram. `python3 tools/check_gametest_report.py`
+  confirmou os 53 resultados. `./gradlew build` gerou `build/libs/gtna-0.5.0.jar` com
+  `version = "0.5.0"` no `mods.toml`; SHA-256:
+  `75b39777ec89292ab38c2a8729bf553edd2dc7261f87577157beda8514d480c7`.
+- Permanecem as verificações manuais específicas listadas em **Estado atual** e em
+  `docs/roadmap/QA-MANUAL-CHECKLIST.md`; o teste in-game geral foi confirmado pelo autor.
+
+### G-0087 (2026-09-24) — auditoria e padronização inicial de tooltips
+
+- **Auditoria:** inventariadas 84 chamadas `.tooltips(...)` (63 em `GTNAMachines`, 18 em
+  `GTNAMachines2`, 3 em `GTNAEnergyHatches`), 74 entradas em `GTNASources.SOURCES` e 22 máquinas com
+  a linha genérica `Added by GregTech Nexus Addon`. Foram levantados os problemas objetivos
+  (descrições duplicadas, literais hardcoded, chave errada, `main_function` faltando, atribuição
+  inconsistente, `pt_br` desatualizado) e os subjetivos (sem `Main Function` padronizada, cores
+  inconsistentes, paredes de texto). Referência do GTOCore documentada (engine no `gtolib` selado;
+  convenção replicável).
+- **Decisões do autor:** atribuição só com `Source:` no conteúdo portado (sem o genérico); esquema de
+  seções/cores adaptado do GTOCore; correções objetivas antes do estilo.
+- **Fase 1 (bugs objetivos):** removida a linha genérica `Added by GTNA`; corrigidas 5 descrições
+  duplicadas (`me_storage_access_hatch`, `me_big_storage_access_hatch`, `me_io_port_hatch`,
+  `infinite_steam_input_bus`, `output_boost_steam_output_bus`); `output_boost_item_bus_*` e
+  `output_boost_fluid_hatch_*` ganharam `main_function`; literais hardcoded viraram chaves
+  (`nexus_me_hypercore`, `me_storage`, `duration_tester`, Artificial Star, aviso do Large Steam
+  Furnace); corrigida a chave do `craft_pattern_hatch` ("Nexus Molecular Forge" → "Nexus Assembly
+  Forge"); `huge_steam_bus` dividido em input/output.
+- **Fase 2 (piloto de estilo):** convenção GTOCore-adaptada documentada em
+  `docs/roadmap/tooltip-standard.md` e aplicada ao Integrated/Advanced Ore Processor, aos hatches
+  Accelerate/Thread/Overclock/Output Boost e aos Infinite Input / Output Boost (bus/hatch/steam):
+  `§6Main Function:§r` + cores semânticas (`§b` valor, `§a` bônus, `§c` aviso, `§e` ação, `§8` nota).
+- **Atribuição:** a linha genérica saiu; o `Source:` continua centralizado em `GTNASources`. A
+  extensão de `SOURCES` para a família ME/pattern-buffer ficou **pendente de decisão de atribuição**
+  do autor (`MEStorageCoreBlock` ainda hardcoda GTO).
+- **Normalização:** os `lang/en_us.json` e `lang/pt_br.json` manuais estavam com CRLF/LF misturados;
+  foram normalizados para LF (`.gitattributes` usa `text=auto`), deixando `git diff --check` limpo.
+- **Validação:** gate offline completo verde: `spotlessCheck`, `compileJava`, `runUnitTests`
+  (**20/20**), `runGameTestServer` (**53/53**) e `runData` determinístico (`written: 0`).
+  `git diff --check` limpo. Mudanças locais, sem commit/push.
+- **Correções do reteste in-game (mesmo checkpoint):** o autor apontou origens erradas e menções
+  redundantes. `SOURCES` ajustado: `large_steam_storage_tank` GTNL→GTO; DT dirt forge/boiler/oven
+  GTO→GTL (`GregTech Leisure`, confirmado pelo autor); `eye_of_harmony` GTO→GTNH;
+  `nexus_molecular_forge` GTNL→GTO; `crafting_cpu_interface` removido (conteúdo original);
+  `directed_tesseract_generator` e `me_storage_access_hatch`/`me_big_storage_access_hatch`/
+  `me_io_port_hatch` adicionados como GTO. A separação `──────` antes do `Source:` passou de
+  `GTNASteamTooltips` (só steam) para `GTNASources` (todas as máquinas com origem). Removidas as
+  menções a mod dos textos (`steam_cracking`, `mega_steam_compressor`, `large_steam_furnace`,
+  `large_steam_hammer/compressor/extractor`, `large_steam_storage_tank`, DT machines, `me_storage`)
+  no provider e nos manuais `en_us`/`pt_br` (17 linhas). pt_br dos três storage hatches adicionado.
+  O rótulo de origem `GregTech Odyssey (GTO)` foi mantido por decisão do autor. Segunda rodada:
+  `integrated_ore_processor`/`advanced_integrated_ore_processor` de `GTLCORE`→`GTL` (origem exibida
+  deve ser GregTech Leisure); removidas 10 menções "GT-Not-Leisure style" que o hífen escondia da
+  varredura anterior e o "GT-Not-Leisure" da estrutura do Primitive Distillation Tower (que é GTO).
+- **Fase 3 (após reteste):** passada de estilo aplicada a mais ~25 máquinas (Nexus Assembly Forge,
+  Eye of Harmony/Wood, Void Miner, Infernal Coke Oven, Hyper/Compact Hyper Pressure, Leap Forward,
+  Industrial Slaughterhouse, Stone Superheater, Steam Manufacturer/Woodcutter, Primitive
+  Distillation Tower, Universal Factory, Primitive Stone Furnace, Brick Kiln, Thermal Power Pump,
+  Liquefaction Furnace, Industrial Platform Deployment Tools), com `§6Main Function:§r` e cores
+  semânticas. Os manuais `pt_br` das mesmas máquinas foram recolorados. Traduzidos os 70 keys de
+  `gtna.tooltip.*`/`gtna.multiblock.*` que faltavam no `pt_br` (agora 100%). Criado
+  `tools/check_lang_parity.py` (paridade `712/1611`, restam `gtna.machine.*` 246, `block.gtna.*` 482,
+  `item.gtna.*` 60). Removido o log `TENTANDO REGISTRAR PARALLEL HATCH`.
+- **Conhecido (EMI):** o aviso `[EMI] 2 recipes loaded with the same id: gtna:<máquina>` no client de
+  singleplayer é artefato da integração GTCEu×EMI (receitas runtime no pack dinâmico); o gametest
+  server não acusa e as receitas funcionam.
+- **Fase 4:** descoberto que o `en_us.json` manual (`src/main/resources/...`) é lido primeiro e o
+  `add` deduplica, então ele **sobrescrevia** o provider em 191 chaves de tooltip/nome — a passada de
+  estilo no provider não aparecia no en_us gerado. Sincronizei ao provider as 24 chaves de tooltip das
+  máquinas recoloridas e porteí as cores do manual para o provider nos hatches wireless
+  (energy/dynamo) e no Nexus Flux Matrix (`§6Main Function:§r`). O texto dos módulos do Steam
+  Elevator e o `duration_tester` continuam sem o cabeçalho (aceitável).
+- **Fase 5:** recolorida a família steam GTNL (`gtna.tooltip.large_steam_*`/`steam_*`, ~230 valores)
+  com `§6Main Function:§r` nas descrições, `§8` nas estruturas e `§7` no restante.
+- **Fase 6:** Reality Ripper deixou de ter literais (`item.gtna.reality_ripper_sword.tooltip.strike`
+  / `.kill`); armadura e cartões já usavam chaves. Ficam os literais de HUD do `QuantumTerminalUI`.
+- **Atribuição da família ME (decisão do autor):** os pattern buffers e o proxy são conteúdo
+  original do GTNA (sem `Source:`); os ME Storage Access/Big/IO Port ficam GTO; os 10 cores seguem o
+  GTOCore (`MEStorageCoreBlock`). Sem mudança de código.
+- **Pendências:** aplicar a convenção ao restante das máquinas GTNA-nativas/famílias steam, decidir a
+  atribuição da família ME, completar o `pt_br` (`gtna.machine.*`/`block.gtna.*`/`item.gtna.*`) e
+  converter os tooltips de item. Ver `docs/roadmap/tooltip-standard.md`.
+
+### G-0086 (2026-09-24) — QA de autocrafting AE2 real e semântica de divisor do Overclock Hatch
+
+**1. Autocrafting AE2 ponta a ponta (`universalFactoryAutocraftsThroughAe2Network`).**
+
+- O GameTest monta uma **rede ME real** no `empty_16`: célula criativa de energia, drive AE2 com uma
+  célula de item 1K e uma **CPU nativa** de crafting (`CRAFTING_UNIT` + `CRAFTING_STORAGE_1K`, 0
+  co-processadores para despachar um pattern por vez). A Universal Factory é formada com o **ME
+  Advanced Pattern Buffer** virado para leste (a única face que o nó AE2 expõe), e a rede começa
+  nessa face. O grid e a CPU se formam sozinhos via tick do servidor.
+- Árvore do pedido: seis recipes sintéticas em seis recipe types, com três camadas e dois joins
+  (Bender, Compressor, Forge Hammer → Lathe, Cutter → Forming Press). Os insumos-base são discos de
+  música (sem receita no GTCEu) para o planner só poder satisfazer o pedido pelos seis patterns. O
+  EU das receitas é de tier LuV para o hatch de teste não overclockar a receita a 1 tick.
+- Cada pedido verifica: **planejamento** (`plan.patternTimes().size() == 6`), **despacho** por slot
+  (contador novo `gtna$getPushedPatternCount`), **trocas de modo** (conjunto novo
+  `gtna$getStartedRecipeTypes`, porque o `activeRecipeType` exibido é sobrescrito quando vários
+  threads iniciam no mesmo tick), **consumo** (slots do buffer vazios ao fim) e **retorno/conclusão**
+  (item final no armazenamento da rede e `craftingLogic.hasJob() == false`). São **dois** pedidos,
+  um de cada vez, removendo a saída antes do segundo.
+- Limite honesto: a rede é mínima (sem controlador ME, sem cabos — nós adjacentes) e o teste injeta
+  os patterns pelo inventário do buffer; o cenário do autor (rede dele, cabos, terminal) continua
+  sendo validação in-game. O teste cobre o que G-0084/G-0085 deixavam fora: planejamento e despacho
+  por uma CPU AE2 real.
+- Descoberta de API: o planner vanilla do AE2 15.4.10 usa
+  `ICraftingSimulationRequester.getGridNode()` em `CraftingTreeNode.buildChildPatterns`; a
+  implementação só com `getActionSource()` (lambda) fazia o plano reportar o item final como
+  `missing`. O requester do teste devolve o nó do buffer.
+
+**2. Overclock Hatch: divisor inteiro de duração.**
+
+- Confirmado no bytecode do GTOCore (`gtolib-release.jar`): `OverclockPartMachine` tem a chave
+  `gtocore.machine.overclock_hatch.divisor` = "Divisor of duration" e `getCurrentMultiplier()`
+  retorna `1.0/valor`; o tooltip mostra `100/(tier-6)%`. Não é porcentagem. O port irmão GT-Shanhai
+  usa `MIN_DIVISOR = 2` e `max = max(2, tier-6)`, default = max. O bytecode só tem a constante
+  `Long 2l` (piso 2).
+- O GTNA guardava `round(mult*100)` (ex.: 33) enquanto o tooltip exibia `33.33%`, causando a
+  divergência. Agora `OverclockHatchPartMachine` guarda o **divisor** (2..`tier-6`, default
+  `tier-6`), `getOverclockMultiplier()` devolve `1/divisor` exato, e o tooltip é derivado do mesmo
+  divisor (`100/divisor%`), então tooltip e comportamento coincidem. A UI ganhou o rótulo
+  "Divisor of duration" (`gtna.machine.overclock_hatch.divisor`).
+- Config: `OverclockHatchBalance.durationMultiplierByTier` (doubles) virou `divisorByTier` (ints
+  2..8); valores customizados antigos voltam ao default. A matemática pura ficou em
+  `OverclockHatchMath` (piso 2, teto `tier-6`, `stepFactor`, `additionalDurationMultiplier`), usada
+  pelo mixin e pela base multi-receita.
+- **Hipótese aberta:** o autor relatou um controle "1 a 7" no GTOCore. A evidência (constante `2l`,
+  port irmão, tooltip `100/(tier-6)`) aponta para divisor `2..(tier-6)` (OpV = 2..7; MAX = 2..8).
+  Se o autor confirmar que o GTOCore aceita divisor 1, basta trocar `OverclockHatchMath.MIN_DIVISOR`
+  para 1 (uma linha) e ajustar os testes.
+
+**Validação:** gate offline completo verde: `spotlessCheck`, `compileJava`, `runUnitTests` (**20/20**,
+inclui `OverclockHatchMathTest`), `runGameTestServer` (**53/53**, inclui
+`universalFactoryAutocraftsThroughAe2Network` e `overclockHatchUsesIntegerDivisor`) e `runData`
+determinístico (`written: 1` na primeira execução da chave nova, `written: 0` na segunda).
+`tools/check_gametest_report.py` confirmou 53 casos. `git diff --check` limpo. Mudanças locais, sem
+commit/push.
+
+**Pendências:** (a) reteste in-game do autor do mesmo pedido AE2 na rede dele; (b) confirmar a faixa
+do divisor do GTOCore (2..(tier-6) vs 1..(tier-6)); (c) QA visual da UI do hatch (rótulo e input
+inteiro); (d) HUD do Flux Matrix, hatches wireless de alta vazão e revisão geral de tooltips ficam
+para as próximas sessões.
+
+### G-0085 (2026-09-24) — GameTest de crafting com subcamadas e trocas repetidas de recipe type
+
+- Após o reteste in-game positivo do autor para G-0084, foi adicionado
+  `universalFactoryProcessesLayeredPatternCrafts`. Ele forma a Universal Factory com ME Advanced
+  Pattern Buffer, injeta seis receitas sintéticas em seis recipe types e executa quatro pedidos
+  completos, um de cada vez. Cada pedido tem três ramos iniciais, uma junção de dois ramos, uma
+  transformação do terceiro e uma junção final. O teste extrai cada saída real do barramento,
+  verifica os insumos da etapa dependente e exige a troca correta do modo em cada uma das 24 etapas.
+- Escopo preciso: a entrega dos insumos e patterns é feita pelo harness diretamente no Pattern
+  Buffer. O teste ainda não monta uma rede AE2 com CPU, armazenamento e pedido final para validar o
+  planejamento, o despacho e o retorno automático de todas as subcamadas. O cenário real do autor
+  segue sendo a validação desse trecho do fluxo.
+- Validação: gate offline completo verde (19/19 unitários, 51/51 gametests, datagen `written: 0`).
+  A primeira tentativa do gate de partida foi interrompida após o datagen deixar de progredir;
+  a execução completa subsequente passou. Mudanças locais, sem commit/push.
+
+### G-0084 (2026-09-24) — pedidos paralelos de laminated glass no ME Advanced Pattern Buffer
+
+- Repro do autor: Universal Factory inicialmente em Extractor, seis patterns de Bender, Lathe,
+  Compressor, Cutter, Forming Press e Forge Hammer; quatro pedidos separados de uma receita final
+  que usa as seis saídas. Alguns pedidos não concluíram, deixando 6 tempered glass e 3 placas de
+  Polyvinyl Butyral no slot de laminated glass, com o modo visual parado em Forge Hammer.
+- O mundo salvo confirmou `cachedRecipeId=gtceu:forming_press/laminated_glass`, buffer em All Modes
+  e controller ocioso. O novo GameTest com a receita real, ME Advanced Pattern Buffer e três pedidos
+  acumulados reproduziu exatamente `staged=[3 PVB plate, 6 tempered glass]`, saída zero e modo sem
+  troca. A causa era a validação de identidade de G-0083: comparava o pattern de **uma** unidade
+  com a cópia da receita já multiplicada para três paralelos. `matchesPatternDetails` agora usa a
+  receita original registrada para reconhecer o pedido; a receita multiplicada continua sendo usada
+  pelo GTCEu para consumir insumos e produzir saídas. O GameTest, com energia recarregada como no
+  hatch criativo do autor, comprovou consumo e três laminated glass produzidos.
+- Validação: gate offline completo verde (19/19 unitários, 50/50 gametests, datagen `written: 0`).
+  O teste reproduziu falha antes da correção e passou depois. Continua pendente o reteste da cadeia
+  completa no mundo salvo do autor com a CPU/rede AE2. Mudanças locais, sem commit/push.
+
+### G-0083 (2026-09-24) — Universal Factory respeita a receita codificada no Pattern Buffer
+
+- O QA anterior cobria a troca de modo com um buffer fixado e o espelhamento de uma receita, mas
+  não dois pedidos da mesma receita nem a execução real de tipos diferentes em threads. O novo
+  GameTest forma a Universal Factory com ME Pattern Buffer, começa no modo Bender, envia um pattern
+  de Circuit Assembler (cobblestone → stone) duas vezes, em pedidos separados, e verifica cada
+  saída. Em seguida, envia esse pattern e outro de Bender ao mesmo tempo e exige duas receitas
+  ativas, com saídas exatas.
+- Antes da correção, o teste falhou de forma reproduzível: a máquina consumiu o cobblestone e
+  produziu **gravel**, apesar do pattern pedir stone. O slot aceitava qualquer receita cujos
+  insumos combinassem, mesmo se a saída e o recipe type fossem outros. Agora um slot com pedido
+  pendente só cede insumos a uma receita que combine com o pattern codificado, incluindo as saídas.
+  A resolução do cache também deixou de associar recipes só por insumos; o circuito compartilhado
+  é considerado ao comparar o pattern.
+- Validação: gate offline completo verde (19/19 unitários, 49/49 gametests, datagen `written: 0`);
+  `tools/check_gametest_report.py` confirmou os 49 casos JUnit contra o log do servidor; `git diff
+  --check` verde. O GameTest injeta insumos diretamente nos slots do buffer, sem rede AE2 real:
+  confirmar no mundo do autor o envio pelo autocrafting e a conclusão no terminal. Mudanças locais,
+  sem commit/push.
+
+### G-0082 (2026-09-24) — QA contínuo e resultados individuais de GameTest
+
+- A partir da disciplina do Horizon-QA, o helper de invariantes agora verifica também o instante
+  inicial. O teste negativo da Universal Factory força uma checagem de estrutura e rejeita a
+  formação sem Maintenance Hatch durante toda a janela de 40 ticks, inclusive estados transitórios.
+- O servidor de GameTest usa o `JUnitLikeTestReporter` nativo do Minecraft, preservando o log
+  habitual, e grava um caso por teste em `build/test-results/gametest/TEST-gtna.xml`. O CI exige um
+  lote completo com contagem positiva, compara a contagem de casos XML com o log e rejeita casos
+  com falha/erro. XML e log são enviados como artefatos para diagnóstico.
+- Validação: gate offline completo verde (19/19 unitários, 48/48 gametests, datagen `written: 0`),
+  verificador do relatório passou em 48 casos e rejeitou fixtures com caso ausente e com falha.
+  `docs/roadmap/qa-strategy.md` foi atualizado. Continuam pendentes os checks visuais in-game de
+  G-0081 e os itens de cobertura de QA listados na estratégia. Mudanças locais, sem commit/push.
+
+### G-0081 (2026-09-23) — diagnóstico de estrutura, módulos KubeJS e ajustes visuais
+
+- O `BlockPattern` do GTCEu procura a primeira aisle em várias posições quando o match falha; o
+  `PatternError.getPos()` pode ser a última sondagem no ar. A checagem agora percorre os predicados
+  de padrões com aisles fixas a partir da célula do controller, usando a mesma transformação de
+  direção/flip do GTCEu. Para padrões repetíveis, mantém o erro original do matcher. Dois novos
+  gametests afirmam a posição do primeiro casing faltando no Large Cutting Saw e no Large Material
+  Press, com controller voltado para norte e leste.
+- O botão de rechecagem passou a ser acrescentado a todo controller com UI fancy do GTCEu,
+  inclusive ME Storage; a UI própria do Nexus ME Hypercore recebeu o mesmo comando.
+- Cada módulo KubeJS acrescenta automaticamente a seção `Auxiliary Module` no tooltip. O evento
+  aceita uma chave de idioma opcional que descreve o benefício; o exemplo do Integrated Ore
+  Processor informa o Item Import Bus adicional em inglês e português. O servidor sincroniza as
+  chaves aos clientes na entrada, inclusive quando o servidor é dedicado. Sem chave específica, a
+  descrição localizada genérica informa que o script define as habilidades.
+- Os hatches Wireless Steam usam o ícone `LIGHT_ON` do GTCEu adotado no GTOCore. O item
+  Borosilicate Glass usa um ícone azul próprio para evitar a silhueta branca no inventário, sem
+  mudar a textura do bloco no mundo. O modelo do Solar Boiling Cell declara a textura lateral como
+  `particle`, evitando o placeholder preto/roxo ao quebrar; o Solar Heat Collector Pipe Casing usa
+  o mesmo gerador de modelo e recebeu a mesma declaração. O Brick Kiln, portado do GTOCore,
+  deixou de acrescentar a linha genérica `GregTech Nexus Addon`; a origem GTO já vinha de
+  `GTNASources`.
+- Validação: gate offline solicitado passou antes das edições (19/19 unitários, 46/46 gametests,
+  datagen `written: 0`) e após as edições (19/19 unitários, 48/48 gametests, datagen `written: 0`).
+  O PNG do item, o modelo gerado e as chaves `en_us`/`pt_br` foram inspecionados. Restam testes
+  visuais in-game do destaque, widgets, tooltip KubeJS, ícones e partículas. Tudo permanece local,
+  sem commit/push.
+
+### G-0080 (2026-09-23) — CPU compartilhada e velocidade do Nexus Planner
+
+- A Interface do Hypercore expõe uma CPU com toda a capacidade de armazenamento e co-processadores
+  dos cores instalados. Cada pedido aceito reserva bytes da capacidade compartilhada e cria uma CPU
+  temporária; jobs simultâneos dividem os lanes de execução. O modo Transcendent preserva capacidade
+  ilimitada. A lista de jobs e suas reservas são persistidas. Saves antigos com CPUs independentes
+  migram conservadoramente: jobs ativos antigos reservam toda a capacidade até terminarem, porque o
+  NBT antigo não guardava a capacidade individual.
+- Corrigida a causa do planner que aguardava indefinidamente em grafos grandes: `Ae2PlannerBridge.tick()`
+  agora roda no fim de cada tick do servidor Forge. A tela de confirmação do AE2 sincroniza a origem
+  real do futuro e exibe `Nexus Planner` quando o motor próprio produziu o plano. `/gtna planner`
+  mostra diagnósticos das capturas ativas no jogo.
+- QA de velocidade: `./gradlew plannerQa --offline` verde, com 18 cenários comparados ao baseline do
+  RaishxCore. Cadeia de 20 mil padrões: p50 de 25,240 ms com grafo em cache e 53,402 ms incluindo
+  construção do grafo; p95 de 27,134 ms e 56,132 ms, respectivamente. Numa segunda rodada com o
+  client aberto, p50 foi 28,998 ms e 70,291 ms; os 18 cenários também passaram. A comparação cobre
+  o motor isolado; a latência de captura/AE2/GUI precisa de medição in-game pelo autor.
+- Validação: `spotlessCheck`, `compileJava`, `runUnitTests` (19/19), `runGameTestServer` (46/46) e
+  `runData` verdes. O primeiro `runData` escreveu a chave nova de idioma; o segundo escreveu zero.
+  Uma terceira execução conjunta passou em unit/gametest, mas o datagen travou por um erro de
+  registro de renderização do Annihilate Generator; `runData` isolado foi repetido e passou
+  (`written: 0`). `runClient` chegou à tela principal sem erro de mixin no log e foi reiniciado
+  após a última correção de nome do job. Não houve commit
+  nem push, conforme pedido do autor.
+
+### G-0079 (2026-09-23) — autoria do Hypercore e espaços livres
+
+- Correção do autor: o Nexus ME Hypercore é um multibloco original dele. Foram removidas as
+  atribuições GTO e RaishxCore do tooltip do controller. O planner continua adaptado do RaishxCore,
+  que também é um mod do mesmo autor; essa relação está documentada em `THIRD_PARTY_NOTICES.md`.
+- O símbolo de espaço do padrão 44×22×44 agora usa `any()` em vez de `air()`. Cabos AE2 e outros
+  blocos colocados nos espaços livres, inclusive o cabo junto à Interface de CPU, não impedem a
+  formação. Os 320 slots de core, casings, controller e Interface mantêm seus predicados.
+- A CPU Interface não passa mais a linha `gtna.machine.crafting_cpu_interface.tooltip` explicitamente:
+  o `MetaMachineBlock` do GTCEu já a acrescenta automaticamente. A duplicação reportada pelo autor
+  desaparece sem remover a informação sobre a exigência de uma Interface.
+- O gerador de idioma agora emite nomes para os cinco Cell Components, nove Industrial Components
+  e cartões Pattern Buffer Copy/Cut, evitando chaves cruas no client. Os ícones dos dois cartões
+  foram substituídos pelos originais distintos do GTLCore; a origem dos assets está em
+  `THIRD_PARTY_NOTICES.md`.
+- O gametest `brickKilnForms` foi estabilizado: a verificação da estrutura espera dois ticks após
+  colocar todos os blocos, evitando concorrer com a checagem assíncrona do controller. Antes da
+  mudança ele falhou em duas execuções do gate, e passou em outra, sem alteração no Brick Kiln.
+- A pedido do autor, mudanças passam a permanecer **locais** até ele testar e aprovar explicitamente
+  a publicação. O `AGENTS.md` local (ignorado pelo Git) foi atualizado com essa regra.
+- Validação: gate offline completo verde: `spotlessCheck`, `compileJava`, `runUnitTests` (19/19),
+  `runGameTestServer` (46/46) e `runData` determinístico (`written: 0`). Os 46 gametests passaram
+  numa segunda execução consecutiva. O idioma gerado contém as 16 chaves novas. Não houve commit
+  nem push. QA in-game do cabo, da formação, do tooltip e dos itens depende do teste do autor.
 
 ### G-0078 (2026-09-23) — Hypercore multi-CPU, planner e UI
 

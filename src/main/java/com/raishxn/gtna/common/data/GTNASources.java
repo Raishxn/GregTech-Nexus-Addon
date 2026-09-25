@@ -28,7 +28,6 @@ import java.util.function.BiConsumer;
 public final class GTNASources {
 
     public static final String GTO = "gto";
-    public static final String RAISHXCORE = "raishxcore";
     public static final String GTNL = "gtnl";
     public static final String GTNH = "gtnh";
     public static final String TST = "tst";
@@ -42,23 +41,28 @@ public final class GTNASources {
     private static final Map<String, String> SOURCES = Map.ofEntries(
             // --- GTO / GTOCore ---
             Map.entry("annihilate_generator", GTO),
-            Map.entry("eye_of_harmony", GTO),
             Map.entry("me_storage", GTO),
-            Map.entry("nexus_me_hypercore", GTO),
-            Map.entry("crafting_cpu_interface", GTO),
-            Map.entry("dimensionally_transcendent_dirt_forge", GTO),
-            Map.entry("dimensionally_transcendent_steam_boiler", GTO),
-            Map.entry("dimensionally_transcendent_steam_oven", GTO),
+            Map.entry("dimensionally_transcendent_dirt_forge", GTL),
+            Map.entry("dimensionally_transcendent_steam_boiler", GTL),
+            Map.entry("dimensionally_transcendent_steam_oven", GTL),
             Map.entry("primitive_distillation_tower", GTO),
             Map.entry("void_miner_steam_gate_aged", GTO),
             Map.entry("leap_forward_one_blast_furnace", GTO),
             Map.entry("large_steam_solar_boiler", GTO),
+            Map.entry("large_steam_storage_tank", GTO),
+            Map.entry("directed_tesseract_generator", GTO),
+            Map.entry("me_storage_access_hatch", GTO),
+            Map.entry("me_big_storage_access_hatch", GTO),
+            Map.entry("me_io_port_hatch", GTO),
+            Map.entry("nexus_molecular_forge", GTO),
+            // --- GT: New Horizons ---
+            Map.entry("eye_of_harmony", GTNH),
             // --- Twist Space Technology (GPL-3.0) ---
             Map.entry("eye_of_wood", TST),
             Map.entry("industrial_slaughterhouse", GTO),
-            // --- GTLCore (LGPLv3) ---
-            Map.entry("integrated_ore_processor", GTLCORE),
-            Map.entry("advanced_integrated_ore_processor", GTLCORE),
+            // --- GregTech Leisure ---
+            Map.entry("integrated_ore_processor", GTL),
+            Map.entry("advanced_integrated_ore_processor", GTL),
             // --- GTOCore (LGPLv3) ---
             Map.entry("brick_kiln", GTO),
             Map.entry("thermal_power_pump", GTO),
@@ -83,7 +87,6 @@ public final class GTNASources {
             Map.entry("large_steam_lathe", GTNL),
             Map.entry("large_steam_cutting", GTNL),
             Map.entry("large_steam_forming_press", GTNL),
-            Map.entry("large_steam_storage_tank", GTNL),
             Map.entry("steam_manufacturer", GTNL),
             Map.entry("steam_lava_maker", GTNL),
             Map.entry("steam_item_vault", GTNL),
@@ -91,7 +94,6 @@ public final class GTNASources {
             Map.entry("steam_cracking", GTNL),
             Map.entry("steam_mega_compressor", GTNL),
             Map.entry("infernal_coke_oven", GTNL),
-            Map.entry("nexus_molecular_forge", GTNL),
             Map.entry("hyper_pressure_reactor", GTNL),
             Map.entry("compact_hyper_pressure_reactor", GTNL),
             Map.entry("steam_cobbler", GTNL),
@@ -126,8 +128,8 @@ public final class GTNASources {
             // --- GTO Extended Platform Presets (permission granted by the GTO team) ---
             Map.entry("industrial_platform_deployment_tools", GTOEPP));
 
-    /** Additional origin for mechanics added to an existing port. */
-    private static final Map<String, String> EXTRA_SOURCES = Map.of("nexus_me_hypercore", RAISHXCORE);
+    /** GTNL draws ~30 box-drawing characters between the stats and the attribution line. */
+    private static final String SEPARATOR = "\u2500".repeat(30);
 
     /** Sources for modules added to machines owned by another mod. */
     private static final Map<ResourceLocation, String> MODULE_SOURCES = Map.of(
@@ -175,9 +177,8 @@ public final class GTNASources {
                 if (original != null) {
                     original.accept(stack, components);
                 }
+                components.add(Component.literal(SEPARATOR).withStyle(ChatFormatting.DARK_GRAY));
                 components.add(line(sourceId));
-                String extraSource = EXTRA_SOURCES.get(id.getPath());
-                if (extraSource != null) components.add(line(extraSource));
             });
         }
     }

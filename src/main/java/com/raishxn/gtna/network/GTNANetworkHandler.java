@@ -10,6 +10,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.network.packet.CLocateConnectionPacket;
 import com.raishxn.gtna.network.packet.CStructureRefreshPacket;
+import com.raishxn.gtna.network.packet.SKubeModuleDescriptions;
 import com.raishxn.gtna.network.packet.SRegionHighlightPacket;
 import com.raishxn.gtna.network.packet.SStructureDetectHighlight;
 import com.raishxn.gtna.network.packet.SStructureGhostPreviewPacket;
@@ -33,6 +34,11 @@ public class GTNANetworkHandler {
     private static int packetId = 0;
 
     public static void init() {
+        CHANNEL.messageBuilder(SKubeModuleDescriptions.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SKubeModuleDescriptions::encode)
+                .decoder(SKubeModuleDescriptions::decode)
+                .consumerMainThread(SKubeModuleDescriptions::handle)
+                .add();
         // S2C – Server highlights a block on the client
         CHANNEL.messageBuilder(SStructureDetectHighlight.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(SStructureDetectHighlight::encode)

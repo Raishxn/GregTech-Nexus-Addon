@@ -3,6 +3,7 @@ package com.raishxn.gtna.api.machine.multiblock;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.pattern.BlockPattern;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -36,6 +37,8 @@ public final class GTNASubPatterns {
     private static final Map<ResourceLocation, List<Function<MultiblockMachineDefinition, BlockPattern>>> KUBE_FACTORIES = new HashMap<>();
     private static final Map<ResourceLocation, List<BlockPattern>> CACHE = new HashMap<>();
     private static final Map<ResourceLocation, List<Component>> TOOLTIPS = new HashMap<>();
+    private static final Map<ResourceLocation, List<String>> KUBE_DESCRIPTIONS = new HashMap<>();
+    private static final Map<ResourceLocation, List<String>> CLIENT_KUBE_DESCRIPTIONS = new HashMap<>();
 
     private GTNASubPatterns() {}
 
@@ -47,8 +50,10 @@ public final class GTNASubPatterns {
 
     /** Registers a server-script extension so it can be replaced on the next server start. */
     public static void registerKubeJS(ResourceLocation machineId,
-                                      Function<MultiblockMachineDefinition, BlockPattern> factory) {
+                                      Function<MultiblockMachineDefinition, BlockPattern> factory,
+                                      String descriptionKey) {
         KUBE_FACTORIES.computeIfAbsent(machineId, id -> new ArrayList<>()).add(factory);
+        KUBE_DESCRIPTIONS.computeIfAbsent(machineId, id -> new ArrayList<>()).add(descriptionKey);
         register(machineId, factory);
     }
 
@@ -62,6 +67,7 @@ public final class GTNASubPatterns {
             CACHE.remove(id);
         });
         KUBE_FACTORIES.clear();
+        KUBE_DESCRIPTIONS.clear();
     }
 
     /**
@@ -99,6 +105,25 @@ public final class GTNASubPatterns {
 
     /** Tooltip lines describing the modules of {@code definition}, or an empty list. */
     public static List<Component> getTooltips(MultiblockMachineDefinition definition) {
-        return TOOLTIPS.getOrDefault(definition.getId(), List.of());
+        ResourceLocation id = definition.getId();
+        List<Component> result = new ArrayList<>(TOOLTIPS.getOrDefault(id, List.of()));
+        List<String> descriptions = CLIENT_KUBE_DESCRIPTIONS.getOrDefault(id,
+                KUBE_DESCRIPTIONS.getOrDefault(id, List.of()));
+        for (String description : descriptions) {
+            result.add(Component.translatable("gtna.machine.auxiliary_module").withStyle(ChatFormatting.GOLD));
+            result.add(Component.translatable(description));
+        }
+        return result;
+    }
+
+    public static Map<ResourceLocation, List<String>> kubeDescriptions() {
+        Map<ResourceLocation, List<String>> copy = new HashMap<>();
+        KUBE_DESCRIPTIONS.forEach((id, descriptions) -> copy.put(id, List.copyOf(descriptions)));
+        return copy;
+    }
+
+    public static void setClientKubeDescriptions(Map<ResourceLocation, List<String>> descriptions) {
+        CLIENT_KUBE_DESCRIPTIONS.clear();
+        CLIENT_KUBE_DESCRIPTIONS.putAll(descriptions);
     }
 }

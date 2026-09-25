@@ -22,12 +22,14 @@ import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTMachines;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
+import com.gregtechceu.gtceu.common.data.machines.GCYMMachines;
 import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
 import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.EnergyHatchPartMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.ItemBusPartMachine;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -36,17 +38,35 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import appeng.api.crafting.PatternDetailsHelper;
+import appeng.api.networking.IGrid;
+import appeng.api.networking.IGridNode;
+import appeng.api.networking.crafting.CalculationStrategy;
+import appeng.api.networking.crafting.ICraftingPlan;
+import appeng.api.networking.crafting.ICraftingSimulationRequester;
+import appeng.api.networking.crafting.ICraftingSubmitResult;
+import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.GenericStack;
+import appeng.api.stacks.KeyCounter;
+import appeng.api.storage.StorageHelper;
+import appeng.blockentity.crafting.CraftingBlockEntity;
+import appeng.blockentity.storage.DriveBlockEntity;
+import appeng.core.definitions.AEBlocks;
+import appeng.core.definitions.AEItems;
 import appeng.crafting.execution.CraftingCpuLogic;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
+import appeng.me.helpers.BaseActionSource;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
+import com.raishxn.gtna.api.machine.multiblock.GTNAPatternDiagnostics;
 import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
 import com.raishxn.gtna.common.WirelessSteamHudSync;
 import com.raishxn.gtna.common.data.GTNABlocks;
@@ -57,12 +77,12 @@ import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
 import com.raishxn.gtna.common.machine.multiblock.electric.LiquefactionFurnaceMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.UniversalFactoryMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
-import com.raishxn.gtna.common.machine.multiblock.energy.NexusMEHyperCoreMachine.CpuSpec;
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamOreProcessorModule;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.BrickKilnMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.PrimitiveStoneFurnaceMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.ThermalPowerPumpMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftingCPUInterfacePartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamInputHatch;
@@ -76,7 +96,10 @@ import com.raishxn.gtna.network.packet.SWirelessSteamStats;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * In-game tests (Forge GameTest) for the parts the plain unit tests cannot reach: machine
@@ -117,6 +140,35 @@ public final class GTNAMachineGameTests {
 
     private GTNAMachineGameTests() {}
 
+    @GameTest(template = "empty_16", timeoutTicks = 20)
+    public static void largeCutterStructureDiagnosticUsesControllerAnchor(GameTestHelper helper) {
+        assertAnchoredDiagnostic(helper, GCYMMachines.LARGE_CUTTER, 3);
+    }
+
+    @GameTest(template = "empty_16", timeoutTicks = 20)
+    public static void largeMaterialPressStructureDiagnosticUsesControllerAnchor(GameTestHelper helper) {
+        assertAnchoredDiagnostic(helper, GCYMMachines.LARGE_MATERIAL_PRESS, 2);
+    }
+
+    private static void assertAnchoredDiagnostic(GameTestHelper helper, MultiblockMachineDefinition definition,
+                                                 int aisleOffset) {
+        BlockPos origin = new BlockPos(8, 5, 8);
+        helper.setBlock(origin, definition.getBlock());
+        if (!(metaMachineAt(helper, origin) instanceof WorkableElectricMultiblockMachine machine)) {
+            helper.fail("controller did not instantiate: " + definition.getId());
+            return;
+        }
+        machine.setFrontFacing(Direction.NORTH);
+        GTNAPatternDiagnostics.Mismatch north = GTNAPatternDiagnostics.firstMismatch(machine, machine.getPattern());
+        helper.assertTrue(north != null && north.pos().equals(helper.absolutePos(origin.offset(1, -1, aisleOffset))),
+                "north diagnostic must point at first missing casing, not a search probe: " + north);
+        machine.setFrontFacing(Direction.EAST);
+        GTNAPatternDiagnostics.Mismatch east = GTNAPatternDiagnostics.firstMismatch(machine, machine.getPattern());
+        helper.assertTrue(east != null && east.pos().equals(helper.absolutePos(origin.offset(-aisleOffset, -1, 1))),
+                "east diagnostic must rotate the missing casing with the controller: " + east);
+        helper.succeed();
+    }
+
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void durationTesterExposesTwoRecipeTypes(GameTestHelper helper) {
         MultiblockMachineDefinition definition = GTNAMachines2.DURATION_TESTER;
@@ -148,6 +200,56 @@ public final class GTNAMachineGameTests {
         helper.assertTrue(placed instanceof MetaMachineBlockEntity holder &&
                 holder.getMetaMachine() instanceof WorkableElectricMultipleRecipesMachine,
                 "placing duration_tester must create a WorkableElectricMultipleRecipesMachine, got " + placed);
+        helper.succeed();
+    }
+
+    /**
+     * Locks the GTOCore overclock-hatch semantics end to end: the hatch stores an integer duration
+     * divisor (not a rounded percentage), the MAX hatch defaults to the tier's best divisor (8), the
+     * machine's overclock logic uses exactly that divisor, and dialing it back to 2 restores the
+     * standard 0.5 overclock.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void overclockHatchUsesIntegerDivisor(GameTestHelper helper) {
+        if (GTNAMachines2.DURATION_TESTER == null ||
+                GTNAMachines2.OVERCLOCK_HATCHES[GTValues.MAX] == null) {
+            helper.fail("duration_tester and the overclock hatches must be enabled");
+            return;
+        }
+        BlockPos controllerPos = new BlockPos(8, 2, 8);
+        clearArea(helper, controllerPos);
+        buildDurationTester(helper, controllerPos);
+        BlockPos hatchPos = controllerPos.offset(0, 1, 2);
+        helper.setBlock(hatchPos, GTNAMachines2.OVERCLOCK_HATCHES[GTValues.MAX].getBlock());
+        if (!(metaMachineAt(helper, controllerPos) instanceof WorkableElectricMultipleRecipesMachine controller)) {
+            helper.fail("duration_tester must be a WorkableElectricMultipleRecipesMachine");
+            return;
+        }
+        MultiblockState state = controller.getMultiblockState();
+        helper.assertTrue(controller.getPattern().checkPatternAt(state, false),
+                "duration_tester pattern did not match: " + patternError(helper, state, controllerPos));
+        controller.onStructureFormed();
+        if (!(metaMachineAt(helper, hatchPos) instanceof OverclockHatchPartMachine hatch)) {
+            helper.fail("the overclock hatch did not instantiate");
+            return;
+        }
+        // MAX tier caps the divisor at 8 and defaults to it.
+        helper.assertTrue(hatch.getOverclockDivisor() == 8,
+                "the MAX overclock hatch must default to divisor 8, got " + hatch.getOverclockDivisor());
+        helper.assertTrue(Math.abs(hatch.getOverclockMultiplier() - 1.0 / 8.0) < 1e-9,
+                "divisor 8 must be exactly one eighth, got " + hatch.getOverclockMultiplier());
+        helper.assertTrue(Math.abs(controller.getOverclockDurationFactor() - 1.0 / 8.0) < 1e-9,
+                "the machine must use the hatch divisor, got " + controller.getOverclockDurationFactor());
+        // Dialing the divisor back to 2 restores the standard overclock, and 1 clamps up to 2.
+        hatch.setCurrentAmount(2);
+        helper.assertTrue(hatch.getOverclockDivisor() == 2,
+                "divisor 2 must be accepted, got " + hatch.getOverclockDivisor());
+        helper.assertTrue(Math.abs(controller.getOverclockDurationFactor() - 0.5) < 1e-9,
+                "divisor 2 must restore the standard 0.5 factor, got " +
+                        controller.getOverclockDurationFactor());
+        hatch.setCurrentAmount(1);
+        helper.assertTrue(hatch.getOverclockDivisor() == 2,
+                "divisor 1 must clamp up to 2, got " + hatch.getOverclockDivisor());
         helper.succeed();
     }
 
@@ -601,7 +703,7 @@ public final class GTNAMachineGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void hypercoreInterfaceHasIndependentCpusAndNoInventory(GameTestHelper helper) {
+    public static void hypercoreInterfaceHasSharedCpuAndNoInventory(GameTestHelper helper) {
         if (GTNAMachines2.CRAFTING_CPU_INTERFACE == null) {
             helper.fail("Crafting CPU Interface is disabled by config");
             return;
@@ -615,13 +717,17 @@ public final class GTNAMachineGameTests {
         }
         helper.assertTrue(machine.getInventory().getSlots() == 0,
                 "the network interface must not expose item slots");
-        machine.configureCpus(List.of(new CpuSpec(1024, 2), new CpuSpec(2048, 4), new CpuSpec(4096, 8)));
-        helper.assertTrue(machine.getConfiguredCpuCount() == 3,
-                "three storage modules must create three independent CPUs");
+        machine.configurePool(1024 + 2048 + 4096, 2 + 4 + 8, false);
+        helper.assertTrue(machine.getCpuPool().getAvailableStorage() == 7168,
+                "storage modules must contribute to one shared CPU capacity");
+        helper.assertTrue(machine.getCpuPool().getCoProcessors() == 14,
+                "co-processors must contribute to one shared lane budget");
+        helper.assertTrue(machine.getCpuPool().getActiveJobCount() == 0,
+                "an idle pool must not create CPUs before a crafting request");
         net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
         machine.saveCustomPersistedData(tag, false);
-        helper.assertTrue(tag.getList("NexusCraftingCpus", net.minecraft.nbt.Tag.TAG_COMPOUND).size() == 3,
-                "all three CPU jobs must have their own persisted state");
+        helper.assertTrue(tag.contains("NexusSharedCraftingPool", net.minecraft.nbt.Tag.TAG_COMPOUND),
+                "shared pool state must be persisted");
         helper.succeed();
     }
 
@@ -673,20 +779,24 @@ public final class GTNAMachineGameTests {
             }
         }
 
-        MetaMachine placed = metaMachineAt(helper, controllerPos);
-        if (!(placed instanceof BrickKilnMachine controller)) {
-            helper.fail("brick_kiln block entity is not a BrickKilnMachine, got " + placed);
-            return;
-        }
-        MultiblockState state = controller.getMultiblockState();
-        if (!controller.getPattern().checkPatternAt(state, false)) {
-            helper.fail(
-                    "brick_kiln pattern did not match: " + patternError(helper, state, controller.self().getPos()));
-            return;
-        }
-        controller.onStructureFormed();
-        helper.assertTrue(controller.isFormed(), "brick_kiln must form from the decoded structure");
-        helper.succeed();
+        // The controller can run an async pattern check while the structure is being placed.
+        // Check after the next tick so its cached state reflects the complete kiln.
+        helper.runAfterDelay(2, () -> {
+            MetaMachine placed = metaMachineAt(helper, controllerPos);
+            if (!(placed instanceof BrickKilnMachine controller)) {
+                helper.fail("brick_kiln block entity is not a BrickKilnMachine, got " + placed);
+                return;
+            }
+            MultiblockState state = controller.getMultiblockState();
+            if (!controller.getPattern().checkPatternAt(state, false)) {
+                helper.fail("brick_kiln pattern did not match: " +
+                        patternError(helper, state, controller.self().getPos()));
+                return;
+            }
+            controller.onStructureFormed();
+            helper.assertTrue(controller.isFormed(), "brick_kiln must form from the decoded structure");
+            helper.succeed();
+        });
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
@@ -1705,11 +1815,674 @@ public final class GTNAMachineGameTests {
         return metaMachineAt(helper, controllerPos) instanceof UniversalFactoryMachine machine ? machine : null;
     }
 
+    /** Repeated requests and concurrent recipe types must consume only their encoded patterns. */
+    @GameTest(template = TEMPLATE, timeoutTicks = 200)
+    public static void universalFactoryProcessesRepeatedPatternFromAnotherMode(GameTestHelper helper) {
+        if (GTNAMachines.UNIVERSAL_FACTORY == null || GTNAMachines2.ME_PATTERN_BUFFER == null) {
+            helper.fail("universal_factory and me_pattern_buffer must be enabled");
+            return;
+        }
+        injectCircuitAssemblerRecipe();
+        BlockPos controllerPos = new BlockPos(8, 8, 8);
+        clearArea(helper, controllerPos);
+        UniversalFactoryMachine controller = buildUniversalFactory(helper, controllerPos, true);
+        BlockPos bufferPos = controllerPos.offset(1, -1, 2);
+        helper.setBlock(bufferPos, GTNAMachines2.ME_PATTERN_BUFFER.getBlock());
+        helper.assertTrue(controller != null, "universal_factory controller must exist");
+        MultiblockState state = controller.getMultiblockState();
+        helper.assertTrue(controller.getPattern().checkPatternAt(state, false),
+                "universal_factory pattern did not match: " + patternError(helper, state, controllerPos));
+        controller.onStructureFormed();
+        helper.assertTrue(controller.isFormed(), "universal_factory must form with ME Pattern Buffer");
+        if (!(metaMachineAt(helper, bufferPos) instanceof GTNAMEPatternBufferPartMachine buffer)) {
+            helper.fail("ME Pattern Buffer is missing from the formed structure");
+            return;
+        }
+        ItemStack pattern = PatternDetailsHelper.encodeProcessingPattern(
+                new GenericStack[] { GenericStack.fromItemStack(new ItemStack(Items.COBBLESTONE)) },
+                new GenericStack[] { GenericStack.fromItemStack(new ItemStack(Items.STONE)) });
+        buffer.getPatternInventory().setStackInSlot(0, pattern);
+        var details = PatternDetailsHelper.decodePattern(pattern, helper.getLevel());
+        helper.assertTrue(details != null, "processing pattern must decode");
+
+        EnergyHatchPartMachine energyHatch = (EnergyHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(-1, 0, 2));
+        IEnergyContainer energy = energyHatch.energyContainer;
+        energy.addEnergy(Math.min(energy.getEnergyCapacity(), 1_000_000L));
+        helper.assertTrue(controller.getEnergyContainer().getEnergyStored() > 0,
+                "universal_factory must see the energy hatch");
+        ItemBusPartMachine outputBus = (ItemBusPartMachine) metaMachineAt(helper,
+                controllerPos.offset(0, -1, 2));
+
+        for (int request = 1; request <= 2; request++) {
+            KeyCounter inputs = new KeyCounter();
+            inputs.add(AEItemKey.of(Items.COBBLESTONE), 1);
+            buffer.getInternalInventory()[0].pushPattern(details, new KeyCounter[] { inputs });
+            for (int tick = 0; tick < 20; tick++) {
+                controller.getRecipeLogic().serverTick();
+            }
+            ItemStack output = outputBus.getInventory().getStackInSlot(0);
+            helper.assertTrue(output.is(Items.STONE) && output.getCount() == request,
+                    "request " + request + " must produce one stone; output=" + output +
+                            ", staged=" + buffer.getInternalInventory()[0].getItems());
+            helper.assertTrue(controller.getActiveRecipeType() == 13,
+                    "request " + request + " must switch from bender to circuit assembler; mode=" +
+                            controller.getActiveRecipeType());
+        }
+
+        injectFactoryBenderRecipe();
+        ItemStack secondPattern = PatternDetailsHelper.encodeProcessingPattern(
+                new GenericStack[] { GenericStack.fromItemStack(new ItemStack(Items.NETHER_STAR)) },
+                new GenericStack[] { GenericStack.fromItemStack(new ItemStack(Items.EMERALD)) });
+        buffer.getPatternInventory().setStackInSlot(1, secondPattern);
+        var secondDetails = PatternDetailsHelper.decodePattern(secondPattern, helper.getLevel());
+        helper.assertTrue(secondDetails != null, "second processing pattern must decode");
+        KeyCounter cobble = new KeyCounter();
+        cobble.add(AEItemKey.of(Items.COBBLESTONE), 1);
+        KeyCounter star = new KeyCounter();
+        star.add(AEItemKey.of(Items.NETHER_STAR), 1);
+        buffer.getInternalInventory()[0].pushPattern(details, new KeyCounter[] { cobble });
+        buffer.getInternalInventory()[1].pushPattern(secondDetails, new KeyCounter[] { star });
+        controller.getRecipeLogic().serverTick();
+        helper.assertTrue(controller.getRecipeLogic().getActiveRecipeCount() == 2,
+                "both distinct recipe types must start concurrently in separate threads");
+        for (int tick = 0; tick < 20; tick++) {
+            controller.getRecipeLogic().serverTick();
+        }
+        int stone = 0;
+        int emerald = 0;
+        for (int slot = 0; slot < outputBus.getInventory().getSlots(); slot++) {
+            ItemStack output = outputBus.getInventory().getStackInSlot(slot);
+            if (output.is(Items.STONE)) stone += output.getCount();
+            if (output.is(Items.EMERALD)) emerald += output.getCount();
+        }
+        helper.assertTrue(stone == 3 && emerald == 1,
+                "concurrent crafts must produce exactly 3 stone and 1 emerald; got " + stone + "/" + emerald);
+        helper.succeed();
+    }
+
+    /** Three queued AE2 crafts must remain valid when the machine scales one recipe in parallel. */
+    @GameTest(template = TEMPLATE, timeoutTicks = 300)
+    public static void universalFactoryProcessesAccumulatedLaminatedGlass(GameTestHelper helper) {
+        if (GTNAMachines.UNIVERSAL_FACTORY == null || GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER == null) {
+            helper.fail("universal_factory and advanced ME Pattern Buffer must be enabled");
+            return;
+        }
+        BlockPos controllerPos = new BlockPos(8, 8, 8);
+        clearArea(helper, controllerPos);
+        UniversalFactoryMachine controller = buildUniversalFactory(helper, controllerPos, true);
+        BlockPos bufferPos = controllerPos.offset(1, -1, 2);
+        helper.setBlock(bufferPos, GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER.getBlock());
+        helper.assertTrue(controller != null, "universal_factory controller must exist");
+        MultiblockState state = controller.getMultiblockState();
+        helper.assertTrue(controller.getPattern().checkPatternAt(state, false),
+                "universal_factory pattern did not match: " + patternError(helper, state, controllerPos));
+        controller.onStructureFormed();
+        if (!(metaMachineAt(helper, bufferPos) instanceof GTNAMEPatternBufferPartMachine buffer)) {
+            helper.fail("advanced ME Pattern Buffer is missing from the structure");
+            return;
+        }
+        ItemStack glass = GTBlocks.CASING_TEMPERED_GLASS.asStack(2);
+        ItemStack pvb = ChemicalHelper.get(TagPrefix.plate, GTMaterials.PolyvinylButyral);
+        ItemStack laminated = GTBlocks.CASING_LAMINATED_GLASS.asStack();
+        ItemStack pattern = PatternDetailsHelper.encodeProcessingPattern(
+                new GenericStack[] { GenericStack.fromItemStack(glass), GenericStack.fromItemStack(pvb) },
+                new GenericStack[] { GenericStack.fromItemStack(laminated) });
+        buffer.getPatternInventory().setStackInSlot(0, pattern);
+        var details = PatternDetailsHelper.decodePattern(pattern, helper.getLevel());
+        helper.assertTrue(details != null, "laminated glass pattern must decode");
+        buffer.getSlotConfigs()[0].setCachedRecipeId("gtceu:forming_press/laminated_glass");
+
+        EnergyHatchPartMachine energyHatch = (EnergyHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(-1, 0, 2));
+        energyHatch.energyContainer.addEnergy(energyHatch.energyContainer.getEnergyCapacity());
+        helper.assertTrue(controller.getEnergyContainer().getEnergyStored() > 0,
+                "universal_factory must see the energy hatch");
+        ItemBusPartMachine outputBus = (ItemBusPartMachine) metaMachineAt(helper,
+                controllerPos.offset(0, -1, 2));
+
+        for (int request = 0; request < 3; request++) {
+            KeyCounter inputs = new KeyCounter();
+            inputs.add(AEItemKey.of(glass), 2);
+            inputs.add(AEItemKey.of(pvb), 1);
+            buffer.getInternalInventory()[0].pushPattern(details, new KeyCounter[] { inputs });
+        }
+        helper.assertTrue(buffer.getInternalInventory()[0].getItems().stream()
+                .mapToInt(ItemStack::getCount).sum() == 9,
+                "three crafts must stage 6 tempered glass and 3 PVB plates");
+        for (int tick = 0; tick < 220; tick++) {
+            // The real setup uses a creative energy hatch. Keep this finite test hatch charged so
+            // the assertion measures pattern routing and parallel execution, not its capacity.
+            energyHatch.energyContainer.addEnergy(energyHatch.energyContainer.getEnergyCapacity() -
+                    energyHatch.energyContainer.getEnergyStored());
+            controller.getRecipeLogic().serverTick();
+        }
+        int produced = 0;
+        for (int slot = 0; slot < outputBus.getInventory().getSlots(); slot++) {
+            ItemStack output = outputBus.getInventory().getStackInSlot(slot);
+            if (ItemStack.isSameItemSameTags(output, laminated)) produced += output.getCount();
+        }
+        helper.assertTrue(produced == 3,
+                "three accumulated crafts must produce 3 laminated glass, got " + produced +
+                        "; staged=" + buffer.getInternalInventory()[0].getItems() +
+                        "; mode=" + controller.getActiveRecipeType() +
+                        "; active=" + controller.getRecipeLogic().getActiveRecipeCount() +
+                        "; energy=" + controller.getEnergyContainer().getEnergyStored());
+        helper.succeed();
+    }
+
+    /** Four separate six-step crafts exercise three branches, two joins and repeated type changes. */
+    @GameTest(template = TEMPLATE, timeoutTicks = 400)
+    public static void universalFactoryProcessesLayeredPatternCrafts(GameTestHelper helper) {
+        if (GTNAMachines.UNIVERSAL_FACTORY == null || GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER == null) {
+            helper.fail("universal_factory and advanced ME Pattern Buffer must be enabled");
+            return;
+        }
+        GTRecipeType[] types = { GTRecipeTypes.BENDER_RECIPES, GTRecipeTypes.COMPRESSOR_RECIPES,
+                GTRecipeTypes.FORGE_HAMMER_RECIPES, GTRecipeTypes.LATHE_RECIPES,
+                GTRecipeTypes.CUTTER_RECIPES, GTRecipeTypes.FORMING_PRESS_RECIPES };
+        ItemStack[][] inputs = {
+                { new ItemStack(Items.DRAGON_BREATH) },
+                { new ItemStack(Items.HEART_OF_THE_SEA) },
+                { new ItemStack(Items.ECHO_SHARD) },
+                { new ItemStack(Items.BLAZE_ROD), new ItemStack(Items.ENDER_PEARL) },
+                { new ItemStack(Items.AMETHYST_SHARD) },
+                { new ItemStack(Items.DIAMOND), new ItemStack(Items.PRISMARINE_SHARD) }
+        };
+        ItemStack[] outputs = { new ItemStack(Items.BLAZE_ROD), new ItemStack(Items.ENDER_PEARL),
+                new ItemStack(Items.AMETHYST_SHARD), new ItemStack(Items.DIAMOND),
+                new ItemStack(Items.PRISMARINE_SHARD), new ItemStack(Items.NETHERITE_INGOT) };
+        injectLayeredFactoryRecipes(types, inputs, outputs);
+
+        BlockPos controllerPos = new BlockPos(8, 8, 8);
+        clearArea(helper, controllerPos);
+        UniversalFactoryMachine controller = buildUniversalFactory(helper, controllerPos, true);
+        BlockPos bufferPos = controllerPos.offset(1, -1, 2);
+        helper.setBlock(bufferPos, GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER.getBlock());
+        helper.assertTrue(controller != null, "universal_factory controller must exist");
+        MultiblockState state = controller.getMultiblockState();
+        helper.assertTrue(controller.getPattern().checkPatternAt(state, false),
+                "universal_factory pattern did not match: " + patternError(helper, state, controllerPos));
+        controller.onStructureFormed();
+        helper.assertTrue(controller.isFormed(), "universal_factory must form with advanced buffer");
+        if (!(metaMachineAt(helper, bufferPos) instanceof GTNAMEPatternBufferPartMachine buffer)) {
+            helper.fail("advanced ME Pattern Buffer is missing from the structure");
+            return;
+        }
+        EnergyHatchPartMachine energyHatch = (EnergyHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(-1, 0, 2));
+        ItemBusPartMachine outputBus = (ItemBusPartMachine) metaMachineAt(helper,
+                controllerPos.offset(0, -1, 2));
+        for (int stage = 0; stage < types.length; stage++) {
+            GenericStack[] patternInputs = new GenericStack[inputs[stage].length];
+            for (int input = 0; input < patternInputs.length; input++) {
+                patternInputs[input] = GenericStack.fromItemStack(inputs[stage][input]);
+            }
+            ItemStack pattern = PatternDetailsHelper.encodeProcessingPattern(patternInputs,
+                    new GenericStack[] { GenericStack.fromItemStack(outputs[stage]) });
+            buffer.getPatternInventory().setStackInSlot(stage, pattern);
+        }
+
+        // Each request walks the dependency graph in order. Outputs are extracted from the real
+        // machine bus before they become the inputs of the next layer's AE2 pattern delivery.
+        for (int request = 1; request <= 4; request++) {
+            ItemStack[] produced = new ItemStack[types.length];
+            for (int stage = 0; stage < types.length; stage++) {
+                if (stage == 3) {
+                    helper.assertTrue(ItemStack.isSameItemSameTags(produced[0], inputs[stage][0]) &&
+                            ItemStack.isSameItemSameTags(produced[1], inputs[stage][1]),
+                            "request " + request + " join layer must consume both branch outputs");
+                } else if (stage == 4) {
+                    helper.assertTrue(ItemStack.isSameItemSameTags(produced[2], inputs[stage][0]),
+                            "request " + request + " cutter layer must consume hammer output");
+                } else if (stage == 5) {
+                    helper.assertTrue(ItemStack.isSameItemSameTags(produced[3], inputs[stage][0]) &&
+                            ItemStack.isSameItemSameTags(produced[4], inputs[stage][1]),
+                            "request " + request + " final layer must consume both subassemblies");
+                }
+                var details = PatternDetailsHelper.decodePattern(buffer.getPatternInventory().getStackInSlot(stage),
+                        helper.getLevel());
+                helper.assertTrue(details != null, "pattern must decode at stage " + stage);
+                ItemStack[] stepInputs = switch (stage) {
+                    case 3 -> new ItemStack[] { produced[0], produced[1] };
+                    case 4 -> new ItemStack[] { produced[2] };
+                    case 5 -> new ItemStack[] { produced[3], produced[4] };
+                    default -> inputs[stage];
+                };
+                KeyCounter delivered = new KeyCounter();
+                for (ItemStack input : stepInputs) {
+                    delivered.add(AEItemKey.of(input), input.getCount());
+                }
+                buffer.getInternalInventory()[stage].pushPattern(details, new KeyCounter[] { delivered });
+                for (int tick = 0; tick < 20; tick++) {
+                    energyHatch.energyContainer.addEnergy(energyHatch.energyContainer.getEnergyCapacity() -
+                            energyHatch.energyContainer.getEnergyStored());
+                    controller.getRecipeLogic().serverTick();
+                }
+                int expectedMode = -1;
+                for (int mode = 0; mode < controller.getDefinition().getRecipeTypes().length; mode++) {
+                    if (controller.getDefinition().getRecipeTypes()[mode] == types[stage]) expectedMode = mode;
+                }
+                helper.assertTrue(controller.getActiveRecipeType() == expectedMode,
+                        "request " + request + " stage " + stage + " must switch to " + types[stage] +
+                                "; mode=" + controller.getActiveRecipeType());
+                for (int slot = 0; slot < outputBus.getInventory().getSlots(); slot++) {
+                    ItemStack stack = outputBus.getInventory().getStackInSlot(slot);
+                    if (ItemStack.isSameItemSameTags(stack, outputs[stage])) {
+                        produced[stage] = outputBus.getInventory().extractItem(slot, 1, false);
+                        break;
+                    }
+                }
+                helper.assertTrue(produced[stage] != null && produced[stage].getCount() == 1,
+                        "request " + request + " stage " + stage + " did not yield " + outputs[stage] +
+                                "; staged=" + buffer.getInternalInventory()[stage].getItems());
+                helper.assertTrue(buffer.getInternalInventory()[stage].getItems().stream().allMatch(ItemStack::isEmpty),
+                        "request " + request + " stage " + stage + " left inputs stuck in the pattern buffer: " +
+                                buffer.getInternalInventory()[stage].getItems());
+            }
+            helper.assertTrue(produced[5].is(Items.NETHERITE_INGOT),
+                    "request " + request + " must finish the full six-step craft");
+        }
+        helper.succeed();
+    }
+
+    // ------------------------------------------------------------------
+    // AE2 autocrafting QA (G-0086): a real ME network, a real crafting CPU, the advanced ME Pattern
+    // Buffer and the Universal Factory. The final order walks a three-layer tree over six recipe
+    // types; the CPU plans and dispatches every pattern and the machine returns each output.
+    // ------------------------------------------------------------------
+
+    /** Recipe types of the autocraft tree. */
+    private static final GTRecipeType[] AUTOCRAFT_TYPES = {
+            GTRecipeTypes.BENDER_RECIPES,
+            GTRecipeTypes.COMPRESSOR_RECIPES,
+            GTRecipeTypes.FORGE_HAMMER_RECIPES,
+            GTRecipeTypes.LATHE_RECIPES,
+            GTRecipeTypes.CUTTER_RECIPES,
+            GTRecipeTypes.FORMING_PRESS_RECIPES
+    };
+
+    /**
+     * Inputs of each autocraft stage. Stage 3 joins stages 0 and 1, stage 4 consumes stage 2 and
+     * stage 5 joins stages 3 and 4, so a correct plan has three layers and two joins.
+     */
+    private static final ItemStack[][] AUTOCRAFT_INPUTS = {
+            { new ItemStack(Items.MUSIC_DISC_13) },
+            { new ItemStack(Items.MUSIC_DISC_BLOCKS) },
+            { new ItemStack(Items.MUSIC_DISC_FAR) },
+            { new ItemStack(Items.MUSIC_DISC_CAT), new ItemStack(Items.MUSIC_DISC_CHIRP) },
+            { new ItemStack(Items.MUSIC_DISC_MALL) },
+            { new ItemStack(Items.MUSIC_DISC_MELLOHI), new ItemStack(Items.MUSIC_DISC_STAL) }
+    };
+
+    private static final ItemStack[] AUTOCRAFT_OUTPUTS = {
+            new ItemStack(Items.MUSIC_DISC_CAT),
+            new ItemStack(Items.MUSIC_DISC_CHIRP),
+            new ItemStack(Items.MUSIC_DISC_MALL),
+            new ItemStack(Items.MUSIC_DISC_MELLOHI),
+            new ItemStack(Items.MUSIC_DISC_STAL),
+            new ItemStack(Items.MUSIC_DISC_STRAD)
+    };
+
+    /** Raw resources the network must hold before the order can be planned. */
+    private static final ItemStack[] AUTOCRAFT_BASE_INPUTS = {
+            new ItemStack(Items.MUSIC_DISC_13),
+            new ItemStack(Items.MUSIC_DISC_BLOCKS),
+            new ItemStack(Items.MUSIC_DISC_FAR)
+    };
+
+    private static final int AUTOCRAFT_REQUESTS = 2;
+    private static final int AUTOCRAFT_RECIPE_DURATION = 20;
+
+    private static boolean autocraftFactoryRecipesInjected;
+
+    /**
+     * Injects the autocraft tree under dedicated ids so it never collides with the layered test's
+     * recipes. Music discs are used because GTCEu has no recipes for them, so the planner can only
+     * satisfy the order through the six patterns in the buffer.
+     */
+    private static void injectAutocraftFactoryRecipes() {
+        if (autocraftFactoryRecipesInjected) return;
+        autocraftFactoryRecipesInjected = true;
+        for (int stage = 0; stage < AUTOCRAFT_TYPES.length; stage++) {
+            GTRecipeType type = AUTOCRAFT_TYPES[stage];
+            type.getAdditionHandler().beginStaging();
+            type.getAdditionHandler().addStaging(type.recipeBuilder(GTNACORE.id("gametest_autocraft_factory_" + stage))
+                    .inputItems(AUTOCRAFT_INPUTS[stage])
+                    .outputItems(AUTOCRAFT_OUTPUTS[stage])
+                    // LuV-tier EU so the LuV test hatch cannot overclock the recipe to one tick: the
+                    // GameTest must observe every recipe-type switch, not a blur.
+                    .EUt(GTValues.VA[GTValues.LuV])
+                    .duration(AUTOCRAFT_RECIPE_DURATION)
+                    .buildRawRecipe());
+            type.getAdditionHandler().completeStaging();
+        }
+    }
+
+    /**
+     * End-to-end AE2 autocrafting QA. Builds a real ME network (creative energy cell, drive with a
+     * 1K cell, native crafting CPU) beside the Universal Factory's advanced pattern buffer, then
+     * asks the CPU for the final item twice, one order at a time. Every pattern must be planned,
+     * dispatched, consumed and returned to the network, with the controller switching through all
+     * six recipe types on each order.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 2400)
+    public static void universalFactoryAutocraftsThroughAe2Network(GameTestHelper helper) {
+        if (GTNAMachines.UNIVERSAL_FACTORY == null || GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER == null) {
+            helper.fail("universal_factory and advanced ME Pattern Buffer must be enabled");
+            return;
+        }
+        injectAutocraftFactoryRecipes();
+
+        BlockPos controllerPos = new BlockPos(4, 4, 4);
+        wipeBox(helper, new BlockPos(0, 0, 0), new BlockPos(15, 10, 10));
+        UniversalFactoryMachine controller = buildUniversalFactory(helper, controllerPos, true);
+        BlockPos bufferPos = controllerPos.offset(1, -1, 2);
+        BlockState bufferState = GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER.getBlock().defaultBlockState()
+                .setValue(BlockStateProperties.FACING, Direction.EAST);
+        helper.setBlock(bufferPos, bufferState);
+        helper.assertTrue(controller != null, "universal_factory controller must exist");
+        MultiblockState state = controller.getMultiblockState();
+        helper.assertTrue(controller.getPattern().checkPatternAt(state, false),
+                "universal_factory pattern did not match: " + patternError(helper, state, controllerPos));
+        controller.onStructureFormed();
+        helper.assertTrue(controller.isFormed(), "universal_factory must form with the advanced buffer");
+        if (!(metaMachineAt(helper, bufferPos) instanceof GTNAMEPatternBufferPartMachine buffer)) {
+            helper.fail("advanced ME Pattern Buffer is missing from the structure");
+            return;
+        }
+        for (int stage = 0; stage < AUTOCRAFT_TYPES.length; stage++) {
+            GenericStack[] patternInputs = new GenericStack[AUTOCRAFT_INPUTS[stage].length];
+            for (int input = 0; input < patternInputs.length; input++) {
+                patternInputs[input] = GenericStack.fromItemStack(AUTOCRAFT_INPUTS[stage][input]);
+            }
+            ItemStack pattern = PatternDetailsHelper.encodeProcessingPattern(patternInputs,
+                    new GenericStack[] { GenericStack.fromItemStack(AUTOCRAFT_OUTPUTS[stage]) });
+            buffer.getTerminalPatternInventory().setItemDirect(stage, pattern);
+        }
+
+        // Real AE2 network: the buffer exposes only its front (EAST) face, so the network starts there.
+        BlockPos energyPos = bufferPos.east();
+        BlockPos drivePos = energyPos.east();
+        BlockPos cpuUnitPos = drivePos.east();
+        helper.setBlock(energyPos, AEBlocks.CREATIVE_ENERGY_CELL.block());
+        helper.setBlock(drivePos, AEBlocks.DRIVE.block());
+        helper.setBlock(cpuUnitPos, AEBlocks.CRAFTING_UNIT.block());
+        helper.setBlock(cpuUnitPos.east(), AEBlocks.CRAFTING_STORAGE_1K.block());
+        if (helper.getBlockEntity(drivePos) instanceof DriveBlockEntity drive) {
+            drive.getInternalInventory().setItemDirect(0, AEItems.ITEM_CELL_1K.stack());
+        }
+
+        EnergyHatchPartMachine energyHatch = (EnergyHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(-1, 0, 2));
+        new Ae2AutocraftRun(helper, controller, buffer, energyHatch).start();
+    }
+
+    /** Wipes an inclusive block box, so the test does not depend on a pristine template. */
+    private static void wipeBox(GameTestHelper helper, BlockPos min, BlockPos max) {
+        for (int x = min.getX(); x <= max.getX(); x++) {
+            for (int y = min.getY(); y <= max.getY(); y++) {
+                for (int z = min.getZ(); z <= max.getZ(); z++) {
+                    helper.setBlock(new BlockPos(x, y, z), Blocks.AIR);
+                }
+            }
+        }
+    }
+
+    private static CraftingCPUCluster findCraftingCluster(IGrid grid) {
+        for (var cpu : grid.getCraftingService().getCpus()) {
+            if (cpu instanceof CraftingCPUCluster cluster) {
+                return cluster;
+            }
+        }
+        return null;
+    }
+
+    private static long countStored(IGrid grid, AEItemKey key) {
+        KeyCounter counter = new KeyCounter();
+        grid.getStorageService().getInventory().getAvailableStacks(counter);
+        return counter.get(key);
+    }
+
+    /**
+     * Tick-driven state machine for the AE2 autocrafting test. The GameTest method must return
+     * quickly, so the wait for the grid, the plan future and the crafting jobs all advance here.
+     */
+    private static final class Ae2AutocraftRun {
+
+        private final GameTestHelper helper;
+        private final UniversalFactoryMachine controller;
+        private final GTNAMEPatternBufferPartMachine buffer;
+        private final EnergyHatchPartMachine energyHatch;
+        private final AEItemKey finalKey = AEItemKey.of(AUTOCRAFT_OUTPUTS[AUTOCRAFT_OUTPUTS.length - 1]);
+
+        private IGrid grid;
+        private CraftingCPUCluster cluster;
+        private Future<ICraftingPlan> planFuture;
+        private boolean ready;
+        private int request;
+        private boolean submitted;
+        private boolean finished;
+        private long requestStartTick;
+        private final int[] pushedAtStart = new int[AUTOCRAFT_TYPES.length];
+
+        Ae2AutocraftRun(GameTestHelper helper, UniversalFactoryMachine controller,
+                        GTNAMEPatternBufferPartMachine buffer, EnergyHatchPartMachine energyHatch) {
+            this.helper = helper;
+            this.controller = controller;
+            this.buffer = buffer;
+            this.energyHatch = energyHatch;
+        }
+
+        void start() {
+            helper.onEachTick(this::tick);
+        }
+
+        private void tick() {
+            if (finished) return;
+            try {
+                doTick();
+            } catch (Throwable failure) {
+                finished = true;
+                helper.fail("autocraft state machine threw: " + failure);
+            }
+        }
+
+        private void doTick() {
+            // The finite test energy hatch must not be the bottleneck; keep it charged like the
+            // creative hatch the author uses in game.
+            if (energyHatch != null) {
+                var container = energyHatch.energyContainer;
+                container.addEnergy(container.getEnergyCapacity() - container.getEnergyStored());
+            }
+            if (!ready) {
+                if (grid == null) {
+                    grid = buffer.getGrid();
+                    if (grid == null) {
+                        if (helper.getTick() > 120) {
+                            finished = true;
+                            helper.fail("AE2 grid never formed: bufferNode=" + buffer.getMainNode().getNode() +
+                                    " bufferOnline=" + buffer.getMainNode().isOnline() +
+                                    " bufferActive=" + buffer.getMainNode().isActive());
+                        }
+                        return;
+                    }
+                }
+                if (cluster == null) {
+                    cluster = findCraftingCluster(grid);
+                    if (cluster == null) {
+                        if (helper.getTick() > 240) {
+                            finished = true;
+                            helper.fail("AE2 grid formed but no crafting CPU was found: craftingBlocks=" +
+                                    grid.getMachines(CraftingBlockEntity.class).size() + " cpus=" +
+                                    grid.getCraftingService().getCpus().size());
+                        }
+                        return;
+                    }
+                }
+                if (!grid.getCraftingService().isCraftable(finalKey)) {
+                    if (helper.getTick() > 360) {
+                        finished = true;
+                        helper.fail("AE2 CPU is present but the buffer patterns are not craftable: patterns=" +
+                                buffer.getAvailablePatterns().size() + " cpus=" +
+                                grid.getCraftingService().getCpus().size());
+                    }
+                    return;
+                }
+                ready = true;
+                beginRequest();
+                return;
+            }
+            if (planFuture != null) {
+                if (!planFuture.isDone()) {
+                    if (helper.getTick() - requestStartTick > 200) {
+                        finished = true;
+                        helper.fail("request " + request + " planning never completed (future=" +
+                                planFuture + ")");
+                    }
+                    return;
+                }
+                submitPlan();
+                return;
+            }
+            if (!submitted) return;
+            if (cluster.craftingLogic.hasJob()) {
+                if (helper.getTick() - requestStartTick > 800) {
+                    finished = true;
+                    helper.fail("request " + request + " stalled after " +
+                            (helper.getTick() - requestStartTick) + " ticks: buffer=" + dumpBuffer() +
+                            " mode=" + controller.getActiveRecipeType() + " pushes=" + pushedSummary());
+                }
+                return;
+            }
+            finishRequest();
+        }
+
+        private void beginRequest() {
+            request++;
+            requestStartTick = helper.getTick();
+            submitted = false;
+            planFuture = null;
+            buffer.gtna$clearStartedRecipeTypes();
+            for (int slot = 0; slot < pushedAtStart.length; slot++) {
+                pushedAtStart[slot] = buffer.gtna$getPushedPatternCount(slot);
+            }
+            IActionSource source = new BaseActionSource();
+            var storage = grid.getStorageService().getInventory();
+            var energy = grid.getEnergyService();
+            for (ItemStack input : AUTOCRAFT_BASE_INPUTS) {
+                AEItemKey key = AEItemKey.of(input);
+                long inserted = StorageHelper.poweredInsert(energy, storage, key, input.getCount(), source);
+                helper.assertTrue(inserted == input.getCount(),
+                        "request " + request + " base input " + input + " must enter the network, inserted " +
+                                inserted);
+            }
+            ICraftingSimulationRequester requester = new ICraftingSimulationRequester() {
+
+                @Override
+                public IActionSource getActionSource() {
+                    return source;
+                }
+
+                @Override
+                public IGridNode getGridNode() {
+                    return buffer.getMainNode().getNode();
+                }
+            };
+            planFuture = grid.getCraftingService().beginCraftingCalculation(
+                    helper.getLevel(), requester, finalKey, 1, CalculationStrategy.REPORT_MISSING_ITEMS);
+        }
+
+        private void submitPlan() {
+            ICraftingPlan plan;
+            try {
+                plan = planFuture.get(0, TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                finished = true;
+                helper.fail("request " + request + " planning failed: " + e);
+                return;
+            }
+            planFuture = null;
+            helper.assertTrue(plan.patternTimes().size() == AUTOCRAFT_TYPES.length,
+                    "request " + request + " plan must use all " + AUTOCRAFT_TYPES.length + " patterns, got " +
+                            plan.patternTimes().size() + " simulation=" + plan.simulation() + " final=" +
+                            plan.finalOutput() + " missing=" + dumpCounter(plan.missingItems()) + " used=" +
+                            dumpCounter(plan.usedItems()) + " craftingForFinal=" +
+                            grid.getCraftingService().getCraftingFor(finalKey).size() + " bufferPatterns=" +
+                            buffer.getAvailablePatterns().size());
+            IActionSource source = new BaseActionSource();
+            ICraftingSubmitResult result = grid.getCraftingService().submitJob(plan, null, cluster, false, source);
+            helper.assertTrue(result.successful(),
+                    "request " + request + " job must submit, error=" + result.errorCode());
+            submitted = true;
+        }
+
+        private void finishRequest() {
+            long returned = countStored(grid, finalKey);
+            helper.assertTrue(returned >= 1,
+                    "request " + request + " must return " + finalKey + " to the network, got " + returned +
+                            "; buffer=" + dumpBuffer());
+            for (int stage = 0; stage < AUTOCRAFT_TYPES.length; stage++) {
+                helper.assertTrue(buffer.gtna$getPushedPatternCount(stage) > pushedAtStart[stage],
+                        "request " + request + " pattern slot " + stage + " was never dispatched by AE2");
+                helper.assertTrue(buffer.getInternalInventory()[stage].getItems().stream().allMatch(ItemStack::isEmpty),
+                        "request " + request + " left inputs stuck in slot " + stage + ": " +
+                                buffer.getInternalInventory()[stage].getItems());
+            }
+            Set<GTRecipeType> started = buffer.gtna$getStartedRecipeTypes();
+            for (GTRecipeType type : AUTOCRAFT_TYPES) {
+                helper.assertTrue(started.contains(type),
+                        "request " + request + " must run a " + type + " recipe, saw " + started +
+                                " (elapsed " + (helper.getTick() - requestStartTick) + " ticks)");
+            }
+            if (request >= AUTOCRAFT_REQUESTS) {
+                finished = true;
+                helper.succeed();
+                return;
+            }
+            // Remove the crafted result so the next order must be planned and crafted again.
+            IActionSource source = new BaseActionSource();
+            long extracted = StorageHelper.poweredExtraction(grid.getEnergyService(),
+                    grid.getStorageService().getInventory(), finalKey, 64, source);
+            helper.assertTrue(extracted >= 1,
+                    "the crafted " + finalKey + " must be extractable before the next order, got " + extracted);
+            beginRequest();
+        }
+
+        private String dumpBuffer() {
+            StringBuilder out = new StringBuilder();
+            for (int slot = 0; slot < AUTOCRAFT_TYPES.length; slot++) {
+                out.append(slot).append('=').append(buffer.getInternalInventory()[slot].getItems()).append(' ');
+            }
+            return out.toString();
+        }
+
+        private String pushedSummary() {
+            StringBuilder out = new StringBuilder("[");
+            for (int slot = 0; slot < AUTOCRAFT_TYPES.length; slot++) {
+                if (slot > 0) out.append(',');
+                out.append(buffer.gtna$getPushedPatternCount(slot) - pushedAtStart[slot]);
+            }
+            return out.append(']').toString();
+        }
+
+        private static String dumpCounter(KeyCounter counter) {
+            StringBuilder out = new StringBuilder("{");
+            boolean first = true;
+            for (var entry : counter) {
+                if (!first) out.append(',');
+                first = false;
+                out.append(entry.getKey()).append('=').append(entry.getLongValue());
+            }
+            return out.append('}').toString();
+        }
+    }
+
     /**
      * Negative test (Horizon-QA style): the Universal Factory must <b>not</b> match without the
      * mandatory maintenance hatch.
      */
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    @GameTest(template = TEMPLATE, timeoutTicks = 45)
     public static void universalFactoryDoesNotFormWithoutMaintenance(GameTestHelper helper) {
         if (GTNAMachines.UNIVERSAL_FACTORY == null) {
             helper.fail("universal_factory is disabled by config");
@@ -1724,7 +2497,8 @@ public final class GTNAMachineGameTests {
         }
         helper.assertFalse(controller.getPattern().checkPatternAt(controller.getMultiblockState(), false),
                 "universal_factory must not match without its mandatory maintenance hatch");
-        helper.succeed();
+        GTNAGameTestUtils.assertNeverForms(helper, controller, 40,
+                "universal_factory must remain unformed without maintenance");
     }
 
     /**
@@ -2164,6 +2938,39 @@ public final class GTNAMachineGameTests {
     }
 
     private static boolean circuitAssemblerRecipeInjected;
+    private static boolean factoryBenderRecipeInjected;
+    private static boolean layeredFactoryRecipesInjected;
+
+    private static void injectLayeredFactoryRecipes(GTRecipeType[] types, ItemStack[][] inputs,
+                                                    ItemStack[] outputs) {
+        if (layeredFactoryRecipesInjected) return;
+        layeredFactoryRecipesInjected = true;
+        for (int stage = 0; stage < types.length; stage++) {
+            GTRecipeType type = types[stage];
+            type.getAdditionHandler().beginStaging();
+            type.getAdditionHandler().addStaging(type.recipeBuilder(GTNACORE.id("gametest_layered_factory_" + stage))
+                    .inputItems(inputs[stage])
+                    .outputItems(outputs[stage])
+                    .EUt(GTValues.VA[GTValues.LV])
+                    .duration(3)
+                    .buildRawRecipe());
+            type.getAdditionHandler().completeStaging();
+        }
+    }
+
+    private static void injectFactoryBenderRecipe() {
+        if (factoryBenderRecipeInjected) return;
+        factoryBenderRecipeInjected = true;
+        GTRecipeType type = GTRecipeTypes.BENDER_RECIPES;
+        type.getAdditionHandler().beginStaging();
+        type.getAdditionHandler().addStaging(type.recipeBuilder(GTNACORE.id("gametest_factory_bender_recipe"))
+                .inputItems(new ItemStack(Items.NETHER_STAR))
+                .outputItems(new ItemStack(Items.EMERALD))
+                .EUt(GTValues.VA[GTValues.LV])
+                .duration(3)
+                .buildRawRecipe());
+        type.getAdditionHandler().completeStaging();
+    }
 
     /**
      * Adds a trivial cobblestone to stone recipe to the circuit assembler type, so the mirror test

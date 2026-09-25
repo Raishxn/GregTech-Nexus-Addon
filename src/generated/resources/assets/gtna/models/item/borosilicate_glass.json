@@ -1,3 +1,6 @@
 {
-  "parent": "gtna:block/borosilicate_glass"
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "gtna:block/casings/borosilicate_glass_inventory"
+  }
 }
