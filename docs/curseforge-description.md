@@ -1,4 +1,4 @@
-# CurseForge listing — GregTech Nexus Addon 0.5.0
+# CurseForge listing — GregTech Nexus Addon 0.5.1
 
 ## Summary
 

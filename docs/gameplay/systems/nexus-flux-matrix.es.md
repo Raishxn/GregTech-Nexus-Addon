@@ -14,7 +14,7 @@ El **Nexus Flux Matrix** es un multibloque de almacenamiento masivo de energia E
 | **Eficiencia** | 85% (LV) a 100% (MAX) |
 | **Transferencia Max** | 500 ZEU/t |
 | **Cross-Dimension** | Si (ZPM+) |
-| **Modo Seguro** | Auto en <10%, reactiva en 25% |
+| **Salida de energía** | Disponible hasta agotar la carga almacenada |
 
 ## Bloques Capacitores (14 tiers)
 | Tier | Capacidad/Bloque | Nombre |
@@ -34,13 +34,9 @@ El **Nexus Flux Matrix** es un multibloque de almacenamiento masivo de energia E
 | OpV | 250P EU | Omniscient |
 | MAX | 5E EU | Omni |
 
-## Sistema de Seguridad
-| Nivel | Accion |
-|:---:|------|
-| 75% | Aviso en chat |
-| 50% | Aviso en chat |
-| 25% | Aviso urgente |
-| <10% | **Modo Seguro**: corta output, sigue aceptando input |
-| 25%+ | Modo Seguro desactivado, output restaurado |
+## Carga baja
+
+La Matrix sigue suministrando energía mientras tenga carga suficiente para la solicitud.
+Cuando la carga no alcanza, la extracción falla normalmente; no hay corte por porcentaje.
 
 Ver [PRD #5](../../prd/prd_05_nexus_flux_matrix.md) para detalles tecnicos completos.

@@ -65,6 +65,55 @@ public class MaterialBuilder {
                         GENERATE_DOUBLE_PLATE, GENERATE_TRIPLE_PLATE)
                 .buildAndRegister().setFormula("Al(CuSn)3");
 
+        EglinSteel = new Material.Builder(GTNACORE.id("eglin_steel"))
+                .ingot().fluid()
+                .blastTemp(1048, LOW)
+                .components(Iron, 4, Kanthal, 1, Invar, 5, Sulfur, 1, Silicon, 1, Carbon, 1)
+                .color(0x4e270b)
+                .iconSet(METALLIC)
+                .flags(GENERATE_PLATE, GENERATE_GEAR, DISABLE_DECOMPOSITION)
+                .buildAndRegister();
+
+        RawBrine = new Material.Builder(GTNACORE.id("raw_brine"))
+                .fluid()
+                .color(0x9f6b26)
+                .buildAndRegister();
+
+        HotBrine = new Material.Builder(GTNACORE.id("hot_brine"))
+                .liquid(320).color(0xbe6026).buildAndRegister();
+        HotDebrominatedBrine = new Material.Builder(GTNACORE.id("hot_debrominated_brine"))
+                .liquid(320).color(0xab896d).buildAndRegister();
+        HotChlorinatedBrominatedBrine = new Material.Builder(GTNACORE.id("hot_chlorinated_brominated_brine"))
+                .liquid(320).color(0xab765d)
+                .components(HotBrine, 1, Chlorine, 1)
+                .flags(DISABLE_DECOMPOSITION).buildAndRegister();
+        HotAlkalineDebrominatedBrine = new Material.Builder(GTNACORE.id("hot_alkaline_debrominated_brine"))
+                .liquid(320).color(0xbe8938)
+                .components(HotDebrominatedBrine, 2, Chlorine, 1)
+                .flags(DISABLE_DECOMPOSITION).buildAndRegister();
+        DebrominatedBrine = new Material.Builder(GTNACORE.id("debrominated_brine"))
+                .liquid().color(0xab8c6d).buildAndRegister();
+        BrominatedChlorineVapor = new Material.Builder(GTNACORE.id("brominated_chlorine_vapor"))
+                .gas().color(0xbb9b72)
+                .components(Chlorine, 1, Bromine, 1, Steam, 1)
+                .flags(DISABLE_DECOMPOSITION).buildAndRegister();
+        AcidicBromineSolution = new Material.Builder(GTNACORE.id("acidic_bromine_solution"))
+                .liquid().color(0xc49b52)
+                .components(Chlorine, 1, Bromine, 1)
+                .flags(DISABLE_DECOMPOSITION).buildAndRegister();
+        ConcentratedBromineSolution = new Material.Builder(GTNACORE.id("concentrated_bromine_solution"))
+                .liquid().color(0x91481e)
+                .components(Bromine, 2, Chlorine, 1)
+                .flags(DISABLE_DECOMPOSITION).buildAndRegister();
+        AcidicBromineExhaust = new Material.Builder(GTNACORE.id("acidic_bromine_exhaust"))
+                .gas().color(0x8f681e)
+                .components(Steam, 3, Chlorine, 1)
+                .buildAndRegister();
+        HydrogenIodide = new Material.Builder(GTNACORE.id("hydrogen_iodide"))
+                .gas().color(0x8187a6)
+                .components(Hydrogen, 1, Iodine, 1)
+                .flags(DISABLE_DECOMPOSITION).buildAndRegister();
+
         DarkSteel = new Material.Builder(GTNACORE.id("dark_steel"))
                 .ingot().fluid()
                 .color(0x414751)

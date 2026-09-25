@@ -11,6 +11,18 @@ public class GTNAMaterials {
     public static Material Breel;
     public static Material HastelloyN;
     public static Material AluminiumBronze;
+    public static Material EglinSteel;
+    public static Material RawBrine;
+    public static Material HotBrine;
+    public static Material HotChlorinatedBrominatedBrine;
+    public static Material HotDebrominatedBrine;
+    public static Material HotAlkalineDebrominatedBrine;
+    public static Material DebrominatedBrine;
+    public static Material BrominatedChlorineVapor;
+    public static Material AcidicBromineSolution;
+    public static Material ConcentratedBromineSolution;
+    public static Material AcidicBromineExhaust;
+    public static Material HydrogenIodide;
     public static Material DarkSteel;
     public static Material EndSteel;
     public static Material Indalloy140;

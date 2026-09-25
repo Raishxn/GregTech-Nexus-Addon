@@ -38,7 +38,6 @@ Sigue el progreso de desarrollo de GregTech Nexus Addon en tiempo real.
 - [ ] **Wireless Energy/Dynamo Hatches** - 11 amperajes, todos los tiers
 - [ ] **Nexus Linker** - Item de vinculacion de red
 - [ ] **Quantum Network Terminal** - GUI de monitoreo completo
-- [ ] **Modo Seguro** - Proteccion automatica en <10%
 
 ### Nuevos Multibloques (Planeados)
 - [ ] Forge of the Iron Crown

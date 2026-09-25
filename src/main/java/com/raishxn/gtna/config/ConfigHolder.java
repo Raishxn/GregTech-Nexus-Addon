@@ -532,21 +532,6 @@ public class ConfigHolder {
         public String maxTransferTierMAX = "500000000000000000000000";
 
         @Configurable
-        @Range(min = 1, max = 100)
-        @Comment("Threshold percentage (0-100) to activate Safe Mode.")
-        public int safeModeThreshold = 10;
-
-        @Configurable
-        @Range(min = 1, max = 100)
-        @Comment("Percentage (0-100) at which Safe Mode is deactivated.")
-        public int safeModeRecovery = 25;
-
-        @Configurable
-        @Range(min = 20, max = 72000)
-        @Comment("Cooldown in ticks between identical alerts.")
-        public int alertCooldownTicks = 1200;
-
-        @Configurable
         @Comment("If false, efficiency uses the average capacitor tier. If true, it uses the highest installed tier.")
         public boolean useHighestTierForEfficiency = false;
     }

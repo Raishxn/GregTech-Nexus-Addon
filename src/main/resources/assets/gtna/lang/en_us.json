@@ -331,8 +331,6 @@
   "config.gtna.option.voidMinerInsanelyEnergyMult": "Void Miner (Insanely) Energy",
   "config.gtna.option.baseLossPercent": "Base Loss Percent",
   "config.gtna.option.maxTransferTierMAX": "MAX Tier Transfer Limit",
-  "config.gtna.option.safeModeThreshold": "Safe Mode Threshold",
-  "config.gtna.option.safeModeRecovery": "Safe Mode Recovery",
   "config.gtna.option.alertCooldownTicks": "Alert Cooldown",
   "config.gtna.option.useHighestTierForEfficiency": "Use Highest Tier For Efficiency",
   "config.jade.plugin_gtna.multiple_recipes_provider": "Multiple Recipes Machine Info",
@@ -405,4 +403,3 @@
   "gtna.machine.me_storage.infinite_status": "Infinite Cell Components: %s/64 - %s",
   "gtna.machine.me_storage.infinite_cell_slot": "Infinite Cell Component Slot"
 }
-

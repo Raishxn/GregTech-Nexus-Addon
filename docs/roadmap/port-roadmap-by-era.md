@@ -7,7 +7,7 @@ Ordem: **Steam → ULV → LV → MV → HV → EV → IV → LuV → ZPM → UV
 
 Legenda: ✅ já no GTNA · 🎯 candidato · 🔁 reimplementar (fonte GPL) · ⛔ fora de escopo
 
-Fontes: **GTNL** (1.20.1, GPL-3.0 — estruturas liberadas com atribuição), **GTOCore** (1.20.1,
+Fontes: **GTNL** (1.7.10/GTNH, GPL-3.0 — estruturas liberadas com atribuição), **GTOCore** (1.20.1,
 LGPLv3 — código/render portável), **TST** (1.7.10, GPL-3.0 — só mecânica).
 
 ---
@@ -140,12 +140,16 @@ LGPLv3 — código/render portável), **TST** (1.7.10, GPL-3.0 — só mecânica
   `advanced_integrated_ore_processor`.
 
 ### Lacuna 🎯 (confirmada pelas quests do GTO — ver `era-mapping-gto-quests.md`)
-- Multiblocos GTOCore de **LV**: `liquefaction_furnace` (portado, G-0063 ✅), `lava_furnace`,
-  `generator_array`, `tree_growth_simulator`, `thermal_power_pump` (portado, G-0062 ✅),
+- Multiblocos GTOCore de **LV**: `liquefaction_furnace` (portado, G-0063 ✅),
+  `generator_array` (portado, G-0089 ✅), `thermal_power_pump` (portado, G-0062 ✅),
   `gas_compressor` (fora por ora, decisão do autor).
-- Próximo passo: **`lava_furnace`** ou **`generator_array`**, e então subir para o MV
-  (`reaction_furnace`, `greenhouse`, `crystallization_chamber`, `component_assembler`,
-  `processing_plant`).
+- `lava_furnace` está **fora de escopo por decisão do autor** (G-0064): o GTNA já tem um equivalente.
+- Seleção do autor em 2026-09-25: `greenhouse` foi portada (G-0090 ✅); manter
+  `component_assembler` e avançar pelos
+  candidatos viáveis até LuV. Excluir `tree_growth_simulator` (GTNA já tem equivalente),
+  `reaction_furnace`, `crystallization_chamber`, `polymerization_reactor` (receitas exclusivas do
+  GTO) e `processing_plant` (redundante com `universal_factory`). `large_gas_turbine` já existe no
+  GTCEu e não deve ter controlador duplicado.
 - **Mecânica de sub-pattern** (módulo/extensão, G-0063) já disponível para o EBF e os demais
   multiblocos futuros.
 

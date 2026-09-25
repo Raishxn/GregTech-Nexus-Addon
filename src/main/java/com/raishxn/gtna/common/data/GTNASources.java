@@ -67,6 +67,10 @@ public final class GTNASources {
             Map.entry("brick_kiln", GTO),
             Map.entry("thermal_power_pump", GTO),
             Map.entry("liquefaction_furnace", GTO),
+            Map.entry("generator_array", GTO),
+            Map.entry("fishing_ground", GTO),
+            Map.entry("evaporation_plant", GTO),
+            Map.entry("greenhouse", GTO),
             // --- GT: Not Leisure ---
             Map.entry("large_steam_crusher", GTNL),
             Map.entry("large_steam_furnace", GTNL),

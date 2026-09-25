@@ -54,6 +54,12 @@ public class GTNABlocks {
     public static final BlockEntry<Block> BRASS_REINFORCED_WOODEN_CASING = createCasingBlock(
             "brass_reinforced_wooden_casing",
             GTNACORE.id("block/casings/brass_reinforced_wooden_casing"));
+    public static final BlockEntry<Block> ALUMINIUM_BRONZE_CASING = createCasingBlock(
+            "aluminium_bronze_casing",
+            GTNACORE.id("block/casings/aluminium_bronze_casing"));
+    public static final BlockEntry<Block> STAINLESS_EVAPORATION_CASING = createCasingBlock(
+            "stainless_evaporation_casing",
+            GTNACORE.id("block/casings/stainless_evaporation_casing"));
     public static final BlockEntry<Block> STEEL_REINFORCED_WOOD = createCasingBlock("steel_reinforced_wood");
     public static final BlockEntry<Block> IRON_REINFORCED_WOOD = createCasingBlock("iron_reinforced_wood");
     public static final BlockEntry<Block> SOLAR_BOILING_CELL = createSolarCasingBlock("solar_boiling_cell");

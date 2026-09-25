@@ -105,6 +105,26 @@ public class GTNARecipeType {
                     FormattingUtil.formatTemperature(data.getInt("ebf_temp"))))
             .setSound(GTSoundEntries.ARC);
 
+    /** GTOCore Fishing Ground: fish seed + bait to fish, with circuit controlled loot modes. */
+    public static final GTRecipeType FISHING_GROUND_RECIPES = register("fishing_ground", "fishing_ground")
+            .setMaxIOSize(2, 2, 0, 0)
+            .setEUIO(IO.IN)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.MINER);
+
+    public static final GTRecipeType EVAPORATION_RECIPES = register("evaporation", "evaporation")
+            .setMaxIOSize(0, 0, 1, 1)
+            .setEUIO(IO.IN)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.MOTOR);
+
+    /** GTOCore Greenhouse: seed/crop catalyst, optional fertilizer and water. */
+    public static final GTRecipeType GREENHOUSE_RECIPES = register("greenhouse", "greenhouse")
+            .setMaxIOSize(3, 1, 1, 0)
+            .setEUIO(IO.IN)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.COOLING);
+
     public static final String HIGH_PRESSURE_REACTOR = "high_pressure_reactor";
     public static final GTRecipeType HIGH_PRESSURE_REACTOR_RECIPES = register("high_pressure_reactor",
             HIGH_PRESSURE_REACTOR)

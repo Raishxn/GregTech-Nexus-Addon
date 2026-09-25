@@ -25,22 +25,29 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
-> ⚠️ **PENDENTE DO FEEDBACK IN-GAME:** comparar o print/lista de blocos do módulo do EBF enviado pelo
-> autor com a geometria e orientação do gametest `ebfModuleForms`. O liquefaction agora verifica o
-> módulo a cada 5 ticks quando formado; confirmar a latência e o botão no client. Conferir
-> visualmente o arco-íris e a tradução do tooltip do EBF, o destaque do bloco errado e o módulo
-> KubeJS do Integrated Ore Processor na interface. Conferir a formação e a posição dos 320 cores
-> do Nexus ME Hypercore na geometria 44×22×44 do `packet.txt`.
+> **Feedback in-game do autor em 2026-09-25:** os módulos estão funcionando e a geometria do Nexus
+> ME Hypercore também. Permanecem os checks visuais específicos do checklist manual que não foram
+> confirmados individualmente, como tooltip, destaque de bloco e interface KubeJS.
 
-> ⚠️ **LEIA PRIMEIRO:** `docs/roadmap/NEXT-SESSION-HANDOFF.md` — handoff da sessão de 2026-09-21
+> **PORTS ATUAIS:** leia primeiro `docs/roadmap/NEXT-SESSION-PORTS-2026-09-25.md` para decisões,
+> estado verificado e próximo passo dos multiblocos até LuV. O handoff anterior
+> `docs/roadmap/NEXT-SESSION-HANDOFF.md` é da sessão de 2026-09-21
 > (Steam/large steam, formato de tooltip com source, blocos faltantes como o Industrial Steam
 > Casing, convenção de orientação de estrutura e o `VaultPortHatch`). A sessão estourou o contexto
 > várias vezes; **confira no código antes de agir** e **não confie** nas estruturas das
 > `large_steam_*` antigas sem revisar contra o GTNL.
 
 - Desenvolvimento na branch `main`; o histórico anterior a G-0026 está preservado no ledger.
-- Versão `mod_version=0.5.0`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
+- Versão `mod_version=0.5.1`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
   AE2 **15.4.10**, ModDevGradle legacyforge **2.0.91**.
+- **Ports GTO em andamento (G-0089/G-0090):** Generator Array, Fishing Ground, Evaporation Plant
+  e Greenhouse foram implementados com suas estruturas, controles e receitas correspondentes. O
+  gate completo passou com **20/20 testes unitários e 57/57 GameTests** após incluir a Greenhouse.
+  Ainda falta validação in-game do autor e a
+  seleção de multiblocos até LuV permanece aberta; não tratar esta leva como concluída.
+- **QA posterior (G-0094):** Wireless Steam Hatches não anunciam mais abilities universais de
+  fluido. A Greenhouse verifica cobertura opaca acima do teto de vidro. O gate completo passou com
+  59/59 GameTests; falta reteste in-game do autor com os novos binários.
 - **Tooltips em padronização (G-0087):** auditoria das 84 tooltips feita; a linha genérica `Added by
   GregTech Nexus Addon` saiu (atribuição só com `Source:` no conteúdo portado), 5 descrições
   duplicadas corrigidas, literais hardcoded viraram chaves e o esquema GTOCore-adaptado
@@ -162,6 +169,155 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0096 (2026-09-25) — preparação da versão 0.5.1
+
+- O autor confirmou o teste in-game e autorizou commit e push na `main` como 0.5.1. A versão
+  foi atualizada em `gradle.properties`, README e título da descrição CurseForge; o changelog
+  público da versão está em `CHANGELOG.md` e o texto pronto para colar no CurseForge em
+  `docs/curseforge-changelog-0.5.1.md`. A publicação do arquivo no CurseForge fica com o autor.
+- `./gradlew spotlessCheck compileJava runUnitTests runGameTestServer runData build --offline`
+  passou. `runData` foi determinístico (`written: 0`); nova execução do servidor seguida de
+  `python3 tools/check_gametest_report.py` confirmou 59/59 GameTests e o JUnit completo.
+  `build/libs/gtna-0.5.1.jar` contém `version = "0.5.1"` no `mods.toml`; SHA-256:
+  `e852fead99da886144f7ea19fa73c8d49a6d5ac2b8384c13db5f6c7fe9f2b35c`.
+- A branch local `main` foi conferida contra `origin/main` após `git fetch` (sem divergência).
+  Permanecem os checks manuais específicos anotados em G-0092 a G-0095; o teste geral da leva
+  foi confirmado pelo autor.
+
+### G-0095 (2026-09-25) — diagnóstico da MAX Output Hatch na Evaporation Plant
+
+- Após o autor relatar que a saída não era aceita, o `run/logs/latest.log` do cliente mostrou
+  avisos de padrão e mensagens de diagnóstico às 11:54–11:55. O texto `ULV Output Hatch` é o
+  bloco de exemplo exibido para a ability `EXPORT_FLUIDS`, não uma restrição de tier.
+- Leitura **somente leitura** do mundo salvo `run/saves/New World` mostrou duas torres. Na primeira,
+  controlador `(-13,-59,-117)`, a `gtceu:max_output_hatch` estava em `(-14,-59,-117)`, célula `Y`
+  da base destinada a entrada de fluido/energia; a `gtceu:mv_input_hatch` já estava em
+  `(-12,-59,-117)`. Mover a MAX Output Hatch para um casing `X` acima da base, por exemplo
+  `(-14,-58,-117)`, é a correção da posição. Na segunda, controlador `(-8,-59,-109)`, a MAX Output
+  Hatch em `(-7,-57,-109)` já ocupava um estágio `X` válido. Essa torre não tinha nenhuma Fluid
+  Input Hatch na base; substituir um casing `Y`, por exemplo `(-9,-59,-109)`, por uma entrada de
+  fluido resolve a exigência de `IMPORT_FLUIDS`. As hatches de energia encontradas ocupam células
+  `Y` válidas. Não alterar o mundo salvo automaticamente.
+- O GameTest da Evaporation agora confirma explicitamente que uma MAX Fluid Output Hatch é
+  aceita em `X` e rejeitada em `Y`. `./gradlew spotlessCheck compileJava runUnitTests
+  runGameTestServer runData --offline` passou: 59/59 GameTests, datagen `written: 0`.
+  Nenhuma alteração de regra de produção foi necessária; sem commit ou publicação.
+
+### G-0094 (2026-09-25) — Steam Hatches restritas e luz da Greenhouse
+
+- Por pedido do autor, as Wireless Steam Input Hatches bronze/aço agora registram só `STEAM`;
+  as Wireless Steam Output Hatches bronze/aço usam a ability exclusiva
+  `GTNAPartAbility.STEAM_EXPORT_FLUIDS`. Saídas não podem declarar `STEAM`, pois seriam aceitas
+  como fonte e invalidariam a estrutura. Nenhuma das quatro anuncia `IMPORT_FLUIDS` ou
+  `EXPORT_FLUIDS`; o armazenamento interno continua filtrado para vapor. O contrato unitário e
+  o GameTest conferem os quatro registros. O predicado defensivo `nonSteamFluidInputHatches`
+  da Evaporation permanece, inclusive para outras peças que possam anunciar ambas as abilities.
+- A Evaporation Plant mantém o desenho do GTOCore: exatamente uma entrada de fluido e uma ou duas
+  entradas de energia na base `Y`; até uma saída de fluido por andar `X`. Não há exigência de tier
+  ULV para a entrada de fluido; o teste usa uma hatch HV. O tooltip `en_us`/`pt_br` explicita as
+  quantidades, a base e o tier livre. O GameTest agora prova que a entrada
+  funciona em outro casing da base e a saída em outro casing do andar. Para diagnosticar o caso
+  in-game em que não formou, ainda é necessária a posição/camada exata e saber se a peça chamada
+  “ULV input hatch” era de fluido ou energia.
+- A Greenhouse antes consultava o brilho acima do vidro e podia continuar mostrando sol após
+  tampar o teto. A estrutura usa vidro temperado GTCEu, cujo valor de bloqueio de luz não serve
+  para amostrar o interior. O centro de leitura foi alinhado com o teto de vidro; a máquina
+  inspeciona a coluna acima dele, desde o primeiro bloco onde uma cobertura pode ser colocada,
+  e aplica o escurecimento diurno. O GameTest cobre teto livre, cobertura de pedra, remoção da
+  cobertura e crescimento de cacto após a remoção. O cenário limpa terreno gerado acima do teto
+  antes de começar.
+- Validação: `./gradlew spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`
+  passou; 59/59 GameTests e datagen `written: 1` após a tradução do tooltip (execução anterior:
+  `written: 0`). Testes de integração anteriores passaram após ajustar o contrato de abilities.
+  `runClient --offline` abriu a janela Forge com o código novo e ficou aberto para QA do autor.
+  Sem commit nem publicação; formação e leitura no mundo real ainda precisam do autor.
+
+### G-0093 (2026-09-25) — Nexus Flux Matrix sem modo Safe; Evaporation Plant sem hatch de vapor
+
+- Pedido do autor após QA no cliente: remover o modo Safe da Nexus Flux Matrix. Retirada de EU
+  agora só falha quando o saldo é menor que a solicitação; nenhuma porcentagem reserva energia.
+  Estado/serialização `SafeMode`, alertas de limiar, opções YAML/JSON e indicadores da UI foram
+  removidos. Saves antigos com `SafeMode: true` são lidos sem usar esse campo; o próximo save
+  não o regrava. GameTest cobre retirada a 5%, descarga a zero e migração desse NBT legado.
+- A Evaporation Plant aceitava a **Wireless Steam Input Hatch** porque o GTNA a registra com as
+  habilidades `STEAM` e `IMPORT_FLUIDS`. O predicado de entrada de fluido aceitava todo bloco da
+  segunda habilidade; a hatch só movimenta vapor e não abastece as receitas de evaporação.
+  O predicado do controlador e do módulo auxiliar agora exclui qualquer entrada que também
+  anuncie `STEAM`. GameTest verifica rejeição da hatch de vapor padrão e da sem fio e aceitação
+  da Fluid Input Hatch HV. O tooltip informa entrada de fluido sem vapor.
+- Validação: `spotlessCheck`, `compileJava`, `runUnitTests` e `runGameTestServer` passaram; o
+  GameTest novo verifica saldo baixo e save legado, e o GameTest da Evaporation verifica as
+  três hatches. O `runData` acoplado ao gate falhou uma vez no registro intermitente do renderer
+  da Artificial Star e ficou com a thread KubeJS ativa; duas execuções isoladas seguintes de
+  `runData --offline` passaram, a segunda com `written: 0`. Registrar esse erro de datagen para
+  investigação se reaparecer. `runClient --offline` foi reiniciado com o código novo e abriu a
+  janela Forge sem erro fatal; ficou aberto para QA do autor. Nenhum commit ou publicação foi feito.
+
+### G-0092 (2026-09-25) — crash KubeJS build.26 e fidelidade dos tooltips GTO
+
+- O `latest.log` anexado registra KubeJS `2001.6.5-build.26` e a falha fatal do mixin GTNA ao
+  buscar `DataGenerator.run`. No jar SRG de Minecraft 1.20.1, o alvo real é
+  `DataGenerator.m_123917_()`. A configuração tem `defaultRequire: 1` e o log mostra que o
+  refmap não foi carregado. O mixin foi tornado opcional (`require = 0`), com nomes dev/SRG
+  explícitos e falha de limpeza apenas registrada; a dependência de desenvolvimento agora é
+  KubeJS build.26. Teste de contrato inspeciona a anotação compilada. O log também contém
+  falhas de mixin de outros mods, sem evidência de que elas causaram este erro fatal do GTNA.
+- Os quatro tooltips GTO usam a chave automática `.tooltip` como função principal, sem
+  repetição no builder. Fishing Ground preserva quatro linhas narrativas e quatro circuitos
+  da fonte; Generator Array informa os valores reais do GTNA e os três geradores suportados;
+  Greenhouse separa requisitos e penalidade de luz; Evaporation Plant informa o módulo
+  auxiliar já registrado. `en_us` e `pt_br` foram sincronizados. O GameTest verifica a
+  quantidade de linhas, a ausência de repetição da chave automática e uma atribuição de
+  origem por controller. Desvios da fonte e motivos estão no handoff dos ports.
+- Validação local: `spotlessApply spotlessCheck compileJava runUnitTests runGameTestServer
+  runData --offline` passou com KubeJS build.26; 21 classes de testes unitários e os GameTests
+  configurados terminaram sem falhas, e `runData` finalizou os provedores e saiu normalmente.
+  `runClient --offline` abriu a janela Minecraft Forge sem a falha do mixin; o processo foi
+  encerrado após o teste de inicialização. Pendente: reteste do autor com jar distribuído no
+  modpack completo do jogador e QA visual dos tooltips
+  em inglês/português. Nenhum commit ou publicação foi feito.
+
+### G-0091 (2026-09-25) — QA de UI e idiomas da primeira leva GTO
+
+- Após o teste in-game do autor, adicionados tooltips descritivos a Fishing Ground e Evaporation
+  Plant; adicionadas as chaves principais de tooltip dos quatro controladores e as traduções
+  `gtna.fishing_ground`, `gtna.evaporation` e `gtna.greenhouse` em inglês e português.
+- Generator Array agora tem um slot visível no controlador para até quatro geradores elegíveis.
+  O slot tem prioridade sobre o barramento de entrada; o barramento permanece funcional em mundos
+  existentes. A UI mantém o botão de saída sem fio. O GameTest verifica limite do slot, filtro
+  de itens e o caminho antigo pelo barramento; um novo GameTest verifica a construção dos quatro
+  tooltips funcionais.
+- Gate pós-correção: `spotlessApply spotlessCheck compileJava runUnitTests runGameTestServer
+  runData --offline` passou com 20/20 testes unitários e 58/58 GameTests. `runClient` foi iniciado
+  para o autor conferir o resultado na interface.
+
+### G-0090 (2026-09-25) — Greenhouse GTO
+
+- Portada a estrutura comprimida 5×5×5 do GTOCore, o controle de luz do céu (zero impede a partida;
+  abaixo de 13 regride dez ticks de progresso por segundo), a receita original do controlador e
+  as 84 receitas fixas de cultivo, com suas quantidades, circuitos, água, EU/t e durações. As
+  receitas de outros mods entram somente quando os itens existem. Farmer's Delight `rich_soil` é
+  aceito quando instalado; lama vanilla é alternativa estável para o GTNA sem aquela dependência.
+- Validação: `./gradlew spotlessApply spotlessCheck compileJava runUnitTests runGameTestServer
+  runData --offline` passou com **20/20 unitários** e **57/57 GameTests**; `spotlessCheck` e
+  `compileJava` foram repetidos após a limpeza final do teste, e `git diff --check` está limpo. O
+  novo GameTest forma a estrutura com hatches MV em céu aberto e produz 12 cactus com o circuito 1.
+  Falta QA in-game.
+
+### G-0089 (2026-09-25) — primeira leva GTO LV–HV
+
+- Portados Generator Array (incluindo saída pelo Nexus Flux Matrix no modo wireless e hatch normal),
+  Fishing Ground (padrão GTO comprimido, iscas e loot de pesca) e Evaporation Plant (estrutura
+  principal, módulo auxiliar, casings e cadeia de salmoura). Materiais que faltavam foram criados
+  para manter as receitas e a progressão. O Lava Furnace foi removido do escopo e não há registro
+  ou receita dele nos recursos atuais.
+- Validação: `./gradlew spotlessApply spotlessCheck compileJava runUnitTests runGameTestServer runData
+  --offline` passou; 20/20 unitários, 56/56 GameTests, datagen executado. `git diff --check` limpo.
+  Não houve teste in-game destes três controladores.
+- Pendências: conferir visual, rotação, JEI, tooltips e operação contínua no cliente; continuar os
+  ports Component Assembler e os candidatos HV–LuV indicados pelo autor, preservando
+  receitas/estruturas/mecânicas tão fielmente quanto o conjunto de dependências permitir.
 
 ### G-0088 (2026-09-25) — preparação da versão 0.5.0
 
@@ -2850,7 +3006,8 @@ Feedback do autor no client:
 - **Ability errada em output quebra na formação, não no pattern:** um hatch de saída que declarasse
   `PartAbility.STEAM` ocuparia o slot de energia por ability, o `SteamMultiMachineBase` não acharia
   fonte `IO.IN` e chamaria `onStructureInvalid()` — a máquina "desforma sozinha" logo após formar.
-  Output = só `EXPORT_FLUIDS`.
+  Desde G-0094, output wireless steam = só `GTNAPartAbility.STEAM_EXPORT_FLUIDS` (antes era
+  `EXPORT_FLUIDS`); não registrar `STEAM` nem uma ability universal de fluidos.
 - **`checkPatternAt` + dump da área** continua sendo o melhor diagnóstico: o teste negativo do
   G-0011 mostrou o bloco `gtna:wireless_steam_input_hatch` na célula `relative=1,0,0` e o erro
   "Expected components ... gtceu:steam_input_hatch", que aponta direto para o predicado culpado.

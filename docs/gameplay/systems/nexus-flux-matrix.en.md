@@ -17,7 +17,7 @@ The **Nexus Flux Matrix** is a massive EU energy storage multiblock with wireles
 | **Efficiency** | 85% (LV) → 100% (MAX) |
 | **Max Transfer** | 500 ZEU/t |
 | **Cross-Dimension** | Yes (ZPM+) |
-| **Safe Mode** | Auto at <10%, reactivates at 25% |
+| **Energy output** | Available until the stored energy runs out |
 
 ## Components
 
@@ -122,15 +122,10 @@ Portable monitor showing:
 - Estimated time remaining
 - "Locate" button for each connection
 
-## Safety System
+## Low charge
 
-| Level | Action |
-|:---:|------|
-| ≤75% | ⚠️ Chat warning |
-| ≤50% | ⚠️ Chat warning |
-| ≤25% | ⚠️ Urgent warning |
-| ≤10% | ⛔ **Safe Mode**: cuts output, continues accepting input |
-| ≥25% | 🔋 Safe Mode deactivated, output restored |
+The Matrix continues supplying energy while it has enough charge for the request. Withdrawals
+fail normally when the stored energy is insufficient; there is no percentage cutoff.
 
 ## Configuration
 

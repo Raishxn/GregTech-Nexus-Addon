@@ -223,11 +223,10 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         NexusEnergyNetwork network = NexusEnergyNetwork.get(serverLevel);
         Int128 energy = network.getEnergy(getOwnerUUID());
         Int128 maxCap = maxCapacity;
-        boolean safeMode = network.getSafeMode(getOwnerUUID());
         Int128 inPerTick = network.getLastInputPerTick(getOwnerUUID());
         Int128 outPerTick = network.getLastOutputPerTick(getOwnerUUID());
 
-        textList.add(Component.literal("\u00a77Status: " + (safeMode ? "\u00a7cSAFE MODE" : "\u00a7aONLINE")));
+        textList.add(Component.literal("\u00a77Status: \u00a7aONLINE"));
 
         double fill = 0.0;
         if (!maxCap.isZero()) {

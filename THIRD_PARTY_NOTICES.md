@@ -41,6 +41,13 @@ Hypercore multiblock itself is original to GTNA and has no source attribution in
   **original textures/assets are CC BY-NC-SA 4.0** and must stay under that license.
 - GTO also asked that ported content **credit the original addon in tooltips** (as GTNH and GTO do
   between themselves). GTNA implements this through `GTNASources`.
+- The Fishing Ground's compressed `pattern/gto/fishing_ground.mbs` and the Aluminium Bronze /
+  Stainless Evaporation casing textures come from GTOCore. The Generator Array, Fishing Ground and
+  Evaporation Plant behavior, structures and recipes are adapted from GTOCore source at commit
+  `dc4824d`.
+- The Greenhouse's compressed `pattern/gto/greenhouse.mbs`, light behavior, controller recipe and
+  crop recipes are adapted from the same GTOCore commit. Its nine Rich Soil positions also accept
+  vanilla Mud, allowing the structure to work without Farmer's Delight installed.
 - GTOCore itself includes textures from other mods; see
   [GTO's `THIRD_PARTY_LICENSES.md`](https://github.com/GregTech-Odyssey/GregTech-Odyssey/blob/main/THIRD_PARTY_LICENSES.md).
 

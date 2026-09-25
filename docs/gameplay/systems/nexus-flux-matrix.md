@@ -17,7 +17,7 @@ O **Nexus Flux Matrix** é um multiblocko de armazenamento massivo de energia EU
 | **Eficiência** | 85% (LV) → 100% (MAX) |
 | **Transfer Limit (MAX)** | 500 ZEU/t |
 | **Cross-Dimension** | Sim (ZPM+) |
-| **Safe Mode** | Auto em <10%, reativa em 25% |
+| **Saída de energia** | Disponível até a carga acabar |
 
 ## Componentes
 
@@ -122,15 +122,10 @@ Monitor portátil com:
 - Tempo restante estimado
 - Botão "Localizar" para cada conexão
 
-## Sistema de Segurança
+## Carga baixa
 
-| Nível | Ação |
-|:---:|------|
-| ≤75% | ⚠️ Aviso no chat |
-| ≤50% | ⚠️ Aviso no chat |
-| ≤25% | ⚠️ Aviso urgente |
-| ≤10% | ⛔ **Safe Mode**: corta output, continua aceitando input |
-| ≥25% | 🔋 Safe Mode desativado, output restaurado |
+A Matrix continua fornecendo energia enquanto houver carga suficiente para a solicitação.
+Quando a carga acaba, a retirada falha normalmente; não há bloqueio por porcentagem.
 
 ## ConfiguraÃ§Ã£o
 

@@ -63,8 +63,6 @@ Acompanhe o progresso de desenvolvimento do GregTech Nexus Addon em tempo real.
 - [ ] **Wireless Transmitter Cover** — Para geradores singleblock
 - [ ] **Nexus Linker** — Item de vinculação (Shift+Click Controller → Click Hatch)
 - [ ] **Quantum Network Terminal** — GUI de monitoramento completo
-- [ ] **Safe Mode** — Proteção auto. em <10% → desliga output → reativa em 25%
-- [ ] **Alertas de bateria** — Chat msgs em 75%, 50%, 25%, <10%
 - [ ] **Cross-dimension** — Suporte inter-dimensional (ZPM+)
 - [ ] **Escalabilidade Quadrática** — `Capacity × Count / 2` com Int128
 - [ ] PRD completo: [prd_05_nexus_flux_matrix.md](../prd/prd_05_nexus_flux_matrix.md)

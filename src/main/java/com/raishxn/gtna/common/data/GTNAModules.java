@@ -41,6 +41,7 @@ public final class GTNAModules {
     public static void init() {
         registerElectricBlastFurnaceModule();
         registerLiquefactionFurnaceModule();
+        registerEvaporationPlantModule();
     }
 
     /**
@@ -137,6 +138,36 @@ public final class GTNAModules {
                 .where('E', blocks(GTBlocks.CASING_STAINLESS_CLEAN.get()))
                 .where('F', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.StainlessSteel)))
                 .where('G', blocks(GTBlocks.CASING_TITANIUM_PIPE.get()))
+                .where(' ', any())
+                .build();
+    }
+
+    /** GTOCore's titanium auxiliary tower for the Evaporation Plant. */
+    private static void registerEvaporationPlantModule() {
+        GTNASubPatterns.register(new ResourceLocation("gtna", "evaporation_plant"),
+                GTNAModules::buildEvaporationPlantExtension,
+                moduleTooltips("parallel", "accelerate"));
+    }
+
+    private static BlockPattern buildEvaporationPlantExtension(MultiblockMachineDefinition definition) {
+        return FactoryBlockPattern.start()
+                .aisle("HFH AAA", "FFF ACA", "FFF ACA", "FFF ACA", " G  AAA")
+                .aisle("FGGAAAA", "FDGDA A", "FDGDA A", "FDGAA A", " G  AEA")
+                .aisle("    AAA", "    A A", "    A A", "    A A", "    AAA")
+                .aisle("   AAAA", "   DA A", "   DA A", "   DA A", "   AAEA")
+                .aisle("    AAA", " B  ACA", "    ACA", "    ACA", "    AAA")
+                .where('A', blocks(GTBlocks.CASING_TITANIUM_STABLE.get()))
+                .where('B', controller(blocks(definition.getBlock())))
+                .where('C', blocks(GTBlocks.FIREBOX_TITANIUM.get()))
+                .where('D', blocks(GTBlocks.CASING_TITANIUM_PIPE.get()))
+                .where('E', abilities(PartAbility.MUFFLER))
+                .where('F', blocks(GTNABlocks.STAINLESS_EVAPORATION_CASING.get())
+                        .or(GTNAMachines3.nonSteamFluidInputHatches())
+                        .or(abilities(PartAbility.EXPORT_FLUIDS))
+                        .or(abilities(PartAbility.PARALLEL_HATCH).setMaxGlobalLimited(1))
+                        .or(abilities(GTNAPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1)))
+                .where('G', blocks(GTNABlocks.STAINLESS_EVAPORATION_CASING.get()))
+                .where('H', frames(GTMaterials.Aluminium))
                 .where(' ', any())
                 .build();
     }

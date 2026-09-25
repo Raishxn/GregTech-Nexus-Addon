@@ -147,6 +147,7 @@ public class CommonProxy {
     private void registerMachines(GTCEuAPI.RegisterEvent<ResourceLocation, MachineDefinition> event) {
         GTNAMachines.init();
         GTNAMachines2.init();
+        GTNAMachines3.init();
         GTNAEnergyHatches.init();
         // Append the shared high-pressure line before the source attribution, so the tooltip reads
         // stats -> high pressure -> Source.

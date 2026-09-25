@@ -437,7 +437,6 @@ public final class GTNABalance {
 
         public Map<String, NexusTierBalance> tiers = defaultNexusTierMap();
         public EfficiencyBalance efficiency = EfficiencyBalance.defaults();
-        public SafeModeBalance safeMode = SafeModeBalance.defaults();
         public NexusLimitsBalance limits = NexusLimitsBalance.defaults();
 
         public static NexusFluxMatrixBalance defaults() {
@@ -453,8 +452,6 @@ public final class GTNABalance {
             }
             if (efficiency == null) efficiency = defaults.efficiency;
             else efficiency.applyDefaults(defaults.efficiency);
-            if (safeMode == null) safeMode = defaults.safeMode;
-            else safeMode.applyDefaults(defaults.safeMode);
             if (limits == null) limits = defaults.limits;
             else limits.applyDefaults(defaults.limits);
         }
@@ -492,25 +489,6 @@ public final class GTNABalance {
             if (baseLossPercentAtLV < 0) baseLossPercentAtLV = defaults.baseLossPercentAtLV;
             if (minimumEfficiency <= 0) minimumEfficiency = defaults.minimumEfficiency;
             if (maximumEfficiency <= 0) maximumEfficiency = defaults.maximumEfficiency;
-        }
-    }
-
-    public static final class SafeModeBalance implements DefaultsApplier<SafeModeBalance> {
-
-        public boolean enabled = true;
-        public int thresholdPercent = 10;
-        public int recoveryPercent = 25;
-        public int alertCooldownTicks = 1200;
-
-        public static SafeModeBalance defaults() {
-            return new SafeModeBalance();
-        }
-
-        @Override
-        public void applyDefaults(SafeModeBalance defaults) {
-            if (thresholdPercent <= 0) thresholdPercent = defaults.thresholdPercent;
-            if (recoveryPercent <= 0) recoveryPercent = defaults.recoveryPercent;
-            if (alertCooldownTicks <= 0) alertCooldownTicks = defaults.alertCooldownTicks;
         }
     }
 

@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.5.1] - 2026-09-25
+
+### Added
+- Ported four GTOCore multiblocks: Generator Array, Fishing Ground, Evaporation Plant and
+  Greenhouse, with their structures, recipes, casings and English/Portuguese tooltips. The
+  Evaporation Plant also has its titanium auxiliary tower.
+- Generator Array supports its eligible GTCEu generators and can send power to the Nexus Flux
+  Matrix in wireless mode. Fishing Ground includes its bait, water and circuit based catches.
+- Added automated formation, recipe, tooltip and behavior checks for the new machines.
+
+### Changed
+- Removed Nexus Flux Matrix Safe Mode. Valid energy withdrawals can drain the network to zero;
+  old SafeMode save data is ignored and no longer written.
+- Wireless Steam Hatches now declare steam specific abilities only. They no longer fill general
+  fluid hatch slots in electric multiblocks.
+- Clarified Evaporation Plant hatch placement: one fluid input and one or two energy inputs go in
+  the base; fluid outputs go in the tower stages. Fluid hatch tier is unrestricted.
+
+### Fixed
+- Prevented a startup crash with KubeJS `2001.6.5-build.26` caused by the GTNA DataGenerator
+  mixin targeting a missing method name. The injection is now optional and handles the runtime
+  method name used by Minecraft 1.20.1.
+- Greenhouse sunlight detection now responds to an opaque roof cover and recovers when it is
+  removed.
+- Revised the four ported machines' tooltips to remove duplicate descriptions and preserve
+  source attribution and relevant mechanics in both supported languages.
+
+### Validation
+- Passed the full formatting, compilation, unit test, GameTest server and data generation gate.
+  The GameTest suite passed all 59 required tests, including a MAX fluid output hatch in a valid
+  Evaporation Plant tower stage.
+
 ## [0.5.0] - 2026-09-25
 
 This release expands steam and ore processing, adds multiblock modules and strengthens AE2

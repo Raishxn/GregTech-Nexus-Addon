@@ -11,6 +11,7 @@ import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
+import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.pattern.MultiblockState;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
@@ -26,12 +27,14 @@ import com.gregtechceu.gtceu.common.data.machines.GCYMMachines;
 import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
 import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.EnergyHatchPartMachine;
+import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.ItemBusPartMachine;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -66,14 +69,19 @@ import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.me.helpers.BaseActionSource;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
+import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPatternDiagnostics;
 import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
 import com.raishxn.gtna.common.WirelessSteamHudSync;
 import com.raishxn.gtna.common.data.GTNABlocks;
 import com.raishxn.gtna.common.data.GTNAMachines;
 import com.raishxn.gtna.common.data.GTNAMachines2;
+import com.raishxn.gtna.common.data.GTNAMachines3;
 import com.raishxn.gtna.common.data.GTNARecipeType;
+import com.raishxn.gtna.common.data.NexusEnergyNetwork;
+import com.raishxn.gtna.common.data.multiblock.GTOCompressedPatternReader;
 import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
+import com.raishxn.gtna.common.machine.multiblock.electric.GreenhouseMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.LiquefactionFurnaceMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.UniversalFactoryMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
@@ -92,6 +100,7 @@ import com.raishxn.gtna.common.machine.multiblock.steam.SteamItemVaultMachine;
 import com.raishxn.gtna.common.machine.multiblock.steam.SteamLavaMakerMachine;
 import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
 import com.raishxn.gtna.network.packet.SWirelessSteamStats;
+import com.raishxn.gtna.utils.datastructure.Int128;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -353,6 +362,467 @@ public final class GTNAMachineGameTests {
         helper.assertTrue(circuit2.getFluid() == GTMaterials.DistilledWater.getFluid(),
                 "circuit 2 of raw gold must require distilled water, got " + circuit2);
         helper.succeed();
+    }
+
+    /** The Generator Array must form with all four required hatches in the GTOCore 3x3x3 shell. */
+    @GameTest(template = "empty_16", timeoutTicks = 40)
+    public static void generatorArrayForms(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(4, 2, 4);
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = 0; dy <= 2; dy++) {
+                for (int dz = 0; dz <= 2; dz++) {
+                    helper.setBlock(controllerPos.offset(dx, dy, dz), Blocks.AIR);
+                }
+            }
+        }
+        helper.setBlock(controllerPos, GTNAMachines3.GENERATOR_ARRAY.getBlock());
+        String[][] aisles = {
+                { "XXX", "CCC", "XXX" },
+                { "XXX", "C#C", "XXX" },
+                { "XSX", "CCC", "XXX" }
+        };
+        for (int aisle = 0; aisle < aisles.length; aisle++) {
+            for (int y = 0; y < 3; y++) {
+                for (int x = 0; x < 3; x++) {
+                    BlockPos pos = controllerPos.offset(1 - x, y, 2 - aisle);
+                    switch (aisles[aisle][y].charAt(x)) {
+                        case 'X' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_SOLID.get());
+                        case 'C' -> helper.setBlock(pos, GTBlocks.CASING_TEMPERED_GLASS.get());
+                        case 'S' -> {}
+                        default -> {}
+                    }
+                }
+            }
+        }
+        helper.setBlock(controllerPos.offset(1, 0, 0), GTMachines.ITEM_IMPORT_BUS[GTValues.LV].getBlock());
+        helper.setBlock(controllerPos.offset(-1, 0, 0), GTMachines.FLUID_IMPORT_HATCH[GTValues.LV].getBlock());
+        helper.setBlock(controllerPos.offset(1, 2, 0), GTMachines.ENERGY_OUTPUT_HATCH[GTValues.MV].getBlock());
+        helper.setBlock(controllerPos.offset(-1, 2, 0), GTMachines.MAINTENANCE_HATCH.getBlock());
+
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof com.raishxn.gtna.common.machine.multiblock.energy.GeneratorArrayMachine array)) {
+            helper.fail("generator_array controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = array.getMultiblockState();
+        if (!array.getPattern().checkPatternAt(state, false)) {
+            helper.fail("generator_array pattern did not match: " + patternError(helper, state, controllerPos));
+            return;
+        }
+        array.onStructureFormed();
+        helper.assertTrue(array.isFormed(), "generator_array must form");
+        ItemStack fourTurbines = GTMachines.STEAM_TURBINE[GTValues.LV].asStack().copyWithCount(5);
+        ItemStack excess = array.getGeneratorStorage().insertItem(0, fourTurbines, false);
+        helper.assertTrue(excess.getCount() == 1 && array.getInstalledGeneratorCount() == 4,
+                "controller slot must accept at most four matching generators");
+        helper.assertTrue(array.getGeneratorStorage().insertItem(0, GTMachines.MACERATOR[GTValues.LV].asStack(),
+                false).getCount() == 1, "controller slot must reject non-generators");
+        array.getGeneratorStorage().storage.extractItem(0, 4, false);
+        ItemBusPartMachine inputBus = (ItemBusPartMachine) metaMachineAt(helper, controllerPos.offset(1, 0, 0));
+        inputBus.getInventory().insertItem(0, GTMachines.STEAM_TURBINE[GTValues.LV].asStack(), false);
+        helper.assertTrue(array.getInstalledGeneratorCount() == 1,
+                "one installed steam turbine must be detected as the generator catalyst");
+        FluidHatchPartMachine fluidHatch = (FluidHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(-1, 0, 0));
+        fluidHatch.tank.setFluidInTank(0, GTMaterials.Steam.getFluid(6400));
+        EnergyHatchPartMachine outputHatch = (EnergyHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(1, 2, 0));
+        var maintenance = (com.gregtechceu.gtceu.common.machine.multiblock.part.MaintenanceHatchPartMachine) metaMachineAt(
+                helper, controllerPos.offset(-1, 2, 0));
+        maintenance.fixAllMaintenanceProblems();
+        array.refreshGeneratorMode();
+        var fuel = array.getRecipeLogic().searchRecipe();
+        helper.assertTrue(fuel.hasNext(), "steam fuel recipe must be indexed");
+        var fuelRecipe = fuel.next();
+        var modifier = com.raishxn.gtna.common.machine.multiblock.energy.GeneratorArrayMachine.recipeModifier(array,
+                fuelRecipe);
+        helper.assertTrue(modifier.apply(fuelRecipe) != null,
+                "array must accept indexed steam fuel recipe: " + fuelRecipe);
+        helper.assertTrue(array.getDefinition().getRecipeModifier().applyModifier(array, fuelRecipe) != null,
+                "registered array modifier must accept steam fuel");
+        helper.assertTrue(array.fullModifyRecipe(fuelRecipe) != null,
+                "array must retain fuel after full recipe modification");
+        helper.assertTrue(array.getRecipeLogic().checkMatchedRecipeAvailable(fuelRecipe),
+                "array must start an available steam fuel recipe (failures=" +
+                        array.getRecipeLogic().getFailureReasons() + ")");
+        array.getRecipeLogic().updateTickSubscription();
+        for (int tick = 0; tick < 30; tick++) {
+            array.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(outputHatch.energyContainer.getEnergyStored() > 0,
+                "steam turbine fuel must generate energy in the dynamo hatch (status=" +
+                        array.getRecipeLogic().getStatus() + ", lastRecipe=" +
+                        array.getRecipeLogic().getLastRecipe() + ", steam=" +
+                        fluidHatch.tank.getFluidInTank(0).getAmount() + ", candidates=" +
+                        array.getRecipeLogic().searchRecipe().hasNext() + ", failures=" +
+                        array.getRecipeLogic().getFailureReasons() + ")");
+        helper.succeed();
+    }
+
+    /** GTOCore's compressed 13x4x13 fishing ground must retain its water and frame geometry. */
+    @GameTest(template = "empty_16", timeoutTicks = 60)
+    public static void fishingGroundForms(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(7, 2, 1);
+        var source = GTOCompressedPatternReader.read("fishing_ground");
+        helper.assertTrue(source.slices().length == 13 && source.slices()[0].length == 4,
+                "fishing ground must retain GTOCore's 13x4x13 shape");
+        helper.setBlock(controllerPos, GTNAMachines3.FISHING_GROUND.getBlock());
+        for (int aisle = 0; aisle < source.slices().length; aisle++) {
+            for (int row = 0; row < source.slices()[aisle].length; row++) {
+                String line = source.slices()[aisle][row];
+                for (int column = 0; column < line.length(); column++) {
+                    BlockPos pos = controllerPos.offset(column - 6, row - 1, aisle);
+                    switch (line.charAt(column)) {
+                        case 'A', 'B' -> helper.setBlock(pos, GTNABlocks.ALUMINIUM_BRONZE_CASING.get());
+                        case 'C' -> helper.setBlock(pos, Blocks.WATER);
+                        case 'D' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_PIPE.get());
+                        case 'E' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.StainlessSteel));
+                        case 'F' -> {}
+                        default -> helper.setBlock(pos, Blocks.AIR);
+                    }
+                }
+            }
+        }
+        helper.setBlock(controllerPos.offset(-2, -1, 0), GTMachines.ITEM_IMPORT_BUS[GTValues.HV].getBlock());
+        helper.setBlock(controllerPos.offset(-1, -1, 0), GTMachines.ITEM_EXPORT_BUS[GTValues.HV].getBlock());
+        helper.setBlock(controllerPos.offset(1, -1, 0), GTMachines.ENERGY_INPUT_HATCH[GTValues.HV].getBlock());
+        helper.setBlock(controllerPos.offset(2, -1, 0), GTMachines.MAINTENANCE_HATCH.getBlock());
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof WorkableElectricMultiblockMachine fishingGround)) {
+            helper.fail("fishing ground controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = fishingGround.getMultiblockState();
+        if (!fishingGround.getPattern().checkPatternAt(state, false)) {
+            helper.fail("fishing ground pattern did not match: " + patternError(helper, state, controllerPos));
+            return;
+        }
+        fishingGround.onStructureFormed();
+        helper.assertTrue(fishingGround.isFormed(), "fishing ground must form");
+        ItemBusPartMachine inputBus = (ItemBusPartMachine) metaMachineAt(helper,
+                controllerPos.offset(-2, -1, 0));
+        ItemBusPartMachine outputBus = (ItemBusPartMachine) metaMachineAt(helper,
+                controllerPos.offset(-1, -1, 0));
+        EnergyHatchPartMachine energyHatch = (EnergyHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(1, -1, 0));
+        var maintenance = (com.gregtechceu.gtceu.common.machine.multiblock.part.MaintenanceHatchPartMachine) metaMachineAt(
+                helper, controllerPos.offset(2, -1, 0));
+        maintenance.fixAllMaintenanceProblems();
+        energyHatch.energyContainer.changeEnergy(1_000_000);
+        inputBus.getInventory().insertItem(0, new ItemStack(Items.COD, 64), false);
+        inputBus.getInventory().insertItem(1,
+                ChemicalHelper.get(TagPrefix.dustTiny, GTMaterials.Meat, 64), false);
+        fishingGround.getRecipeLogic().updateTickSubscription();
+        for (int tick = 0; tick < 2_100; tick++) fishingGround.getRecipeLogic().serverTick();
+        int caught = 0;
+        for (int slot = 0; slot < outputBus.getInventory().getSlots(); slot++) {
+            ItemStack stack = outputBus.getInventory().getStackInSlot(slot);
+            if (stack.is(Items.COD)) caught += stack.getCount();
+        }
+        helper.assertTrue(caught >= 32,
+                "bait recipe must produce at least 32 cod (caught=" + caught + ", status=" +
+                        fishingGround.getRecipeLogic().getStatus() + ")");
+        inputBus.getInventory().setStackInSlot(0, IntCircuitBehaviour.stack(2));
+        inputBus.getInventory().setStackInSlot(1, ItemStack.EMPTY);
+        var fishingController = (com.raishxn.gtna.common.machine.multiblock.electric.FishingGroundMachine) fishingGround;
+        helper.assertTrue(fishingController.getCircuitMode() == 2,
+                "input bus must expose fishing circuit 2 (slot=" +
+                        inputBus.getInventory().getStackInSlot(0) + ", formed=" + fishingGround.isFormed() + ")");
+        int beforeLoot = 0;
+        for (int slot = 0; slot < outputBus.getInventory().getSlots(); slot++) {
+            beforeLoot += outputBus.getInventory().getStackInSlot(slot).getCount();
+        }
+        var lootCandidates = fishingGround.getRecipeLogic().searchRecipe();
+        helper.assertTrue(lootCandidates.hasNext(), "circuit 2 must select the vanilla fishing fish loot table");
+        var selectedLoot = lootCandidates.next();
+        helper.assertTrue(selectedLoot.id.getPath().endsWith("/fishing_loot_2"),
+                "circuit 2 must choose the fishing fish loot recipe: " + selectedLoot.id);
+        fishingGround.getRecipeLogic().resetRecipeLogic();
+        for (int tick = 0; tick < 30; tick++) {
+            energyHatch.energyContainer.changeEnergy(10_000);
+            fishingGround.getRecipeLogic().serverTick();
+        }
+        int afterLoot = 0;
+        for (int slot = 0; slot < outputBus.getInventory().getSlots(); slot++) {
+            afterLoot += outputBus.getInventory().getStackInSlot(slot).getCount();
+        }
+        helper.assertTrue(afterLoot > beforeLoot,
+                "circuit 2 must produce vanilla fish loot (before=" + beforeLoot + ", after=" + afterLoot +
+                        ", status=" + fishingGround.getRecipeLogic().getStatus() + ", reason=" +
+                        fishingGround.getRecipeLogic().getFancyTooltip() + ", progress=" +
+                        fishingGround.getRecipeLogic().getProgress() + ", recipe=" +
+                        fishingGround.getRecipeLogic().getLastRecipe() + ", energy=" +
+                        energyHatch.energyContainer.getEnergyStored() + ")");
+        helper.succeed();
+    }
+
+    /** GTOCore's eight-layer column must form and turn water into salt water. */
+    @GameTest(template = "empty_16", timeoutTicks = 40)
+    public static void evaporationPlantForms(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(4, 2, 4);
+        String[][] bottom = { { "FYF", "YYY", "FYF" }, { "YSY", "Y#Y", "YYY" } };
+        helper.setBlock(controllerPos, GTNAMachines3.EVAPORATION_PLANT.getBlock());
+        for (int aisle = 0; aisle < 8; aisle++) {
+            String[] rows = aisle < 2 ? bottom[aisle] :
+                    aisle == 7 ? new String[] { " Z ", "ZZZ", " Z " } :
+                            new String[] { "XXX", "X#X", "XXX" };
+            for (int row = 0; row < 3; row++) {
+                for (int column = 0; column < 3; column++) {
+                    BlockPos pos = controllerPos.offset(column - 1, aisle - 1, row);
+                    switch (rows[row].charAt(column)) {
+                        case 'Y', 'X', 'Z' -> helper.setBlock(pos,
+                                GTNABlocks.STAINLESS_EVAPORATION_CASING.get());
+                        case 'F' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Aluminium));
+                        case '#', ' ' -> helper.setBlock(pos, Blocks.AIR);
+                        case 'S' -> {}
+                        default -> helper.fail("unexpected evaporation symbol");
+                    }
+                }
+            }
+        }
+        helper.setBlock(controllerPos.offset(0, -1, 1), GTMachines.FLUID_IMPORT_HATCH[GTValues.HV].getBlock());
+        helper.setBlock(controllerPos.offset(0, -1, 0), GTMachines.ENERGY_INPUT_HATCH[GTValues.HV].getBlock());
+        helper.setBlock(controllerPos.offset(0, 1, 0), GTMachines.FLUID_EXPORT_HATCH[GTValues.HV].getBlock());
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof WorkableElectricMultiblockMachine plant)) {
+            helper.fail("evaporation plant controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = plant.getMultiblockState();
+        if (!plant.getPattern().checkPatternAt(state, false)) {
+            helper.fail("evaporation plant pattern did not match: " + patternError(helper, state, controllerPos));
+            return;
+        }
+        BlockPos fluidInputPos = controllerPos.offset(0, -1, 1);
+        helper.setBlock(fluidInputPos, GTMachines.STEAM_HATCH.getBlock());
+        helper.assertTrue(!plant.getPattern().checkPatternAt(state, false),
+                "evaporation plant must reject the standard steam input hatch");
+        helper.assertTrue(GTNAMachines.WIRELESS_STEAM_INPUT_HATCH != null,
+                "wireless steam input hatch must be registered for the evaporation regression test");
+        for (var steamInput : new com.gregtechceu.gtceu.api.machine.MachineDefinition[] {
+                GTNAMachines.WIRELESS_STEAM_INPUT_HATCH, GTNAMachines.WIRELESS_STEAM_INPUT_HATCH_STEEL }) {
+            helper.assertTrue(PartAbility.STEAM.isApplicable(steamInput.getBlock()),
+                    "wireless steam input must retain its steam ability");
+            helper.assertTrue(!PartAbility.IMPORT_FLUIDS.isApplicable(steamInput.getBlock()),
+                    "wireless steam input must not be a universal fluid hatch");
+        }
+        for (var steamOutput : new com.gregtechceu.gtceu.api.machine.MachineDefinition[] {
+                GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH, GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH_STEEL }) {
+            helper.assertTrue(GTNAPartAbility.STEAM_EXPORT_FLUIDS.isApplicable(steamOutput.getBlock()),
+                    "wireless steam output must retain its dedicated steam output ability");
+            helper.assertTrue(!PartAbility.EXPORT_FLUIDS.isApplicable(steamOutput.getBlock()),
+                    "wireless steam output must not be a universal fluid hatch");
+        }
+        helper.setBlock(fluidInputPos, GTNAMachines.WIRELESS_STEAM_INPUT_HATCH.getBlock());
+        helper.assertTrue(!plant.getPattern().checkPatternAt(state, false),
+                "evaporation plant must reject a steam-only input hatch");
+        helper.setBlock(fluidInputPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.HV].getBlock());
+        helper.assertTrue(plant.getPattern().checkPatternAt(state, false),
+                "evaporation plant must still accept a normal fluid input hatch");
+        plant.onStructureFormed();
+        helper.assertTrue(plant.isFormed(), "evaporation plant must form");
+        helper.assertTrue(!GTNASubPatterns.get(GTNAMachines3.EVAPORATION_PLANT).isEmpty(),
+                "GTOCore titanium auxiliary tower must be registered");
+        FluidHatchPartMachine input = (FluidHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(0, -1, 1));
+        FluidHatchPartMachine output = (FluidHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(0, 1, 0));
+        EnergyHatchPartMachine energy = (EnergyHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(0, -1, 0));
+        input.tank.setFluidInTank(0, GTMaterials.Water.getFluid(50_000));
+        plant.getRecipeLogic().updateTickSubscription();
+        for (int tick = 0; tick < 250; tick++) {
+            energy.energyContainer.changeEnergy(10_000);
+            plant.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(output.tank.getFluidInTank(0).getFluid() == GTMaterials.SaltWater.getFluid() &&
+                output.tank.getFluidInTank(0).getAmount() >= 1_000,
+                "water evaporation must output 1000 mB salt water (output=" +
+                        output.tank.getFluidInTank(0) + ", status=" + plant.getRecipeLogic().getStatus() + ")");
+        input.tank.setFluidInTank(0, GTMaterials.SaltWater.getFluid(20_000));
+        output.tank.setFluidInTank(0, FluidStack.EMPTY);
+        plant.getRecipeLogic().resetRecipeLogic();
+        for (int tick = 0; tick < 1_100; tick++) {
+            energy.energyContainer.changeEnergy(10_000);
+            plant.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(output.tank.getFluidInTank(0).getFluid() ==
+                com.raishxn.gtna.common.data.GTNAMaterials.RawBrine.getFluid() &&
+                output.tank.getFluidInTank(0).getAmount() >= 1_000,
+                "brine evaporation must output 1000 mB raw brine (output=" +
+                        output.tank.getFluidInTank(0) + ", status=" + plant.getRecipeLogic().getStatus() + ")");
+        BlockPos otherBasePos = controllerPos.offset(1, -1, 1);
+        helper.setBlock(fluidInputPos, GTNABlocks.STAINLESS_EVAPORATION_CASING.get());
+        helper.setBlock(otherBasePos, GTMachines.FLUID_IMPORT_HATCH[GTValues.HV].getBlock());
+        helper.assertTrue(plant.getPattern().checkPatternAt(state, false),
+                "evaporation plant must allow a fluid input at another base casing");
+        helper.setBlock(otherBasePos, GTNABlocks.STAINLESS_EVAPORATION_CASING.get());
+        helper.setBlock(fluidInputPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.HV].getBlock());
+        BlockPos otherOutputPos = controllerPos.offset(1, 1, 0);
+        helper.setBlock(controllerPos.offset(0, 1, 0), GTNABlocks.STAINLESS_EVAPORATION_CASING.get());
+        helper.setBlock(otherOutputPos, GTMachines.FLUID_EXPORT_HATCH[GTValues.HV].getBlock());
+        helper.assertTrue(plant.getPattern().checkPatternAt(state, false),
+                "evaporation plant must allow a fluid output at another tower casing");
+        helper.setBlock(otherOutputPos, GTMachines.FLUID_EXPORT_HATCH[GTValues.MAX].getBlock());
+        helper.assertTrue(plant.getPattern().checkPatternAt(state, false),
+                "evaporation plant must accept a MAX fluid output hatch in a tower stage");
+        helper.setBlock(otherOutputPos, GTNABlocks.STAINLESS_EVAPORATION_CASING.get());
+        helper.setBlock(controllerPos.offset(-1, 0, 0), GTMachines.FLUID_EXPORT_HATCH[GTValues.MAX].getBlock());
+        helper.assertTrue(!plant.getPattern().checkPatternAt(state, false),
+                "evaporation plant must reject a MAX fluid output hatch in a base input position");
+        helper.succeed();
+    }
+
+    /** Low charge and legacy SafeMode NBT must never block a valid withdrawal. */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void nexusFluxMatrixCanDrainBelowFormerSafeModeThreshold(GameTestHelper helper) {
+        UUID owner = UUID.randomUUID();
+        NexusEnergyNetwork network = new NexusEnergyNetwork();
+        network.setMaxCapacity(owner, new Int128(1_000));
+        helper.assertTrue(network.addEnergy(owner, new Int128(50), helper.getLevel()).longValue() == 50,
+                "network must accept energy below the former safe-mode threshold");
+        helper.assertTrue(network.consumeEnergy(owner, new Int128(50), helper.getLevel()),
+                "network must allow withdrawal down to zero");
+
+        CompoundTag oldSave = network.save(new CompoundTag());
+        oldSave.getList("EnergyNetworks", net.minecraft.nbt.Tag.TAG_COMPOUND)
+                .getCompound(0).putBoolean("SafeMode", true);
+        NexusEnergyNetwork restored = new NexusEnergyNetwork(oldSave);
+        restored.addEnergy(owner, new Int128(10), helper.getLevel());
+        helper.assertTrue(restored.consumeEnergy(owner, new Int128(10), helper.getLevel()),
+                "legacy SafeMode flag must not block withdrawal after loading");
+        helper.assertTrue(!restored.save(new CompoundTag())
+                .getList("EnergyNetworks", net.minecraft.nbt.Tag.TAG_COMPOUND)
+                .getCompound(0).contains("SafeMode"),
+                "removed SafeMode flag must not be written back to world data");
+        helper.succeed();
+    }
+
+    /** GTOCore Greenhouse must form from its 5x5x5 MBS and grow the original cactus recipe. */
+    @GameTest(template = "empty_16", timeoutTicks = 80)
+    public static void greenhouseFormsAndGrows(GameTestHelper helper) {
+        // GameTest templates sit underground; move the crop chamber into open sky.
+        BlockPos controllerPos = new BlockPos(7, 200, 7);
+        var source = GTOCompressedPatternReader.read("greenhouse");
+        helper.assertTrue(source.slices().length == 5 && source.slices()[0].length == 5,
+                "greenhouse must retain GTOCore's 5x5x5 shape");
+        helper.setBlock(controllerPos, GTNAMachines3.GREENHOUSE.getBlock());
+        for (int aisle = 0; aisle < 5; aisle++) {
+            for (int row = 0; row < 5; row++) {
+                String line = source.slices()[aisle][row];
+                for (int column = 0; column < line.length(); column++) {
+                    BlockPos pos = controllerPos.offset(2 - column, row - 1, 4 - aisle);
+                    switch (line.charAt(column)) {
+                        case 'B' -> helper.setBlock(pos, GTBlocks.MACHINE_CASING_ULV.get());
+                        case 'G' -> helper.setBlock(pos, GTBlocks.CASING_TEMPERED_GLASS.get());
+                        case 'd' -> helper.setBlock(pos, Blocks.MUD);
+                        case '#', '0' -> helper.setBlock(pos, Blocks.AIR);
+                        case 'E' -> {}
+                        default -> helper.fail("unexpected greenhouse symbol");
+                    }
+                }
+            }
+        }
+        BlockPos itemInputPos = controllerPos.offset(-1, -1, 0);
+        BlockPos itemOutputPos = controllerPos.offset(0, -1, 0);
+        BlockPos fluidInputPos = controllerPos.offset(1, -1, 0);
+        BlockPos energyPos = controllerPos.offset(-1, 0, 0);
+        BlockPos maintenancePos = controllerPos.offset(1, 0, 0);
+        helper.setBlock(itemInputPos, GTMachines.ITEM_IMPORT_BUS[GTValues.MV].getBlock());
+        helper.setBlock(itemOutputPos, GTMachines.ITEM_EXPORT_BUS[GTValues.MV].getBlock());
+        helper.setBlock(fluidInputPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.MV].getBlock());
+        helper.setBlock(energyPos, GTMachines.ENERGY_INPUT_HATCH[GTValues.MV].getBlock());
+        helper.setBlock(maintenancePos, GTMachines.MAINTENANCE_HATCH.getBlock());
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof GreenhouseMachine greenhouse)) {
+            helper.fail("greenhouse controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = greenhouse.getMultiblockState();
+        if (!greenhouse.getPattern().checkPatternAt(state, false)) {
+            helper.fail("greenhouse pattern did not match: " + patternError(helper, state, controllerPos));
+            return;
+        }
+        greenhouse.onStructureFormed();
+        helper.assertTrue(greenhouse.isFormed(), "greenhouse must form");
+        ItemBusPartMachine itemInput = (ItemBusPartMachine) metaMachineAt(helper, itemInputPos);
+        ItemBusPartMachine itemOutput = (ItemBusPartMachine) metaMachineAt(helper, itemOutputPos);
+        FluidHatchPartMachine fluidInput = (FluidHatchPartMachine) metaMachineAt(helper, fluidInputPos);
+        EnergyHatchPartMachine energy = (EnergyHatchPartMachine) metaMachineAt(helper, energyPos);
+        var maintenance = (com.gregtechceu.gtceu.common.machine.multiblock.part.MaintenanceHatchPartMachine) metaMachineAt(
+                helper, maintenancePos);
+        maintenance.fixAllMaintenanceProblems();
+        helper.getLevel().setDayTime(1000);
+        for (int x = -2; x <= 2; x++) {
+            for (int z = 0; z <= 4; z++) {
+                helper.setBlock(controllerPos.offset(x, 4, z), Blocks.AIR);
+            }
+        }
+        helper.runAfterDelay(20, () -> {
+            helper.assertTrue(greenhouse.getCurrentIllumination() > 0,
+                    "greenhouse must receive sunlight before its roof is covered (light=" +
+                            greenhouse.getCurrentIllumination() + ", facing=" + greenhouse.getFrontFacing() +
+                            ", center=" + greenhouse.getPos().relative(greenhouse.getFrontFacing().getOpposite(), 2)
+                                    .above(4) +
+                            ", roof=" + helper.getLevel().getBlockState(
+                                    greenhouse.getPos().relative(greenhouse.getFrontFacing().getOpposite(), 2)
+                                            .above(3)) +
+                            ", sample=" + helper.getLevel().getBlockState(
+                                    greenhouse.getPos().relative(greenhouse.getFrontFacing().getOpposite(), 2)
+                                            .above(4)) +
+                            ", top=" +
+                            helper.getLevel().getHeight(
+                                    net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE,
+                                    greenhouse.getPos().getX(),
+                                    greenhouse.getPos().relative(greenhouse.getFrontFacing().getOpposite(), 2).getZ()) +
+                            ", dark=" + helper.getLevel().getSkyDarken() +
+                            ")");
+            for (int x = -2; x <= 2; x++) {
+                for (int z = 0; z <= 4; z++) {
+                    helper.setBlock(controllerPos.offset(x, 4, z), Blocks.STONE);
+                }
+            }
+            helper.runAfterDelay(20, () -> {
+                helper.assertTrue(greenhouse.getCurrentIllumination() == 0,
+                        "opaque cover above the glass roof must block daylight inside the greenhouse");
+                for (int x = -2; x <= 2; x++) {
+                    for (int z = 0; z <= 4; z++) {
+                        helper.setBlock(controllerPos.offset(x, 4, z), Blocks.AIR);
+                    }
+                }
+                helper.runAfterDelay(20, () -> {
+                    helper.assertTrue(greenhouse.getCurrentIllumination() > 0,
+                            "greenhouse must recover sunlight after the cover is removed (light=" +
+                                    greenhouse.getCurrentIllumination() + ")");
+                    itemInput.getInventory().insertItem(0, new ItemStack(Blocks.CACTUS), false);
+                    itemInput.getInventory().insertItem(1, IntCircuitBehaviour.stack(1), false);
+                    fluidInput.tank.setFluidInTank(0, GTMaterials.Water.getFluid(1000));
+                    greenhouse.getRecipeLogic().updateTickSubscription();
+                    for (int tick = 0; tick < 1300; tick++) {
+                        energy.energyContainer.changeEnergy(1000);
+                        greenhouse.getRecipeLogic().serverTick();
+                    }
+                    helper.assertTrue(itemOutput.getInventory().getStackInSlot(0).is(Blocks.CACTUS.asItem()) &&
+                            itemOutput.getInventory().getStackInSlot(0).getCount() >= 12,
+                            "greenhouse must grow twelve cactus (output=" +
+                                    itemOutput.getInventory().getStackInSlot(0) +
+                                    ", status=" + greenhouse.getRecipeLogic().getStatus() +
+                                    ", reason=" + greenhouse.getRecipeLogic().getFancyTooltip() +
+                                    ", input=" + itemInput.getInventory().getStackInSlot(0) + "/" +
+                                    itemInput.getInventory().getStackInSlot(1) +
+                                    ", fluid=" + fluidInput.tank.getFluidInTank(0) +
+                                    ", energy=" + energy.energyContainer.getEnergyStored() +
+                                    ", skylight=" + greenhouse.getCurrentIllumination() +
+                                    ", skyVisible=" + helper.getLevel().canSeeSky(
+                                            helper.absolutePos(controllerPos).relative(greenhouse.getFrontFacing())
+                                                    .above(4)) +
+                                    ")");
+                    helper.succeed();
+                });
+            });
+        });
     }
 
     /**
@@ -2815,6 +3285,34 @@ public final class GTNAMachineGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void newGtoControllersDescribeTheirFunction(GameTestHelper helper) {
+        for (MultiblockMachineDefinition definition : new MultiblockMachineDefinition[] {
+                GTNAMachines3.GENERATOR_ARRAY, GTNAMachines3.FISHING_GROUND,
+                GTNAMachines3.EVAPORATION_PLANT, GTNAMachines3.GREENHOUSE }) {
+            java.util.List<Component> tooltip = new java.util.ArrayList<>();
+            definition.getTooltipBuilder().accept(ItemStack.EMPTY, tooltip);
+            String prefix = "gtna.machine." + definition.getId().getPath() + ".tooltip";
+            long functionalLines = tooltip.stream().filter(component -> component
+                    .getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents contents &&
+                    contents.getKey().startsWith(prefix + ".")).count();
+            int expectedLines = definition == GTNAMachines3.FISHING_GROUND ? 9 :
+                    definition == GTNAMachines3.GENERATOR_ARRAY ? 5 : 3;
+            helper.assertTrue(functionalLines == expectedLines,
+                    definition.getId() + " has incomplete functional tooltip: " + tooltip);
+            helper.assertTrue(tooltip.stream().noneMatch(component -> component
+                    .getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents contents &&
+                    prefix.equals(contents.getKey())),
+                    definition.getId() + " explicitly repeats the automatic description: " + tooltip);
+            long sourceLines = tooltip.stream().filter(component -> component
+                    .getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents contents &&
+                    "gtna.tooltip.source".equals(contents.getKey())).count();
+            helper.assertTrue(sourceLines == 1,
+                    definition.getId() + " must have exactly one source attribution: " + tooltip);
+        }
+        helper.succeed();
+    }
+
     /**
      * Manifest phase 2 regression: the Dimensionally Transcendent Dirt Forge must also be on the GTNA
      * multiple-recipes base (migrated as a zero-energy machine).
@@ -2999,7 +3497,7 @@ public final class GTNAMachineGameTests {
         }
         BlockPos failed = state.error.getPos();
         String relative = failed == null ? "?" :
-                failed.offset(-controllerPos.getX(), -controllerPos.getY(), -controllerPos.getZ()).toShortString();
+                failed.subtract(helper.absolutePos(controllerPos)).toShortString();
         return state.error.getErrorInfo().getString() + " | failed world=" + failed + " relative=" + relative +
                 " | area=" + areaDump(helper);
     }

@@ -14,7 +14,7 @@ Ordem das eras (order_index): stoneage → steam → ulv → lv → mv → hv �
 ## Resumo: multiblocos GTOCore por era (confirmados no código)
 - **Steam:** `steam_piston_hammer`, `steam_foundry`, `steam_pressor`, `steam_mixer`, `steam_separator`, `steam_bath`, `steam_ore_washer`, `steam_crusher`, `steam_cracker`, `large_coke_oven`, `item_vault`/`fluid_vault`/`general_vault`.
 - **ULV:** a era é dominada por **singleblocks** do GTOCore (`ulv_assembler`, `ulv_lathe`, `ulv_wiremill`, `ulv_chemical_reactor`, `ulv_packer`, `ulv_fluid_solidifier`, `ulv_loom`, `ulv_electric_*`). Multiblocos: `primitive_distillation_tower` (✅ GTNA), `digital_miner`. → **nada de multibloco genuíno restante** (fecha com o `brick_kiln`, G-0060).
-- **LV:** `liquefaction_furnace`, `lava_furnace`, `generator_array`, `tree_growth_simulator`, `thermal_power_pump`, `gas_compressor` (o resto do LV é GTCEu base + `large_steam_*` ✅).
+- **LV:** `liquefaction_furnace`, `generator_array`, `tree_growth_simulator`, `thermal_power_pump`, `gas_compressor` (o resto do LV é GTCEu base + `large_steam_*` ✅). `lava_furnace` aparece na quest original, mas está fora do escopo GTNA por decisão do autor.
 - **MV:** `reaction_furnace`, `greenhouse`, `crystallization_chamber`, `component_assembler`, `processing_plant`.
 
 ## main-stoneage
@@ -105,8 +105,8 @@ Ordem das eras (order_index): stoneage → steam → ulv → lv → mv → hv �
 - `gtocore:lv_laser_welder` 🎯
 - `gtocore:electric_heater` 🎯
 - `gtocore:phenolic_resin_bucket` 🎯
-- `gtocore:lava_furnace` 🎯
-- `gtocore:generator_array` 🎯
+- `gtocore:lava_furnace` ⛔ fora do escopo GTNA; equivalente já existe
+- `gtocore:generator_array` ✅ GTNA (G-0089; QA in-game pendente)
 - `gtocore:tree_growth_simulator` 🎯
 - `gtocore:lv_energy_input_hatch_16a` 🎯
 - `gtocore:steel_motor_enclosure` 🎯
@@ -154,7 +154,7 @@ Ordem das eras (order_index): stoneage → steam → ulv → lv → mv → hv �
 - `gtocore:processing_plant` 🎯
 - `gtocore:crystallization_chamber` 🎯
 - `gtocore:silicon_crystal_seed` 🎯
-- `gtocore:greenhouse` 🎯
+- `gtocore:greenhouse` ✅ GTNA (G-0090; QA in-game pendente)
 - `gtocore:component_assembler` 🎯
 - `gtocore:alumina_ceramic_rough_blank` 🎯
 - `gtocore:alumina_ceramic_block` 🎯
@@ -178,7 +178,7 @@ Ordem das eras (order_index): stoneage → steam → ulv → lv → mv → hv �
 ## hv
 
 - `gtocore:desulfurizer` 🎯
-- `gtocore:fishing_ground` 🎯
+- `gtocore:fishing_ground` ✅ GTNA (G-0089; QA in-game pendente)
 - `gtocore:polymerization_reactor` 🎯
 - `gtocore:void_transporter` 🎯
 - `gtocore:drone_control_center` 🎯
@@ -190,7 +190,7 @@ Ordem das eras (order_index): stoneage → steam → ulv → lv → mv → hv �
 - `gtocore:planet_data_chip` 🎯
 - `gtocore:virtual_item_supply_machine` 🎯
 - `gtocore:mv_programmablec_hatch` 🎯
-- `gtocore:evaporation_plant` 🎯
+- `gtocore:evaporation_plant` ✅ GTNA (G-0089; QA in-game pendente)
 - `gtocore:nether_reactor_core` 🎯
 - `gtocore:pulsating_photovoltaic_power_station` 🎯
 - `gtocore:recycler` 🎯

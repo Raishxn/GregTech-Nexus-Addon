@@ -205,6 +205,7 @@ public class GTNALangProvider extends LanguageProvider {
                 "High pressure mode doubles processing speed and steam consumption");
 
         add("material.gtna.aluminium_bronze", "Aluminium Bronze");
+        add("material.gtna.eglin_steel", "Eglin Steel");
         add("material.gtna.end_steel", "EndSteel");
         add("material.gtna.indalloy_140", "Indalloy 140");
         add("material.gtna.trinaquadalloy", "Trinaquadalloy");
@@ -337,6 +338,75 @@ public class GTNALangProvider extends LanguageProvider {
                 "§7The recipe's temperature sets the minimum coil tier, like the EBF.");
         add("gtna.machine.liquefaction_furnace.tooltip.2",
                 "§7Attach the stainless-steel extension tower to add §bParallel§7 and §bAccelerate§7 hatches.");
+
+        add("block.gtna.generator_array", "Generator Array");
+        add("gtna.machine.generator_array.tooltip",
+                "§6Main Function:§r §7Runs matching GTCEu generators using their normal fuel recipes.");
+        add("gtna.machine.generator_array.tooltip.0",
+                "§7Generator limit:§r §b4§7 of the same type and tier, in the controller slot or input bus.");
+        add("gtna.machine.generator_array.tooltip.1",
+                "§7Generation multiplier:§r §a1.3×§7 per installed generator; fuel use rises with output.");
+        add("gtna.machine.generator_array.tooltip.2",
+                "§7Fuel enters through fluid hatches; energy exits through the dynamo hatch.");
+        add("gtna.machine.generator_array.tooltip.3",
+                "§eWireless mode:§r §7sends energy to the owner's Nexus Flux Matrix with §c5% loss§7.");
+        add("gtna.machine.generator_array.tooltip.4",
+                "§7Supported generators: §bSteam Turbine, Gas Turbine, Combustion Generator§7.");
+        add("gtna.machine.generator_array.generators", "Installed generators: %s / 4");
+        add("gtna.machine.generator_array.generator_slot", "Generators (up to 4)");
+        add("gtna.machine.generator_array.wireless", "Wireless output: ");
+        add("gtna.machine.generator_array.on", "[On]");
+        add("gtna.machine.generator_array.off", "[Off]");
+        add("block.gtna.aluminium_bronze_casing", "Aluminium Bronze Casing");
+        add("block.gtna.fishing_ground", "Fishing Ground");
+        add("gtna.fishing_ground", "Fishing Ground");
+        add("gtna.machine.fishing_ground.tooltip",
+                "§6Main Function:§r §7Automatically fishes with bait in a water-filled structure.");
+        add("gtna.machine.fishing_ground.tooltip.0", "§7Like eating fish?");
+        add("gtna.machine.fishing_ground.tooltip.1",
+                "§7The AFFL-200 intelligent large fishing farm is a regular on the GregTech cuisine series.");
+        add("gtna.machine.fishing_ground.tooltip.2",
+                "§7Its powerful §eintelligent breeding system§7 brings powerful productivity.");
+        add("gtna.machine.fishing_ground.tooltip.3",
+                "§7It can meet the entire branch office's aquatic food needs.");
+        add("gtna.machine.fishing_ground.tooltip.4", "§6Set the circuit to enable automatic fishing:§r");
+        add("gtna.machine.fishing_ground.tooltip.5", "§7  Circuit §b1§7: §brandom fishing§7.");
+        add("gtna.machine.fishing_ground.tooltip.6", "§7  Circuit §b2§7: §bcatch fish§7.");
+        add("gtna.machine.fishing_ground.tooltip.7", "§7  Circuit §b3§7: §bcatch junk§7.");
+        add("gtna.machine.fishing_ground.tooltip.8", "§7  Circuit §b4§7: §bcatch treasure§7.");
+        add("block.gtna.stainless_evaporation_casing", "Stainless Evaporation Casing");
+        add("block.gtna.evaporation_plant", "Evaporation Plant");
+        add("gtna.evaporation", "Evaporation");
+        add("gtna.machine.evaporation_plant.tooltip",
+                "§6Main Function:§r §7Evaporates brine and other fluids in a tall processing tower.");
+        add("gtna.machine.evaporation_plant.tooltip.0",
+                "§7The stainless tower accepts up to §b5§7 repeated evaporation stages.");
+        add("gtna.machine.evaporation_plant.tooltip.1",
+                "§7Base: exactly one non-steam fluid input hatch (any tier) and 1–2 energy input hatches. Each tower stage accepts one fluid output hatch.");
+        add("gtna.machine.evaporation_plant.tooltip.2",
+                "§6Auxiliary Module:§r §bTitanium tower§7 enables Parallel and Accelerate hatches.");
+        add("block.gtna.greenhouse", "Greenhouse");
+        add("gtna.greenhouse", "Greenhouse");
+        add("gtna.machine.greenhouse.tooltip",
+                "§6Main Function:§r §7Grows crops from a retained seed or plant, water and optional fertilizer.");
+        add("gtna.machine.greenhouse.skylight", "Current illumination: %s");
+        add("gtna.machine.greenhouse.tooltip.0",
+                "§6Running Requirements:§r §eRequires sunlight to operate.");
+        add("gtna.machine.greenhouse.tooltip.1",
+                "§cInsufficient sunlight slows growth; no sunlight stops it.");
+        add("gtna.machine.greenhouse.tooltip.2",
+                "§7Use Rich Soil or §bMud§7 in the planting beds.");
+        add("material.gtna.raw_brine", "Raw Brine");
+        add("material.gtna.hot_brine", "Hot Brine");
+        add("material.gtna.hot_chlorinated_brominated_brine", "Hot Chlorinated Brominated Brine");
+        add("material.gtna.hot_debrominated_brine", "Hot Debrominated Brine");
+        add("material.gtna.hot_alkaline_debrominated_brine", "Hot Alkaline Debrominated Brine");
+        add("material.gtna.debrominated_brine", "Debrominated Brine");
+        add("material.gtna.brominated_chlorine_vapor", "Brominated Chlorine Vapor");
+        add("material.gtna.acidic_bromine_solution", "Acidic Bromine Solution");
+        add("material.gtna.concentrated_bromine_solution", "Concentrated Bromine Solution");
+        add("material.gtna.acidic_bromine_exhaust", "Acidic Bromine Exhaust");
+        add("material.gtna.hydrogen_iodide", "Hydrogen Iodide");
 
         add("block.gtna.industrial_platform_deployment_tools", "Industrial Platform Deployment Tools");
         add("gtna.machine.industrial_platform_deployment_tools.tooltip.0",
@@ -1507,8 +1577,6 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.voidMinerInsanelyEnergyMult", "Void Miner (Insanely) Energy");
         add("config.gtna.option.baseLossPercent", "Base Loss Percent");
         add("config.gtna.option.maxTransferTierMAX", "MAX Tier Transfer Limit");
-        add("config.gtna.option.safeModeThreshold", "Safe Mode Threshold");
-        add("config.gtna.option.safeModeRecovery", "Safe Mode Recovery");
         add("config.gtna.option.alertCooldownTicks", "Alert Cooldown");
         add("config.gtna.option.useHighestTierForEfficiency", "Use Highest Tier For Efficiency");
         // Jade builds one config entry per registered data provider and asserts the translation

@@ -29,7 +29,6 @@ Track the development progress of GregTech Nexus Addon in real time.
 - [ ] **Wireless Energy/Dynamo Hatches** - 11 amperages, all tiers
 - [ ] **Nexus Linker** - Network binding item
 - [ ] **Quantum Network Terminal** - Full monitoring GUI
-- [ ] **Safe Mode** - Auto protection at <10%
 
 ### New Multiblocks (Planned)
 - [ ] Forge of the Iron Crown

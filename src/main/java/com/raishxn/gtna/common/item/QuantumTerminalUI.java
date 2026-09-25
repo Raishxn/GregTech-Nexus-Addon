@@ -87,7 +87,6 @@ public class QuantumTerminalUI {
         NexusEnergyNetwork network = NexusEnergyNetwork.get((ServerLevel) player.level());
         Int128 energy = network.getEnergy(networkOwner);
         Int128 maxCapacity = network.getMaxCapacity(networkOwner);
-        boolean safeMode = network.getSafeMode(networkOwner);
         Int128 inPerTick = network.getLastInputPerTick(networkOwner);
         Int128 outPerTick = network.getLastOutputPerTick(networkOwner);
 
@@ -128,11 +127,7 @@ public class QuantumTerminalUI {
         textList.add(Component.literal("§7Network: §f" + ownerName));
 
         // Status
-        if (safeMode) {
-            textList.add(Component.literal("§7Status: §c⛔ SAFE MODE"));
-        } else {
-            textList.add(Component.literal("§7Status: §a✅ ONLINE"));
-        }
+        textList.add(Component.literal("§7Status: §a✅ ONLINE"));
 
         // Matrix formed
         textList.add(Component.literal("§7Matrix: " + (matrixFormed ? "§a✅ FORMED" : "§c✖ NOT FORMED")));

@@ -723,6 +723,117 @@ public class GTNAMachineRecipes {
                     .EUt(0)
                     .save(provider);
         }
+
+        // GTOCore MachineRecipe.java: steel plates, LV circuits and an LV emitter.
+        if (enabled(GTNAMachines3.GENERATOR_ARRAY)) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines3.GENERATOR_ARRAY.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("BCB")
+                    .pattern("ABA")
+                    .define('A', Objects.requireNonNull(ChemicalHelper.getTag(TagPrefix.plate, GTMaterials.Steel)))
+                    .define('B', CustomTags.LV_CIRCUITS)
+                    .define('C', GTItems.EMITTER_LV.asStack().getItem())
+                    .unlockedBy("has_steel_plate", InventoryChangeTrigger.TriggerInstance
+                            .hasItems(ChemicalHelper.get(TagPrefix.plate, GTMaterials.Steel).getItem()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines3.FISHING_GROUND)) {
+            // GTOCore Mixer.java, Assembler.java and classified/FishingGround.java.
+            GTRecipeTypes.MIXER_RECIPES.recipeBuilder("gtna_eglin_steel_dust")
+                    .inputItems(TagPrefix.dust, GTMaterials.Iron, 4)
+                    .inputItems(TagPrefix.dust, GTMaterials.Kanthal)
+                    .inputItems(TagPrefix.dust, GTMaterials.Invar, 5)
+                    .inputItems(TagPrefix.dust, GTMaterials.Sulfur)
+                    .inputItems(TagPrefix.dust, GTMaterials.Silicon)
+                    .inputItems(TagPrefix.dust, GTMaterials.Carbon)
+                    .outputItems(TagPrefix.dust, GTNAMaterials.EglinSteel, 13)
+                    .EUt(120)
+                    .duration(600)
+                    .save(provider);
+            GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_aluminium_bronze_casing")
+                    .inputItems(TagPrefix.frameGt, GTNAMaterials.AluminiumBronze)
+                    .inputItems(TagPrefix.plate, GTNAMaterials.AluminiumBronze, 6)
+                    .circuitMeta(6)
+                    .outputItems(GTNABlocks.ALUMINIUM_BRONZE_CASING.asItem())
+                    .EUt(16)
+                    .duration(50)
+                    .save(provider);
+            GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_fishing_ground")
+                    .inputItems(GTMachines.FISHER[GTValues.LV].asStack())
+                    .inputItems(GTMachines.FISHER[GTValues.MV].asStack())
+                    .inputItems(GTMachines.FISHER[GTValues.HV].asStack())
+                    .inputItems(GTItems.SENSOR_LV)
+                    .inputItems(GTItems.SENSOR_MV)
+                    .inputItems(GTItems.SENSOR_HV)
+                    .inputItems(CustomTags.EV_CIRCUITS, 2)
+                    .inputItems(TagPrefix.plate, GTNAMaterials.EglinSteel, 4)
+                    .inputItems(TagPrefix.plateDouble, GTNAMaterials.AluminiumBronze, 4)
+                    .inputFluids(GTMaterials.SolderingAlloy, 576)
+                    .outputItems(GTNAMachines3.FISHING_GROUND.asStack())
+                    .EUt(480)
+                    .duration(400)
+                    .save(provider);
+            Item[] fish = { Items.COD, Items.SALMON, Items.TROPICAL_FISH, Items.PUFFERFISH };
+            for (int index = 0; index < fish.length; index++) {
+                GTNARecipeType.FISHING_GROUND_RECIPES.recipeBuilder("fishing_ground" + (index + 1))
+                        .notConsumable(new net.minecraft.world.item.ItemStack(fish[index], 64))
+                        .inputItems(TagPrefix.dustTiny, GTMaterials.Meat, 64)
+                        .outputItems(fish[index], 32)
+                        .EUt(1)
+                        .duration(2000)
+                        .save(provider);
+            }
+        }
+        if (enabled(GTNAMachines3.EVAPORATION_PLANT)) {
+            // GTOCore MachineRecipe.java, MiscRecipe.java, Evaporation.java and BrineRecipes.java.
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines3.EVAPORATION_PLANT.asStack().getItem())
+                    .pattern("CBC")
+                    .pattern("FMF")
+                    .pattern("CBC")
+                    .define('C', CustomTags.HV_CIRCUITS)
+                    .define('B', ChemicalHelper.get(TagPrefix.wireGtDouble, GTMaterials.Kanthal).getItem())
+                    .define('F', GTItems.ELECTRIC_PUMP_HV.asStack().getItem())
+                    .define('M', GTMachines.HULL[GTValues.HV].asStack().getItem())
+                    .unlockedBy("has_hv_pump", InventoryChangeTrigger.TriggerInstance
+                            .hasItems(GTItems.ELECTRIC_PUMP_HV.asStack().getItem()))
+                    .save(provider);
+            GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_stainless_evaporation_casing")
+                    .inputItems(GTBlocks.CASING_STAINLESS_CLEAN.asItem())
+                    .inputItems(TagPrefix.wireGtDouble, GTMaterials.AnnealedCopper, 4)
+                    .inputFluids(GTMaterials.PolyvinylChloride, 288)
+                    .outputItems(GTNABlocks.STAINLESS_EVAPORATION_CASING.asItem())
+                    .duration(30)
+                    .EUt(GTValues.VA[GTValues.HV])
+                    .save(provider);
+            GTNARecipeType.EVAPORATION_RECIPES.recipeBuilder("salt_water")
+                    .inputFluids(GTMaterials.Water, 50_000)
+                    .outputFluids(GTMaterials.SaltWater.getFluid(1_000))
+                    .EUt(30)
+                    .duration(600)
+                    .save(provider);
+            GTNARecipeType.EVAPORATION_RECIPES.recipeBuilder("brine_evaporation")
+                    .inputFluids(GTMaterials.SaltWater, 20_000)
+                    .outputFluids(GTNAMaterials.RawBrine.getFluid(1_000))
+                    .duration(1_000)
+                    .EUt(GTValues.VA[GTValues.HV])
+                    .save(provider);
+            registerBrineChain(provider);
+        }
+        if (enabled(GTNAMachines3.GREENHOUSE)) {
+            // GTOCore classified/Vanilla.java:385, exact MV controller ingredients.
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines3.GREENHOUSE.asStack().getItem())
+                    .pattern("AAA")
+                    .pattern("BCB")
+                    .pattern("DED")
+                    .define('A', GTBlocks.CASING_TEMPERED_GLASS.asItem())
+                    .define('B', CustomTags.MV_CIRCUITS)
+                    .define('C', GTMachines.HULL[GTValues.MV].asStack().getItem())
+                    .define('D', GTItems.ELECTRIC_PISTON_MV.asStack().getItem())
+                    .define('E', GTItems.ELECTRIC_PUMP_MV.asStack().getItem())
+                    .unlockedBy("has_mv_pump", InventoryChangeTrigger.TriggerInstance
+                            .hasItems(GTItems.ELECTRIC_PUMP_MV.asStack().getItem()))
+                    .save(provider);
+        }
         if (enabled(GTNAMachines.STEAM_LAVA_MAKER)) {
             // GTNL SteamManufacturer parity: StronzeWrappedCasing + 2 hydraulic motors + Stronze/Breel
             // medium pipes -> lava maker (200 t @ 200 EU/t).
@@ -1642,6 +1753,77 @@ public class GTNAMachineRecipes {
                 }
             }
         }
+    }
+
+    /** GTOCore BrineRecipes: bromine and iodine extraction downstream of evaporation. */
+    private static void registerBrineChain(Consumer<FinishedRecipe> provider) {
+        GTRecipeTypes.FLUID_HEATER_RECIPES.recipeBuilder("gtna_brine_heating")
+                .inputFluids(GTNAMaterials.RawBrine, 1_000)
+                .outputFluids(GTNAMaterials.HotBrine.getFluid(1_000))
+                .duration(12_000).EUt(GTValues.VA[GTValues.HV]).save(provider);
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("gtna_brine_chlorination")
+                .inputFluids(GTNAMaterials.HotBrine, 1_000)
+                .inputFluids(GTMaterials.Chlorine, 1_000)
+                .outputFluids(GTNAMaterials.HotChlorinatedBrominatedBrine.getFluid(2_000))
+                .duration(100).EUt(GTValues.VA[GTValues.HV]).save(provider);
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("gtna_brine_filtration")
+                .inputFluids(GTNAMaterials.HotChlorinatedBrominatedBrine, 1_000)
+                .inputFluids(GTMaterials.Chlorine, 1_000)
+                .inputFluids(GTMaterials.Steam, 1_000)
+                .outputFluids(GTNAMaterials.HotAlkalineDebrominatedBrine.getFluid(1_000))
+                .outputFluids(GTNAMaterials.BrominatedChlorineVapor.getFluid(2_000))
+                .duration(300).EUt(GTValues.VA[GTValues.HV]).save(provider);
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("gtna_brominated_chlorine_vapor_condensation")
+                .inputFluids(GTNAMaterials.BrominatedChlorineVapor, 1_000)
+                .inputFluids(GTMaterials.Water, 1_000)
+                .outputFluids(GTNAMaterials.AcidicBromineSolution.getFluid(1_000))
+                .outputFluids(GTMaterials.Water.getFluid(1_000))
+                .duration(200).EUt(GTValues.VA[GTValues.HV]).save(provider);
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("gtna_bromine_vapor_concentration")
+                .inputFluids(GTNAMaterials.AcidicBromineSolution, 1_000)
+                .inputFluids(GTMaterials.Steam, 1_000)
+                .outputFluids(GTNAMaterials.ConcentratedBromineSolution.getFluid(1_000))
+                .outputFluids(GTNAMaterials.AcidicBromineExhaust.getFluid(1_000))
+                .duration(100).EUt(GTValues.VA[GTValues.HV]).save(provider);
+        GTRecipeTypes.DISTILLATION_RECIPES.recipeBuilder("gtna_bromine_distillation")
+                .inputFluids(GTNAMaterials.ConcentratedBromineSolution, 1_000)
+                .outputFluids(GTMaterials.Chlorine.getFluid(500))
+                .outputFluids(GTMaterials.Bromine.getFluid(1_000))
+                .duration(500).EUt(GTValues.VA[GTValues.HV]).save(provider);
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("gtna_brine_neutralization")
+                .inputFluids(GTNAMaterials.HotAlkalineDebrominatedBrine, 3_000)
+                .inputItems(TagPrefix.dust, GTMaterials.Potassium)
+                .outputFluids(GTNAMaterials.HotDebrominatedBrine.getFluid(2_000))
+                .outputItems(TagPrefix.dust, GTMaterials.RockSalt, 2)
+                .duration(100).EUt(GTValues.VA[GTValues.HV]).save(provider);
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("gtna_debrominated_brine_raw_brine_mixing")
+                .inputFluids(GTNAMaterials.RawBrine, 1_000)
+                .inputFluids(GTNAMaterials.HotDebrominatedBrine, 1_000)
+                .outputFluids(GTNAMaterials.HotBrine.getFluid(1_000))
+                .outputFluids(GTNAMaterials.DebrominatedBrine.getFluid(1_000))
+                .duration(200).EUt(GTValues.VA[GTValues.HV]).save(provider);
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("gtna_acidic_bromine_exhaust_heating")
+                .inputFluids(GTNAMaterials.AcidicBromineExhaust, 1_000)
+                .inputFluids(GTNAMaterials.HotBrine, 1_000)
+                .outputFluids(GTNAMaterials.HotChlorinatedBrominatedBrine.getFluid(1_000))
+                .outputFluids(GTMaterials.Steam.getFluid(3_000))
+                .duration(100).EUt(GTValues.VA[GTValues.HV]).save(provider);
+        GTRecipeTypes.CENTRIFUGE_RECIPES.recipeBuilder("gtna_debrominated_brine_decomposition")
+                .inputFluids(GTNAMaterials.DebrominatedBrine, 2_000)
+                .outputFluids(GTMaterials.SaltWater.getFluid(1_000))
+                .duration(60).EUt(GTValues.VA[GTValues.MV]).save(provider);
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("gtna_brine_acidification")
+                .inputFluids(GTNAMaterials.HotBrine, 2_000)
+                .inputFluids(GTMaterials.HydrochloricAcid, 1_000)
+                .outputFluids(GTNAMaterials.HotAlkalineDebrominatedBrine.getFluid(2_000))
+                .outputFluids(GTNAMaterials.HydrogenIodide.getFluid(1_000))
+                .duration(100).EUt(GTValues.VHA[GTValues.HV]).save(provider);
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("gtna_iodine")
+                .inputFluids(GTNAMaterials.HydrogenIodide, 2_000)
+                .inputFluids(GTMaterials.Oxygen, 1_000)
+                .outputItems(TagPrefix.dust, GTMaterials.Iodine)
+                .outputFluids(GTMaterials.Water.getFluid(1_000))
+                .duration(1_000).EUt(GTValues.VHA[GTValues.HV]).save(provider);
     }
 
     private static void registerMEStorageCoreRecipes(Consumer<FinishedRecipe> provider) {

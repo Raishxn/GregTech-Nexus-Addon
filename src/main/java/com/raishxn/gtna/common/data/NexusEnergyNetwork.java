@@ -5,15 +5,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedData;
 
-import com.raishxn.gtna.config.ConfigHolder;
-import com.raishxn.gtna.config.GTNABalance;
 import com.raishxn.gtna.utils.datastructure.Int128;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -41,9 +37,6 @@ public class NexusEnergyNetwork extends SavedData {
 
         public Int128 energy = Int128.ZERO();
         public Int128 maxCapacity = Int128.ZERO();
-        public boolean safeMode = false;
-        public long lastAlertTime = 0;
-
         public Int128 inputPerTick = Int128.ZERO();
         public Int128 outputPerTick = Int128.ZERO();
         public Int128 lastInputPerTick = Int128.ZERO();
@@ -72,7 +65,6 @@ public class NexusEnergyNetwork extends SavedData {
             NetworkState state = new NetworkState();
             state.energy = Int128.fromString(entry.getString("Amount"), Int128.ZERO());
             state.maxCapacity = Int128.fromString(entry.getString("MaxCapacity"), Int128.ZERO());
-            state.safeMode = entry.getBoolean("SafeMode");
             state.totalCapacitors = entry.getLong("TotalCapacitors");
             state.averageTier = entry.getInt("AvgTier");
             state.efficiency = entry.getDouble("Efficiency");
@@ -95,7 +87,6 @@ public class NexusEnergyNetwork extends SavedData {
             entry.putUUID("Owner", uuid);
             entry.putString("Amount", state.energy.toString());
             entry.putString("MaxCapacity", state.maxCapacity.toString());
-            entry.putBoolean("SafeMode", state.safeMode);
             entry.putLong("TotalCapacitors", state.totalCapacitors);
             entry.putInt("AvgTier", state.averageTier);
             entry.putDouble("Efficiency", state.efficiency);
@@ -169,10 +160,6 @@ public class NexusEnergyNetwork extends SavedData {
         return getState(owner).lastOutputPerTick.copy();
     }
 
-    public boolean getSafeMode(UUID owner) {
-        return getState(owner).safeMode;
-    }
-
     public Map<GlobalPos, ConnectionInfo> getConnections(UUID owner) {
         return getState(owner).connections;
     }
@@ -237,7 +224,6 @@ public class NexusEnergyNetwork extends SavedData {
         state.energy.add(accepted);
         state.inputPerTick.add(accepted);
 
-        checkSafeMode(owner, state, level);
         setDirty();
         return accepted;
     }
@@ -254,62 +240,11 @@ public class NexusEnergyNetwork extends SavedData {
         NetworkState state = getState(owner);
         handleTick(state, level.getGameTime());
 
-        if (state.safeMode) return false;
         if (state.energy.compareTo(amount) < 0) return false;
 
         state.energy.subtract(amount);
         state.outputPerTick.add(amount);
-        checkSafeMode(owner, state, level);
         setDirty();
         return true;
-    }
-
-    private void checkSafeMode(UUID owner, NetworkState state, ServerLevel level) {
-        if (state.maxCapacity.isZero()) return;
-
-        var cfg = ConfigHolder.INSTANCE.machines.nexusFluxMatrix;
-        if (!GTNABalance.getNexusFluxMatrix().safeMode.enabled) {
-            if (state.safeMode) {
-                state.safeMode = false;
-                setDirty();
-            }
-            return;
-        }
-
-        double currentRatio;
-        if (state.maxCapacity.compareTo(Int128.fromBigInteger(BigInteger.valueOf(1_000_000_000L))) < 0) {
-            currentRatio = (double) state.energy.toLong() / (double) state.maxCapacity.toLong();
-        } else {
-            currentRatio = state.energy.toBigInteger().doubleValue() / state.maxCapacity.toBigInteger().doubleValue();
-        }
-
-        double percentage = currentRatio * 100.0;
-        long currentGameTime = level.getGameTime();
-
-        if (!state.safeMode && percentage <= cfg.safeModeThreshold) {
-            state.safeMode = true;
-            maybeAlertOwner(owner, state, level, currentGameTime,
-                    "CRITICAL: Energy < " + cfg.safeModeThreshold + "%. Entering Safe Mode.",
-                    net.minecraft.ChatFormatting.DARK_RED,
-                    net.minecraft.ChatFormatting.BOLD);
-        } else if (state.safeMode && percentage >= cfg.safeModeRecovery) {
-            state.safeMode = false;
-            maybeAlertOwner(owner, state, level, currentGameTime,
-                    "Power restored. Safe Mode deactivated.",
-                    net.minecraft.ChatFormatting.GREEN);
-        }
-    }
-
-    private void maybeAlertOwner(UUID owner, NetworkState state, ServerLevel level, long currentGameTime,
-                                 String message, net.minecraft.ChatFormatting... formatting) {
-        int cooldown = Math.max(0, ConfigHolder.INSTANCE.machines.nexusFluxMatrix.alertCooldownTicks);
-        if (currentGameTime - state.lastAlertTime < cooldown) return;
-
-        state.lastAlertTime = currentGameTime;
-        ServerPlayer alertPlayer = level.getServer().getPlayerList().getPlayer(owner);
-        if (alertPlayer != null) {
-            alertPlayer.displayClientMessage(net.minecraft.network.chat.Component.literal(message)
-                    .withStyle(formatting), false);
-        }
     }
 }

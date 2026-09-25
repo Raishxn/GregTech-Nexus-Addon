@@ -198,6 +198,7 @@ tasks.register('runUnitTests') {
             'com.raishxn.gtna.SteamWiringContractTest',
             'com.raishxn.gtna.ModuleTooltipContractTest',
             'com.raishxn.gtna.BuildDependencyContractTest',
+            'com.raishxn.gtna.DataGeneratorMixinContractTest',
             'com.raishxn.gtna.PartAbilityCoverageTest',
             'com.raishxn.gtna.RegistrationContractTest',
             'com.raishxn.gtna.OutputBoostContractTest',
@@ -241,6 +242,7 @@ dependencies {
     // provide them; these are the MC 1.20.1 versions.
     testImplementation("it.unimi.dsi:fastutil:8.5.9")
     testImplementation("com.google.guava:guava:32.1.2-jre")
+    testImplementation("org.ow2.asm:asm:9.8")
 
     // JEI, EMI, Jade
     modCompileOnly("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
@@ -279,8 +281,8 @@ dependencies {
     modImplementation("curse.maven:configuration-444699:5840405")
 
     // KubeJS soft dependency
-    modCompileOnly("dev.latvian.mods:kubejs-forge:2001.6.5-build.16")
-    modRuntimeOnly("dev.latvian.mods:kubejs-forge:2001.6.5-build.16")
+    modCompileOnly("dev.latvian.mods:kubejs-forge:2001.6.5-build.26")
+    modRuntimeOnly("dev.latvian.mods:kubejs-forge:2001.6.5-build.26")
     modCompileOnly("dev.latvian.mods:rhino-forge:2001.2.2-build.17")
     modRuntimeOnly("dev.latvian.mods:rhino-forge:2001.2.2-build.17")
     modRuntimeOnly("dev.architectury:architectury-forge:9.1.12")

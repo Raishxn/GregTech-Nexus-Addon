@@ -5,7 +5,8 @@ This is the authoritative scope for the GTOCore and GTLAdditions port. Registry 
 ## Rules
 
 - Target: GTCEu `7.5.3` on Minecraft `1.20.1`.
-- Every recipe-processing controller is implemented on a GTNA multiple-recipes base and accepts the Thread Hatch where its structure permits it.
+- Recipe-processing controllers use the GTNA multiple-recipes base when they need multiple maps or
+  Thread Hatch support. Source-specific machines keep specialized logic when required for fidelity.
 - Coil machines use `CoilWorkableElectricMultipleRecipesMachine` or a specialized subclass.
 - Space machines may depend on Ad Astra and Stargate Journey.
 - A machine is excluded as mana/arcane only when it actually consumes or transports Botania mana.
@@ -20,6 +21,17 @@ These GTO IDs map to existing GTNA implementations and will be upgraded instead 
 
 These Botania-mana controllers are excluded: `mana_alloy_blast_smelter`, `base_mana_distributor`, `advanced_mana_distributor`, `mana_infuser`, `mana_condenser`, `elf_exchange`, `industrial_altar`, `mana_greenhouse`, `mana_garden`, `rune_engraving_chamber`, `large_alchemical_device`, `large_perfusion_device`, `the_primordial_reconstructor`, `resonance_flower`, `cosmic_celestial_spire_of_convergence`, `mana_beam_assembler`, `pulse_machine_maintenance_pedestal`.
 
+`lava_furnace` is excluded by the author's 2026-09-25 decision: GTNA already has an equivalent multiblock.
+
+## Implemented in the current local port batch
+
+`generator_array`, `fishing_ground`, `evaporation_plant`, `greenhouse`. All four passed the full
+build, unit, GameTest and datagen gate (20/20 unit tests, 57/57 GameTests). All four still need the
+author’s in-game check.
+
+For the author's exact selection, exclusions, current gate and next action, read
+`NEXT-SESSION-PORTS-2026-09-25.md`.
+
 ## GTOCore candidates
 
 ### Research and computation
@@ -32,7 +44,7 @@ These Botania-mana controllers are excluded: `mana_alloy_blast_smelter`, `base_m
 
 ### Processing set A
 
-`digital_miner`, `evaporation_plant`, `plasma_condenser`, `rare_earth_centrifugal`, `comprehensive_tombarthite_processing_facility`, `sps_crafting`, `advanced_sps_crafting`, `matter_fabricator`, `void_fluid_drilling_rig`, `void_miner`, `large_void_miner`, `chemical_plant`, `decay_hastener`, `recycler`, `mass_fabricator`, `advanced_mass_fabricator`, `precision_assembler`, `fishing_ground`, `lava_furnace`, `large_gas_collector`, `engraving_laser_plant`, `magnetic_confinement_dimensionality_shock_device`, `quantum_force_transformer`, `chemical_complex`, `integrated_ore_processor`, `dragon_egg_copier`, `large_cracker`, `steam_piston_hammer`, `large_steam_forge_hammer`, `steam_pressor`, `steam_foundry`, `large_steam_macerator`, `steam_mixer`, `steam_separator`, `steam_bath`, `steam_ore_washer`, `petrochemical_plant`, `large_pyrolyse_oven`, `mega_wiremill`, `superconducting_magnetic_presser`, `heavy_rolling`, `phase_change_cube`, `particle_stream_matrix_filling_machine`, `disassembly`, `element_copying`, `atomic_energy_excitation_plant`, `industrial_flotation_cell`, `vacuum_drying_furnace`, `molten_core`, `electric_implosion_compressor`, `stellar_forge`, `component_assembly_line`, `advanced_integrated_ore_processor`, `integrated_assembler`.
+`digital_miner`, `evaporation_plant`, `plasma_condenser`, `rare_earth_centrifugal`, `comprehensive_tombarthite_processing_facility`, `sps_crafting`, `advanced_sps_crafting`, `matter_fabricator`, `void_fluid_drilling_rig`, `void_miner`, `large_void_miner`, `chemical_plant`, `decay_hastener`, `recycler`, `mass_fabricator`, `advanced_mass_fabricator`, `precision_assembler`, `fishing_ground`, `large_gas_collector`, `engraving_laser_plant`, `magnetic_confinement_dimensionality_shock_device`, `quantum_force_transformer`, `chemical_complex`, `integrated_ore_processor`, `dragon_egg_copier`, `large_cracker`, `steam_piston_hammer`, `large_steam_forge_hammer`, `steam_pressor`, `steam_foundry`, `large_steam_macerator`, `steam_mixer`, `steam_separator`, `steam_bath`, `steam_ore_washer`, `petrochemical_plant`, `large_pyrolyse_oven`, `mega_wiremill`, `superconducting_magnetic_presser`, `heavy_rolling`, `phase_change_cube`, `particle_stream_matrix_filling_machine`, `disassembly`, `element_copying`, `atomic_energy_excitation_plant`, `industrial_flotation_cell`, `vacuum_drying_furnace`, `molten_core`, `electric_implosion_compressor`, `stellar_forge`, `component_assembly_line`, `advanced_integrated_ore_processor`, `integrated_assembler`.
 
 ### Processing set B
 

@@ -39,11 +39,11 @@ public final class SteamWiringContractTest {
     /** Pinning a steam slot to this exact block excludes any part that only has the STEAM ability. */
     private static final String EXACT_HATCH_PIN = "blocks(GTMachines.STEAM_HATCH";
 
-    /** The input hatch must serve as a steam source: STEAM ability + fluid import. */
-    private static final String INPUT_HATCH_ABILITIES = ".abilities(PartAbility.STEAM, IMPORT_FLUIDS)";
+    /** Steam hatches must not advertise the universal fluid abilities. */
+    private static final String INPUT_HATCH_ABILITIES = ".abilities(PartAbility.STEAM)";
 
     /** The output hatch only exports steam; declaring STEAM would let it occupy the energy slot. */
-    private static final String OUTPUT_HATCH_WITH_STEAM = ".abilities(PartAbility.STEAM, EXPORT_FLUIDS)";
+    private static final String OUTPUT_HATCH_ABILITIES = ".abilities(GTNAPartAbility.STEAM_EXPORT_FLUIDS)";
 
     /** The ability-based predicate GTCEu itself uses for the steam-source slot. */
     private static final String ABILITY_PIN = "abilities(PartAbility.STEAM)";
@@ -87,17 +87,21 @@ public final class SteamWiringContractTest {
 
     /** The input hatch is a steam source; the output hatch must not be one. */
     private static void checkHatchAbilityRoles() throws IOException {
-        String source = Files.readString(MACHINES_SOURCE, StandardCharsets.UTF_8);
-        if (!source.contains(INPUT_HATCH_ABILITIES)) {
+        String allMachines = Files.readString(MACHINES_SOURCE, StandardCharsets.UTF_8);
+        String source = allMachines.substring(allMachines.indexOf("// --- INPUT HATCHES (Recebe Vapor) ---"),
+                allMachines.indexOf("public static final MachineDefinition HUGE_STEAM_INPUT_BUS"));
+        if (source.split(java.util.regex.Pattern.quote(INPUT_HATCH_ABILITIES), -1).length - 1 < 2) {
             throw new AssertionError("the wireless steam input hatch no longer declares " +
                     INPUT_HATCH_ABILITIES + " in " + MACHINES_SOURCE +
-                    "; it must stay a STEAM + IMPORT_FLUIDS part");
+                    "; both tiers must stay steam-only sources");
         }
-        if (source.contains(OUTPUT_HATCH_WITH_STEAM)) {
-            throw new AssertionError("the wireless steam output hatch declares the STEAM ability " +
-                    "(matches " + OUTPUT_HATCH_WITH_STEAM + "); with the ability-based steam slot it could " +
-                    "occupy the machine's energy slot and invalidate the structure - it is a pure " +
-                    "EXPORT_FLUIDS part");
+        if (source.split(java.util.regex.Pattern.quote(OUTPUT_HATCH_ABILITIES), -1).length - 1 != 2) {
+            throw new AssertionError("both wireless steam output tiers must declare only " +
+                    OUTPUT_HATCH_ABILITIES);
+        }
+        if (source.contains(".abilities(PartAbility.STEAM, IMPORT_FLUIDS)") ||
+                source.contains(".abilities(EXPORT_FLUIDS)")) {
+            throw new AssertionError("wireless steam hatches must not advertise universal fluid abilities");
         }
     }
 

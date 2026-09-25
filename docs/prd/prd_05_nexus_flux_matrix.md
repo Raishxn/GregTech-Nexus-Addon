@@ -218,38 +218,11 @@ Item de mão que abre uma GUI com informações completas da rede:
 
 ---
 
-## 6. Sistema de Segurança / Safety System
+## 6. Comportamento com carga baixa
 
-Executado via `serverTick` com flags anti-spam:
-
-### 6.1 Alertas de Bateria
-
-| Nível | Mensagem | Ação |
-|:---:|----------|------|
-| ≤75% | `⚠️ Energy Level: 75%` | Aviso no chat |
-| ≤50% | `⚠️ Energy Level: 50%` | Aviso no chat |
-| ≤25% | `⚠️ Energy Level: 25% (Approaching Safe Mode)` | Aviso urgente |
-| ≤10% | `⛔ CRITICAL: Energy < 10%. Entering Safe Mode.` | **SAFE MODE ATIVADO** |
-
-### 6.2 Safe Mode
-
-- **Gatilho**: Energia abaixo de **10%**
-- **Ação**: Corta **todo** output de energia (máquinas param)
-- **Continua aceitando** input (geradores ainda carregam)
-- **Retorno**: Sistema volta ao normal quando atingir **25%** de carga
-- **Lógica**:
-```java
-if (safeModeActive) {
-    if (percent >= 25) {
-        safeModeActive = false;
-        sendAlert("🔋 Power restored. Safe Mode deactivated.");
-    }
-    return; // Block all output
-} else if (percent <= 10) {
-    safeModeActive = true;
-    sendAlert("⛔ CRITICAL: Safe Mode activated.");
-}
-```
+Decisão de 2026-09-25: a Matrix fornece energia até esgotar a carga. Uma retirada falha
+somente quando a energia armazenada é insuficiente para o valor solicitado. O modo Safe e
+os alertas associados foram removidos.
 
 ---
 
@@ -300,10 +273,7 @@ nexusFluxMatrix:
   maxCapacitorBlocks: 750
   baseLossPercent: 15.0
   maxTransferTierMAX: 500000000000000000000000  # 500 ZEU/t
-  safeModeThreshold: 10
-  safeModeRecovery: 25
   crossDimensionMinTier: 7  # ZPM
-  alertCooldownTicks: 1200  # 1 minuto entre alertas iguais
 ```
 
 ---
@@ -314,7 +284,7 @@ nexusFluxMatrix:
 2. **Fase 2**: `NexusFluxMatrixMachine` (controller com pattern dinâmico)
 3. **Fase 3**: `WirelessEnergyHatch` + `WirelessDynamoHatch` (baseado em GTMThings)
 4. **Fase 4**: `NexusLinkerItem` + bind/unbind logic
-5. **Fase 5**: Safe Mode + alertas + config
+5. **Fase 5**: Configuração de capacidade, eficiência e transferência
 6. **Fase 6**: Covers (Receiver/Transmitter)
 7. **Fase 7**: Quantum Network Terminal (GUI)
 8. **Fase 8**: Integração FTB Teams (opcional)
