@@ -80,6 +80,7 @@ import com.raishxn.gtna.common.data.GTNAMachines3;
 import com.raishxn.gtna.common.data.GTNARecipeType;
 import com.raishxn.gtna.common.data.NexusEnergyNetwork;
 import com.raishxn.gtna.common.data.multiblock.GTOCompressedPatternReader;
+import com.raishxn.gtna.common.item.terminal.NexusBuildCheckGuard;
 import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
 import com.raishxn.gtna.common.machine.multiblock.electric.GreenhouseMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.LiquefactionFurnaceMachine;
@@ -3228,6 +3229,23 @@ public final class GTNAMachineGameTests {
         int[] dimensions = GTNAMachines.NEXUS_ME_HYPERCORE.getPatternFactory().get().getDimensions();
         helper.assertTrue(java.util.Arrays.equals(dimensions, new int[] { 44, 22, 44 }),
                 "Nexus ME Hypercore pattern dimensions: " + java.util.Arrays.toString(dimensions));
+        helper.succeed();
+    }
+
+    /** Terminal builds defer only the target controller's repeated checks, then restore them. */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void nexusTerminalBuildCheckGuardIsScoped(GameTestHelper helper) {
+        BlockPos center = helper.absolutePos(new BlockPos(2, 2, 2));
+        MultiblockState target = new MultiblockState(helper.getLevel(), center);
+        MultiblockState other = new MultiblockState(helper.getLevel(), center.offset(1, 0, 0));
+        BlockPos changed = center.offset(0, 0, 1);
+        helper.assertTrue(!NexusBuildCheckGuard.skips(target, changed), "checks must run outside a build");
+        NexusBuildCheckGuard.run(target, () -> {
+            helper.assertTrue(NexusBuildCheckGuard.skips(target, changed), "target check must be deferred");
+            helper.assertTrue(!NexusBuildCheckGuard.skips(other, changed), "other checks must still run");
+            helper.assertTrue(!NexusBuildCheckGuard.skips(target, center), "controller changes must still run");
+        });
+        helper.assertTrue(!NexusBuildCheckGuard.skips(target, changed), "checks must resume after the build");
         helper.succeed();
     }
 

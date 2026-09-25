@@ -18,6 +18,7 @@
     "gtceu.BlockPatternAccessor",
     "gtceu.FancyMachineUIWidgetStructureMixin",
     "gtceu.MetaMachineBlockMixin",
+    "gtceu.MultiblockStateBuildMixin",
     "gtceu.MultiblockControllerMachineMixin",
     "gtceu.MultiblockMachineDefinitionMixin",
     "gtceu.WorkableElectricMultiblockMachineMixin",

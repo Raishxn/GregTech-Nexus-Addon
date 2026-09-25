@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 
+import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh;
 import com.raishxn.gtna.client.ClientPlayerLookup;
 import com.raishxn.gtna.common.item.terminal.ui.NexusTerminalUIFactory;
@@ -93,10 +94,14 @@ public class NexusTerminalBehavior implements IItemUIFactory, IAddInformation {
                 boolean buildModule = setting.getModuleBuild() > 0;
                 if (!controller.isFormed() || buildModule || setting.isReplaceMode()) {
                     if (!level.isClientSide()) {
+                        long started = System.nanoTime();
                         NexusAutoBuilder.autoBuild(player, controller, terminalStack);
                         if (controller instanceof MultiblockControllerMachine multiblockController) {
                             GTNAStructureRefresh.refresh(multiblockController, true);
                         }
+                        GTNACORE.LOGGER.info("Nexus Terminal built {} in {} ms",
+                                controller.self().getDefinition().getId(),
+                                java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started));
                     }
                     return InteractionResult.sidedSuccess(level.isClientSide);
                 }

@@ -25,6 +25,18 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
+> **Hotfix local após 0.5.1 (G-0097):** corrigido o crash de carregamento do
+> `MetaMachineBlockMixin` no GTCEu 7.5.3 distribuído. O alvo em produção é `m_5871_`,
+> enquanto no ambiente de desenvolvimento é `appendHoverText`. A injeção agora aceita ambos
+> os nomes e `require = 0`. O teste na instância Prism `1.20.1` revelou outro alvo SRG,
+> `CoreCraftConfirmMenuMixin`, também corrigido; o segundo lançamento chegou à interface do
+> cliente sem falha de mixin. A validação manual no mundo ainda está pendente.
+
+> **Desempenho do Terminal (G-0098/G-0099):** o Nexus Terminal causou um tick acima de 40 s ao
+> construir o Hypercore na instância Prism. O watchdog capturou verificações repetidas do padrão
+> durante a colocação. Um JAR corrigido foi instalado; a medição de uma nova construção no mundo
+> ainda não foi registrada. O autor autorizou commit e push da correção mesmo com esse check pendente.
+
 > **Feedback in-game do autor em 2026-09-25:** os módulos estão funcionando e a geometria do Nexus
 > ME Hypercore também. Permanecem os checks visuais específicos do checklist manual que não foram
 > confirmados individualmente, como tooltip, destaque de bloco e interface KubeJS.
@@ -169,6 +181,70 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0099 (2026-09-25) — JAR 0.5.1 corrigido autorizado para a main
+
+- O autor autorizou commit e push na `main` e a substituição do JAR 0.5.1 de teste. O JAR
+  corrigido em `build/libs/gtna-0.5.1.jar` e na instância Prism `1.20.1` tem SHA-256
+  `afc79d801e00cb7e1974a4f6b843ed7f89a19a86e1641c3bdab97fb4458e4585` e declara
+  `version = "0.5.1"` em `mods.toml`. O JAR 0.5.0 anterior da instância está preservado em
+  `gtna-test-backup`.
+- Os mixins de tooltip GTCEu e confirmação AE2 foram retestados no cliente de produção do Prism
+  sem novo crash de carregamento. `spotlessCheck compileJava runUnitTests runGameTestServer
+  runData --offline` passou após todas as mudanças de código: 60/60 GameTests, 0 falhas,
+  datagen `written: 0`. O build do JAR também passou.
+- O changelog e o texto para CurseForge foram atualizados para o JAR corrigido. A página pública
+  do CurseForge mostrava 0.5.0 como arquivo principal e nenhum 0.5.1 em 2026-09-25; portanto
+  não havia um arquivo 0.5.1 naquela plataforma para substituir. O upload no CurseForge fica
+  com o autor conforme G-0096.
+- **Pendente:** repetir a construção do Hypercore no mundo e medir o tempo; confirmar tooltip de
+  módulos e fluxo do planner AE2. O log da última sessão não registrou uma nova construção.
+
+### G-0098 (2026-09-25) — pausa longa ao construir o Hypercore pelo Nexus Terminal
+
+- Na instância Prism `1.20.1`, o autor confirmou que a pausa começou no Shift+clique do Terminal.
+  O watchdog ModernFix registrou tick de servidor acima de 40 s; a thread estava em
+  `MultiblockState.onBlockStateChanged -> checkPatternWithLock -> BlockPattern.checkPatternAt`
+  após colocação de bloco. A estrutura tem 44×22×44 posições. Captura posterior da thread mostrou
+  o servidor ocioso, indicando pausa longa, sem deadlock persistente.
+- `NexusBuildCheckGuard` e `MultiblockStateBuildMixin` adiam as verificações disparadas por blocos
+  do multiblocos alvo enquanto o Terminal constrói; mudanças no controller e verificações de
+  outros multiblocos continuam normais. O Terminal chama `GTNAStructureRefresh.refresh` ao final.
+  O guard é local à thread, restaurado em `finally`. GameTest confere escopo e restauração.
+- Adicionada medição no log do tempo total da construção para o reteste. Gate completo antes dessa
+  medição passou: `spotlessCheck compileJava runUnitTests runGameTestServer runData build --offline`,
+  60/60 GameTests, datagen `written: 0`. Após a medição, `spotlessCheck compileJava runUnitTests
+  build --offline` passou. JAR instalado na instância Prism e cliente reaberto sem erro de mixin.
+- O gate completo foi repetido após a medição: `spotlessCheck compileJava runUnitTests
+  runGameTestServer runData --offline` passou, com 60/60 GameTests e datagen `written: 0`.
+- **Pendente:** medir a construção no mundo do autor e confirmar formação e comportamento do
+  Hypercore. Mudanças locais, sem commit/push.
+
+### G-0097 (2026-09-25) — crash do tooltip de módulos no JAR 0.5.1
+
+- O autor relatou `InvalidInjectionException` em `gtceu.MetaMachineBlockMixin` ao iniciar com o
+  JAR 0.5.1. `javap` no `gtceu-1.20.1-7.5.3-slim.jar` distribuído confirmou que o método de
+  tooltip de `MetaMachineBlock` é `m_5871_(ItemStack, BlockGetter, List, TooltipFlag)`; o JAR
+  GTCEu 7.5.3 da instância Prism `1.20.1` confirmou a mesma assinatura. A fonte local e o
+  ambiente de desenvolvimento usam `appendHoverText` para esse método. Sem
+  refmap carregado, a injeção da 0.5.1 buscava apenas o nome de desenvolvimento e era obrigatória.
+- O mixin agora declara os dois nomes, `remap = false` e `require = 0`. No primeiro lançamento
+  da instância Prism `1.20.1` (GTCEu 7.5.3, KubeJS build.26, AE2 15.4.10, Forge 47.4.20),
+  o crash de tooltip desapareceu, mas `CoreCraftConfirmMenuMixin` falhou procurando
+  `broadcastChanges`. `javap` no AE2 distribuído confirmou `m_38946_` com a chamada `Future.get`
+  usada como ponto de injeção. Esse mixin também aceita os dois nomes e usa `require = 0`.
+  `ProductionMixinTargetContractTest` verifica as duas anotações compiladas.
+- `spotlessCheck compileJava runUnitTests runGameTestServer runData build --offline` passou após
+  a primeira correção. Após a segunda correção, `spotlessCheck compileJava runUnitTests build
+  --offline` e o gate completo `spotlessCheck compileJava runUnitTests runGameTestServer runData
+  --offline` também passaram: 59/59 GameTests e `runData` com `written: 0`.
+  O segundo lançamento no Prism passou pelo carregamento dos mods e chegou à interface do cliente
+  sem `Mixin apply failed` ou crash report novo. O log registrou falha não fatal do Narrator por
+  falta de `libflite.so` no sistema.
+- **Pendente:** conferir no jogo o tooltip de módulo e o fluxo do planner AE2, e obter o feedback
+  do autor antes de publicar. O JAR
+  0.5.0 da instância foi preservado em `gtna-test-backup`; o JAR de teste 0.5.1 está em `mods`.
+  Alterações locais, sem commit/push; a versão publicada segue 0.5.1.
 
 ### G-0096 (2026-09-25) — preparação da versão 0.5.1
 

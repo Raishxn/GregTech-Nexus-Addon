@@ -27,7 +27,8 @@ public class NexusAutoBuilder {
 
         NexusBlockPattern pattern = NexusBlockPattern.fromBlockPattern(controller.getPattern());
         if (pattern != null) {
-            pattern.autoBuild(player, controller.getMultiblockState(), setting, terminalStack);
+            var state = controller.getMultiblockState();
+            NexusBuildCheckGuard.run(state, () -> pattern.autoBuild(player, state, setting, terminalStack));
         }
     }
 }

@@ -26,7 +26,8 @@ import java.util.List;
 @Mixin(MetaMachineBlock.class)
 public abstract class MetaMachineBlockMixin {
 
-    @Inject(method = "appendHoverText", at = @At("TAIL"))
+    // GTCEu's production jar uses the SRG name; no refmap is available to remap this target.
+    @Inject(method = { "appendHoverText", "m_5871_" }, at = @At("TAIL"), remap = false, require = 0)
     private void gtna$appendModuleTooltip(ItemStack stack, BlockGetter level, List<Component> tooltip,
                                           TooltipFlag flag, CallbackInfo ci) {
         MachineDefinition definition = ((MetaMachineBlock) (Object) this).definition;

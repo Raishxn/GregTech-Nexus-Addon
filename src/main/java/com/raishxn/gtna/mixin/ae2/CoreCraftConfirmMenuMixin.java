@@ -33,7 +33,10 @@ public abstract class CoreCraftConfirmMenuMixin implements CraftConfirmPlannerOr
         raishxcore$planningOrigin = PlanningOrigin.NONE;
     }
 
-    @Inject(method = "broadcastChanges",
+    // AbstractContainerMenu's override is SRG-named in the distributed AE2 jar.
+    @Inject(method = { "broadcastChanges", "m_38946_" },
+            remap = false,
+            require = 0,
             at = @At(value = "INVOKE",
                      target = "Ljava/util/concurrent/Future;get()Ljava/lang/Object;",
                      shift = At.Shift.BEFORE))

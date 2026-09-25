@@ -2,6 +2,16 @@
 
 ## [0.5.1] - 2026-09-25
 
+### Corrected JAR
+- Fixed production startup crashes in the GTCEu module-tooltip and AE2 crafting-confirmation
+  mixins. Both now recognize the Minecraft 1.20.1 runtime method names, and missing injection
+  targets cannot stop the game from loading.
+- Reduced repeated structure checks while the Nexus Terminal builds the Nexus ME Hypercore.
+  The target structure is checked once at the end of the build. The in-world build time still
+  needs confirmation with the corrected JAR.
+- Re-tested startup in a Prism Launcher instance with GTCEu 7.5.3, AE2 15.4.10 and KubeJS
+  `2001.6.5-build.26`. The full validation gate passed with 60/60 GameTests.
+
 ### Added
 - Ported four GTOCore multiblocks: Generator Array, Fishing Ground, Evaporation Plant and
   Greenhouse, with their structures, recipes, casings and English/Portuguese tooltips. The
@@ -29,7 +39,7 @@
 
 ### Validation
 - Passed the full formatting, compilation, unit test, GameTest server and data generation gate.
-  The GameTest suite passed all 59 required tests, including a MAX fluid output hatch in a valid
+  The GameTest suite passed all 60 required tests, including a MAX fluid output hatch in a valid
   Evaporation Plant tower stage.
 
 ## [0.5.0] - 2026-09-25

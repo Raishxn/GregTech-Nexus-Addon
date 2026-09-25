@@ -199,6 +199,7 @@ tasks.register('runUnitTests') {
             'com.raishxn.gtna.ModuleTooltipContractTest',
             'com.raishxn.gtna.BuildDependencyContractTest',
             'com.raishxn.gtna.DataGeneratorMixinContractTest',
+            'com.raishxn.gtna.ProductionMixinTargetContractTest',
             'com.raishxn.gtna.PartAbilityCoverageTest',
             'com.raishxn.gtna.RegistrationContractTest',
             'com.raishxn.gtna.OutputBoostContractTest',

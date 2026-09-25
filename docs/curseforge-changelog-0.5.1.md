@@ -2,6 +2,12 @@
 
 This update adds four GregTech Odyssey multiblocks and fixes the KubeJS startup crash reported with GTNA 0.5.0. Changes below are relative to 0.5.0.
 
+## Corrected 0.5.1 JAR
+
+- Fixed two additional startup crashes affecting GTCEu module tooltips and the AE2 crafting confirmation screen in production modpacks.
+- Reduced repeated structure checks while the Nexus Terminal builds the Nexus ME Hypercore. In-world build time still needs confirmation with this corrected JAR.
+- Verified startup with GTCEu 7.5.3, AE2 15.4.10 and KubeJS build.26 in the Prism `1.20.1` modpack. The automated suite now passes all 60 GameTests.
+
 ## New machines
 
 - **Generator Array:** runs supported GTCEu generators together, with normal energy output or wireless transfer to the Nexus Flux Matrix.
@@ -22,5 +28,5 @@ The machines include their structures, recipes, assets and English/Portuguese to
 
 ## Validation
 
-- Passed formatting, compilation, unit tests, data generation and all 59 required GameTests. The tests include a MAX fluid output hatch placed in a valid Evaporation Plant stage.
+- Passed formatting, compilation, unit tests, data generation and all 60 required GameTests. The tests include a MAX fluid output hatch placed in a valid Evaporation Plant stage.
 - Requires Minecraft 1.20.1, Forge and GregTech CEu Modern 7.5.3 or newer. Check the file dependencies for the full mod list.
