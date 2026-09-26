@@ -5,7 +5,7 @@ Fonte comparada: `GTOCore-Main` commit `dc4824d`, padrões de `MultiBlockA`, `Mu
 
 | Multibloco | Bônus do módulo | Posições que aceitam os hatches | Verificação |
 | --- | --- | --- | --- |
-| Electric Blast Furnace | 1 Energy Hatch adicional; 1 Accelerate Hatch | Invar Heatproof `A` | GameTest de formação, limite e rejeição no corpo principal |
+| Electric Blast Furnace | 1 Energy Hatch adicional; 1 Accelerate Hatch | Invar Heatproof `A`; o Accelerate também cabe no Invar `C` da expansão | GameTest de formação, limite, célula superior e rejeição no corpo principal |
 | Liquefaction Furnace | 1 Parallel Hatch; 1 Accelerate Hatch | Invar Heatproof `A` na torre inox | Padrão e registro comparados com GTO; formação da base testada |
 | Evaporation Plant | 1 Parallel Hatch; 1 Accelerate Hatch | Stainless Evaporation `F` e `G`, mais Titanium Stable `A` exposto | GameTest cobre os encaixes `F` e `G/A` sem force scan; IV Parallel = 4 |
 | Cold Ice Freezer | Atomization/Condensation; até 6 Energy Hatches; 1 Accelerate Hatch | Cold Ice Casing `B` da torre | GameTest do desbloqueio, limites e rejeição no corpo principal |

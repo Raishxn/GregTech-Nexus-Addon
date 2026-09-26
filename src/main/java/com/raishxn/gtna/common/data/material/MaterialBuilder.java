@@ -424,6 +424,21 @@ public class MaterialBuilder {
                 .flags(GENERATE_BRICK)
                 .buildAndRegister().setFormula("TiN");
 
+        BoronCarbide = new Material.Builder(GTNACORE.id("boron_carbide"))
+                .dust()
+                .color(0x1e1e1e)
+                .iconSet(DULL)
+                .components(Boron, 4, Carbon, 3)
+                .flags(DISABLE_DECOMPOSITION)
+                .buildAndRegister().setFormula("B4C");
+
+        BoronCarbideCeramics = new Material.Builder(GTNACORE.id("boron_carbide_ceramics"))
+                .dust()
+                .color(0x2b2b31)
+                .iconSet(BRIGHT)
+                .flags(GENERATE_BRICK)
+                .buildAndRegister().setFormula("B4C");
+
         // GTOCore Tanmolyium (GTO MaterialA): the iridium casing's plate. Copied 1:1; the production
         // route is GTCEu's automatic component mixer/EBF chain.
         Tanmolyium = new Material.Builder(GTNACORE.id("tanmolyium"))

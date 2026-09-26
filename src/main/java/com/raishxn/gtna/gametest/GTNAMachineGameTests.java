@@ -1380,6 +1380,23 @@ public final class GTNAMachineGameTests {
         helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
                 .gtna$formedModuleCount() == 1, "module must be restored with one Accelerate Hatch");
 
+        // The upper outer C cell is where players naturally install a hatch beside a tall-coil
+        // EBF. It must now accept Accelerate while the limit remains one across the whole module.
+        BlockPos lowerAccelerate = controllerPos.offset(1, 0, 4);
+        BlockPos upperAccelerate = controllerPos.offset(2, 3, 1);
+        helper.setBlock(lowerAccelerate, GTBlocks.CASING_INVAR_HEATPROOF.get());
+        helper.setBlock(upperAccelerate, GTNAMachines2.ACCELERATE_HATCHES[GTValues.HV].getBlock());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
+                "EBF module must accept a top-row HV Accelerate Hatch");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
+                .gtna$formedModuleCount() == 1, "top-row Accelerate Hatch must belong to the module");
+        helper.setBlock(lowerAccelerate, GTNAMachines2.ACCELERATE_HATCHES[GTValues.LV].getBlock());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
+                "EBF base must remain formed with two Accelerate Hatches in the module");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
+                .gtna$formedModuleCount() == 0, "module must reject a second Accelerate Hatch");
+        helper.setBlock(upperAccelerate, GTBlocks.CASING_INVAR_HEATPROOF.get());
+
         // A missing optional module must not leave its pattern error on the shared state: GTCEu
         // refuses to start every EBF recipe while isRecipeLogicAvailable() is false.
         helper.setBlock(controllerPos.offset(2, 0, 4), Blocks.AIR);
@@ -6206,6 +6223,41 @@ public final class GTNAMachineGameTests {
         boolean present = helper.getLevel().getRecipeManager().getAllRecipesFor(GTRecipeTypes.ASSEMBLER_RECIPES)
                 .stream().anyMatch(recipe -> recipe.id.getPath().endsWith("component_assembler_controller"));
         helper.assertTrue(present, "the GTNA Component Assembler controller recipe must exist");
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void componentCasingFamiliesHaveDistinctAssemblerInputs(GameTestHelper helper) {
+        for (String tier : new String[] { "lv", "mv", "hv", "ev", "iv", "luv", "zpm", "uv" }) {
+            GTRecipeType type = switch (tier) {
+                case "luv", "zpm", "uv" -> GTRecipeTypes.ASSEMBLY_LINE_RECIPES;
+                default -> GTRecipeTypes.ASSEMBLER_RECIPES;
+            };
+            GTRecipe assemblerCasing = recipeById(helper, type, "component_assembly_casing_" + tier);
+            GTRecipe lineCasing = recipeById(helper, type, "component_assembly_line_casing_" + tier);
+            helper.assertTrue(assemblerCasing != null && lineCasing != null,
+                    "both " + tier + " casing families need an obtainable recipe");
+            Object assemblerCircuit = assemblerCasing.getInputContents(ItemRecipeCapability.CAP).stream()
+                    .map(Content::getContent).filter(IntCircuitIngredient.class::isInstance).findFirst().orElse(null);
+            Object lineCircuit = lineCasing.getInputContents(ItemRecipeCapability.CAP).stream()
+                    .map(Content::getContent).filter(IntCircuitIngredient.class::isInstance).findFirst().orElse(null);
+            helper.assertTrue(assemblerCircuit != null && lineCircuit != null &&
+                    !assemblerCircuit.equals(lineCircuit),
+                    "the two " + tier + " casing recipes need different circuits in GTCEu's lookup");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void boronCarbideCeramicCasingHasCompleteProductionChain(GameTestHelper helper) {
+        helper.assertTrue(recipeById(helper, GTRecipeTypes.MIXER_RECIPES, "gtna_boron_carbide_dust") != null,
+                "Boron Carbide dust must have a Mixer route");
+        helper.assertTrue(recipeById(helper, GTRecipeTypes.SIFTER_RECIPES,
+                "gtna_boron_carbide_ceramics_dust") != null,
+                "Boron Carbide Ceramics dust must have a Sifter route");
+        helper.assertTrue(recipeById(helper, GTRecipeTypes.ASSEMBLER_RECIPES,
+                "boron_carbide_ceramic_radiation_resistant_mechanical_cube") != null,
+                "Boron Carbide casing must have an Assembler route");
         helper.succeed();
     }
 

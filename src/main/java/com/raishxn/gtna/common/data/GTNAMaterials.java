@@ -78,6 +78,9 @@ public class GTNAMaterials {
     public static Material CarbonFiberPolyphenyleneSulfideComposite;
     /** GTOCore ceramic of the extension's titanium-nitride mechanical block (GTO MaterialB:4980). */
     public static Material TitaniumNitrideCeramic;
+    /** GTOCore boron-carbide chain, simplified to GTCEu processing machines. */
+    public static Material BoronCarbide;
+    public static Material BoronCarbideCeramics;
 
     public static void init() {
         MaterialBuilder.init();

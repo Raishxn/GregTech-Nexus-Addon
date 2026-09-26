@@ -25,6 +25,19 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
+> **QA do autor e correções G-0124:** EBF sem módulo executou Aluminium Dust → Ingot em 11,05 s
+> com energia HV, bobina Tritanium e muffler IV; EMI mostra 22,1 s antes do overclock normal do
+> EBF. O Accelerate Hatch HV na carcaça superior do módulo quebrava a formação porque aquela
+> célula `C` só aceitava casing; agora aceita um Accelerate, mantendo limite global de um.
+> Paginação/hover JEI, boiler wireless, Dehydrators, Vacuum Dryer, Flux HUD, Rocket Engines e
+> Evaporation Plant passaram no client do autor. A UI da base multi-receita recebeu estado,
+> progresso, falha, energia, modo e saída. A textura CTM da carcaça Boron Carbide tinha caminho
+> incorreto; corrigida. As duas famílias de Component Assembly Casings usam circuitos diferentes
+> nos tiers LV–UV para evitar descarte de receita pelo GTCEu. A cadeia simplificada de Boron
+> Carbide e Boron Carbide Ceramics foi adicionada. O exemplo KubeJS de desempenho foi deslocado
+> para fora da base e do outro módulo. Gate: 100/100 GameTests, unitários, compilação, Spotless e
+> datagen `written: 0`. O client aberto ainda usa o código anterior; aguarda reinício e reteste.
+
 > **EBF sem módulo (G-0123):** a base do Electric Blast Furnace podia formar com energia e calor,
 > mas a falha da checagem do módulo opcional deixava um `PatternError` no estado compartilhado.
 > `WorkableMultiblockMachine.isRecipeLogicAvailable()` então retornava falso e bloqueava toda
@@ -384,6 +397,37 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0124 (2026-09-26) — QA em client: módulo EBF, UI, CTM, carcaças e KubeJS
+
+- O autor confirmou EBF sem módulo processando Aluminium Dust → Ingot em 11,05 s com hatch HV,
+  bobinas Tritanium e muffler IV; EMI lista 22,1 s. O EBF stock aplica `ebfOverclock` conforme
+  tensão e temperatura, portanto esse tempo menor não é evidência de bônus do módulo.
+- O Accelerate Hatch HV colocado na quarta camada, dois blocos à esquerda e um atrás do
+  controlador, ocupa a célula superior `C` do módulo. Ela só aceitava Invar Heatproof Casing.
+  O predicado agora aceita Accelerate nessa célula e o GameTest troca o hatch da base do módulo
+  pelo hatch superior, confirma a formação e rejeita dois Accelerate Hatches simultâneos.
+- A UI de `WorkableElectricMultipleRecipesMachine` mostrava apenas a linha personalizada de
+  energia porque omitira as chamadas de estado, progresso, falha de receita, modo e saída do
+  `MultiblockDisplayText`. Essas linhas foram adicionadas para o Integrated Ore Processor e os
+  demais hosts dessa classe.
+- A captura do Boron Carbide Radiation Resistant Casing mostrou o CTM roxo/preto: o `.mcmeta`
+  apontava para `gtna:block/...`, mas o atlas está em `gtna:block/casings/...`. Caminho corrigido.
+  O material GTO `BoronCarbide`/`BoronCarbideCeramics` foi adicionado com rota simplificada:
+  Mixer (4 Boron + 3 Carbon → 7 B4C), Sifter (2 B4C → cerâmica), Compressor/Cutter automáticos
+  para flocos e receita Assembler original da carcaça com 16 flocos. Omite os fornos não portados.
+- Os casings `component_assembly_casing_*` e `component_assembly_line_casing_*` tinham insumos
+  idênticos; o GTCEu descartava um resultado em seu lookup, apesar de ambos aparecerem no código.
+  Circuitos 1/2 distinguem as famílias em LV–UV. GameTest confere ambas e circuitos diferentes.
+- A página JEI do exemplo KubeJS de desempenho colocava a célula `P` dois blocos do controller,
+  coincidindo com a extremidade da base do Integrated Ore Processor. Agora `P` fica a quatro
+  blocos, fora da base e do outro exemplo de módulo.
+- O autor confirmou sem falha: paginação/hover JEI do Component Assembler, Large Steam Solar
+  Boiler wireless, Dehydrators LV–OpV, Vacuum Drying Furnace, HUD Flux Matrix, nomes Rocket
+  Engines e Evaporation Plant. Ainda faltam reteste no client das correções acima, duração do
+  Accelerate Hatch e bônus KubeJS com módulo formado.
+- Gate local: `spotlessApply compileJava runUnitTests runGameTestServer runData --offline` passou
+  com 100/100 GameTests e datagen `written: 0` (`/tmp/gtna-0124-final-gate.log`).
 
 ### G-0123 (2026-09-26) — EBF processa receitas sem módulo auxiliar
 

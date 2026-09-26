@@ -282,6 +282,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("material.gtna.lithium_oxide", "Lithium Oxide");
         add("material.gtna.zirconium_oxide", "Zirconium Oxide");
         add("material.gtna.zirconia_ceramic", "Zirconia Ceramic");
+        add("material.gtna.boron_carbide", "Boron Carbide");
+        add("material.gtna.boron_carbide_ceramics", "Boron Carbide Ceramics");
         // --- Hatches Translations (UPDATED) ---
 
         // Accelerate Hatch

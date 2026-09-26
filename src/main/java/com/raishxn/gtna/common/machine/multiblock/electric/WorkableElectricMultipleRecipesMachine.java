@@ -191,6 +191,13 @@ public class WorkableElectricMultipleRecipesMachine extends WorkableElectricMult
     public void addDisplayText(List<Component> textList) {
         MultiblockDisplayText.builder(textList, isFormed())
                 .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
+                .addEnergyUsageLine(energyContainer)
+                .addEnergyTierLine(getTier())
+                .addMachineModeLine(getRecipeType(), getRecipeTypes().length > 1)
+                .addWorkingStatusLine()
+                .addProgressLine(recipeLogic)
+                .addRecipeFailReasonLine(recipeLogic)
+                .addOutputLines(recipeLogic.getLastRecipe())
                 .addCustom(text -> {
                     GTNAMultipleRecipesLogic logic = getRecipeLogic();
                     long storedEnergy = 0;
