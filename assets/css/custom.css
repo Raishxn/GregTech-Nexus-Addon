@@ -1,0 +1,190 @@
+/* ===================================
+   GTNA Custom Theme — GregTech Nexus Addon
+   Deep Purple / Cosmic Theme
+   =================================== */
+
+:root {
+  /* Core Brand Colors — Based on GTNA Logo */
+  --gtna-nexus-purple: #7B2D8E;
+  --gtna-nexus-light: #9B59B6;
+  --gtna-nexus-dark: #4A0E5C;
+  --gtna-nexus-glow: #C084FC;
+  --gtna-star-gold: #FFD700;
+  --gtna-star-amber: #FFA726;
+  
+  /* Material Colors */
+  --gtna-stronze-gold: #968030;
+  --gtna-nexium-blue: #4A7AE5;
+  --gtna-echoite-green: #26734d;
+  --gtna-hazard-red: #FF3333;
+  --gtna-breel-muted: #506040;
+}
+
+/* ===== Dark Mode Enhancements ===== */
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color: #0d0b14;
+  --md-default-bg-color--light: #15112a;
+  --md-primary-fg-color: #7B2D8E;
+  --md-accent-fg-color: #C084FC;
+  --md-typeset-a-color: #C084FC;
+}
+
+/* ===== Hero Header ===== */
+.md-header {
+  background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #0d0b14 100%) !important;
+}
+
+.md-tabs {
+  background: rgba(26, 10, 46, 0.8) !important;
+}
+
+/* ===== Logo Sizing ===== */
+.md-header__button.md-logo img {
+  height: 28px;
+  image-rendering: pixelated;
+}
+
+/* ===== Feature Cards ===== */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.feature-card {
+  background: var(--md-default-bg-color--light);
+  border: 1px solid rgba(123, 45, 142, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  border-color: var(--gtna-nexus-purple);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(123, 45, 142, 0.2);
+}
+
+.feature-card h3 {
+  margin-top: 0;
+  color: var(--gtna-nexus-light);
+}
+
+/* ===== Status Badges ===== */
+.status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-done {
+  background: rgba(38, 115, 77, 0.2);
+  color: #4ADE80;
+  border: 1px solid rgba(38, 115, 77, 0.4);
+}
+
+.status-wip {
+  background: rgba(192, 132, 252, 0.2);
+  color: #C084FC;
+  border: 1px solid rgba(192, 132, 252, 0.4);
+}
+
+.status-planned {
+  background: rgba(74, 122, 229, 0.2);
+  color: #6B9AFF;
+  border: 1px solid rgba(74, 122, 229, 0.4);
+}
+
+/* ===== Tier Badges ===== */
+.tier-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: monospace;
+}
+
+.tier-ulv { background: #555; color: #fff; }
+.tier-lv { background: #b4b4b4; color: #000; }
+.tier-mv { background: #ff6d00; color: #fff; }
+.tier-hv { background: #ffed00; color: #000; }
+.tier-ev { background: #00bcd4; color: #000; }
+.tier-iv { background: #9c27b0; color: #fff; }
+.tier-luv { background: #e91e63; color: #fff; }
+.tier-zpm { background: #ff1744; color: #fff; }
+.tier-uv { background: #00e676; color: #000; }
+
+/* ===== Machine Stat Tables ===== */
+.stat-table th {
+  background: rgba(123, 45, 142, 0.15) !important;
+  font-weight: 700;
+}
+
+.stat-table td code {
+  background: rgba(123, 45, 142, 0.1);
+  color: var(--gtna-nexus-light);
+}
+
+/* ===== Calculator Section ===== */
+.calculator-box {
+  background: var(--md-default-bg-color--light);
+  border: 1px solid rgba(123, 45, 142, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.calculator-box h4 {
+  color: var(--gtna-nexus-glow);
+  margin-top: 0;
+}
+
+/* ===== Mode Cards (Slaughterhouse-style) ===== */
+.mode-card {
+  background: var(--md-default-bg-color--light);
+  border-left: 3px solid var(--gtna-nexus-purple);
+  border-radius: 0 8px 8px 0;
+  padding: 0.75rem 1.25rem;
+  margin: 0.5rem 0;
+}
+
+.mode-card.mode-passive { border-left-color: #4ADE80; }
+.mode-card.mode-hostile { border-left-color: #FF6B6B; }
+.mode-card.mode-boss { border-left-color: #FFD700; }
+.mode-card.mode-dragon { border-left-color: #C084FC; }
+
+/* ===== Roadmap Styles ===== */
+.roadmap-item {
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  border-left: 3px solid var(--gtna-nexium-blue);
+  border-radius: 0 8px 8px 0;
+  background: var(--md-default-bg-color--light);
+}
+
+.roadmap-item.done { border-left-color: #4ADE80; }
+.roadmap-item.wip { border-left-color: #C084FC; }
+.roadmap-item.planned { border-left-color: #6B9AFF; }
+
+/* ===== Hover Glow for Links ===== */
+.md-content a:hover {
+  text-shadow: 0 0 8px rgba(123, 45, 142, 0.3);
+}
+
+/* ===== Code Tabs (Java/KubeJS) ===== */
+.md-typeset .tabbed-labels > label {
+  font-weight: 600;
+}
+
+/* ===== Responsive Fixes ===== */
+@media (max-width: 768px) {
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,4410 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Nexus of Steam & Steel — Documentation for GregTech Nexus Addon">
+      
+      
+        <meta name="author" content="Raishxn">
+      
+      
+        <link rel="canonical" href="https://raishxn.github.io/GregTech-Nexus-Addon/es/roadmap/technical-audit-pattern-buffer/">
+      
+      
+        <link rel="prev" href="../multiblock-port-manifest/">
+      
+      
+        <link rel="next" href="../pattern-buffer-fidelity-gap/">
+      
+      
+        
+          <link rel="alternate" href="../../../roadmap/technical-audit-pattern-buffer/" hreflang="pt">
+        
+          <link rel="alternate" href="../../../en/roadmap/technical-audit-pattern-buffer/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="es">
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>🔍 Auditoria Técnica — Estrutura do GTNA + Pattern Buffer Multi-Modo - GregTech Nexus Addon</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/css/custom.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#auditoria-tecnica-estrutura-do-gtna-pattern-buffer-multi-modo" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../" title="GregTech Nexus Addon" class="md-header__button md-logo" aria-label="GregTech Nexus Addon" data-md-component="logo">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            GregTech Nexus Addon
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              🔍 Auditoria Técnica — Estrutura do GTNA + Pattern Buffer Multi-Modo
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Seleccionar idioma">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../roadmap/technical-audit-pattern-buffer/" hreflang="pt" class="md-select__link">
+              Português
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../../en/roadmap/technical-audit-pattern-buffer/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="es" class="md-select__link">
+              Español
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Compartir" aria-label="Compartir" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Raishxn/GregTech-Nexus-Addon" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Raishxn/GregTech-Nexus-Addon
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🏠 Inicio
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../gameplay/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🎮 Jugabilidad
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../development/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🔧 Desarrollo
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📋 Hoja de Ruta
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="GregTech Nexus Addon" class="md-nav__button md-logo" aria-label="GregTech Nexus Addon" data-md-component="logo">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    GregTech Nexus Addon
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Raishxn/GregTech-Nexus-Addon" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Raishxn/GregTech-Nexus-Addon
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Inicio
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    🏠 Inicio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalacion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/first-steps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Primeros Pasos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preguntas Frecuentes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../gameplay/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎮 Jugabilidad
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    🎮 Jugabilidad
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eras
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Eras
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/eras/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🗺 Resumen de Eras
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/eras/steam-and-steel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ⚙ Era de Vapor y Acero
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../gameplay/machines/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Máquinas
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Máquinas
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_2" id="__nav_2_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Era Vapor y Acero
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Era Vapor y Acero
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/large-steam-furnace/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔥 Large Steam Furnace
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/large-steam-crusher/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ⚙ Large Steam Crusher
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/large-steam-alloy-smelter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔩 Large Steam Alloy Smelter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/large-steam-solar-boiler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ☀️ Large Steam Solar Boiler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/steam-cobbler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🪨 Steam Cobbler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/stone-superheater/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🌡 Stone Superheater
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/steam-manufacturer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔧 Steam Manufacturer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/steam-woodcutter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🪓 Steam Woodcutter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_3" id="__nav_2_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multibloques Eléctricos
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Multibloques Eléctricos
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/electric/industrial-slaughterhouse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🐮 Industrial Slaughterhouse
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_4" id="__nav_2_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sin Electricidad
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Sin Electricidad
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/noenergy/infernal-coke-oven/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔥 Infernal Coke Oven
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/noenergy/hyper-pressure-reactor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🌀 Hyper Pressure Reactor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/noenergy/leap-forward-blast-furnace/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏗 Leap Forward Blast Furnace
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_5" id="__nav_2_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Void Miner
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Void Miner
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/void-miner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ⛏ Void Miner (Steam Gate Aged)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../gameplay/parts/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hatches y Partes
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Hatches y Partes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/parts/wireless-steam-hatches/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📡 Wireless Steam Hatches
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/parts/thread-hatch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧵 Thread Hatch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/parts/accelerate-hatch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ⚡ Accelerate Hatch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/parts/overclock-hatch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔥 Overclock Hatch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/parts/advanced-parallel-hatch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📊 Advanced Parallel Hatch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/parts/huge-steam-bus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📦 Huge Steam Buses
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../gameplay/materials/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Materiales
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Materiales
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/materials/alloys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ⚗ Aleaciones Metalicas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/materials/elements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧪 Elementos Personalizados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/materials/fluids/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    💧 Fluidos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sistemas
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Sistemas
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/systems/wireless-steam-network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📡 Red de Vapor Inalambrico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/systems/nexus-flux-matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ⚡ Nexus Flux Matrix - Sistema de Energia Inalambrica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/systems/hydraulic-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔧 Sistema Hidraulico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Consejos
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Consejos
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/tips/optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    💡 Consejos de Optimizacion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/tips/ae2-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔌 Integracion AE2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../development/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔧 Desarrollo
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    🔧 Desarrollo
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🛠 Configuracion del Entorno
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏗 Arquitectura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/api/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🌐 Vista General de la API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/api/kubejs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🕹 Integracion KubeJS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/api/machines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏭 Crear Maquinas con Hatches GTNA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/api/materials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧪 API de Materiales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🤝 Contribuir
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📋 Hoja de Ruta
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    📋 Hoja de Ruta
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multiblock-port-manifest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multiblock port manifest
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔍 Auditoria Técnica — Estrutura do GTNA + Pattern Buffer Multi-Modo
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔍 Auditoria Técnica — Estrutura do GTNA + Pattern Buffer Multi-Modo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#resumo-executivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Resumo Executivo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#achados-criticos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔴 Achados Críticos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔴 Achados Críticos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-diretorio-net-compilando-no-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Diretório net/ compilando no build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dead-code-gtnaapplypatternbuffermode-nunca-e-chamado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Dead code: gtna$applyPatternBufferMode nunca é chamado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-descricao-lorem-ipsum-no-modstoml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Descrição Lorem Ipsum no mods.toml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-zero-testes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Zero testes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-dependencias-duras-de-soft-deps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Dependências duras de soft-deps
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#achados-altos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🟠 Achados Altos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🟠 Achados Altos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#6-gtnamatchesmodeid-com-hardcode-de-regressao-oculta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. gtna$matchesModeId com hardcode de regressão oculta
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-nbt-mutado-no-item-do-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. NBT mutado no item do pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-activerecipetype-e-global-incompativel-com-multi-threads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. activeRecipeType é global — incompatível com multi-threads
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-monolitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Monolitos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#10-example_registrate-orfao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. EXAMPLE_REGISTRATE órfão
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#achados-medios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🟡 Achados Médios
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deep-dive-pattern-buffer-multi-modo-por-que-o-gtocore-funciona-e-o-gtna-nao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔬 Deep-Dive: Pattern Buffer Multi-Modo — Por que o GTOCore "funciona" e o GTNA não
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔬 Deep-Dive: Pattern Buffer Multi-Modo — Por que o GTOCore &#34;funciona&#34; e o GTNA não">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#como-o-gtocore-realmente-funciona-codigo-verificado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como o GTOCore realmente funciona (código verificado)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#o-que-o-gtna-faz-hoje-e-por-que-travou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que o GTNA faz hoje (e por que travou)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#por-que-igual-gtocore-nao-era-possivel-no-gtm-oficial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por que "igual GTOCore" não era possível no GTM oficial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arquitetura-alvo-curadoria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Arquitetura-alvo (curadoria)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plano-de-testes-padrao-real-da-comunidade-gtm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Plano de Testes (padrão real da comunidade GTM)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧪 Plano de Testes (padrão real da comunidade GTM)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nivel-1-testes-puros-srctestjava-padrao-real-do-gtlcore-implementado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nível 1 — Testes puros (src/test/java) — padrão real do GTLCore ✅ IMPLEMENTADO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nivel-2-gametests-forge-gametest-implementado-commit-fb05806" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nível 2 — GameTests Forge (@GameTest) — ✅ IMPLEMENTADO (commit fb05806)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nivel-3-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nível 3 — CI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist-priorizado-de-execucao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✅ Checklist Priorizado de Execução
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="✅ Checklist Priorizado de Execução">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fase-0-higiene-concluida-commit-d8e1494" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 0 — Higiene ✅ CONCLUÍDA (commit d8e1494)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-1-feature-pattern-buffer-multi-modo-concluida-commit-d8e1494" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 1 — Feature pattern buffer multi-modo ✅ CONCLUÍDA (commit d8e1494)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-2-testes-concluida-gametest-opcional-fica-para-a-fase-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 2 — Testes ✅ CONCLUÍDA (gametest opcional fica para a Fase 2+)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-3-refactor-estrutural-iniciada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 3 — Refactor estrutural 🟡 INICIADA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-c-seletor-de-modo-no-buffer-paridade-gtocore-concluida-commit-21265ae" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase C — Seletor de modo no buffer (paridade GTOCore) ✅ CONCLUÍDA (commit 21265ae)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-c1-layout-da-pagina-do-buffer-painel-docado-concluida-commit-7822893" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase C.1 — Layout da página do buffer: painel docado ✅ CONCLUÍDA (commit 7822893)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-d-auto-switch-de-modo-em-multiblocos-do-mod-base-concluida-commit-733521e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase D — Auto-switch de modo em multiblocos do mod base ✅ CONCLUÍDA (commit 733521e)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verificacoes-no-source-oficial-gtceu-753-append-de-2a-passada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📎 Verificações no Source Oficial GTCEu 7.5.3 (append de 2ª passada)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📎 Verificações no Source Oficial GTCEu 7.5.3 (append de 2ª passada)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#impacto-no-plano" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Impacto no plano
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusao-resposta-ao-objetivo-original" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💡 Conclusão — Resposta ao objetivo original
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pattern-buffer-fidelity-gap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Gap de Fidelidade — Pattern Buffer GTNA vs GTOCore/GTLCore
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#resumo-executivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Resumo Executivo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#achados-criticos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔴 Achados Críticos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔴 Achados Críticos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-diretorio-net-compilando-no-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Diretório net/ compilando no build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dead-code-gtnaapplypatternbuffermode-nunca-e-chamado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Dead code: gtna$applyPatternBufferMode nunca é chamado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-descricao-lorem-ipsum-no-modstoml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Descrição Lorem Ipsum no mods.toml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-zero-testes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Zero testes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-dependencias-duras-de-soft-deps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Dependências duras de soft-deps
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#achados-altos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🟠 Achados Altos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🟠 Achados Altos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#6-gtnamatchesmodeid-com-hardcode-de-regressao-oculta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. gtna$matchesModeId com hardcode de regressão oculta
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-nbt-mutado-no-item-do-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. NBT mutado no item do pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-activerecipetype-e-global-incompativel-com-multi-threads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. activeRecipeType é global — incompatível com multi-threads
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-monolitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Monolitos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#10-example_registrate-orfao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. EXAMPLE_REGISTRATE órfão
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#achados-medios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🟡 Achados Médios
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deep-dive-pattern-buffer-multi-modo-por-que-o-gtocore-funciona-e-o-gtna-nao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔬 Deep-Dive: Pattern Buffer Multi-Modo — Por que o GTOCore "funciona" e o GTNA não
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔬 Deep-Dive: Pattern Buffer Multi-Modo — Por que o GTOCore &#34;funciona&#34; e o GTNA não">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#como-o-gtocore-realmente-funciona-codigo-verificado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como o GTOCore realmente funciona (código verificado)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#o-que-o-gtna-faz-hoje-e-por-que-travou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que o GTNA faz hoje (e por que travou)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#por-que-igual-gtocore-nao-era-possivel-no-gtm-oficial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por que "igual GTOCore" não era possível no GTM oficial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arquitetura-alvo-curadoria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Arquitetura-alvo (curadoria)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plano-de-testes-padrao-real-da-comunidade-gtm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Plano de Testes (padrão real da comunidade GTM)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧪 Plano de Testes (padrão real da comunidade GTM)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nivel-1-testes-puros-srctestjava-padrao-real-do-gtlcore-implementado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nível 1 — Testes puros (src/test/java) — padrão real do GTLCore ✅ IMPLEMENTADO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nivel-2-gametests-forge-gametest-implementado-commit-fb05806" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nível 2 — GameTests Forge (@GameTest) — ✅ IMPLEMENTADO (commit fb05806)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nivel-3-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nível 3 — CI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist-priorizado-de-execucao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✅ Checklist Priorizado de Execução
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="✅ Checklist Priorizado de Execução">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fase-0-higiene-concluida-commit-d8e1494" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 0 — Higiene ✅ CONCLUÍDA (commit d8e1494)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-1-feature-pattern-buffer-multi-modo-concluida-commit-d8e1494" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 1 — Feature pattern buffer multi-modo ✅ CONCLUÍDA (commit d8e1494)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-2-testes-concluida-gametest-opcional-fica-para-a-fase-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 2 — Testes ✅ CONCLUÍDA (gametest opcional fica para a Fase 2+)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-3-refactor-estrutural-iniciada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 3 — Refactor estrutural 🟡 INICIADA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-c-seletor-de-modo-no-buffer-paridade-gtocore-concluida-commit-21265ae" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase C — Seletor de modo no buffer (paridade GTOCore) ✅ CONCLUÍDA (commit 21265ae)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-c1-layout-da-pagina-do-buffer-painel-docado-concluida-commit-7822893" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase C.1 — Layout da página do buffer: painel docado ✅ CONCLUÍDA (commit 7822893)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-d-auto-switch-de-modo-em-multiblocos-do-mod-base-concluida-commit-733521e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase D — Auto-switch de modo em multiblocos do mod base ✅ CONCLUÍDA (commit 733521e)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verificacoes-no-source-oficial-gtceu-753-append-de-2a-passada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📎 Verificações no Source Oficial GTCEu 7.5.3 (append de 2ª passada)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📎 Verificações no Source Oficial GTCEu 7.5.3 (append de 2ª passada)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#impacto-no-plano" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Impacto no plano
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusao-resposta-ao-objetivo-original" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💡 Conclusão — Resposta ao objetivo original
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="auditoria-tecnica-estrutura-do-gtna-pattern-buffer-multi-modo">🔍 Auditoria Técnica — Estrutura do GTNA + Pattern Buffer Multi-Modo<a class="headerlink" href="#auditoria-tecnica-estrutura-do-gtna-pattern-buffer-multi-modo" title="Permanent link">&para;</a></h1>
+<div class="admonition info">
+<p class="admonition-title">Metadados</p>
+<p><strong>Data:</strong> 2026-09 · <strong>Escopo:</strong> Estrutura completa do mod + feature de pattern buffer multi-modo
+<strong>Projetos de referência:</strong> GTOCore-Main, GTO-GregTech-Modern (fork GTM do GTO), GTLCore e <strong>source oficial GTCEu 7.5.3</strong> (<code>/home/raishxn/MineProjects/GTCEu-7.5.3</code>)
+<strong>Verificações:</strong> 203 arquivos Java, build/CI/workflows, mixins, datagen, git status, bytecode/source do GTM 7.5.3 (<code>javap</code> + leitura direta do source)
+<strong>Manifest correlato:</strong> <a href="../multiblock-port-manifest/"><code>docs/roadmap/multiblock-port-manifest.md</code></a></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Este documento é o detalhe técnico, não o estado atual</p>
+<p>O estado corrente do trabalho, as pendências priorizadas e as notas de campo (custos já pagos,
+para não redescobrir) ficam no <strong><code>CONTINUITY_LEDGER.md</code></strong>, na raiz do repositório. Uma sessão
+nova deve começar por lá; este documento explica o <em>porquê</em> das decisões e o histórico das fases.</p>
+</div>
+<hr />
+<h2 id="resumo-executivo">📊 Resumo Executivo<a class="headerlink" href="#resumo-executivo" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Área</th>
+<th>Status</th>
+<th>Nota</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Estrutura de pacotes</td>
+<td>🟡 Boa com ressalvas</td>
+<td>8/10</td>
+</tr>
+<tr>
+<td>Higiene de repositório/build</td>
+<td>🔴 Problemas reais</td>
+<td>5/10</td>
+</tr>
+<tr>
+<td>Arquitetura do código</td>
+<td>🟡 Monolitos + dead code</td>
+<td>6/10</td>
+</tr>
+<tr>
+<td>Pattern Buffer multi-modo</td>
+<td>🟠 Mecânica ok, fundação errada</td>
+<td>5/10</td>
+</tr>
+<tr>
+<td>Testes</td>
+<td>🔴 <strong>Zero</strong> (0 testes, 0 gametests)</td>
+<td>0/10</td>
+</tr>
+<tr>
+<td>Docs/CI</td>
+<td>🟢 Acima da média da comunidade</td>
+<td>9/10</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pontos fortes</strong> (muitos addons da comunidade não têm): docs MkDocs com CI + i18n, manifest de port mecânico com IDs registráveis, spotless configurado, datagen separado em <code>src/generated</code>, estrutura de pacotes <code>api/common/integration/mixin</code> correta, e o handler por-slot do pattern buffer (<code>GTNAPatternBufferRecipeHandler</code>) — equivalente conceitual correto do <code>InternalSlotRecipeHandler</code> do GTOCore.</p>
+<hr />
+<h2 id="achados-criticos">🔴 Achados Críticos<a class="headerlink" href="#achados-criticos" title="Permanent link">&para;</a></h2>
+<h3 id="1-diretorio-net-compilando-no-build">1. Diretório <code>net/</code> compilando no build<a class="headerlink" href="#1-diretorio-net-compilando-no-build" title="Permanent link">&para;</a></h3>
+<p><code>net/minecraftforge/common/crafting/**</code> — 6 classes Forge <strong>decompiladas</strong> na raiz do projeto, sendo <strong>compiladas</strong> (o <code>sourceSets.main.java</code> pega a raiz em setups LegacyForge/ModDevGradle). Risco de conflito com as classes reais do Forge.</p>
+<p><strong>Ação:</strong> deletar <code>net/</code> e <code>site/</code> (output do mkdocs não deve ser versionado — o workflow de docs já faz <code>gh-deploy</code>); adicionar <code>site/</code> e <code>net/</code> ao <code>.gitignore</code>.</p>
+<h3 id="2-dead-code-gtnaapplypatternbuffermode-nunca-e-chamado">2. Dead code: <code>gtna$applyPatternBufferMode</code> nunca é chamado<a class="headerlink" href="#2-dead-code-gtnaapplypatternbuffermode-nunca-e-chamado" title="Permanent link">&para;</a></h3>
+<p>Confirmado por busca global: <code>IPatternBufferModeHost.gtna$applyPatternBufferMode</code> (implementado em <code>WorkableElectricMultipleRecipesMachine.java:254</code> e <code>SteamMultiMachineBase.java:120</code>) <strong>não tem nenhum call site</strong>. O multibloco <strong>nunca</strong> troca <code>activeRecipeType</code> pela receita do pattern — metade da feature simplesmente não roda. É a causa raiz do "nunca ficou perfeito igual GTOCore".</p>
+<p><strong>Ação:</strong> wire-up na Fase 1 (ver Deep-Dive abaixo).</p>
+<h3 id="3-descricao-lorem-ipsum-no-modstoml">3. Descrição Lorem Ipsum no <code>mods.toml</code><a class="headerlink" href="#3-descricao-lorem-ipsum-no-modstoml" title="Permanent link">&para;</a></h3>
+<p><code>src/main/resources/META-INF/mods.toml:27</code> — "Example Description... Lorem Ipsum". Primeira coisa que o jogador vê no painel de mods.</p>
+<h3 id="4-zero-testes">4. Zero testes<a class="headerlink" href="#4-zero-testes" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>src/test</code> não existia (agora existe, ver Fase 2). <strong>Correção factual (2ª passada):</strong> o GTLCore <strong>não usa JUnit</strong> — seus testes em <code>src/test/java/org/gtlcore/gtlcore/...</code> são classes com <code>public static void main</code> + helper <code>require()</code> (asserts manuais, ex: <code>WirelessTerminalGridResolverTest</code>), sem <code>useJUnitPlatform</code> no build. Esse padrão é <strong>mais simples</strong> e foi o adotado (ver Fase 2).</li>
+<li>Verificado no jar/source oficial do GTM 7.5.3: <strong>não há infraestrutura de GameTest publicada pela GTM</strong> — nenhum addon da comunidade tem gametests de máquina. O padrão real é <strong>teste puro para lógica</strong> + teste manual/runtime.</li>
+<li>O <code>build.gradle</code> já tem <code>forge.enabledGameTestNamespaces</code> configurado (herdado do template) — abordagem híbrida viável (JUnit agora, gametest depois).</li>
+</ul>
+<h3 id="5-dependencias-duras-de-soft-deps">5. Dependências duras de soft-deps<a class="headerlink" href="#5-dependencias-duras-de-soft-deps" title="Permanent link">&para;</a></h3>
+<p><code>mods.toml</code> (~linhas 44-54): <code>ad_astra</code> e <code>sgjourney</code> com <code>mandatory = true</code> — qualquer usuário sem Ad Astra/Stargate Journey não carrega o mod inteiro, mesmo sem usar as máquinas espaciais.</p>
+<p><strong>Ação:</strong> <code>mandatory = false</code> + guards <code>ModList.isLoaded(...)</code> nos pontos de uso (máquinas espaciais).</p>
+<hr />
+<h2 id="achados-altos">🟠 Achados Altos<a class="headerlink" href="#achados-altos" title="Permanent link">&para;</a></h2>
+<h3 id="6-gtnamatchesmodeid-com-hardcode-de-regressao-oculta">6. <code>gtna$matchesModeId</code> com hardcode de regressão oculta<a class="headerlink" href="#6-gtnamatchesmodeid-com-hardcode-de-regressao-oculta" title="Permanent link">&para;</a></h3>
+<p><code>IPatternBufferModeHost.java:42-43</code>:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="s">"saw"</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">requested</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s">"cutting_saw"</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">requested</span><span class="p">))</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">        </span><span class="p">(</span><span class="n">path</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">"cutter"</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">path</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">"saw"</span><span class="p">));</span>
+</span></code></pre></div>
+<p>Um pattern de <strong>cutter</strong> aceita modo <strong>"saw"</strong> e vice-versa — matching falso que mascara bugs de roteamento. O GTOCore faz matching por <strong>igualdade exata de <code>GTRecipeType</code></strong> (objeto), nunca por string fuzzy.</p>
+<p><strong>Ação:</strong> extrair para <code>ModeIdMatcher</code> pura (Fase 1), com match exato + sufixo controlado.</p>
+<h3 id="7-nbt-mutado-no-item-do-pattern">7. NBT mutado no item do pattern<a class="headerlink" href="#7-nbt-mutado-no-item-do-pattern" title="Permanent link">&para;</a></h3>
+<p><code>GTNAMEPatternBufferPartMachine</code> grava <code>gtnaPatternRecipeId</code>/<code>gtnaPatternModeId</code> <strong>no ItemStack do pattern</strong> (<code>saveSlotData</code>, ~linha 860). Problemas:</p>
+<ul>
+<li>Estado mora no item: mover o pattern para outro buffer carrega estado "fantasma";</li>
+<li>O slot já tem fonte de verdade própria (<code>slotConfigs[i]</code> com <code>cachedRecipeId</code>/<code>preferredModeId</code>) — <strong>duas fontes de verdade</strong>, e a do item é a redundante.</li>
+</ul>
+<p><strong>Ação:</strong> remover os tags do item; manter tudo em <code>GTNAPatternBufferSlotConfig</code>.</p>
+<h3 id="8-activerecipetype-e-global-incompativel-com-multi-threads">8. <code>activeRecipeType</code> é global — incompatível com multi-threads<a class="headerlink" href="#8-activerecipetype-e-global-incompativel-com-multi-threads" title="Permanent link">&para;</a></h3>
+<p>O próprio código já registra isso (comentário em <code>gtna$slotAcceptsRecipe</code>, ~linha 427): <em>"The controller's active recipe type is global, so it cannot be used as the routing state when several GTNA recipe threads run at once."</em> O routing <strong>por slot</strong> está correto e é o que faz a mecânica funcionar; o "modo global" só pode existir como <strong>espelho de UI</strong> (ver Deep-Dive).</p>
+<h3 id="9-monolitos">9. Monolitos<a class="headerlink" href="#9-monolitos" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Arquivo</th>
+<th>Linhas</th>
+<th>Problema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>common/data/AnnihilateGeneratorA.java</code></td>
+<td><strong>6.333</strong></td>
+<td>~95% é aisle-pattern de estrutura</td>
+</tr>
+<tr>
+<td><code>common/data/AnnihilateGeneratorB.java</code></td>
+<td><strong>5.994</strong></td>
+<td>Variante de A → duplicação massiva</td>
+</tr>
+<tr>
+<td><code>common/data/GTNAMachines.java</code></td>
+<td>2.915</td>
+<td>Registro de tudo num arquivo</td>
+</tr>
+<tr>
+<td><code>GTNAMEPatternBufferPartMachine.java</code></td>
+<td>2.310</td>
+<td>Mistura inventário+sync+UI+resolvers+modos</td>
+</tr>
+<tr>
+<td><code>data/recipe/GTNAMachineRecipes.java</code></td>
+<td>1.271</td>
+<td>Aceitável (arquivo de receitas)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ação (Fase 3):</strong> aisles de estrutura → <code>common/data/multiblock/</code> (já é o padrão de EyeOfHarmony/EyeOfWood — padronizar); GTNAMachines → dividir por domínio (GTOCore usa lotes <code>machines/MultiBlockA..H.java</code>); PatternBuffer → extrair <code>PatternBufferUI</code>, <code>PatternSlotResolver</code>, <code>ModeRegistry</code>.</p>
+<h3 id="10-example_registrate-orfao">10. <code>EXAMPLE_REGISTRATE</code> órfão<a class="headerlink" href="#10-example_registrate-orfao" title="Permanent link">&para;</a></h3>
+<p><code>GTNACORE.java:26</code> cria <strong>um segundo</strong> <code>GTRegistrate</code> (nome de template) que ninguém usa — o real é <code>GTNARegistry.REGISTRATE</code>. Dois registrates no mesmo modid = risco de registros órfãos.</p>
+<p><strong>Ação:</strong> deletar (Fase 0).</p>
+<hr />
+<h2 id="achados-medios">🟡 Achados Médios<a class="headerlink" href="#achados-medios" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Comentários que mentem</strong> em <code>GTNAMultipleRecipesLogic.java</code>: linhas 65, 369, 405-406 — comentários de "sumário" ("(... mantidos iguais)", "(Código original...)") seguidos do código real logo abaixo. Armadilha de manutenção.</li>
+<li><strong>Magic numbers</strong>: <code>searchLimit = 30</code> (GTNAMultipleRecipesLogic:131), <code>Math.max(4, remaining/...)</code> (217), <code>maxLength = 20</code> (446), <code>PATTERNS_PER_PAGE = 54</code>. Extrair para constantes nomeadas.</li>
+<li><strong><code>ThreadMultiplierStrategy</code></strong> usa <code>HashMap&lt;MultiblockMachineDefinition, Integer&gt;</code> estático — estado global paralelo ao registrate. Torne-o imutável pós-registro (hoje <code>register()</code> aceita escrita a qualquer momento).</li>
+<li><strong>Strings hardcoded na UI</strong>: <code>"Parallels: "</code>, <code>"Active Threads: "</code>, <code>"Idle - Waiting for inputs..."</code>, <code>" -&gt; "</code>, <code>" x"</code> (em <code>WorkableElectricMultipleRecipesMachine</code> e <code>GTNAMultipleRecipesLogic</code>) — não passam pelo lang. Usar <code>Component.translatable</code> (o datagen de lang <code>GTNALangProvider</code> + <code>pt_br.json</code> já existem).</li>
+<li><strong><code>isRecipeAlreadyActive</code></strong> bloqueia por <code>recipe.id</code> quando paralelo &gt; 1 — impede rodar a <em>mesma</em> receita em threads distintas. Documentar/parametrizar a decisão.</li>
+<li><strong>CI não roda testes nem spotless</strong>: <code>gradle.yml</code> só roda <code>./gradlew build</code>. Adicionar <code>./gradlew build spotlessCheck test</code>.</li>
+<li><strong>Árvore de trabalho suja</strong>: 8 arquivos modificados + <code>CoilWorkableElectricMultipleRecipesMachine.java</code> (novo, 70 linhas, herda <code>GTValues</code> sem usar) sem commit. Commitar antes de qualquer refactor.</li>
+<li><strong>Nome de pacote</strong> <code>common/machine/multiMachineBase</code> — camelCase em pacote; convenção Java é minúsculas (<code>multiblock/base</code>).</li>
+<li><strong><code>saveCustomPersistedData</code>/<code>loadCustomPersistedData</code></strong> em <code>GTNAMultipleRecipesLogic</code> não re-notifica handlers pós-load (o GTOCore sempre re-notifica). Menor.</li>
+<li><strong><code>Int128</code> reimplementado</strong> — 687 linhas de aritmética custom. ✅ <strong>CORRIGIDO E VALIDADO (Fase 2, <code>Int128Test</code>):</strong><ul>
+<li>A suspeita de "campo de bugs silenciosos" era real: <code>multiply(Int128)</code> errava <strong>~7%
+  dos casos</strong> (7298/100000) por perda de carry entre os limbs de 32 bits; <code>divideNew(long)</code>
+  e <code>divide(long)</code> erravam para dividendos grandes/negativos (mesma família de bug limb).</li>
+<li><strong>Correção:</strong> os três métodos agora roteiam pelos caminhos já verificados —
+  <code>multiply*</code> por <code>toBigInteger</code>/<code>fromBigInteger</code> (roundtrip exato, 0/100k erros);
+  <code>divide(long)</code>/<code>divideNew(long)</code> pela <code>divide(Int128, rem)</code> bit-a-bit.</li>
+<li><strong>Validação:</strong> 0 erros em 100.000 casos aleatórios cada (add, subtract, multiply,
+  shiftLeft, divide) contra oráculo <code>BigInteger</code> + probes de regressão no teste.</li>
+<li>Quem chama <code>Int128</code>: a matemática de energia do <strong>Nexus Flux Matrix</strong> — agora confiável.
+Teste: <code>src/test/java/com/raishxn/gtna/Int128Test.java</code>.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2 id="deep-dive-pattern-buffer-multi-modo-por-que-o-gtocore-funciona-e-o-gtna-nao">🔬 Deep-Dive: Pattern Buffer Multi-Modo — Por que o GTOCore "funciona" e o GTNA não<a class="headerlink" href="#deep-dive-pattern-buffer-multi-modo-por-que-o-gtocore-funciona-e-o-gtna-nao" title="Permanent link">&para;</a></h2>
+<h3 id="como-o-gtocore-realmente-funciona-codigo-verificado">Como o GTOCore realmente funciona (código verificado)<a class="headerlink" href="#como-o-gtocore-realmente-funciona-codigo-verificado" title="Permanent link">&para;</a></h3>
+<p>Em <code>GTOCore-Main/.../MEPatternBufferPartMachine.java</code> + <code>MultiMachineModeFancyConfigurator.java</code> + o fork GTM deles:</p>
+<ol>
+<li><strong>O modo mora no BUFFER, não no controller.</strong> O buffer tem <code>List&lt;GTRecipeType&gt; recipeTypes</code> (tipos que o controller suporta) e <code>GTRecipeType recipeType</code> (filtro selecionado, <code>null</code> = "todos") — seletor <code>MultiMachineModeFancyConfigurator</code> na UI do buffer.</li>
+<li>Cada pattern é decodificado num <code>InternalSlot</code> que <strong>cacheia o GTRecipe resolvido</strong> junto com o tipo da receita.</li>
+<li>O <code>InternalSlotRecipeHandler</code> expõe cada slot como <code>RecipeHandlerUnit</code> — a busca de receita do controller <strong>não consulta a recipe map por tipo</strong>; recebe receitas prontas dos slots.</li>
+<li>O fork GTM deles mudou o cerne: <code>fullModifyRecipe</code> valida com <code>GTRecipeType.available(definition.recipeType, getAvailableRecipeTypes())</code> — o controller aceita <strong>qualquer tipo disponível</strong>; o "modo ativo" virou <strong>estado de UI</strong>.</li>
+<li><code>setRecipeType</code> do buffer só faz <code>machine.getRecipeLogic().markLastRecipeDirty()</code> — troca de modo = invalidar cache de busca, não "trocar o motor".</li>
+</ol>
+<h3 id="o-que-o-gtna-faz-hoje-e-por-que-travou">O que o GTNA faz hoje (e por que travou)<a class="headerlink" href="#o-que-o-gtna-faz-hoje-e-por-que-travou" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ Ponto 3 já implementado (<code>GTNAPatternBufferRecipeHandler</code> com RHLs por slot) e routing por slot (<code>gtna$slotAcceptsRecipe</code>) — <strong>a mecânica de rodar múltiplos tipos já funciona</strong>;</li>
+<li>⚠️ O "modo do controller" (<code>setActiveRecipeType</code>): a ligação <strong>existe</strong> em <code>tryStartRecipe</code>, mas
+  ficou <strong>inerte</strong> até a 3ª passada — nenhuma máquina Java declarava mais de um recipe type (então
+  <code>gtna$resolvePatternBufferMode</code> sempre retornava <code>null</code>) e o provider do buffer
+  (<code>gtna$getPreferredModeForRecipe</code>) estava órfão. Corrigido; ver o adendo da Fase 1;</li>
+<li>❌ <code>GTNAMultipleRecipesLogic</code> tem <strong>dois pipelines</strong> (<code>tryStartRecipe</code> manual duplicando <code>getRecipeModifier</code>, além do <code>searchRecipe</code> cego por todos os tipos no fallback);</li>
+<li>❌ Matching por string fuzzy com hardcode saw/cutter (achado #6).</li>
+</ul>
+<h3 id="por-que-igual-gtocore-nao-era-possivel-no-gtm-oficial">Por que "igual GTOCore" não era possível no GTM oficial<a class="headerlink" href="#por-que-igual-gtocore-nao-era-possivel-no-gtm-oficial" title="Permanent link">&para;</a></h3>
+<p>No GTM 7.5.3 oficial, <code>IRecipeLogicMachine</code> <strong>não tem</strong> <code>getAvailableRecipeTypes()</code> nem handler-units — <code>RecipeLogic</code> busca <strong>só o tipo ativo</strong>:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// RecipeLogic.java:334 (source oficial GTCEu 7.5.3)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@NotNull</span><span class="w"> </span><span class="n">Iterator</span><span class="o">&lt;</span><span class="n">GTRecipe</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">searchRecipe</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">machine</span><span class="p">.</span><span class="na">getRecipeType</span><span class="p">().</span><span class="na">searchRecipe</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">}</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1">// WorkableMultiblockMachine.java:304</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="kd">public</span><span class="w"> </span><span class="n">GTRecipeType</span><span class="w"> </span><span class="nf">getRecipeType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">recipeTypes</span><span class="o">[</span><span class="n">activeRecipeType</span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span></code></pre></div>
+<p>Com N threads simultâneas de tipos distintos (cutter + lathe + bender ao mesmo tempo), um único <code>activeRecipeType</code> global é <strong>matematicamente insuficiente</strong>. O GTOCore contornou isso <strong>modificando o GTM</strong>; o GTNA não pode. A solução correta é a que o código já fazia sem perceber: <strong>modo por slot/thread, com o modo global como espelho de UI</strong>.</p>
+<h3 id="arquitetura-alvo-curadoria">🎯 Arquitetura-alvo (curadoria)<a class="headerlink" href="#arquitetura-alvo-curadoria" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>┌────────────────────────────────────────────────────────────────┐
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>│ GTNAMultipleRecipesLogic (único ponto de início de thread)     │
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>│  startRecipeInternal(GTRecipe base, slotHint)                  │
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>│    1. dry-run match (matchContents SIMULATE)                   │
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>│    2. host.gtna$applyPatternBufferMode(modeId, recipe) ← espelho│
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>│    3. modificadores (paralelo/OC/hatches) via UM pipeline      │
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>│    4. IO real + activeRecipes.add                              │
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>│    5. provider.gtna$onRecipeStarted(recipe)                    │
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>└────────────────────────────────────────────────────────────────┘
+</span></code></pre></div>
+<p>Mudanças concretas da <strong>Fase 1</strong>:</p>
+<p><strong>1. Wire-up do espelho de modo</strong> — em <code>startRecipeInternal</code>, após o dry-run bem-sucedido:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">machine</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">IPatternBufferModeHost</span><span class="w"> </span><span class="n">host</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="n">host</span><span class="p">.</span><span class="na">gtna$applyPatternBufferMode</span><span class="p">(</span><span class="n">recipe</span><span class="p">.</span><span class="na">getType</span><span class="p">().</span><span class="na">registryName</span><span class="p">.</span><span class="na">toString</span><span class="p">(),</span><span class="w"> </span><span class="n">recipe</span><span class="p">);</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>E a implementação correta do host — <strong>fórmula exata da própria GTM</strong> (copiada de <code>MachineModeFancyConfigurator.setActiveRecipeTypeAndUpdateTickSubs</code>, source oficial):</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nd">@Override</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">gtna$applyPatternBufferMode</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">modeId</span><span class="p">,</span><span class="w"> </span><span class="n">GTRecipe</span><span class="w"> </span><span class="n">recipe</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">getRecipeTypes</span><span class="p">().</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ModeIdMatcher</span><span class="p">.</span><span class="na">matches</span><span class="p">(</span><span class="n">modeId</span><span class="p">,</span><span class="w"> </span><span class="n">getRecipeTypes</span><span class="p">()</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">newType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">            </span><span class="kt">boolean</span><span class="w"> </span><span class="n">needUpdate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">keepSubscribing</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">getActiveRecipeType</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">newType</span><span class="p">;</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">            </span><span class="n">setActiveRecipeType</span><span class="p">(</span><span class="n">newType</span><span class="p">);</span><span class="w">   </span><span class="c1">// @Persisted: NBT + sync de rede automáticos</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">needUpdate</span><span class="p">)</span><span class="w"> </span><span class="n">getRecipeLogic</span><span class="p">().</span><span class="na">updateTickSubscription</span><span class="p">();</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><strong>2. <code>ModeIdMatcher</code> pura e testável</strong> (substitui o fuzzy+hardcode):</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ModeIdMatcher</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="cm">/** Match exato: namespace:path, ou sufixo exato do path ("cutter" matcha gtna:big_cutter). */</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">matches</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">requested</span><span class="p">,</span><span class="w"> </span><span class="nd">@Nullable</span><span class="w"> </span><span class="n">GTRecipeType</span><span class="w"> </span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">requested</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">type</span><span class="p">.</span><span class="na">registryName</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">req</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">requested</span><span class="p">.</span><span class="na">trim</span><span class="p">().</span><span class="na">toLowerCase</span><span class="p">(</span><span class="n">Locale</span><span class="p">.</span><span class="na">ROOT</span><span class="p">).</span><span class="na">replace</span><span class="p">(</span><span class="sc">'_'</span><span class="p">,</span><span class="w"> </span><span class="sc">' '</span><span class="p">);</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">        </span><span class="n">ResourceLocation</span><span class="w"> </span><span class="n">rl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">type</span><span class="p">.</span><span class="na">registryName</span><span class="p">;</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">full</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">toLowerCase</span><span class="p">(</span><span class="n">Locale</span><span class="p">.</span><span class="na">ROOT</span><span class="p">).</span><span class="na">replace</span><span class="p">(</span><span class="sc">'_'</span><span class="p">,</span><span class="w"> </span><span class="sc">' '</span><span class="p">);</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rl</span><span class="p">.</span><span class="na">getPath</span><span class="p">().</span><span class="na">toLowerCase</span><span class="p">(</span><span class="n">Locale</span><span class="p">.</span><span class="na">ROOT</span><span class="p">).</span><span class="na">replace</span><span class="p">(</span><span class="sc">'_'</span><span class="p">,</span><span class="w"> </span><span class="sc">' '</span><span class="p">);</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">req</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">full</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">req</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">path</span><span class="p">.</span><span class="na">endsWith</span><span class="p">(</span><span class="s">"/"</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">req</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">path</span><span class="p">.</span><span class="na">endsWith</span><span class="p">(</span><span class="s">" "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">req</span><span class="p">);</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Nada de <code>contains("saw")</code>. Dois tipos cujo path termina com o mesmo sufixo colidem — nesses casos o modo do slot deve ser o <strong>id completo</strong>.</p>
+<p><strong>3. Fonte única de verdade</strong> — deletar <code>PATTERN_RECIPE_ID_TAG</code>/<code>PATTERN_MODE_ID_TAG</code> do ItemStack; <code>slotConfigs[i]</code> manda (com <code>cachedRecipeId</code> + <code>preferredModeId</code> + <code>derivedModeId</code>). Elimina a classe inteira de "limpeza de modo stale" (<code>resolveAndCacheSlotRecipe</code>, linhas 926-937).</p>
+<p><strong>4. Unificar modificadores</strong> — <code>tryStartRecipe</code> duplica <code>getRecipeModifier</code>/ParallelLogic/OC; manter <strong>um</strong> caminho: <code>ModifierFunction</code> do host aplicado na receita base. Ordem oficial de referência (<code>RecipeLogic.setupRecipe</code>, source oficial): retry de <code>lastRecipe</code> → <code>beforeWorking(recipe)</code> → <code>handleRecipeIO(IN)</code> → status/progress/duration.</p>
+<p><strong>5. AUTO nunca "trava"</strong> — <code>preferredModeId</code> em branco = AUTO (aceita tudo); <code>derivedModeId</code> é só display.</p>
+<hr />
+<h2 id="plano-de-testes-padrao-real-da-comunidade-gtm">🧪 Plano de Testes (padrão real da comunidade GTM)<a class="headerlink" href="#plano-de-testes-padrao-real-da-comunidade-gtm" title="Permanent link">&para;</a></h2>
+<h3 id="nivel-1-testes-puros-srctestjava-padrao-real-do-gtlcore-implementado">Nível 1 — Testes puros (<code>src/test/java</code>) — padrão <strong>real</strong> do GTLCore ✅ <strong>IMPLEMENTADO</strong><a class="headerlink" href="#nivel-1-testes-puros-srctestjava-padrao-real-do-gtlcore-implementado" title="Permanent link">&para;</a></h3>
+<p><strong>Correção da 1ª passada:</strong> o GTLCore não usa JUnit. O padrão adotado (igual ao deles) é
+<code>main()</code> + asserts, sem framework — mais leve e sem dor de classpath no ModDevGradle.
+Implementado:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>// build.gradle: sourceSet 'test' (src/test/java) + task `runUnitTests` (JavaExec por classe)
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>// `check` agora depende de `runUnitTests`.
+</span></code></pre></div>
+<p>Testes criados e <strong>passando</strong> (<code>./gradlew runUnitTests</code> → BUILD SUCCESSFUL, 6 classes):</p>
+<ul>
+<li><code>Int128Test</code> — add/subtract/shiftLeft/negate validados contra <code>BigInteger</code> (0 erros em 100k
+  casos cada); <code>multiply</code> e <code>divideNew</code> documentados como <strong>bugs reais</strong> (ver achado #20).</li>
+<li><code>ModeIdMatcherTest</code> — trava as regras de matching (exato + sufixo) e as garantias
+  anti-hardcode (saw↛cutter, etc.).</li>
+<li><code>NumberUtilsTest</code>, <code>StructureSlicerTest</code>, <code>GTRecipe2IntBiMultiMapTest</code> — os três alvos
+  originalmente listados aqui, entregues na Fase 2 (ver checklist).</li>
+<li><code>PatternBufferModeSelectionTest</code> — trava a decisão "modo fixado no slot vence, tipo da receita
+  é o fallback", em <code>PatternBufferModeSelection.select</code> (função pura; chama a produção direto,
+  sem espelho).</li>
+</ul>
+<blockquote>
+<p><strong>Contagem atual (2026-09-20): 9 classes</strong> em <code>runUnitTests</code> — as 6 acima mais
+<code>BufferModeSwitchPolicyTest</code> (política idle-only do auto-switch), <code>ConfigLangKeysTest</code> (G-0007/G-0008)
+e <code>PatternBufferLayoutTest</code> (geometria da página do buffer, ver Fase C.1).</p>
+</blockquote>
+<h3 id="nivel-2-gametests-forge-gametest-implementado-commit-fb05806">Nível 2 — GameTests Forge (<code>@GameTest</code>) — ✅ <strong>IMPLEMENTADO</strong> (commit <code>fb05806</code>)<a class="headerlink" href="#nivel-2-gametests-forge-gametest-implementado-commit-fb05806" title="Permanent link">&para;</a></h3>
+<p><strong>Estado anterior (auditoria de 3ª passada):</strong> o GTNA <strong>não tinha gametest funcional</strong> — nenhum
+<code>@GameTest</code>, nenhum template de estrutura, e <strong>não existia o run <code>gameTestServer</code></strong> em
+<code>legacyForge.runs</code> (só <code>client</code>, <code>server</code> e <code>data</code>), então a task nem era gerada.</p>
+<p><strong>O que existe agora, e que roda de verdade:</strong></p>
+<ul>
+<li>Run <code>gameTestServer</code> em <code>legacyForge.runs</code> com <code>forge.enabledGameTestNamespaces=gtna</code>.</li>
+<li>Template <code>src/main/resources/data/gtna/structures/empty_5x5.nbt</code> (estrutura vazia 5x5x5 gerada
+  à mão — palette/blocks/entities vazios, DataVersion 3465), para os testes terem onde construir.</li>
+<li><code>com.raishxn.gtna.gametest.GTNAMachineGameTests</code> com 4 testes, <strong>todos passando</strong>
+  (<code>./gradlew runGameTestServer</code> → <code>All 4 required tests passed</code>):</li>
+<li><code>durationTesterExposesTwoRecipeTypes</code> — trava a <strong>precondição</strong> do auto-switch de modo (com um
+    único recipe type o espelho é um no-op silencioso, que foi exatamente como a feature ficou
+    invisível);</li>
+<li><code>durationTesterControllerCanBePlaced</code> — smoke test do harness (placement + block entity →
+    nossa classe de máquina);</li>
+<li><code>bufferModeFilterGatesSlotAcceptance</code> — exercita o filtro de modo do buffer (Fase C) numa receita
+    real: sem pin aceita, pinado no próprio tipo aceita, pinado em outro tipo recusa <strong>em todos os
+    slots</strong>, e limpar o filtro restaura a aceitação;</li>
+<li><code>runningSecondRecipeTypeMirrorsControllerMode</code> — <strong>o teste end-to-end do espelho</strong>: monta o
+    duration_tester formado, injeta uma receita trivial no <code>CIRCUIT_ASSEMBLER_RECIPES</code>, alimenta o
+    input bus com energia no energy hatch e afirma que o <code>activeRecipeType</code> sai de 0 (assembler)
+    para 1 (circuit assembler). É a asserção que a feature inteira depende e que os unit tests não
+    alcançam.
+    Notas de campo que valem para qualquer teste de multibloco futuro: a geometria vem de
+    <code>FactoryBlockPattern.start()</code> = (LEFT, UP, FRONT) → char→-X, string→+Y, aisle→-Z com a célula do
+    controller como origem; o padrão do duration_tester <strong>exige</strong> maintenance hatch
+    (<code>setExactLimit(1)</code> é mínimo E máximo) além do energy hatch do <code>autoAbilities</code>; o
+    <code>EnergyContainerList</code> do controller não implementa <code>addEnergy</code> (o default da interface é no-op),
+    então a energia vai no <code>NotifiableEnergyContainer</code> do hatch; e <code>onStructureFormed()</code> marca
+    <code>isFormed()</code> incondicionalmente, então o teste afirma o retorno de <code>checkPatternAt()</code>.`</li>
+<li>CI com o passo de gametest + <strong>guarda do banner</strong> <code>GAME TESTS COMPLETE</code> (o <code>runGameTestServer</code> sai
+  com código 0 mesmo quando o mod falha ao carregar) e criação do <code>run/eula.txt</code>, já que <code>run/</code> é
+  gitignored.</li>
+</ul>
+<p><strong>Bônus — o harness pagou o investimento antes de rodar o primeiro teste:</strong> a primeira execução
+revelou que o mod <strong>não carregava em servidor dedicado</strong> (dois vazamentos de classe client-only em
+código comum; ver o commit <code>998c8f8</code>). Isso passava batido porque o <code>runGameTestServer</code> retornava
+sucesso mesmo assim — precisamente o motivo da guarda do banner no CI.</p>
+<p><strong>Divergência consciente vs UFO Future:</strong> aqui os testes ficam em <code>src/main/java/.../gametest/</code> (o
+mod inteiro já é o <code>sourceSet main</code>), então as classes de teste <strong>vão no jar</strong>; elas são inertes em
+jogo normal e só rodam quando o namespace é habilitado. O UFO Future usa um sourceset/mod de teste
+separado (<code>ufo_tests</code>) — é o refinamento natural quando quisermos tirar isso do jar.</p>
+<p><strong>Horizon-QA (<code>GTNewHorizons/Horizon-QA</code>) — não adotar.</strong> É um framework de QA <strong>para 1.7.10/GTNH</strong>
+que reimplementa a API de GameTest no Minecraft 1.7.10 (que não tem GameTest nativo), acoplado ao
+toolchain RetroFuturaGradle e a conceitos do GT5-Unofficial (<code>helper.gtnh()</code>, EU, manutenção).
+O motivo de existir dele é justamente o que o Forge 1.20.1 <strong>já tem nativo</strong>, e nem
+<code>--mcJvmArgs</code> do RFG existe no ModDevGradle. O que vale aproveitar é só a <strong>disciplina</strong>:
+teste negativo com assert por tick, template exportado in-game e relatório/exit-code no CI.</p>
+<h3 id="nivel-3-ci">Nível 3 — CI<a class="headerlink" href="#nivel-3-ci" title="Permanent link">&para;</a></h3>
+<p>O CI (<code>.github/workflows/gradle.yml</code>) roda <code>./gradlew build</code>, <code>./gradlew spotlessCheck runUnitTests</code>
+(os unit tests já estão no gate; o <code>test</code> citado em versões anteriores deste doc não existe como
+task — a real é <code>runUnitTests</code>) e, agora, também o gametest. Já aplicado:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Game tests</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="no"># run/ is gitignored, so CI has to accept the EULA the dedicated server asks for.</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="no">mkdir -p run</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="no">echo "eula=true" &gt; run/eula.txt</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="no">./gradlew runGameTestServer</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Assert game tests actually ran</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span><span class="no">if ! grep -q "GAME TESTS COMPLETE" run/logs/latest.log; then</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">      </span><span class="no">echo "::error::runGameTestServer finished without running any GameTest"</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">      </span><span class="no">tail -n 200 run/logs/latest.log</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">      </span><span class="no">exit 1</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">    </span><span class="no">fi</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">    </span><span class="no">grep -E "All [0-9]+ required tests passed|GAME TESTS COMPLETE" run/logs/latest.log</span>
+</span></code></pre></div>
+<hr />
+<h2 id="checklist-priorizado-de-execucao">✅ Checklist Priorizado de Execução<a class="headerlink" href="#checklist-priorizado-de-execucao" title="Permanent link">&para;</a></h2>
+<h3 id="fase-0-higiene-concluida-commit-d8e1494">Fase 0 — Higiene ✅ <strong>CONCLUÍDA</strong> (commit <code>d8e1494</code>)<a class="headerlink" href="#fase-0-higiene-concluida-commit-d8e1494" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <code>git rm -r net/ site/</code> + <code>.gitignore</code> (<code>site/</code>, <code>net/</code>) — <code>build/</code> já estava ignorado</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Deletado <code>EXAMPLE_REGISTRATE</code> de <code>GTNACORE.java</code> (confirmado: zero usos)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Descrição do <code>mods.toml</code> substituída; <code>ad_astra</code>/<code>sgjourney</code> → <code>mandatory = false</code>.
+      <strong>Nota:</strong> guards <code>ModList.isLoaded</code> foram <strong>desnecessários</strong> — nenhuma classe GTNA
+      importa <code>ad_astra</code>/<code>sgjourney</code>/<code>botarium</code>/<code>resourceful*</code> ainda (essas deps foram
+      adicionadas no WIP para o conteúdo espacial futuro). O mod carrega standalone.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Commit do WIP pendente (snapshot <code>af94676</code>, 17 arquivos)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <strong>Bônus:</strong> <code>spotlessApply</code> executado no repositório inteiro (spotless estava
+      configurado mas nunca enforced — o CI não o rodava; ver achado #16)</li>
+</ul>
+<h3 id="fase-1-feature-pattern-buffer-multi-modo-concluida-commit-d8e1494">Fase 1 — Feature pattern buffer multi-modo ✅ <strong>CONCLUÍDA</strong> (commit <code>d8e1494</code>)<a class="headerlink" href="#fase-1-feature-pattern-buffer-multi-modo-concluida-commit-d8e1494" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <code>ModeIdMatcher</code> criado (<code>api/machine/feature/ModeIdMatcher.java</code>) — matching estrito
+      (exato + sufixo de path), <strong>sem</strong> <code>contains("saw")</code> e sem equivalência saw↔cutter.
+      Validado por 17 casos de lógica (incl. garantias anti-hardcode).</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Wire-up: <code>gtna$applyPatternBufferMode</code> agora é chamado em <code>tryStartRecipe</code>
+      (após o dry-run <code>matchContents</code>, antes de <code>beforeWorking</code>). As duas implementações
+      (<code>WorkableElectricMultipleRecipesMachine</code>, <code>SteamMultiMachineBase</code>) usam a <strong>fórmula
+      exata da GTM</strong> (setter + <code>updateTickSubscription()</code> condicional; <code>@Persisted</code> cuida
+      de NBT/sync). Dead code eliminado — agora há 1 call site real.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> NBT do pattern item removido: <code>persistPatternRecipeMetadata</code> deletado;
+      <code>loadPatternRecipeMetadata</code> virou migração que <strong>remove</strong> tags legadas de itens
+      antigos em vez de carregá-las. <code>slotConfigs</code> é a única fonte de verdade.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Pipeline de modificadores: confirmado <strong>um único caminho de execução</strong>
+      (<code>tryStartRecipe</code>: parallel → overclock → hatches → match → mode-mirror →
+      beforeWorking → IO IN). O <code>getRecipeModifier</code> separado serve só ao preview/EMI,
+      não é um segundo pipeline de execução — fusão completa fica para a Fase 3.</li>
+</ul>
+<p><strong>Adendo (3ª passada) — a Fase 1 estava inerte na prática.</strong> A ligação do espelho existia
+(<code>tryStartRecipe</code> chamava <code>gtna$applyPatternBufferMode</code>), mas duas coisas impediam o jogador de
+ver a feature funcionar:</p>
+<ul>
+<li><strong>Nenhuma máquina Java declarava mais de um recipe type.</strong> Scan dos 40 registros de multiblock:
+  zero usos de <code>.recipeTypes(...)</code> e zero <code>.recipeType()</code> repetido na mesma cadeia. Como
+  <code>gtna$resolvePatternBufferMode</code> retorna <code>null</code> quando <code>getRecipeTypes().length &lt;= 1</code>, o espelho
+  era <strong>no-op em todo o mod</strong>. O único usuário da base multi-receita era o <code>duration_tester</code>
+  (declarado com 1 tipo) e o caminho KubeJS (<code>gtna:multiple_recipes</code>).</li>
+<li><strong>O provider do buffer estava órfão.</strong> <code>gtna$getPreferredModeForRecipe</code> era declarado e
+  implementado (<code>GTNAMEPatternBufferPartMachine</code>) mas não tinha <strong>nenhum call site</strong>: o modo
+  fixado no slot (<code>preferredModeId</code>) filtrava o roteamento (<code>gtna$slotAcceptsRecipe</code>) mas não
+  dirigia o modo da máquina.</li>
+</ul>
+<p><strong>Corrigido nesta rodada:</strong></p>
+<ul>
+<li><code>duration_tester</code> agora declara <code>ASSEMBLER_RECIPES</code> + <code>CIRCUIT_ASSEMBLER_RECIPES</code> — 2 modos, o
+  que torna o auto-switch exercitável in-game (o tab "Machine Mode" da GTM só aparece com
+  <code>length &gt; 1</code>).</li>
+<li><code>tryStartRecipe</code> resolve o modo <strong>pelo pattern buffer</strong>: <code>gtna$getPreferredModeForRecipe</code> do
+  provider que serve a receita, com fallback no tipo exato da receita quando o slot está em AUTO
+  (ou quando o pin é um id legado que não resolve em nenhum modo da máquina — sem esse fallback um
+  pin stale desligaria o espelho silenciosamente).</li>
+<li>A decisão virou a função pura <code>PatternBufferModeSelection.select(preferred, recipeType)</code>,
+  coberta por <code>PatternBufferModeSelectionTest</code> (6º teste do <code>runUnitTests</code>).</li>
+<li><strong>Política escolhida:</strong> espelhar sempre o tipo que iniciou a receita. Com N threads de tipos
+  diferentes o <code>activeRecipeType</code> é global e vai alternar entre eles — limitação inerente ao
+  campo, não do espelho.</li>
+</ul>
+<h3 id="fase-2-testes-concluida-gametest-opcional-fica-para-a-fase-2">Fase 2 — Testes ✅ <strong>CONCLUÍDA</strong> (gametest opcional fica para a Fase 2+)<a class="headerlink" href="#fase-2-testes-concluida-gametest-opcional-fica-para-a-fase-2" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <code>src/test</code> criado + task <code>runUnitTests</code> (padrão GTLCore: <code>main()</code> + asserts, sem JUnit —
+      correção da 1ª passada que sugeria JUnit). <code>check</code> agora depende de <code>runUnitTests</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <code>Int128Test</code> — <strong>revelou 2 bugs reais</strong> em <code>multiply</code>/<code>divideNew</code> (achado #20 🔴).</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <code>ModeIdMatcherTest</code> — trava as regras anti-hardcode.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <strong>🔴 Corrigir <code>Int128.multiply</code> e <code>Int128.divideNew</code></strong> — corrigido (commit <code>5a7129a</code>) e
+      validado com <strong>0 erros em 100.000 casos</strong> vs oráculo <code>BigInteger</code>
+      (add/subtract/multiply/shiftLeft/divide), com probes de regressão travadas no <code>Int128Test</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <code>NumberUtilsTest</code> (formatação K/M/G, tabela <code>pow95</code>, tiers de voltagem fake com round-trip,
+      <code>saturatedAdd</code>/<code>saturatedMultiply</code>), <code>StructureSlicerTest</code> (semântica exata de
+      slice/insert dos aisles, clamps e <code>q</code> 1-based) e <code>GTRecipe2IntBiMultiMapTest</code>
+      (espelho byte-a-byte da estrutura, pois <code>GTRecipe</code> exige bootstrap; chave stand-in com
+      equals/hashCode por id igual ao <code>GTRecipe</code>, + fuzz de 5.000 passos contra modelo de
+      referência verificando a invariante dos dois mapas a cada passo).</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> CI: <code>spotlessCheck</code> + <code>runUnitTests</code> adicionados ao <code>gradle.yml</code> (commit <code>4bf0f0c</code>).</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Gametest: em vez do "steam simples" previsto aqui, o harness completo foi construído e o
+      primeiro alvo foi um <strong>multibloco elétrico end-to-end</strong> (o <code>duration_tester</code> do espelho de
+      modo), que exigia mais do harness do que um steam — ver Nível 2 e o checkpoint <code>G-0004</code> do
+      <code>CONTINUITY_LEDGER.md</code>. Um teste de steam continua barato de adicionar, mas deixou de ser o
+      caminho crítico.</li>
+</ul>
+<h3 id="fase-3-refactor-estrutural-iniciada">Fase 3 — Refactor estrutural 🟡 <strong>INICIADA</strong><a class="headerlink" href="#fase-3-refactor-estrutural-iniciada" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Split AnnihilateGeneratorA/B → aisles em <code>common/data/multiblock/</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Split <code>GTNAMEPatternBufferPartMachine</code> (UI/resolver/mode) — <strong>CONCLUÍDO</strong>
+      (<code>d2f9497</code>, <code>3b28fd1</code>, <code>74c8a1b</code>; 2759 → 1192 linhas). Três classes no mesmo pacote:
+      <code>PatternSlotResolver</code> (busca/matching de receita por slot: resolução com preferência de
+      cache, migração de tags legados, matching slot/pattern com catalyst + keepByProduct, e os
+      helpers puramente estáticos de copy/consume/collect/compare); <code>PatternBufferModeRegistry</code>
+      (descoberta dos recipe types do controller + formatação de label, com o cache sincronizado
+      <code>availableModeIds</code> permanecendo na máquina); e <code>PatternBufferUI</code> (página de slots, config
+      panel, ghost rows de item/fluido/catalyst, widgets internos, seleção/preview e apresentação
+      do seletor de modo).
+      A máquina mantém o estado persistente/sincronizado (<code>selectedSlot</code>, <code>currentPage</code>,
+      inventários, <code>slotConfigs</code>) e as ações de domínio que os botões disparam; a UI só as invoca.
+      Um back-reference <code>@Nullable patternBufferUI</code> roteia os refreshes de preview disparados no
+      lado do servidor (<code>refreshUiPreview()</code>), que viram no-op quando nenhuma UI está aberta.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Split GTNAMachines por domínio</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Internacionalizar strings de UI</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Fundir <code>getRecipeModifier</code> (preview) com o caminho de execução, se fizer sentido</li>
+</ul>
+<h3 id="fase-c-seletor-de-modo-no-buffer-paridade-gtocore-concluida-commit-21265ae">Fase C — Seletor de modo no buffer (paridade GTOCore) ✅ <strong>CONCLUÍDA</strong> (commit <code>21265ae</code>)<a class="headerlink" href="#fase-c-seletor-de-modo-no-buffer-paridade-gtocore-concluida-commit-21265ae" title="Permanent link">&para;</a></h3>
+<p>O GTOCore permite escolher, <strong>na UI do próprio buffer</strong>, quais recipe types ele atende
+(<code>MultiMachineModeFancyConfigurator</code>: <code>List&lt;GTRecipeType&gt; recipeTypes</code> + <code>recipeType</code> selecionado,
+<code>null</code> = todos; trocar só invalida a busca de receita). O GTNA só tinha o modo <strong>por slot</strong>
+(<code>preferredModeId</code>), que decide <em>qual slot</em> serve a receita — nada decidia se o buffer inteiro
+está naquele modo.</p>
+<ul>
+<li><code>selectedModeId</code> no part machine (vazio = todos os modos), <code>@Persisted</code> + <code>@DescSynced</code>, com
+  setter que valida e pede <code>markLastRecipeDirty()</code> aos controllers — o equivalente GTNA do
+  <code>setRecipeType</code> do GTOCore.</li>
+<li><code>gtna$slotAcceptsRecipe</code> aplica o filtro <strong>do buffer antes</strong> do filtro do slot: um único ponto
+  cobre os slot handlers, o fast-path de receita cacheada (<code>collectCachedBufferRecipes</code>) e o
+  matcher de slots.</li>
+<li><code>verifySelectedMode()</code> (par do <code>MultiMachineModeFancyConfigurator.verify</code>) descarta uma seleção
+  que o controller não oferece mais, no load e ao anexar/desanexar de controller. <strong>Só no
+  servidor</strong> — no cliente o cache sincronizado pode não ter chegado e limpar ali só piscaria a UI.</li>
+<li><code>PatternBufferModeRegistry.getBufferModeOptions</code> monta a lista: "todos", os recipe types do
+  controller e a seleção stale (para continuar visível e poder ser limpa).</li>
+<li><code>PatternBufferModeConfigurator</code> é um <strong>side tab fancy</strong> no buffer (reusa o título/ícone
+  "Machine Mode" da própria GTM). Não precisa do sync manual de widget do GTOCore porque a seleção
+  é um campo <code>@DescSynced</code>; o clique é aplicado só no servidor.</li>
+<li>Lang keys no <code>GTNALangProvider</code> (en_us, regenerado por <code>runData</code>) e no <code>pt_br.json</code>.</li>
+</ul>
+<p><strong>Validado:</strong> <code>compileJava</code> + <code>spotlessCheck</code> + <code>runUnitTests</code> (6/6) + <code>runData</code>. A troca em si
+ainda precisa de verificação in-game (é onde um gametest do Nível 2 ajudaria).</p>
+<h3 id="fase-c1-layout-da-pagina-do-buffer-painel-docado-concluida-commit-7822893">Fase C.1 — Layout da página do buffer: painel <strong>docado</strong> ✅ <strong>CONCLUÍDA</strong> (commit <code>7822893</code>)<a class="headerlink" href="#fase-c1-layout-da-pagina-do-buffer-painel-docado-concluida-commit-7822893" title="Permanent link">&para;</a></h3>
+<p><strong>O bug (relatado in-game).</strong> Ao clicar com o botão do meio num slot, a UI "vazava": widgets
+desenhados <strong>fora</strong> da página — por cima da moldura e das fileiras do inventário do jogador.</p>
+<p><strong>A causa (medida, não estimada).</strong> A página era <code>176 x 220</code> e o painel de configuração era
+<strong>trocado por cima</strong> da grade de patterns com o mesmo tamanho, mas o conteúdo dele somava <strong>326 px</strong>
+de altura: 106 px eram desenhados além da borda inferior. O <code>FancyMachineUIWidget</code> dimensiona a
+moldura a partir de <code>page.getSize()</code> (<code>Math.max(86, page.height + border*2)</code> + a altura do
+<code>PlayerInventoryWidget</code>), e o LDLib <strong>não recorta</strong> os filhos de uma página — então o excesso
+aparecia literalmente em cima dos slots do inventário.</p>
+<p><strong>A correção.</strong> A página virou <strong>uma só</strong> de <code>352 x 248</code>, com duas colunas:</p>
+<table>
+<thead>
+<tr>
+<th>Coluna</th>
+<th>x</th>
+<th>Conteúdo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Patterns</td>
+<td><code>0 … 176</code></td>
+<td>status ME, rename, grade 9x6 (<code>8 + 9*18 = 170</code>), rodapé de navegação ancorado embaixo</td>
+</tr>
+<tr>
+<td>Configuração</td>
+<td><code>176 … 352</code></td>
+<td>painel <code>BACKGROUND_INVERSE</code> do slot selecionado: 2 linhas de diagnóstico, 4 ghost rows (itens, fluidos, catalyst itens, catalyst fluidos), circuito, modo preferido, toggle de cache</td>
+</tr>
+</tbody>
+</table>
+<p>Tudo que fazia o painel estourar <strong>e não é decisão por slot</strong> saiu para um novo side tab fancy,
+<strong>Buffer Tools</strong> (<code>PatternBufferToolsConfigurator</code>, ícone data stick): limpeza de cache
+(<code>clear_machine_recipe_cache</code> / <code>clear_pattern_recipe_cache</code>) e as ferramentas de circuito dos
+patterns codificados (<code>embed_circuit</code> / <code>remove_circuits</code> / <code>skip_existing</code>). O botão por slot fica
+<strong>desabilitado</strong> quando nenhum slot está selecionado.</p>
+<p><strong>Geometria como fonte única de verdade.</strong> <code>PatternBufferLayout</code> guarda as constantes (página,
+colunas, cada linha do painel, página do tab de ferramentas) e um <code>describeViolation()</code> que percorre
+o plano vertical verificando sobreposição, estouro da coluna e estouro da página. O
+<code>PatternBufferLayoutTest</code> (9º unit test) chama esse walker e ainda afirma: soma das colunas, largura
+interna do painel, ghost rows casando com a grade (mesmo <code>9 * 18</code>), e que a GUI inteira
+(página + moldura <code>2*4</code> + inventário <code>86</code>) cabe nos <strong>360 px lógicos</strong> de uma tela 1080p em GUI scale
+3 (<code>248 + 8 + 86 = 342</code>).</p>
+<p><strong>Por que esse teste importa:</strong> esta classe de bug é <strong>invisível para os dois gates existentes</strong> —
+unit tests são lógica pura e o gametest roda em servidor dedicado, sem client. É o mesmo ponto cego
+do G-0007 (config do Jade), com a mesma mitigação: um teste que lê a geometria, não o render.</p>
+<p><strong>Divergência consciente (anti-plágio).</strong> O layout é <strong>nosso</strong>: mostra ghost rows de item/fluido +
+catalyst porque o GTNA guarda a especialização em <code>slotConfigs</code> (não no NBT do pattern item), então
+um clone 1:1 do GTLAdditions seria ao mesmo tempo impossível e uma violação de licença
+(GTLAdditions é <strong>GPL-3.0</strong>; o GTNA é <strong>LGPLv3</strong>). Nada de código foi copiado.</p>
+<p><strong>Pendência:</strong> validação visual — só o usuário, com <code>./gradlew runClient</code>, pode confirmar o
+alinhamento fino (e se a página cabe no GUI scale dele).</p>
+<h3 id="fase-d-auto-switch-de-modo-em-multiblocos-do-mod-base-concluida-commit-733521e">Fase D — Auto-switch de modo em multiblocos do <strong>mod base</strong> ✅ <strong>CONCLUÍDA</strong> (commit <code>733521e</code>)<a class="headerlink" href="#fase-d-auto-switch-de-modo-em-multiblocos-do-mod-base-concluida-commit-733521e" title="Permanent link">&para;</a></h3>
+<p><strong>O problema (duplo).</strong> Até aqui o espelho de modo só existia nas máquinas do GTNA, porque ele mora
+em <code>GTNAMultipleRecipesLogic</code>. As máquinas multi-modo do GTCEu — <code>large_cutter</code> (cutter+lathe),
+<code>multi_smelter</code> (furnace+alloy_smelter) e o conjunto do GCYM (2 a 4 tipos) — usam a <code>RecipeLogic</code> de
+estoque, que além de não chamar o espelho tem um bloqueio estrutural:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// RecipeLogic.java:334 (source oficial)</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kd">public</span><span class="w"> </span><span class="nd">@NotNull</span><span class="w"> </span><span class="n">Iterator</span><span class="o">&lt;</span><span class="n">GTRecipe</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">searchRecipe</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">machine</span><span class="p">.</span><span class="na">getRecipeType</span><span class="p">().</span><span class="na">searchRecipe</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span><span class="w">   </span><span class="c1">// só o tipo ATIVO</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Ou seja: com a máquina em modo <em>cutter</em>, uma receita de <em>lathe</em> do buffer <strong>nunca é procurada</strong> —
+não existe "o que espelhar". É o ovo-e-galinha que o GTOCore só resolveu modificando o núcleo do
+GTM, e que aqui foi resolvido sem tocar na base.</p>
+<p><strong>A solução.</strong> Inject no <strong>HEAD de <code>searchRecipe()</code></strong> (<code>GTRecipeLogicMixin</code>), antes do corpo da
+busca: se a máquina oferece mais de um recipe type, o mixin pergunta aos pattern buffers do
+controller qual modo está pendente e aplica a fórmula de modo da GTM. Como roda antes da busca, a
+mesma chamada já procura no tipo correto.</p>
+<ul>
+<li><strong>Hint nova:</strong> <code>IPatternBufferModeProvider.gtna$getPendingModeId()</code> — o modo do <strong>filtro do
+  buffer</strong> quando ele está pinado (controle explícito, Fase C), senão o <code>preferredModeId</code>/
+  <code>derivedModeId</code> de um slot que <strong>realmente tem insumo staged</strong>. Um pattern que não pode rodar não
+  puxa a máquina para o modo dele.</li>
+<li><strong>Política</strong> (<code>BufferModeSwitchPolicy.selectTargetIndex</code>, pura e testada): troca só com a logic
+  <strong>IDLE</strong>, só para um tipo que a máquina oferece, e nunca como no-op. O idle-only é o que torna a
+  feature segura: máquina ociosa <strong>não achou</strong> receita no modo atual (senão estaria WORKING) e não
+  está no meio de uma receita (WAITING), então nada é interrompido nem disputado. O controle manual
+  continua no buffer (pins por slot + filtro do buffer) — deliberadamente <strong>sem</strong> uma segunda camada
+  de override no tab da máquina, que criaria dois "quem vence?" concorrentes.</li>
+<li><strong>Config:</strong> <code>ConfigHolder.machines.bufferDrivenMachineMode</code>, <strong>default ON</strong>. O opt-in real é o
+  jogador colocar um ME Pattern Buffer do GTNA na máquina; a config é o escape hatch.</li>
+<li><strong>Guards:</strong> pula <code>GTNAMultipleRecipesLogic</code> (as nossas máquinas já espelham, sem dupla aplicação)
+  e ignora logic que não é de controller (<code>LargeCombustionEngineMachine</code> também chama <code>searchRecipe</code>).</li>
+</ul>
+<p><strong>Cobertura:</strong> 5º gametest <code>patternBufferDrivesBaseMachineMode</code> monta o <code>multi_smelter</code> do GTCEu por
+código (3x3x3, casings <code>CASING_INVAR_HEATPROOF</code>, coils, muffler, energy + maintenance hatch e o
+pattern buffer num slot de casing — ele registra <code>IMPORT_ITEMS</code>, então o <code>autoAbilities</code> o aceita
+como se fosse um input bus), forma, pina o buffer em <code>alloy_smelter</code> e afirma a troca 0 → 1 através
+de um <code>findAndHandleRecipe()</code> real; limpar o pin deve deixar o modo quieto. Mais o unit test
+<code>BufferModeSwitchPolicyTest</code>.</p>
+<p><strong>Lacuna conhecida:</strong> o caminho de <strong>conteúdo staged</strong> do hint (inputs empurrados pelo AE2 para o
+slot) ainda não tem teste de runtime — o gametest cobre o caminho do pin do buffer.</p>
+<hr />
+<h2 id="verificacoes-no-source-oficial-gtceu-753-append-de-2a-passada">📎 Verificações no Source Oficial GTCEu 7.5.3 (append de 2ª passada)<a class="headerlink" href="#verificacoes-no-source-oficial-gtceu-753-append-de-2a-passada" title="Permanent link">&para;</a></h2>
+<p>Esta seção registra as confirmações feitas com o <strong>source oficial</strong> (<code>/home/raishxn/MineProjects/GTCEu-7.5.3</code>), que fecharam as incertezas da primeira passada (que usava bytecode do jar slim):</p>
+<ol>
+<li>
+<p><strong>Busca de receita usa só o tipo ativo</strong> — <code>RecipeLogic.searchRecipe()</code> (linha 334) chama <code>machine.getRecipeType().searchRecipe(...)</code>; <code>getRecipeType()</code> retorna <code>recipeTypes[activeRecipeType]</code> (linha 304). Não existe concatenação de todos os tipos no GTM oficial (isso é invenção do fork do GTO). Buscar por tipo com <code>searchRecipe</code> por índice é o caminho correto.</p>
+</li>
+<li>
+<p><strong>O GTM oficial JÁ tem a UI de troca de modo</strong> — <code>IFancyUIMachine.attachSideTabs</code> (~linha 103) anexa <code>new MachineModeFancyConfigurator(rLMachine)</code> a todo <code>IRecipeLogicMachine</code> <strong>com <code>getRecipeTypes().length &gt; 1</code></strong> (refinamento da 2ª passada: máquinas de tipo único não recebem o tab). O tab "Machine Mode" já existe na UI dos multiblocos multi-tipo hoje; o que faltava era só o <strong>automatismo</strong> (atualizar <code>activeRecipeType</code> quando o pattern entrega receita de outro tipo) — implementado na Fase 1.</p>
+</li>
+<li>
+<p><strong>Fórmula exata do "set mode"</strong> — <code>MachineModeFancyConfigurator.setActiveRecipeTypeAndUpdateTickSubs</code> (linhas 66-72):</p>
+</li>
+</ol>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kt">boolean</span><span class="w"> </span><span class="n">needUpdateTickSubs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">machine</span><span class="p">.</span><span class="na">keepSubscribing</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">activeRecipeType</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">machine</span><span class="p">.</span><span class="na">getActiveRecipeType</span><span class="p">();</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">machine</span><span class="p">.</span><span class="na">setActiveRecipeType</span><span class="p">(</span><span class="n">activeRecipeType</span><span class="p">);</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">needUpdateTickSubs</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="n">machine</span><span class="p">.</span><span class="na">getRecipeLogic</span><span class="p">().</span><span class="na">updateTickSubscription</span><span class="p">();</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>E o campo em si é <code>@Getter @Setter @Persisted private int activeRecipeType;</code> (WorkableMultiblockMachine:63-66) — <strong>persistência em NBT + sync de rede automáticos</strong> via ldlib. Não precisa de packet manual nem <code>requestSync</code>.</p>
+<ol>
+<li>
+<p><strong>⚠️ Armadilha confirmada: <code>setRecipeType(GTRecipeType)</code> não troca modo</strong> — <code>WorkableMultiblockMachine.java:312-319</code> faz <code>recipeTypes[activeRecipeType] = newType;</code> (<strong>substitui o tipo no array</strong>, anotado <code>@ApiStatus.Internal @VisibleForTesting</code>). Chamar achando que troca de modo <strong>corrompe a máquina em runtime</strong>. Nunca usar; sempre <code>setActiveRecipeType(int)</code>.</p>
+</li>
+<li>
+<p><strong>Ordem de <code>setupRecipe</code> oficial</strong> — retry de <code>lastRecipe</code> primeiro → <code>beforeWorking(recipe)</code> → <code>handleRecipeIO(IN)</code> → status/progress/duration (RecipeLogic.java:393-411). Há também <code>lastFailedMatches</code> (cache de falhas para UI).</p>
+</li>
+</ol>
+<h3 id="impacto-no-plano">Impacto no plano<a class="headerlink" href="#impacto-no-plano" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Item da Fase 1</th>
+<th>Status com o source oficial</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ModeIdMatcher</code> sem hardcode</td>
+<td>✅ segue como planejado</td>
+</tr>
+<tr>
+<td>Wire-up do modo automático</td>
+<td>✅ fórmula <strong>exata</strong> da GTM (setter + updateTickSubs)</td>
+</tr>
+<tr>
+<td>Remover NBT do pattern item</td>
+<td>✅ segue como planejado</td>
+</tr>
+<tr>
+<td>Unificar pipeline de modificadores</td>
+<td>✅ ordem oficial de referência</td>
+</tr>
+<tr>
+<td><code>searchRecipe</code> por tipo no logic</td>
+<td>✅ confirmado que não existe API melhor no GTM oficial</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="conclusao-resposta-ao-objetivo-original">💡 Conclusão — Resposta ao objetivo original<a class="headerlink" href="#conclusao-resposta-ao-objetivo-original" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><em>"criar a funcionalidade do meu pattern buffer mudar o modo de multiblocos dependendo da receita... nunca consegui fazer de forma perfeita igual o GTOCore/GTOlib"</em></p>
+</blockquote>
+<p>O objetivo não era alcançável por <strong>replicação direta</strong>: o GTOCore executa essa mecânica num GTM <strong>modificado por eles</strong> (controller aceita todos os recipe types simultaneamente via handler-units). No GTM oficial, o "modo ativo" é um inteiro global — impossível representar N threads de tipos distintos.</p>
+<p>O GTOCore "mente" na UI: o que muda de modo de verdade lá é o <strong>buffer</strong> (por buffer/slot), e o controller aceita qualquer tipo. O código do GTNA já chegou 80% dessa conclusão sozinho (routing por slot) — faltava: (1) wire do espelho de modo pro display, (2) matar o dead code, (3) fonte única de verdade (<code>slotConfigs</code>, não NBT do item), (4) matching sem hardcode.</p>
+<p><strong>Regra de ouro extraída:</strong> <em>mecânica de roteamento por slot + <code>activeRecipeType</code> como espelho de UI atualizado via <code>setActiveRecipeType(i)</code> + <code>updateTickSubscription()</code> — exatamente o que o GTOCore faz, com a fundação correta do GTM 7.5.3 oficial.</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pie" >
+        
+          
+          <a href="../multiblock-port-manifest/" class="md-footer__link md-footer__link--prev" aria-label="Anterior: Multiblock port manifest">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Anterior
+              </span>
+              <div class="md-ellipsis">
+                Multiblock port manifest
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../pattern-buffer-fidelity-gap/" class="md-footer__link md-footer__link--next" aria-label="Siguiente: 🎯 Gap de Fidelidade — Pattern Buffer GTNA vs GTOCore/GTLCore">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Siguiente
+              </span>
+              <div class="md-ellipsis">
+                🎯 Gap de Fidelidade — Pattern Buffer GTNA vs GTOCore/GTLCore
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2024-2026 Raishxn — Licensed under LGPLv3
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/Raishxn/GregTech-Nexus-Addon" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://discord.gg/d3qHufwRxb" target="_blank" rel="noopener" title="discord.gg" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M492.5 69.8c-.2-.3-.4-.6-.8-.7-38.1-17.5-78.4-30-119.7-37.1-.4-.1-.8 0-1.1.1s-.6.4-.8.8c-5.5 9.9-10.5 20.2-14.9 30.6-44.6-6.8-89.9-6.8-134.4 0-4.5-10.5-9.5-20.7-15.1-30.6-.2-.3-.5-.6-.8-.8s-.7-.2-1.1-.2C162.5 39 122.2 51.5 84.1 69c-.3.1-.6.4-.8.7C7.1 183.5-13.8 294.6-3.6 404.2c0 .3.1.5.2.8s.3.4.5.6c44.4 32.9 94 58 146.8 74.2.4.1.8.1 1.1 0s.7-.4.9-.7c11.3-15.4 21.4-31.8 30-48.8.1-.2.2-.5.2-.8s0-.5-.1-.8-.2-.5-.4-.6-.4-.3-.7-.4c-15.8-6.1-31.2-13.4-45.9-21.9-.3-.2-.5-.4-.7-.6s-.3-.6-.3-.9 0-.6.2-.9.3-.5.6-.7c3.1-2.3 6.2-4.7 9.1-7.1.3-.2.6-.4.9-.4s.7 0 1 .1c96.2 43.9 200.4 43.9 295.5 0 .3-.1.7-.2 1-.2s.7.2.9.4c2.9 2.4 6 4.9 9.1 7.2.2.2.4.4.6.7s.2.6.2.9-.1.6-.3.9-.4.5-.6.6c-14.7 8.6-30 15.9-45.9 21.8-.2.1-.5.2-.7.4s-.3.4-.4.7-.1.5-.1.8.1.5.2.8c8.8 17 18.8 33.3 30 48.8.2.3.6.6.9.7s.8.1 1.1 0c52.9-16.2 102.6-41.3 147.1-74.2.2-.2.4-.4.5-.6s.2-.5.2-.8c12.3-126.8-20.5-236.9-86.9-334.5zm-302 267.7c-29 0-52.8-26.6-52.8-59.2s23.4-59.2 52.8-59.2c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.4 59.2-52.8 59.2m195.4 0c-29 0-52.8-26.6-52.8-59.2s23.4-59.2 52.8-59.2c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.2 59.2-52.8 59.2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.expand", "navigation.indexes", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.tabs.link", "toc.follow", "announce.dismiss"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
