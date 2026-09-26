@@ -79,6 +79,9 @@ public class GTNAItems {
     public static ItemEntry<RealityRipperSwordItem> REALITY_RIPPER_SWORD;
     public static ItemEntry<ComponentItem> INFINITE_STEAM_SINGLEBLOCK_COVER;
     public static ItemEntry<ComponentItem> INFINITE_ELECTRIC_SINGLEBLOCK_COVER;
+    /** GTOCore grind balls: durability 50 / tier 1 and durability 100 / tier 2. */
+    public static ItemEntry<ComponentItem> GRINDBALL_SOAPSTONE;
+    public static ItemEntry<ComponentItem> GRINDBALL_ALUMINIUM;
 
     public static void init() {
         CELL_COMPONENT_1M = registerCellComponent(1);
@@ -163,6 +166,20 @@ public class GTNAItems {
                         GTNACORE.id("item/primitive_mans_spacetime_distortion_device")))
                 .register();
         registerIndustrialComponents();
+
+        // GTOCore grinding balls for the ISA Mill. Soapstone is tier 1 (50 durability) and
+        // Aluminium is tier 2 (100 durability); the tier is read by BallHatchPartMachine.
+        GRINDBALL_SOAPSTONE = REGISTRATE.item("grindball_soapstone", ComponentItem::create)
+                .lang("Soapstone Grinding Ball")
+                .properties(stack -> stack.stacksTo(1).durability(50))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/grindball_soapstone")))
+                .register();
+
+        GRINDBALL_ALUMINIUM = REGISTRATE.item("grindball_aluminium", ComponentItem::create)
+                .lang("Aluminium Grinding Ball")
+                .properties(stack -> stack.stacksTo(1).durability(100))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/grindball_aluminium")))
+                .register();
 
         NEXUS_LINKER = REGISTRATE.item("nexus_linker", com.raishxn.gtna.common.item.NexusLinkerItem::new)
                 .lang("Nexus Linker")

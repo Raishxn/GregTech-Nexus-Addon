@@ -1,0 +1,7 @@
+{
+  "parent": "gtceu:block/cube_2_layer/all",
+  "textures": {
+    "bot_all": "gtna:block/casings/blaze_casing",
+    "top_all": "gtna:block/casings/blaze_casing_bloom"
+  }
+}

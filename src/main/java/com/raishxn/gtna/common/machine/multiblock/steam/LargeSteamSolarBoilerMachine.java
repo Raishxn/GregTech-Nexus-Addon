@@ -25,6 +25,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 
+import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.client.renderer.GTNATextures;
 import com.raishxn.gtna.common.data.GTNABlocks;
 import org.jetbrains.annotations.NotNull;
@@ -120,7 +121,8 @@ public class LargeSteamSolarBoilerMachine extends WorkableMultiblockMachine impl
                 .where('~', Predicates.controller(Predicates.blocks(getDefinition().get())))
                 .where('A', Predicates.blocks(GTBlocks.STEEL_HULL.get())
                         .or(Predicates.abilities(IMPORT_FLUIDS).setPreviewCount(1))
-                        .or(Predicates.abilities(EXPORT_FLUIDS).setPreviewCount(1)))
+                        .or(Predicates.abilities(EXPORT_FLUIDS).setPreviewCount(1))
+                        .or(Predicates.abilities(GTNAPartAbility.STEAM_EXPORT_FLUIDS).setPreviewCount(1)))
                 .where('B', Predicates.blocks(GTNABlocks.SOLAR_BOILING_CELL.get()))
                 .build();
     }

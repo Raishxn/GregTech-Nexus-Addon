@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -33,6 +34,12 @@ public abstract class MetaMachineBlockMixin {
         MachineDefinition definition = ((MetaMachineBlock) (Object) this).definition;
         if (!(definition instanceof MultiblockMachineDefinition multiblock)) {
             return;
+        }
+        if (GTNASources.hasCuratedGtoTooltip(multiblock)) {
+            String mainKey = definition.getId().getNamespace() + ".machine." +
+                    definition.getId().getPath() + ".tooltip";
+            tooltip.removeIf(line -> line.getContents() instanceof TranslatableContents translated &&
+                    mainKey.equals(translated.getKey()));
         }
         List<Component> moduleTooltips = GTNASubPatterns.getTooltips(multiblock);
         if (moduleTooltips.isEmpty()) {

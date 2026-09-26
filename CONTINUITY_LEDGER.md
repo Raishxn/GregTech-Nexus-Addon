@@ -25,6 +25,92 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
+> **Gate final e envio para `main` (G-0122):** o Large Steam Solar Boiler aceita a saída de vapor
+> wireless GTNA e a receita deposita vapor no tanque; os Dehydrators LV–OpV e os nomes dos Rocket
+> Engines têm registros/traduções; a Flux Matrix ganhou HUD opcional de energia. O módulo KubeJS
+> aceita bônus de velocidade e overclock perfeito nos controladores de múltiplas receitas, com
+> exemplo carregado pelo cliente. O crash de índice do preview JEI recebeu guarda client-side.
+> Gate final verde: **98/98 GameTests**, unitários, Spotless, compilação e datagen `written: 0`
+> (`/tmp/gtna-0122-final-gate.log`). O cliente isolado carregou os scripts KubeJS e mostrou o HUD;
+> o preview JEI específico e a execução de receita com módulo KubeJS formado ainda não foram
+> retestados manualmente. O cliente e save originais do autor não foram substituídos.
+
+> **Módulos sem bloqueio + cadeia de secagem (G-0121):** a thread de checagem assíncrona do GTCEu
+> podia entrar em deadlock com o servidor: `gtna$setModuleCount` consultava o chunk para enviar o
+> pacote visual enquanto segurava o lock do padrão. O envio agora é agendado na thread do servidor.
+> O Dehydrator IV do GTO foi portado com a receita shaped original e suas texturas; a receita
+> original do controlador Vacuum Drying Furnace voltou a existir. Gate completo verde com
+> **97/97 GameTests** (`/tmp/gtna-dehydrator-deadlock-gate.log`); a geração escreveu 5 arquivos
+> novos. Repetição do datagen: `written: 0`. A rejeição do Parallel Hatch relatada pelo autor
+> ainda requer saber qual das duas torres ele estava testando. O primeiro `runClient` parou por
+> traduções Jade ausentes no en_us gerado; após regenerar o cache do datagen, o cliente abriu o
+> mundo `New World` sem essa falha e segue disponível para o reteste. Sem commit/push.
+
+> **Evaporation Plant ainda em investigação (G-0120):** após o relato de que os hatches continuam
+> rejeitados no módulo, o GameTest passou a montar a torre com o controlador voltado para norte,
+> leste e sul; em cada orientação, substitui `F` por Parallel IV e Accelerate e depois move os
+> hatches para `G/A`, deixando a atualização natural dos blocos agir sem chamar refresh. O módulo
+> continua formado, coleta os dois hatches e concede quatro paralelos em **97/97 GameTests**.
+> O mundo salvo tem um Evaporation Plant voltado para sul com Parallel IV na célula `F` inferior
+> (`-13,-60,-121`, marcado `is_formed=true`, `currentParallel=4`) e Accelerate UXV em
+> (`-10,-59,-117`, também formado). Há uma segunda Evaporation Plant em `-8,-59,-109` que está
+> inválida no save. Pergunta pendente ao autor: em qual das duas tentou colocar o Parallel Hatch?
+> Na segunda não havia Fluid Input Hatch entre as peças salvas; a base exige exatamente uma.
+> O save atualizado às 07:37 mostra Parallel UHV em `-10,-58,-117` formado, com
+> `currentParallel=1024`, ao lado do Accelerate UXV formado; a primeira torre está formada e
+> funcionando. A segunda torre continua inválida. Isso comprova aceitação da peça naquela posição,
+> mas ainda não identifica qual tentativa anterior falhou.
+> A divergência in-game ainda requer a captura do ponto de colocação e do diagnóstico da estrutura.
+> Gate completo verde;
+> datagen `written: 0`. Cliente continua aberto. Sem commit/push.
+
+> **QA do restante dos ports GTO (G-0119):** o módulo da Evaporation Plant foi testado com Parallel
+> Hatch IV e Accelerate Hatch nos blocos `F` da torre: forma sem force scan e disponibiliza quatro
+> paralelos. Após o autor constatar que isso ainda não atendia à instalação real, os mesmos hatches
+> foram habilitados também em `G` e no titânio exposto `A`, preservando limite global de um de cada.
+> Os sete multiblocos com
+> módulos GTO foram auditados em `docs/fixes/2026-09-26-gto-module-audit.md`. A Rocket Large Turbine
+> ganhou a receita original com Rocket Engine EV; os motores EV/IV/LuV e suas texturas foram
+> portados. Chemical Plant e Supercritical Steam Turbine receberam seções de tooltip alinhadas ao
+> GTO. Component Assembly Line usa os oito casings originais que faltavam, com receitas obtíveis;
+> o layout `.rtui` e as barras de progresso do GTO foram copiados, e o texto de consumo mostra
+> EU/t. Algumas receitas de casing substituem materiais exclusivos da fork GTO (detalhes G-0119).
+> Gate completo: **95 GameTests**, unitários, Spotless, compilação e datagen. O visual do novo layout,
+> dos casings e das tooltips ainda precisa ser confirmado no cliente pelo autor. Sem commit/push.
+
+> **QA dos hatches e telas GTO (G-0118):** o autor confirmou o CTM e o funcionamento da UI/tooltip
+> do Cold Ice; a hélice do Grinding Ball Hatch ainda estava escura e a Blaze escondia o limite de
+> paralelos durante a receita. O renderer agora usa iluminação plena no sprite, e a Blaze mantém
+> os 64 paralelos visíveis durante o trabalho. A injeção global que aceitava Accelerate/Overclock
+> em qualquer `autoAbilities` foi retirada: o corpo principal do Cold Ice rejeita esses hatches,
+> enquanto o módulo conserva seu encaixe explícito. Isa Mill, Flotation Cell e Vacuum Drying
+> receberam linhas próprias de UI; as tooltips GTO tiveram requisitos técnicos ampliados mantendo
+> lore e apenas `Source`. Gate completo verde: 94/94 GameTests e datagen. O efeito visual e a
+> apresentação em jogo ainda precisam de reteste do autor. Sem commit/push.
+
+> **Fidelidade visual/UI após novo QA do autor (G-0117):** o CTM base de Blaze/Cold Ice estava
+> sem os arquivos `.png.mcmeta` de animação, embora as imagens fossem byte-idênticas ao GTO. Os
+> metadados originais foram copiados e conferidos; o resultado visual ainda aguarda reteste no
+> cliente. A Grinding Ball Hatch passou a desenhar os sprites originais de hélice
+> `ball_hatch_idle`/`ball_hatch_spinning` em vez de girar o item. A UI da Blaze destaca o número
+> paralelo em roxo, labels de voiding/heat em branco e temperatura em vermelho. Tooltips dos
+> 16 multiblocos da leva usam o arranjo da Blaze, histórias originais onde existem e somente
+> `Source` como atribuição. A UI das outras processadoras recebeu voiding, paralelo disponível e
+> estado sem receita. Jade ganhou aviso de chunk não forçado, percentuais reais de receita e
+> dureza/resistência na posição e cores do GTO. Ainda há divergência de EU/t entre o port e o
+> GTO por mecânica de overclock do gtolib; não mascarar o valor no Jade.
+
+> **QA GTO após as capturas do autor (G-0116):** a UI da Blaze foi complementada com paralelo
+> máximo, modo de descarte, capacidade térmica e ausência de receita. Sua tooltip agora usa as
+> quatro linhas originais de lore e os requisitos técnicos do GTOCore, sem a paráfrase anterior.
+> O cache dos sub-patterns foi corrigido para cobrir a profundidade inteira (antes só monitorava
+> a primeira aisle); o GameTest quebra e restaura uma célula do Cold Ice sem forçar scan e passa.
+> Jade mostra dureza/resistência para blocos GTNA. Gate completo verde: 26 testes unitários,
+> 94 GameTests, datagen; compilação/testes incrementais também passaram após o ajuste final.
+> **Pendente do teste manual:** validar o visual de Blaze/Cold Ice casings e a UI/tooltips no cliente.
+> A equivalência 1:1 das tooltips dos demais ports e do renderer original do Grinding Ball Hatch
+> ainda não foi demonstrada; não tratar esses itens como concluídos.
+
 > **Release GitHub 0.5.1 (G-0100):** a tag `v0.5.1` aponta para o commit corrigido
 > `9808c5037e255522fae21139f35b7b80a6286d9d`; o release público contém o changelog
 > completo e o JAR de SHA-256 `afc79d801e00cb7e1974a4f6b843ed7f89a19a86e1641c3bdab97fb4458e4585`.
@@ -52,6 +138,108 @@ foi feito nem repetir os erros já pagos.
 > Casing, convenção de orientação de estrutura e o `VaultPortHatch`). A sessão estourou o contexto
 > várias vezes; **confira no código antes de agir** e **não confie** nas estruturas das
 > `large_steam_*` antigas sem revisar contra o GTNL.
+
+> **Ports locais em andamento (G-0101):** o Component Assembler base (LV–IV) e a Large Greenhouse
+> foram acrescentados após a primeira leva de quatro. A extensão do Component Assembler, receitas
+> ULV/LuV e os demais candidatos até LuV ainda estão em trabalho; não tratar a seleção como fechada.
+
+> **Fábrica Química (G-0102):** `chemical_plant` portada (estrutura GTO 5×5×5 de PTFE inerte +
+> bobinas + tubulação PTFE, Parallel Hatch, overclock perfeito e bônus de bobina de 5% por tier).
+> A receita do controlador foi omitida por decisão do autor até que ele avalie portar toda a
+> cadeia de recursos do GTO. O gate completo passou com 65/65 GameTests e datagen escrito.
+
+> **Mega Alloy Blast Smelter (G-0103):** `mega_alloy_blast_smelter` portado do GTOCore (id
+> exclusivo; o ABS normal já é do GTCEu). Reaproveita carcaças GCYM e `ALLOY_BLAST_RECIPES`, com
+> bônus de 0,8× EU / 0,6× duração. Gate completo com 66/66 GameTests. Os candidatos restantes da
+> seleção até LuV dependem de uma camada grande de carcaças/materiais/recipe types exclusivos do
+> GTO; o roadmap e os bloqueios estão em `docs/roadmap/NEXT-SESSION-PORTS-2026-09-25.md`.
+
+> **Módulo de atomização do Cold Ice Freezer (G-0112):** o sub-pattern do GTOCore
+> (`MultiBlockD.java:367-388`) foi registrado como módulo GTNA no controlador existente (torre de
+> Naquadah Alloy + Cold Ice Casing + Heat Vents + moldura de Naquadah) e libera o recipe type novo
+> `ATOMIZATION_CONDENSATION_RECIPES` só com a extensão formada, como o `recipeTypeAvailable` do GTO.
+> As receitas (`GTNAAtomizationRecipes`) portam `GTOMaterialRecipeHandler.java:425-455` para todos os
+> materiais GTCEu/GTNA com dust + fluido (fluido/molten → dust ou líquido, gás inerte escalado pela
+> massa e hélio líquido ≥ 5000 K). Substituição documentada: o gás de alta pressão exclusivo do GTO
+> vira o gás regular na mesma quantidade. `Naquadah` recuperou `GENERATE_FRAME`. Gate completo com
+> **26/26 testes unitários** (os contratos globais de QA foram criados aqui: `PortLangParityTest`,
+> `PortChainClosureTest`, `MachineTooltipContractTest`, `PartAbilityCoverageTest` estendido e
+> `ControllerRecipePolicyTest`) e **67/67 GameTests** na época. QA in-game pendente.
+
+> **Extensão até UV (G-0114):** o corte do Component Assembler e da `component_assembly_line` subiu
+> de LuV para UV (o máximo com receitas de lote no GTCEu base). Entram as carcaças ZPM/UV nas duas
+> famílias (texturas GTO, CC BY-NC-SA), os oito lotes ZPM e os oito UV (48 → **64** receitas de
+> `component_assembly`) e a produção das carcaças via Assembly Line com três substituições
+> documentadas de soldas exclusivas do GTO (Pikyonium/ArtheriumTin/AbyssalAlloy). Gate completo com
+> **26/26 testes unitários** e **94/94 GameTests**, `runData` com `written: 0`. QA in-game pendente.
+
+> **QA in-game de 2026-09-26 e correções (G-0113):** o autor testou a leva inteira no cliente e
+> abriu uma lista de divergências. O que foi corrigido na hora (G-0113) e o que **permanece aberto**
+> — texturas dos casings Blaze/Cold Ice, Ball Hatch roxa/preta, throughput do ISA Mill (paralelismo
+> de conteúdo do gtolib: GTO 96 saídas/ciclo em 2 receitas paralelas × GTNA 48), delay/re-scan dos
+> módulos, divergência geral de tooltips/UIs/Jade — estão detalhados com as capturas em
+> **`docs/fixes/2026-09-26-gto-fidelity-fixes.md`**. A próxima sessão deve começar por esse
+> documento: a causa do ISA Mill já está identificada (`accurateContentParallel`), faltando a
+> fórmula de compensação (batch/OC) e a decisão sobre o padrão de tooltip em camadas (F-07).
+
+> **ISA Mill (G-0104):** `isa_mill` portado do GTOCore (estrutura comprimida 3×3×7, carcaças
+> Inconel-625, prefixo `MILLED`, data key `grindball`, Ball Hatch e 48 receitas). O gate da esfera
+> fica no `getRealRecipe` e a matemática de dano do GTO é aplicada em `beforeWorking` — o
+> `fullModifyRecipe` do GTCEu 7.5.3 roda uma vez por candidata e danificar ali gastaria a esfera em
+> receitas que não iniciam. A receita do controlador foi portada (Assembly Line) com os três
+> materiais GTO que ela exige (Inconel-625/792 e Tantalloy-61) copiados 1:1 de `MaterialA`. Gate
+> completo com 69/69 GameTests e datagen `written: 0`. QA in-game pendente.
+
+> **Rocket Large Turbine (G-0105):** `rocket_large_turbine` portado do GTOCore (EV, `special=true`,
+> base `V[EV] * 2.5 = 5120 EU/t`). O padrão base 3×3×3 e o módulo do motor de foguete usam apenas
+> blocos GTCEu (titanium turbine/stable casing, gearbox de titânio, engine intake, moldura
+> BlueSteel) e o recipe type novo `gtna:rocket_engine` roda a única receita de `RocketFuel` do GTO
+> (10 mB → 512 EU/t por 20 ticks). A classe `RocketLargeTurbineMachine` porta o caminho não-mega da
+> `TurbineMachine` do GTO (paralelo pelo rotor, eficiência na duração, gate de rotor, modo de alta
+> velocidade com os valores normal do GTO e bônus do módulo 2×/20%/2×). Gate completo com **26/26
+> testes unitários** e **71/71 GameTests**, `runData` repetido com `written: 0`. QA in-game pendente.
+>
+> **Supercritical Steam Turbine (G-0106):** `supercritical_steam_turbine` portado do GTOCore (IV,
+> `special=false`, base `V[IV] * 2 = 16384 EU/t`). A máquina reusa a base não-mega
+> `GTNALargeTurbineMachine` extraída do port da rocket turbine (mesma `TurbineMachine` do GTO para
+> as duas), o módulo SUPERCRITICAL em carcaças GCYM (bônus 2×/20%/2×) e a carcaça nova
+> `supercritical_turbine_casing` (texturas GTO, CC BY-NC-SA). A receita de combustível reusa
+> `DenseSupercriticalSteam` no lugar do `SupercriticalSteam` do GTO com os números 80 mB → 8 mB /
+> 30 ticks / `V[MV]`; a receita do controlador foi portada (Assembler, só GTCEu/GTNA). Gate completo
+> com **26/26 testes unitários** e **73/73 GameTests**, `runData` repetido com `written: 0`. QA
+> in-game pendente.
+>
+> **Flotação + Secagem (G-0107/G-0108):** o par **Industrial Flotation Cell** +
+> **Vacuum Drying Furnace** foi portado do GTOCore com **cadeia fechada**: os 12 `*Front` que a
+> flotação produz alimentam as 12 receitas de secagem, que devolvem dusts GTCEu + `RedMud` + `Water`,
+> e o `RedMud` é neutralizado no Mixer. Carcaças/materiais novos: Hastelloy-N75 (casing/gearbox/pipe),
+> `Flotation Cell`, `Red Steel Casing`, etilxantatos, turpentina, 12 foams, RedMud/NeutralisedRedMud,
+> Hastelloy-N75 e Stellite. O `Vacuum Drying Furnace` reproduz o overclock de bobina do EBF
+> (`GTNAHeatingCoilOverclock`, já que o GTCEu mantém a matemática package-private) no modo de secagem
+> e o paralelo `2^(temp/900)` no modo Dehydrator. Gate completo com **26/26 testes unitários** e
+> **76/76 GameTests**, `runData` repetido com `written: 0`. QA in-game pendente.
+>
+> **Extensão do Component Assembler (G-0109):** as duas camadas de `addSubPattern` do GTOCore
+> (`MultiBlockC.java:328-397`) formam como módulos GTNA no controlador existente e elevam o teto de
+> carcaça de IV para LuV; os cinco blocos novos (computer casing, control casings MK2, power
+> transmission e cerâmica de nitreto de titânio) e os materiais compostos vieram do GTOCore com
+> atribuição CC BY-NC-SA. Entram as oito receitas de lote LuV e a produção da carcaça LuV. Gate
+> completo com **26/26 testes unitários** e **83/83 GameTests**, `runData` repetido com `written: 0`.
+> QA in-game pendente.
+>
+> **Component Assembly Line (G-0110):** o `component_assembly_line` separado usa o `.mbs` real
+> 47×15×31, a família de carcaças LV–LuV (texturas GTO) e o mesmo portão de receita; os nove blocos
+> GTO exclusivos da estrutura foram substituídos por equivalentes GTNA/GTCEu documentados (tabela no
+> checkpoint G-0110), o cross-recipe do gtolib não foi reproduzido e a receita do controlador foi
+> omitida/registrada. Gate completo com **26/26 testes unitários** e **90 GameTests aprovados**,
+> `runData` repetido com `written: 0`. QA in-game pendente.
+>
+> **QA retroativo GTO (G-0111):** `chemical_plant` e `mega_alloy_blast_smelter` fecharam a cobertura
+> A1–A7 (negativo de formação, hatches/Parallel, sem módulo, contagem de receitas, execução real e
+> política de controlador). O padrão do mega foi extraído para
+> `GTNAMachines3.MEGA_ALLOY_BLAST_SMELTER_PATTERN` para o GameTest construir a mesma fonte. Gate
+> completo com **26/26 testes unitários** e **93 GameTests aprovados**, `runData` com `written: 0`.
+> QA in-game das duas máquinas segue pendente.
 
 - Desenvolvimento na branch `main`; o histórico anterior a G-0026 está preservado no ledger.
 - Versão `mod_version=0.5.1`. Base: Minecraft **1.20.1**, Forge **47.4.1**, GTCEu **7.5.3**,
@@ -164,7 +352,7 @@ foi feito nem repetir os erros já pagos.
   módulo (G-0043). Ver G-0041..G-0043 para causa raiz, testes e pendências.
 - **Feature em foco:** o **ME Pattern Buffer multi-modo** (fidelidade ao GTLCore/GTOCore). A tabela
   de fidelidade está **toda verde** e as divergências conscientes estão documentadas no gap doc.
-- **Testes hoje:** 20 unit tests (`main()` + asserts, padrão GTLCore) e 53 gametests (`@GameTest`),
+- **Testes hoje:** 26 unit tests (`main()` + asserts, padrão GTLCore) e 94 gametests (`@GameTest`),
   ambos no gate do CI; os GameTests geram relatório JUnit, verificado por
   `tools/check_gametest_report.py`.
 - **Steam Cracker:** o autor confirmou em 2026-09-23 que a implementação deve continuar sendo a do
@@ -185,6 +373,794 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0122 (2026-09-26) — Boiler wireless, Dehydrator, HUD, JEI e módulos KubeJS
+
+- Large Steam Solar Boiler: o padrão estático e o dinâmico aceitam
+  `STEAM_EXPORT_FLUIDS` GTNA. GameTest forma com saída wireless, rejeita entrada wireless na
+  posição de saída e executa receita que entrega 100 mB de vapor ao tanque remoto.
+- Dehydrator: registros e receitas shaped em todos os tiers elétricos LV–OpV, com nomes
+  en_us/pt_br e recursos gerados. Rocket Engine EV/IV/LuV recebeu os nomes originais em ambas
+  as línguas. Os GameTests conferem as receitas dos Dehydrators.
+- Flux Matrix: botão de HUD, estado/sincronização de saldo e fluxo da rede, editor de posição e
+  configuração; o HUD foi observado no cliente isolado. O cliente original do autor permaneceu
+  aberto, e uma cópia do save `New World` foi usada no worktree para esse teste.
+- Preview JEI do Component Assembler: o relatório real mostrava acesso fora dos limites após
+  troca de página. Uma guarda client-side ignora slots obsoletos. Compilação e abertura geral do
+  cliente passaram; a navegação exata que causava o crash ainda não foi repetida após a correção.
+- API KubeJS: `SubPatternEventJS.add` aceita velocidade e overclock perfeito; o bônus só conta
+  para módulos aceitos e formados no controlador de múltiplas receitas. Aliases de Parallel
+  Hatch, Overclock Hatch e Accelerate Hatch estão expostos. O exemplo
+  `examples/kubejs/server_scripts/gtna_multiple_recipes_module.js` carregou sem erro e
+  registrou dois módulos no Integrated Ore Processor. A aceleração de uma receita com módulo
+  externo formado ainda não foi medida no cliente.
+- Candidatos GTO/GTNL documentados em
+  `docs/roadmap/NEXT-GTO-GTNL-CANDIDATES-2026-09-26.md`, com fontes e dependências.
+- Gate: `./gradlew spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`
+  passou com **98/98 GameTests** e datagen `written: 0` (`/tmp/gtna-0122-final-gate.log`);
+  `git diff --check` passou. O envio a `main` foi autorizado pelo autor após os testes.
+
+### G-0121 (2026-09-26) — Dehydrator IV, receita do Vacuum Dryer e deadlock de módulos
+
+- `GTNAMachines3.DEHYDRATOR[IV]` usa `SimpleTieredMachine` e o recipe type Dehydrator existente.
+  Texturas originais do GTO copiadas sob CC BY-NC-SA; fonte declarada em `GTNASources` e
+  `THIRD_PARTY_NOTICES.md`.
+- Receita shaped `WCW/AMA/PRP` do GTO registrada com os componentes IV do GTCEu via
+  `registerMachineRecipe`; receita Assembler do controlador Vacuum Drying Furnace restaurada com
+  quatro Dehydrators IV e todos os ingredientes originais. O GameTest confirma ambas as receitas
+  e o item da receita shaped. `ControllerRecipePolicyTest` não a considera mais omitida.
+- Thread dump do GameTest em `/tmp/gtna-gametest-thread-dump.txt` mostrou o servidor esperando o
+  lock da checagem do padrão enquanto a thread assíncrona, segurando esse lock, aguardava
+  `getChunkAt` em `gtna$setModuleCount`. Agora o pacote é agendado para a thread do servidor,
+  sem leitura de chunk na thread assíncrona; contagem de módulos é `volatile` e pacotes obsoletos
+  são descartados.
+- `./gradlew spotlessApply spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`
+  passou com **97/97 GameTests** (`/tmp/gtna-dehydrator-deadlock-gate.log`), datagen `written: 5`
+  pelos novos recursos. Segunda execução de `runData --offline` terminou com `written: 0`
+  (`/tmp/gtna-dehydrator-datagen-repeat.log`). O primeiro `runClient --offline` encontrou en_us
+  gerado sem as chaves Jade; limpar somente os arquivos em `.cache` do datagen e executar
+  `runData --offline` novamente restaurou as traduções. O segundo `runClient --offline` carregou
+  o mundo `New World` e segue aberto para o autor. `git diff --check` passou. Sem commit/push.
+
+### G-0120 (2026-09-26) — Evaporation Plant: orientação e atualização natural
+
+- Teste de módulo ampliado para controladores voltados a norte, leste e sul. A célula `F` inferior
+  coincide com a posição do Parallel IV no mundo de teste do autor. Cada variante verifica duas
+  substituições sucessivas: hatches em `F`, depois em `G/A`, sem `GTNAStructureRefresh.refresh` após
+  as trocas. O teste também remove e recoloca um tubo do módulo: ele cai e volta automaticamente,
+  mantendo os hatches. O Parallel IV concede quatro paralelos e o Accelerate aparece em `getParts()`.
+- **Ainda não confirmado in-game:** o autor relata rejeição dos dois hatches; é necessária a
+  posição exata da tentativa e o diagnóstico da estrutura para reconciliar o relato com o teste.
+  Depois informou que Accelerate passou a ser aceito, mas Parallel não. O save de 07:13 contém um
+  Parallel IV já formado na torre sul; se a tentativa for nessa torre, o limite global de uma
+  hatch paralela explica a rejeição de uma segunda. A outra torre está inválida no save.
+  Não há Fluid Input Hatch entre os blocos com entidade da segunda base; o padrão da Evaporation
+  Plant exige exatamente uma entrada de fluido.
+- Leitura do save após o client voltar a abrir: o Parallel UHV em `(-10,-58,-117)` está formado com
+  `currentParallel=1024`; o Accelerate UXV em `(-10,-59,-117)` e a primeira torre também estão
+  formados. A segunda torre permanece inválida. Não generalizar essa observação para toda posição
+  possível do módulo até o autor identificar onde a tentativa falhou.
+- `./gradlew spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` passou:
+  **97/97 GameTests**, datagen `written: 0` (`/tmp/gtna-evap-rebuild-gate.log`). Sem commit/push.
+
+### G-0119 (2026-09-26) — Evaporation, Rocket Engine e Component Assembly Line
+
+- Evaporation Plant: teste novo substitui duas células `F` por Parallel IV e Accelerate após formar
+  o módulo em casing puro; `GTNAStructureRefresh.refresh(plant, false)` mantém módulo e hatches sem
+  force scan, e `getCurrentParallel() == 4`. O autor ainda reportou rejeição ao instalar no módulo:
+  `G` tem a mesma textura de `F` e `A` é a casca exposta. O GTNA passou a aceitar Parallel/Accelerate
+  em `F`, `G` e `A` com as mesmas instâncias de predicado para manter limite global de um por tipo;
+  o GameTest foi ampliado para `G/A` sem force scan. É uma adaptação de usabilidade frente ao GTO,
+  cujo padrão original libera apenas `F`.
+- Auditoria dos módulos GTO: EBF, Liquefaction, Evaporation, Cold Ice, Rocket Large Turbine,
+  Supercritical Steam Turbine e Component Assembler; bônus, limites e encaixes documentados em
+  `docs/fixes/2026-09-26-gto-module-audit.md`. Liquefaction e as saídas extras das turbinas ainda
+  precisam de confirmação manual específica das posições no preview.
+- Rocket Large Turbine: receita original GTO `ABA/CDC/EFE` usa **Rocket Engine EV**, não Advanced
+  Rocket Engine III. Motores EV/IV/LuV portados via gerador simples GTCEu e texturas GTO; recipes
+  shaped seguem a cadeia original, com cabos registrados como blocos no GTCEu 7.5.3. Teste de
+  receita do controlador atualizado de ausente para presente.
+- Component Assembly Line: símbolos `F/H/I/R/S/W/X/Z` agora usam Molecular, Boron Carbide, Precision
+  Processing, Advanced Assembly Line, Chemical Resistant Pipe, Circuit Assembly Line, Spacetime
+  Assembly Line e Pressure Containment casings do GTO. Texturas, CTM/metadados e bloco molecular
+  com bloom portados. Receitas originais preservadas quando seus ingredientes existem; Boron
+  Carbide Ceramics vira Boron + Carbon, Pikyonium vira Ruridit, Scandium líquido vira Rhodium e o
+  Spacetime Unit usa uma receita de Assembler com materiais GTCEu disponíveis. O advanced unit
+  usa a textura estática; a animação ActiveBlock exclusiva do GTO não foi reproduzida.
+- UI de Component Assembly: `.rtui` binário original do GTO sob namespace GTNA, com as duas barras
+  de progresso referenciadas pelo layout. `GTRecipeWidgetMixin` apresenta EU/t real inclusive com
+  overclock; tier rotulado `Casing Tier`. Ainda requer inspeção visual no cliente para confirmar
+  compatibilidade da UI custom com GTCEu 7.5.3.
+- Tooltips de Chemical Plant e Supercritical Steam Turbine reorganizadas em seções técnicas GTO,
+  mantendo lore e só a linha de Source.
+- Validação: `./gradlew spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`
+  passou com **95/95 GameTests** (ver `/tmp/gtna-final-gate.log`). Repetição após copiar o `.rtui`
+  em `/tmp/gtna-final-gate2.log`, e gate final após ampliar os encaixes `A/G` e remover a descrição
+  duplicada em `/tmp/gtna-evap-expanded-gate.log` — também **95/95**, datagen verde. Cliente
+  reiniciado para inspeção manual. Sem commit/push.
+
+### G-0118 (2026-09-26) — Hatches limitados ao padrão e telas GTO revisadas
+
+- Removido `PredicatesMixin`, que anexava Accelerate/Overclock Hatch a todos os
+  `autoAbilities` elétricos. Os padrões com encaixe explícito continuam aceitando esses hatches;
+  os casings da base Cold Ice e Electric Blast Furnace agora os rejeitam. GameTests cobrem
+  a rejeição no corpo principal e a formação com o módulo.
+- A Blaze sempre mostra o limite de 64 paralelos, inclusive durante a receita. O rotor do Grinding
+  Ball Hatch usa iluminação plena para corrigir a hélice escura; a aparência final depende de
+  confirmação visual no cliente.
+- Isa Mill mostra paralelo máximo 2 e aviso de esfera ausente. Flotation Cell e Vacuum Drying
+  receberam o mesmo padrão de paralelo, voiding e estado sem receita; Vacuum Drying também mostra
+  temperatura das bobinas. As tooltips técnicas e histórias dos ports GTO foram complementadas,
+  mantendo somente `Source` como atribuição.
+- Gate completo `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` passou;
+  94/94 GameTests e datagen. `git diff --check` passou. Reteste manual de UI, tooltip e brilho da
+  hélice pendente. Sem commit/push.
+
+### G-0117 (2026-09-26) — CTM, hélice, cores e padrão das tooltips GTO
+
+- Causa do CTM quebrado encontrada: faltavam `blaze_casing_ctm.png.mcmeta` e
+  `cold_ice_casing_ctm.png.mcmeta`, necessários para dividir e animar as folhas verticais. Os
+  arquivos copiados do GTO são byte-idênticos aos originais, assim como as folhas PNG.
+- `BallHatchRenderer` usa os sprites originais 48×48/48×192 do GTO para o rotor parado/girando;
+  a renderização dinâmica percorre quatro quadros sem renderizar o item da esfera. O aspecto
+  visual no cliente ainda precisa de confirmação do autor.
+- Blaze UI recebeu as cores pedidas. As demais processadoras GTO desta leva exibem voiding,
+  ausência de receita e o limite de paralelo quando existe; Jade mostra os multiplicadores
+  calculados da receita ativa e informa se o chunk não está forçado. O Jade mantém o EU/t real
+  do GTNA, que pode diferir do GTO devido ao overclock específico do gtolib.
+- `GTNAGTOTooltips` substitui os resumos das 16 máquinas de `GTNAMachines3` por linhas de lore
+  originais disponíveis no GTO e seções técnicas legíveis; onde o port difere do GTO, os valores
+  descrevem a implementação atual. A atribuição é só `Source`; o cabeçalho e o rodapé extras
+  `GTO Core | Machine`/`GTOCore` foram removidos.
+- Gate completo `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` verde
+  após o último ajuste: 26 unitários, 94/94 GameTests e datagen; a checagem incremental de
+  `spotlessCheck compileJava runUnitTests` também passou.
+- Sem commit/push. `runClient --offline` foi relançado após o gate, chegando à tela do cliente;
+  reteste visual do autor necessário para CTM, rotor, tooltips e UI.
+
+### G-0116 (2026-09-26) — Correção de re-scan de módulos e comparação da Blaze
+
+- O GameTest do Cold Ice Freezer passou a alterar uma célula válida da extensão sem chamar
+  `GTNAStructureRefresh.refresh`: quebrar baixa o contador e recolocar o bloco restaura a extensão.
+  A causa era o loop de volume usar apenas o limite da primeira aisle (`centerOffset[3/4]`), em
+  vez da profundidade (`getDimensions()[0]`), perdendo o bloco do cache após a quebra.
+- A UI da Blaze Blast Furnace ganhou as linhas de paralelo 64, voiding, heat capacity e
+  `No Recipe found` que a captura comparativa do GTO mostrou. A tooltip da Blaze foi refeita
+  com a lore literal e requisitos técnicos originais; outros ports continuam pendentes de 1:1.
+- O Jade de blocos GTNA passou a exibir hardness e blast resistance. A chave de configuração
+  exigida pelo Jade foi adicionada; os números inteiros aparecem sem `.0`.
+- `./gradlew spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` passou:
+  26 testes unitários, 94/94 GameTests, datagen; `spotlessCheck compileJava runUnitTests` passou
+  novamente após o ajuste de formatação numérica do Jade.
+- Sem commit/push. Cliente de desenvolvimento relançado para teste manual do autor.
+
+### G-0115 (2026-09-26) — Primeira rodada das correções de fidelidade do QA GTO
+
+- **F-02:** o log do cliente mostrou `Dynamic render type with ID gtna:ball_hatch/ball does not exist` durante o bake do modelo. `ClientProxy` agora registra o codec do `BallHatchRenderer` antes do bake; o registro tardio em `CommonProxy` também foi alinhado. O renderer atual de item foi mantido como plano B do documento. `runClient --offline` alcançou o menu e completou o bake do atlas sem `Dynamic render type`/`Failed to load model` para o hatch; ainda conferir hatch vazio e com esfera dentro do mundo.
+- **F-03:** o ISA Mill recebeu paralelo de conteúdo de até 2 receitas via `ParallelLogic.getParallelAmount`, limitado por insumos e espaço de saída. O modificador multiplica conteúdos, EU/t e `recipe.parallels`, de modo que o dano da esfera use o paralelo efetivo. Isto é uma aproximação documentada do batch/OC do gtolib; repetir o protocolo de 60 s e medir EU/t, duração, saída e desgaste antes de declarar paridade.
+- **F-04:** um provider Jade do ISA Mill mostra `Need to grind ball` quando a estrutura está formada e a esfera falta, além dos multiplicadores reais de EU/t e duração em relação à receita original. As linhas genéricas de progresso, energia, paralelo, saídas e estrutura continuam providas pelo GTCEu. Ainda faltam a compensação energética/temporal exata do gtolib, o formato completo de energia e o aviso de chunk não forçado.
+- **F-05:** o cache de posições do controller agora inclui o volume inteiro de cada sub-pattern, inclusive células depois da primeira falha. Isso permite revalidar quando qualquer bloco do módulo muda. Se o pacote de contagem chegar antes do block entity no cliente, ele fica pendente e é aplicado assim que a entidade carregar. A sincronização na reentrada ainda deve ser testada no cliente; falta GameTest de quebra e recolocação para todas as extensões.
+- **F-06:** todos os `BlockItem` registrados pelos helpers de `GTNABlocks` mostram dureza e resistência a explosão, formatadas como no scanner do GTCEu; tradução en_us/pt_br incluída.
+- **F-08:** EMI foi retirado apenas do runtime de desenvolvimento para evitar o `AbstractMethodError` com JEI e os avisos de IDs duplicados emitidos pelo EMI. JEI permanece no runtime de dev. A origem dos IDs repetidos não foi investigada separadamente.
+- **F-07:** o autor escolheu seções técnicas e lore do GTO. `GTNASources` acrescenta a lista localizada de recipe types às máquinas GTO e as histórias de seis ports com correspondência verificada (Fishing Ground, Component Assembler, Blaze Blast Furnace, Cold Ice Freezer, ISA Mill e Industrial Flotation Cell), antes da atribuição `Source:`. A linha sobre o limite do Component Assembler foi adaptada para IV base/UV com extensão, refletindo o port. As demais máquinas não tinham lore correspondente confirmado no GTOCore. A padronização fina de números em cada UI ainda está aberta.
+- **F-01:** texturas de duas camadas e brilho continuam pendentes de comparação visual no cliente. Os mcmeta de bloom já marcam `emissive` e `shimmer`, mas a implementação nativa do helper do gtolib não está disponível para comparação; nenhuma paridade visual foi presumida.
+- **Validação:** `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` passou depois de todas as mudanças (26/26 testes unitários, banner `94 GAME TESTS COMPLETE`); a primeira geração escreveu 1 arquivo de idioma, e a segunda `runData` foi determinística (`written: 0`). Sem commit/push. Reteste in-game ainda necessário para F-01 a F-05 e revisão das tooltips F-07.
+
+
+### G-0114 (2026-09-26) — Extensão até UV: Component Assembler + component_assembly_line
+
+- **Corte LuV → UV.** O teto das duas máquinas subiu para UV, o máximo com receitas de lote no
+  GTCEu base: `ComponentAssemblerMachine` usa `Math.min(GTValues.UV, ...)` com módulo formado
+  (igual ao `ComponentAssemblerMachine` do GTO) e `ComponentAssemblyLineMachine` usa
+  `Math.min(GTValues.UV, ...)`; as regras uniformes `componentAssemblyTierCasings()` e
+  `componentAssemblyLineTierCasings()` ganharam ZPM/UV.
+- Blocos novos com texturas do GTOCore `component_assembly_line_casing_zpm/uv.png`
+  (CC BY-NC-SA; `THIRD_PARTY_NOTICES.md` atualizado): `COMPONENT_ASSEMBLY_CASING_ZPM/UV` (família da
+  extensão) e `COMPONENT_ASSEMBLY_LINE_CASING_ZPM/UV` (família da linha), com lang en + pt_br e
+  modelos/blockstates/loot tables gerados pelo datagen.
+- Receitas: `GTNAComponentRecipes#assemblyLineZpmBatches`/`assemblyLineUvBatches` portam
+  `ComponentRecipes.java:45-46` 1:1 (oito lotes por tier, `fluidMultiplier = 4`, L = 144,
+  `component_casing_tier = 7/8`, 2400 ticks, `VA[ZPM]/VA[UV]`), incluindo o caso especial UV do
+  motor (Amerício `L * 192` no lugar de `L * 24 * fluidMultiplier`). Total do recipe type:
+  **48 → 64** lotes (40 base LV–IV + 8 LuV + 8 ZPM + 8 UV). Todos os materiais desses 16 lotes são
+  GTCEu/GTNA (`MarM200Steel` é o port do GTNA), sem substituições; `arm_zpm`/`arm_uv` usam os
+  circuitos tier-1/tier-3 corretos (LuV+EV e ZPM+IV).
+- Produção das carcaças ZPM/UV: Assembly Line do GTO com estação de pesquisa no tier anterior da
+  mesma família (`AssemblyLine.java:2297`/`:3613`). Únicas substituições (documentadas em
+  `GTNABlockRecipes` e no `THIRD_PARTY_NOTICES.md`): Pikyonium 2016 → **Trinaquadalloy 2016**
+  (liga ZPM do GTNA, já obtenível), ArtheriumTin 2304 →
+  **EnrichedNaquadahTriniumEuropiumDuranide 2304** (supercondutor UV de 9900 K vs. os 9800 K do
+  GTO) e AbyssalAlloy 1152 → **RutheniumTriniumAmericiumNeutronate 1152** (supercondutor UHV de
+  10800 K, o mesmo blast do GTO). Indalloy140, Neutrônio e Lubrificante são 1:1; o `plateDouble`
+  de Tritânio é gerado pelo GTCEu sem flag nova.
+- QA (GameTests): `componentAssemblerExtensionFormsInTwoLayers` agora usa carcaças UV e confirma o
+  teto UV; `componentAssemblerExtensionRaisesTheTierGate` percorre LuV→ZPM→UV (lote ZPM rejeitado
+  sem a carcaça ZPM e aceito com ela; UV idem); o novo `componentAssemblerExtensionRunsTheUvBatch`
+  executa o lote UV de verdade; a contagem 64 foi atualizada em
+  `componentAssemblerLoadsAllBatchRecipes`/`componentAssemblerRequiresMatchingCasingTier` e nos dois
+  testes da linha; `componentAssemblyLineGatesTheTier` cobre ZPM/UV. Lang e tooltips mencionam o
+  teto UV.
+- Validação: `./gradlew spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`
+  verde com **26/26 testes unitários** e **All 94 required tests passed** (`TEST-gtna.xml` com os 16
+  testes de componente, incluindo o novo); `runData` repetido com `written: 0`.
+  `PortLangParityTest`, `MachineTooltipContractTest` e `ControllerRecipePolicyTest` verdes.
+- Pendências: QA in-game do autor (JEI dos lotes ZPM/UV, receitas das carcaças na Assembly Line,
+  texturas e tooltips en/pt_br) segue aberta; sem commit/push. Se o autor preferir fidelidade total
+  nas soldas, Pikyonium e ArtheriumTin podem ser portados 1:1 (todos os componentes existem no
+  GTCEu/GTNA); AbyssalAlloy depende do gás `BarnardaAir`, exclusivo do GTO.
+
+### G-0113 (2026-09-26) — Correções do QA in-game do autor
+
+- **Cold Ice Freezer — recipe type não liberava no cliente:** o contador de módulos
+  (`gtna$formedModuleCount`) existia apenas no servidor; o cliente sempre lia 0 e o seletor de modos
+  filtrava fora o `atomization_condensation`. Adicionado `SModuleCountPacket` (S2C) registrado em
+  `GTNANetworkHandler` e enviado no fim de `MultiblockControllerMachineMixin.checkPattern()` quando o
+  valor muda. A lógica client vive em `client.ModuleCountClientHandler` (`@OnlyIn(CLIENT)`), senão o
+  dedicated server quebra ao registrar o canal (o primeiro build travou o GameTest por isso).
+- **Cold Ice Freezer — módulo não re-detectava:** quando um bloco do módulo é quebrado e recolocado,
+  a célula que falhou não entra no `MultiblockState.cache` (o `BlockPattern` aborta antes do
+  `addPosCache`), então o controller não era notificado. O mixin agora registra a posição do erro do
+  sub-pattern no cache, e o módulo re-forma sem scan manual.
+- **CTM/bloom dos casings:** `blaze_casing` e `cold_ice_casing` são casings de duas camadas no GTO
+  (base + `_bloom` emissivo). Foram copiadas as texturas `_bloom`/`_ctm_bloom` (+ mcmeta) e os
+  modelos passaram a usar `gtceu:block/cube_2_layer/all`; os cascos MK2 usam
+  `cube_2_layer/bottom_top` com `side_bloom` (antes o bloom estava documentado como não portado).
+- **Recipe types sem lang:** adicionadas as chaves `gtna.<tipo>` que faltavam em `en` e `pt_br`
+  (`isa_mill`, `rocket_engine`, `supercritical_steam_turbine`, `flotating_beneficiation`,
+  `vacuum_drying`, `dehydrator`, `atomization_condensation`, `annihilate_generator`, além das antigas
+  sem pt_br).
+- **Tooltip de módulo:** agora anuncia também os *recipe types* liberados
+  (`gtna.machine.auxiliary_module.recipe_types`), como o `moduleTooltips(abilities, recipeTypes)` do
+  GTO; o Cold Ice lista Atomization Condensation. O GameTest do módulo foi atualizado para as 5
+  linhas.
+- **Tooltip do ISA Mill:** destaca o Perfect Overclock (÷4 por degrau de tensão).
+- **UI de threads:** `WorkableElectricMultipleRecipesMachine` só mostra o painel de threads quando
+  `getMaxThreads() > 1` (Thread Hatch instalada). Corrige o "Thread 1: Unknown" na flotação/secagem.
+- **Assembly line — casings:** `iridium_casing` portado do GTO (bloco + textura ctm + receita de
+  Assembly Line com o `Tanmolyium` copiado 1:1 em `MaterialBuilder`), usado nas células A/K,
+  `appearanceBlock`/overlay atualizados; `naquadah_alloy_casing` corrigida para a textura
+  `hyper_mechanical_casing` do GTO (antes usava a de purificação de água). O GameTest da line
+  constrói A/K com o irídio.
+- **Ball Hatch render:** `BallHatchRenderer` (DynamicRender, client) mostra a esfera guardada
+  flutuando e girando na frente da hatch — devagar em idle, rápido com a máquina trabalhando
+  (`isWorking` já era `@DescSynced`). Desvio documentado: o GTO usa os sprites achatados
+  `ball_hatch_idle`/`spinning`; o GTNA renderiza o item real.
+- **ISA Mill — divergência de throughput em investigação:** o autor reportou GTO 34 ops vs GTNA 25
+  ops com o mesmo hatch UV (contagens de stacks+itens). A receita e o overclock do port batem com o
+  GTO (48 saídas, 2400 ticks, ÷4 por degrau = 9 ticks); a hipótese aberta é o paralelismo de conteúdo
+  do gtolib (`accurateContentParallel`, não portado) ou janelas de tempo diferentes. Teste
+  controlado (mesmo tempo de parede) marcado para a próxima sessão com o cliente aberto.
+- Validação: `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` passou com
+  **26/26 testes unitários** e **93/93 GameTests**; `runData` repetido com `written: 0` (a primeira
+  execução escreveu 16 arquivos novos dos blocos/modelos). QA in-game pendente dos itens visuais.
+
+### G-0112 (2026-09-26) — Módulo de atomização do Cold Ice Freezer + contratos globais de QA
+
+- Port do sub-pattern de atomização do GTOCore (`MultiBlockD.java:367-388`) para o controlador
+  `gtna:cold_ice_freezer` existente, registrado em `GTNAModules` como módulo GTNA: torre de 9×7×7
+  com `NAQUADAH_ALLOY_CASING`, `GCYM HEAT_VENT`, `COLD_ICE_CASING`, moldura de Naquadah,
+  `CASING_TUNGSTENSTEEL_PIPE` e `CASING_ALUMINIUM_FROSTPROOF`; as células 'B' aceitam até 6 Energy
+  Hatches e uma Accelerate Hatch (`GTNAPartAbility.ACCELERATE_HATCH`; o GTCEu 7.5.3 não tem
+  `PartAbility.ACCELERATE_HATCH`, desvio documentado no javadoc do módulo).
+- Comportamento fiel ao `ColdIceFreezerMachine.recipeTypeAvailable`: o recipe type
+  `ATOMIZATION_CONDENSATION_RECIPES` (novo em `GTNARecipeType`) só aparece em `getRecipeTypes()` /
+  `getRecipeType()` quando o módulo está formado (`IGTNAModuleHost.gtna$formedModuleCount() > 0`),
+  com guarda extra em `beforeWorking`.
+- Receitas: `GTNAAtomizationRecipes` porta o subconjunto de `GTOMaterialRecipeHandler.java:425-455`
+  para todos os materiais GTCEu/GTNA com dust + fluido: fluido→dust, molten→dust (circuito 1) e
+  molten→líquido (circuito 2), com o gás inerte escalado pela massa e o gate de hélio líquido para
+  blast ≥ 5000 K. `GTOUtils.getVoltageMultiplier` (gtolib nativo) foi substituído pela fórmula
+  equivalente do GTCEu (`blast ≥ 2800 K ? 30 : 8 EU/t`).
+  **Substituição documentada:** o GTO usa gases de alta pressão exclusivos
+  (`GTOFluidStorageKey.HIGH_PRESSURE_GAS`, produzidos no Gas Compressor não portado); o GTNA usa o gás
+  regular na mesma quantidade, mantendo a semântica e evitando um fluido inobtenível.
+- `Naquadah` ganhou `GENERATE_FRAME` em `MaterialAdd` (o GTO usa moldura de Naquadah; o GTCEu 7.5.3
+  não a gera).
+- Lang en + pt_br (`tooltip.2` atualizado para descrever o módulo); `GTNASources` já tinha a entrada.
+- QA: GameTest `coldIceFreezerAtomizationModuleUnlocksSecondRecipeType` cobre A1 formação base,
+  A2 negativo, A3 hatches + limite de 6 energias + rejeição de Fluid Hatch em casing puro, A4 recipe
+  type só com o módulo, A5 upkeep de gelo com o módulo formado e A6 contagem dinâmica do gerador vs.
+  recipe manager; A7 fica no contrato unitário de política de controlador.
+- Contratos globais de QA criados nesta etapa (regra adicional do autor): `PortLangParityTest`
+  (161 chaves `pt_br` que faltavam traduzidas), `PortChainClosureTest`,
+  `MachineTooltipContractTest`, `PartAbilityCoverageTest` estendido (GTNAMachines3 + módulos) e
+  `ControllerRecipePolicyTest`. A receita do controlador do `mega_alloy_blast_smelter`
+  (`classified/Vanilla.java:564`, só GTCEu/GCYM) foi portada porque o `ControllerRecipePolicyTest`
+  a exigia e ela não existia.
+- Validação final do lote (2026-09-26, após a máquina 1 também entrar no
+  `newGtoControllersDescribeTheirFunction` junto com ISA Mill e as duas turbinas):
+  `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` passou com
+  **26/26 testes unitários** e **93/93 GameTests**; `runData` repetido duas vezes com
+  `written: 0`. QA in-game do módulo (visual do sub-pattern, tooltip e JEI) pendente.
+
+### G-0111 (2026-09-26) — QA retroativo: `chemical_plant` e `mega_alloy_blast_smelter`
+
+- QA A1–A7 retroativo das duas máquinas, que em G-0102/G-0103 só tinham formação/dimensões e
+  tooltips. Nenhum código de máquina mudou; o único ajuste de produção foi extrair o padrão do mega
+  para `GTNAMachines3.MEGA_ALLOY_BLAST_SMELTER_PATTERN`, para o GameTest construir exatamente a
+  mesma fonte que a definição registra (verificado string a string contra o
+  `GCYMMachines.java:898-908` do GTOCore).
+- `chemicalPlantFormsWithLargeChemicalRecipes` (estendido):
+  - A2: `Blocks.GOLD_BLOCK` no lugar de uma bobina não forma; restaurar o `COIL_KANTHAL` exato
+    reforma e mantém o coil tier 1.
+  - A3: Parallel Hatch IV aceita numa célula 'b' (`getParallelHatch().isPresent()`); Fluid Hatch
+    rejeitada na célula exclusiva de tubulação PTFE 'd'.
+  - A4: sem módulo/sub-pattern GTNA registrado (`GTNASubPatterns.get(...).isEmpty()`).
+  - A6: família LARGE_CHEMICAL_RECIPES não vazia + receita `blaze_casing_gtna_route` presente (a
+    família é compartilhada com o GTCEu, então não há contagem estável).
+  - A7: ausência intencional do controlador (comentário em `GTNAMachineRecipes.java:889` e lista
+    `OMITTED` do `ControllerRecipePolicyTest`) confirmada em `CRAFTING` e `ASSEMBLER_RECIPES`.
+- `chemicalPlantRunsLargeChemicalRecipe` (novo, A5): roda a rota real `blaze_casing_gtna_route`
+  (1 High-Temperature Smelting Casing + 32 Tin Foil + 1440 mB Blaze + 576 mB Gallium Arsenide +
+  288 mB Vanadium Gallium) com 3 fluid import hatches, bobina Kanthal (0,95×) e hatch LuV; duração
+  < 900 (base 900) e 1 Blaze Casing na output bus.
+- `megaAlloyBlastSmelterFormsWithParallelHatch` (novo, A1–A3): constrói o padrão registrado
+  11×18×11 (HSSG 5400 K, Muffler obrigatório virado para cima, Maintenance exact 1, energia IV) e
+  aceita a Parallel Hatch IV; A2 Gold Block na carcaça; A3 Fluid Hatch rejeitada na célula
+  exclusiva de Heat Vent e **Item Export Bus rejeitado** porque o tipo ALLOY_BLAST tem 0 outputs de
+  item (`setMaxIOSize(9, 0, 3, 1)`), então o `autoAbilities` não oferece EXPORT_ITEMS.
+- `megaAlloyBlastSmelterRunsAlloyBlast` (novo, A5): roda a receita GTCEu manual de Potin
+  (`gtceu:alloy_blast_smelter/potin`: 6 Copper + 2 Tin + 1 Lead + circuito 9, 1084 K, 300 ticks
+  base) e entrega **1296 mB** de Potin líquido; bônus 0,8× EU / 0,6× duração + EBF overclock do
+  hatch IV aplicados.
+- `megaAlloyBlastSmelterMatchesGtoDefinition` (estendido): A6 família não vazia + receitas nomeadas
+  (`potin`, `inconel_625`); A7 receita shaped do controlador presente em `RecipeType.CRAFTING`
+  (portada do `classified/Vanilla.java:564`).
+- A4 nas duas máquinas: não há módulo/extensão GTNA, coberto por asserção explícita.
+- Erros diagnosticados no primeiro run do GameTest e corrigidos: ids de receita de tipo GTCEu são
+  prefixados pelo path do tipo (`gtceu:alloy_blast_smelter/potin`), então os filtros usam
+  `endsWith`; e `autoAbilities` só aceita EXPORT_ITEMS quando o tipo tem output de item.
+- Validação: `./gradlew spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`
+  verde com **26/26 testes unitários** e **All 93 required tests passed**
+  (`TEST-gtna.xml` com 93 testcases e 0 falhas), e `runData` repetido com `written: 0`.
+- Pendências: QA in-game do autor das duas máquinas (JEI/receitas, tooltips en/pt_br,
+  orientação/colocação e o visual do MEGA) segue aberta; sem commit/push.
+
+### G-0110 (2026-09-26) — component_assembly_line
+
+- `component_assembly_line` portado do GTOCore (`MultiBlockA.java:1927`) sobre o
+  `ComponentAssemblyLineMachine` (base `WorkableElectricMultiblockMachine`): regra de carcaça única
+  (a família nova `COMPONENT_ASSEMBLY_LINE_CASING_LV..LUV`, texturas do GTOCore em
+  `block/casings/component_assembly_line/`, CC BY-NC-SA), portão de receita
+  (`component_casing_tier <= tier da carcaça`, teto LuV; ZPM..MAX fora do escopo), Parallel Hatch e
+  overclock não-perfeito — o mesmo modificador do Component Assembler base. O
+  `TierCasingCrossRecipeMultiblockMachine` do gtolib é substituído e a execução cross-recipe (várias
+  receitas simultâneas) não é reproduzida; documentado.
+- Estrutura: `.mbs` real 47×15×31 (`pattern/gto/component_assembly_line.mbs`), com a tabela de
+  substituições GTO→GTNA documentada abaixo. `Naquadria` recebeu `GENERATE_FRAME` (o GTOCore faz o
+  mesmo para o anel da linha).
+- Receita do controlador: omitida e registrada no `ControllerRecipePolicyTest` (o original é uma
+  receita de Assembly Line com a Advanced Assembly Line/Advanced Assembly Line Unit/Mithril do GTO).
+- Tabela de substituições (símbolo → bloco GTO → bloco GTNA):
+  `A`/`K` IRIDIUM_CASING → `HYPER_MECHANICAL_CASING`; `F` MOLECULAR_CASING → GCYM `CASING_ATOMIC`;
+  `H` BORON_CARBIDE... → `LITHIUM_OXIDE_CERAMIC_HEAT_RESISTANT_SHOCK_RESISTANT_MECHANICAL_CUBE`;
+  `I` PRECISION_PROCESSING_MECHANICAL_CASING →
+  `COBALT_OXIDE_CERAMIC_STRONG_THERMALLY_CONDUCTIVE_MECHANICAL_BLOCK`;
+  `R` ADVANCED_ASSEMBLY_LINE_UNIT → `CASING_ASSEMBLY_CONTROL`;
+  `S` CHEMICAL_CORROSION_RESISTANT_PIPE_CASING → `CASING_PTFE_INERT`;
+  `W` MACHINE_CASING_CIRCUIT_ASSEMBLY_LINE → GCYM `CASING_LARGE_SCALE_ASSEMBLING`;
+  `X` SPACETIME_ASSEMBLY_LINE_UNIT → `SPACETIME_COMPRESSION_FIELD_GENERATOR`;
+  `Z` PRESSURE_CONTAINMENT_CASING → `HYPER_PRESSURE_BREEL_CASING`;
+  `U` `light()` = GTCEu `LAMPS` → predicado das mesmas lâmpadas GTCEu. Os demais símbolos existem
+  1:1 no GTCEu/GTNA (`NAQUADAH_ALLOY_CASING`, nonconducting, HERMETIC LuV, FILTER_CASING,
+  CLEANROOM_GLASS, ELECTROLYTIC_CELL, CASING_ASSEMBLY_LINE, molduras Hastelloy-N/HSLA/Naquadria,
+  pia de PTFE). Thread/Overclock/Accelerate Hatch do GTO não entram porque o GTNA não tem a lógica
+  cross-recipe; entram Parallel, Maintenance, energia, laser e IO.
+- QA: 7 GameTests novos (A1 formação pelo `.mbs` real + orientação + 63 células de tier, A2 bloco
+  inválido e tier misturado, A3 hatches no casco K e rejeição em célula de tier, A4 portão LV→LuV,
+  A5 execução do lote LuV com consumo, A6 as 48 receitas, A7 controlador omitido).
+- Validação: gate completo `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`
+  verde com **26/26 testes unitários** e **90 testes de GameTest** (84 do arquivo principal, incluindo
+  os 14 novos, + 6 de outras classes; todos aprovados); `runData` repetido com `written: 0`. QA
+  in-game pendente.
+
+### G-0109 (2026-09-26) — Extensão grande do Component Assembler
+
+- As duas camadas de `addSubPattern` do GTOCore (`MultiBlockC.java:328-397`) foram registradas como
+  módulos GTNA em `GTNAModules` sob o controlador `component_assembler`: a primeira 29×6×13 (célula
+  'Q' no controlador, casings de tier, Accelerate Hatch e IO) e a segunda 29×6×20 (célula 'H',
+  computer casing, control casings MK2, laser/parallel). As duas podem formar ao mesmo tempo, como no
+  GTOCore (`getSubFormedAmount()`); o único ponto compartilhado entre elas é o controlador.
+- Regra de tier estendida: `componentAssemblyTierCasings()` agora vai até LuV
+  (`COMPONENT_ASSEMBLY_CASING_LUV`, textura do `component_assembly_line_casing_luv` do GTOCore). A
+  máquina lê o tier das células do padrão principal e aplica o teto do GTOCore: IV sem módulo, LuV
+  com módulo (o GTOCore sobe até UV; o GTNA só tem carcaças até LuV — documentado).
+- Blocos novos: `THREE_PROOF_COMPUTER_CASING`, `MACHINING_CONTROL_CASING_MK2` e
+  `ENERGY_CONTROL_CASING_MK2` (sided, sem a camada de bloom emissiva), `ELECTRIC_POWER_TRANSMISSION_CASING`
+  e `TITANIUM_NITRIDE_CERAMIC_IMPACT_RESISTANT_MECHANICAL_BLOCK`, todos com texturas do GTOCore
+  (CC BY-NC-SA, `GTNASources`/`THIRD_PARTY_NOTICES.md`). Materiais novos 1:1:
+  `CarbonFiberPolyphenyleneSulfideComposite` (moldura) e `TitaniumNitrideCeramic` (flake da receita);
+  `Trinium` recebeu `GENERATE_FRAME` (o GTOCore faz o mesmo para a moldura da extensão).
+- Receitas: as oito receitas de lote LuV de `ComponentRecipes#assembly_line(LuV)` (2400 ticks,
+  `component_casing_tier = 6`, `fluidMultiplier = 2`), 1:1, e a produção da carcaça LuV (Assembly Line
+  do GTOCore com `Indalloy140`). As receitas do ramo `ASSEMBLY_LINE_RECIPES` do mesmo método foram
+  omitidas por exigirem prefixos de item exclusivos do GTO (motor enclosure, piston housing, ...).
+  Caminhos GTNA documentados para os cinco blocos: os cascos de controle MK2 vêm do Precision
+  Assembler (máquina excluída), então usam rotas Assembler com a mesma forma; o
+  `TitaniumNitrideCeramic` ganhou uma rota Mixer (Ti + N) porque a cadeia do GTO não foi portada.
+- Desvio documentado: as células de tier da extensão impõem uniformidade dentro de cada camada, mas o
+  tier efetivo continua vindo do padrão base (o mixin restaura o contexto principal após cada
+  sub-padrão); o GTOCore compartilha um único contexto entre base e extensão.
+- QA: 7 GameTests novos (A1 formação das duas camadas + teto IV→LuV, A2 bloco inválido/tier misturado,
+  A3 hatches da extensão e rejeição de hatch em casing, A4 portão de receita LuV, A5 execução do lote
+  LuV com consumo, A6 contagem 48 receitas, A7 receita do controlador). Template novo `empty_48`
+  (48³) para as estruturas de 29 de largura.
+- Validação: gate completo `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`
+  verde com **26/26 testes unitários** e **83/83 GameTests** (76 anteriores + 7 novos); `runData`
+  repetido com `written: 0`. QA in-game pendente.
+
+### G-0108 (2026-09-25) — Vacuum Drying Furnace
+
+- Port de `vacuum_drying_furnace` do GTOCore `dc4824d` (`MultiBlockA.java:1707`, palette 1732-1744) e
+  do padrão comprimido `pattern/vacuum_drying_furnace.mbs` (3 aisles × 5 rows × 3 chars, orientação
+  gravada LEFT/UP/FRONT; controller em char 1, row 0, aisle 2). A casca é `RED_STEEL_CASING` (nova,
+  texturas GTO com atribuição CC BY-NC-SA), com 24 células de bobina (`heatingCoils()`), Muffler
+  `setExactLimit(1)` na face superior (front virado para o ar interior) e Maintenance
+  `setExactLimit(1)`; energias ≤2, item in ≤2 / out ≤1, fluido in ≤2 / out ≤2.
+- Comportamento: `VacuumDryingFurnaceMachine extends CoilWorkableElectricMultipleRecipesMachine`
+  reproduz o `CoilCustomParallelMultiblockMachine` do GTO por tipo de receita:
+  - `VACUUM_DRYING` (modo principal): serial (paralelo 1) com o `UPGRADE_EBF_OVERCLOCK` do GTO,
+    reproduzido pelo novo `GTNAHeatingCoilOverclock`. O GTO usa a matemática de bobina do EBF, cujos
+    `heatingCoilOC`/`getCoilEUtDiscount`/`getModifier` são package-private no GTCEu 7.5.3; o port
+    reimplementa só as duas funções de matemática e reusa `OverclockingLogic.OCParams`/`OCResult`
+    (records públicos): portão de `ebf_temp`, desconto de 0,95^n EU/t por 900K acima da receita e
+    passos de overclock perfeitos (duração /4) enquanto houver desconto sobrando.
+  - `DEHYDRATOR`: paralelo `2^floor(temperatura da bobina / 900)` (máximo com o paralelo do hatch) e
+    overclock não-perfeito padrão, como o `UPGRADE_PARALLELIZABLE_OVERCLOCK` do GTO.
+  A fórmula de paralelo segue o tipo **selecionado** (`getRecipeType()`), exatamente como o
+  `m.getRecipeType()` do GTO; a busca multi-receita do GTNA pode iniciar receitas do outro tipo, o
+  que está documentado no javadoc da classe.
+- Recipe types novos em `GTNARecipeType`: `VACUUM_DRYING` (0 item in / 9 out / 1 fluido in / 2 out,
+  barra `PROGRESS_BAR_ARROW`, som `COOLING`; as infos de JEI de temperatura e bobina vêm do
+  `ebf_temp`, como o `BLAST_RECIPES` do GTCEu, mais o widget de bobinas válidas) e `DEHYDRATOR`
+  (2/6/2/2, `PROGRESS_BAR_EXTRACT`, som `ARC`), copiando os IO do GTO
+  (`GTORecipeTypes.java:664`/`:143`).
+- Receitas (`GTNAFlotationDryingRecipes`, registrado no `GTNAGTAddon`): as 12 receitas de secagem do
+  `classified/VacuumDrying.java` 1:1 — 4000 mB de foam → 6 pilhas de dusts GTCEu + 200 mB `RedMud` +
+  2000 mB `Water`, com EUt (1920–491520), duração 2400 e `blastFurnaceTemp` (3500–9500) originais; a
+  única receita do `classified/Dehydrator.java` que só usa GTCEu (`salt_dust`: 1000 mB SaltWater → 2
+  Salt, EUt 30, 160 ticks); e a neutralização de Red Mud do `processing/StoneDustProcess.java`
+  (RedMud 1000 + HCl 4000 → `NeutralisedRedMud` 2000, Mixer, EUt 128, 100 ticks), que fecha o
+  subproduto da secagem. Cinco receitas de bloco/carcaça (Assembler) e a receita do controlador da
+  flotação completam o par.
+- Substituições/omissões documentadas: GTO usa a data key `temperature` para o JEI; o port lê
+  `ebf_temp`, que é o que `blastFurnaceTemp` grava. Os `recoveryStacks` dinâmicos do GTO
+  (`tinydustFromDustOutput`) não são portáveis pela API estática `recoveryItems` do GTCEu e ficam
+  omitidos, como no ISA Mill. A receita do controlador usa quatro `DEHYDRATOR[IV]` (máquina
+  single-block exclusiva do GTO) → **omitida** e registrada em `ControllerRecipePolicyTest.OMITTED`.
+  Bloqueio rígido: `NeutralisedRedMud` é terminal por enquanto — a cadeia seguinte do GTO
+  (StoneDustProcess: red slurry → titanyl sulfate → titanium tetrachloride / cloretos de terras
+  raras) exigiria ~5 fluidos GTO adicionais e está fora do escopo do par. O `trinium_compound` (só
+  na Mega Vacuum Drying Furnace, devolve `ResidualTriniiteSolution`) e as demais receitas do
+  Dehydrator (dependem de fluidos GTO) não foram portados.
+- Lang en (`GTNALangProvider`: nome do bloco/máquina, `tooltip` + 3 linhas) + pt_br
+  (`pt_br.json`, inclui nomes de material). Atribuição em `GTNASources`
+  (`vacuum_drying_furnace`) e texturas no `THIRD_PARTY_NOTICES.md`.
+- QA automático em `GTNAMachineGameTests`:
+  - `vacuumDryingFurnaceFormsAndDriesFoam` — A1 formação pelo `.mbs` (3×5×3, orientação gravada) e
+    leitura da bobina HSSG (5400K); A2 negativo (Gold Block no lugar da bobina e Fluid Hatch numa
+    célula de bobina, que é exclusiva); A3 hatches obrigatórias (Muffler e Maintenance) e
+    item/fluido/energia; A4 as duas famílias de receita expostas; A5a execução real do modo
+    Dehydrator (SaltWater → 2 Salt; paralelo com bobina 2^6 = 64, mas um lote de 1000 mB roda só: 160
+    → 10 ticks em quatro overclocks não-perfeitos); A5b execução real do modo principal (pyrope foam
+    → 128 Magnesium + 48 Silicon + 200 mB Red Mud + 2000 mB Water, com overclock EBF de um passo
+    perfeito: 2400 → 600 ticks com bobina HSSG e hatch IV); A6 exatamente **12** receitas
+    `vacuum_drying` e **1** `dehydrator`; A7 ausência da receita de controlador nos Assembler.
+  - `flotationFoamFeedsVacuumDrying` (cadeia fechada): toda espuma produzida pela flotação tem
+    receita de secagem, o `RedMud` tem consumidor (Mixer) e uma fornalha formada aceita o
+    `PyropeFront` como input (`RecipeHelper.matchContents`). Complementa o
+    `PortChainClosureTest` (varredura de fontes), que agora reporta os 12 `*Front` + `RedMud`.
+- Validação: `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` passou com
+  **26/26 classes de teste unitário**, **76/76 GameTests** (`All 76 required tests passed`) e
+  `runData` repetido com `written: 0`. QA in-game (CTM das texturas, tooltip en/pt_br, JEI das duas
+  categorias, rotação/colocação e comportamento sob carga das bobinas) pendente com o autor. Sem
+  commit ou publicação.
+
+### G-0107 (2026-09-25) — Industrial Flotation Cell
+
+- Port de `industrial_flotation_cell` do GTOCore `dc4824d` (`MultiBlockA.java:1678`, palette
+  1688-1703) e do padrão comprimido `pattern/industrial_flotation_cell.mbs` (9 aisles × 7 rows ×
+  7 chars; orientação gravada RIGHT/BACK/UP; controller em char 3, row 0, aisle 1). Carcaças novas
+  `HASTELLOY_N_75_CASING`/`_GEARBOX`/`_PIPE` e paredes `FLOTATION_CELL` (texturas GTO, CC BY-NC-SA).
+- Comportamento: `IndustrialFlotationCellMachine extends WorkableElectricMultipleRecipesMachine`
+  porta o `ElectricMultiblockMachine` + `parallelizablePerfectOverclock()` do GTO: o overclock
+  perfeito vira `OverclockingLogic.PERFECT_OVERCLOCK`, que é exatamente o que a lógica
+  multi-receitas do GTNA aplica (`ELECTRIC_OVERCLOCK.apply(getOverclockingLogic())`); uma Overclock
+  Hatch do GTNA, se algum padrão um dia aceitar uma, continua tendo prioridade. O padrão aceita
+  Parallel Hatch (o GTO usa), energia ≤2, fluido in ≤1 / out ≤1, item in ≤2 e Maintenance exata —
+  sem Muffler, como no GTO.
+- Recipe type novo `FLOTATING_BENEFICIATION` (`GTORecipeTypes.java:658`): 2 item in / 0 out / 1
+  fluido in / 1 fluido out, barra `PROGRESS_BAR_BATH` e som `CHEMICAL`.
+- Receitas (`GTNAFlotationDryingRecipes`, registrado no `GTNAGTAddon`): as 12 receitas do
+  `classified/FlotatingBeneficiation.java` 1:1 (reagente etilxantato 32 ou 64 + 64 MILLED + turpentina
+  8000–280000 mB → 1000 mB do foam, EUt 7680/30720/491520 e durações originais). A receita
+  `metal_compound_particle_front` **não** foi portada: depende do `MetalCompoundParticles` da era
+  espacial do GTO e o consumidor dela (`rarest_metal_mixture_dust`) exige cinco dusts de resíduos +
+  `NanoScaleTungsten`, todos exclusivos do GTO; sem produtor, o `*Front` não cria beco sem saída.
+  Também portadas as 5 receitas de bloco/carcaça do `classified/Assembler.java`
+  (`hastelloy_n_75_casing`/`_gearbox`/`_pipe`, `flotation_cell`, `red_steel_casing`, 1:1) e a receita
+  do controlador do `classified/AssemblyLine.java:1794` (Assembly Line, só GTCEu/GTNA, com a station
+  research original de 32 CWU/t no ORE_WASHER[IV]) — coberta pelo `ControllerRecipePolicyTest`.
+- Materiais GTNA novos (1:1 de `MaterialA`/`MaterialB`, com atribuição no ledger e nos javadocs):
+  `HastelloyN75` (MaterialA:693) e `Stellite` (MaterialA:1060), necessários pelas carcaças e pela
+  receita do controlador; `SodiumEthylxanthate`, `PotassiumEthylxanthate` e `Turpentine` (reagentes);
+  os 12 fluidos `*Front` (MetalB:2974-3070, componentes = o minério GTCEu correspondente); `RedMud` e
+  `NeutralisedRedMud` (MaterialB:4023/4028). Única substituição de material: o icon set `LIMPID` do
+  GTO não existe no GTCEu, então RedMud/NeutralisedRedMud usam `FLUID`.
+- Cadeia fechada: os 12 `*Front` produzidos têm as 12 receitas de secagem como consumidoras e o
+  `RedMud` tem a neutralização no Mixer (ver G-0108); o `PortChainClosureTest` reporta
+  `[PyropeFront, RedstoneFront, …, EnrichedNaquadahFront, RedMud]` sem becos sem saída.
+- Lang en (`GTNALangProvider`: nome do bloco/máquina, `tooltip` + 3 linhas) + pt_br; atribuição em
+  `GTNASources` (`industrial_flotation_cell`) e texturas no `THIRD_PARTY_NOTICES.md`.
+- QA automático em `GTNAMachineGameTests`:
+  - `industrialFlotationCellFormsWithParallelHatch` — A1 formação pelo `.mbs` real (9×7×7 e
+    orientação gravada); A2 negativo (Gold Block no lugar de uma parede `FLOTATION_CELL` e Fluid
+    Hatch na tampa superior só-carcaça, restaurando e voltando a formar); A3 hatches aceitas
+    (energia LuV, Maintenance, item in, fluido in/out) e Parallel Hatch GCYM IV aceita; A5 execução
+    real da receita de piropo com hatch LuV: um passo de overclock perfeito (7680 → 30720 EU/t) corta
+    4800 → 1200 ticks e entrega 1000 mB de `PyropeFront`; A6 exatamente **12** receitas; A7 receita
+    do controlador presente na Assembly Line.
+  - `flotationFoamFeedsVacuumDrying` (ver G-0108) e `newGtoControllersDescribeTheirFunction` inclui
+    as duas máquinas novas (tooltip + 1 linha de atribuição).
+- Validação: `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` passou com
+  **26/26 classes de teste unitário**, **76/76 GameTests** (`All 76 required tests passed`) e
+  `runData` repetido com `written: 0`. QA in-game (CTM das texturas Hastelloy/Flotation Cell, tooltip
+  en/pt_br, JEI da categoria `flotating_beneficiation`, rotação/colocação do controlador) pendente
+  com o autor. Sem commit ou publicação.
+
+### G-0106 (2026-09-25) — Supercritical Steam Turbine
+
+- Port de `supercritical_steam_turbine` do GTOCore `dc4824d` (`GeneratorMultiblock.java:234-239`):
+  IV, `special=false`, recipe type novo `gtna:supercritical_steam_turbine`
+  (`SUPERCRITICAL_STEAM_TURBINE_FUELS` no GTO, `GTORecipeTypes.java:214`: GENERATOR, IO out,
+  0/0/1/1, `CENTRIFUGE_OVERLAY`, `PROGRESS_BAR_GAS_COLLECTOR`, som `TURBINE`) e a estrutura do
+  `registerLargeTurbine` (`MachineRegisterUtils.java:468-483`, sub-pattern SUPERCRITICAL). Padrão
+  base 3×3×3 com a carcaça nova nas células C/H, gearbox de TungstenSteel, célula R (rotor holder
+  ≥ IV **ou** Energy Output Hatch, ambos `setExactLimit(1)`); o módulo (5×4×7) usa
+  `GCYMBlocks.CASING_HIGH_TEMPERATURE_SMELTING` (A), `GCYMBlocks.ELECTROLYTIC_CELL` (B), a carcaça
+  nova em C/D (D aceita até 3 Energy Output Hatches) e moldura de TungstenSteel (F). Padrões em
+  Java, como no GTO (sem `.mbs`).
+- **Refatoração da base não-mega:** o comportamento que a máquina 3 tinha em
+  `RocketLargeTurbineMachine` virou `GTNALargeTurbineMachine` (`WorkableElectricMultiblockMachine`
+  + `ITurbineMachine`, caminho `mega=false` da `TurbineMachine` do GTO). `RocketLargeTurbineMachine`
+  e `SupercriticalSteamTurbineMachine` são subclasses finas que fixam tier/`special`/id de lang,
+  exatamente como o GTO cria as duas turbinas com o mesmo construtor. O comportamento da rocket
+  turbine não mudou (base `V[EV]*2.5`, módulo 2×/20%/2×, modo de alta velocidade com os valores
+  normal do GTO e dano fixo sem glass tier). As chaves de lang do modo de alta velocidade e da
+  estimativa de saída agora são `<id>`-dependentes (`gtna.machine.<id>.…`).
+- **Bloco novo `supercritical_turbine_casing`** em `GTNABlocks` (`createCasingBlock`, CTM ativa):
+  texturas `supercritical_turbine_casing.png`, `_ctm.png` e `.png.mcmeta` copiadas do GTOCore com o
+  namespace reescrito para `gtna` (CC BY-NC-SA 4.0, registrado em `GTNASources` via
+  `supercritical_steam_turbine` e no `THIRD_PARTY_NOTICES.md`). Receita da carcaça portada 1:1 do
+  `Assembler.java:2546` (GTCEu tungstensteel turbine casing + rod/gear/plate de MarM200Steel +
+  circuito 6, `EUt(16)`/50 ticks); o `GTOMaterials.MarM200Steel` do GTO é o
+  `GTNAMaterials.MarM200Steel` já portado.
+- **Substituição travada GTO→GTNA no combustível:** o GTO só tem `SupercriticalSteam`
+  (`MaterialB.java:3490`, 1000 K, produzido pelo Heat Exchanger); o GTNA não cria esse material e
+  reusa `DenseSupercriticalSteam` — seu primeiro grau supercrítico, produzido a partir de
+  `SuperHeatedSteam` no High Pressure Reactor e já usado pelo Void Miner/Cactus Wonder. O segundo
+  grau (`InsanelySupercriticalSteam`) **não** é consumido para não inventar um combustível que o
+  GTO não tem. A receita `FuelRecipe.java:225-230` mantém os números exatos: 80 mB → 8 mB de água
+  destilada, 30 ticks, `EUt(-V[MV])`, id `supercritical_steam` (em runtime
+  `gtna:supercritical_steam_turbine/supercritical_steam`).
+- **Receita do controlador portada** (decisão do autor: portar quando usar só GTCEu/GTNA): o
+  `Assembler.java:1527` usa `GTMachines.HULL[LuV]`, 4 circuitos LuV, 2 motores LuV,
+  rod/gear/plate de `MarM200Steel` e pipes de `TungstenCarbide` — todos disponíveis no GTNA.
+  Registrada em `GTNASupercriticalSteamTurbineRecipes` com `GTNAMachines3.SUPERCRITICAL_STEAM_TURBINE.asStack()`
+  (coberta pelo `ControllerRecipePolicyTest` sem entrada na lista `OMITTED`).
+- Lang en (`GTNALangProvider`: nome do bloco, nome da máquina, `tooltip` + 3 linhas,
+  `estimated_output`, chaves do modo de alta velocidade e bônus do módulo) + pt_br (`pt_br.json`).
+- QA automático em `GTNAMachineGameTests`:
+  - `supercriticalSteamTurbineFormsWithRotorAndModule` — A1 formação pelo padrão real (base e
+    depois o módulo, `gtna$formedModuleCount() == 1`); A2 negativo (Gold Block na carcaça e na
+    casca do módulo); A3 hatches (rotor holder IV virado para fora, Energy Output Hatch
+    obrigatória, muffler com face livre, manutenção e fluido) e rejeição de Fluid Hatch na célula
+    do rotor e em célula só de carcaça, e de Parallel Hatch (o GTO não tem slot de paralelo na
+    turbina); A6 exatamente **1** receita `supercritical_steam`; A7 receita do controlador
+    presente no `ASSEMBLER_RECIPES`.
+  - `supercriticalSteamTurbineBurnsSupercriticalSteamWithRotor` — A5 execução real: rotor de
+    titânio (115%) em rotor holder IV com dynamo IV → 64 paralelos, 8.192 EU/t, 41 ticks
+    (30 × 1,15 × 1,2), 5.120 mB por lote e 335.872 EU entregues em 41 ticks; o mesmo teste confirma
+    que o holder IV mantém 100% de eficiência de holder (tier fixo do controlador).
+- Bloqueios rígidos (herdados da máquina 3): gtolib sem fonte obriga a base
+  `WorkableElectricMultiblockMachine` + `ParallelLogic.getParallelAmount` no lugar de
+  `ElectricMultiblockMachine`/`accurateContentParallel`; `ItemPartMachine` de auto-insert de rotor
+  não portado; painel de ajuste expert do modo de alta velocidade não portado; sem glass tier
+  (dano fixo); turbinas mega continuam fora do escopo. Nenhum bloqueio novo nesta máquina.
+- Validação: `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` passou com
+  **26/26 classes de teste unitário**, **73/73 GameTests** (`All 73 required tests passed`) e
+  `runData` repetido com `written: 0`. QA in-game (JEI, tooltip renderizado, orientação e modo de
+  alta velocidade sob carga) pendente com o autor.
+
+### G-0105 (2026-09-25) — Rocket Large Turbine
+
+- Port de `rocket_large_turbine` do GTOCore `dc4824d` (`GeneratorMultiblock.java:227-232`): EV,
+  `special=true`, recipe type novo `gtna:rocket_engine` (`ROCKET_ENGINE_FUELS` no GTO) e a mesma
+  estrutura do `registerLargeTurbine` (`MachineRegisterUtils.java:393-486`, sub-pattern ROCKET nas
+  linhas 452-467). Nenhum bloco novo: o padrão base 3×3×3 usa `CASING_TITANIUM_TURBINE`,
+  `CASING_TITANIUM_GEARBOX` e a célula R (rotor holder **ou** Energy Output Hatch, ambos
+  `setExactLimit(1)`); o módulo (5×4×7) usa `CASING_TITANIUM_STABLE`, `CASING_ENGINE_INTAKE`,
+  `CASING_TITANIUM_TURBINE`/Energia nas células D e moldura de BlueSteel. O padrão base e o módulo
+  são escritos em Java, como no GTO (não há `.mbs`; não foram copiados arquivos).
+- Comportamento: `RocketLargeTurbineMachine` (`WorkableElectricMultiblockMachine`, também
+  `ITurbineMachine`) porta o caminho **não-mega** da `TurbineMachine`. `getRealRecipe` reproduz a
+  matemática do GTO: `EUt` do combustível, `getVoltage() = V[EV] * 2.5 * totalPower/100 * 2 (módulo)`,
+  `turbineMaxVoltage = min(getOverclockVoltage(), getVoltage() * (speed/maxSpeed)^2)`, paralelo
+  `turbineMaxVoltage / EUt`, saída `min(turbineMaxVoltage, paralelo * EUt)` (substituída nos
+  `tickOutputs` via `EURecipeCapability.putEUContent`) e duração `receita * totalEfficiency * 1.2 /
+  100` **sem** paralelizar a duração (o `recipe.copy(...)` do GTCEu escala a duração; o port usa
+  `copy(modifier, false)`). O gate de rotor presente do `matchRecipeInput` está explícito no
+  `getRealRecipe`, além do gate nativo do `RotorHolderPartMachine` do GTCEu. Rotação: a rotação e o
+  dano base (1 + problemas de manutenção por segundo) são os do rotor holder do GTCEu; a máquina
+  reporta `getTier() = EV` fixo (como o GTO), então um rotor holder EV mantém 100% de eficiência de
+  holder mesmo com dynamo IV.
+- Modo de alta velocidade: portado com os valores **normais** do GTO (3× saída, 10 de dano ao rotor
+  por segundo acumulado e 8× de falha de manutenção), botão na UI fancy com a textura
+  `high_speed_mode.png` copiada do GTOCore (CC BY-NC-SA 4.0). O painel de ajuste do modo expert
+  (gtolib/`GTOGuiTextures.PARALLEL_CONFIG`, string `ars_nouveau.locked`) **não** foi portado; o GTNA
+  não tem modo expert, então os valores ficam fixos. O bônus do módulo é 2× saída / +20% eficiência /
+  2× multiplicador de dano (usado apenas no modo de alta velocidade pelo código do GTO).
+- Substituições GTO→GTNA (bloqueios rígidos documentados):
+  - gtolib `ElectricMultiblockMachine`/`RecipeHandlerUnit`/`accurateContentParallel` não têm fonte
+    (gtolib é biblioteca compilada). O port estende `WorkableElectricMultiblockMachine` e usa
+    `ParallelLogic.getParallelAmount` como aproximação do paralelo por conteúdo; a matemática de
+    tensão/paralelo/duração é a do GTO.
+  - `GTOPredicates.RotorBlockFacingOutwards` foi portado para `GTNAMachines3.rotorBlockFacingOutwards`
+    com `IRotorHolderMachine` + `MetaMachineBlock.getDefinition().getTier()` + o scan de folga
+    (3×3 à frente e 5×5 exclusivo). O `TraceabilityPredicate.direction` do fork do GTO não existe no
+    GTCEu 7.5.3, então a checagem de direção fica dentro do predicado.
+  - O `ItemPartMachine` que reinsere rotores automaticamente (peça exclusiva do GTO) não foi portado;
+    os rotores continuam sendo colocados na UI do rotor holder.
+  - `addFuelProperties` (jetpack `PowerlessJetpack` do GTO) e a 7ª receita (criogênio do Ad Astra) não
+    foram portados. Das 6 receitas do GTO, só `rocket_engine_fuel_1` usa material GTCEu
+    (`RocketFuel`, 10 mB / 20 ticks / 512 EU/t) e é a única registrada; as outras cinco usam fluidos
+    exclusivos do GTO (`RocketFuelRp1`, `DenseHydrazineFuelMixture`, `RocketFuelCn3h7o3`,
+    `RocketFuelH8n4c2o4`, `ExplosiveHydrazine`) — documentado no javadoc de `GTNARocketFuelRecipes`,
+    no tooltip e no ledger.
+  - Receita do controlador **omitida** (decisão travada: dependência exclusiva do GTO): a receita
+    original em `classified/Vanilla.java:579` tem `GTOMachines.ROCKET_ENGINE_GENERATOR[EV]` no centro,
+    máquina single-block que o GTNA não porta. Registrada em `ControllerRecipePolicyTest.OMITTED` com
+    o motivo e documentada no javadoc do registro.
+- Lang en (`GTNALangProvider`: nome, `tooltip` + 3 linhas, `estimated_output`, chaves do modo de alta
+  velocidade, bônus do módulo e `gtna.multiblock.pattern.rotor_clearance`) + pt_br (`pt_br.json`).
+  Atribuição em `GTNASources` (`rocket_large_turbine`) e no `THIRD_PARTY_NOTICES.md` (mecânica e a
+  textura do botão).
+- QA automático em `GTNAMachineGameTests`:
+  - `rocketLargeTurbineFormsWithRotorAndModule` — A1 formação pelo padrão real (base e depois o
+    módulo, `gtna$formedModuleCount() == 1`); A2 negativo (Gold Block em casing e na casca do módulo,
+    Fluid Hatch na célula do rotor e em célula só de casing); A3 hatches (rotor holder, Energy Output
+    Hatch obrigatória, muffler com face livre, manutenção e fluido), rotor holder presente e Parallel
+    Hatch rejeitada (o GTO não tem slot de paralelo na turbina); A6 exatamente **1** receita
+    `rocket_engine_fuel_1`; A7 ausência de receita de controlador.
+  - `rocketLargeTurbineBurnsRocketFuelWithRotor` — A5 execução real: rotor de titânio (115%) em rotor
+    holder EV com dynamo IV → 16 paralelos, 8.192 EU/t, 27 ticks (20 × 1,15 × 1,2), 160 mB por lote e
+    221.184 EU entregues em 27 ticks; o mesmo teste confirma que o holder EV mantém 100% de eficiência
+    de holder (tier fixo do controlador).
+- Validação: `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` passou com
+  **26/26 classes de teste unitário**, **71/71 GameTests** (`All 71 required tests passed`) e
+  `runData` repetido com `written: 0` (primeira execução: `written: 6` — blockstate, model de bloco,
+  model de item e as chaves de lang geradas).
+- Pendências manuais: QA in-game do modelo/textura do controlador e do módulo, tooltip en/pt_br,
+  JEI (categoria `rocket_engine` e a receita de RocketFuel), rotação/colocação do controlador,
+  comportamento sob carga do rotor (dano/velocidade), o botão do modo de alta velocidade e a
+  ausência do auto-insert de rotores do GTO. Sem commit ou publicação.
+
+### G-0104 (2026-09-25) — ISA Mill
+
+- Port de `isa_mill` do GTOCore `dc4824d`: estrutura comprimida 7×3×3 (7 camadas) copiada para
+  `pattern/gto/isa_mill.mbs` e lida com `GTOCompressedPatternReader`; orientação gravada
+  BACK/UP/RIGHT (char→+Z, aisle→+X, row→+Y com o controlador virado a NORTH). Carcaças novas
+  Inconel-625 (casing/gearbox/pipe) com texturas do GTOCore (png + `_ctm` + `.mcmeta`),
+  `appearanceBlock` na carcaça, `RotationState.ALL` e overclock perfeito.
+- Comportamento: `IsaMillMachine` (`WorkableElectricMultiblockMachine`) roda `ISA_MILL_RECIPES`
+  (2 item in / 1 out / 1 fluido in, EU in; a data key `grindball` aparece no JEI). O gate da esfera
+  fica no `getRealRecipe` (sem esfera ou tier errado = receita indisponível) e a matemática de dano
+  do GTO (`durability + parallels/(Unbreaking+1) + 1`, destruição ao atingir o dano máximo) é
+  aplicada em `beforeWorking`. Motivo da adaptação: o `fullModifyRecipe` do GTCEu 7.5.3 é chamado
+  uma vez por candidata da busca; danificar em `getRealRecipe` gastaria a esfera em receitas que
+  nunca iniciam. Está no javadoc da classe e aqui.
+- `BallHatchPartMachine` (IV, ability nova `GTNAPartAbility.GRIND_BALL_HATCH`, slot único filtrado,
+  esferas soapstone=1/50 de durabilidade e aluminium=2/100), **sem renderer custom**: modelo hull
+  com o overlay `ball_hatch` do GTOCore e o comportamento GTO (40 de dano ao tocar em
+  funcionamento; a esfera não é devolvida se a hatch for removida em funcionamento). A UI é a slot
+  LDLib padrão, não a tela do `ItemPartMachine` do gtolib.
+- Prefixo `MILLED`: `GTNATagPrefix.MILLED` (`milled_%s`, tag `milleds/%s`, icon `milled`,
+  `GTNAMaterialFlags.GENERATE_MILLED`), textura copiada e override
+  `assets/gtceu/models/item/material_sets/dull/milled.json` → `gtna:item/material_sets/dull/milled`
+  (fidelidade ao GTO, que também só envia o template `dull`). Flag adicionada aos 12 materiais
+  GTCEu das receitas (Grossular, Almandine, Chalcopyrite, NaquadahEnriched, Platinum, Redstone,
+  Monazite, Pentlandite, Nickel, Spessartine, Pyrope, Sphalerite) via `MaterialAdd`.
+- Data key `GTNARecipeDataKeys.GRINDBALL = "grindball"`.
+- Receitas (`GTNAIsaMillRecipes`, registrado no `GTNAGTAddon`): as 48 do `classified/IsaMill.java`
+  com EUt 1920 / duração / água / quantidade / circuito idênticos
+  (`TagUtils.createTGItemTag("ores/x")` → `TagPrefix.ore`; `TagPrefix.rawOre` mantido). Também
+  foram portadas as receitas do casing/gearbox/pipe (Assembler), das duas esferas (Forming Press),
+  da Ball Hatch (Assembler) e do controlador (Assembly Line com station research 32 CWU/t).
+- Substituições/expansões documentadas: a Control Hatch do GTO não é portada; o recovery stack
+  dinâmico do JEI também não (a API do GTCEu é um `Supplier` estático). Para manter a receita do
+  controlador **presente e fiel**, os três materiais exclusivos do GTO que ela usa (Inconel-625,
+  Inconel-792, Tantalloy-61) foram portados 1:1 de `MaterialA` (componentes, cor, icon set, blast e
+  flags); as rotas de produção são as automáticas do GTCEu (alloy blast/EBF/mixer), o que o
+  GameTest confirma para o Inconel-625.
+- Lang en (`GTNALangProvider`, inclui `tagprefix.milled` e `gtna.recipe.grindball`) + pt_br
+  (`pt_br.json`), nomes dos blocos/itens, atribuição em `GTNASources` (`isa_mill`,
+  `grind_ball_hatch`) e texturas no `THIRD_PARTY_NOTICES.md`.
+- QA automático em `GTNAMachineGameTests`:
+  - `isaMillFormsWithBallHatch` — A1 formação pelo `.mbs` (7×3×3 e orientação gravada); A2 negativo
+    (Gold Block no gearbox e Fluid Hatch no tubo); A3 hatches de item/fluido/energia/manutenção e a
+    Ball Hatch aceita; A5-gate (esfera ausente/tier errado não iniciam, tier certo inicia, dano 2 e
+    destruição no limite); A6 **48** receitas + alloy blast do Inconel-625; A7 receita do
+    controlador na Assembly Line.
+  - `isaMillGrindsOreWithGrindingBall` — execução real: 1 minério de Grossular + 100 mB de água
+    destilada + esfera de soapstone → 96 MILLED Grossular, overclock perfeito (4800 → 1200 ticks) e
+    2 de dano na esfera.
+  - Detalhe descoberto no teste: o Muffler Hatch é obrigatório (`setExactLimit(1)` no GTO) e a face
+    frontal dele precisa ficar livre, senão `IMufflerMachine.modifyRecipe` devolve null.
+- Validação: `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` passou com
+  **26/26 classes de teste unitário**, **69/69 GameTests** (`All 69 required tests passed`) e
+  `runData` repetido com `written: 0`.
+- Pendências manuais: QA in-game dos modelos/CTM Inconel, tooltip en/pt_br, JEI (categoria e a
+  linha `Grinding Ball Material`), rotação/colocação do controlador e a ausência da animação
+  idle/spinning da esfera. Sem commit ou publicação.
+
+### G-0103 (2026-09-25) — Mega Alloy Blast Smelter
+
+- Port de `mega_alloy_blast_smelter` (id exclusivo do GTOCore; o `alloy_blast_smelter` normal já
+  existe no GTCEu e não foi duplicado). Estrutura GTO 11×18×11 copiada em linha, carcaça GCYM de
+  alta temperatura, bobinas, `HEAT_VENT`, vidro temperado, intake extremo, fireboxes e tubulação.
+- Comportamento: `MegaAlloyBlastSmelterMachine` (CoilWorkableElectricMultiblockMachine) roda
+  `GCYMRecipeTypes.ALLOY_BLAST_RECIPES` com Parallel Hatch, gate de temperatura de bobina e bônus de
+  0,8× EU / 0,6× duração. O `UPGRADE_GCYM_OVERCLOCKING` do gtolib é nativo/fechado; o port usa o
+  overclock padrão de Alloy Blast do GTCEu e documenta a diferença.
+- Substituições documentadas: a célula de "integral framework" (tier-block do GTO) virou moldura de
+  Tungstênio-Aço; `autoGCYMAbilities` virou `autoAbilities`.
+- Sem novos blocos, materiais ou recipe types. Atribuição em `GTNASources` e
+  `THIRD_PARTY_NOTICES.md`.
+- Validação: gate completo passou com **66/66 GameTests** e datagen determinístico (6 arquivos
+  novos). Teste in-game pendente. Sem commit ou publicação.
+- Roadmap dos candidatos restantes (com os bloqueios de recursos GTO) registrado no handoff.
+
+### G-0102 (2026-09-25) — Fábrica Química (Chemical Plant)
+
+- Port de `chemical_plant` a partir do GTOCore `dc4824d`: estrutura comprimida 5×5×5 copiada para
+  `pattern/gto/chemical_plant.mbs` (carcaça de PTFE inerte com mínimo de 60 blocos, bobinas de
+  aquecimento e tubulação de PTFE). Roda `LARGE_CHEMICAL_RECIPES`.
+- Comportamento: `ChemicalPlantMachine` (CoilWorkableElectricMultiblockMachine) com Parallel
+  Hatch, overclock perfeito e bônus de eficiência de bobina de `1 - tier × 0.05` em EU e duração,
+  exatamente o valor que o GTO exibe no controlador. O `coilReductionOverclock(0.25)` do gtolib é
+  nativo/fechado; o argumento de duração não pôde ser verificado e está documentado.
+- GTO usa uma Hatch de Catalisador e o Machine Access Link (peças exclusivas do GTO) que não foram
+  portados; o predicado da carcaça mantém o resto idêntico.
+- Receita do controlador: **omitida por decisão do autor** (a original é Assembly Line com
+  WatertightSteel e outros recursos exclusivos do GTO). Um port completo exigiria portar a cadeia
+  de materiais do GTO.
+- Texturas: overlay reaproveitado do Reator Químico Grande do GTCEu (mesma carcaça de PTFE inerte);
+  sem asset novo. Atribuição no `GTNASources` e `THIRD_PARTY_NOTICES.md`.
+- Validação: `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` passou com
+  **65/65 GameTests** e datagen determinístico (15 arquivos novos gerados). Teste in-game pendente.
+  Sem commit ou publicação.
+
+### G-0101 (2026-09-25) — Component Assembler base e Large Greenhouse
+
+- Decisão do autor: continuar todos os candidatos viáveis até LuV; criar equivalentes GTNA para
+  dependências externas e rotas alternativas com os mesmos insumos quando um controlador excluído
+  for necessário. Sem commit/publicação antes do teste in-game e aprovação do autor.
+- Component Assembler: estrutura GTO 7×5×5, casings LV–IV de tier uniforme, casing multifuncional,
+  controller e 40 receitas de componentes (oito para cada tier LV–IV). A máquina só aceita uma
+  receita até o tier de casing formado. Texturas dos casings vieram do GTOCore `dc4824d`, com
+  atribuição em `GTNASources` e `THIRD_PARTY_NOTICES.md`. A estrutura extra grande, receitas ULV e
+  processamento LuV+ ainda não foram portados; o port atual é a base funcional.
+- Large Greenhouse: estrutura GTO comprimida 9×10×9, modos Greenhouse e Tree Growth Simulator,
+  receita do controlador LuV e família GTO de árvores vanilla + entradas condicionais quando os
+  respectivos mods estão presentes. `minecraft:mud` substitui Rich Soil se Farmer's Delight não
+  estiver instalado. Como no GTO, a máquina não exige luz solar.
+- Validação: gate inicial `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`
+  passou; após o Component Assembler, o gate completo passou com 61/61 GameTests e `runData`
+  determinístico (`written: 0`). Após a Large Greenhouse, `spotlessApply compileJava
+  runGameTestServer --offline` passou com 62/62 GameTests. Falta repetir o gate completo após a
+  receita final da carcaça multifuncional e as próximas mudanças. Teste manual in-game pendente.
+- Próximo: continuar os candidatos HV–LuV do handoff; revisar as dependências específicas de cada
+  um antes de marcar o port completo. Nenhum commit ou publicação deste lote foi feito.
 
 ### G-0100 (2026-09-25) — GitHub Release v0.5.1 publicado
 

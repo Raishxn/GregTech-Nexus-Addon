@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "gtna:block/casings/naquadah_reinforced_plant_casing"
+    "all": "gtna:block/casings/hyper_mechanical_casing"
   }
 }

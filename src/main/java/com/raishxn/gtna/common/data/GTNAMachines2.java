@@ -15,6 +15,7 @@ import com.gregtechceu.gtceu.api.pattern.Predicates;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
+import com.gregtechceu.gtceu.common.data.models.GTMachineModels;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +24,7 @@ import net.minecraftforge.fml.ModList;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.feature.OverclockHatchMath;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
+import com.raishxn.gtna.client.renderer.machine.BallHatchRenderer;
 import com.raishxn.gtna.common.data.multiblock.GTNAMultiBlockFileReader;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamApiaryModule;
@@ -37,6 +39,7 @@ import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamOreP
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamWeatherModule;
 import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.AdvancedParallelHatchPartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.BallHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.InfiniteInputBusPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.InfiniteInputHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostFluidHatchPartMachine;
@@ -83,6 +86,8 @@ public class GTNAMachines2 {
     public static MachineDefinition ME_BIG_STORAGE_ACCESS_HATCH;
     public static MachineDefinition ME_IO_PORT_HATCH;
     public static MachineDefinition DIRECTED_TESSERACT_GENERATOR;
+    /** GTOCore {@code GRIND_BALL_HATCH}: single-slot grinding-ball part for the ISA Mill. */
+    public static MachineDefinition GRIND_BALL_HATCH;
 
     // Steam Elevator modules (GTNL port, LGPLv3)
     public static MachineDefinition STEAM_ELEVATOR_FLIGHT_MODULE_I;
@@ -112,6 +117,7 @@ public class GTNAMachines2 {
         registerPatternBuffers();
         registerCraftingCpuInterface();
         registerMEStorageAccessHatches();
+        registerGrindBallHatch();
         registerDirectedTesseract();
         registerParallelHatch(GTValues.UHV, 1024);
         registerParallelHatch(GTValues.UEV, 4096);
@@ -308,6 +314,25 @@ public class GTNAMachines2 {
                 // MetaMachineBlock inserts; listing it here as well printed it twice.
                 .tooltips(
                         Component.translatable("gtna.machine.me_storage_access_hatch.network"),
+                        Component.translatable("gtceu.part_sharing.disabled"))
+                .register();
+    }
+
+    /**
+     * GTOCore {@code grind_ball_hatch}: the ISA Mill's grinding-ball slot and front rotor overlay.
+     */
+    private static void registerGrindBallHatch() {
+        GRIND_BALL_HATCH = REGISTRATE
+                .machine("grind_ball_hatch", BallHatchPartMachine::new)
+                .tier(GTValues.IV)
+                .rotationState(RotationState.ALL)
+                .abilities(GTNAPartAbility.GRIND_BALL_HATCH)
+                .model(GTMachineModels.createColorOverlayTieredHullMachineModel(
+                        GTNACORE.id("block/overlay/machine/ball_hatch"), null, null)
+                        .andThen(builder -> builder.addDynamicRenderer(BallHatchRenderer::new)))
+                .tooltips(
+                        Component.translatable("gtna.machine.grind_ball_hatch.tooltip.0"),
+                        Component.translatable("gtna.machine.grind_ball_hatch.tooltip.1"),
                         Component.translatable("gtceu.part_sharing.disabled"))
                 .register();
     }

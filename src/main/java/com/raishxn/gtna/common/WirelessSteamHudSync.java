@@ -9,8 +9,10 @@ import net.minecraftforge.fml.common.Mod;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
+import com.raishxn.gtna.common.data.NexusEnergyNetwork;
 import com.raishxn.gtna.common.data.SteamNetworkData;
 import com.raishxn.gtna.network.GTNANetworkHandler;
+import com.raishxn.gtna.network.packet.SWirelessEnergyStats;
 import com.raishxn.gtna.network.packet.SWirelessSteamStats;
 
 import java.util.HashMap;
@@ -52,6 +54,14 @@ public final class WirelessSteamHudSync {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             online.add(player.getUUID());
             GTNANetworkHandler.sendToPlayer(snapshot(level, player.getUUID()), player);
+            NexusEnergyNetwork energy = NexusEnergyNetwork.get(level);
+            UUID owner = player.getUUID();
+            GTNANetworkHandler.sendToPlayer(new SWirelessEnergyStats(
+                    energy.getEnergy(owner).toHumanReadableString(),
+                    energy.getMaxCapacity(owner).toHumanReadableString(),
+                    energy.getLastInputPerTick(owner).toHumanReadableString(),
+                    energy.getLastOutputPerTick(owner).toHumanReadableString(),
+                    energy.getConnections(owner).size()), player);
         }
         // Drop the samples of players that logged off so a later login starts at delta 0 instead
         // of reporting everything produced while they were away.

@@ -6,6 +6,7 @@ import com.gregtechceu.gtceu.api.registry.GTRegistries;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -71,6 +72,20 @@ public final class GTNASources {
             Map.entry("fishing_ground", GTO),
             Map.entry("evaporation_plant", GTO),
             Map.entry("greenhouse", GTO),
+            Map.entry("component_assembler", GTO),
+            Map.entry("component_assembly_line", GTO),
+            Map.entry("large_greenhouse", GTO),
+            Map.entry("blaze_blast_furnace", GTO),
+            Map.entry("cold_ice_freezer", GTO),
+            Map.entry("chemical_plant", GTO),
+            Map.entry("mega_alloy_blast_smelter", GTO),
+            Map.entry("isa_mill", GTO),
+            Map.entry("grind_ball_hatch", GTO),
+            Map.entry("rocket_large_turbine", GTO),
+            Map.entry("supercritical_steam_turbine", GTO),
+            Map.entry("industrial_flotation_cell", GTO),
+            Map.entry("vacuum_drying_furnace", GTO),
+            Map.entry("iv_dehydrator", GTO),
             // --- GT: Not Leisure ---
             Map.entry("large_steam_crusher", GTNL),
             Map.entry("large_steam_furnace", GTNL),
@@ -146,6 +161,13 @@ public final class GTNASources {
         return SOURCES.containsKey(path);
     }
 
+    /** These machines have a complete curated tooltip, so GTCEu's generic short line is redundant. */
+    public static boolean hasCuratedGtoTooltip(MultiblockMachineDefinition definition) {
+        String path = definition.getId().getPath();
+        return GTO.equals(SOURCES.get(path)) &&
+                ("blaze_blast_furnace".equals(path) || GTNAGTOTooltips.handles(path));
+    }
+
     /** The "Source: <addon>" tooltip line for a source id. The addon name is animated on the client. */
     public static Component line(String sourceId) {
         Component addon = Component.translatable("gtna.source." + sourceId);
@@ -178,8 +200,43 @@ public final class GTNASources {
             }
             BiConsumer<ItemStack, List<Component>> original = definition.getTooltipBuilder();
             definition.setTooltipBuilder((stack, components) -> {
+                if ("blaze_blast_furnace".equals(id.getPath())) {
+                    for (int i = 0; i < 4; i++) {
+                        components.add(Component.translatable("gtna.gto.blaze.story." + i)
+                                .withStyle(ChatFormatting.GRAY));
+                    }
+                    components.add(Component.translatable("gtna.gto.running_requirements")
+                            .withStyle(ChatFormatting.GOLD));
+                    components.add(Component.translatable("gtna.gto.blaze.requirement"));
+                    components.add(Component.translatable("gtna.gto.blaze.consumption")
+                            .withStyle(ChatFormatting.GRAY));
+                    components.add(Component.translatable("gtna.gto.blaze.time"));
+                    components.add(Component.translatable("gtna.gto.blaze.parallel"));
+                    components.add(Component.translatable("gtna.gto.blaze.recipe_type"));
+                    components.add(line(sourceId));
+                    return;
+                }
+                if (definition instanceof MultiblockMachineDefinition gtoMultiblock && GTO.equals(sourceId) &&
+                        GTNAGTOTooltips.append(gtoMultiblock, components)) {
+                    return;
+                }
                 if (original != null) {
                     original.accept(stack, components);
+                }
+                if (definition instanceof MultiblockMachineDefinition multiblock && GTO.equals(sourceId)) {
+                    var types = multiblock.getRecipeTypes();
+                    if (types.length > 0) {
+                        MutableComponent recipeTypes = Component.translatable("gtna.tooltip.recipe_types")
+                                .withStyle(ChatFormatting.GOLD);
+                        for (int i = 0; i < types.length; i++) {
+                            if (i > 0) recipeTypes.append(Component.literal(", ").withStyle(ChatFormatting.GRAY));
+                            ResourceLocation recipeId = types[i].registryName;
+                            recipeTypes.append(Component.translatable(
+                                    recipeId.getNamespace() + "." + recipeId.getPath())
+                                    .withStyle(ChatFormatting.GRAY));
+                        }
+                        components.add(recipeTypes);
+                    }
                 }
                 components.add(Component.literal(SEPARATOR).withStyle(ChatFormatting.DARK_GRAY));
                 components.add(line(sourceId));

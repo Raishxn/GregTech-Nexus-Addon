@@ -1,0 +1,11 @@
+{
+  "parent": "gtceu:block/cube_2_layer/bottom_top",
+  "textures": {
+    "bot_bottom": "gtna:block/casings/sided/machining_control_casing_mk2/top",
+    "bot_side": "gtna:block/casings/sided/machining_control_casing_mk2/side",
+    "bot_top": "gtna:block/casings/sided/machining_control_casing_mk2/top",
+    "top_bottom": "gtna:block/casings/sided/machining_control_casing_mk2/top",
+    "top_side": "gtna:block/casings/sided/machining_control_casing_mk2/side_bloom",
+    "top_top": "gtna:block/casings/sided/machining_control_casing_mk2/top"
+  }
+}

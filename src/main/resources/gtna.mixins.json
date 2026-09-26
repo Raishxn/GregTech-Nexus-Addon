@@ -22,12 +22,13 @@
     "gtceu.MultiblockControllerMachineMixin",
     "gtceu.MultiblockMachineDefinitionMixin",
     "gtceu.WorkableElectricMultiblockMachineMixin",
-    "gtceu.PredicatesMixin",
     "gtceu.GTRecipeLogicMixin",
     "gtceu.RecipeHelperMixin",
     "kubejs.DataGeneratorMixin"
   ],
   "client": [
+    "client.MultiblockInfoSlotGuardMixin",
+    "client.GTRecipeWidgetMixin",
     "client.FancyMachineUIWidgetMixin",
     "client.CoreCraftConfirmScreenMixin"
   ],

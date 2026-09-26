@@ -28,10 +28,16 @@ public class SubPatternEventJS extends EventJS {
     /** The optional key is resolved by the client's language pack when the controller tooltip opens. */
     public void add(String machineId, Function<MultiblockMachineDefinition, BlockPattern> factory,
                     String descriptionKey) {
+        add(machineId, factory, descriptionKey, 1.0, false);
+    }
+
+    /** Speed bonus applies only while this module is formed. Use 2.0 for twice the recipe speed. */
+    public void add(String machineId, Function<MultiblockMachineDefinition, BlockPattern> factory,
+                    String descriptionKey, double speedBonus, boolean perfectOverclock) {
         ResourceLocation id = ResourceLocation.tryParse(machineId);
         if (id == null) {
             throw new IllegalArgumentException("Invalid machine id: " + machineId);
         }
-        GTNASubPatterns.registerKubeJS(id, factory, descriptionKey);
+        GTNASubPatterns.registerKubeJS(id, factory, descriptionKey, speedBonus, perfectOverclock);
     }
 }

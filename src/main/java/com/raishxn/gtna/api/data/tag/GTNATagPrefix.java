@@ -165,5 +165,21 @@ public class GTNATagPrefix {
             .generateItem(true)
             .generationCondition(hasDustProperty.and(mat -> mat.hasFlag(GTNAMaterialFlags.GENERATE_BRICK)));
 
+    /**
+     * GTOCore {@code MILLED}: ore/raw-ore products of the ISA Mill. Kept 1:1 with the GTO prefix
+     * ({@code milled_%s}, tag {@code milleds/%s}, icon type {@code milled}); the item model is the
+     * {@code assets/gtceu/models/item/material_sets/dull/milled.json} override that GTO also ships.
+     */
+    public static final TagPrefix MILLED = new TagPrefix("milled")
+            .idPattern("milled_%s")
+            .defaultTagPath("milleds/%s")
+            .unformattedTagPath("milleds")
+            .langValue("Milled %s")
+            .materialAmount(GTValues.M)
+            .materialIconType(new MaterialIconType("milled"))
+            .unificationEnabled(true)
+            .generateItem(true)
+            .generationCondition(mat -> mat.hasFlag(GTNAMaterialFlags.GENERATE_MILLED));
+
     public static void register() {}
 }

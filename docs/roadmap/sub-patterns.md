@@ -49,6 +49,21 @@ Notas:
 - Máquinas Java usam a interface `ISubPatternMachine` (ver `LiquefactionFurnaceMachine` como
   exemplo); o registry é o caminho para KubeJS/datapacks.
 
+### Módulos de desempenho em `gtna:multiple_recipes`
+
+O overload `event.add(id, factory, descriptionKey, speedBonus, perfectOverclock)` configura bônus
+que só entram em vigor quando **aquele módulo** forma. `speedBonus=2.0` reduz a duração à metade;
+valores maiores são aceitos (teto combinado de 1024×). `perfectOverclock=true` aplica o overclock
+perfeito quando não há Overclock Hatch substituindo a curva. Os bônus são usados pela classe GTNA
+`WorkableElectricMultipleRecipesMachine` e por `GTNAMultipleRecipesLogic` na execução real.
+
+O binding `GTNAPartAbility` publica `PARALLEL_HATCH` e `PARALLEL_CONTROL_HATCH` (sinônimos para a
+ability de Parallel Hatch do GTCEu), `OVERCLOCK_HATCH` e `ACCELERATE_HATCH`. Use cada um em
+`Predicates.abilities(...).setMaxGlobalLimited(1)` no slot desejado. O Parallel Hatch define a
+quantidade de receitas paralelas; o Accelerate Hatch aplica seu bônus de duração por tier; o
+Overclock Hatch fornece sua curva de overclock. Veja o script completo em
+[`examples/kubejs/server_scripts/gtna_multiple_recipes_module.js`](../../examples/kubejs/server_scripts/gtna_multiple_recipes_module.js).
+
 ## Na UI e no preview (G-0066)
 
 - **Contagem na UI:** todo multibloco expõe `IGTNAModuleHost` (implementado pelo

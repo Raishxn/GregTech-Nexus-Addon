@@ -44,7 +44,8 @@ public class GTNALangProvider extends LanguageProvider {
             GTNATagPrefix.singularity,
             GTNATagPrefix.brick,
             GTNATagPrefix.roughBlank,
-            GTNATagPrefix.flake
+            GTNATagPrefix.flake,
+            GTNATagPrefix.MILLED
     };
 
     public GTNALangProvider(PackOutput output) {
@@ -147,11 +148,74 @@ public class GTNALangProvider extends LanguageProvider {
         add(GTNATagPrefix.brick.getUnlocalizedName(), "Brick");
         add(GTNATagPrefix.roughBlank.getUnlocalizedName(), "Rough Blank");
         add(GTNATagPrefix.flake.getUnlocalizedName(), "Flake");
+        // Milled items are the first GTNA prefix applied to GTCEu materials, so the prefix string
+        // must keep the material argument (as GTO's "Milled %s").
+        add(GTNATagPrefix.MILLED.getUnlocalizedName(), "Milled %s");
     }
 
     private void addStaticTranslations() {
         // --- Ported-content attribution (appended to machine tooltips by GTNASources) ---
         add("gtna.tooltip.source", "Source: %s");
+        add("gtna.tooltip.block_properties", "Hardness: %s Blast Resistance: %s");
+        add("gtna.jade.need_grind_ball", "Need to grind ball");
+        add("gtna.ui.voiding_mode", "Voiding Mode: %s");
+        add("gtna.ui.parallel_max", "Performing up to %s Recipes in Parallel");
+        add("gtna.ui.heat_capacity", "Heat Capacity: %s");
+        add("gtna.ui.no_recipe_found", "No Recipe found");
+        add("gtna.jade.energy_multiplier", "Total Energy Cost Multiplier: %s");
+        add("gtna.jade.time_multiplier", "Total Time Cost Multiplier: %s");
+        add("gtna.jade.chunk_not_forced", "The chunk the machine is in is not forced loaded");
+        add("gtna.tooltip.gto_story", "GTO Story:");
+        add("gtna.gto.blaze.header", "§9GTO Core | Machine");
+        add("gtna.gto.blaze.story.0",
+                "A new employee transferred from Tinker's Construct seems particularly fond of blazes, keeping a blaze spawner in the company's electric furnace array");
+        add("gtna.gto.blaze.story.1",
+                "After a day, all furnaces were coated with scalding blaze residue, and strangely all machines suddenly doubled their speed");
+        add("gtna.gto.blaze.story.2",
+                "These blaze-coated furnaces also gained 64-item batch processing capability, with efficiency growing exponentially");
+        add("gtna.gto.blaze.story.3",
+                "The spawner was later ordered removed, but this blaze acceleration technology was widely adopted across the company");
+        add("gtna.gto.running_requirements", "- Running Requirements");
+        add("gtna.gto.blaze.requirement",
+                "§e∘ Requires to provide §b 2^(Voltage tier - 2 ) * 10mb/s§r of §6Liquid  Blaze");
+        add("gtna.gto.blaze.consumption", "# Consumes Liquid Blaze once immediately when the recipe starts");
+        add("gtna.gto.blaze.time", "§9- Time Cost Multiply : 0.5");
+        add("gtna.gto.blaze.parallel", "§a- Parallel Number : 64");
+        add("gtna.gto.blaze.recipe_type", "§e- Recipes Type : §fElectric Blast Furnace");
+        add("gtna.jade.hardness", "Hardness: %s");
+        add("gtna.jade.blast_resistance", "Blast Resistance: %s");
+        add("gtna.tooltip.recipe_types", "Recipe Types: ");
+        add("gtna.story.fishing_ground.0", "Like eating fish?");
+        add("gtna.story.fishing_ground.1", "The AFFL-200 fishing farm is a regular in GregTech cuisine.");
+        add("gtna.story.fishing_ground.2", "Its intelligent breeding system delivers remarkable output.");
+        add("gtna.story.fishing_ground.3", "It feeds an entire branch office with aquatic food.");
+        add("gtna.story.component_assembler.0",
+                "GTO's gift to new employees makes assembly feel like building blocks.");
+        add("gtna.story.component_assembler.1", "The base handles recipes through IV; its extension reaches UV.");
+        add("gtna.story.component_assembler.2",
+                "Treat it well: your first salary may cost less than one of its parts.");
+        add("gtna.story.blaze_blast_furnace.0",
+                "A new Tinkers' Construct employee kept a blaze spawner among the furnaces.");
+        add("gtna.story.blaze_blast_furnace.1",
+                "The furnaces gained a coat of blaze residue and suddenly ran twice as fast.");
+        add("gtna.story.blaze_blast_furnace.2", "They could also process 64 items in a batch.");
+        add("gtna.story.blaze_blast_furnace.3", "The spawner was removed, but blaze acceleration stayed.");
+        add("gtna.story.cold_ice_freezer.0", "A liquid ice leak led to the discovery of this cryogenic machine.");
+        add("gtna.story.cold_ice_freezer.1",
+                "The ice reacted with the aluminium frame to create a stable superconducting space.");
+        add("gtna.story.cold_ice_freezer.2",
+                "Tungsten steel pipes circulate the cold in a vortex and freeze 64 samples at once.");
+        add("gtna.story.cold_ice_freezer.3",
+                "The employee behind the accident vanished, but the chairman treasures the machine.");
+        add("gtna.story.isa_mill.0", "The Isa 1672N mill is green on the outside, but hardly eco-friendly.");
+        add("gtna.story.isa_mill.1", "Its exhaust smells strange, and few workers want to touch the messy output.");
+        add("gtna.story.isa_mill.2", "Wet ball milling crushes ores with remarkable efficiency.");
+        add("gtna.story.isa_mill.3", "The scientists reluctantly admit that brute force sometimes works.");
+        add("gtna.story.industrial_flotation_cell.0", "The Isa U-276 ore separator is a mature purification machine.");
+        add("gtna.story.industrial_flotation_cell.1",
+                "Pine oil flotation leaves the workshop smelling of essential balm.");
+        add("gtna.story.industrial_flotation_cell.2", "At least mosquitoes rarely bite anyone working here.");
+        add("gtna.story.industrial_flotation_cell.3", "Safety first; stay alert around the machinery!");
         add("gtna.tooltip.machine_type", "Machine Type: %s");
         add("gtna.source.gto", "GregTech Odyssey (GTO)");
         add("gtna.source.gtnl", "GT: Not Leisure (GTNL)");
@@ -180,9 +244,12 @@ public class GTNALangProvider extends LanguageProvider {
                 "  Expansion structures can install additional hatches to bring additional bonuses.");
         add("gtna.machine.auxiliary_module.unlocked",
                 "Hatch types unlocked by installing auxiliary modules : %s");
+        add("gtna.machine.auxiliary_module.recipe_types",
+                "Recipe types unlocked by installing auxiliary modules : %s");
         add("gtna.machine.auxiliary_module.hatch.accelerate", "Accelerate Hatch");
         add("gtna.machine.auxiliary_module.hatch.extra_energy", "Extra Energy Hatch");
         add("gtna.machine.auxiliary_module.hatch.parallel", "Parallel Hatch");
+        add("gtna.machine.auxiliary_module.hatch.laser", "Laser Hatch");
         add("gtna.machine.auxiliary_module.kubejs.generic",
                 "Expands the structure with abilities defined by the server script.");
         add("gtna.machine.auxiliary_module.kubejs.item_import", "Unlocks an additional Item Import Bus.");
@@ -396,6 +463,214 @@ public class GTNALangProvider extends LanguageProvider {
                 "§cInsufficient sunlight slows growth; no sunlight stops it.");
         add("gtna.machine.greenhouse.tooltip.2",
                 "§7Use Rich Soil or §bMud§7 in the planting beds.");
+        add("block.gtna.multi_functional_casing", "Multi Functional Casing");
+        add("block.gtna.component_assembly_casing_lv", "LV Component Assembly Casing");
+        add("block.gtna.component_assembly_casing_mv", "MV Component Assembly Casing");
+        add("block.gtna.component_assembly_casing_hv", "HV Component Assembly Casing");
+        add("block.gtna.component_assembly_casing_ev", "EV Component Assembly Casing");
+        add("block.gtna.component_assembly_casing_iv", "IV Component Assembly Casing");
+        add("block.gtna.component_assembly_casing_luv", "LuV Component Assembly Casing");
+        add("block.gtna.component_assembly_casing_zpm", "ZPM Component Assembly Casing");
+        add("block.gtna.component_assembly_casing_uv", "UV Component Assembly Casing");
+        add("block.gtna.component_assembler", "Component Assembler");
+        add("gtna.component_assembly", "Component Assembly");
+        add("gtna.recipe.component_assembly.tier", "Casing Tier: %s");
+        add("gtna.recipe.eu_usage", "Usage: %s EU/t");
+        add("block.gtna.molecular_casing", "Molecular Casing");
+        add("block.gtna.boron_carbide_ceramic_radiation_resistant_mechanical_cube",
+                "Boron Carbide Radiation Resistant Casing");
+        add("block.gtna.precision_processing_mechanical_casing", "Precision Processing Mechanical Casing");
+        add("block.gtna.advanced_assembly_line_unit", "Advanced Assembly Line Unit");
+        add("block.gtna.chemical_corrosion_resistant_pipe_casing", "Chemical Corrosion Resistant Pipe Casing");
+        add("block.gtna.machine_casing_circuit_assembly_line", "Circuit Assembly Line Machine Casing");
+        add("block.gtna.spacetime_assembly_line_unit", "Spacetime Assembly Line Unit");
+        add("block.gtna.pressure_containment_casing", "Pressure Containment Casing");
+        add("gtna.multiblock.pattern.error.component_casing_tier", "Component assembly casings must have one tier");
+        add("gtna.machine.component_assembler.casing_tier", "Casing tier: %s");
+        add("gtna.machine.component_assembler.tooltip",
+                "§6Main Function:§r §7Assembles batches of 16 electric components from materials and circuits.");
+        add("gtna.machine.component_assembler.tooltip.0", "§7The tier of every component casing must match.");
+        add("gtna.machine.component_assembler.tooltip.1",
+                "§7The base structure supports recipes up to §bIV§7; a formed extension raises the cap to §bUV§7.");
+        add("gtna.machine.component_assembler.tooltip.2",
+                "§7Each batch needs the casing tier shown in its recipe and a numbered circuit.");
+        add("block.gtna.large_greenhouse", "Large Greenhouse");
+        add("gtna.tree_growth_simulator", "Tree Growth Simulator");
+        // GTNA recipe-type display names (GTCEu uses <namespace>.<path> as the category title).
+        add("gtna.annihilate_generator", "Annihilation Generator");
+        add("gtna.atomization_condensation", "Atomization Condensation");
+        add("gtna.dehydrator", "Dehydrator");
+        add("block.gtna.lv_dehydrator", "Basic Dehydrator");
+        add("block.gtna.mv_dehydrator", "Advanced Dehydrator");
+        add("block.gtna.hv_dehydrator", "Advanced Dehydrator II");
+        add("block.gtna.ev_dehydrator", "Advanced Dehydrator III");
+        add("block.gtna.iv_dehydrator", "Elite Dehydrator");
+        add("block.gtna.luv_dehydrator", "Elite Dehydrator II");
+        add("block.gtna.zpm_dehydrator", "Elite Dehydrator III");
+        add("block.gtna.uv_dehydrator", "Ultimate Dehydrator");
+        add("block.gtna.uhv_dehydrator", "Epic Dehydrator");
+        add("block.gtna.uev_dehydrator", "Epic Dehydrator II");
+        add("block.gtna.uiv_dehydrator", "Epic Dehydrator III");
+        add("block.gtna.uxv_dehydrator", "Epic Dehydrator IV");
+        add("block.gtna.opv_dehydrator", "Legendary Dehydrator");
+        add("gtna.flotating_beneficiation", "Flotating Beneficiation");
+        add("gtna.isa_mill", "ISA Mill");
+        add("gtna.rocket_engine", "Rocket Engine");
+        add("gtna.machine.auxiliary_module.kubejs.performance", "2x speed and perfect overclock when formed");
+        add("block.gtna.ev_rocket_engine", "Advanced Rocket Engine III");
+        add("block.gtna.iv_rocket_engine", "Elite Rocket Engine");
+        add("block.gtna.luv_rocket_engine", "Elite Rocket Engine II");
+        add("gtna.supercritical_steam_turbine", "Supercritical Steam Turbine");
+        add("gtna.vacuum_drying", "Vacuum Drying");
+        add("gtna.machine.large_greenhouse.tooltip",
+                "§6Main Function:§r §7Grows crops and trees in two selectable recipe modes.");
+        add("gtna.machine.large_greenhouse.tooltip.0",
+                "§6Running Requirements:§r §aCan cultivate trees and general crops.");
+        add("gtna.machine.large_greenhouse.tooltip.1", "§aCan operate without sunlight.");
+        add("gtna.machine.large_greenhouse.tooltip.2",
+                "§7Tree recipes retain the sapling and use water; fertilizer speeds growth.");
+        add("block.gtna.blaze_casing", "Blaze Casing");
+        add("block.gtna.blaze_blast_furnace", "Blaze Blast Furnace");
+        add("gtna.machine.blaze_blast_furnace.tooltip",
+                "§6Main Function:§r §7Runs Electric Blast Furnace recipes in up to 64 parallel at half duration.");
+        add("gtna.machine.blaze_blast_furnace.tooltip.0",
+                "§7Consumes molten Blaze when a recipe starts and every second while working.");
+        add("gtna.machine.blaze_blast_furnace.tooltip.1",
+                "§7Heating coil temperature must meet the recipe requirement.");
+        add("gtna.machine.blaze_blast_furnace.tooltip.2",
+                "§7Blaze Casings use a Large Chemical Reactor recipe with the original ingredients.");
+        add("block.gtna.cold_ice_casing", "Cold Ice Casing");
+        add("block.gtna.cold_ice_freezer", "Cold Ice Freezer");
+        add("gtna.machine.cold_ice_freezer.tooltip",
+                "§6Main Function:§r §7Runs Vacuum Freezer recipes in up to 64 parallel at half duration.");
+        add("gtna.machine.cold_ice_freezer.tooltip.0",
+                "§7Consumes liquid Ice when a recipe starts and every second while working.");
+        add("gtna.machine.cold_ice_freezer.tooltip.1",
+                "§7Liquid Ice upkeep is 2^(voltage tier - 2) × 10 mB per payment.");
+        add("gtna.machine.cold_ice_freezer.tooltip.2",
+                "§7The base structure only runs Vacuum Freezer recipes; the Naquadah Alloy auxiliary tower unlocks the Atomization Condensation recipes plus one Accelerate Hatch and up to six extra Energy Hatches.");
+        add("block.gtna.chemical_plant", "Chemical Plant");
+        add("gtna.machine.chemical_plant.tooltip",
+                "§6Main Function:§r §7Runs Large Chemical Reactor recipes with a Parallel Hatch and a perfect overclock.");
+        add("gtna.machine.chemical_plant.tooltip.0",
+                "§7Coil Efficiency Bonus: every coil tier above Cupronickel reduces energy and duration by §b5%§7.");
+        add("gtna.machine.chemical_plant.tooltip.1",
+                "§7A Parallel Hatch multiplies the batch; the controller also shows the current multipliers.");
+        add("gtna.machine.chemical_plant.tooltip.2",
+                "§7GTO's Catalyst Hatch and Machine Access Link are not ported.");
+        add("gtna.machine.chemical_plant.eut_multiplier", "§7EU multiplier: §b%s");
+        add("gtna.machine.chemical_plant.duration_multiplier", "§7Duration multiplier: §b%s");
+        add("block.gtna.mega_alloy_blast_smelter", "Mega Alloy Blast Smelter");
+        add("gtna.machine.mega_alloy_blast_smelter.tooltip",
+                "§6Main Function:§r §7Runs Alloy Blast Smelter recipes in a coiled shell with a Parallel Hatch.");
+        add("gtna.machine.mega_alloy_blast_smelter.tooltip.0",
+                "§7Consumes §b80%§7 of the recipe EU and §b60%§7 of its duration.");
+        add("gtna.machine.mega_alloy_blast_smelter.tooltip.1",
+                "§7Heating coil temperature must meet the recipe requirement.");
+        add("gtna.machine.mega_alloy_blast_smelter.tooltip.2",
+                "§7GTO's tiered integral framework cell is replaced by a TungstenSteel frame.");
+        add("gtna.recipe.grindball", "§7Grinding Ball Material: §b%s");
+        add("block.gtna.inconel_625_casing", "Inconel-625 Casing");
+        add("block.gtna.inconel_625_gearbox", "Inconel-625 Gearbox");
+        add("block.gtna.inconel_625_pipe", "Inconel-625 Pipe");
+        add("block.gtna.iridium_casing", "Iridium Casing");
+        add("block.gtna.isa_mill", "ISA Mill");
+        add("gtna.machine.isa_mill.tooltip",
+                "§6Main Function:§r §7Wet-grinds ores and raw ores into Milled products with a §bPerfect Overclock§7 (duration ÷4 per voltage tier).");
+        add("gtna.machine.isa_mill.tooltip.0",
+                "§7A Ball Hatch with a matching grinding ball is required; every operation consumes ball durability.");
+        add("gtna.machine.isa_mill.tooltip.1",
+                "§7Soapstone balls (tier 1) process ore blocks; Aluminium balls (tier 2) halve the duration and yield fewer Milled products.");
+        add("gtna.machine.isa_mill.tooltip.2",
+                "§7Circuit 1 selects the tier-1 mode and circuit 10 selects the tier-2 mode.");
+        add("block.gtna.grind_ball_hatch", "Grinding Ball Hatch");
+        add("gtna.machine.grind_ball_hatch.tooltip",
+                "§6Main Function:§r §7Holds one grinding ball for the ISA Mill.");
+        add("gtna.machine.grind_ball_hatch.tooltip.0",
+                "§7Accepts Soapstone (tier 1) and Aluminium (tier 2) grinding balls.");
+        add("gtna.machine.grind_ball_hatch.tooltip.1",
+                "§7Touching the hatch while the mill is running hurts.");
+        add("item.gtna.grindball_soapstone", "Soapstone Grinding Ball");
+        add("item.gtna.grindball_aluminium", "Aluminium Grinding Ball");
+        add("block.gtna.rocket_large_turbine", "Rocket Large Turbine");
+        add("gtna.machine.rocket_large_turbine.tooltip",
+                "§6Main Function:§r §7An EV rocket turbine that burns rocket fuel and converts rotor power into EU.");
+        add("gtna.machine.rocket_large_turbine.tooltip.0",
+                "§7Base production: §f5120 EU/t§7. An installed rotor is required; output scales with the Rotor Holder.");
+        add("gtna.machine.rocket_large_turbine.tooltip.1",
+                "§7Each Rotor Holder tier above EV adds §f10%§7 efficiency and doubles the output. The rocket engine module adds §f2x output§7, §f+20% efficiency§7 and a §f2x rotor damage§7 multiplier.");
+        add("gtna.machine.rocket_large_turbine.tooltip.2",
+                "§7High-Speed Mode multiplies output by §f3§7 but wears the rotor §f10x§7 faster. Only GTCEu Rocket Fuel is ported; GTO's other rocket fuels are not.");
+        add("gtna.machine.rocket_large_turbine.estimated_output", "§7Estimated Max Output: §b%s EU/t");
+        add("gtna.machine.rocket_large_turbine.high_speed_mode", "High-Speed Mode");
+        add("gtna.machine.rocket_large_turbine.high_speed_enabled", " [§aEnabled§r]");
+        add("gtna.machine.rocket_large_turbine.high_speed_disabled", " [§cDisabled§r]");
+        add("gtna.machine.rocket_large_turbine.module_bonus",
+                "§7Rocket engine module: §f2x output§7, §f+20% efficiency§7, §f2x rotor damage multiplier§7 and up to three extra Energy Output Hatches.");
+        add("block.gtna.supercritical_turbine_casing", "Supercritical Turbine Casing");
+        add("block.gtna.supercritical_steam_turbine", "Supercritical Steam Turbine");
+        add("gtna.machine.supercritical_steam_turbine.tooltip",
+                "§6Main Function:§r §7An IV turbine that expands supercritical steam through a rotor into EU.");
+        add("gtna.machine.supercritical_steam_turbine.tooltip.0",
+                "§7Base production: §f16384 EU/t§7. An installed rotor is required; output scales with the Rotor Holder.");
+        add("gtna.machine.supercritical_steam_turbine.tooltip.1",
+                "§7Each Rotor Holder tier above IV adds §f10%§7 efficiency and doubles the output. The supercritical module adds §f2x output§7, §f+20% efficiency§7 and a §f2x rotor damage§7 multiplier.");
+        add("gtna.machine.supercritical_steam_turbine.tooltip.2",
+                "§7Consumes §fDense Supercritical Steam§7 in place of GTO's Supercritical Steam; the fuel recipe keeps GTO's §f80 mB → 8 mB§7 distilled water numbers.");
+        add("gtna.machine.supercritical_steam_turbine.estimated_output", "§7Estimated Max Output: §b%s EU/t");
+        add("gtna.machine.supercritical_steam_turbine.high_speed_mode", "High-Speed Mode");
+        add("gtna.machine.supercritical_steam_turbine.high_speed_enabled", " [§aEnabled§r]");
+        add("gtna.machine.supercritical_steam_turbine.high_speed_disabled", " [§cDisabled§r]");
+        add("gtna.machine.supercritical_steam_turbine.module_bonus",
+                "§7Supercritical module: §f2x output§7, §f+20% efficiency§7, §f2x rotor damage multiplier§7 and up to three extra Energy Output Hatches.");
+        add("block.gtna.hastelloy_n_75_casing", "Hastelloy N 75 Casing");
+        add("block.gtna.hastelloy_n_75_gearbox", "Hastelloy N 75 Gearbox");
+        add("block.gtna.hastelloy_n_75_pipe", "Hastelloy N 75 Pipe");
+        add("block.gtna.flotation_cell", "Flotation Cell");
+        add("block.gtna.industrial_flotation_cell", "Industrial Flotation Cell");
+        add("gtna.machine.industrial_flotation_cell.tooltip",
+                "§6Main Function:§r §7Froth-floats a MILLED ore with an ethylxanthate reagent and turpentine into an ore foam with a perfect overclock.");
+        add("gtna.machine.industrial_flotation_cell.tooltip.0",
+                "§7Inputs: §f32 ethylxanthate dust§7 (sodium or potassium), §f64 Milled ore§7 and turpentine; output: §f1000 mB§7 of the matching ore foam.");
+        add("gtna.machine.industrial_flotation_cell.tooltip.1",
+                "§7Milled ore comes from the ISA Mill; a Parallel Hatch multiplies the batch. Each recipe runs at its own Voltage tier.");
+        add("gtna.machine.industrial_flotation_cell.tooltip.2",
+                "§7GTO's metal-compound-particle recipe is not ported (it needs GTO space-era materials), so only the twelve ore foams are available.");
+        add("block.gtna.red_steel_casing", "Red Steel Casing");
+        add("block.gtna.three_proof_computer_casing", "Three-Proof Computer Casing");
+        add("block.gtna.machining_control_casing_mk2", "Machining Control Casing MK II");
+        add("block.gtna.energy_control_casing_mk2", "Energy Control Casing MK II");
+        add("block.gtna.electric_power_transmission_casing", "Electric Power Transmission Casing");
+        add("block.gtna.titanium_nitride_ceramic_impact_resistant_mechanical_block",
+                "Titanium Nitride Ceramic Impact-Resistant Mechanical Block");
+        add("block.gtna.component_assembly_line_casing_lv", "LV Component Assembly Line Casing");
+        add("block.gtna.component_assembly_line_casing_mv", "MV Component Assembly Line Casing");
+        add("block.gtna.component_assembly_line_casing_hv", "HV Component Assembly Line Casing");
+        add("block.gtna.component_assembly_line_casing_ev", "EV Component Assembly Line Casing");
+        add("block.gtna.component_assembly_line_casing_iv", "IV Component Assembly Line Casing");
+        add("block.gtna.component_assembly_line_casing_luv", "LuV Component Assembly Line Casing");
+        add("block.gtna.component_assembly_line_casing_zpm", "ZPM Component Assembly Line Casing");
+        add("block.gtna.component_assembly_line_casing_uv", "UV Component Assembly Line Casing");
+        add("block.gtna.component_assembly_line", "Component Assembly Line");
+        add("gtna.machine.component_assembly_line.tooltip",
+                "§6Main Function:§r §7Runs the component assembly batches as a tier-cased line with a Parallel Hatch.");
+        add("gtna.machine.component_assembly_line.tooltip.0",
+                "§7Every component assembly line casing must share one tier; a batch cannot start above that tier.");
+        add("gtna.machine.component_assembly_line.tooltip.1",
+                "§7The line handles the LV–IV batches plus the eight LuV, ZPM and UV batches of the Component Assembler extension.");
+        add("gtna.machine.component_assembly_line.tooltip.2",
+                "§7GTNA ports the LV–UV casing tiers; UHV and above are documented as out of scope. GTO's cross-recipe threads are not ported.");
+        add("gtna.machine.component_assembly_line.casing_tier", "Casing tier: %s");
+        add("block.gtna.vacuum_drying_furnace", "Vacuum Drying Furnace");
+        add("gtna.machine.vacuum_drying_furnace.tooltip",
+                "§6Main Function:§r §7Dries flotation ore foams back into GTCEu dusts, Red Mud and Water, or runs the Dehydrator family.");
+        add("gtna.machine.vacuum_drying_furnace.tooltip.0",
+                "§7Vacuum Drying mode: §f4000 mB ore foam§7 → six dust stacks + §f200 mB Red Mud§7 + §f2000 mB Water§7. Coil temperature must reach the recipe temperature.");
+        add("gtna.machine.vacuum_drying_furnace.tooltip.1",
+                "§7Dehydrator mode: every §f900K§7 of coil temperature doubles the parallel count (§f2^(temperature / 900)§7); the Vacuum Drying mode stays serial.");
+        add("gtna.machine.vacuum_drying_furnace.tooltip.2",
+                "§7Red Mud is neutralised with hydrochloric acid in a Mixer. GTO's Mega Vacuum Drying Furnace and its trinium-compound recipe are not ported.");
+        add("gtna.multiblock.pattern.rotor_clearance", "§6Requires an exclusive 5x5 space§r");
         add("material.gtna.raw_brine", "Raw Brine");
         add("material.gtna.hot_brine", "Hot Brine");
         add("material.gtna.hot_chlorinated_brominated_brine", "Hot Chlorinated Brominated Brine");
@@ -1300,6 +1575,9 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.selfRestraint", "Self Restraint");
         add("config.gtna.option.disableFlyInertia", "Disable Fly Inertia");
         add("config.gtna.option.wirelessSteamHud", "Wireless Steam HUD");
+        add("config.gtna.option.wirelessEnergyHud", "Wireless Energy HUD");
+        add("config.gtna.option.wirelessEnergyHudX", "Wireless Energy HUD X Position");
+        add("config.gtna.option.wirelessEnergyHudY", "Wireless Energy HUD Y Position");
         add("config.gtna.option.wirelessSteamHudX", "Wireless Steam HUD X Position");
         add("config.gtna.option.wirelessSteamHudY", "Wireless Steam HUD Y Position");
         add("config.gtna.option.wirelessSteamHudHistorySeconds", "Wireless Steam HUD History Seconds");
@@ -1384,6 +1662,12 @@ public class GTNALangProvider extends LanguageProvider {
 
         // Wireless steam network HUD (client overlay, off by default; see ConfigHolder.Client)
         add("gtna.hud.wireless_steam.name", "Wireless Steam HUD");
+        add("gtna.hud.wireless_energy.name", "Wireless Energy HUD");
+        add("gtna.hud.wireless_energy.balance", "§bWireless Energy§7: §f%s§7 / §f%s §7EU");
+        add("gtna.hud.wireless_energy.flow", "§7Flow: §a+%s§7 / §c-%s§7 EU/t");
+        add("gtna.hud.wireless_energy.connections", "§7Connections: §f%s");
+        add("gtna.machine.wireless_energy.hud.toggle", "Toggle the wireless energy HUD");
+        add("gtna.machine.wireless_energy.hud.editor", "Right click to move the HUD");
         add("gtna.hud.wireless_steam.balance", "§bWireless Steam§7: §f%s §7mB");
         add("gtna.hud.wireless_steam.flow", "§7Flow: §a+%s§7 / §c-%s§7 mB/s");
         add("gtna.hud.wireless_steam.hatches", "§7Hatches: §f%s §7drain / §f%s §7feed");
@@ -1583,6 +1867,9 @@ public class GTNALangProvider extends LanguageProvider {
         // exists (config.jade.plugin_<namespace>.<provider uid path>); a missing one crashes the dev
         // client with 'Missing config translation'. Keep these in sync with GTNAJadePlugin.
         add("config.jade.plugin_gtna.multiple_recipes_provider", "Multiple Recipes Machine Info");
+        add("config.jade.plugin_gtna.isa_mill_status", "ISA Mill Status");
+        add("config.jade.plugin_gtna.block_stats", "Block Hardness and Blast Resistance");
+        add("config.jade.plugin_gtna.gto_status", "GTO Machine Status");
         add("config.jade.plugin_gtna.me_pattern_buffer", "ME Pattern Buffer Info");
         add("config.jade.plugin_gtna.solar_boiler_provider", "Large Steam Solar Boiler Info");
         add("config.jade.plugin_gtna.wireless_steam_network", "Wireless Steam Network Info");

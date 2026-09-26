@@ -41,20 +41,20 @@ public class HudEditorScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addRenderableWidget(Button.builder(toggleLabel(), button -> {
-            for (IMoveableHud hud : HUDS) {
+        for (int index = 0; index < HUDS.size(); index++) {
+            IMoveableHud hud = HUDS.get(index);
+            addRenderableWidget(Button.builder(toggleLabel(hud), button -> {
                 hud.setEnabled(!hud.isEnabled());
-            }
-            button.setMessage(toggleLabel());
-        }).bounds(6, 6, 150, 20).build());
+                button.setMessage(toggleLabel(hud));
+            }).bounds(6 + index * 154, 6, 150, 20).build());
+        }
         addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> onClose())
                 .bounds(width - 66, 6, 60, 20).build());
     }
 
-    private static Component toggleLabel() {
-        boolean anyEnabled = HUDS.stream().anyMatch(IMoveableHud::isEnabled);
-        return Component.translatable("gtna.hud.editor.toggle",
-                Component.translatable(anyEnabled ? "gtna.hud.editor.on" : "gtna.hud.editor.off"));
+    private static Component toggleLabel(IMoveableHud hud) {
+        return Component.empty().append(hud.getDisplayName()).append(": ")
+                .append(Component.translatable(hud.isEnabled() ? "gtna.hud.editor.on" : "gtna.hud.editor.off"));
     }
 
     @Override

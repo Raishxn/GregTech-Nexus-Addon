@@ -55,5 +55,9 @@ public class GTNAMaterialFlags {
             .requireProps(PropertyKey.DUST)
             .build();
 
+    /** GTOCore {@code MILLED} products from the ISA Mill; no property requirement upstream. */
+    public static final MaterialFlag GENERATE_MILLED = new MaterialFlag.Builder("generate_milled")
+            .build();
+
     public static void register() {}
 }

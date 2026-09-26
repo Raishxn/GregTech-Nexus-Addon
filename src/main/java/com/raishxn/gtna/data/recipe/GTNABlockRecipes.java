@@ -1,9 +1,12 @@
 package com.raishxn.gtna.data.recipe;
 
+import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
+import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.common.data.*;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
+import com.gregtechceu.gtceu.data.recipe.GTCraftingComponents;
 
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -14,6 +17,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
+import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.common.data.GTNABlocks;
 import com.raishxn.gtna.common.data.GTNAItems;
@@ -282,6 +286,19 @@ public class GTNABlockRecipes {
                 .duration(50)
                 .save(provider);
 
+        // GTOCore classified/Assembler.java "supercritical_turbine_casing": GTO's MarM200Steel is
+        // GTNA's MarM200Steel, so the casing recipe is ported 1:1.
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("supercritical_turbine_casing")
+                .inputItems(GTBlocks.CASING_TUNGSTENSTEEL_TURBINE.asItem())
+                .inputItems(TagPrefix.rod, GTNAMaterials.MarM200Steel, 2)
+                .inputItems(TagPrefix.gear, GTNAMaterials.MarM200Steel)
+                .inputItems(TagPrefix.plate, GTNAMaterials.MarM200Steel, 6)
+                .circuitMeta(6)
+                .outputItems(GTNABlocks.SUPERCRITICAL_TURBINE_CASING.asItem())
+                .EUt(16)
+                .duration(50)
+                .save(provider);
+
         GTRecipeTypes.SIFTER_RECIPES.recipeBuilder("gtna_zirconia_ceramic_dust")
                 .inputItems(TagPrefix.dust, GTNAMaterials.ZirconiumOxide, 2)
                 .outputItems(TagPrefix.dust, GTNAMaterials.ZirconiaCeramic)
@@ -330,6 +347,7 @@ public class GTNABlockRecipes {
                 .save(provider);
 
         registerABSCasingRecipes(provider);
+        registerComponentAssemblyCasingRecipes(provider);
 
         GTRecipeTypes.FLUID_SOLIDFICATION_RECIPES.recipeBuilder("gtna_naquadah_borosilicate_glass")
                 .inputItems(GTNABlocks.BOROSILICATE_GLASS_BLOCK.asItem())
@@ -486,6 +504,28 @@ public class GTNABlockRecipes {
                 .outputItems(GTNABlocks.ANTIMATTER_CONTAINMENT_CASING.asItem())
                 .EUt(1966080)
                 .duration(400)
+                .save(provider);
+
+        // GTOCore classified/AssemblyLine.java:2291 "iridium_casing": the Component Assembly Line
+        // shell. GTO's Tanmolyium plate is ported 1:1 (MaterialBuilder); the rest is GTCEu base.
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_iridium_casing")
+                .inputItems(TagPrefix.frameGt, GTMaterials.Iridium, 2)
+                .inputItems(GTBlocks.CASING_TITANIUM_TURBINE.asItem())
+                .inputItems(GTBlocks.CASING_STAINLESS_TURBINE.asItem())
+                .inputItems(TagPrefix.foil, GTMaterials.Osmiridium, 4)
+                .inputItems(TagPrefix.foil, GTMaterials.Iridium, 4)
+                .inputItems(TagPrefix.plate, GTNAMaterials.Tanmolyium)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Iridium)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Osmiridium)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(1440))
+                .inputFluids(GTMaterials.Iridium.getFluid(576))
+                .outputItems(GTNABlocks.IRIDIUM_CASING.asItem(), 2)
+                .EUt(30720)
+                .duration(200)
+                .stationResearch(b -> b
+                        .researchStack(ChemicalHelper.get(TagPrefix.block, GTMaterials.Osmiridium))
+                        .CWUt(32)
+                        .EUt(30720))
                 .save(provider);
 
         GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_hollow_casing")
@@ -688,5 +728,363 @@ public class GTNABlockRecipes {
                     .category(GTRecipeCategories.CHEM_DYES)
                     .save(provider);
         }
+    }
+
+    /**
+     * Component Assembler extension blocks and the {@code component_assembly_line} casing family.
+     *
+     * <p>
+     * The casing production for LV–IV follows GTOCore's {@code Assembler} recipes 1:1 (the same
+     * frame/plateDouble/component/solder pattern already used for the base assembler family). The
+     * LuV–UV casings are GTOCore's {@code AssemblyLine} recipes with the research station on the
+     * previous tier of the same family; their GTO-only solder fluids are substituted by obtainable
+     * GTNA/GTCEu equivalents (Pikyonium → Trinaquadalloy; ArtheriumTin →
+     * EnrichedNaquadahTriniumEuropiumDuranide; AbyssalAlloy → RutheniumTriniumAmericiumNeutronate),
+     * documented in the ledger G-0114.
+     *
+     * <p>
+     * The four extension control/transmission casings have no portable GTOCore recipe: the machining
+     * and energy control casings are built in GTO's Precision Assembler (an excluded machine) from
+     * GTO-only modules and composites, and the power transmission casing uses GTO-only composite
+     * materials. Their GTNA routes keep GTOCore's shape (frame + double plate + optical/electrical
+     * parts + circuit + solder) with GTNA/GTCEu materials and are recorded in the ledger.
+     */
+    private static void registerComponentAssemblyCasingRecipes(Consumer<FinishedRecipe> provider) {
+        registerComponentAssemblyLineStructureCasings(provider);
+        componentCasing(provider, "component_assembly_line_casing_lv", GTValues.LV, GTMaterials.Steel,
+                GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_LV, 288);
+        componentCasing(provider, "component_assembly_line_casing_mv", GTValues.MV, GTMaterials.Aluminium,
+                GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_MV, 432);
+        componentCasing(provider, "component_assembly_line_casing_hv", GTValues.HV, GTMaterials.StainlessSteel,
+                GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_HV, 576);
+        componentCasing(provider, "component_assembly_line_casing_ev", GTValues.EV, GTMaterials.Titanium,
+                GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_EV, 720);
+        componentCasing(provider, "component_assembly_line_casing_iv", GTValues.IV, GTMaterials.TungstenSteel,
+                GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_IV, 864);
+
+        // GTOCore AssemblyLine.java "component_assembly_line_casing_luv": GTCEu materials plus GTNA's
+        // ported Indalloy140, with the research station on the IV casing of the same family. The
+        // Component Assembler's own LuV casing (the extension family) is built the same way but
+        // researches the component-assembly IV casing.
+        assemblyLineCasing(provider, GTNABlocks.COMPONENT_ASSEMBLY_CASING_LUV,
+                GTNABlocks.COMPONENT_ASSEMBLY_CASING_IV, "component_assembly_casing_luv");
+        assemblyLineCasing(provider, GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_LUV,
+                GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_IV, "component_assembly_line_casing_luv");
+
+        // GTOCore AssemblyLine.java "component_assembly_line_casing_zpm"/"_uv": the top two tiers of
+        // the GTO component assembly line. Their GTO-only solder fluids are substituted by obtainable
+        // GTNA/GTCEu equivalents of the same tier (documented in the ledger G-0114):
+        // Pikyonium -> GTNA Trinaquadalloy (ZPM alloy), ArtheriumTin -> EnrichedNaquadahTriniumEuropiumDuranide
+        // and AbyssalAlloy -> RutheniumTriniumAmericiumNeutronate (UV/UHV superconductors, nearly the
+        // same GTO blast temperatures). Research stations follow GTO: LuV casing for ZPM, ZPM for UV.
+        assemblyLineCasingZpm(provider, GTNABlocks.COMPONENT_ASSEMBLY_CASING_ZPM,
+                GTNABlocks.COMPONENT_ASSEMBLY_CASING_LUV, "component_assembly_casing_zpm");
+        assemblyLineCasingZpm(provider, GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_ZPM,
+                GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_LUV, "component_assembly_line_casing_zpm");
+        assemblyLineCasingUv(provider, GTNABlocks.COMPONENT_ASSEMBLY_CASING_UV,
+                GTNABlocks.COMPONENT_ASSEMBLY_CASING_ZPM, "component_assembly_casing_uv");
+        assemblyLineCasingUv(provider, GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_UV,
+                GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_ZPM, "component_assembly_line_casing_uv");
+
+        // GTOCore AssemblerA "THREE_PROOF_COMPUTER_CASING": GTNA substitutes GTO's
+        // StainlessSteelJbk75 frame and TungstenAlloyYG10 plates with TungstenSteel/TungstenCarbide;
+        // the optical pipe is GTCEu's normal optical pipe.
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("three_proof_computer_casing")
+                .inputItems(TagPrefix.frameGt, GTMaterials.TungstenSteel)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.TungstenCarbide, 6)
+                .inputItems(TagPrefix.wireFine, GTMaterials.Platinum, 64)
+                .inputItems(TagPrefix.wireFine, GTMaterials.Silver, 64)
+                .inputItems(GTBlocks.OPTICAL_PIPES[0].asItem(), 2)
+                .inputItems(CustomTags.LuV_CIRCUITS)
+                .circuitMeta(6)
+                .outputItems(GTNABlocks.THREE_PROOF_COMPUTER_CASING.asItem())
+                .EUt(30000)
+                .duration(200)
+                .save(provider);
+
+        // GTOCore PrecisionAssembler "machining_control_casing_mk2" (excluded machine, GTO-only
+        // Machining Control Module MK II and composites): GTNA keeps the frame + composite double
+        // plate + optical pipe shape and the solder/YttriumBariumCuprate fluids.
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("machining_control_casing_mk2")
+                .inputItems(TagPrefix.frameGt, GTMaterials.TungstenSteel)
+                .inputItems(TagPrefix.plateDouble, GTNAMaterials.CarbonFiberPolyphenyleneSulfideComposite, 6)
+                .inputItems(GTBlocks.OPTICAL_PIPES[0].asItem(), 16)
+                .inputItems(CustomTags.LuV_CIRCUITS, 2)
+                .inputFluids(GTMaterials.YttriumBariumCuprate.getFluid(576))
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(288))
+                .circuitMeta(2)
+                .outputItems(GTNABlocks.MACHINING_CONTROL_CASING_MK2.asItem())
+                .EUt(30720)
+                .duration(400)
+                .save(provider);
+
+        // GTOCore PrecisionAssembler "energy_control_casing_mk2" (excluded machine, GTO-only Energy
+        // Control Module MK II): GTNA keeps the UV voltage coil, frame, composite double plate and
+        // YttriumBariumCuprate/solder fluids.
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("energy_control_casing_mk2")
+                .inputItems(GTItems.VOLTAGE_COIL_UV, 2)
+                .inputItems(TagPrefix.frameGt, GTMaterials.TungstenSteel)
+                .inputItems(TagPrefix.plateDouble, GTNAMaterials.CarbonFiberPolyphenyleneSulfideComposite, 6)
+                .inputFluids(GTMaterials.YttriumBariumCuprate.getFluid(576))
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(288))
+                .circuitMeta(2)
+                .outputItems(GTNABlocks.ENERGY_CONTROL_CASING_MK2.asItem())
+                .EUt(30720)
+                .duration(400)
+                .save(provider);
+
+        // GTOCore AssemblerA "electric_power_transmission_casing": GTNA substitutes GTO's composites
+        // with the ported carbon-fiber composite and copper foil, keeping the two GTCEu wire inputs
+        // (SamariumIronArsenicOxide and UraniumTriplatinum) and the IV sensor.
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("electric_power_transmission_casing")
+                .inputItems(TagPrefix.frameGt, GTNAMaterials.CarbonFiberPolyphenyleneSulfideComposite)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Aluminium, 6)
+                .inputItems(TagPrefix.foil, GTMaterials.Copper, 10)
+                .inputItems(TagPrefix.wireGtSingle, GTMaterials.SamariumIronArsenicOxide, 6)
+                .inputItems(TagPrefix.wireGtSingle, GTMaterials.UraniumTriplatinum, 6)
+                .inputItems(GTItems.SENSOR_IV)
+                .circuitMeta(6)
+                .outputItems(GTNABlocks.ELECTRIC_POWER_TRANSMISSION_CASING.asItem())
+                .EUt(16)
+                .duration(50)
+                .save(provider);
+
+        // GTOCore Assembler "titanium_nitride_ceramic_impact_resistant_mechanical_block": 1:1 with the
+        // locally created TitaniumNitrideCeramic and GTNA's flake prefix.
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("titanium_nitride_ceramic_impact_resistant_mechanical_block")
+                .inputItems(TagPrefix.frameGt, GTMaterials.Titanium)
+                .inputItems(TagPrefix.plate, GTMaterials.BlueSteel, 2)
+                .inputItems(GTNATagPrefix.flake, GTNAMaterials.TitaniumNitrideCeramic, 16)
+                .outputItems(GTNABlocks.TITANIUM_NITRIDE_CERAMIC_IMPACT_RESISTANT_MECHANICAL_BLOCK.asItem())
+                .EUt(30)
+                .duration(200)
+                .save(provider);
+
+        // GTOCore's nitridation chain for TitaniumNitrideCeramic is not ported; GTNA reacts Titanium
+        // dust with Nitrogen in the Mixer instead (recorded in the ledger).
+        GTRecipeTypes.MIXER_RECIPES.recipeBuilder("gtna_titanium_nitride_ceramic_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Titanium)
+                .inputFluids(GTMaterials.Nitrogen.getFluid(1000))
+                .outputItems(TagPrefix.dust, GTNAMaterials.TitaniumNitrideCeramic)
+                .duration(200)
+                .EUt(480)
+                .save(provider);
+    }
+
+    /** Structure materials retained from GTO; unavailable GTO-only inputs use existing GTNA materials. */
+    private static void registerComponentAssemblyLineStructureCasings(Consumer<FinishedRecipe> provider) {
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("molecular_casing")
+                .inputItems(GTBlocks.HIGH_POWER_CASING.asItem())
+                .inputItems(TagPrefix.plateDouble, GTMaterials.BatteryAlloy, 4)
+                .inputItems(GTItems.EMITTER_IV)
+                .inputItems(TagPrefix.ring, GTMaterials.Darmstadtium, 24)
+                .inputItems(TagPrefix.foil, GTMaterials.Tungsten, 12)
+                .inputItems(TagPrefix.foil, GTMaterials.Ruridit, 12)
+                .inputItems(TagPrefix.foil, GTMaterials.TungstenSteel, 24)
+                .inputItems(TagPrefix.plate, GTMaterials.Rhodium, 6)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Ruthenium, 4)
+                .inputFluids(GTMaterials.NiobiumNitride, 864)
+                .outputItems(GTNABlocks.MOLECULAR_CASING.asItem())
+                .EUt(491520).duration(400).save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("boron_carbide_ceramic_radiation_resistant_mechanical_cube")
+                .inputItems(TagPrefix.frameGt, GTMaterials.Ruridit)
+                .inputItems(TagPrefix.plate, GTMaterials.TitaniumTungstenCarbide, 2)
+                .inputItems(TagPrefix.dust, GTMaterials.Boron, 8)
+                .inputItems(TagPrefix.dust, GTMaterials.Carbon, 8)
+                .outputItems(GTNABlocks.BORON_CARBIDE_CERAMIC_RADIATION_RESISTANT_MECHANICAL_CUBE.asItem())
+                .EUt(30).duration(200).save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("precision_processing_mechanical_casing")
+                .inputItems(TagPrefix.frameGt, GTNAMaterials.HastelloyN)
+                .inputItems(TagPrefix.ingot, GTNAMaterials.HastelloyN, 6)
+                .inputItems(TagPrefix.gearSmall, GTMaterials.RhodiumPlatedPalladium, 4)
+                .inputItems(TagPrefix.gearSmall, GTMaterials.HSSS, 4)
+                .inputItems(TagPrefix.gearSmall, GTMaterials.Osmiridium, 4)
+                .inputItems(TagPrefix.rod, GTNAMaterials.HastelloyN, 6)
+                .inputFluids(GTMaterials.Rhodium, 1152)
+                .outputItems(GTNABlocks.PRECISION_PROCESSING_MECHANICAL_CASING.asItem())
+                .EUt(480).duration(200).save(provider);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.ADVANCED_ASSEMBLY_LINE_UNIT.get())
+                .pattern("ABA").pattern("CDC").pattern("ABA")
+                .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.HSSG).getItem())
+                .define('B', ChemicalHelper.get(TagPrefix.gear, GTMaterials.Rhodium).getItem())
+                .define('C', CustomTags.UV_CIRCUITS)
+                .define('D', GTBlocks.CASING_ASSEMBLY_LINE.asItem())
+                .unlockedBy("has_assembly_line", InventoryChangeTrigger.TriggerInstance
+                        .hasItems(GTBlocks.CASING_ASSEMBLY_LINE.asItem()))
+                .save(provider, GTNACORE.id("advanced_assembly_line_unit"));
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("chemical_corrosion_resistant_pipe_casing")
+                .inputItems(TagPrefix.frameGt, GTMaterials.StainlessSteel)
+                .inputItems(TagPrefix.pipeNormalFluid, GTMaterials.StainlessSteel, 4)
+                .inputItems(TagPrefix.plate, GTMaterials.Polytetrafluoroethylene, 4)
+                .inputItems(TagPrefix.plate, GTMaterials.StainlessSteel, 4)
+                .inputFluids(GTMaterials.Polytetrafluoroethylene, 576)
+                .outputItems(GTNABlocks.CHEMICAL_CORROSION_RESISTANT_PIPE_CASING.asItem())
+                .EUt(480).duration(200).save(provider);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNABlocks.MACHINE_CASING_CIRCUIT_ASSEMBLY_LINE.get())
+                .pattern("ABA").pattern("CDC").pattern("ABA")
+                .define('A', ChemicalHelper.get(TagPrefix.plate, GTMaterials.Ruridit).getItem())
+                .define('B', ChemicalHelper.get(TagPrefix.gear, GTMaterials.HSSG).getItem())
+                .define('C', GTItems.ROBOT_ARM_LuV.get())
+                .define('D', ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Ruridit).getItem())
+                .unlockedBy("has_luv_robot_arm", InventoryChangeTrigger.TriggerInstance
+                        .hasItems(GTItems.ROBOT_ARM_LuV.get()))
+                .save(provider, GTNACORE.id("machine_casing_circuit_assembly_line"));
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("spacetime_assembly_line_unit")
+                .inputItems(GTNABlocks.ADVANCED_ASSEMBLY_LINE_UNIT.asItem(), 2)
+                .inputItems(GTNABlocks.MACHINE_CASING_CIRCUIT_ASSEMBLY_LINE.asItem(), 2)
+                .inputItems(TagPrefix.plate, GTMaterials.NaquadahAlloy, 8)
+                .inputItems(CustomTags.UV_CIRCUITS, 4)
+                .inputFluids(GTMaterials.SolderingAlloy, 1152)
+                .outputItems(GTNABlocks.SPACETIME_ASSEMBLY_LINE_UNIT.asItem())
+                .EUt(491520).duration(400).save(provider);
+
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("pressure_containment_casing")
+                .inputItems(TagPrefix.frameGt, GTMaterials.Polytetrafluoroethylene)
+                .inputItems(TagPrefix.plate, GTMaterials.DamascusSteel, 2)
+                .inputFluids(GTMaterials.StainlessSteel, 1152)
+                .outputItems(GTNABlocks.PRESSURE_CONTAINMENT_CASING.asItem())
+                .EUt(120).duration(100).save(provider);
+    }
+
+    /** GTOCore's {@code component_assembly_line_casing_*} Assembler recipe, per tier. */
+    private static void componentCasing(Consumer<FinishedRecipe> provider, String name, int tier, Material material,
+                                        BlockEntry<Block> output, int solder) {
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder(name)
+                .inputItems(TagPrefix.frameGt, material)
+                .inputItems(TagPrefix.plateDouble, material, 16)
+                .inputItems(component("field_generator", tier), 2)
+                .inputItems(component("electric_pump", tier), 4)
+                .inputItems(component("robot_arm", tier), 4)
+                .inputItems(component("sensor", tier), 4)
+                .inputItems(component("conveyor_module", tier), 6)
+                .inputItems(TagPrefix.gear, material, 4)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(solder))
+                .outputItems(output.asItem())
+                .EUt(GTValues.VA[tier])
+                .duration(320)
+                .save(provider);
+    }
+
+    /** GTOCore's {@code component_assembly_line_casing_luv} Assembly Line recipe. */
+    private static void assemblyLineCasing(Consumer<FinishedRecipe> provider,
+                                           BlockEntry<Block> output, BlockEntry<Block> researchStack,
+                                           String name) {
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder(name)
+                .inputItems(TagPrefix.frameGt, GTMaterials.Europium)
+                .inputItems(TagPrefix.plateDense, GTMaterials.RhodiumPlatedPalladium, 6)
+                .inputItems(GTItems.FIELD_GENERATOR_LuV, 4)
+                .inputItems(GTItems.ELECTRIC_PUMP_LuV, 6)
+                .inputItems(GTItems.ROBOT_ARM_LuV, 8)
+                .inputItems(GTItems.SENSOR_LuV, 10)
+                .inputItems(GTItems.CONVEYOR_MODULE_LuV, 16)
+                .inputItems(TagPrefix.gear, GTMaterials.Osmiridium, 4)
+                .inputItems(TagPrefix.gearSmall, GTMaterials.RhodiumPlatedPalladium, 16)
+                .inputItems(TagPrefix.wireGtOctal, GTMaterials.IndiumTinBariumTitaniumCuprate, 4)
+                .inputItems(CustomTags.LuV_CIRCUITS, 8)
+                .inputItems(CustomTags.IV_CIRCUITS, 16)
+                .inputFluids(GTNAMaterials.Indalloy140.getFluid(3456))
+                .inputFluids(GTMaterials.Zeron100.getFluid(1728))
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(1152))
+                .inputFluids(GTMaterials.Lubricant.getFluid(4000))
+                .outputItems(output.asItem())
+                .EUt(30720)
+                .duration(600)
+                .stationResearch(b -> b
+                        .researchStack(researchStack.asStack())
+                        .CWUt(128)
+                        .EUt(30720))
+                .save(provider);
+    }
+
+    /**
+     * GTOCore's {@code component_assembly_line_casing_zpm} Assembly Line recipe. GTO's Pikyonium
+     * solder is substituted by GTNA's obtainable ZPM alloy {@code Trinaquadalloy} (same 2016 mB);
+     * Indalloy140, Neutronium and Lubricant are ported 1:1. The station research targets the LuV
+     * casing of the same family, like GTO.
+     */
+    private static void assemblyLineCasingZpm(Consumer<FinishedRecipe> provider,
+                                              BlockEntry<Block> output, BlockEntry<Block> researchStack,
+                                              String name) {
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder(name)
+                .inputItems(TagPrefix.frameGt, GTMaterials.NaquadahAlloy)
+                .inputItems(TagPrefix.plateDense, GTMaterials.NaquadahAlloy, 6)
+                .inputItems(GTItems.FIELD_GENERATOR_ZPM, 4)
+                .inputItems(GTItems.ELECTRIC_PUMP_ZPM, 6)
+                .inputItems(GTItems.ROBOT_ARM_ZPM, 8)
+                .inputItems(GTItems.SENSOR_ZPM, 10)
+                .inputItems(GTItems.CONVEYOR_MODULE_ZPM, 16)
+                .inputItems(TagPrefix.gear, GTMaterials.NaquadahAlloy, 4)
+                .inputItems(TagPrefix.gearSmall, GTMaterials.NaquadahAlloy, 16)
+                .inputItems(TagPrefix.wireGtOctal, GTMaterials.IndiumTinBariumTitaniumCuprate, 4)
+                .inputItems(CustomTags.ZPM_CIRCUITS, 8)
+                .inputItems(CustomTags.LuV_CIRCUITS, 16)
+                .inputFluids(GTNAMaterials.Indalloy140.getFluid(4032))
+                .inputFluids(GTNAMaterials.Trinaquadalloy.getFluid(2016))
+                .inputFluids(GTMaterials.Neutronium.getFluid(1008))
+                .inputFluids(GTMaterials.Lubricant.getFluid(5000))
+                .outputItems(output.asItem())
+                .EUt(122880)
+                .duration(600)
+                .stationResearch(b -> b
+                        .researchStack(researchStack.asStack())
+                        .CWUt(192)
+                        .EUt(122880))
+                .save(provider);
+    }
+
+    /**
+     * GTOCore's {@code component_assembly_line_casing_uv} Assembly Line recipe. GTO's ArtheriumTin
+     * and AbyssalAlloy solders are substituted by the closest obtainable GTCEu superconductors of
+     * nearly the same blast temperature (EnrichedNaquadahTriniumEuropiumDuranide 9900 K for
+     * ArtheriumTin's 9800 K, RutheniumTriniumAmericiumNeutronate 10800 K for AbyssalAlloy's
+     * 10800 K), keeping the original 2304/1152 mB. GTO's {@code plateDouble Tritanium} is kept
+     * (GTCEu generates double plates for any material with the plate flag). The station research
+     * targets the ZPM casing of the same family, like GTO.
+     */
+    private static void assemblyLineCasingUv(Consumer<FinishedRecipe> provider,
+                                             BlockEntry<Block> output, BlockEntry<Block> researchStack,
+                                             String name) {
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder(name)
+                .inputItems(TagPrefix.frameGt, GTMaterials.Tritanium)
+                .inputItems(TagPrefix.plateDouble, GTMaterials.Tritanium, 24)
+                .inputItems(GTItems.FIELD_GENERATOR_UV, 4)
+                .inputItems(GTItems.ELECTRIC_PUMP_UV, 6)
+                .inputItems(GTItems.ROBOT_ARM_UV, 8)
+                .inputItems(GTItems.SENSOR_UV, 10)
+                .inputItems(GTItems.CONVEYOR_MODULE_UV, 16)
+                .inputItems(TagPrefix.gear, GTMaterials.Tritanium, 4)
+                .inputItems(TagPrefix.gearSmall, GTMaterials.Tritanium, 16)
+                .inputItems(TagPrefix.wireGtOctal, GTMaterials.IndiumTinBariumTitaniumCuprate, 4)
+                .inputItems(CustomTags.UV_CIRCUITS, 8)
+                .inputItems(CustomTags.ZPM_CIRCUITS, 16)
+                .inputFluids(GTNAMaterials.Indalloy140.getFluid(4608))
+                .inputFluids(GTMaterials.EnrichedNaquadahTriniumEuropiumDuranide.getFluid(2304))
+                .inputFluids(GTMaterials.RutheniumTriniumAmericiumNeutronate.getFluid(1152))
+                .inputFluids(GTMaterials.Lubricant.getFluid(6000))
+                .outputItems(output.asItem())
+                .EUt(491520)
+                .duration(600)
+                .stationResearch(b -> b
+                        .researchStack(researchStack.asStack())
+                        .CWUt(256)
+                        .EUt(491520))
+                .save(provider);
+    }
+
+    private static net.minecraft.world.item.Item component(String kind, int tier) {
+        Object value = switch (kind) {
+            case "field_generator" -> GTCraftingComponents.FIELD_GENERATOR.get(tier);
+            case "electric_pump" -> GTCraftingComponents.PUMP.get(tier);
+            case "robot_arm" -> GTCraftingComponents.ROBOT_ARM.get(tier);
+            case "sensor" -> GTCraftingComponents.SENSOR.get(tier);
+            default -> GTCraftingComponents.CONVEYOR.get(tier);
+        };
+        return ((net.minecraft.world.item.ItemStack) value).getItem();
     }
 }

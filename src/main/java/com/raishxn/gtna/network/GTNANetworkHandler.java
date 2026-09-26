@@ -11,9 +11,11 @@ import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.network.packet.CLocateConnectionPacket;
 import com.raishxn.gtna.network.packet.CStructureRefreshPacket;
 import com.raishxn.gtna.network.packet.SKubeModuleDescriptions;
+import com.raishxn.gtna.network.packet.SModuleCountPacket;
 import com.raishxn.gtna.network.packet.SRegionHighlightPacket;
 import com.raishxn.gtna.network.packet.SStructureDetectHighlight;
 import com.raishxn.gtna.network.packet.SStructureGhostPreviewPacket;
+import com.raishxn.gtna.network.packet.SWirelessEnergyStats;
 import com.raishxn.gtna.network.packet.SWirelessSteamStats;
 
 public class GTNANetworkHandler {
@@ -52,6 +54,13 @@ public class GTNANetworkHandler {
                 .consumerMainThread(SRegionHighlightPacket::handle)
                 .add();
 
+        // S2C – formed auxiliary-module count for the machine-mode switcher
+        CHANNEL.messageBuilder(SModuleCountPacket.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SModuleCountPacket::encode)
+                .decoder(SModuleCountPacket::decode)
+                .consumerMainThread(SModuleCountPacket::handle)
+                .add();
+
         CHANNEL.messageBuilder(SStructureGhostPreviewPacket.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(SStructureGhostPreviewPacket::encode)
                 .decoder(SStructureGhostPreviewPacket::decode)
@@ -63,6 +72,12 @@ public class GTNANetworkHandler {
                 .encoder(SWirelessSteamStats::encode)
                 .decoder(SWirelessSteamStats::decode)
                 .consumerMainThread(SWirelessSteamStats::handle)
+                .add();
+
+        CHANNEL.messageBuilder(SWirelessEnergyStats.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SWirelessEnergyStats::encode)
+                .decoder(SWirelessEnergyStats::decode)
+                .consumerMainThread(SWirelessEnergyStats::handle)
                 .add();
 
         // C2S – Client requests a locate highlight

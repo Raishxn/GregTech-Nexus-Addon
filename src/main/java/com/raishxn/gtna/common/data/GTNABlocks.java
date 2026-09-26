@@ -6,7 +6,6 @@ import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.GlassBlock;
@@ -15,6 +14,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.common.block.GTNABlockItem;
 import com.raishxn.gtna.common.block.MEStorageCoreBlock;
 import com.raishxn.gtna.common.block.NexusCapacitorBlock;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -60,6 +60,49 @@ public class GTNABlocks {
     public static final BlockEntry<Block> STAINLESS_EVAPORATION_CASING = createCasingBlock(
             "stainless_evaporation_casing",
             GTNACORE.id("block/casings/stainless_evaporation_casing"));
+    public static final BlockEntry<Block> MULTI_FUNCTIONAL_CASING = createCasingBlock("multi_functional_casing");
+    /**
+     * GTOCore Inconel-625 family (ISA Mill shell, gearbox and pipe). The textures keep GTOCore's
+     * relative paths, so the pipe/gearbox live under {@code block/} and the casing under
+     * {@code block/casings/}.
+     */
+    public static final BlockEntry<Block> INCONEL_625_CASING = createCasingBlock("inconel_625_casing",
+            GTNACORE.id("block/casings/inconel_625_casing"));
+    public static final BlockEntry<Block> INCONEL_625_GEARBOX = createCasingBlock("inconel_625_gearbox",
+            GTNACORE.id("block/inconel_625_gearbox"));
+    public static final BlockEntry<Block> INCONEL_625_PIPE = createCasingBlock("inconel_625_pipe",
+            GTNACORE.id("block/inconel_625_pipe"));
+    public static final BlockEntry<Block> BLAZE_CASING = createTwoLayerCasingBlock("blaze_casing");
+    public static final BlockEntry<Block> COLD_ICE_CASING = createTwoLayerCasingBlock("cold_ice_casing");
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_CASING_LV = createCasingBlock(
+            "component_assembly_casing_lv");
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_CASING_MV = createCasingBlock(
+            "component_assembly_casing_mv");
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_CASING_HV = createCasingBlock(
+            "component_assembly_casing_hv");
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_CASING_EV = createCasingBlock(
+            "component_assembly_casing_ev");
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_CASING_IV = createCasingBlock(
+            "component_assembly_casing_iv");
+    /**
+     * GTOCore {@code component_assembly_line_casing_luv} (CC BY-NC-SA 4.0): the LuV member of the
+     * Component Assembler casing family, reached only with the large extension formed. The texture
+     * keeps GTOCore's {@code component_assembly_line} sheet with the GTNA family name.
+     */
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_CASING_LUV = createCasingBlock(
+            "component_assembly_casing_luv");
+    /**
+     * GTOCore {@code component_assembly_line_casing_zpm} (CC BY-NC-SA 4.0): the ZPM member of the
+     * Component Assembler casing family, reached only with the large extension formed.
+     */
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_CASING_ZPM = createCasingBlock(
+            "component_assembly_casing_zpm");
+    /**
+     * GTOCore {@code component_assembly_line_casing_uv} (CC BY-NC-SA 4.0): the UV member of the
+     * Component Assembler casing family, the top of the GTNA extension port.
+     */
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_CASING_UV = createCasingBlock(
+            "component_assembly_casing_uv");
     public static final BlockEntry<Block> STEEL_REINFORCED_WOOD = createCasingBlock("steel_reinforced_wood");
     public static final BlockEntry<Block> IRON_REINFORCED_WOOD = createCasingBlock("iron_reinforced_wood");
     public static final BlockEntry<Block> SOLAR_BOILING_CELL = createSolarCasingBlock("solar_boiling_cell");
@@ -166,8 +209,15 @@ public class GTNABlocks {
     public static final BlockEntry<Block> HYPER_MECHANICAL_CASING = createCasingBlock("hyper_mechanical_casing");
     public static final BlockEntry<Block> HOLLOW_CASING = createCasingBlock("hollow_casing",
             GTNACORE.id("block/hollow_casing"));
+    /**
+     * GTOCore {@code naquadah_alloy_casing} (CC BY-NC-SA 4.0). GTO reuses the
+     * {@code hyper_mechanical_casing} sheet for this block (the earlier GTNA copy pointed at the
+     * water-purification {@code naquadah_reinforced_plant_casing} sheet by mistake).
+     */
     public static final BlockEntry<Block> NAQUADAH_ALLOY_CASING = createCasingBlock("naquadah_alloy_casing",
-            GTNACORE.id("block/casings/naquadah_reinforced_plant_casing"));
+            GTNACORE.id("block/casings/hyper_mechanical_casing"));
+    /** GTOCore {@code iridium_casing} (CC BY-NC-SA 4.0): the Component Assembly Line shell. */
+    public static final BlockEntry<Block> IRIDIUM_CASING = createCasingBlock("iridium_casing");
     public static final BlockEntry<Block> DYSON_CONTROL_TOROID = createCasingBlock("dyson_control_toroid");
     public static final BlockEntry<Block> DYSON_CONTROL_CASING = createCasingBlock("dyson_control_casing");
     public static final BlockEntry<Block> DEGENERATE_RHENIUM_CONSTRAINED_CASING = createCasingBlock(
@@ -210,6 +260,124 @@ public class GTNABlocks {
     public static final BlockEntry<Block> MATRIX_MODULE_IV = createCasingBlock(
             "matrix_module_iv",
             GTNACORE.id("block/wireless_energy_unit/uev"));
+
+    /**
+     * GTOCore {@code supercritical_turbine_casing} (CC BY-NC-SA 4.0): the wall of the non-mega
+     * Supercritical Steam Turbine and of its SUPERCRITICAL module. The texture, its connected
+     * texture sheet and the {@code .png.mcmeta} are copied from {@code gtocore} with the namespace
+     * rewritten to {@code gtna}.
+     */
+    public static final BlockEntry<Block> SUPERCRITICAL_TURBINE_CASING = createCasingBlock(
+            "supercritical_turbine_casing");
+
+    /**
+     * GTOCore {@code hastelloy_n_75_casing} (CC BY-NC-SA 4.0): the shell of the Industrial Flotation
+     * Cell. The texture, its connected texture sheet and the {@code .png.mcmeta} are copied from
+     * {@code gtocore} with the namespace rewritten to {@code gtna}.
+     */
+    public static final BlockEntry<Block> HASTELLOY_N_75_CASING = createCasingBlock(
+            "hastelloy_n_75_casing");
+    /**
+     * GTOCore {@code hastelloy_n_75_gearbox} (CC BY-NC-SA 4.0): the flotation cell's central
+     * gearbox. GTOCore keeps this texture under {@code block/}, not {@code block/casings/}.
+     */
+    public static final BlockEntry<Block> HASTELLOY_N_75_GEARBOX = createCasingBlock(
+            "hastelloy_n_75_gearbox", GTNACORE.id("block/hastelloy_n_75_gearbox"));
+    /** GTOCore {@code hastelloy_n_75_pipe} (CC BY-NC-SA 4.0): the cell's aeration pipe. */
+    public static final BlockEntry<Block> HASTELLOY_N_75_PIPE = createCasingBlock(
+            "hastelloy_n_75_pipe", GTNACORE.id("block/hastelloy_n_75_pipe"));
+    /** GTOCore {@code flotation_cell} (CC BY-NC-SA 4.0): the flotation tank walls. */
+    public static final BlockEntry<Block> FLOTATION_CELL = createCasingBlock(
+            "flotation_cell", GTNACORE.id("block/flotation_cell"));
+    /**
+     * GTOCore {@code red_steel_casing} (CC BY-NC-SA 4.0): the Vacuum Drying Furnace shell. The
+     * texture, its connected texture sheet and the {@code .png.mcmeta} are copied from
+     * {@code gtocore} with the namespace rewritten to {@code gtna}.
+     */
+    public static final BlockEntry<Block> RED_STEEL_CASING = createCasingBlock(
+            "red_steel_casing");
+
+    /**
+     * GTOCore {@code three_proof_computer_casing} (CC BY-NC-SA 4.0): the computer wall of the
+     * Component Assembler's large extension. Texture, connected sheet and {@code .png.mcmeta} copied
+     * from {@code gtocore} with the namespace rewritten to {@code gtna}.
+     */
+    public static final BlockEntry<Block> THREE_PROOF_COMPUTER_CASING = createCasingBlock(
+            "three_proof_computer_casing");
+    /**
+     * GTOCore {@code machining_control_casing_mk2} (CC BY-NC-SA 4.0): the sided machining-control
+     * wall of the Component Assembler's large extension. Sided base sheet, connected sheet,
+     * {@code .png.mcmeta} and the emissive {@code side_bloom} overlay copied from {@code gtocore}
+     * with the namespace rewritten to {@code gtna}; rendered with GTCEu's
+     * {@code cube_2_layer/bottom_top} model.
+     */
+    public static final BlockEntry<Block> MACHINING_CONTROL_CASING_MK2 = createSidedCasingBlock(
+            "machining_control_casing_mk2");
+    /**
+     * GTOCore {@code energy_control_casing_mk2} (CC BY-NC-SA 4.0): the sided energy-control wall of
+     * the Component Assembler's large extension. Same two-layer treatment as the machining casing.
+     */
+    public static final BlockEntry<Block> ENERGY_CONTROL_CASING_MK2 = createSidedCasingBlock(
+            "energy_control_casing_mk2");
+    /**
+     * GTOCore {@code electric_power_transmission_casing} (CC BY-NC-SA 4.0): the power line wall of
+     * the Component Assembler's large extension.
+     */
+    public static final BlockEntry<Block> ELECTRIC_POWER_TRANSMISSION_CASING = createCasingBlock(
+            "electric_power_transmission_casing");
+    /**
+     * GTOCore {@code titanium_nitride_ceramic_impact_resistant_mechanical_block} (CC BY-NC-SA 4.0):
+     * the impact-resistant ceramic wall of the Component Assembler extension. GTOCore keeps this
+     * texture under {@code block/}, not {@code block/casings/}; the GTNA copy lives with the casings.
+     */
+    public static final BlockEntry<Block> TITANIUM_NITRIDE_CERAMIC_IMPACT_RESISTANT_MECHANICAL_BLOCK = createCasingBlock(
+            "titanium_nitride_ceramic_impact_resistant_mechanical_block");
+    /** GTOCore Component Assembly Line casings (CC BY-NC-SA 4.0). */
+    public static final BlockEntry<Block> MOLECULAR_CASING = createTwoLayerCasingBlock("molecular_casing");
+    public static final BlockEntry<Block> BORON_CARBIDE_CERAMIC_RADIATION_RESISTANT_MECHANICAL_CUBE = createCasingBlock(
+            "boron_carbide_ceramic_radiation_resistant_mechanical_cube");
+    public static final BlockEntry<Block> PRECISION_PROCESSING_MECHANICAL_CASING = createCasingBlock(
+            "precision_processing_mechanical_casing");
+    public static final BlockEntry<Block> ADVANCED_ASSEMBLY_LINE_UNIT = createCasingBlock(
+            "advanced_assembly_line_unit");
+    public static final BlockEntry<Block> CHEMICAL_CORROSION_RESISTANT_PIPE_CASING = createCasingBlock(
+            "chemical_corrosion_resistant_pipe_casing");
+    public static final BlockEntry<Block> MACHINE_CASING_CIRCUIT_ASSEMBLY_LINE = createCasingBlock(
+            "machine_casing_circuit_assembly_line");
+    public static final BlockEntry<Block> SPACETIME_ASSEMBLY_LINE_UNIT = createCasingBlock(
+            "spacetime_assembly_line_unit");
+    public static final BlockEntry<Block> PRESSURE_CONTAINMENT_CASING = createCasingBlock(
+            "pressure_containment_casing");
+    /**
+     * GTOCore {@code component_assembly_line_casing_lv..uv} (CC BY-NC-SA 4.0): the tier casing
+     * family of the {@code component_assembly_line}. GTNA ports LV..UV; the UHV..MAX tiers stay
+     * documented as out of scope. Textures keep GTOCore's
+     * {@code block/casings/component_assembly_line/} path.
+     */
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_LINE_CASING_LV = createCasingBlock(
+            "component_assembly_line_casing_lv",
+            GTNACORE.id("block/casings/component_assembly_line/component_assembly_line_casing_lv"));
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_LINE_CASING_MV = createCasingBlock(
+            "component_assembly_line_casing_mv",
+            GTNACORE.id("block/casings/component_assembly_line/component_assembly_line_casing_mv"));
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_LINE_CASING_HV = createCasingBlock(
+            "component_assembly_line_casing_hv",
+            GTNACORE.id("block/casings/component_assembly_line/component_assembly_line_casing_hv"));
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_LINE_CASING_EV = createCasingBlock(
+            "component_assembly_line_casing_ev",
+            GTNACORE.id("block/casings/component_assembly_line/component_assembly_line_casing_ev"));
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_LINE_CASING_IV = createCasingBlock(
+            "component_assembly_line_casing_iv",
+            GTNACORE.id("block/casings/component_assembly_line/component_assembly_line_casing_iv"));
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_LINE_CASING_LUV = createCasingBlock(
+            "component_assembly_line_casing_luv",
+            GTNACORE.id("block/casings/component_assembly_line/component_assembly_line_casing_luv"));
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_LINE_CASING_ZPM = createCasingBlock(
+            "component_assembly_line_casing_zpm",
+            GTNACORE.id("block/casings/component_assembly_line/component_assembly_line_casing_zpm"));
+    public static final BlockEntry<Block> COMPONENT_ASSEMBLY_LINE_CASING_UV = createCasingBlock(
+            "component_assembly_line_casing_uv",
+            GTNACORE.id("block/casings/component_assembly_line/component_assembly_line_casing_uv"));
 
     public static final BlockEntry<MEStorageCoreBlock> T1_ME_STORAGE_CORE = createMEStorageCore(1, false);
     public static final BlockEntry<MEStorageCoreBlock> T2_ME_STORAGE_CORE = createMEStorageCore(2, false);
@@ -260,6 +428,68 @@ public class GTNABlocks {
         return createCasingBlock(name, Block::new, texture, () -> Blocks.IRON_BLOCK, () -> RenderType::solid);
     }
 
+    /**
+     * A GTOCore-style sided control casing: one texture for the top face and one for the sides, under
+     * {@code block/casings/sided/<name>/}. GTNA's {@link #createCasingBlock} only emits cube-all
+     * models, so this helper reproduces the sided blockstate with the same tags and item-model
+     * conventions.
+     */
+    /**
+     * GTOCore two-layer (bloom) casing: the base texture plus the emissive {@code _bloom} overlay,
+     * both connected through their {@code .png.mcmeta} (CC BY-NC-SA 4.0 from GTOCore). GTCEu's
+     * {@code cube_2_layer/all} parent renders the pair, exactly like the original.
+     */
+    public static BlockEntry<Block> createTwoLayerCasingBlock(String name) {
+        ResourceLocation base = GTNACORE.id("block/casings/" + name);
+        ResourceLocation bloom = GTNACORE.id("block/casings/" + name + "_bloom");
+        return REGISTRATE.block(name, Block::new)
+                .initialProperties(() -> Blocks.IRON_BLOCK)
+                .properties(p -> p
+                        .mapColor(MapColor.METAL)
+                        .strength(5.0f, 6.0f)
+                        .sound(SoundType.METAL)
+                        .requiresCorrectToolForDrops()
+                        .isValidSpawn((state, level, pos, ent) -> false))
+                .addLayer(() -> RenderType::cutoutMipped)
+                .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(),
+                        prov.models().withExistingParent(ctx.getName(), GTCEu.id("block/cube_2_layer/all"))
+                                .texture("bot_all", base)
+                                .texture("top_all", bloom)))
+                .tag(GTToolType.WRENCH.harvestTags.get(0), BlockTags.MINEABLE_WITH_PICKAXE)
+                .item(GTNABlockItem::new)
+                .model((ctx, prov) -> prov.withExistingParent(ctx.getName(), prov.modLoc("block/" + ctx.getName())))
+                .build()
+                .register();
+    }
+
+    public static BlockEntry<Block> createSidedCasingBlock(String name) {
+        ResourceLocation side = GTNACORE.id("block/casings/sided/" + name + "/side");
+        ResourceLocation top = GTNACORE.id("block/casings/sided/" + name + "/top");
+        ResourceLocation bloom = GTNACORE.id("block/casings/sided/" + name + "/side_bloom");
+        return REGISTRATE.block(name, Block::new)
+                .initialProperties(() -> Blocks.IRON_BLOCK)
+                .properties(p -> p
+                        .mapColor(MapColor.METAL)
+                        .strength(5.0f, 6.0f)
+                        .sound(SoundType.METAL)
+                        .requiresCorrectToolForDrops()
+                        .isValidSpawn((state, level, pos, ent) -> false))
+                .addLayer(() -> RenderType::cutoutMipped)
+                .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(),
+                        prov.models().withExistingParent(ctx.getName(), GTCEu.id("block/cube_2_layer/bottom_top"))
+                                .texture("bot_side", side)
+                                .texture("bot_top", top)
+                                .texture("bot_bottom", top)
+                                .texture("top_side", bloom)
+                                .texture("top_top", top)
+                                .texture("top_bottom", top)))
+                .tag(GTToolType.WRENCH.harvestTags.get(0), BlockTags.MINEABLE_WITH_PICKAXE)
+                .item(GTNABlockItem::new)
+                .model((ctx, prov) -> prov.withExistingParent(ctx.getName(), prov.modLoc("block/" + ctx.getName())))
+                .build()
+                .register();
+    }
+
     @SuppressWarnings("all")
     public static BlockEntry<Block> createCasingBlock(String name,
                                                       NonNullFunction<BlockBehaviour.Properties, Block> blockSupplier,
@@ -277,7 +507,7 @@ public class GTNABlocks {
                 .addLayer(type)
                 .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models().cubeAll(ctx.getName(), texture)))
                 .tag(GTToolType.WRENCH.harvestTags.get(0), BlockTags.MINEABLE_WITH_PICKAXE)
-                .item(BlockItem::new)
+                .item(GTNABlockItem::new)
                 .model((ctx, prov) -> {
                     if ("borosilicate_glass".equals(ctx.getName())) {
                         prov.withExistingParent(ctx.getName(), new ResourceLocation("minecraft", "block/cube_all"))
@@ -307,7 +537,7 @@ public class GTNABlocks {
                     ).texture("particle", prov.modLoc("block/casings/" + name)));
                 })
                 .tag(GTToolType.WRENCH.harvestTags.get(0), BlockTags.MINEABLE_WITH_PICKAXE)
-                .item(BlockItem::new)
+                .item(GTNABlockItem::new)
 
                 .build()
                 .register();
@@ -333,7 +563,7 @@ public class GTNABlocks {
                 .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models().cubeAll(ctx.getName(),
                         GTNACORE.id(texture))))
                 .tag(GTToolType.WRENCH.harvestTags.get(0), BlockTags.MINEABLE_WITH_PICKAXE)
-                .item(BlockItem::new)
+                .item(GTNABlockItem::new)
                 .build()
                 .register();
     }
@@ -352,7 +582,7 @@ public class GTNABlocks {
                         prov.models().cubeAll(ctx.getName(),
                                 GTNACORE.id("block/wireless_energy_unit/" + name.replace("nexus_capacitor_", "")))))
                 .tag(GTToolType.WRENCH.harvestTags.get(0), BlockTags.MINEABLE_WITH_PICKAXE)
-                .item(BlockItem::new)
+                .item(GTNABlockItem::new)
                 .build()
                 .register();
     }

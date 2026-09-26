@@ -29,6 +29,10 @@ public class GTNAMaterials {
     public static Material Trinaquadalloy;
     public static Material MarM200Steel;
     public static Material FallKing;
+    /** GTOCore alloy additions required by the ISA Mill casings and controller recipe. */
+    public static Material Inconel625;
+    public static Material Inconel792;
+    public static Material Tantalloy61;
     public static Material Acrylonitrile;
     public static Material Abs;
     public static Material Polystyrene;
@@ -42,6 +46,38 @@ public class GTNAMaterials {
     public static Material SuperHeatedSteam;
     public static Material InsanelySupercriticalSteam;
     public static Material CompressedSteam;
+    public static Material Tanmolyium;
+    /** GTOCore alloy additions required by the Industrial Flotation Cell casings and controller. */
+    public static Material HastelloyN75;
+    public static Material Stellite;
+    /** GTOCore flotation reagents (Industrial Flotation Cell inputs). */
+    public static Material SodiumEthylxanthate;
+    public static Material PotassiumEthylxanthate;
+    public static Material Turpentine;
+    /**
+     * GTOCore flotation products: the {@code *Front} ore foams produced by the Industrial Flotation
+     * Cell and dried back into GTCEu dusts by the Vacuum Drying Furnace. Every one of them has a
+     * drying consumer (see {@code GTNAFlotationDryingRecipes}).
+     */
+    public static Material PyropeFront;
+    public static Material RedstoneFront;
+    public static Material ChalcopyriteFront;
+    public static Material MonaziteFront;
+    public static Material EnrichedNaquadahFront;
+    public static Material GrossularFront;
+    public static Material NickelFront;
+    public static Material AlmandineFront;
+    public static Material PlatinumFront;
+    public static Material PentlanditeFront;
+    public static Material SpessartineFront;
+    public static Material SphaleriteFront;
+    /** GTOCore drying by-products; {@code RedMud} is neutralised in the Chemical Reactor. */
+    public static Material RedMud;
+    public static Material NeutralisedRedMud;
+    /** GTOCore composite frame of the Component Assembler extension (GTO MaterialComposite:179). */
+    public static Material CarbonFiberPolyphenyleneSulfideComposite;
+    /** GTOCore ceramic of the extension's titanium-nitride mechanical block (GTO MaterialB:4980). */
+    public static Material TitaniumNitrideCeramic;
 
     public static void init() {
         MaterialBuilder.init();

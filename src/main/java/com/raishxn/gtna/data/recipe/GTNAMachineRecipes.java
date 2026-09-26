@@ -8,6 +8,7 @@ import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.recipe.ingredient.IntCircuitIngredient;
 import com.gregtechceu.gtceu.common.data.*;
+import com.gregtechceu.gtceu.common.data.machines.GCYMMachines;
 import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 
@@ -18,8 +19,10 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 
 import appeng.core.definitions.AEBlocks;
@@ -34,6 +37,27 @@ import java.util.function.Consumer;
 public class GTNAMachineRecipes {
 
     public static void register(Consumer<FinishedRecipe> provider) {
+        rocketEngine(provider, "ev", GTValues.EV, GTMaterials.Lead, GTMaterials.Steel,
+                CustomTags.EV_CIRCUITS, GTItems.ELECTRIC_MOTOR_EV.get(), GTItems.ELECTRIC_PUMP_EV.get());
+        rocketEngine(provider, "iv", GTValues.IV, GTMaterials.Chromium, GTMaterials.TungstenSteel,
+                CustomTags.IV_CIRCUITS, GTItems.ELECTRIC_MOTOR_IV.get(), GTItems.ELECTRIC_PUMP_IV.get());
+        rocketEngine(provider, "luv", GTValues.LuV, GTMaterials.RhodiumPlatedPalladium, GTMaterials.Osmium,
+                CustomTags.LuV_CIRCUITS, GTItems.ELECTRIC_MOTOR_LuV.get(), GTItems.ELECTRIC_PUMP_LuV.get());
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines3.ROCKET_LARGE_TURBINE.asStack().getItem())
+                .pattern("ABA")
+                .pattern("CDC")
+                .pattern("EFE")
+                .define('A', GTItems.ELECTRIC_PISTON_EV.get())
+                .define('B', CustomTags.IV_CIRCUITS)
+                .define('C', GTItems.ELECTRIC_MOTOR_EV.get())
+                .define('D', GTNAMachines3.ROCKET_ENGINE_GENERATOR[GTValues.EV].asStack().getItem())
+                .define('E',
+                        Objects.requireNonNull(
+                                ChemicalHelper.getBlock(TagPrefix.cableGtDouble, GTMaterials.BlackSteel)))
+                .define('F', Objects.requireNonNull(ChemicalHelper.getTag(TagPrefix.plateDense, GTMaterials.Obsidian)))
+                .unlockedBy("has_ev_rocket_engine", InventoryChangeTrigger.TriggerInstance
+                        .hasItems(GTNAMachines3.ROCKET_ENGINE_GENERATOR[GTValues.EV].asStack().getItem()))
+                .save(provider, GTNACORE.id("rocket_large_turbine"));
         if (enabled(GTNAMachines.LARGE_STEAM_CRUSHER)) {
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_CRUSHER.asStack().getItem())
                     .pattern("ABA")
@@ -832,6 +856,76 @@ public class GTNAMachineRecipes {
                     .define('E', GTItems.ELECTRIC_PUMP_MV.asStack().getItem())
                     .unlockedBy("has_mv_pump", InventoryChangeTrigger.TriggerInstance
                             .hasItems(GTItems.ELECTRIC_PUMP_MV.asStack().getItem()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines3.LARGE_GREENHOUSE)) {
+            // GTOCore classified/Vanilla.java:290; the existing Greenhouse is the center item.
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines3.LARGE_GREENHOUSE.asStack().getItem())
+                    .pattern("ABA")
+                    .pattern("CDC")
+                    .pattern("ABA")
+                    .define('A', GTItems.FIELD_GENERATOR_EV.asItem())
+                    .define('B', CustomTags.LuV_CIRCUITS)
+                    .define('C', GTItems.SENSOR_EV.asItem())
+                    .define('D', GTNAMachines3.GREENHOUSE.asStack().getItem())
+                    .unlockedBy("has_greenhouse", InventoryChangeTrigger.TriggerInstance
+                            .hasItems(GTNAMachines3.GREENHOUSE.asStack().getItem()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines3.BLAZE_BLAST_FURNACE)) {
+            // Original casing needs the excluded Reaction Furnace. The Large Chemical Reactor
+            // accepts the same item and all three fluids at EV; its 4500 K coil gate cannot apply.
+            GTRecipeTypes.LARGE_CHEMICAL_RECIPES.recipeBuilder("blaze_casing_gtna_route")
+                    .inputItems(GCYMBlocks.CASING_HIGH_TEMPERATURE_SMELTING.asItem())
+                    .inputItems(TagPrefix.foil, GTMaterials.Tin, 32)
+                    .inputFluids(GTMaterials.Blaze, 1440)
+                    .inputFluids(GTMaterials.GalliumArsenide, 576)
+                    .inputFluids(GTMaterials.VanadiumGallium, 288)
+                    .outputItems(GTNABlocks.BLAZE_CASING.asItem())
+                    .EUt(1920).duration(900).save(provider);
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines3.BLAZE_BLAST_FURNACE.asStack().getItem())
+                    .pattern("ABA").pattern("BCB").pattern("ABA")
+                    .define('A', GTNABlocks.BLAZE_CASING.asItem())
+                    .define('B', GTItems.FIELD_GENERATOR_IV.asItem())
+                    .define('C', GTMultiMachines.ELECTRIC_BLAST_FURNACE.asStack().getItem())
+                    .unlockedBy("has_blaze_casing", InventoryChangeTrigger.TriggerInstance
+                            .hasItems(GTNABlocks.BLAZE_CASING.asItem()))
+                    .save(provider);
+        }
+        if (enabled(GTNAMachines3.COLD_ICE_FREEZER)) {
+            // GTOCore classified/Vacuum.java:46 and classified/Vanilla.java:609.
+            GTRecipeTypes.VACUUM_RECIPES.recipeBuilder("cold_ice_casing")
+                    .inputItems(GTBlocks.CASING_ALUMINIUM_FROSTPROOF.asItem())
+                    .inputFluids(GTMaterials.Ice, 10_000)
+                    .inputFluids(GTMaterials.VanadiumGallium, 576)
+                    .outputItems(GTNABlocks.COLD_ICE_CASING.asItem())
+                    .EUt(1920).duration(200).save(provider);
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines3.COLD_ICE_FREEZER.asStack().getItem())
+                    .pattern("ABA").pattern("BCB").pattern("ABA")
+                    .define('A', GTNABlocks.COLD_ICE_CASING.asItem())
+                    .define('B', GTItems.EMITTER_IV.asItem())
+                    .define('C', GTMultiMachines.VACUUM_FREEZER.asStack().getItem())
+                    .unlockedBy("has_cold_ice_casing", InventoryChangeTrigger.TriggerInstance
+                            .hasItems(GTNABlocks.COLD_ICE_CASING.asItem()))
+                    .save(provider);
+        }
+        // Chemical Plant controller recipe intentionally omitted: GTO's original is an Assembly
+        // Line recipe that needs GTO-only WatertightSteel and other resources. Author decision
+        // (2026-09-25) is to skip fabricated controller recipes and record the gap. A full port
+        // would require porting the whole GTO material chain.
+        if (enabled(GTNAMachines3.MEGA_ALLOY_BLAST_SMELTER)) {
+            // GTOCore classified/Vanilla.java:564, all GTCEu/GCYM ingredients.
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines3.MEGA_ALLOY_BLAST_SMELTER.asStack().getItem())
+                    .pattern("ABA").pattern("CDC").pattern("EFE")
+                    .define('A', ChemicalHelper.get(TagPrefix.spring, GTMaterials.NaquadahAlloy).getItem())
+                    .define('B', CustomTags.ZPM_CIRCUITS)
+                    .define('C', GTItems.FIELD_GENERATOR_ZPM.asItem())
+                    .define('D', GCYMMachines.BLAST_ALLOY_SMELTER.asStack().getItem())
+                    .define('E', ChemicalHelper.get(TagPrefix.plateDense, GTMaterials.Darmstadtium).getItem())
+                    .define('F', ChemicalHelper
+                            .get(TagPrefix.wireGtHex, GTMaterials.EnrichedNaquadahTriniumEuropiumDuranide).getItem())
+                    .unlockedBy("has_blast_alloy_smelter", InventoryChangeTrigger.TriggerInstance
+                            .hasItems(GCYMMachines.BLAST_ALLOY_SMELTER.asStack().getItem()))
                     .save(provider);
         }
         if (enabled(GTNAMachines.STEAM_LAVA_MAKER)) {
@@ -2172,6 +2266,24 @@ public class GTNAMachineRecipes {
             }
         }
         return true;
+    }
+
+    private static void rocketEngine(Consumer<FinishedRecipe> provider, String name, int tier,
+                                     Material rotor, Material cable, TagKey<Item> circuit,
+                                     ItemLike motor, ItemLike pump) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                GTNAMachines3.ROCKET_ENGINE_GENERATOR[tier].asStack().getItem())
+                .pattern("ABA")
+                .pattern("CDC")
+                .pattern("EFE")
+                .define('A', Objects.requireNonNull(ChemicalHelper.getTag(TagPrefix.rotor, rotor)))
+                .define('B', circuit)
+                .define('C', motor)
+                .define('D', GTMachines.HULL[tier].asStack().getItem())
+                .define('E', Objects.requireNonNull(ChemicalHelper.getBlock(TagPrefix.cableGtDouble, cable)))
+                .define('F', pump)
+                .unlockedBy("has_rocket_motor", InventoryChangeTrigger.TriggerInstance.hasItems(motor))
+                .save(provider, GTNACORE.id(name + "_rocket_engine"));
     }
 
     private static Item machineItem(String id) {

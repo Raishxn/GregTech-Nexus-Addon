@@ -202,6 +202,10 @@ tasks.register('runUnitTests') {
             'com.raishxn.gtna.ProductionMixinTargetContractTest',
             'com.raishxn.gtna.PartAbilityCoverageTest',
             'com.raishxn.gtna.RegistrationContractTest',
+            'com.raishxn.gtna.PortLangParityTest',
+            'com.raishxn.gtna.PortChainClosureTest',
+            'com.raishxn.gtna.MachineTooltipContractTest',
+            'com.raishxn.gtna.ControllerRecipePolicyTest',
             'com.raishxn.gtna.OutputBoostContractTest',
             'com.raishxn.gtna.AccelerateHatchMathTest',
             'com.raishxn.gtna.OverclockHatchMathTest',
@@ -249,7 +253,6 @@ dependencies {
     modCompileOnly("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
     modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
     modRuntimeOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
-    modRuntimeOnly("dev.emi:emi-forge:${emi_version}+${minecraft_version}")
     modCompileOnly("curse.maven:jade-324717:5390389")
     if (!isDataRun) {
         modRuntimeOnly("curse.maven:jade-324717:5390389")
@@ -378,6 +381,7 @@ tasks.withType(JavaExec).configureEach {
 tasks.register('installIntegratedOreKubeJSExample', Copy) {
     description = 'Installs the Integrated Ore Processor KubeJS example in the local dev run.'
     from('examples/kubejs/server_scripts/gtna_integrated_ore_module.js')
+    from('examples/kubejs/server_scripts/gtna_multiple_recipes_module.js')
     into('run/kubejs/server_scripts')
 }
 tasks.named('runClient').configure {

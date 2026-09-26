@@ -19,16 +19,22 @@ import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import com.gregtechceu.gtceu.api.recipe.ingredient.IntCircuitIngredient;
+import com.gregtechceu.gtceu.common.data.GCYMBlocks;
+import com.gregtechceu.gtceu.common.data.GCYMRecipeTypes;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
+import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMachines;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.common.data.machines.GCYMMachines;
 import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
 import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
+import com.gregtechceu.gtceu.common.item.TurbineRotorBehaviour;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.EnergyHatchPartMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.ItemBusPartMachine;
+import com.gregtechceu.gtceu.common.machine.multiblock.part.MaintenanceHatchPartMachine;
+import com.gregtechceu.gtceu.common.machine.multiblock.part.RotorHolderPartMachine;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,8 +42,11 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -69,27 +78,43 @@ import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.me.helpers.BaseActionSource;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.capability.SteamWirelessNetworkManager;
+import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPatternDiagnostics;
+import com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh;
 import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
 import com.raishxn.gtna.common.WirelessSteamHudSync;
 import com.raishxn.gtna.common.data.GTNABlocks;
+import com.raishxn.gtna.common.data.GTNAItems;
 import com.raishxn.gtna.common.data.GTNAMachines;
 import com.raishxn.gtna.common.data.GTNAMachines2;
 import com.raishxn.gtna.common.data.GTNAMachines3;
+import com.raishxn.gtna.common.data.GTNAMaterials;
 import com.raishxn.gtna.common.data.GTNARecipeType;
 import com.raishxn.gtna.common.data.NexusEnergyNetwork;
 import com.raishxn.gtna.common.data.multiblock.GTOCompressedPatternReader;
 import com.raishxn.gtna.common.item.terminal.NexusBuildCheckGuard;
 import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
+import com.raishxn.gtna.common.machine.multiblock.electric.BlazeBlastFurnaceMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.ChemicalPlantMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.ColdIceFreezerMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.ComponentAssemblerMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.ComponentAssemblyLineMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.GreenhouseMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.IndustrialFlotationCellMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.IsaMillMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.LiquefactionFurnaceMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.MegaAlloyBlastSmelterMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.RocketLargeTurbineMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.SupercriticalSteamTurbineMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.UniversalFactoryMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.VacuumDryingFurnaceMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.common.machine.multiblock.module.steamElevator.SteamOreProcessorModule;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.BrickKilnMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.PrimitiveStoneFurnaceMachine;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.ThermalPowerPumpMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.BallHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OutputBoostHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftingCPUInterfacePartMachine;
@@ -100,6 +125,7 @@ import com.raishxn.gtna.common.machine.multiblock.steam.AdjustableSteamParallelM
 import com.raishxn.gtna.common.machine.multiblock.steam.SteamItemVaultMachine;
 import com.raishxn.gtna.common.machine.multiblock.steam.SteamLavaMakerMachine;
 import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
+import com.raishxn.gtna.data.recipe.GTNAAtomizationRecipes;
 import com.raishxn.gtna.network.packet.SWirelessSteamStats;
 import com.raishxn.gtna.utils.datastructure.Int128;
 
@@ -558,6 +584,50 @@ public final class GTNAMachineGameTests {
         helper.succeed();
     }
 
+    /** The solar producer must accept the dedicated wireless steam output ability. */
+    @GameTest(template = "empty_16", timeoutTicks = 40)
+    public static void solarBoilerAcceptsWirelessSteamOutput(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(7, 2, 4);
+        for (int aisle = 0; aisle < 5; aisle++) {
+            String row = aisle == 0 || aisle == 4 ? "AAAAA" : "ABBBA";
+            for (int column = 0; column < 5; column++) {
+                BlockPos pos = controllerPos.offset(column - 2, 0, 4 - aisle);
+                helper.setBlock(pos, row.charAt(column) == 'B' ?
+                        GTNABlocks.SOLAR_BOILING_CELL.get() : GTBlocks.STEEL_HULL.get());
+            }
+        }
+        helper.setBlock(controllerPos, GTNAMachines.LARGE_STEAM_SOLAR_BOILER.getBlock());
+        BlockPos waterInput = controllerPos.offset(-2, 0, 0);
+        BlockPos steamOutput = controllerPos.offset(2, 0, 0);
+        helper.setBlock(waterInput, GTMachines.FLUID_IMPORT_HATCH[GTValues.LV].getBlock());
+        helper.setBlock(steamOutput, GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH_STEEL.getBlock());
+        var machine = (com.raishxn.gtna.common.machine.multiblock.steam.LargeSteamSolarBoilerMachine) metaMachineAt(
+                helper, controllerPos);
+        MultiblockState state = machine.getMultiblockState();
+        helper.assertTrue(machine.getPattern().checkPatternAt(state, false),
+                "solar boiler must accept a wireless steam output: " + patternError(helper, state, controllerPos));
+        machine.onStructureFormed();
+        helper.assertTrue(machine.isFormed(), "solar boiler must form with wireless steam output");
+        var inputHatch = (FluidHatchPartMachine) metaMachineAt(helper, waterInput);
+        var outputHatch = (com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamOutputHatch) metaMachineAt(
+                helper, steamOutput);
+        inputHatch.tank.setFluidInTank(0, GTMaterials.Water.getFluid(1000));
+        var steamRecipe = com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder
+                .of(GTNACORE.id("solar_boiler_wireless_test"), machine.getRecipeType())
+                .inputFluids(GTMaterials.Water.getFluid(1))
+                .outputFluids(GTMaterials.Steam.getFluid(100))
+                .duration(2)
+                .buildRawRecipe();
+        machine.getRecipeLogic().setupRecipe(steamRecipe);
+        for (int tick = 0; tick < 3; tick++) machine.getRecipeLogic().serverTick();
+        helper.assertTrue(outputHatch.tank.getFluidInTank(0).getAmount() == 100,
+                "formed solar boiler must deliver steam to wireless output hatch");
+        helper.setBlock(steamOutput, GTNAMachines.WIRELESS_STEAM_INPUT_HATCH_STEEL.getBlock());
+        helper.assertTrue(!machine.getPattern().checkPatternAt(state, false),
+                "a steam input cannot replace the solar boiler's output");
+        helper.succeed();
+    }
+
     /** GTOCore's eight-layer column must form and turn water into salt water. */
     @GameTest(template = "empty_16", timeoutTicks = 40)
     public static void evaporationPlantForms(GameTestHelper helper) {
@@ -674,6 +744,155 @@ public final class GTNAMachineGameTests {
         helper.assertTrue(!plant.getPattern().checkPatternAt(state, false),
                 "evaporation plant must reject a MAX fluid output hatch in a base input position");
         helper.succeed();
+    }
+
+    /** The titanium tower must accept both performance hatches without opening their slots in the base. */
+    @GameTest(template = "empty_16", timeoutTicks = 80)
+    public static void evaporationPlantModuleAcceptsPerformanceHatches(GameTestHelper helper) {
+        assertEvaporationPlantModuleAcceptsPerformanceHatches(helper, Direction.NORTH);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 80)
+    public static void evaporationPlantModuleAcceptsPerformanceHatchesFacingEast(GameTestHelper helper) {
+        assertEvaporationPlantModuleAcceptsPerformanceHatches(helper, Direction.EAST);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 80)
+    public static void evaporationPlantModuleAcceptsPerformanceHatchesFacingSouth(GameTestHelper helper) {
+        assertEvaporationPlantModuleAcceptsPerformanceHatches(helper, Direction.SOUTH);
+    }
+
+    private static void assertEvaporationPlantModuleAcceptsPerformanceHatches(GameTestHelper helper, Direction facing) {
+        BlockPos controllerPos = new BlockPos(6, 4, 5);
+        String[][] bottom = { { "FYF", "YYY", "FYF" }, { "YSY", "Y#Y", "YYY" } };
+        helper.setBlock(controllerPos, GTNAMachines3.EVAPORATION_PLANT.getBlock());
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof WorkableElectricMultiblockMachine plant)) {
+            helper.fail("Evaporation Plant controller is missing: " + machine);
+            return;
+        }
+        plant.setFrontFacing(facing);
+        for (int aisle = 0; aisle < 8; aisle++) {
+            String[] rows = aisle < 2 ? bottom[aisle] :
+                    aisle == 7 ? new String[] { " Z ", "ZZZ", " Z " } :
+                            new String[] { "XXX", "X#X", "XXX" };
+            for (int row = 0; row < 3; row++) {
+                for (int ch = 0; ch < 3; ch++) {
+                    BlockPos pos = evaporationOffset(controllerPos, ch - 1, aisle - 1, row, facing);
+                    switch (rows[row].charAt(ch)) {
+                        case 'Y', 'X', 'Z' -> helper.setBlock(pos, GTNABlocks.STAINLESS_EVAPORATION_CASING.get());
+                        case 'F' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Aluminium));
+                        case '#', ' ' -> helper.setBlock(pos, Blocks.AIR);
+                        default -> {}
+                    }
+                }
+            }
+        }
+        helper.setBlock(evaporationOffset(controllerPos, 0, -1, 1, facing),
+                GTMachines.FLUID_IMPORT_HATCH[GTValues.HV].getBlock());
+        helper.setBlock(evaporationOffset(controllerPos, 0, -1, 0, facing),
+                GTMachines.ENERGY_INPUT_HATCH[GTValues.HV].getBlock());
+
+        String[][] tower = {
+                { "HFH AAA", "FFF ACA", "FFF ACA", "FFF ACA", " G  AAA" },
+                { "FGGAAAA", "FDGDA A", "FDGDA A", "FDGAA A", " G  AEA" },
+                { "    AAA", "    A A", "    A A", "    A A", "    AAA" },
+                { "   AAAA", "   DA A", "   DA A", "   DA A", "   AAEA" },
+                { "    AAA", " B  ACA", "    ACA", "    ACA", "    AAA" }
+        };
+        for (int aisle = 0; aisle < tower.length; aisle++) {
+            for (int row = 0; row < tower[aisle].length; row++) {
+                for (int ch = 0; ch < tower[aisle][row].length(); ch++) {
+                    BlockPos pos = evaporationOffset(controllerPos, 1 - ch, row - 1, 4 - aisle, facing);
+                    switch (tower[aisle][row].charAt(ch)) {
+                        case 'A' -> helper.setBlock(pos, GTBlocks.CASING_TITANIUM_STABLE.get());
+                        case 'C' -> helper.setBlock(pos, GTBlocks.FIREBOX_TITANIUM.get());
+                        case 'D' -> helper.setBlock(pos, GTBlocks.CASING_TITANIUM_PIPE.get());
+                        case 'E' -> helper.setBlock(pos, GTMachines.MUFFLER_HATCH[GTValues.HV].getBlock());
+                        case 'F', 'G' -> helper.setBlock(pos, GTNABlocks.STAINLESS_EVAPORATION_CASING.get());
+                        case 'H' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Aluminium));
+                        default -> {}
+                    }
+                }
+            }
+        }
+        helper.assertTrue(GTNAStructureRefresh.refresh(plant, true),
+                "Evaporation Plant and its titanium tower must form before hatch replacement");
+        helper.assertTrue(
+                ((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) plant).gtna$formedModuleCount() == 1,
+                "complete titanium tower must match with solid stainless casing");
+        helper.setBlock(evaporationOffset(controllerPos, 0, -1, 4, facing),
+                GCYMMachines.PARALLEL_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(evaporationOffset(controllerPos, 1, 0, 4, facing),
+                GTNAMachines2.ACCELERATE_HATCHES[GTValues.IV].getBlock());
+        helper.runAfterDelay(4, () -> {
+            helper.assertTrue(
+                    ((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) plant).gtna$formedModuleCount() == 1,
+                    "the tower with hatches in F cells must stay formed after natural block updates");
+            helper.assertTrue(plant.getParallelHatch().isPresent() &&
+                    plant.getParallelHatch().orElseThrow().getCurrentParallel() == 4,
+                    "a Parallel Hatch in an F cell must grant four parallels without calling refresh");
+            helper.assertTrue(plant.getParts().stream().anyMatch(
+                    part -> part instanceof com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine),
+                    "an Accelerate Hatch in an F cell must be collected without refresh");
+
+            // The visually identical G casing and the exposed titanium shell are the intuitive
+            // places to install hatches in-game. They must offer the same module-only abilities.
+            helper.setBlock(evaporationOffset(controllerPos, 0, -1, 4, facing),
+                    GTNABlocks.STAINLESS_EVAPORATION_CASING.get());
+            helper.setBlock(evaporationOffset(controllerPos, 1, 0, 4, facing),
+                    GTNABlocks.STAINLESS_EVAPORATION_CASING.get());
+            helper.setBlock(evaporationOffset(controllerPos, 0, -1, 3, facing),
+                    GCYMMachines.PARALLEL_HATCH[GTValues.IV].getBlock());
+            helper.setBlock(evaporationOffset(controllerPos, -5, 0, 4, facing),
+                    GTNAMachines2.ACCELERATE_HATCHES[GTValues.IV].getBlock());
+            helper.runAfterDelay(4, () -> {
+                helper.assertTrue(
+                        ((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) plant).gtna$formedModuleCount() == 1,
+                        "the tower with hatches in exposed A/G cells must stay formed after natural block updates");
+                helper.assertTrue(plant.getParallelHatch().isPresent() &&
+                        plant.getParallelHatch().orElseThrow().getCurrentParallel() == 4,
+                        "a Parallel Hatch in a G cell must grant four parallels without calling refresh");
+                helper.assertTrue(plant.getParts().stream().anyMatch(
+                        part -> part instanceof com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine),
+                        "an Accelerate Hatch in the exposed titanium shell must be collected without refresh");
+
+                // A player can finish the module after installing its hatches. A missing pipe
+                // must temporarily drop only the module, then recover it when rebuilt.
+                BlockPos pipePos = evaporationOffset(controllerPos, 0, 0, 3, facing);
+                helper.setBlock(pipePos, Blocks.AIR);
+                helper.runAfterDelay(4, () -> {
+                    helper.assertTrue(
+                            ((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) plant)
+                                    .gtna$formedModuleCount() == 0,
+                            "missing titanium pipe must invalidate the module without a forced scan");
+                    helper.setBlock(pipePos, GTBlocks.CASING_TITANIUM_PIPE.get());
+                    helper.runAfterDelay(4, () -> {
+                        helper.assertTrue(
+                                ((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) plant)
+                                        .gtna$formedModuleCount() == 1,
+                                "rebuilding the pipe must restore the hatch-bearing module");
+                        helper.assertTrue(plant.getParallelHatch().isPresent() &&
+                                plant.getParallelHatch().orElseThrow().getCurrentParallel() == 4,
+                                "recovered module must retain its four parallels");
+                        helper.assertTrue(plant.getParts().stream().anyMatch(
+                                part -> part instanceof com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine),
+                                "recovered module must collect its Accelerate Hatch");
+                        helper.succeed();
+                    });
+                });
+            });
+        });
+    }
+
+    private static BlockPos evaporationOffset(BlockPos controllerPos, int x, int y, int z, Direction facing) {
+        return switch (facing) {
+            case EAST -> controllerPos.offset(-z, y, x);
+            case SOUTH -> controllerPos.offset(-x, y, -z);
+            default -> controllerPos.offset(x, y, z);
+        };
     }
 
     /** Low charge and legacy SafeMode NBT must never block a valid withdrawal. */
@@ -1150,13 +1369,11 @@ public final class GTNAMachineGameTests {
                 .gtna$formedModuleCount() == 0, "module must reject wireless Energy Hatches");
         helper.setBlock(secondModuleEnergy, GTBlocks.CASING_INVAR_HEATPROOF.get());
 
-        // A second Accelerate Hatch in the base must not be counted with the one in the module.
+        // The base must never accept the module-only Accelerate Hatch.
         BlockPos baseCasing = controllerPos.offset(-1, 0, 1);
         helper.setBlock(baseCasing, GTNAMachines2.ACCELERATE_HATCHES[GTValues.LV].getBlock());
-        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
-                "EBF base must still form with one Accelerate Hatch");
-        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
-                .gtna$formedModuleCount() == 0, "module must reject a second Accelerate Hatch");
+        helper.assertTrue(!controller.getPattern().checkPatternAt(state, false),
+                "EBF base must reject an Accelerate Hatch even while its module is connected");
         helper.setBlock(baseCasing, GTBlocks.CASING_INVAR_HEATPROOF.get());
         helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
                 "EBF module must form again after removing the duplicate hatch");
@@ -3307,17 +3524,22 @@ public final class GTNAMachineGameTests {
     public static void newGtoControllersDescribeTheirFunction(GameTestHelper helper) {
         for (MultiblockMachineDefinition definition : new MultiblockMachineDefinition[] {
                 GTNAMachines3.GENERATOR_ARRAY, GTNAMachines3.FISHING_GROUND,
-                GTNAMachines3.EVAPORATION_PLANT, GTNAMachines3.GREENHOUSE }) {
+                GTNAMachines3.EVAPORATION_PLANT, GTNAMachines3.GREENHOUSE,
+                GTNAMachines3.COMPONENT_ASSEMBLER, GTNAMachines3.LARGE_GREENHOUSE,
+                GTNAMachines3.BLAZE_BLAST_FURNACE, GTNAMachines3.COLD_ICE_FREEZER,
+                GTNAMachines3.CHEMICAL_PLANT, GTNAMachines3.MEGA_ALLOY_BLAST_SMELTER,
+                GTNAMachines3.ISA_MILL, GTNAMachines3.ROCKET_LARGE_TURBINE,
+                GTNAMachines3.SUPERCRITICAL_STEAM_TURBINE,
+                GTNAMachines3.INDUSTRIAL_FLOTATION_CELL, GTNAMachines3.VACUUM_DRYING_FURNACE,
+                GTNAMachines3.COMPONENT_ASSEMBLY_LINE }) {
             java.util.List<Component> tooltip = new java.util.ArrayList<>();
             definition.getTooltipBuilder().accept(ItemStack.EMPTY, tooltip);
             String prefix = "gtna.machine." + definition.getId().getPath() + ".tooltip";
             long functionalLines = tooltip.stream().filter(component -> component
                     .getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents contents &&
                     contents.getKey().startsWith(prefix + ".")).count();
-            int expectedLines = definition == GTNAMachines3.FISHING_GROUND ? 9 :
-                    definition == GTNAMachines3.GENERATOR_ARRAY ? 5 : 3;
-            helper.assertTrue(functionalLines == expectedLines,
-                    definition.getId() + " has incomplete functional tooltip: " + tooltip);
+            helper.assertTrue(functionalLines == 0,
+                    definition.getId() + " still has the shortened GTNA tooltip: " + tooltip);
             helper.assertTrue(tooltip.stream().noneMatch(component -> component
                     .getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents contents &&
                     prefix.equals(contents.getKey())),
@@ -3326,9 +3548,893 @@ public final class GTNAMachineGameTests {
                     .getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents contents &&
                     "gtna.tooltip.source".equals(contents.getKey())).count();
             helper.assertTrue(sourceLines == 1,
-                    definition.getId() + " must have exactly one source attribution: " + tooltip);
+                    definition.getId() + " must have the expected GTO source attribution: " + tooltip);
+            helper.assertTrue(
+                    tooltip.stream()
+                            .noneMatch(component -> "GTOCore".equals(component.getString()) ||
+                                    "GTO Core | Machine".equals(component.getString())),
+                    definition.getId() + " must use Source as its only attribution: " + tooltip);
         }
         helper.succeed();
+    }
+
+    /** The GTO base structure forms with one casing tier and rejects a mixed tier. */
+    @GameTest(template = "empty_16", timeoutTicks = 80)
+    public static void componentAssemblerRequiresMatchingCasingTier(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(8, 2, 8);
+        String[][] aisles = {
+                { "AaaaaaA", "ACDDDCA", "ACDDDCA", "ACDDDCA", "AAAAAAA" },
+                { "aAEEEAa", "FG   GF", "FG   GF", "FG   GF", "AACACAA" },
+                { "aAEEEAa", "FHI IHF", "FJI IJF", "FG   GF", "AACACAA" },
+                { "aAEEEAa", "FG   GF", "FG   GF", "FG   GF", "AACACAA" },
+                { "AaaBaaA", "ACDDDCA", "ACDDDCA", "ACDDDCA", "AAAAAAA" }
+        };
+        for (int aisle = 0; aisle < aisles.length; aisle++) {
+            for (int row = 0; row < aisles[aisle].length; row++) {
+                for (int column = 0; column < aisles[aisle][row].length(); column++) {
+                    BlockPos pos = controllerPos.offset(3 - column, row, 4 - aisle);
+                    switch (aisles[aisle][row].charAt(column)) {
+                        case 'A', 'a' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_SOLID.get());
+                        case 'B' -> helper.setBlock(pos, GTNAMachines3.COMPONENT_ASSEMBLER.getBlock());
+                        case 'C' -> helper.setBlock(pos, GTBlocks.CASING_GRATE.get());
+                        case 'D' -> helper.setBlock(pos, GTBlocks.CASING_TEMPERED_GLASS.get());
+                        case 'E' -> helper.setBlock(pos, GTBlocks.STEEL_HULL.get());
+                        case 'F' -> helper.setBlock(pos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_LV.get());
+                        case 'G' -> helper.setBlock(pos, GTNABlocks.MULTI_FUNCTIONAL_CASING.get());
+                        case 'H' -> helper.setBlock(pos, ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Steel));
+                        case 'I' -> helper.setBlock(pos, Blocks.IRON_BARS);
+                        case 'J' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_GEARBOX.get());
+                        case ' ' -> helper.setBlock(pos, Blocks.AIR);
+                        default -> helper.fail("unexpected Component Assembler symbol");
+                    }
+                }
+            }
+        }
+        // Five replaceable shell cells carry one of each required ability.
+        helper.setBlock(controllerPos.offset(2, 0, 0), GTMachines.ITEM_IMPORT_BUS[GTValues.MV].getBlock());
+        helper.setBlock(controllerPos.offset(1, 0, 0), GTMachines.ITEM_EXPORT_BUS[GTValues.MV].getBlock());
+        helper.setBlock(controllerPos.offset(-1, 0, 0), GTMachines.FLUID_IMPORT_HATCH[GTValues.MV].getBlock());
+        helper.setBlock(controllerPos.offset(-2, 0, 0), GTMachines.ENERGY_INPUT_HATCH[GTValues.MV].getBlock());
+        helper.setBlock(controllerPos.offset(2, 0, 4), GTMachines.MAINTENANCE_HATCH.getBlock());
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof ComponentAssemblerMachine assembler)) {
+            helper.fail("Component Assembler controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = assembler.getMultiblockState();
+        helper.assertTrue(assembler.getPattern().checkPatternAt(state, false),
+                "Component Assembler base must form: " + patternError(helper, state, controllerPos));
+        helper.setBlock(controllerPos.offset(3, 1, 3), GTNABlocks.COMPONENT_ASSEMBLY_CASING_MV.get());
+        helper.assertTrue(!assembler.getPattern().checkPatternAt(state, false),
+                "Component Assembler must reject mixed casing tiers");
+        var componentRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.COMPONENT_ASSEMBLY_RECIPES);
+        helper.assertTrue(componentRecipes.size() == 64,
+                "Component Assembler must load eight batch recipes at each tier LV-IV plus the eight " +
+                        "LuV, ZPM and UV extension batches; found " + componentRecipes.size());
+        helper.succeed();
+    }
+
+    /** The Large Greenhouse keeps both crop and tree modes and forms from GTO's compressed MBS. */
+    @GameTest(template = "empty_16", timeoutTicks = 80)
+    public static void largeGreenhouseFormsWithTreeRecipes(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(8, 2, 3);
+        var source = GTOCompressedPatternReader.read("large_greenhouse");
+        helper.assertTrue(source.slices().length == 9 && source.slices()[0].length == 10 &&
+                source.slices()[0][0].length() == 9,
+                "Large Greenhouse must retain GTOCore's 9x10x9 shape");
+        for (int aisle = 0; aisle < source.slices().length; aisle++) {
+            for (int row = 0; row < source.slices()[aisle].length; row++) {
+                String line = source.slices()[aisle][row];
+                for (int column = 0; column < line.length(); column++) {
+                    BlockPos pos = controllerPos.offset(4 - column, row - 1, 8 - aisle);
+                    switch (line.charAt(column)) {
+                        case '~' -> helper.setBlock(pos, GTNAMachines3.LARGE_GREENHOUSE.getBlock());
+                        case 'a' -> helper.setBlock(pos, GTBlocks.CASING_STAINLESS_CLEAN.get());
+                        case 'b' -> helper.setBlock(pos, GTBlocks.CASING_TEMPERED_GLASS.get());
+                        case 'c' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.StainlessSteel));
+                        case 'd' -> helper.setBlock(pos, Blocks.MUD);
+                        case 'e' -> helper.setBlock(pos, GTBlocks.CASING_POLYTETRAFLUOROETHYLENE_PIPE.get());
+                        case 'f' -> helper.setBlock(pos, GTBlocks.CASING_GRATE.get());
+                        case ' ' -> helper.setBlock(pos, Blocks.AIR);
+                        default -> helper.fail("unexpected Large Greenhouse symbol");
+                    }
+                }
+            }
+        }
+        helper.setBlock(controllerPos.offset(4, 0, 0), GTMachines.ITEM_IMPORT_BUS[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(3, 0, 0), GTMachines.ITEM_EXPORT_BUS[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(2, 0, 0), GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(1, 0, 0), GTMachines.ENERGY_INPUT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(-1, 0, 0), GTMachines.MAINTENANCE_HATCH.getBlock());
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof WorkableElectricMultiblockMachine greenhouse)) {
+            helper.fail("Large Greenhouse controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = greenhouse.getMultiblockState();
+        helper.assertTrue(greenhouse.getPattern().checkPatternAt(state, false),
+                "Large Greenhouse must form: " + patternError(helper, state, controllerPos));
+        helper.assertTrue(GTNAMachines3.LARGE_GREENHOUSE.getRecipeTypes().length == 2,
+                "Large Greenhouse must expose crop and tree growth recipe modes");
+        var treeRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.TREE_GROWTH_RECIPES);
+        helper.assertTrue(treeRecipes.size() >= 16,
+                "Large Greenhouse must have GTO's vanilla tree family; found " + treeRecipes.size());
+        helper.succeed();
+    }
+
+    /** GTO blaze structure and molten Blaze upkeep, including the replacement casing route. */
+    @GameTest(template = "empty_16", timeoutTicks = 80)
+    public static void blazeBlastFurnaceFormsAndConsumesBlaze(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(7, 4, 5);
+        var source = GTOCompressedPatternReader.read("blaze_blast_furnace");
+        helper.assertTrue(source.slices().length == 7 && source.slices()[0].length == 6 &&
+                source.slices()[0][0].length() == 7,
+                "Blaze Blast Furnace must retain GTOCore's 7x6x7 shape");
+        for (int aisle = 0; aisle < source.slices().length; aisle++) {
+            for (int row = 0; row < source.slices()[aisle].length; row++) {
+                String line = source.slices()[aisle][row];
+                for (int column = 0; column < line.length(); column++) {
+                    BlockPos pos = controllerPos.offset(column - 3, row - 2, aisle - 1);
+                    switch (line.charAt(column)) {
+                        case 'A' -> helper.setBlock(pos, GCYMBlocks.CASING_HIGH_TEMPERATURE_SMELTING.get());
+                        case 'B' -> helper.setBlock(pos, GCYMBlocks.HEAT_VENT.get());
+                        case 'C' -> helper.setBlock(pos, GTBlocks.CASING_TUNGSTENSTEEL_PIPE.get());
+                        case 'D', 'E' -> helper.setBlock(pos, GTNABlocks.BLAZE_CASING.get());
+                        case 'F' -> helper.setBlock(pos, GTBlocks.COIL_TRINIUM.get());
+                        case 'G' -> helper.setBlock(pos, GTNAMachines3.BLAZE_BLAST_FURNACE.getBlock());
+                        case 'H' -> helper.setBlock(pos, GTMachines.MUFFLER_HATCH[GTValues.IV].getBlock());
+                        case ' ' -> helper.setBlock(pos, Blocks.AIR);
+                        default -> helper.fail("unexpected Blaze Blast Furnace symbol");
+                    }
+                }
+            }
+        }
+        helper.setBlock(controllerPos.offset(-1, 0, 0), GTMachines.ITEM_IMPORT_BUS[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(1, 0, 0), GTMachines.ITEM_EXPORT_BUS[GTValues.IV].getBlock());
+        BlockPos fluidPos = controllerPos.offset(-1, 3, 0);
+        helper.setBlock(fluidPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(0, 3, 0), GTMachines.FLUID_EXPORT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(1, 3, 0), GTMachines.ENERGY_INPUT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(-2, 0, 1), GTMachines.MAINTENANCE_HATCH.getBlock());
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof BlazeBlastFurnaceMachine furnace)) {
+            helper.fail("Blaze Blast Furnace controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = furnace.getMultiblockState();
+        helper.assertTrue(furnace.getPattern().checkPatternAt(state, false),
+                "Blaze Blast Furnace must form: " + patternError(helper, state, controllerPos));
+        furnace.onStructureFormed();
+        var blastRecipes = helper.getLevel().getRecipeManager().getAllRecipesFor(GTRecipeTypes.BLAST_RECIPES);
+        GTRecipe usable = blastRecipes.stream().filter(recipe -> recipe.data.getInt("ebf_temp") <=
+                furnace.getCoilType().getCoilTemperature() + 100 * Math.max(0, furnace.getTier() - 2))
+                .findFirst().orElse(null);
+        helper.assertTrue(usable != null, "Blaze Blast Furnace needs a blast recipe for its upkeep check");
+        helper.assertTrue(!furnace.beforeWorking(usable), "missing molten Blaze must block startup");
+        FluidHatchPartMachine fluid = (FluidHatchPartMachine) metaMachineAt(helper, fluidPos);
+        fluid.tank.setFluidInTank(0, GTMaterials.Blaze.getFluid(1000));
+        helper.assertTrue(furnace.beforeWorking(usable), "molten Blaze must allow startup");
+        helper.assertTrue(fluid.tank.getFluidInTank(0).getAmount() < 1000,
+                "molten Blaze must be consumed at startup");
+        var lcrRecipes = helper.getLevel().getRecipeManager().getAllRecipesFor(GTRecipeTypes.LARGE_CHEMICAL_RECIPES);
+        helper.assertTrue(
+                lcrRecipes.stream().anyMatch(recipe -> recipe.id.getPath().endsWith("blaze_casing_gtna_route")),
+                "the original Blaze Casing inputs need a route outside the excluded Reaction Furnace");
+        helper.succeed();
+    }
+
+    /** GTO Cold Ice Freezer base accepts its original casings and requires liquid Ice to start. */
+    @GameTest(template = "empty_16", timeoutTicks = 80)
+    public static void coldIceFreezerFormsAndConsumesIce(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(7, 4, 2);
+        String[][] aisles = {
+                { "AAAAA", " BBB ", " BGB ", " BBB ", "AAAAA" },
+                { "AAAAA", "BE EB", "BE EB", "BE EB", "AAAAA" },
+                { "AAAAA", " F F ", " F F ", " F F ", "ACHCA" },
+                { "AAAAA", "BE EB", "BE EB", "BE EB", "ACCCA" },
+                { "AAAAA", "D   D", "D   D", "D   D", "ACCCA" },
+                { "AAAAA", "BE EB", "BE EB", "BE EB", "ACCCA" },
+                { "AAAAA", " F F ", " F F ", " F F ", "ACHCA" },
+                { "AAAAA", "BE EB", "BE EB", "BE EB", "AAAAA" },
+                { "AAAAA", " BBB ", " BBB ", " BBB ", "AAAAA" }
+        };
+        for (int aisle = 0; aisle < aisles.length; aisle++) {
+            for (int row = 0; row < aisles[aisle].length; row++) {
+                for (int column = 0; column < aisles[aisle][row].length(); column++) {
+                    BlockPos pos = controllerPos.offset(column - 2, row - 2, aisle);
+                    switch (aisles[aisle][row].charAt(column)) {
+                        case 'A' -> helper.setBlock(pos, GTBlocks.CASING_ALUMINIUM_FROSTPROOF.get());
+                        case 'B', 'C' -> helper.setBlock(pos, GTNABlocks.COLD_ICE_CASING.get());
+                        case 'D' -> helper.setBlock(pos, GTBlocks.CASING_TEMPERED_GLASS.get());
+                        case 'E' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Aluminium));
+                        case 'F' -> helper.setBlock(pos, GTBlocks.CASING_TUNGSTENSTEEL_PIPE.get());
+                        case 'G' -> helper.setBlock(pos, GTNAMachines3.COLD_ICE_FREEZER.getBlock());
+                        case 'H' -> helper.setBlock(pos, GTMachines.MUFFLER_HATCH[GTValues.IV].getBlock());
+                        case ' ' -> helper.setBlock(pos, Blocks.AIR);
+                        default -> helper.fail("unexpected Cold Ice Freezer symbol");
+                    }
+                }
+            }
+        }
+        helper.setBlock(controllerPos.offset(-1, -1, 0), GTMachines.ITEM_IMPORT_BUS[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(0, -1, 0), GTMachines.ITEM_EXPORT_BUS[GTValues.IV].getBlock());
+        BlockPos fluidPos = controllerPos.offset(1, -1, 0);
+        helper.setBlock(fluidPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(-1, 1, 0), GTMachines.FLUID_EXPORT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(0, 1, 0), GTMachines.ENERGY_INPUT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(1, 1, 0), GTMachines.MAINTENANCE_HATCH.getBlock());
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof ColdIceFreezerMachine freezer)) {
+            helper.fail("Cold Ice Freezer controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = freezer.getMultiblockState();
+        helper.assertTrue(freezer.getPattern().checkPatternAt(state, false),
+                "Cold Ice Freezer base must form: " + patternError(helper, state, controllerPos));
+        freezer.onStructureFormed();
+        var vacuumRecipes = helper.getLevel().getRecipeManager().getAllRecipesFor(GTRecipeTypes.VACUUM_RECIPES);
+        helper.assertTrue(!vacuumRecipes.isEmpty(), "Cold Ice Freezer needs Vacuum Freezer recipes");
+        helper.assertTrue(!freezer.beforeWorking(vacuumRecipes.get(0)), "missing liquid Ice must block startup");
+        FluidHatchPartMachine fluid = (FluidHatchPartMachine) metaMachineAt(helper, fluidPos);
+        fluid.tank.setFluidInTank(0, GTMaterials.Ice.getFluid(1000));
+        helper.assertTrue(freezer.beforeWorking(vacuumRecipes.get(0)), "liquid Ice must allow startup");
+        helper.assertTrue(fluid.tank.getFluidInTank(0).getAmount() < 1000,
+                "liquid Ice must be consumed at startup");
+        helper.assertTrue(vacuumRecipes.stream().anyMatch(recipe -> recipe.id.getPath().endsWith("cold_ice_casing")),
+                "Cold Ice Casing recipe must use Vacuum Freezer");
+        helper.succeed();
+    }
+
+    /**
+     * QA contract for the GTOCore Cold Ice Freezer auxiliary module: the extension forms on the west
+     * face, the {@code atomization_condensation} recipe type only becomes available with it, its
+     * Energy Hatch limit and Accelerate Hatch slot behave, and invalid cells break formation.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 120)
+    public static void coldIceFreezerAtomizationModuleUnlocksSecondRecipeType(GameTestHelper helper) {
+        MultiblockMachineDefinition definition = GTNAMachines3.COLD_ICE_FREEZER;
+        BlockPos controllerPos = new BlockPos(8, 5, 3);
+        buildColdIceFreezerBase(helper, controllerPos);
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof ColdIceFreezerMachine freezer)) {
+            helper.fail("Cold Ice Freezer controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = freezer.getMultiblockState();
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(freezer, true),
+                "Cold Ice Freezer base must form: " + patternError(helper, state, controllerPos));
+        helper.assertTrue(freezer.getRecipeTypes().length == 1,
+                "without the module the freezer must only expose Vacuum recipes, got " +
+                        java.util.Arrays.toString(freezer.getRecipeTypes()));
+        helper.assertTrue(freezer.getRecipeTypes()[0] == GTRecipeTypes.VACUUM_RECIPES,
+                "the base recipe type must stay Vacuum Freezer");
+
+        // The base casing must not unlock hatches reserved for auxiliary modules.
+        BlockPos mainPerformanceCell = controllerPos.offset(-1, 1, 8);
+        helper.setBlock(mainPerformanceCell, GTNAMachines2.ACCELERATE_HATCHES[GTValues.IV].getBlock());
+        helper.assertTrue(!freezer.getPattern().checkPatternAt(state, false),
+                "Cold Ice base must reject the module-only Accelerate Hatch");
+        helper.setBlock(mainPerformanceCell, GTNAMachines2.OVERCLOCK_HATCHES[GTValues.UV].getBlock());
+        helper.assertTrue(!freezer.getPattern().checkPatternAt(state, false),
+                "Cold Ice base must reject an unlisted Overclock Hatch");
+        helper.setBlock(mainPerformanceCell, GTNABlocks.COLD_ICE_CASING.get());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(freezer, true),
+                "Cold Ice base must reform after removing unauthorized performance hatches");
+
+        // Negative formation: an invalid block in a pure casing cell must break the base structure.
+        BlockPos invalidPos = controllerPos.offset(-2, -2, 4);
+        helper.setBlock(invalidPos, Blocks.GOLD_BLOCK);
+        helper.assertTrue(!freezer.getPattern().checkPatternAt(state, false),
+                "a Gold Block must not replace a Cold Ice Casing");
+        helper.setBlock(invalidPos, GTBlocks.CASING_ALUMINIUM_FROSTPROOF.get());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(freezer, true),
+                "removing the invalid block must let the base form again: " +
+                        patternError(helper, state, controllerPos));
+
+        // The module recipe type is registered but not reachable without the extension.
+        var atomizationRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.ATOMIZATION_CONDENSATION_RECIPES);
+        int[] generated = { 0 };
+        GTNAAtomizationRecipes.register(recipe -> generated[0]++);
+        helper.assertTrue(generated[0] > 100,
+                "the atomization generator must produce a material subset, got " + generated[0]);
+        helper.assertTrue(atomizationRecipes.size() == generated[0],
+                "the recipe manager must hold every generated atomization recipe: expected " + generated[0] +
+                        " but found " + atomizationRecipes.size());
+        helper.assertTrue(!atomizationRecipes.isEmpty() &&
+                !freezer.beforeWorking(atomizationRecipes.get(0)),
+                "atomization must be blocked while the module is absent");
+
+        // Build the GTOCore auxiliary tower: 9 aisles x 7 rows x 7 chars, controller at (0,2,8).
+        String[][] module = {
+                { "    AAA", "    BBB", "    BBB", "    DDD", "    DDD", "    DDD", "    DDD" },
+                { "   EAAA", "   EDFB", "   EDFB", "   EDFD", "    DFD", "    DFD", "    DDD" },
+                { "   FAAA", "   FDDB", "  FFDDB", "   EDDD", "    DDD", "    DDD", "    DDD" },
+                { "   EGGG", "   EG H", "   EG H", "   EGGG", "       ", "       ", "       " },
+                { "    GGG", "    G H", "    G H", "    GGG", "       ", "       ", "       " },
+                { "   EGGG", "   EG H", "   EG H", "   EGGG", "       ", "       ", "       " },
+                { "   FAAA", "   FDDB", "  FFDDB", "   EDDD", "    DDD", "    DDD", "    DDD" },
+                { "   EAAA", "   EDFB", "   EDFB", "   EDFD", "    DFD", "    DFD", "    DDD" },
+                { "    AAA", "    BBB", "C   BBB", "    DDD", "    DDD", "    DDD", "    DDD" },
+        };
+        for (int aisle = 0; aisle < module.length; aisle++) {
+            for (int row = 0; row < module[aisle].length; row++) {
+                for (int ch = 0; ch < module[aisle][row].length(); ch++) {
+                    char symbol = module[aisle][row].charAt(ch);
+                    if (symbol == ' ' || symbol == 'C') {
+                        continue;
+                    }
+                    BlockPos pos = controllerPos.offset(-ch, row - 2, 8 - aisle);
+                    switch (symbol) {
+                        case 'A' -> helper.setBlock(pos, GTBlocks.CASING_ALUMINIUM_FROSTPROOF.get());
+                        case 'B', 'D' -> helper.setBlock(pos, GTNABlocks.COLD_ICE_CASING.get());
+                        case 'E' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Naquadah));
+                        case 'F' -> helper.setBlock(pos, GTBlocks.CASING_TUNGSTENSTEEL_PIPE.get());
+                        case 'G' -> helper.setBlock(pos, GTNABlocks.NAQUADAH_ALLOY_CASING.get());
+                        case 'H' -> helper.setBlock(pos, GCYMBlocks.HEAT_VENT.get());
+                        default -> helper.fail("unexpected Cold Ice Freezer module symbol " + symbol);
+                    }
+                }
+            }
+        }
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(freezer, true),
+                "Cold Ice Freezer with the auxiliary tower must form: " +
+                        patternError(helper, state, controllerPos));
+        int formedModules = ((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) freezer)
+                .gtna$formedModuleCount();
+        helper.assertTrue(formedModules == 1, "expected 1 formed module, got " + formedModules);
+        helper.assertTrue(freezer.getRecipeTypes().length == 2,
+                "the formed module must unlock the atomization recipe type: " +
+                        java.util.Arrays.toString(freezer.getRecipeTypes()));
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns
+                .getTooltips(definition).size() == 5,
+                "the module must advertise the Accelerate/Extra Energy Hatches and the atomization recipe type");
+
+        BlockPos automaticRefreshCell = controllerPos.offset(-4, 0, 2);
+        BlockPos automaticRefreshWorldCell = helper.absolutePos(automaticRefreshCell);
+        helper.assertTrue(state.isPosInCache(automaticRefreshWorldCell),
+                "module cell must be cached before block change; center=" +
+                        java.util.Arrays.toString(
+                                ((com.raishxn.gtna.mixin.gtceu.BlockPatternAccessor) com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns
+                                        .get(definition).get(0))
+                                        .gtna$getCenterOffset()) +
+                        ", dimensions=" +
+                        java.util.Arrays.toString(com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns
+                                .get(definition).get(0).getDimensions()) +
+                        ", cache=" + state.getCache());
+        helper.assertTrue(com.gregtechceu.gtceu.api.pattern.MultiblockWorldSavedData.getOrCreate(helper.getLevel())
+                .getControllersInChunk(new net.minecraft.world.level.ChunkPos(automaticRefreshWorldCell))
+                .contains(state),
+                "module chunk must map to controller before block change");
+        helper.setBlock(automaticRefreshCell, Blocks.GOLD_BLOCK);
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) freezer)
+                .gtna$formedModuleCount() == 0, "breaking the module must update without force scan; formed=" +
+                        freezer.isFormed());
+        helper.setBlock(automaticRefreshCell, GTNABlocks.COLD_ICE_CASING.get());
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) freezer)
+                .gtna$formedModuleCount() == 1, "repairing the module must update without force scan; " +
+                        "cached=" + state.isPosInCache(automaticRefreshWorldCell) + ", mapped=" +
+                        com.gregtechceu.gtceu.api.pattern.MultiblockWorldSavedData.getOrCreate(helper.getLevel())
+                                .getControllersInChunk(
+                                        new net.minecraft.world.level.ChunkPos(automaticRefreshWorldCell))
+                                .contains(state) +
+                        ", formed=" + freezer.isFormed() + ", error=" +
+                        patternError(helper, state, controllerPos));
+
+        // The module shell accepts Accelerate and (up to six) Energy Hatches on its 'B' cells.
+        BlockPos speedPos = controllerPos.offset(-6, -1, 8);
+        BlockPos firstEnergyPos = controllerPos.offset(-6, 0, 6);
+        helper.setBlock(speedPos, GTNAMachines2.ACCELERATE_HATCHES[GTValues.IV].getBlock());
+        helper.setBlock(firstEnergyPos, GTMachines.ENERGY_INPUT_HATCH[GTValues.IV].getBlock());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(freezer, true),
+                "the module must accept an Accelerate Hatch and an extra Energy Hatch");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) freezer)
+                .gtna$formedModuleCount() == 1,
+                "the module must stay formed with one Accelerate and one Energy Hatch");
+
+        // Seven Energy Hatches in the module exceed GTO's six-hatch limit and drop the module.
+        BlockPos[] extraEnergy = {
+                controllerPos.offset(-5, -1, 8), controllerPos.offset(-4, -1, 8),
+                controllerPos.offset(-6, -1, 7), controllerPos.offset(-6, 0, 7),
+                controllerPos.offset(-6, -1, 2), controllerPos.offset(-6, 0, 2),
+        };
+        for (BlockPos pos : extraEnergy) {
+            helper.setBlock(pos, GTMachines.ENERGY_INPUT_HATCH[GTValues.IV].getBlock());
+        }
+        com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(freezer, true);
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) freezer)
+                .gtna$formedModuleCount() == 0, "seven module Energy Hatches must reject the module");
+        helper.setBlock(firstEnergyPos, GTNABlocks.COLD_ICE_CASING.get());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(freezer, true),
+                "restoring the module cells must form the tower again");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) freezer)
+                .gtna$formedModuleCount() == 1, "the module must be restored");
+
+        // A pure-casing module cell rejects a Fluid Hatch; the base keeps working without the module.
+        BlockPos pureCasing = controllerPos.offset(-4, 0, 2);
+        helper.setBlock(pureCasing, GTMachines.FLUID_IMPORT_HATCH[GTValues.IV].getBlock());
+        com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(freezer, true);
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) freezer)
+                .gtna$formedModuleCount() == 0, "a Fluid Hatch must not replace a plain module casing");
+        helper.setBlock(pureCasing, GTNABlocks.COLD_ICE_CASING.get());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(freezer, true),
+                "removing the Fluid Hatch must form the module again");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) freezer)
+                .gtna$formedModuleCount() == 1,
+                "the module must be formed before the atomization upkeep check");
+
+        // With the tower formed the atomization recipe still requires liquid Ice upkeep.
+        helper.assertFalse(freezer.beforeWorking(atomizationRecipes.get(0)),
+                "liquid Ice must still gate the atomization recipe with the module formed");
+        FluidHatchPartMachine iceHatch = (FluidHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(1, -1, 0));
+        iceHatch.tank.setFluidInTank(0, GTMaterials.Ice.getFluid(1000));
+        helper.assertTrue(freezer.beforeWorking(atomizationRecipes.get(0)),
+                "liquid Ice must allow the atomization recipe with the module formed");
+        helper.succeed();
+    }
+
+    /** Builds the GTOCore Cold Ice Freezer 9x5x5 base and its required IO hatches. */
+    private static void buildColdIceFreezerBase(GameTestHelper helper, BlockPos controllerPos) {
+        String[][] aisles = {
+                { "AAAAA", " BBB ", " BGB ", " BBB ", "AAAAA" },
+                { "AAAAA", "BE EB", "BE EB", "BE EB", "AAAAA" },
+                { "AAAAA", " F F ", " F F ", " F F ", "ACHCA" },
+                { "AAAAA", "BE EB", "BE EB", "BE EB", "ACCCA" },
+                { "AAAAA", "D   D", "D   D", "D   D", "ACCCA" },
+                { "AAAAA", "BE EB", "BE EB", "BE EB", "ACCCA" },
+                { "AAAAA", " F F ", " F F ", " F F ", "ACHCA" },
+                { "AAAAA", "BE EB", "BE EB", "BE EB", "AAAAA" },
+                { "AAAAA", " BBB ", " BBB ", " BBB ", "AAAAA" }
+        };
+        for (int aisle = 0; aisle < aisles.length; aisle++) {
+            for (int row = 0; row < aisles[aisle].length; row++) {
+                for (int column = 0; column < aisles[aisle][row].length(); column++) {
+                    BlockPos pos = controllerPos.offset(column - 2, row - 2, aisle);
+                    switch (aisles[aisle][row].charAt(column)) {
+                        case 'A' -> helper.setBlock(pos, GTBlocks.CASING_ALUMINIUM_FROSTPROOF.get());
+                        case 'B', 'C' -> helper.setBlock(pos, GTNABlocks.COLD_ICE_CASING.get());
+                        case 'D' -> helper.setBlock(pos, GTBlocks.CASING_TEMPERED_GLASS.get());
+                        case 'E' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Aluminium));
+                        case 'F' -> helper.setBlock(pos, GTBlocks.CASING_TUNGSTENSTEEL_PIPE.get());
+                        case 'G' -> helper.setBlock(pos, GTNAMachines3.COLD_ICE_FREEZER.getBlock());
+                        case 'H' -> helper.setBlock(pos, GTMachines.MUFFLER_HATCH[GTValues.IV].getBlock());
+                        case ' ' -> helper.setBlock(pos, Blocks.AIR);
+                        default -> helper.fail("unexpected Cold Ice Freezer symbol");
+                    }
+                }
+            }
+        }
+        helper.setBlock(controllerPos.offset(-1, -1, 0), GTMachines.ITEM_IMPORT_BUS[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(0, -1, 0), GTMachines.ITEM_EXPORT_BUS[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(1, -1, 0), GTMachines.FLUID_IMPORT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(-1, 1, 0), GTMachines.FLUID_EXPORT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(0, 1, 0), GTMachines.ENERGY_INPUT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(1, 1, 0), GTMachines.MAINTENANCE_HATCH.getBlock());
+    }
+
+    /** GTO Chemical Plant base forms from the compressed MBS and reports its coil multipliers. */
+    @GameTest(template = "empty_16", timeoutTicks = 80)
+    public static void chemicalPlantFormsWithLargeChemicalRecipes(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(9, 4, 9);
+        var source = GTOCompressedPatternReader.read("chemical_plant");
+        helper.assertTrue(source.slices().length == 5 && source.slices()[0].length == 5 &&
+                source.slices()[0][0].length() == 5,
+                "Chemical Plant must retain GTOCore's 5x5x5 shape");
+        buildChemicalPlantBase(helper, controllerPos);
+        // The 'b' shell accepts abilities; place the required hatches on the controller wall.
+        helper.setBlock(chemicalPlantPos(controllerPos, 1, 0, 3), GTMachines.ITEM_IMPORT_BUS[GTValues.LuV].getBlock());
+        helper.setBlock(chemicalPlantPos(controllerPos, 2, 0, 3), GTMachines.ITEM_EXPORT_BUS[GTValues.LuV].getBlock());
+        helper.setBlock(chemicalPlantPos(controllerPos, 3, 0, 3),
+                GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(chemicalPlantPos(controllerPos, 4, 0, 3),
+                GTMachines.FLUID_EXPORT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(chemicalPlantPos(controllerPos, 1, 4, 3),
+                GTMachines.ENERGY_INPUT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(chemicalPlantPos(controllerPos, 2, 4, 3), GTMachines.MAINTENANCE_HATCH.getBlock());
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof ChemicalPlantMachine plant)) {
+            helper.fail("Chemical Plant controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = plant.getMultiblockState();
+        helper.assertTrue(plant.getPattern().checkPatternAt(state, false),
+                "Chemical Plant must form: " + patternError(helper, state, controllerPos));
+        plant.onStructureFormed();
+        helper.assertTrue(plant.getCoilTier() == 1,
+                "Chemical Plant must read its heating coil tier, got " + plant.getCoilTier());
+        helper.assertTrue(java.util.Arrays.stream(GTNAMachines3.CHEMICAL_PLANT.getRecipeTypes())
+                .anyMatch(type -> type == GTRecipeTypes.LARGE_CHEMICAL_RECIPES),
+                "Chemical Plant must run Large Chemical Reactor recipes");
+        java.util.List<Component> display = new java.util.ArrayList<>();
+        ChemicalPlantMachine.addCoilDisplay(plant, display);
+        helper.assertTrue(display.size() == 2,
+                "Chemical Plant must display its EU and duration coil multipliers");
+        // A4: no GTNA module/extension is registered for this controller, so the A4 check is N/A.
+        helper.assertTrue(GTNASubPatterns.get(GTNAMachines3.CHEMICAL_PLANT).isEmpty(),
+                "the Chemical Plant must not gain an undeclared GTNA module");
+
+        // A3: the Parallel Hatch is accepted in a 'b' shell cell and shows up on the controller.
+        helper.setBlock(chemicalPlantPos(controllerPos, 3, 4, 3), GCYMMachines.PARALLEL_HATCH[GTValues.IV].getBlock());
+        helper.assertTrue(GTNAStructureRefresh.refresh(plant, true),
+                "the Chemical Plant must accept a Parallel Hatch on the shell: " +
+                        patternError(helper, state, controllerPos));
+        helper.assertTrue(plant.getParallelHatch().isPresent(),
+                "the Advanced Parallel Hatch must be accepted by the Chemical Plant");
+
+        // A2: a Gold Block cannot replace a heating coil; restoring the exact coil reforms.
+        BlockPos coilPos = chemicalPlantPos(controllerPos, 1, 1, 1);
+        helper.setBlock(coilPos, Blocks.GOLD_BLOCK);
+        helper.assertTrue(!plant.getPattern().checkPatternAt(state, false),
+                "a Gold Block must not replace a Chemical Plant heating coil");
+        helper.setBlock(coilPos, GTBlocks.COIL_KANTHAL.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(plant, true),
+                "restoring the coil must let the Chemical Plant form again: " +
+                        patternError(helper, state, controllerPos));
+        // A3: the PTFE pipe cell is casing-only and must reject a fluid hatch.
+        BlockPos pipePos = chemicalPlantPos(controllerPos, 1, 2, 1);
+        helper.setBlock(pipePos, GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.assertTrue(!plant.getPattern().checkPatternAt(state, false),
+                "the PTFE pipe cell must reject a fluid hatch");
+        helper.setBlock(pipePos, GTBlocks.CASING_POLYTETRAFLUOROETHYLENE_PIPE.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(plant, true),
+                "restoring the pipe must let the Chemical Plant form again: " +
+                        patternError(helper, state, controllerPos));
+        helper.assertTrue(plant.getCoilTier() == 1, "the Kanthal coil tier must survive the refreshes");
+
+        // A6: the shared Large Chemical Reactor family is loaded and the ported GTNA route exists.
+        // The family is shared with GTCEu, so assert a specific recipe instead of a fragile count.
+        var lcrRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTRecipeTypes.LARGE_CHEMICAL_RECIPES);
+        helper.assertTrue(!lcrRecipes.isEmpty(),
+                "the Chemical Plant needs the Large Chemical Reactor recipe family");
+        helper.assertTrue(lcrRecipes.stream()
+                .anyMatch(recipe -> recipe.id.getPath().endsWith("blaze_casing_gtna_route")),
+                "the ported Blaze Casing Large Chemical Reactor route must be present");
+        // A7: the controller recipe is deliberately omitted and documented in
+        // GTNAMachineRecipes.register ("Chemical Plant controller recipe intentionally omitted");
+        // nothing may fabricate one.
+        helper.assertTrue(helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING).stream()
+                .noneMatch(recipe -> recipe.getId().getPath().contains("chemical_plant")),
+                "the Chemical Plant controller crafting recipe must stay omitted (documented)");
+        helper.assertTrue(helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTRecipeTypes.ASSEMBLER_RECIPES).stream()
+                .noneMatch(recipe -> recipe.id.getPath().endsWith("chemical_plant")),
+                "the Chemical Plant controller Assembler recipe must stay omitted (documented)");
+        helper.succeed();
+    }
+
+    /**
+     * GTO Chemical Plant execution (A5): the real ported Blaze Casing Large Chemical Reactor route
+     * (high-temperature smelting casing + 32 Tin Foil + Blaze/Gallium Arsenide/Vanadium Gallium)
+     * starts on the formed machine and delivers the Blaze Casing output. The Kanthal coil applies
+     * its 0.95× EU/duration efficiency and the LuV hatch perfect-overclocks the 900-tick recipe.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 2400)
+    public static void chemicalPlantRunsLargeChemicalRecipe(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(9, 4, 9);
+        buildChemicalPlantBase(helper, controllerPos);
+        BlockPos inputPos = chemicalPlantPos(controllerPos, 1, 0, 3);
+        BlockPos outputPos = chemicalPlantPos(controllerPos, 2, 0, 3);
+        BlockPos blazePos = chemicalPlantPos(controllerPos, 3, 0, 3);
+        BlockPos galliumPos = chemicalPlantPos(controllerPos, 4, 0, 3);
+        BlockPos vanadiumPos = chemicalPlantPos(controllerPos, 1, 4, 3);
+        BlockPos energyPos = chemicalPlantPos(controllerPos, 2, 4, 3);
+        BlockPos maintenancePos = chemicalPlantPos(controllerPos, 3, 4, 3);
+        helper.setBlock(inputPos, GTMachines.ITEM_IMPORT_BUS[GTValues.LuV].getBlock());
+        helper.setBlock(outputPos, GTMachines.ITEM_EXPORT_BUS[GTValues.LuV].getBlock());
+        helper.setBlock(blazePos, GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(galliumPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(vanadiumPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(energyPos, GTMachines.ENERGY_INPUT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(maintenancePos, GTMachines.MAINTENANCE_HATCH.getBlock());
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof ChemicalPlantMachine plant)) {
+            helper.fail("Chemical Plant controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = plant.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(plant, true),
+                "Chemical Plant must form for the execution test: " + patternError(helper, state, controllerPos));
+        ((MaintenanceHatchPartMachine) metaMachineAt(helper, maintenancePos)).fixAllMaintenanceProblems();
+
+        GTRecipe blazeCasing = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTRecipeTypes.LARGE_CHEMICAL_RECIPES).stream()
+                .filter(recipe -> recipe.id.getPath().endsWith("blaze_casing_gtna_route"))
+                .findFirst().orElse(null);
+        helper.assertTrue(blazeCasing != null, "the Blaze Casing Large Chemical Reactor route must exist");
+        ItemBusPartMachine inputBus = (ItemBusPartMachine) metaMachineAt(helper, inputPos);
+        inputBus.getInventory().insertItem(0,
+                new ItemStack(GCYMBlocks.CASING_HIGH_TEMPERATURE_SMELTING.asItem()), false);
+        inputBus.getInventory().insertItem(1, ChemicalHelper.get(TagPrefix.foil, GTMaterials.Tin, 32), false);
+        ((FluidHatchPartMachine) metaMachineAt(helper, blazePos)).tank.setFluidInTank(0,
+                GTMaterials.Blaze.getFluid(1440));
+        ((FluidHatchPartMachine) metaMachineAt(helper, galliumPos)).tank.setFluidInTank(0,
+                GTMaterials.GalliumArsenide.getFluid(576));
+        ((FluidHatchPartMachine) metaMachineAt(helper, vanadiumPos)).tank.setFluidInTank(0,
+                GTMaterials.VanadiumGallium.getFluid(288));
+        EnergyHatchPartMachine energy = (EnergyHatchPartMachine) metaMachineAt(helper, energyPos);
+        plant.getRecipeLogic().updateTickSubscription();
+
+        int guard = 0;
+        while (!plant.getRecipeLogic().isWorking() && guard++ < 20) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            plant.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(plant.getRecipeLogic().isWorking(),
+                "the Chemical Plant must start the Blaze Casing route; status=" +
+                        plant.getRecipeLogic().getStatus() + " recipe=" + plant.getRecipeLogic().getLastRecipe() +
+                        " failures=" + plant.getRecipeLogic().getFailureReasons());
+        int duration = plant.getRecipeLogic().getDuration();
+        helper.assertTrue(duration > 0 && duration < 900,
+                "the coil efficiency plus the perfect overclock must cut the 900-tick recipe, got " + duration);
+        for (int tick = 0; tick < duration + 5; tick++) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            plant.getRecipeLogic().serverTick();
+        }
+        ItemBusPartMachine outputBus = (ItemBusPartMachine) metaMachineAt(helper, outputPos);
+        helper.assertTrue(busItemCount(outputBus, new ItemStack(GTNABlocks.BLAZE_CASING.asItem())) == 1,
+                "the Chemical Plant must output one Blaze Casing, found " +
+                        busItemCount(outputBus, new ItemStack(GTNABlocks.BLAZE_CASING.asItem())) + " (status=" +
+                        plant.getRecipeLogic().getStatus() + ", reason=" +
+                        plant.getRecipeLogic().getFancyTooltip() + ")");
+        helper.succeed();
+    }
+
+    /**
+     * Maps a Chemical Plant pattern cell (char column, row, aisle) to world space. GTOCore recorded
+     * LEFT/UP/FRONT (char → -X, row → +Y, aisle → -Z); the controller is char 0, row 1, aisle 4.
+     */
+    private static BlockPos chemicalPlantPos(BlockPos controllerPos, int column, int row, int aisle) {
+        return controllerPos.offset(-column, row - 1, 4 - aisle);
+    }
+
+    /** Builds the GTOCore Chemical Plant 5×5×5 shell from the real compressed MBS. */
+    private static void buildChemicalPlantBase(GameTestHelper helper, BlockPos controllerPos) {
+        var source = GTOCompressedPatternReader.read("chemical_plant");
+        for (int aisle = 0; aisle < source.slices().length; aisle++) {
+            for (int row = 0; row < source.slices()[aisle].length; row++) {
+                String line = source.slices()[aisle][row];
+                for (int column = 0; column < line.length(); column++) {
+                    BlockPos pos = chemicalPlantPos(controllerPos, column, row, aisle);
+                    switch (line.charAt(column)) {
+                        case 'a' -> helper.setBlock(pos, GTNAMachines3.CHEMICAL_PLANT.getBlock());
+                        case 'b' -> helper.setBlock(pos, GTBlocks.CASING_PTFE_INERT.get());
+                        case 'c' -> helper.setBlock(pos, GTBlocks.COIL_KANTHAL.get());
+                        case 'd' -> helper.setBlock(pos, GTBlocks.CASING_POLYTETRAFLUOROETHYLENE_PIPE.get());
+                        case ' ' -> helper.setBlock(pos, Blocks.AIR);
+                        default -> helper.fail("unexpected Chemical Plant symbol");
+                    }
+                }
+            }
+        }
+    }
+
+    /** The GTO Mega Alloy Blast Smelter keeps its large shape and the GTCEu Alloy Blast recipes. */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void megaAlloyBlastSmelterMatchesGtoDefinition(GameTestHelper helper) {
+        MultiblockMachineDefinition definition = GTNAMachines3.MEGA_ALLOY_BLAST_SMELTER;
+        int[] dimensions = definition.getPatternFactory().get().getDimensions();
+        helper.assertTrue(dimensions.length == 3 && dimensions[0] == 11 && dimensions[1] == 18 &&
+                dimensions[2] == 11,
+                "Mega Alloy Blast Smelter must keep GTOCore's 11x18x11 shape; got " +
+                        java.util.Arrays.toString(dimensions));
+        helper.assertTrue(definition == GTNAMachines3.MEGA_ALLOY_BLAST_SMELTER &&
+                definition.getBlock() != null,
+                "the Mega Alloy Blast Smelter controller must be registered and placeable");
+        helper.assertTrue(java.util.Arrays.stream(definition.getRecipeTypes())
+                .anyMatch(type -> type == GCYMRecipeTypes.ALLOY_BLAST_RECIPES),
+                "Mega Alloy Blast Smelter must run Alloy Blast recipes");
+        var alloyRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GCYMRecipeTypes.ALLOY_BLAST_RECIPES);
+        helper.assertTrue(!alloyRecipes.isEmpty(),
+                "Mega Alloy Blast Smelter needs GTCEu's Alloy Blast recipe family");
+        // A6: the family is shared/auto-generated, so pin named recipes instead of a fragile count:
+        // the hand-written GTCEu Potin entry (the A5 execution target) and the GTNA Inconel-625
+        // recipe generated from the ported material.
+        helper.assertTrue(alloyRecipes.stream().anyMatch(recipe -> recipe.id.getPath().endsWith("potin")),
+                "the Alloy Blast family must keep GTCEu's manual Potin recipe");
+        helper.assertTrue(alloyRecipes.stream().anyMatch(recipe -> recipe.id.getPath().endsWith("inconel_625")),
+                "the ported Inconel-625 automatic Alloy Blast recipe must be present");
+        // A7: the ported GTOCore controller recipe is a shaped crafting recipe (Vanilla.java:564).
+        helper.assertTrue(helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING).stream()
+                .anyMatch(recipe -> recipe.getId().getPath().endsWith("mega_alloy_blast_smelter")),
+                "the Mega Alloy Blast Smelter shaped controller recipe must be present");
+        helper.succeed();
+    }
+
+    /**
+     * GTOCore Mega Alloy Blast Smelter QA (A1–A3): the registered 11×18×11 pattern forms with its
+     * mandatory Muffler, Maintenance and energy hatches plus the Advanced Parallel Hatch, and
+     * rejects a Gold Block or a fluid hatch in casing-only cells.
+     */
+    @GameTest(template = "empty_48", timeoutTicks = 200)
+    public static void megaAlloyBlastSmelterFormsWithParallelHatch(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(24, 8, 12);
+        wipeMegaAlloyBlastSmelterArea(helper, controllerPos);
+        buildMegaAlloyBlastSmelterBase(helper, controllerPos);
+        BlockPos energyPos = megaAlloyBlastSmelterPos(controllerPos, 4, 2, 10);
+        BlockPos maintenancePos = megaAlloyBlastSmelterPos(controllerPos, 6, 2, 10);
+        BlockPos parallelPos = megaAlloyBlastSmelterPos(controllerPos, 4, 1, 10);
+        BlockPos inputPos = megaAlloyBlastSmelterPos(controllerPos, 6, 1, 10);
+        BlockPos outputBusPos = megaAlloyBlastSmelterPos(controllerPos, 6, 3, 10);
+        BlockPos fluidOutPos = megaAlloyBlastSmelterPos(controllerPos, 4, 3, 10);
+        helper.setBlock(energyPos, GTMachines.ENERGY_INPUT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(maintenancePos, GTMachines.MAINTENANCE_HATCH.getBlock());
+        helper.setBlock(parallelPos, GCYMMachines.PARALLEL_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(inputPos, GTMachines.ITEM_IMPORT_BUS[GTValues.IV].getBlock());
+        helper.setBlock(fluidOutPos, GTMachines.FLUID_EXPORT_HATCH[GTValues.IV].getBlock());
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof MegaAlloyBlastSmelterMachine smelter)) {
+            helper.fail("Mega Alloy Blast Smelter controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = smelter.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(smelter, true),
+                "the Mega Alloy Blast Smelter must form with its Muffler, Maintenance and Parallel Hatch: " +
+                        patternError(helper, state, controllerPos));
+        helper.assertTrue(smelter.getParallelHatch().isPresent(),
+                "the Advanced Parallel Hatch must be accepted by the Mega Alloy Blast Smelter");
+        helper.assertTrue(smelter.getCoilType().getCoilTemperature() == 5400,
+                "the Mega Alloy Blast Smelter must read its HSSG heating coils, got " +
+                        smelter.getCoilType().getCoilTemperature() + "K");
+        // A4: no GTNA module/extension is registered for this controller, so the A4 check is N/A.
+        helper.assertTrue(GTNASubPatterns.get(GTNAMachines3.MEGA_ALLOY_BLAST_SMELTER).isEmpty(),
+                "the Mega Alloy Blast Smelter must not gain an undeclared GTNA module");
+
+        // A2: a Gold Block cannot replace the high-temperature smelting casing.
+        BlockPos casingPos = megaAlloyBlastSmelterPos(controllerPos, 3, 5, 10);
+        helper.setBlock(casingPos, Blocks.GOLD_BLOCK);
+        helper.assertTrue(!smelter.getPattern().checkPatternAt(state, false),
+                "a Gold Block must not replace the high-temperature smelting casing");
+        helper.setBlock(casingPos, GCYMBlocks.CASING_HIGH_TEMPERATURE_SMELTING.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(smelter, true),
+                "restoring the casing must reform the smelter: " + patternError(helper, state, controllerPos));
+        // A3: the Heat Vent cell is exclusive and must reject a fluid hatch.
+        BlockPos ventPos = megaAlloyBlastSmelterPos(controllerPos, 4, 0, 10);
+        helper.setBlock(ventPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.IV].getBlock());
+        helper.assertTrue(!smelter.getPattern().checkPatternAt(state, false),
+                "the Heat Vent cell must reject a fluid hatch");
+        helper.setBlock(ventPos, GCYMBlocks.HEAT_VENT.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(smelter, true),
+                "restoring the Heat Vent must reform the smelter: " + patternError(helper, state, controllerPos));
+        // A3: the Alloy Blast type has no item outputs, so autoAbilities does not accept an Item
+        // Export Bus in a shell cell either.
+        helper.setBlock(outputBusPos, GTMachines.ITEM_EXPORT_BUS[GTValues.IV].getBlock());
+        helper.assertTrue(!smelter.getPattern().checkPatternAt(state, false),
+                "an Item Export Bus must not replace a shell casing (the Alloy Blast type has no item outputs)");
+        helper.setBlock(outputBusPos, GCYMBlocks.CASING_HIGH_TEMPERATURE_SMELTING.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(smelter, true),
+                "restoring the casing must reform the smelter: " + patternError(helper, state, controllerPos));
+        helper.succeed();
+    }
+
+    /**
+     * GTCEu manual Potin Alloy Blast recipe execution on the Mega Alloy Blast Smelter (A5): 6 Copper
+     * + 2 Tin + 1 Lead dust and circuit 9 at 1,084 K with HSSG coils produce 1,296 mB of liquid
+     * Potin. GTO's 0.8× EU / 0.6× duration bonus and the IV energy hatch overclock apply on top of
+     * the base 300-tick recipe.
+     */
+    @GameTest(template = "empty_48", timeoutTicks = 600)
+    public static void megaAlloyBlastSmelterRunsAlloyBlast(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(24, 8, 12);
+        wipeMegaAlloyBlastSmelterArea(helper, controllerPos);
+        buildMegaAlloyBlastSmelterBase(helper, controllerPos);
+        BlockPos inputPos = megaAlloyBlastSmelterPos(controllerPos, 4, 1, 10);
+        BlockPos fluidOutPos = megaAlloyBlastSmelterPos(controllerPos, 6, 3, 10);
+        BlockPos energyPos = megaAlloyBlastSmelterPos(controllerPos, 4, 2, 10);
+        BlockPos maintenancePos = megaAlloyBlastSmelterPos(controllerPos, 6, 2, 10);
+        helper.setBlock(inputPos, GTMachines.ITEM_IMPORT_BUS[GTValues.IV].getBlock());
+        helper.setBlock(fluidOutPos, GTMachines.FLUID_EXPORT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(energyPos, GTMachines.ENERGY_INPUT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(maintenancePos, GTMachines.MAINTENANCE_HATCH.getBlock());
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof MegaAlloyBlastSmelterMachine smelter)) {
+            helper.fail("Mega Alloy Blast Smelter controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = smelter.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(smelter, true),
+                "the Mega Alloy Blast Smelter must form for the execution test: " +
+                        patternError(helper, state, controllerPos));
+        ((MaintenanceHatchPartMachine) metaMachineAt(helper, maintenancePos)).fixAllMaintenanceProblems();
+
+        GTRecipe potin = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GCYMRecipeTypes.ALLOY_BLAST_RECIPES).stream()
+                .filter(recipe -> recipe.id.getPath().endsWith("potin"))
+                .findFirst().orElse(null);
+        helper.assertTrue(potin != null, "the GTCEu Potin Alloy Blast recipe must exist");
+        ItemBusPartMachine inputBus = (ItemBusPartMachine) metaMachineAt(helper, inputPos);
+        inputBus.getInventory().insertItem(0, ChemicalHelper.get(TagPrefix.dust, GTMaterials.Copper, 6), false);
+        inputBus.getInventory().insertItem(1, ChemicalHelper.get(TagPrefix.dust, GTMaterials.Tin, 2), false);
+        inputBus.getInventory().insertItem(2, ChemicalHelper.get(TagPrefix.dust, GTMaterials.Lead, 1), false);
+        inputBus.getCircuitInventory().setStackInSlot(0, IntCircuitBehaviour.stack(9));
+        EnergyHatchPartMachine energy = (EnergyHatchPartMachine) metaMachineAt(helper, energyPos);
+        smelter.getRecipeLogic().updateTickSubscription();
+
+        int guard = 0;
+        while (!smelter.getRecipeLogic().isWorking() && guard++ < 20) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            smelter.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(smelter.getRecipeLogic().isWorking(),
+                "the smelter must start the Potin recipe; status=" + smelter.getRecipeLogic().getStatus() +
+                        " recipe=" + smelter.getRecipeLogic().getLastRecipe() + " failures=" +
+                        smelter.getRecipeLogic().getFailureReasons());
+        int duration = smelter.getRecipeLogic().getDuration();
+        helper.assertTrue(duration > 0 && duration <= 300,
+                "GTO's 0.6x duration plus the heating-coil overclock must stay under the 300-tick base, got " +
+                        duration);
+        for (int tick = 0; tick < duration + 5; tick++) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            smelter.getRecipeLogic().serverTick();
+        }
+        FluidHatchPartMachine fluidOut = (FluidHatchPartMachine) metaMachineAt(helper, fluidOutPos);
+        FluidStack output = fluidOut.tank.getFluidInTank(0);
+        helper.assertTrue(output.getFluid() == GTMaterials.Potin.getFluid() && output.getAmount() == 1296,
+                "the Potin recipe must output 1,296 mB of liquid Potin, got " + output + " (status=" +
+                        smelter.getRecipeLogic().getStatus() + ", reason=" +
+                        smelter.getRecipeLogic().getFancyTooltip() + ")");
+        helper.succeed();
+    }
+
+    /**
+     * Maps a Mega Alloy Blast Smelter pattern cell to world space. The registered pattern uses the
+     * default LEFT/UP/FRONT orientation (char → -X, row → +Y, aisle → -Z) with the controller
+     * {@code ~} at char 5, row 2, aisle 10.
+     */
+    private static BlockPos megaAlloyBlastSmelterPos(BlockPos controllerPos, int column, int row, int aisle) {
+        return controllerPos.offset(5 - column, row - 2, 10 - aisle);
+    }
+
+    /** Wipes the Mega Alloy Blast Smelter footprint (plus a margin) before building it. */
+    private static void wipeMegaAlloyBlastSmelterArea(GameTestHelper helper, BlockPos controllerPos) {
+        wipeBox(helper, controllerPos.offset(-6, -3, -1), controllerPos.offset(6, 16, 11));
+    }
+
+    /**
+     * Builds the registered Mega Alloy Blast Smelter 11×18×11 pattern from
+     * {@link GTNAMachines3#MEGA_ALLOY_BLAST_SMELTER_PATTERN} with HSSG coils and an upward-facing
+     * Muffler on the 'g' cell.
+     */
+    private static void buildMegaAlloyBlastSmelterBase(GameTestHelper helper, BlockPos controllerPos) {
+        String[][] aisles = GTNAMachines3.MEGA_ALLOY_BLAST_SMELTER_PATTERN;
+        helper.assertTrue(aisles.length == 11 && aisles[0].length == 18 && aisles[0][0].length() == 11,
+                "the registered Mega Alloy Blast Smelter rows must stay 11x18x11");
+        for (int aisle = 0; aisle < aisles.length; aisle++) {
+            for (int row = 0; row < aisles[aisle].length; row++) {
+                String line = aisles[aisle][row];
+                for (int column = 0; column < line.length(); column++) {
+                    BlockPos pos = megaAlloyBlastSmelterPos(controllerPos, column, row, aisle);
+                    switch (line.charAt(column)) {
+                        case '~' -> helper.setBlock(pos, GTNAMachines3.MEGA_ALLOY_BLAST_SMELTER.getBlock());
+                        case 'b' -> helper.setBlock(pos, GCYMBlocks.CASING_HIGH_TEMPERATURE_SMELTING.get());
+                        case 'a' -> helper.setBlock(pos, GTBlocks.COIL_HSSG.get());
+                        case 'g' -> helper.setBlock(pos, GTMachines.MUFFLER_HATCH[GTValues.IV].getBlock()
+                                .defaultBlockState().setValue(BlockStateProperties.FACING, Direction.UP));
+                        case 'e' -> helper.setBlock(pos, GCYMBlocks.HEAT_VENT.get());
+                        case 'c' -> helper.setBlock(pos, GTBlocks.CASING_TEMPERED_GLASS.get());
+                        case 'f' -> helper.setBlock(pos, GTBlocks.CASING_EXTREME_ENGINE_INTAKE.get());
+                        case 'h' -> helper.setBlock(pos, GTBlocks.FIREBOX_STEEL.get());
+                        case 'i' -> helper.setBlock(pos, GTBlocks.FIREBOX_TITANIUM.get());
+                        case 'j' -> helper.setBlock(pos, GTBlocks.FIREBOX_TUNGSTENSTEEL.get());
+                        case 'k' -> helper.setBlock(pos, GTBlocks.CASING_TUNGSTENSTEEL_PIPE.get());
+                        case 'A' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.TungstenSteel));
+                        case ' ' -> helper.setBlock(pos, Blocks.AIR);
+                        default -> helper.fail("unexpected Mega Alloy Blast Smelter symbol " + line.charAt(column));
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -3413,6 +4519,2188 @@ public final class GTNAMachineGameTests {
         helper.assertTrue(stone >= 1,
                 "the primitive stone furnace must smelt with no energy hatch, but the output bus held no stone");
         helper.succeed();
+    }
+
+    /**
+     * GTOCore ISA Mill QA: the compressed MBS forms with the exclusive Ball Hatch slot, a Gold Block
+     * or a fluid hatch in a casing cell breaks it, the recipe manager holds the 48 ported recipes,
+     * and the controller recipe is present in the Assembly Line.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 80)
+    public static void isaMillFormsWithBallHatch(GameTestHelper helper) {
+        var source = GTOCompressedPatternReader.read("isa_mill");
+        helper.assertTrue(source.slices().length == 7 && source.slices()[0].length == 3 &&
+                source.slices()[0][0].length() == 3,
+                "ISA Mill must retain GTOCore's 7x3x3 shape");
+        helper.assertTrue(
+                source.chars() == com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.BACK &&
+                        source.rows() == com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.UP &&
+                        source.aisles() == com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.RIGHT,
+                "ISA Mill must keep GTOCore's recorded orientation");
+
+        BlockPos controllerPos = new BlockPos(8, 4, 4);
+        buildIsaMillBase(helper, controllerPos);
+        helper.setBlock(controllerPos.offset(-3, -1, 0), GTMachines.ITEM_IMPORT_BUS[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(-3, -1, 1), GTMachines.ITEM_EXPORT_BUS[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(-3, -1, 2), GTMachines.FLUID_IMPORT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(-3, 1, 0), GTMachines.ENERGY_INPUT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(controllerPos.offset(-3, 1, 1), GTMachines.MAINTENANCE_HATCH.getBlock());
+        // GTOCore pins the Muffler with setExactLimit(1), so it is mandatory like the maintenance
+        // hatch; its front face must stay exposed (IMufflerMachine returns null otherwise), so it
+        // sits on the char-0 north face of the shell.
+        helper.setBlock(controllerPos.offset(-3, 0, 0), GTMachines.MUFFLER_HATCH[GTValues.IV].getBlock());
+        BlockPos ballPos = controllerPos.offset(3, 0, 1);
+
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof IsaMillMachine mill)) {
+            helper.fail("ISA Mill controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = mill.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(mill, true),
+                "ISA Mill must form (facing=" + mill.getFrontFacing() + ", upwards=" + mill.getUpwardsFacing() +
+                        "): " + patternError(helper, state, controllerPos));
+        helper.assertTrue(mill.getParts().stream().anyMatch(part -> part instanceof BallHatchPartMachine),
+                "the Ball Hatch must be accepted by the ISA Mill");
+
+        // Negative formation: a Gold Block cannot replace the gearbox, a fluid hatch cannot take a pipe.
+        BlockPos gearboxPos = controllerPos.offset(-2, 0, 1);
+        helper.setBlock(gearboxPos, Blocks.GOLD_BLOCK);
+        helper.assertTrue(!mill.getPattern().checkPatternAt(state, false),
+                "a Gold Block must not replace the Inconel-625 Gearbox");
+        helper.setBlock(gearboxPos, GTNABlocks.INCONEL_625_GEARBOX.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(mill, true),
+                "restoring the gearbox must let the ISA Mill form again: " +
+                        patternError(helper, state, controllerPos));
+        BlockPos pipePos = controllerPos.offset(3, 1, 2);
+        helper.setBlock(pipePos, GTMachines.FLUID_IMPORT_HATCH[GTValues.IV].getBlock());
+        helper.assertTrue(!mill.getPattern().checkPatternAt(state, false),
+                "the Inconel-625 Pipe cell must reject a fluid hatch");
+        helper.setBlock(pipePos, GTNABlocks.INCONEL_625_PIPE.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(mill, true),
+                "restoring the pipe must let the ISA Mill form again: " +
+                        patternError(helper, state, controllerPos));
+
+        // QA A6: exactly the 48 ported ISA Mill recipes.
+        var recipes = helper.getLevel().getRecipeManager().getAllRecipesFor(GTNARecipeType.ISA_MILL_RECIPES);
+        helper.assertTrue(recipes.size() == 48,
+                "the ISA Mill must load GTOCore's 48 recipes, found " + recipes.size());
+        // The ported Inconel-625 material must stay obtainable through GTCEu's automatic alloy blast.
+        var alloyBlast = helper.getLevel().getRecipeManager().getAllRecipesFor(GCYMRecipeTypes.ALLOY_BLAST_RECIPES);
+        helper.assertTrue(alloyBlast.stream().anyMatch(recipe -> recipe.id.getPath().endsWith("inconel_625")),
+                "Inconel-625 needs GTCEu's automatic alloy blast recipe; found " +
+                        alloyBlast.stream().map(recipe -> recipe.id.toString())
+                                .filter(id -> id.contains("inconel")).limit(5).toList());
+        // QA A7: the ported Assembly Line controller recipe is registered (GTCEu prefixes the
+        // recipe type path: gtceu:assembly_line/isa_mill).
+        var assemblyLineRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTRecipeTypes.ASSEMBLY_LINE_RECIPES);
+        helper.assertTrue(assemblyLineRecipes.stream().anyMatch(recipe -> recipe.id.getPath().endsWith("isa_mill")),
+                "the ISA Mill Assembly Line controller recipe must be present; mill-ish ids=" +
+                        assemblyLineRecipes.stream().map(recipe -> recipe.id.toString())
+                                .filter(id -> id.contains("mill") || id.contains("isa")).limit(10).toList() +
+                        " total=" + assemblyLineRecipes.size());
+
+        // QA A5 gate: missing ball / wrong tier block startup; the matching ball starts and takes
+        // the GTOCore damage; a ball at its durability limit is destroyed by its last use.
+        GTRecipe tierOne = recipes.stream().filter(recipe -> recipe.id.getPath().endsWith("milled_grossular_bgs"))
+                .findFirst().orElse(null);
+        GTRecipe tierTwo = recipes.stream().filter(recipe -> recipe.id.getPath().endsWith("milled_grossular_bal"))
+                .findFirst().orElse(null);
+        helper.assertTrue(tierOne != null && tierTwo != null, "the grossular recipes must exist");
+        BallHatchPartMachine ballHatch = (BallHatchPartMachine) metaMachineAt(helper, ballPos);
+        helper.assertTrue(!mill.beforeWorking(tierOne), "a missing grinding ball must block startup");
+        ballHatch.setBallStack(new ItemStack(GTNAItems.GRINDBALL_ALUMINIUM.get()));
+        helper.assertTrue(!mill.beforeWorking(tierOne),
+                "a tier-2 Aluminium ball must not run a tier-1 recipe");
+        helper.assertTrue(ballHatch.getBallStack().getDamageValue() == 0,
+                "a refused start must not damage the ball");
+        ballHatch.setBallStack(new ItemStack(GTNAItems.GRINDBALL_SOAPSTONE.get()));
+        helper.assertTrue(mill.beforeWorking(tierOne), "a matching tier-1 ball must start the recipe");
+        helper.assertTrue(ballHatch.getBallStack().getDamageValue() == 2,
+                "the GTOCore formula must add parallels / (Unbreaking + 1) + 1 durability, got " +
+                        ballHatch.getBallStack().getDamageValue());
+        ItemStack spent = new ItemStack(GTNAItems.GRINDBALL_SOAPSTONE.get());
+        spent.setDamageValue(spent.getMaxDamage() - 1);
+        ballHatch.setBallStack(spent);
+        helper.assertTrue(mill.beforeWorking(tierOne), "the last ball use must still start the recipe");
+        helper.assertTrue(ballHatch.getBallStack().isEmpty(),
+                "a grinding ball at its durability limit must be destroyed");
+        helper.succeed();
+    }
+
+    /**
+     * GTOCore ISA Mill execution: an ore block, distilled water and a matching grinding ball run a
+     * perfect overclock (4800 / 4 = 1200 ticks at 4x EU), output 96 MILLED grossular and consume two
+     * points of ball durability.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 2400)
+    public static void isaMillGrindsOreWithGrindingBall(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(8, 4, 4);
+        buildIsaMillBase(helper, controllerPos);
+        BlockPos inputPos = controllerPos.offset(-3, -1, 0);
+        BlockPos outputPos = controllerPos.offset(-3, -1, 1);
+        BlockPos fluidPos = controllerPos.offset(-3, -1, 2);
+        BlockPos energyPos = controllerPos.offset(-3, 1, 0);
+        BlockPos maintenancePos = controllerPos.offset(-3, 1, 1);
+        helper.setBlock(inputPos, GTMachines.ITEM_IMPORT_BUS[GTValues.IV].getBlock());
+        helper.setBlock(outputPos, GTMachines.ITEM_EXPORT_BUS[GTValues.IV].getBlock());
+        helper.setBlock(fluidPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(energyPos, GTMachines.ENERGY_INPUT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(maintenancePos, GTMachines.MAINTENANCE_HATCH.getBlock());
+        // GTOCore pins the Muffler with setExactLimit(1), so it is mandatory like the maintenance
+        // hatch; its front face must stay exposed (IMufflerMachine returns null otherwise), so it
+        // sits on the char-0 north face of the shell.
+        helper.setBlock(controllerPos.offset(-3, 0, 0), GTMachines.MUFFLER_HATCH[GTValues.IV].getBlock());
+        BlockPos ballPos = controllerPos.offset(3, 0, 1);
+
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof IsaMillMachine mill)) {
+            helper.fail("ISA Mill controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = mill.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(mill, true),
+                "ISA Mill must form: " + patternError(helper, state, controllerPos));
+        ((com.gregtechceu.gtceu.common.machine.multiblock.part.MaintenanceHatchPartMachine) metaMachineAt(helper,
+                maintenancePos)).fixAllMaintenanceProblems();
+
+        BallHatchPartMachine ballHatch = (BallHatchPartMachine) metaMachineAt(helper, ballPos);
+        ballHatch.setBallStack(new ItemStack(GTNAItems.GRINDBALL_SOAPSTONE.get()));
+        ItemBusPartMachine inputBus = (ItemBusPartMachine) metaMachineAt(helper, inputPos);
+        inputBus.getCircuitInventory().setStackInSlot(0, IntCircuitBehaviour.stack(1));
+        inputBus.getInventory().insertItem(0, ChemicalHelper.get(TagPrefix.ore, GTMaterials.Grossular), false);
+        FluidHatchPartMachine fluid = (FluidHatchPartMachine) metaMachineAt(helper, fluidPos);
+        fluid.tank.setFluidInTank(0, GTMaterials.DistilledWater.getFluid(100));
+        EnergyHatchPartMachine energy = (EnergyHatchPartMachine) metaMachineAt(helper, energyPos);
+        mill.getRecipeLogic().updateTickSubscription();
+
+        int guard = 0;
+        while (!mill.getRecipeLogic().isWorking() && guard++ < 20) {
+            energy.energyContainer.changeEnergy(50_000);
+            mill.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(mill.getRecipeLogic().isWorking(),
+                "the mill must start with ore, water and a matching ball; status=" +
+                        mill.getRecipeLogic().getStatus() + " recipe=" + mill.getRecipeLogic().getLastRecipe() +
+                        " ore=" + inputBus.getInventory().getStackInSlot(0) + " circuit=" +
+                        inputBus.getCircuitInventory().getStackInSlot(0) + " fluid=" +
+                        fluid.tank.getFluidInTank(0) + " ball=" + ballHatch.getBallStack() + " failures=" +
+                        mill.getRecipeLogic().getFailureReasons());
+        helper.assertTrue(mill.getRecipeLogic().getDuration() == 1200,
+                "the perfect overclock must cut 4800 ticks to 1200, got " +
+                        mill.getRecipeLogic().getDuration());
+
+        for (int tick = 0; tick < 1_300; tick++) {
+            energy.energyContainer.changeEnergy(50_000);
+            mill.getRecipeLogic().serverTick();
+        }
+        ItemBusPartMachine outputBus = (ItemBusPartMachine) metaMachineAt(helper, outputPos);
+        ItemStack milledGrossular = ChemicalHelper.get(GTNATagPrefix.MILLED, GTMaterials.Grossular);
+        int milled = 0;
+        for (int slot = 0; slot < outputBus.getInventory().getSlots(); slot++) {
+            ItemStack stack = outputBus.getInventory().getStackInSlot(slot);
+            if (stack.is(milledGrossular.getItem())) {
+                milled += stack.getCount();
+            }
+        }
+        helper.assertTrue(milled >= 96,
+                "the mill must output 96 MILLED Grossular, found " + milled + " (status=" +
+                        mill.getRecipeLogic().getStatus() + ", reason=" +
+                        mill.getRecipeLogic().getFancyTooltip() + ")");
+        helper.assertTrue(ballHatch.getBallStack().getDamageValue() == 2,
+                "one started recipe must consume 2 durability, got " +
+                        ballHatch.getBallStack().getDamageValue());
+        helper.succeed();
+    }
+
+    /** Builds the ISA Mill 7x3x3 shell from GTOCore's compressed MBS, controller facing NORTH. */
+    private static void buildIsaMillBase(GameTestHelper helper, BlockPos controllerPos) {
+        var source = GTOCompressedPatternReader.read("isa_mill");
+        for (int aisle = 0; aisle < source.slices().length; aisle++) {
+            for (int row = 0; row < source.slices()[aisle].length; row++) {
+                String line = source.slices()[aisle][row];
+                for (int column = 0; column < line.length(); column++) {
+                    BlockPos pos = controllerPos.offset(aisle - 3, row - 1, column);
+                    switch (line.charAt(column)) {
+                        case 'B' -> helper.setBlock(pos, GTNABlocks.INCONEL_625_CASING.get());
+                        case 'C' -> helper.setBlock(pos, GTNABlocks.INCONEL_625_GEARBOX.get());
+                        case 'A' -> helper.setBlock(pos, GTNABlocks.INCONEL_625_PIPE.get());
+                        case 'D' -> helper.setBlock(pos, GTNAMachines2.GRIND_BALL_HATCH.getBlock());
+                        case '~' -> helper.setBlock(pos, GTNAMachines3.ISA_MILL.getBlock());
+                        default -> helper.fail("unexpected ISA Mill symbol " + line.charAt(column));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * GTOCore Industrial Flotation Cell QA: the compressed MBS keeps its 9×7×7 shape and recorded
+     * RIGHT/BACK/UP orientation, forms with the Parallel Hatch and GTO's ability set, rejects a Gold
+     * Block or a fluid hatch in casing-only cells, holds exactly the 12 ported flotation recipes and
+     * runs the pyrope recipe with GTO's perfect overclock.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 80)
+    public static void industrialFlotationCellFormsWithParallelHatch(GameTestHelper helper) {
+        var source = GTOCompressedPatternReader.read("industrial_flotation_cell");
+        helper.assertTrue(source.slices().length == 9 && source.slices()[0].length == 7 &&
+                source.slices()[0][0].length() == 7,
+                "Industrial Flotation Cell must keep GTOCore's 9x7x7 shape");
+        helper.assertTrue(
+                source.chars() == com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.RIGHT &&
+                        source.rows() == com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.BACK &&
+                        source.aisles() == com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.UP,
+                "Industrial Flotation Cell must keep GTOCore's recorded orientation");
+
+        BlockPos controllerPos = new BlockPos(8, 4, 4);
+        buildIndustrialFlotationCellBase(helper, controllerPos);
+        addIndustrialFlotationCellHatches(helper, controllerPos);
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof IndustrialFlotationCellMachine cell)) {
+            helper.fail("Industrial Flotation Cell controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = cell.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(cell, true),
+                "Industrial Flotation Cell must form: " + patternError(helper, state, controllerPos));
+        helper.assertTrue(cell.getParallelHatch().isPresent(),
+                "the Advanced Parallel Hatch must be accepted by the Industrial Flotation Cell");
+        helper.assertTrue(cell.getParts().stream().anyMatch(part -> part instanceof MaintenanceHatchPartMachine),
+                "the maintenance hatch must be part of the flotation cell");
+
+        // Negative formation: a Gold Block cannot replace a Flotation Cell wall, and a casing-only
+        // top-cap cell must reject a fluid hatch.
+        BlockPos wallPos = flotationCellPos(controllerPos, 1, 3, 3);
+        helper.setBlock(wallPos, Blocks.GOLD_BLOCK);
+        helper.assertTrue(!cell.getPattern().checkPatternAt(state, false),
+                "a Gold Block must not replace a Flotation Cell wall");
+        helper.setBlock(wallPos, GTNABlocks.FLOTATION_CELL.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(cell, true),
+                "restoring the cell wall must let the flotation cell form again: " +
+                        patternError(helper, state, controllerPos));
+        BlockPos capPos = flotationCellPos(controllerPos, 3, 3, 8);
+        helper.setBlock(capPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.assertTrue(!cell.getPattern().checkPatternAt(state, false),
+                "the Hastelloy-N75 top cap must reject a fluid hatch");
+        helper.setBlock(capPos, GTNABlocks.HASTELLOY_N_75_CASING.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(cell, true),
+                "restoring the top cap must let the flotation cell form again: " +
+                        patternError(helper, state, controllerPos));
+
+        // QA A6: exactly the 12 ported ore flotation recipes.
+        var recipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.FLOTATING_BENEFICIATION_RECIPES);
+        helper.assertTrue(recipes.size() == 12,
+                "the Industrial Flotation Cell must load GTO's 12 ore flotation recipes, found " + recipes.size());
+        helper.assertTrue(java.util.Arrays.stream(GTNAMachines3.INDUSTRIAL_FLOTATION_CELL.getRecipeTypes())
+                .anyMatch(type -> type == GTNARecipeType.FLOTATING_BENEFICIATION_RECIPES),
+                "the Industrial Flotation Cell must run the flotating_beneficiation family");
+        // QA A7: the ported Assembly Line controller recipe is registered.
+        var assemblyLineRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTRecipeTypes.ASSEMBLY_LINE_RECIPES);
+        helper.assertTrue(assemblyLineRecipes.stream()
+                .anyMatch(recipe -> recipe.id.getPath().endsWith("industrial_flotation_cell")),
+                "the Industrial Flotation Cell Assembly Line controller recipe must be present; ids=" +
+                        assemblyLineRecipes.stream().map(recipe -> recipe.id.toString())
+                                .filter(id -> id.contains("flotation")).limit(5).toList());
+
+        // QA A5: the pyrope recipe with a LuV hatch. One perfect overclock step (7680 → 30720 EU/t,
+        // 4800 → 1200 ticks) fills the output hatch with 1000 mB Pyrope Front.
+        BlockPos inputPos = flotationCellPos(controllerPos, 1, 1, 1);
+        BlockPos fluidInPos = flotationCellPos(controllerPos, 5, 1, 1);
+        BlockPos fluidOutPos = flotationCellPos(controllerPos, 0, 2, 1);
+        BlockPos energyPos = flotationCellPos(controllerPos, 2, 0, 1);
+        ItemBusPartMachine inputBus = (ItemBusPartMachine) metaMachineAt(helper, inputPos);
+        inputBus.getInventory().insertItem(0,
+                ChemicalHelper.get(TagPrefix.dust, GTNAMaterials.SodiumEthylxanthate, 32), false);
+        inputBus.getInventory().insertItem(1,
+                ChemicalHelper.get(GTNATagPrefix.MILLED, GTMaterials.Pyrope, 64), false);
+        FluidHatchPartMachine fluidIn = (FluidHatchPartMachine) metaMachineAt(helper, fluidInPos);
+        fluidIn.tank.setFluidInTank(0, GTNAMaterials.Turpentine.getFluid(8000));
+        EnergyHatchPartMachine energy = (EnergyHatchPartMachine) metaMachineAt(helper, energyPos);
+        cell.getRecipeLogic().updateTickSubscription();
+
+        int guard = 0;
+        while (!cell.getRecipeLogic().isWorking() && guard++ < 20) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            cell.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(cell.getRecipeLogic().isWorking(),
+                "the flotation cell must start with reagent, Milled Pyrope and turpentine; status=" +
+                        cell.getRecipeLogic().getStatus() + " recipe=" + cell.getRecipeLogic().getLastRecipe() +
+                        " failures=" + cell.getRecipeLogic().getFailureReasons());
+        helper.assertTrue(cell.getRecipeLogic().getDuration() == 1200,
+                "the perfect overclock must cut 4800 ticks to 1200, got " +
+                        cell.getRecipeLogic().getDuration());
+
+        for (int tick = 0; tick < 1_220; tick++) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            cell.getRecipeLogic().serverTick();
+        }
+        FluidHatchPartMachine fluidOut = (FluidHatchPartMachine) metaMachineAt(helper, fluidOutPos);
+        FluidStack output = fluidOut.tank.getFluidInTank(0);
+        helper.assertTrue(output.getFluid() == GTNAMaterials.PyropeFront.getFluid() && output.getAmount() >= 1000,
+                "the cell must output 1000 mB Pyrope Front, got " + output + " (status=" +
+                        cell.getRecipeLogic().getStatus() + ", reason=" + cell.getRecipeLogic().getFancyTooltip() +
+                        ")");
+        helper.succeed();
+    }
+
+    /**
+     * GTOCore Vacuum Drying Furnace QA: the compressed MBS keeps its 3×5×3 shape and recorded
+     * LEFT/UP/FRONT orientation, forms with its mandatory Muffler and Maintenance Hatches, rejects a
+     * Gold Block or a fluid hatch in a coil cell, exposes both recipe families and runs one recipe
+     * per family (a serial EBF-style drying recipe and a coil-parallelised Dehydrator recipe).
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 120)
+    public static void vacuumDryingFurnaceFormsAndDriesFoam(GameTestHelper helper) {
+        var source = GTOCompressedPatternReader.read("vacuum_drying_furnace");
+        helper.assertTrue(source.slices().length == 3 && source.slices()[0].length == 5 &&
+                source.slices()[0][0].length() == 3,
+                "Vacuum Drying Furnace must keep GTOCore's 3x5x3 shape");
+        helper.assertTrue(
+                source.chars() == com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.LEFT &&
+                        source.rows() == com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.UP &&
+                        source.aisles() == com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.FRONT,
+                "Vacuum Drying Furnace must keep GTOCore's recorded orientation");
+
+        BlockPos controllerPos = new BlockPos(8, 4, 4);
+        buildVacuumDryingFurnaceBase(helper, controllerPos);
+        addVacuumDryingFurnaceHatches(helper, controllerPos);
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof VacuumDryingFurnaceMachine furnace)) {
+            helper.fail("Vacuum Drying Furnace controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = furnace.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(furnace, true),
+                "Vacuum Drying Furnace must form: " + patternError(helper, state, controllerPos));
+        helper.assertTrue(furnace.getCoilType().getCoilTemperature() == 5400,
+                "the Vacuum Drying Furnace must read its HSSG heating coil, got " +
+                        furnace.getCoilType().getCoilTemperature() + "K");
+        helper.assertTrue(furnace.getRecipeTypes().length == 2,
+                "the Vacuum Drying Furnace must expose the vacuum_drying and dehydrator families");
+
+        // Negative formation: a Gold Block cannot replace a coil, and the coil cell is exclusive.
+        BlockPos coilPos = vacuumDryingPos(controllerPos, 0, 1, 1);
+        helper.setBlock(coilPos, Blocks.GOLD_BLOCK);
+        helper.assertTrue(!furnace.getPattern().checkPatternAt(state, false),
+                "a Gold Block must not replace a heating coil");
+        helper.setBlock(coilPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.IV].getBlock());
+        helper.assertTrue(!furnace.getPattern().checkPatternAt(state, false),
+                "the heating-coil cell must reject a fluid hatch");
+        helper.setBlock(coilPos, GTBlocks.COIL_HSSG.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(furnace, true),
+                "restoring the coil must let the Vacuum Drying Furnace form again: " +
+                        patternError(helper, state, controllerPos));
+
+        // QA A6: 12 drying recipes and the single ported Dehydrator recipe.
+        var dryingRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.VACUUM_DRYING_RECIPES);
+        helper.assertTrue(dryingRecipes.size() == 12,
+                "the Vacuum Drying Furnace must load GTO's 12 ore-foam drying recipes, found " +
+                        dryingRecipes.size());
+        var dehydratorRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.DEHYDRATOR_RECIPES);
+        helper.assertTrue(dehydratorRecipes.size() == 1,
+                "the Vacuum Drying Furnace must load the one ported GTCEu-only Dehydrator recipe, found " +
+                        dehydratorRecipes.size());
+        // QA A7: the GTO controller recipe is available after porting the IV Dehydrator.
+        var assemblerRecipes = helper.getLevel().getRecipeManager().getAllRecipesFor(GTRecipeTypes.ASSEMBLER_RECIPES);
+        helper.assertTrue(assemblerRecipes.stream()
+                .anyMatch(recipe -> recipe.id.getPath().endsWith("vacuum_drying_furnace")),
+                "the Vacuum Drying Furnace controller must have its original GTO Assembler recipe");
+        for (int tier : com.gregtechceu.gtceu.common.data.machines.GTMachineUtils.ELECTRIC_TIERS) {
+            String tierName = GTValues.VN[tier].toLowerCase(java.util.Locale.ROOT);
+            var dehydratorCraftingRecipe = helper.getLevel().getRecipeManager()
+                    .byKey(new ResourceLocation("gtceu", "shaped/" + tierName + "_dehydrator"));
+            helper.assertTrue(GTNAMachines3.DEHYDRATOR[tier] != null &&
+                    dehydratorCraftingRecipe.isPresent() &&
+                    dehydratorCraftingRecipe.orElseThrow().getResultItem(helper.getLevel().registryAccess())
+                            .getItem() ==
+                            GTNAMachines3.DEHYDRATOR[tier].asStack().getItem(),
+                    tierName + " Dehydrator must have a craftable machine recipe");
+        }
+
+        // QA A5a: the Dehydrator mode. With HSSG coils the parallel cap is 2^6 = 64, so a single
+        // 1000 mB batch still runs alone: 30 → 7680 EU/t and 160 → 10 ticks over four overclocks.
+        furnace.setActiveRecipeType(1);
+        BlockPos fluidInPos = vacuumDryingPos(controllerPos, 0, 0, 0);
+        BlockPos itemOutPos = vacuumDryingPos(controllerPos, 1, 0, 0);
+        BlockPos energyPos = vacuumDryingPos(controllerPos, 1, 0, 1);
+        FluidHatchPartMachine fluidIn = (FluidHatchPartMachine) metaMachineAt(helper, fluidInPos);
+        fluidIn.tank.setFluidInTank(0, GTMaterials.SaltWater.getFluid(1000));
+        EnergyHatchPartMachine energy = (EnergyHatchPartMachine) metaMachineAt(helper, energyPos);
+        furnace.getRecipeLogic().updateTickSubscription();
+
+        int guard = 0;
+        while (!furnace.getRecipeLogic().isWorking() && guard++ < 20) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            furnace.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(furnace.getRecipeLogic().isWorking(),
+                "the Dehydrator mode must start with salt water; status=" + furnace.getRecipeLogic().getStatus() +
+                        " recipe=" + furnace.getRecipeLogic().getLastRecipe() + " failures=" +
+                        furnace.getRecipeLogic().getFailureReasons());
+        helper.assertTrue(furnace.getRecipeLogic().getDuration() == 10,
+                "the Dehydrator mode must apply four non-perfect overclocks (160 → 10 ticks), got " +
+                        furnace.getRecipeLogic().getDuration());
+        for (int tick = 0; tick < 12; tick++) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            furnace.getRecipeLogic().serverTick();
+        }
+        ItemBusPartMachine itemOut = (ItemBusPartMachine) metaMachineAt(helper, itemOutPos);
+        helper.assertTrue(busItemCount(itemOut, ChemicalHelper.get(TagPrefix.dust, GTMaterials.Salt)) == 2,
+                "the Dehydrator mode must output 2 Salt, found " +
+                        busItemCount(itemOut, ChemicalHelper.get(TagPrefix.dust, GTMaterials.Salt)));
+
+        // QA A5b: the main Vacuum Drying mode. The pyrope foam (EUt 1920, 2400 ticks, 3500K) runs
+        // through the EBF-style heating-coil overclock: one perfect step with the 5400K HSSG coil and
+        // an IV hatch cuts the duration to 600 ticks and returns the six dusts, Red Mud and Water.
+        furnace.setActiveRecipeType(0);
+        fluidIn.tank.setFluidInTank(0, GTNAMaterials.PyropeFront.getFluid(4000));
+        furnace.getRecipeLogic().updateTickSubscription();
+        guard = 0;
+        while (!furnace.getRecipeLogic().isWorking() && guard++ < 20) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            furnace.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(furnace.getRecipeLogic().isWorking(),
+                "the Vacuum Drying mode must start with pyrope foam; status=" +
+                        furnace.getRecipeLogic().getStatus() + " recipe=" + furnace.getRecipeLogic().getLastRecipe() +
+                        " failures=" + furnace.getRecipeLogic().getFailureReasons());
+        helper.assertTrue(furnace.getRecipeLogic().getDuration() == 600,
+                "the heating-coil overclock must cut 2400 ticks to 600, got " +
+                        furnace.getRecipeLogic().getDuration());
+        for (int tick = 0; tick < 620; tick++) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            furnace.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(busItemCount(itemOut, ChemicalHelper.get(TagPrefix.dust, GTMaterials.Magnesium)) == 128,
+                "the drying furnace must output 128 Magnesium, found " +
+                        busItemCount(itemOut, ChemicalHelper.get(TagPrefix.dust, GTMaterials.Magnesium)));
+        helper.assertTrue(busItemCount(itemOut, ChemicalHelper.get(TagPrefix.dust, GTMaterials.Silicon)) == 48,
+                "the drying furnace must output 48 Silicon, found " +
+                        busItemCount(itemOut, ChemicalHelper.get(TagPrefix.dust, GTMaterials.Silicon)));
+        FluidHatchPartMachine fluidOutOne = (FluidHatchPartMachine) metaMachineAt(helper,
+                vacuumDryingPos(controllerPos, 2, 0, 0));
+        FluidHatchPartMachine fluidOutTwo = (FluidHatchPartMachine) metaMachineAt(helper,
+                vacuumDryingPos(controllerPos, 0, 4, 2));
+        helper.assertTrue(fluidAmount(GTNAMaterials.RedMud.getFluid(), fluidOutOne, fluidOutTwo) == 200,
+                "the drying furnace must output 200 mB Red Mud, found " +
+                        fluidAmount(GTNAMaterials.RedMud.getFluid(), fluidOutOne, fluidOutTwo));
+        helper.assertTrue(fluidAmount(GTMaterials.Water.getFluid(), fluidOutOne, fluidOutTwo) == 2000,
+                "the drying furnace must output 2000 mB Water, found " +
+                        fluidAmount(GTMaterials.Water.getFluid(), fluidOutOne, fluidOutTwo));
+        helper.succeed();
+    }
+
+    /**
+     * QA chain contract: every flotation foam the flotation cell produces has a drying recipe in the
+     * Vacuum Drying Furnace family and the produced Red Mud has a consumer, and a real drying machine
+     * accepts the pyrope foam as a recipe input. Complements the source-scan PortChainClosureTest.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 80)
+    public static void flotationFoamFeedsVacuumDrying(GameTestHelper helper) {
+        var flotationRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.FLOTATING_BENEFICIATION_RECIPES);
+        var dryingRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.VACUUM_DRYING_RECIPES);
+        helper.assertTrue(flotationRecipes.size() == 12 && dryingRecipes.size() == 12,
+                "the chain needs the 12 flotation and 12 drying recipes, found " +
+                        flotationRecipes.size() + " and " + dryingRecipes.size());
+
+        List<String> unconsumed = new ArrayList<>();
+        for (GTRecipe recipe : flotationRecipes) {
+            for (Fluid produced : outputFluidsOf(recipe)) {
+                if (dryingRecipes.stream().noneMatch(drying -> inputFluidsOf(drying).contains(produced))) {
+                    unconsumed.add(ForgeRegistries.FLUIDS.getKey(produced).toString());
+                }
+            }
+        }
+        helper.assertTrue(unconsumed.isEmpty(),
+                "every flotation foam needs a Vacuum Drying consumer, dead ends: " + unconsumed);
+
+        Fluid redMud = GTNAMaterials.RedMud.getFluid();
+        var mixerRecipes = helper.getLevel().getRecipeManager().getAllRecipesFor(GTRecipeTypes.MIXER_RECIPES);
+        helper.assertTrue(mixerRecipes.stream().anyMatch(recipe -> inputFluidsOf(recipe).contains(redMud)),
+                "Red Mud needs a consuming recipe (the ported neutralisation mixer)");
+
+        // Machine-level proof: a formed Vacuum Drying Furnace accepts the pyrope foam the flotation
+        // cell produces as a valid recipe input.
+        BlockPos controllerPos = new BlockPos(8, 4, 4);
+        buildVacuumDryingFurnaceBase(helper, controllerPos);
+        addVacuumDryingFurnaceHatches(helper, controllerPos);
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof VacuumDryingFurnaceMachine furnace)) {
+            helper.fail("Vacuum Drying Furnace controller is missing: " + machine);
+            return;
+        }
+        helper.assertTrue(GTNAStructureRefresh.refresh(furnace, true),
+                "Vacuum Drying Furnace must form for the chain test: " +
+                        patternError(helper, furnace.getMultiblockState(), controllerPos));
+        FluidHatchPartMachine fluidIn = (FluidHatchPartMachine) metaMachineAt(helper,
+                vacuumDryingPos(controllerPos, 0, 0, 0));
+        fluidIn.tank.setFluidInTank(0, GTNAMaterials.PyropeFront.getFluid(4000));
+        // The recipe carries a tick EUt, so the machine's energy buffer must be able to pay for it
+        // before the input match succeeds.
+        EnergyHatchPartMachine energy = (EnergyHatchPartMachine) metaMachineAt(helper,
+                vacuumDryingPos(controllerPos, 1, 0, 1));
+        energy.energyContainer.changeEnergy(1_000_000);
+        GTRecipe pyropeDrying = dryingRecipes.stream()
+                .filter(recipe -> recipe.id.getPath().endsWith("pyrope_front_pro"))
+                .findFirst().orElseThrow(() -> new IllegalStateException("missing pyrope_front_pro drying recipe"));
+        var match = com.gregtechceu.gtceu.api.recipe.RecipeHelper.matchContents(furnace, pyropeDrying);
+        helper.assertTrue(match.isSuccess(),
+                "the Vacuum Drying Furnace must accept the Pyrope Front produced by the flotation cell; reason=" +
+                        match.reason().getString() + " capability=" + match.capability() + " io=" + match.io());
+        helper.succeed();
+    }
+
+    /** Every fluid a recipe outputs (index-independent). */
+    private static List<Fluid> outputFluidsOf(GTRecipe recipe) {
+        List<Fluid> fluids = new ArrayList<>();
+        for (Content content : recipe.getOutputContents(FluidRecipeCapability.CAP)) {
+            fluids.addAll(fluidsOf(content));
+        }
+        return fluids;
+    }
+
+    /** Every fluid a recipe accepts as input. */
+    private static List<Fluid> inputFluidsOf(GTRecipe recipe) {
+        List<Fluid> fluids = new ArrayList<>();
+        for (Content content : recipe.getInputContents(FluidRecipeCapability.CAP)) {
+            fluids.addAll(fluidsOf(content));
+        }
+        return fluids;
+    }
+
+    /** Total count of a prototype item across every slot of an item bus. */
+    private static int busItemCount(ItemBusPartMachine bus, ItemStack prototype) {
+        int total = 0;
+        for (int slot = 0; slot < bus.getInventory().getSlots(); slot++) {
+            ItemStack stack = bus.getInventory().getStackInSlot(slot);
+            if (stack.is(prototype.getItem())) total += stack.getCount();
+        }
+        return total;
+    }
+
+    /** Amount of a fluid across the first tank of the given fluid hatches. */
+    private static int fluidAmount(Fluid fluid, FluidHatchPartMachine... hatches) {
+        int total = 0;
+        for (FluidHatchPartMachine hatch : hatches) {
+            FluidStack stack = hatch.tank.getFluidInTank(0);
+            if (stack.getFluid() == fluid) total += stack.getAmount();
+        }
+        return total;
+    }
+
+    /**
+     * Maps an Industrial Flotation Cell pattern cell to world space. GTOCore recorded
+     * RIGHT/BACK/UP (char → +X, row → +Z, aisle → +Y) with the controller at char 3, row 0, aisle 1.
+     */
+    private static BlockPos flotationCellPos(BlockPos controllerPos, int ch, int row, int aisle) {
+        return controllerPos.offset(ch - 3, aisle - 1, row);
+    }
+
+    /**
+     * Maps a Vacuum Drying Furnace pattern cell to world space. GTOCore recorded LEFT/UP/FRONT
+     * (char → -X, row → +Y, aisle → -Z) with the controller at char 1, row 0, aisle 2.
+     */
+    private static BlockPos vacuumDryingPos(BlockPos controllerPos, int ch, int row, int aisle) {
+        return controllerPos.offset(1 - ch, row, 2 - aisle);
+    }
+
+    /** Builds the Industrial Flotation Cell 9×7×7 shell from GTOCore's compressed MBS. */
+    private static void buildIndustrialFlotationCellBase(GameTestHelper helper, BlockPos controllerPos) {
+        var source = GTOCompressedPatternReader.read("industrial_flotation_cell");
+        for (int aisle = 0; aisle < source.slices().length; aisle++) {
+            for (int row = 0; row < source.slices()[aisle].length; row++) {
+                String line = source.slices()[aisle][row];
+                for (int ch = 0; ch < line.length(); ch++) {
+                    BlockPos pos = flotationCellPos(controllerPos, ch, row, aisle);
+                    switch (line.charAt(ch)) {
+                        case 'A', 'E' -> helper.setBlock(pos, GTNABlocks.HASTELLOY_N_75_CASING.get());
+                        case 'B' -> helper.setBlock(pos, GTNABlocks.FLOTATION_CELL.get());
+                        case 'C' -> helper.setBlock(pos, GTNABlocks.HASTELLOY_N_75_PIPE.get());
+                        case 'D' -> helper.setBlock(pos, GTNABlocks.HASTELLOY_N_75_GEARBOX.get());
+                        case '~' -> helper.setBlock(pos, GTNAMachines3.INDUSTRIAL_FLOTATION_CELL.getBlock());
+                        case ' ', '#' -> helper.setBlock(pos, Blocks.AIR);
+                        default -> helper.fail("unexpected Industrial Flotation Cell symbol " + line.charAt(ch));
+                    }
+                }
+            }
+        }
+    }
+
+    /** Places the flotation cell's mandatory and QA hatches on the 'A' shell cells. */
+    private static void addIndustrialFlotationCellHatches(GameTestHelper helper, BlockPos controllerPos) {
+        helper.setBlock(flotationCellPos(controllerPos, 2, 0, 1),
+                GTMachines.ENERGY_INPUT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(flotationCellPos(controllerPos, 4, 0, 1), GTMachines.MAINTENANCE_HATCH.getBlock());
+        helper.setBlock(flotationCellPos(controllerPos, 1, 1, 1),
+                GTMachines.ITEM_IMPORT_BUS[GTValues.LuV].getBlock());
+        helper.setBlock(flotationCellPos(controllerPos, 5, 1, 1),
+                GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(flotationCellPos(controllerPos, 0, 2, 1),
+                GTMachines.FLUID_EXPORT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(flotationCellPos(controllerPos, 6, 2, 1),
+                GCYMMachines.PARALLEL_HATCH[GTValues.IV].getBlock());
+    }
+
+    /** Builds the Vacuum Drying Furnace 3×5×3 shell from GTOCore's compressed MBS. */
+    private static void buildVacuumDryingFurnaceBase(GameTestHelper helper, BlockPos controllerPos) {
+        var source = GTOCompressedPatternReader.read("vacuum_drying_furnace");
+        for (int aisle = 0; aisle < source.slices().length; aisle++) {
+            for (int row = 0; row < source.slices()[aisle].length; row++) {
+                String line = source.slices()[aisle][row];
+                for (int ch = 0; ch < line.length(); ch++) {
+                    BlockPos pos = vacuumDryingPos(controllerPos, ch, row, aisle);
+                    switch (line.charAt(ch)) {
+                        case 'A' -> helper.setBlock(pos, GTNABlocks.RED_STEEL_CASING.get());
+                        case 'B' -> helper.setBlock(pos, GTBlocks.COIL_HSSG.get());
+                        // The muffler is pinned with setExactLimit(1) and its front face must stay
+                        // exposed; the cell below it is the interior air of the coil chamber.
+                        case 'C' -> helper.setBlock(pos, GTMachines.MUFFLER_HATCH[GTValues.IV].getBlock()
+                                .defaultBlockState().setValue(BlockStateProperties.FACING, Direction.DOWN));
+                        case '~' -> helper.setBlock(pos, GTNAMachines3.VACUUM_DRYING_FURNACE.getBlock());
+                        case ' ' -> helper.setBlock(pos, Blocks.AIR);
+                        default -> helper.fail("unexpected Vacuum Drying Furnace symbol " + line.charAt(ch));
+                    }
+                }
+            }
+        }
+    }
+
+    /** Places the Vacuum Drying Furnace's mandatory and QA hatches on the 'A' shell cells. */
+    private static void addVacuumDryingFurnaceHatches(GameTestHelper helper, BlockPos controllerPos) {
+        helper.setBlock(vacuumDryingPos(controllerPos, 1, 0, 1),
+                GTMachines.ENERGY_INPUT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(vacuumDryingPos(controllerPos, 0, 0, 1), GTMachines.MAINTENANCE_HATCH.getBlock());
+        helper.setBlock(vacuumDryingPos(controllerPos, 2, 0, 1),
+                GTMachines.ITEM_IMPORT_BUS[GTValues.IV].getBlock());
+        helper.setBlock(vacuumDryingPos(controllerPos, 1, 0, 0),
+                GTMachines.ITEM_EXPORT_BUS[GTValues.IV].getBlock());
+        helper.setBlock(vacuumDryingPos(controllerPos, 0, 0, 0),
+                GTMachines.FLUID_IMPORT_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(vacuumDryingPos(controllerPos, 2, 0, 0),
+                GTMachines.FLUID_EXPORT_HATCH[GTValues.IV].getBlock());
+        // The drying recipes emit two fluids (Red Mud and Water); a second export hatch is required.
+        helper.setBlock(vacuumDryingPos(controllerPos, 0, 4, 2),
+                GTMachines.FLUID_EXPORT_HATCH[GTValues.IV].getBlock());
+    }
+
+    /**
+     * GTOCore Rocket Large Turbine QA: the 3×3×3 titanium base forms with its mandatory Rotor
+     * Holder and Energy Output Hatch, the rocket engine module wraps it and counts as one formed
+     * module, invalid blocks and misplaced hatches are rejected, the ported recipe family holds
+     * exactly the single GTCEu RocketFuel recipe, and the omitted controller recipe is confirmed
+     * absent.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 120)
+    public static void rocketLargeTurbineFormsWithRotorAndModule(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(8, 5, 4);
+        clearRocketLargeTurbineArea(helper, controllerPos);
+        buildRocketLargeTurbineBase(helper, controllerPos);
+        buildRocketLargeTurbineHatches(helper, controllerPos, GTValues.EV);
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof RocketLargeTurbineMachine turbine)) {
+            helper.fail("Rocket Large Turbine controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = turbine.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "the Rocket Large Turbine base must form: " + patternError(helper, state, controllerPos));
+        helper.assertTrue(turbine.getParts().stream().anyMatch(part -> part instanceof RotorHolderPartMachine),
+                "the rotor holder must be part of the turbine");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) turbine)
+                .gtna$formedModuleCount() == 0,
+                "the base turbine must form without the rocket engine module");
+
+        // A2: a Gold Block cannot replace a titanium turbine casing.
+        BlockPos casingPos = controllerPos.offset(1, -1, 1);
+        helper.setBlock(casingPos, Blocks.GOLD_BLOCK);
+        helper.assertTrue(!turbine.getPattern().checkPatternAt(state, false),
+                "a Gold Block must not replace a Titanium Turbine Casing");
+        helper.setBlock(casingPos, GTBlocks.CASING_TITANIUM_TURBINE.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "restoring the casing must let the turbine form again: " +
+                        patternError(helper, state, controllerPos));
+
+        // A2/A3: the rotor cell only accepts a Rotor Holder or an Energy Output Hatch.
+        BlockPos rotorPos = controllerPos.offset(1, 0, 1);
+        helper.setBlock(rotorPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.EV].getBlock());
+        helper.assertTrue(!turbine.getPattern().checkPatternAt(state, false),
+                "the rotor cell must reject a Fluid Hatch");
+        helper.setBlock(rotorPos, rocketRotorHolderState(Direction.EAST));
+        // A3: a pure titanium casing cell rejects a Fluid Hatch too.
+        helper.setBlock(casingPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.EV].getBlock());
+        helper.assertTrue(!turbine.getPattern().checkPatternAt(state, false),
+                "a Titanium Turbine Casing cell must reject a Fluid Hatch");
+        helper.setBlock(casingPos, GTBlocks.CASING_TITANIUM_TURBINE.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "restoring the rotor holder and casing must let the turbine form again: " +
+                        patternError(helper, state, controllerPos));
+        // GTO's large turbine has no Parallel Hatch slot, so the casings must reject one.
+        helper.setBlock(casingPos, GCYMMachines.PARALLEL_HATCH[GTValues.IV].getBlock());
+        helper.assertTrue(!turbine.getPattern().checkPatternAt(state, false),
+                "the titanium casing cell must reject a Parallel Hatch");
+        helper.setBlock(casingPos, GTBlocks.CASING_TITANIUM_TURBINE.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "restoring the casing must let the turbine form again: " +
+                        patternError(helper, state, controllerPos));
+
+        // The rocket engine module wraps the base and grants GTO's module bonus.
+        buildRocketLargeTurbineModule(helper, controllerPos);
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "the rocket engine module must form: " + patternError(helper, state, controllerPos));
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) turbine)
+                .gtna$formedModuleCount() == 1,
+                "the rocket engine module must count as one formed module");
+        helper.assertTrue(!GTNASubPatterns.getTooltips(GTNAMachines3.ROCKET_LARGE_TURBINE).isEmpty(),
+                "the rocket engine module must advertise its bonus on the item tooltip");
+        BlockPos moduleShellPos = controllerPos.offset(-4, -1, 3);
+        helper.setBlock(moduleShellPos, Blocks.GOLD_BLOCK);
+        GTNAStructureRefresh.refresh(turbine, true);
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) turbine)
+                .gtna$formedModuleCount() == 0,
+                "a Gold Block in the module shell must drop the module");
+        helper.setBlock(moduleShellPos, GTBlocks.CASING_TITANIUM_STABLE.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "restoring the module shell must form the module again: " +
+                        patternError(helper, state, controllerPos));
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) turbine)
+                .gtna$formedModuleCount() == 1, "the module must be formed again");
+
+        // A6: only GTCEu's RocketFuel recipe is ported (the other GTO fuels do not exist in GTNA).
+        var fuelRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.ROCKET_ENGINE_FUELS);
+        helper.assertTrue(fuelRecipes.size() == 1,
+                "the ported rocket_engine family must hold exactly one recipe, found " + fuelRecipes.size());
+        helper.assertTrue(fuelRecipes.get(0).id.getPath().endsWith("rocket_engine_fuel_1"),
+                "the ported recipe must be GTO's RocketFuel entry: " + fuelRecipes.get(0).id);
+
+        // GTO's controller recipe now uses GTNA's ported EV Rocket Engine.
+        helper.assertTrue(helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING).stream()
+                .anyMatch(recipe -> recipe.getId().getPath().equals("rocket_large_turbine")),
+                "the Rocket Large Turbine controller recipe must be available");
+        helper.succeed();
+    }
+
+    /**
+     * GTOCore Rocket Large Turbine execution: 10 mB RocketFuel is a 512 EU/t recipe; a titanium
+     * rotor (115% efficiency) on an EV holder over the EV controller, an IV dynamo and the formed
+     * module turn it into 16 parallels at 8,192 EU/t for 27 ticks (160 mB per batch), the exact
+     * numbers GTO's non-mega math produces.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 400)
+    public static void rocketLargeTurbineBurnsRocketFuelWithRotor(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(8, 5, 4);
+        clearRocketLargeTurbineArea(helper, controllerPos);
+        buildRocketLargeTurbineBase(helper, controllerPos);
+        buildRocketLargeTurbineHatches(helper, controllerPos, GTValues.IV);
+        buildRocketLargeTurbineModule(helper, controllerPos);
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof RocketLargeTurbineMachine turbine)) {
+            helper.fail("Rocket Large Turbine controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = turbine.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "the turbine must form with the rocket engine module: " +
+                        patternError(helper, state, controllerPos));
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) turbine)
+                .gtna$formedModuleCount() == 1,
+                "the rocket engine module must be formed for the module bonus");
+
+        BlockPos rotorPos = controllerPos.offset(1, 0, 1);
+        BlockPos energyPos = controllerPos.offset(-2, 0, 1);
+        BlockPos fuelPos = controllerPos.offset(0, -1, 1);
+        RotorHolderPartMachine rotorHolder = (RotorHolderPartMachine) metaMachineAt(helper, rotorPos);
+        ItemStack rotor = new ItemStack(GTItems.TURBINE_ROTOR.asItem());
+        TurbineRotorBehaviour.getBehaviour(rotor).setPartMaterial(rotor, GTMaterials.Titanium);
+        rotorHolder.setRotorStack(rotor);
+        rotorHolder.setRotorSpeed(rotorHolder.getMaxRotorHolderSpeed());
+        helper.assertTrue(rotorHolder.getTotalEfficiency() == 115,
+                "an EV rotor holder over the EV controller must stay at 100% holder efficiency, got " +
+                        rotorHolder.getTotalEfficiency());
+        FluidHatchPartMachine fuelHatch = (FluidHatchPartMachine) metaMachineAt(helper, fuelPos);
+        fuelHatch.tank.setFluidInTank(0, GTMaterials.RocketFuel.getFluid(1000));
+        ((MaintenanceHatchPartMachine) metaMachineAt(helper, controllerPos.offset(-1, 0, 2)))
+                .fixAllMaintenanceProblems();
+
+        GTRecipe origin = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.ROCKET_ENGINE_FUELS).get(0);
+        GTRecipe modified = turbine.fullModifyRecipe(origin.copy());
+        helper.assertTrue(modified != null, "the turbine must accept 10 mB of RocketFuel");
+        helper.assertTrue(modified.parallels == 16,
+                "an IV dynamo's 8,192 EU/t over 512 EU/t must run 16 parallels, got " + modified.parallels);
+        helper.assertTrue(modified.getOutputEUt().voltage() == 8192,
+                "the module's 2x output must cap the batch at 8,192 EU/t, got " +
+                        modified.getOutputEUt().voltage());
+        helper.assertTrue(modified.duration == 27,
+                "115% rotor efficiency and the module's +20% must turn 20 ticks into 27, got " +
+                        modified.duration);
+
+        EnergyHatchPartMachine dynamo = (EnergyHatchPartMachine) metaMachineAt(helper, energyPos);
+        turbine.getRecipeLogic().updateTickSubscription();
+        int guard = 0;
+        while (!turbine.getRecipeLogic().isWorking() && guard++ < 20) {
+            turbine.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(turbine.getRecipeLogic().isWorking(),
+                "the turbine must start with RocketFuel and an installed rotor; status=" +
+                        turbine.getRecipeLogic().getStatus() + " recipe=" +
+                        turbine.getRecipeLogic().getLastRecipe() + " fuel=" +
+                        fuelHatch.tank.getFluidInTank(0) + " rotor=" + rotorHolder.getRotorStack() +
+                        " failures=" + turbine.getRecipeLogic().getFailureReasons());
+        helper.assertTrue(fuelHatch.tank.getFluidInTank(0).getAmount() == 840,
+                "starting one 16-parallel batch must consume 160 mB of RocketFuel, found " +
+                        fuelHatch.tank.getFluidInTank(0).getAmount());
+
+        for (int tick = 0; tick < 27; tick++) {
+            turbine.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(dynamo.energyContainer.getEnergyStored() == 8192L * 27,
+                "one completed recipe must output 8,192 EU/t for 27 ticks (221,184 EU), got " +
+                        dynamo.energyContainer.getEnergyStored());
+        helper.assertTrue(fuelHatch.tank.getFluidInTank(0).getAmount() == 680,
+                "the finished recipe must restart and consume a second 160 mB batch, found " +
+                        fuelHatch.tank.getFluidInTank(0).getAmount());
+        helper.succeed();
+    }
+
+    /** Clears the Rocket Large Turbine footprint (base + module) before building it. */
+    private static void clearRocketLargeTurbineArea(GameTestHelper helper, BlockPos controllerPos) {
+        for (int dx = -6; dx <= 2; dx++) {
+            for (int dy = -2; dy <= 3; dy++) {
+                for (int dz = -2; dz <= 4; dz++) {
+                    helper.setBlock(controllerPos.offset(dx, dy, dz), Blocks.AIR);
+                }
+            }
+        }
+    }
+
+    /**
+     * GTOCore Rocket Large Turbine base: 3 aisles × 3 rows × 4 chars, controller 'S' at
+     * (char 1, row 1, aisle 2). Default directions with the controller facing NORTH map a pattern
+     * cell to {@code (1 - char, row - 1, 2 - aisle)}.
+     */
+    private static void buildRocketLargeTurbineBase(GameTestHelper helper, BlockPos controllerPos) {
+        String[][] aisles = {
+                { "CCCC", "CHHC", "CCCC" },
+                { "CHHC", "RGGR", "CHHC" },
+                { "CCCC", "CSHC", "CCCC" },
+        };
+        for (int aisle = 0; aisle < aisles.length; aisle++) {
+            for (int row = 0; row < aisles[aisle].length; row++) {
+                for (int ch = 0; ch < aisles[aisle][row].length(); ch++) {
+                    char symbol = aisles[aisle][row].charAt(ch);
+                    BlockPos pos = controllerPos.offset(1 - ch, row - 1, 2 - aisle);
+                    switch (symbol) {
+                        case 'C', 'H' -> helper.setBlock(pos, GTBlocks.CASING_TITANIUM_TURBINE.get());
+                        case 'G' -> helper.setBlock(pos, GTBlocks.CASING_TITANIUM_GEARBOX.get());
+                        case 'S' -> helper.setBlock(pos, GTNAMachines3.ROCKET_LARGE_TURBINE.getBlock());
+                        case 'R' -> {}
+                        default -> helper.fail("unexpected Rocket Large Turbine symbol " + symbol);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * The mandatory hatches of the base shell: the rotor holder facing outwards in an 'R' cell, the
+     * exactly-one Energy Output Hatch in the other 'R' cell, and the muffler/maintenance/fluid
+     * hatches on 'H' cells. The muffler's front has to stay exposed.
+     */
+    private static void buildRocketLargeTurbineHatches(GameTestHelper helper, BlockPos controllerPos,
+                                                       int dynamoTier) {
+        helper.setBlock(controllerPos.offset(1, 0, 1), rocketRotorHolderState(Direction.EAST));
+        helper.setBlock(controllerPos.offset(-2, 0, 1), GTMachines.ENERGY_OUTPUT_HATCH[dynamoTier].getBlock());
+        helper.setBlock(controllerPos.offset(0, 0, 2),
+                GTMachines.MUFFLER_HATCH[GTValues.EV].getBlock().defaultBlockState()
+                        .setValue(BlockStateProperties.FACING, Direction.SOUTH));
+        helper.setBlock(controllerPos.offset(-1, 0, 2), GTMachines.MAINTENANCE_HATCH.getBlock());
+        helper.setBlock(controllerPos.offset(0, -1, 1), GTMachines.FLUID_IMPORT_HATCH[dynamoTier].getBlock());
+    }
+
+    /**
+     * GTOCore's rocket engine module ({@code MachineRegisterUtils} ROCKET_ENGINE_FUELS branch):
+     * 5 aisles × 4 rows × 7 chars, controller 'E' at (char 1, row 1, aisle 3), so a pattern cell maps
+     * to {@code (1 - char, row - 1, 3 - aisle)}.
+     */
+    private static void buildRocketLargeTurbineModule(GameTestHelper helper, BlockPos controllerPos) {
+        String[][] module = {
+                { "AAAAAAA", "A   ABA", "A   ABA", "AAAAAAA" },
+                { "    CCD", "    CCD", "    CCD", "A   ABA" },
+                { "    CCD", "    FFF", "    CCD", "A   ABA" },
+                { "    CCD", " E  CCD", "    CCD", "A   ABA" },
+                { "AAAAAAA", "A   ABA", "A   ABA", "AAAAAAA" },
+        };
+        for (int aisle = 0; aisle < module.length; aisle++) {
+            for (int row = 0; row < module[aisle].length; row++) {
+                for (int ch = 0; ch < module[aisle][row].length(); ch++) {
+                    char symbol = module[aisle][row].charAt(ch);
+                    if (symbol == ' ' || symbol == 'E') {
+                        continue;
+                    }
+                    BlockPos pos = controllerPos.offset(1 - ch, row - 1, 3 - aisle);
+                    switch (symbol) {
+                        case 'A' -> helper.setBlock(pos, GTBlocks.CASING_TITANIUM_STABLE.get());
+                        case 'B' -> helper.setBlock(pos, GTBlocks.CASING_ENGINE_INTAKE.get());
+                        case 'C', 'D' -> helper.setBlock(pos, GTBlocks.CASING_TITANIUM_TURBINE.get());
+                        case 'F' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.BlueSteel));
+                        default -> helper.fail("unexpected Rocket Large Turbine module symbol " + symbol);
+                    }
+                }
+            }
+        }
+    }
+
+    /** The EV rotor holder block state facing the given direction (GTO requires facing outwards). */
+    private static BlockState rocketRotorHolderState(Direction facing) {
+        return GTMachines.ROTOR_HOLDER[GTValues.EV].getBlock().defaultBlockState()
+                .setValue(BlockStateProperties.FACING, facing);
+    }
+
+    /**
+     * GTOCore Supercritical Steam Turbine QA: the 3×3×3 supercritical casing base forms with its
+     * mandatory Rotor Holder and Energy Output Hatch, the supercritical module wraps it and counts
+     * as one formed module, invalid blocks and misplaced hatches are rejected, the ported recipe
+     * family holds exactly the single supercritical steam recipe, and the ported Assembler
+     * controller recipe is present.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 120)
+    public static void supercriticalSteamTurbineFormsWithRotorAndModule(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(8, 5, 4);
+        clearSupercriticalSteamTurbineArea(helper, controllerPos);
+        buildSupercriticalSteamTurbineBase(helper, controllerPos);
+        buildSupercriticalSteamTurbineHatches(helper, controllerPos, GTValues.IV);
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof SupercriticalSteamTurbineMachine turbine)) {
+            helper.fail("Supercritical Steam Turbine controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = turbine.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "the Supercritical Steam Turbine base must form: " + patternError(helper, state, controllerPos));
+        helper.assertTrue(turbine.getParts().stream().anyMatch(part -> part instanceof RotorHolderPartMachine),
+                "the rotor holder must be part of the turbine");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) turbine)
+                .gtna$formedModuleCount() == 0,
+                "the base turbine must form without the supercritical module");
+
+        // A2: a Gold Block cannot replace a Supercritical Turbine Casing.
+        BlockPos casingPos = controllerPos.offset(1, -1, 1);
+        helper.setBlock(casingPos, Blocks.GOLD_BLOCK);
+        helper.assertTrue(!turbine.getPattern().checkPatternAt(state, false),
+                "a Gold Block must not replace a Supercritical Turbine Casing");
+        helper.setBlock(casingPos, GTNABlocks.SUPERCRITICAL_TURBINE_CASING.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "restoring the casing must let the turbine form again: " +
+                        patternError(helper, state, controllerPos));
+
+        // A2/A3: the rotor cell only accepts a Rotor Holder or an Energy Output Hatch.
+        BlockPos rotorPos = controllerPos.offset(1, 0, 1);
+        helper.setBlock(rotorPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.IV].getBlock());
+        helper.assertTrue(!turbine.getPattern().checkPatternAt(state, false),
+                "the rotor cell must reject a Fluid Hatch");
+        helper.setBlock(rotorPos, supercriticalRotorHolderState(Direction.EAST));
+        // A3: a pure supercritical casing cell rejects a Fluid Hatch too.
+        helper.setBlock(casingPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.IV].getBlock());
+        helper.assertTrue(!turbine.getPattern().checkPatternAt(state, false),
+                "a Supercritical Turbine Casing cell must reject a Fluid Hatch");
+        helper.setBlock(casingPos, GTNABlocks.SUPERCRITICAL_TURBINE_CASING.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "restoring the rotor holder and casing must let the turbine form again: " +
+                        patternError(helper, state, controllerPos));
+        // GTO's large turbine has no Parallel Hatch slot, so the casings must reject one.
+        helper.setBlock(casingPos, GCYMMachines.PARALLEL_HATCH[GTValues.IV].getBlock());
+        helper.assertTrue(!turbine.getPattern().checkPatternAt(state, false),
+                "the supercritical casing cell must reject a Parallel Hatch");
+        helper.setBlock(casingPos, GTNABlocks.SUPERCRITICAL_TURBINE_CASING.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "restoring the casing must let the turbine form again: " +
+                        patternError(helper, state, controllerPos));
+
+        // The supercritical module wraps the base and grants GTO's module bonus.
+        buildSupercriticalSteamTurbineModule(helper, controllerPos);
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "the supercritical module must form: " + patternError(helper, state, controllerPos));
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) turbine)
+                .gtna$formedModuleCount() == 1,
+                "the supercritical module must count as one formed module");
+        helper.assertTrue(!GTNASubPatterns.getTooltips(GTNAMachines3.SUPERCRITICAL_STEAM_TURBINE).isEmpty(),
+                "the supercritical module must advertise its bonus on the item tooltip");
+        BlockPos moduleShellPos = controllerPos.offset(-4, -1, 3);
+        helper.setBlock(moduleShellPos, Blocks.GOLD_BLOCK);
+        GTNAStructureRefresh.refresh(turbine, true);
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) turbine)
+                .gtna$formedModuleCount() == 0,
+                "a Gold Block in the module shell must drop the module");
+        helper.setBlock(moduleShellPos, GCYMBlocks.CASING_HIGH_TEMPERATURE_SMELTING.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "restoring the module shell must form the module again: " +
+                        patternError(helper, state, controllerPos));
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) turbine)
+                .gtna$formedModuleCount() == 1, "the module must be formed again");
+
+        // A6: the ported supercritical family holds exactly the single GTNA-steam recipe.
+        var fuelRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.SUPERCRITICAL_STEAM_TURBINE_FUELS);
+        helper.assertTrue(fuelRecipes.size() == 1,
+                "the ported supercritical family must hold exactly one recipe, found " + fuelRecipes.size());
+        helper.assertTrue(fuelRecipes.get(0).id.getPath().endsWith("supercritical_steam"),
+                "the ported recipe must be GTO's supercritical_steam entry: " + fuelRecipes.get(0).id);
+
+        // A7: GTO's controller recipe is ported; it only used GTCEu/GTNA resources.
+        helper.assertTrue(helper.getLevel().getRecipeManager().getAllRecipesFor(GTRecipeTypes.ASSEMBLER_RECIPES)
+                .stream().anyMatch(recipe -> recipe.getId().getPath()
+                        .endsWith("supercritical_steam_turbine")),
+                "the ported supercritical turbine Assembler recipe must exist");
+        helper.succeed();
+    }
+
+    /**
+     * GTOCore Supercritical Steam Turbine execution: 80 mB of supercritical steam is a
+     * {@code V[MV] = 128 EU/t} recipe; a titanium rotor (115% efficiency) on an IV holder over the
+     * IV controller, an IV dynamo and the formed module turn it into 64 parallels at 8,192 EU/t
+     * for 41 ticks (5,120 mB per batch), the exact numbers GTO's non-mega math produces.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 400)
+    public static void supercriticalSteamTurbineBurnsSupercriticalSteamWithRotor(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(8, 5, 4);
+        clearSupercriticalSteamTurbineArea(helper, controllerPos);
+        buildSupercriticalSteamTurbineBase(helper, controllerPos);
+        buildSupercriticalSteamTurbineHatches(helper, controllerPos, GTValues.IV);
+        buildSupercriticalSteamTurbineModule(helper, controllerPos);
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof SupercriticalSteamTurbineMachine turbine)) {
+            helper.fail("Supercritical Steam Turbine controller is missing: " + machine);
+            return;
+        }
+        MultiblockState state = turbine.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(turbine, true),
+                "the turbine must form with the supercritical module: " +
+                        patternError(helper, state, controllerPos));
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) turbine)
+                .gtna$formedModuleCount() == 1,
+                "the supercritical module must be formed for the module bonus");
+
+        BlockPos rotorPos = controllerPos.offset(1, 0, 1);
+        BlockPos energyPos = controllerPos.offset(-2, 0, 1);
+        BlockPos fuelPos = controllerPos.offset(0, -1, 1);
+        RotorHolderPartMachine rotorHolder = (RotorHolderPartMachine) metaMachineAt(helper, rotorPos);
+        ItemStack rotor = new ItemStack(GTItems.TURBINE_ROTOR.asItem());
+        TurbineRotorBehaviour.getBehaviour(rotor).setPartMaterial(rotor, GTMaterials.Titanium);
+        rotorHolder.setRotorStack(rotor);
+        rotorHolder.setRotorSpeed(rotorHolder.getMaxRotorHolderSpeed());
+        helper.assertTrue(rotorHolder.getTotalEfficiency() == 115,
+                "an IV rotor holder over the IV controller must stay at 100% holder efficiency, got " +
+                        rotorHolder.getTotalEfficiency());
+        FluidHatchPartMachine fuelHatch = (FluidHatchPartMachine) metaMachineAt(helper, fuelPos);
+        fuelHatch.tank.setFluidInTank(0, GTNAMaterials.DenseSupercriticalSteam.getFluid(6000));
+        ((MaintenanceHatchPartMachine) metaMachineAt(helper, controllerPos.offset(-1, 0, 2)))
+                .fixAllMaintenanceProblems();
+
+        GTRecipe origin = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.SUPERCRITICAL_STEAM_TURBINE_FUELS).get(0);
+        GTRecipe modified = turbine.fullModifyRecipe(origin.copy());
+        helper.assertTrue(modified != null, "the turbine must accept 80 mB of supercritical steam");
+        helper.assertTrue(modified.parallels == 64,
+                "an IV dynamo's 8,192 EU/t over 128 EU/t must run 64 parallels, got " + modified.parallels);
+        helper.assertTrue(modified.getOutputEUt().voltage() == 8192,
+                "the module's 2x output must cap the batch at 8,192 EU/t, got " +
+                        modified.getOutputEUt().voltage());
+        helper.assertTrue(modified.duration == 41,
+                "115% rotor efficiency and the module's +20% must turn 30 ticks into 41, got " +
+                        modified.duration);
+
+        EnergyHatchPartMachine dynamo = (EnergyHatchPartMachine) metaMachineAt(helper, energyPos);
+        turbine.getRecipeLogic().updateTickSubscription();
+        int guard = 0;
+        while (!turbine.getRecipeLogic().isWorking() && guard++ < 20) {
+            turbine.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(turbine.getRecipeLogic().isWorking(),
+                "the turbine must start with supercritical steam and an installed rotor; status=" +
+                        turbine.getRecipeLogic().getStatus() + " recipe=" +
+                        turbine.getRecipeLogic().getLastRecipe() + " fuel=" +
+                        fuelHatch.tank.getFluidInTank(0) + " rotor=" + rotorHolder.getRotorStack() +
+                        " failures=" + turbine.getRecipeLogic().getFailureReasons());
+        helper.assertTrue(fuelHatch.tank.getFluidInTank(0).getAmount() == 880,
+                "starting one 64-parallel batch must consume 5,120 mB of supercritical steam, found " +
+                        fuelHatch.tank.getFluidInTank(0).getAmount());
+
+        for (int tick = 0; tick < 41; tick++) {
+            turbine.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(dynamo.energyContainer.getEnergyStored() == 8192L * 41,
+                "one completed recipe must output 8,192 EU/t for 41 ticks (335,872 EU), got " +
+                        dynamo.energyContainer.getEnergyStored());
+        helper.succeed();
+    }
+
+    /** Clears the Supercritical Steam Turbine footprint (base + module) before building it. */
+    private static void clearSupercriticalSteamTurbineArea(GameTestHelper helper, BlockPos controllerPos) {
+        for (int dx = -6; dx <= 2; dx++) {
+            for (int dy = -2; dy <= 3; dy++) {
+                for (int dz = -2; dz <= 4; dz++) {
+                    helper.setBlock(controllerPos.offset(dx, dy, dz), Blocks.AIR);
+                }
+            }
+        }
+    }
+
+    /**
+     * GTOCore Supercritical Steam Turbine base: 3 aisles × 3 rows × 4 chars, controller 'S' at
+     * (char 1, row 1, aisle 2). Default directions with the controller facing NORTH map a pattern
+     * cell to {@code (1 - char, row - 1, 2 - aisle)}.
+     */
+    private static void buildSupercriticalSteamTurbineBase(GameTestHelper helper, BlockPos controllerPos) {
+        String[][] aisles = {
+                { "CCCC", "CHHC", "CCCC" },
+                { "CHHC", "RGGR", "CHHC" },
+                { "CCCC", "CSHC", "CCCC" },
+        };
+        for (int aisle = 0; aisle < aisles.length; aisle++) {
+            for (int row = 0; row < aisles[aisle].length; row++) {
+                for (int ch = 0; ch < aisles[aisle][row].length(); ch++) {
+                    char symbol = aisles[aisle][row].charAt(ch);
+                    BlockPos pos = controllerPos.offset(1 - ch, row - 1, 2 - aisle);
+                    switch (symbol) {
+                        case 'C', 'H' -> helper.setBlock(pos, GTNABlocks.SUPERCRITICAL_TURBINE_CASING.get());
+                        case 'G' -> helper.setBlock(pos, GTBlocks.CASING_TUNGSTENSTEEL_GEARBOX.get());
+                        case 'S' -> helper.setBlock(pos, GTNAMachines3.SUPERCRITICAL_STEAM_TURBINE.getBlock());
+                        case 'R' -> {}
+                        default -> helper.fail("unexpected Supercritical Steam Turbine symbol " + symbol);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * The mandatory hatches of the base shell: the rotor holder facing outwards in an 'R' cell, the
+     * exactly-one Energy Output Hatch in the other 'R' cell, and the muffler/maintenance/fluid
+     * hatches on 'H' cells. The muffler's front has to stay exposed.
+     */
+    private static void buildSupercriticalSteamTurbineHatches(GameTestHelper helper, BlockPos controllerPos,
+                                                              int dynamoTier) {
+        helper.setBlock(controllerPos.offset(1, 0, 1), supercriticalRotorHolderState(Direction.EAST));
+        helper.setBlock(controllerPos.offset(-2, 0, 1), GTMachines.ENERGY_OUTPUT_HATCH[dynamoTier].getBlock());
+        helper.setBlock(controllerPos.offset(0, 0, 2),
+                GTMachines.MUFFLER_HATCH[GTValues.IV].getBlock().defaultBlockState()
+                        .setValue(BlockStateProperties.FACING, Direction.SOUTH));
+        helper.setBlock(controllerPos.offset(-1, 0, 2), GTMachines.MAINTENANCE_HATCH.getBlock());
+        helper.setBlock(controllerPos.offset(0, -1, 1), GTMachines.FLUID_IMPORT_HATCH[dynamoTier].getBlock());
+    }
+
+    /**
+     * GTOCore's SUPERCRITICAL module ({@code MachineRegisterUtils} SUPERCRITICAL_STEAM_TURBINE_FUELS
+     * branch): 5 aisles × 4 rows × 7 chars, controller 'E' at (char 1, row 1, aisle 3), so a pattern
+     * cell maps to {@code (1 - char, row - 1, 3 - aisle)}.
+     */
+    private static void buildSupercriticalSteamTurbineModule(GameTestHelper helper, BlockPos controllerPos) {
+        String[][] module = {
+                { "AAAAAAA", "A   ABA", "A   ABA", "AAAAAAA" },
+                { "    CCD", "    CCD", "    CCD", "A   ABA" },
+                { "    CCD", "    FFF", "    CCD", "A   ABA" },
+                { "    CCD", " E  CCD", "    CCD", "A   ABA" },
+                { "AAAAAAA", "A   ABA", "A   ABA", "AAAAAAA" },
+        };
+        for (int aisle = 0; aisle < module.length; aisle++) {
+            for (int row = 0; row < module[aisle].length; row++) {
+                for (int ch = 0; ch < module[aisle][row].length(); ch++) {
+                    char symbol = module[aisle][row].charAt(ch);
+                    if (symbol == ' ' || symbol == 'E') {
+                        continue;
+                    }
+                    BlockPos pos = controllerPos.offset(1 - ch, row - 1, 3 - aisle);
+                    switch (symbol) {
+                        case 'A' -> helper.setBlock(pos, GCYMBlocks.CASING_HIGH_TEMPERATURE_SMELTING.get());
+                        case 'B' -> helper.setBlock(pos, GCYMBlocks.ELECTROLYTIC_CELL.get());
+                        case 'C', 'D' -> helper.setBlock(pos, GTNABlocks.SUPERCRITICAL_TURBINE_CASING.get());
+                        case 'F' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.TungstenSteel));
+                        default -> helper.fail("unexpected Supercritical Steam Turbine module symbol " + symbol);
+                    }
+                }
+            }
+        }
+    }
+
+    /** The IV rotor holder block state facing the given direction (GTO requires facing outwards). */
+    private static BlockState supercriticalRotorHolderState(Direction facing) {
+        return GTMachines.ROTOR_HOLDER[GTValues.IV].getBlock().defaultBlockState()
+                .setValue(BlockStateProperties.FACING, facing);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Component Assembler large extension (GTOCore MultiBlockC.java:328-397, QA A1-A7)
+    // ---------------------------------------------------------------------------------------------
+
+    /** GTOCore's first extension layer: 29x6x13, controller at (char 14, row 0, aisle 11). */
+    private static final String[][] COMPONENT_ASSEMBLER_EXTENSION = {
+            { " CCCCCCCCCCCCCCCCCCCCCCCCCCC ", " C         C     C         C ", " C         C     C         C ",
+                    " C         C     C         C ", " C         C     C         C ",
+                    " CCCCCCCCCCCCCCCCCCCCCCCCCCC " },
+            { "ADDDDDDDDDDDDDDDDDDDDDDDDDDDA", "AHMMMMMMMMHDHNNNHDHMMMMMMMMHA",
+                    "AHMMMMMMMMHDHNNNHDHMMMMMMMMHA", "AHMMMMMMMMHDHNNNHDHMMMMMMMMHA",
+                    "ADDDDDDDDDDDDDDDDDDDDDDDDDDDA", " CFFC  CFFC CFFFC CFFC  CFFC " },
+            { "AEEEEEEEEEEDEEEEEDEEEEEEEEEEA", "B                           B",
+                    "A          J     J          A", "B                           B",
+                    "ADHHDDDDHHDDDHDHDDDHHDDDDHHDA", " CHHC  CHHC CHFHC CHHC  CHHC " },
+            { "AFFFFFFFFFFDFFFFFDFFFFFFFFFFA", "BIIIIIIIIII  P P  IIIIIIIIIIB",
+                    "A          J P P J          A", "BJJJJJJJJJJ       JJJJJJJJJJB",
+                    "ADHHDDDDHHDDDHDHDDDHHDDDDHHDA", " CHHC  CHHC CHFHC CHHC  CHHC " },
+            { "AGGGGGGGGGGDGGGGGDGGGGGGGGGGA", "B                           B",
+                    "AGGGGGGGGGGJGGGGGJGGGGGGGGGGA", "B                           B",
+                    "ADHHDDDDHHDDDHDHDDDHHDDDDHHDA", " CHHC  CHHC CHFHC CHHC  CHHC " },
+            { "AFFFFFFFFFFDFFFFFDFFFFFFFFFFA", "BIIIIIIIIII  P P  IIIIIIIIIIB",
+                    "A          J P P J          A", "BJJJJJJJJJJ       JJJJJJJJJJB",
+                    "ADHHDDDDHHDDDHDHDDDHHDDDDHHDA", " CHHC  CHHC CHFHC CHHC  CHHC " },
+            { "AEEEEEEEEEEDEEEEEDEEEEEEEEEEA", "B                           B",
+                    "A          J     J          A", "B                           B",
+                    "ADHHDDDDHHDDDHDHDDDHHDDDDHHDA", " CHHC  CHHC CHFHC CHHC  CHHC " },
+            { "ADDDDDDDDDD       DDDDDDDDDDA", "AHDO OO ODH       HDO OO ODHA",
+                    "AHDO OO ODH       HDO OO ODHA", "AHD      DH       HD      DHA",
+                    "ADDDDDDDDDD       DDDDDDDDDDA", " CFFC  CFFC CFFFC CFFC  CFFC " },
+            { " CKKKKKKKKC       CKKKKKKKKC ", " CKO OO OKC       CKO OO OKC ",
+                    " CKO OO OKC       CKO OO OKC ", " CKKKKKKKKC       CKKKKKKKKC ",
+                    " CC      CC       CC      CC ", " CCCCCCCCCCCCCCCCCCCCCCCCCCC " },
+            { " CKFFFFFFKC       CKFFFFFFKC ", "  LO OO OL         LO OO OL  ",
+                    "  LO OO OL         LO OO OL  ", "  KNNNNNNK         KNNNNNNK  ",
+                    "  C      C         C      C  ", "                             " },
+            { " CKFFFFFFKC       CKFFFFFFKC ", "  LO OO OL         LO OO OL  ",
+                    "  LO OO OL         LO OO OL  ", "  KNNNNNNK         KNNNNNNK  ",
+                    "  C      C         C      C  ", "                             " },
+            { " CKFFFFFFKC   Q   CKFFFFFFKC ", "  L      L         L      L  ",
+                    "  L      L         L      L  ", "  KNNNNNNK         KNNNNNNK  ",
+                    "  C      C         C      C  ", "                             " },
+            { " CKKKKKKKKC       CKKKKKKKKC ", "  KNNNNNNK         KNNNNNNK  ",
+                    "  KNNNNNNK         KNNNNNNK  ", "  KKKKKKKK         KKKKKKKK  ",
+                    "                             ", "                             " }
+    };
+
+    /** GTOCore's second extension layer: 29x6x20, controller at (char 14, row 0, aisle 19). */
+    private static final String[][] COMPONENT_ASSEMBLER_EXTENSION_WIDE = {
+            { "AAADDDAAA AAAGGGAAA AAADDDAAA", "BBCBBBCBBAA AGFGA AABBCBBBCBB",
+                    "BBCBIBCBB AAAGGGAAA BBCBEBCBB", "BBCBIBCBB    GGG    BBCBEBCBB",
+                    "BBCBIBCBB    GFG    BBCBEBCBB", "  CBBBC      GGG      CBBBC  " },
+            { "AAAAAAAAAAA A   A AAAAAAAAAAA", "BB BIB BBFFFFFFFFFFFBB BEB BB",
+                    "BB BIB BBAA AGFGA AABB BEB BB", "BB BIB BB    GFG    BB BEB BB",
+                    "BB BIB BB    FFF    BB BEB BB", "  CBBBC      GFG      CBBBC  " },
+            { "AAAAAAAAA AAAGGGAAA AAAAAAAAA", "BB BBB BBAAFAGFGAFAABB BBB BB",
+                    "BB BIB BB AAAGGGAAA BB BEB BB", "BB BIB BB    GGG    BB BEB BB",
+                    "BB BIB BB    G G    BB BEB BB", "  CBBBC      GGG      CBBBC  " },
+            { "AAAAAAAAA    G G    AAAAAAAAA", "C  III  C  F  F  F  C  EEE  C",
+                    "C  III  C    GFG    C  EEE  C", "C  III  C    GFG    C  EEE  C",
+                    "C  III  C    FFF    C  EEE  C", "CCCCCCCCC    GFG    CCCCCCCCC" },
+            { "AAAAAAAAA AAAGGGAAA AAAAAAAAA", "BB BBB BB AFAGFGAFA BB BBB BB",
+                    "BB BIB BB AAAGGGAAA BB BEB BB", "BB BIB BB    GGG    BB BEB BB",
+                    "BB BIB BB    G G    BB BEB BB", "  CBBBC      GGG      CBBBC  " },
+            { "AAAAAAAAA    G G    AAAAAAAAA", "BB BIB BB  F  F  F  BB BEB BB",
+                    "BB BIB BB    GFG    BB BEB BB", "BB BIB BB    GFG    BB BEB BB",
+                    "BB BIB BB    FFF    BB BEB BB", "  CBBBC      GFG      CBBBC  " },
+            { "AAAAAAAAA AAAGGGAAA AAAAAAAAA", "BBCBBBCBB AFAG GAFA BBCBBBCBB",
+                    "BBCBIBCBB AAAGGGAAA BBCBEBCBB", "BBCBIBCBB    GGG    BBCBEBCBB",
+                    "BBCBIBCBB    G G    BBCBEBCBB", "  CBBBC      GGG      CBBBC  " },
+            { "           A     A           ", "          AFA   AFA          ",
+                    "           A     A           ", "                             ",
+                    "                             ", "                             " },
+            { "                             ", "          A A   A A          ",
+                    "                             ", "                             ",
+                    "                             ", "                             " },
+            { "                             ", "                             ", "                             ",
+                    "                             ", "                             ",
+                    "                             " },
+            { "                             ", "                             ", "                             ",
+                    "                             ", "                             ",
+                    "                             " },
+            { "                             ", "                             ", "                             ",
+                    "                             ", "                             ",
+                    "                             " },
+            { "                             ", "                             ", "                             ",
+                    "                             ", "                             ",
+                    "                             " },
+            { "                             ", "                             ", "                             ",
+                    "                             ", "                             ",
+                    "                             " },
+            { "                             ", "                             ", "                             ",
+                    "                             ", "                             ",
+                    "                             " },
+            { "                             ", "                             ", "                             ",
+                    "                             ", "                             ",
+                    "                             " },
+            { "                             ", "                             ", "                             ",
+                    "                             ", "                             ",
+                    "                             " },
+            { "                             ", "                             ", "                             ",
+                    "                             ", "                             ",
+                    "                             " },
+            { "                             ", "                             ", "                             ",
+                    "                             ", "                             ",
+                    "                             " },
+            { "              H              ", "                             ", "                             ",
+                    "                             ", "                             ",
+                    "                             " }
+    };
+
+    /**
+     * QA A1: the two GTOCore extension layers are registered against the Component Assembler, remain
+     * independent, and together raise the casing cap from the base's IV to UV.
+     */
+    @GameTest(template = "empty_48", timeoutTicks = 600)
+    public static void componentAssemblerExtensionFormsInTwoLayers(GameTestHelper helper) {
+        MultiblockMachineDefinition definition = GTNAMachines3.COMPONENT_ASSEMBLER;
+        BlockPos controllerPos = new BlockPos(16, 4, 3);
+        buildComponentAssemblerBase(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_UV.get());
+        addComponentAssemblerBaseHatches(helper, controllerPos);
+        ComponentAssemblerMachine assembler = componentAssemblerAt(helper, controllerPos);
+        if (assembler == null) {
+            return;
+        }
+        MultiblockState state = assembler.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true),
+                "Component Assembler base must form: " + patternError(helper, state, controllerPos));
+        helper.assertTrue(assembler.getCasingTier() == GTValues.IV,
+                "the base alone must cap UV casings at IV, got " + GTValues.VN[assembler.getCasingTier()]);
+
+        var layers = GTNASubPatterns.get(definition);
+        helper.assertTrue(layers.size() == 2, "GTOCore ships two Component Assembler extension layers");
+        int[] first = layers.get(0).getDimensions();
+        int[] second = layers.get(1).getDimensions();
+        helper.assertTrue(java.util.Arrays.equals(first, new int[] { 13, 6, 29 }),
+                "the first extension layer must keep GTOCore's 29x6x13 shape, got " +
+                        java.util.Arrays.toString(first));
+        helper.assertTrue(java.util.Arrays.equals(second, new int[] { 20, 6, 29 }),
+                "the second extension layer must keep GTOCore's 29x6x20 shape, got " +
+                        java.util.Arrays.toString(second));
+
+        buildComponentAssemblerExtension(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_UV.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true),
+                "the first extension layer must keep the base formed: " +
+                        patternError(helper, state, controllerPos));
+        helper.assertTrue(gtnaModuleCount(assembler) == 1,
+                "the first extension layer must match, got " + gtnaModuleCount(assembler));
+        helper.assertTrue(assembler.getCasingTier() == GTValues.UV,
+                "the first layer must raise the casing cap to UV, got " +
+                        GTValues.VN[assembler.getCasingTier()]);
+
+        buildComponentAssemblerExtensionWide(helper, controllerPos);
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true),
+                "the second extension layer must keep the base formed: " +
+                        patternError(helper, state, controllerPos));
+        helper.assertTrue(gtnaModuleCount(assembler) == 2,
+                "both extension layers must match, got " + gtnaModuleCount(assembler));
+        helper.succeed();
+    }
+
+    /**
+     * QA A2: a Gold Block in an extension casing cell and a mixed casing tier both drop the layer
+     * while the base keeps working; restoring the cells reforms it.
+     */
+    @GameTest(template = "empty_48", timeoutTicks = 600)
+    public static void componentAssemblerExtensionRejectsInvalidBlocks(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(16, 4, 3);
+        buildComponentAssemblerBase(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_LV.get());
+        addComponentAssemblerBaseHatches(helper, controllerPos);
+        ComponentAssemblerMachine assembler = componentAssemblerAt(helper, controllerPos);
+        if (assembler == null) {
+            return;
+        }
+        buildComponentAssemblerExtension(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_LV.get());
+        MultiblockState state = assembler.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true) && gtnaModuleCount(assembler) == 1,
+                "the extension must form before the negative check: " +
+                        patternError(helper, state, controllerPos));
+
+        BlockPos invalidPos = controllerPos.offset(12, 3, 3);
+        helper.setBlock(invalidPos, Blocks.GOLD_BLOCK);
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true),
+                "the base must survive an invalid extension block");
+        helper.assertTrue(gtnaModuleCount(assembler) == 0,
+                "a Gold Block must break the extension layer, got " + gtnaModuleCount(assembler));
+        helper.setBlock(invalidPos, GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true) && gtnaModuleCount(assembler) == 1,
+                "restoring the extension casing must reform the layer");
+
+        BlockPos tierPos = controllerPos.offset(14, 1, 9);
+        helper.setBlock(tierPos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_MV.get());
+        GTNAStructureRefresh.refresh(assembler, true);
+        helper.assertTrue(gtnaModuleCount(assembler) == 0,
+                "the extension tier casings must all match, got " + gtnaModuleCount(assembler));
+        helper.setBlock(tierPos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_LV.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true) && gtnaModuleCount(assembler) == 1,
+                "restoring the tier must reform the extension layer");
+
+        // A pure tier-casing cell accepts no hatch either.
+        helper.setBlock(tierPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.LV].getBlock());
+        GTNAStructureRefresh.refresh(assembler, true);
+        helper.assertTrue(gtnaModuleCount(assembler) == 0,
+                "a Fluid Hatch must not replace an extension tier casing");
+        helper.succeed();
+    }
+
+    /**
+     * QA A3: the extension shell accepts its Accelerate Hatch and IO parts, and the merged parts land
+     * on the controller.
+     */
+    @GameTest(template = "empty_48", timeoutTicks = 600)
+    public static void componentAssemblerExtensionAcceptsItsHatches(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(16, 4, 3);
+        buildComponentAssemblerBase(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_LV.get());
+        addComponentAssemblerBaseHatches(helper, controllerPos);
+        ComponentAssemblerMachine assembler = componentAssemblerAt(helper, controllerPos);
+        if (assembler == null) {
+            return;
+        }
+        buildComponentAssemblerExtension(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_LV.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true) && gtnaModuleCount(assembler) == 1,
+                "the extension must form before the hatch check");
+
+        BlockPos acceleratePos = controllerPos.offset(14, 0, 10);
+        BlockPos moduleBusPos = controllerPos.offset(-14, 0, 10);
+        helper.setBlock(acceleratePos, GTNAMachines2.ACCELERATE_HATCHES[GTValues.LuV].getBlock());
+        helper.setBlock(moduleBusPos, GTMachines.ITEM_IMPORT_BUS[GTValues.LuV].getBlock());
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true) && gtnaModuleCount(assembler) == 1,
+                "the extension must accept an Accelerate Hatch and an extra Item Bus");
+        helper.assertTrue(assembler.getParts().stream().anyMatch(part -> part.self().getBlockState()
+                .is(GTNAMachines2.ACCELERATE_HATCHES[GTValues.LuV].getBlock())),
+                "the extension Accelerate Hatch must be merged into the controller parts");
+        helper.assertTrue(assembler.getParts().stream().anyMatch(part -> part.self().getBlockState()
+                .is(GTMachines.ITEM_IMPORT_BUS[GTValues.LuV].getBlock())),
+                "the extension Item Bus must be merged into the controller parts");
+        helper.succeed();
+    }
+
+    /**
+     * QA A4 + A5: the extension raises the casing cap, which moves the recipe gate: without the
+     * extension the LuV/ZPM/UV batches are refused; with it a LuV-cased extension accepts LuV and
+     * refuses ZPM, a ZPM-cased one accepts ZPM and refuses UV, and a UV-cased one accepts UV.
+     */
+    @GameTest(template = "empty_48", timeoutTicks = 600)
+    public static void componentAssemblerExtensionRaisesTheTierGate(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(16, 4, 3);
+        var tierCells = buildComponentAssemblerBase(helper, controllerPos,
+                GTNABlocks.COMPONENT_ASSEMBLY_CASING_LUV.get());
+        addComponentAssemblerBaseHatches(helper, controllerPos);
+        ComponentAssemblerMachine assembler = componentAssemblerAt(helper, controllerPos);
+        if (assembler == null) {
+            return;
+        }
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true), "the base must form");
+        GTRecipe motorLuv = recipeById(helper, GTNARecipeType.COMPONENT_ASSEMBLY_RECIPES, "motor_luv");
+        GTRecipe motorZpm = recipeById(helper, GTNARecipeType.COMPONENT_ASSEMBLY_RECIPES, "motor_zpm");
+        GTRecipe motorUv = recipeById(helper, GTNARecipeType.COMPONENT_ASSEMBLY_RECIPES, "motor_uv");
+        if (motorLuv == null || motorZpm == null || motorUv == null) {
+            return;
+        }
+        helper.assertTrue(motorLuv.data.getInt("component_casing_tier") == GTValues.LuV,
+                "motor_luv must require the LuV casing tier");
+        helper.assertTrue(motorZpm.data.getInt("component_casing_tier") == GTValues.ZPM,
+                "motor_zpm must require the ZPM casing tier");
+        helper.assertTrue(motorUv.data.getInt("component_casing_tier") == GTValues.UV,
+                "motor_uv must require the UV casing tier");
+        helper.assertTrue(!assembler.beforeWorking(motorLuv) && !assembler.beforeWorking(motorZpm) &&
+                !assembler.beforeWorking(motorUv),
+                "without the extension the LuV/ZPM/UV batches must be refused even with LuV casings");
+
+        buildComponentAssemblerExtension(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_LUV.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true) && gtnaModuleCount(assembler) == 1,
+                "the extension must form before the tier-gate check");
+        helper.assertTrue(assembler.beforeWorking(motorLuv),
+                "the formed extension must allow a LuV batch with LuV casings");
+        helper.assertTrue(!assembler.beforeWorking(motorZpm),
+                "a LuV-cased extension must refuse the ZPM batch");
+
+        for (BlockPos pos : tierCells) {
+            helper.setBlock(pos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_ZPM.get());
+        }
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true) &&
+                assembler.getCasingTier() == GTValues.ZPM,
+                "ZPM casings must raise the extension to the ZPM tier, got " +
+                        GTValues.VN[assembler.getCasingTier()]);
+        helper.assertTrue(assembler.beforeWorking(motorZpm),
+                "a ZPM-cased extension must accept the ZPM batch");
+        helper.assertTrue(!assembler.beforeWorking(motorUv),
+                "a ZPM-cased extension must refuse the UV batch");
+
+        for (BlockPos pos : tierCells) {
+            helper.setBlock(pos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_UV.get());
+        }
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true) &&
+                assembler.getCasingTier() == GTValues.UV,
+                "UV casings must raise the extension to the UV tier, got " +
+                        GTValues.VN[assembler.getCasingTier()]);
+        helper.assertTrue(assembler.beforeWorking(motorUv),
+                "a UV-cased extension must accept the UV batch");
+
+        BlockPos invalidPos = controllerPos.offset(12, 3, 3);
+        helper.setBlock(invalidPos, Blocks.GOLD_BLOCK);
+        GTNAStructureRefresh.refresh(assembler, true);
+        helper.assertTrue(gtnaModuleCount(assembler) == 0 && assembler.getCasingTier() == GTValues.IV,
+                "breaking the extension must restore the IV casing cap, got " +
+                        GTValues.VN[assembler.getCasingTier()]);
+        helper.assertTrue(!assembler.beforeWorking(motorLuv),
+                "the same LuV batch must be refused once the extension is broken");
+        helper.setBlock(invalidPos, GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.get());
+        GTNAStructureRefresh.refresh(assembler, true);
+        helper.assertTrue(assembler.beforeWorking(motorUv),
+                "restoring the extension must allow the UV batch again");
+        helper.succeed();
+    }
+
+    /**
+     * QA A5 (execution): the LuV batch actually starts on the extended machine, spending EU and its
+     * first item inputs. Completion is not awaited: the batch duration is 2400 ticks.
+     */
+    @GameTest(template = "empty_48", timeoutTicks = 600)
+    public static void componentAssemblerExtensionRunsTheLuvBatch(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(16, 4, 3);
+        buildComponentAssemblerBase(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_LUV.get());
+        addComponentAssemblerBaseHatches(helper, controllerPos);
+        ComponentAssemblerMachine assembler = componentAssemblerAt(helper, controllerPos);
+        if (assembler == null) {
+            return;
+        }
+        buildComponentAssemblerExtension(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_LUV.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true) && gtnaModuleCount(assembler) == 1,
+                "the extension must form before the execution check");
+
+        ItemBusPartMachine inputBus = (ItemBusPartMachine) metaMachineAt(helper, controllerPos.offset(2, 0, 0));
+        ItemBusPartMachine outputBus = (ItemBusPartMachine) metaMachineAt(helper, controllerPos.offset(1, 0, 0));
+        EnergyHatchPartMachine energyHatch = (EnergyHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(-1, 0, 0));
+        ((MaintenanceHatchPartMachine) metaMachineAt(helper, controllerPos.offset(2, 0, 4)))
+                .fixAllMaintenanceProblems();
+        inputBus.getInventory().insertItem(0, ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.SamariumMagnetic, 12),
+                false);
+        inputBus.getInventory().insertItem(1,
+                ChemicalHelper.get(TagPrefix.cableGtSingle, GTMaterials.NiobiumTitanium, 24), false);
+        inputBus.getInventory().insertItem(2, IntCircuitBehaviour.stack(1), false);
+        // The base shell has room for one mandatory fluid hatch plus four more for the batch fluids.
+        helper.setBlock(controllerPos.offset(3, 0, 3), GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(-3, 0, 3), GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(3, 0, 2), GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(-3, 0, 2), GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true) && gtnaModuleCount(assembler) == 1,
+                "the base must still form with the batch fluid hatches");
+        setHatchFluid(helper, controllerPos.offset(-2, 0, 0), GTMaterials.HSSS, 13680);
+        setHatchFluid(helper, controllerPos.offset(3, 0, 3), GTMaterials.Ruridit, 6912);
+        setHatchFluid(helper, controllerPos.offset(-3, 0, 3), GTMaterials.SolderingAlloy, 3456);
+        setHatchFluid(helper, controllerPos.offset(3, 0, 2), GTMaterials.Lubricant, 6000);
+        setHatchFluid(helper, controllerPos.offset(-3, 0, 2), GTMaterials.HSSE, 3456);
+        energyHatch.energyContainer.changeEnergy(100_000_000L);
+        assembler.getRecipeLogic().updateTickSubscription();
+        for (int tick = 0; tick < 20; tick++) {
+            assembler.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(assembler.getRecipeLogic().isActive(),
+                "the LuV batch must start on the extended machine, status=" +
+                        assembler.getRecipeLogic().getStatus() + " reason=" +
+                        assembler.getRecipeLogic().getFancyTooltip());
+        int motors = 0;
+        for (int slot = 0; slot < outputBus.getInventory().getSlots(); slot++) {
+            ItemStack stack = outputBus.getInventory().getStackInSlot(slot);
+            if (stack.is(GTItems.ELECTRIC_MOTOR_LuV.asItem())) {
+                motors += stack.getCount();
+            }
+        }
+        helper.assertTrue(assembler.getRecipeLogic().getProgress() > 0 || motors > 0,
+                "the started LuV batch must show progress");
+        helper.succeed();
+    }
+
+    /**
+     * QA A5 (execution, ceiling): the UV batch starts on the UV-cased extended machine, the top of
+     * the port. Completion is not awaited: the batch duration is 2400 ticks.
+     */
+    @GameTest(template = "empty_48", timeoutTicks = 600)
+    public static void componentAssemblerExtensionRunsTheUvBatch(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(16, 4, 3);
+        buildComponentAssemblerBase(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_UV.get());
+        addComponentAssemblerBaseHatches(helper, controllerPos);
+        // The UV batch needs a UV energy hatch; the other base hatches stay LuV.
+        helper.setBlock(controllerPos.offset(-1, 0, 0), GTMachines.ENERGY_INPUT_HATCH[GTValues.UV].getBlock());
+        ComponentAssemblerMachine assembler = componentAssemblerAt(helper, controllerPos);
+        if (assembler == null) {
+            return;
+        }
+        buildComponentAssemblerExtension(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_CASING_UV.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true) && gtnaModuleCount(assembler) == 1,
+                "the extension must form before the execution check");
+
+        ItemBusPartMachine inputBus = (ItemBusPartMachine) metaMachineAt(helper, controllerPos.offset(2, 0, 0));
+        ItemBusPartMachine outputBus = (ItemBusPartMachine) metaMachineAt(helper, controllerPos.offset(1, 0, 0));
+        EnergyHatchPartMachine energyHatch = (EnergyHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(-1, 0, 0));
+        ((MaintenanceHatchPartMachine) metaMachineAt(helper, controllerPos.offset(2, 0, 4)))
+                .fixAllMaintenanceProblems();
+        inputBus.getInventory().insertItem(0, ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.SamariumMagnetic, 12),
+                false);
+        inputBus.getInventory().insertItem(1,
+                ChemicalHelper.get(TagPrefix.cableGtSingle, GTMaterials.YttriumBariumCuprate, 24), false);
+        inputBus.getInventory().insertItem(2, IntCircuitBehaviour.stack(1), false);
+        // The base shell has room for one mandatory fluid hatch plus four more for the batch fluids.
+        helper.setBlock(controllerPos.offset(3, 0, 3), GTMachines.FLUID_IMPORT_HATCH[GTValues.UV].getBlock());
+        helper.setBlock(controllerPos.offset(-3, 0, 3), GTMachines.FLUID_IMPORT_HATCH[GTValues.UV].getBlock());
+        helper.setBlock(controllerPos.offset(3, 0, 2), GTMachines.FLUID_IMPORT_HATCH[GTValues.UV].getBlock());
+        helper.setBlock(controllerPos.offset(-3, 0, 2), GTMachines.FLUID_IMPORT_HATCH[GTValues.UV].getBlock());
+        helper.setBlock(controllerPos.offset(-2, 0, 0), GTMachines.FLUID_IMPORT_HATCH[GTValues.UV].getBlock());
+        helper.assertTrue(GTNAStructureRefresh.refresh(assembler, true) && gtnaModuleCount(assembler) == 1,
+                "the base must still form with the batch fluid hatches");
+        setHatchFluid(helper, controllerPos.offset(-2, 0, 0), GTMaterials.Tritanium, 13680);
+        setHatchFluid(helper, controllerPos.offset(3, 0, 3), GTMaterials.Americium, 27648);
+        setHatchFluid(helper, controllerPos.offset(-3, 0, 3), GTMaterials.SolderingAlloy, 6912);
+        setHatchFluid(helper, controllerPos.offset(3, 0, 2), GTMaterials.Lubricant, 12000);
+        setHatchFluid(helper, controllerPos.offset(-3, 0, 2), GTMaterials.Naquadria, 6912);
+        energyHatch.energyContainer.changeEnergy(500_000_000L);
+        assembler.getRecipeLogic().updateTickSubscription();
+        for (int tick = 0; tick < 20; tick++) {
+            assembler.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(assembler.getRecipeLogic().isActive(),
+                "the UV batch must start on the UV-cased extended machine, status=" +
+                        assembler.getRecipeLogic().getStatus() + " reason=" +
+                        assembler.getRecipeLogic().getFancyTooltip());
+        helper.succeed();
+    }
+
+    /** QA A6: the recipe manager holds the 40 base batches plus the eight LuV, ZPM and UV batches. */
+    @GameTest(template = "empty_16", timeoutTicks = 40)
+    public static void componentAssemblerLoadsAllBatchRecipes(GameTestHelper helper) {
+        var componentRecipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.COMPONENT_ASSEMBLY_RECIPES);
+        helper.assertTrue(componentRecipes.size() == 64,
+                "Component Assembly recipes must be the 40 base batches plus 8 LuV, 8 ZPM and 8 UV batches; found " +
+                        componentRecipes.size());
+        for (int tier : new int[] { GTValues.LuV, GTValues.ZPM, GTValues.UV }) {
+            long batches = componentRecipes.stream()
+                    .filter(recipe -> recipe.data.getInt("component_casing_tier") == tier)
+                    .count();
+            helper.assertTrue(batches == 8,
+                    "expected 8 " + GTValues.VN[tier] + " batches, found " + batches);
+        }
+        helper.succeed();
+    }
+
+    /** QA A7: the Component Assembler controller recipe is present in the GTNA sources. */
+    @GameTest(template = "empty_16", timeoutTicks = 40)
+    public static void componentAssemblerHasItsControllerRecipe(GameTestHelper helper) {
+        boolean present = helper.getLevel().getRecipeManager().getAllRecipesFor(GTRecipeTypes.ASSEMBLER_RECIPES)
+                .stream().anyMatch(recipe -> recipe.id.getPath().endsWith("component_assembler_controller"));
+        helper.assertTrue(present, "the GTNA Component Assembler controller recipe must exist");
+        helper.succeed();
+    }
+
+    /** Builds the Component Assembler base with the given uniform casing tier, returning its 'F' cells. */
+    private static java.util.List<BlockPos> buildComponentAssemblerBase(GameTestHelper helper, BlockPos controllerPos,
+                                                                        Block tierCasing) {
+        java.util.List<BlockPos> tierCells = new ArrayList<>();
+        String[][] aisles = {
+                { "AaaaaaA", "ACDDDCA", "ACDDDCA", "ACDDDCA", "AAAAAAA" },
+                { "aAEEEAa", "FG   GF", "FG   GF", "FG   GF", "AACACAA" },
+                { "aAEEEAa", "FHI IHF", "FJI IJF", "FG   GF", "AACACAA" },
+                { "aAEEEAa", "FG   GF", "FG   GF", "FG   GF", "AACACAA" },
+                { "AaaBaaA", "ACDDDCA", "ACDDDCA", "ACDDDCA", "AAAAAAA" }
+        };
+        for (int aisle = 0; aisle < aisles.length; aisle++) {
+            for (int row = 0; row < aisles[aisle].length; row++) {
+                for (int column = 0; column < aisles[aisle][row].length(); column++) {
+                    BlockPos pos = controllerPos.offset(3 - column, row, 4 - aisle);
+                    switch (aisles[aisle][row].charAt(column)) {
+                        case 'A', 'a' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_SOLID.get());
+                        case 'B' -> helper.setBlock(pos, GTNAMachines3.COMPONENT_ASSEMBLER.getBlock());
+                        case 'C' -> helper.setBlock(pos, GTBlocks.CASING_GRATE.get());
+                        case 'D' -> helper.setBlock(pos, GTBlocks.CASING_TEMPERED_GLASS.get());
+                        case 'E' -> helper.setBlock(pos, GTBlocks.STEEL_HULL.get());
+                        case 'F' -> {
+                            helper.setBlock(pos, tierCasing);
+                            tierCells.add(pos);
+                        }
+                        case 'G' -> helper.setBlock(pos, GTNABlocks.MULTI_FUNCTIONAL_CASING.get());
+                        case 'H' -> helper.setBlock(pos, ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Steel));
+                        case 'I' -> helper.setBlock(pos, Blocks.IRON_BARS);
+                        case 'J' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_GEARBOX.get());
+                        case ' ' -> helper.setBlock(pos, Blocks.AIR);
+                        default -> helper.fail("unexpected Component Assembler symbol");
+                    }
+                }
+            }
+        }
+        return tierCells;
+    }
+
+    /** The base 'a' cells carry the mandatory item/fluid/energy/maintenance parts. */
+    private static void addComponentAssemblerBaseHatches(GameTestHelper helper, BlockPos controllerPos) {
+        helper.setBlock(controllerPos.offset(2, 0, 0), GTMachines.ITEM_IMPORT_BUS[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(1, 0, 0), GTMachines.ITEM_EXPORT_BUS[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(-1, 0, 0), GTMachines.ENERGY_INPUT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(-2, 0, 0), GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(2, 0, 4), GTMachines.MAINTENANCE_HATCH.getBlock());
+    }
+
+    /** GTOCore's first extension layer, controller at pattern (14, 0, 11). */
+    private static void buildComponentAssemblerExtension(GameTestHelper helper, BlockPos controllerPos,
+                                                         Block tierCasing) {
+        for (int aisle = 0; aisle < COMPONENT_ASSEMBLER_EXTENSION.length; aisle++) {
+            for (int row = 0; row < COMPONENT_ASSEMBLER_EXTENSION[aisle].length; row++) {
+                String line = COMPONENT_ASSEMBLER_EXTENSION[aisle][row];
+                for (int column = 0; column < line.length(); column++) {
+                    char symbol = line.charAt(column);
+                    if (symbol == ' ') {
+                        continue;
+                    }
+                    BlockPos pos = controllerPos.offset(14 - column, row, 11 - aisle);
+                    switch (symbol) {
+                        case 'A' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_SOLID.get());
+                        case 'B' -> helper.setBlock(pos, tierCasing);
+                        case 'C' -> helper.setBlock(pos, GCYMBlocks.CASING_NONCONDUCTING.get());
+                        case 'D' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_SOLID.get());
+                        case 'E' -> helper.setBlock(pos, GTBlocks.CASING_ASSEMBLY_CONTROL.get());
+                        case 'F' -> helper.setBlock(pos, GTBlocks.STEEL_HULL.get());
+                        case 'G' -> helper.setBlock(pos, GTBlocks.CASING_ASSEMBLY_LINE.get());
+                        case 'H' -> helper.setBlock(pos, GTBlocks.CASING_GRATE.get());
+                        case 'I' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Trinium));
+                        case 'J' -> helper.setBlock(pos, GTNABlocks.PROCESS_MACHINE_CASING.get());
+                        case 'K' -> helper.setBlock(pos,
+                                GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.get());
+                        case 'L' -> helper.setBlock(pos,
+                                GTNABlocks.TITANIUM_NITRIDE_CERAMIC_IMPACT_RESISTANT_MECHANICAL_BLOCK.get());
+                        case 'M' -> helper.setBlock(pos, GTBlocks.CASING_LAMINATED_GLASS.get());
+                        case 'N' -> helper.setBlock(pos, GTBlocks.CASING_TEMPERED_GLASS.get());
+                        case 'O' -> helper.setBlock(pos, GTBlocks.CASING_POLYTETRAFLUOROETHYLENE_PIPE.get());
+                        case 'P' -> helper.setBlock(pos, Blocks.IRON_BARS);
+                        case 'Q' -> helper.setBlock(pos, GTNAMachines3.COMPONENT_ASSEMBLER.getBlock());
+                        default -> helper.fail("unexpected Component Assembler extension symbol " + symbol);
+                    }
+                }
+            }
+        }
+    }
+
+    /** GTOCore's second extension layer, controller at pattern (14, 0, 19). */
+    private static void buildComponentAssemblerExtensionWide(GameTestHelper helper, BlockPos controllerPos) {
+        for (int aisle = 0; aisle < COMPONENT_ASSEMBLER_EXTENSION_WIDE.length; aisle++) {
+            for (int row = 0; row < COMPONENT_ASSEMBLER_EXTENSION_WIDE[aisle].length; row++) {
+                String line = COMPONENT_ASSEMBLER_EXTENSION_WIDE[aisle][row];
+                for (int column = 0; column < line.length(); column++) {
+                    char symbol = line.charAt(column);
+                    if (symbol == ' ') {
+                        continue;
+                    }
+                    BlockPos pos = controllerPos.offset(14 - column, row, 19 - aisle);
+                    switch (symbol) {
+                        case 'A' -> helper.setBlock(pos, GCYMBlocks.CASING_NONCONDUCTING.get());
+                        case 'B' -> helper.setBlock(pos, GTNABlocks.THREE_PROOF_COMPUTER_CASING.get());
+                        case 'C' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt,
+                                        GTNAMaterials.CarbonFiberPolyphenyleneSulfideComposite));
+                        case 'D' -> helper.setBlock(pos, GTBlocks.CASING_STEEL_SOLID.get());
+                        case 'E' -> helper.setBlock(pos, GTNABlocks.MACHINING_CONTROL_CASING_MK2.get());
+                        case 'F' -> helper.setBlock(pos, GTNABlocks.ELECTRIC_POWER_TRANSMISSION_CASING.get());
+                        case 'G' -> helper.setBlock(pos, GTBlocks.CASING_PALLADIUM_SUBSTATION.get());
+                        case 'H' -> helper.setBlock(pos, GTNAMachines3.COMPONENT_ASSEMBLER.getBlock());
+                        case 'I' -> helper.setBlock(pos, GTNABlocks.ENERGY_CONTROL_CASING_MK2.get());
+                        default -> helper.fail("unexpected Component Assembler wide extension symbol " + symbol);
+                    }
+                }
+            }
+        }
+    }
+
+    private static ComponentAssemblerMachine componentAssemblerAt(GameTestHelper helper, BlockPos controllerPos) {
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof ComponentAssemblerMachine assembler)) {
+            helper.fail("Component Assembler controller is missing: " + machine);
+            return null;
+        }
+        return assembler;
+    }
+
+    private static int gtnaModuleCount(com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine machine) {
+        return ((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) (Object) machine).gtna$formedModuleCount();
+    }
+
+    private static GTRecipe recipeById(GameTestHelper helper, GTRecipeType type, String path) {
+        return helper.getLevel().getRecipeManager().getAllRecipesFor(type).stream()
+                .filter(recipe -> recipe.id.getPath().endsWith(path))
+                .findFirst().orElseGet(() -> {
+                    helper.fail("missing recipe " + path + " in " + type.registryName);
+                    return null;
+                });
+    }
+
+    private static void setHatchFluid(GameTestHelper helper, BlockPos pos,
+                                      com.gregtechceu.gtceu.api.data.chemical.material.Material material,
+                                      int amount) {
+        FluidHatchPartMachine hatch = (FluidHatchPartMachine) metaMachineAt(helper, pos);
+        hatch.tank.setFluidInTank(0, material.getFluid(amount));
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // component_assembly_line (GTOCore MultiBlockA.java:1927, QA A1-A7)
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * QA A1: the real GTOCore {@code component_assembly_line.mbs} (47×15×31) forms with the GTNA
+     * substitutions, keeps its recorded orientation and reads the uniform LV casing tier.
+     */
+    @GameTest(template = "empty_48", timeoutTicks = 600)
+    public static void componentAssemblyLineFormsFromItsMbs(GameTestHelper helper) {
+        var source = GTOCompressedPatternReader.read("component_assembly_line");
+        helper.assertTrue(source.slices().length == 47 && source.slices()[0].length == 15 &&
+                source.slices()[0][0].length() == 31,
+                "Component Assembly Line must keep GTOCore's 47x15x31 shape");
+        helper.assertTrue(
+                source.chars() == com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.LEFT &&
+                        source.rows() == com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.UP &&
+                        source.aisles() == com.gregtechceu.gtceu.api.pattern.util.RelativeDirection.FRONT,
+                "Component Assembly Line must keep GTOCore's recorded orientation");
+
+        BlockPos controllerPos = new BlockPos(16, 2, 1);
+        var tierCells = buildComponentAssemblyLineBase(helper, controllerPos,
+                GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_LV.get());
+        // GTOCore pins the Maintenance Hatch with setExactLimit(1), so the line needs one to form.
+        helper.setBlock(controllerPos.offset(1, 0, 0), GTMachines.MAINTENANCE_HATCH.getBlock());
+        helper.assertTrue(tierCells.size() == 63,
+                "the pattern must keep its 63 tier casing cells, got " + tierCells.size());
+        ComponentAssemblyLineMachine line = componentAssemblyLineAt(helper, controllerPos);
+        if (line == null) {
+            return;
+        }
+        MultiblockState state = line.getMultiblockState();
+        // The non-flipped block layout must be exact before the formation check.
+        helper.assertTrue(GTNAPatternDiagnostics.firstMismatch(line, line.getPattern()) == null,
+                "Component Assembly Line first mismatch: " +
+                        GTNAPatternDiagnostics.firstMismatch(line, line.getPattern()));
+        helper.assertTrue(GTNAStructureRefresh.refresh(line, true),
+                "Component Assembly Line must form: " + patternError(helper, state, controllerPos));
+        helper.assertTrue(line.getCasingTier() == GTValues.LV,
+                "LV casings must read as the LV tier, got " + GTValues.VN[line.getCasingTier()]);
+        helper.assertTrue(java.util.Arrays.stream(GTNAMachines3.COMPONENT_ASSEMBLY_LINE.getRecipeTypes())
+                .anyMatch(type -> type == GTNARecipeType.COMPONENT_ASSEMBLY_RECIPES),
+                "the line must run the component assembly family");
+        helper.succeed();
+    }
+
+    /** QA A2: a Gold Block in a shell casing cell breaks the structure; restoring it reforms. */
+    @GameTest(template = "empty_48", timeoutTicks = 600)
+    public static void componentAssemblyLineRejectsInvalidBlocks(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(16, 2, 1);
+        buildComponentAssemblyLineBase(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_LV.get());
+        // The mandatory K-cell Maintenance Hatch (GTO setExactLimit(1)).
+        helper.setBlock(controllerPos.offset(1, 0, 0), GTMachines.MAINTENANCE_HATCH.getBlock());
+        ComponentAssemblyLineMachine line = componentAssemblyLineAt(helper, controllerPos);
+        if (line == null) {
+            return;
+        }
+        MultiblockState state = line.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(line, true),
+                "the line must form before the negative check: " + patternError(helper, state, controllerPos));
+
+        BlockPos invalidPos = controllerPos.offset(9, -1, 0);
+        helper.setBlock(invalidPos, Blocks.GOLD_BLOCK);
+        helper.assertTrue(!line.getPattern().checkPatternAt(state, false),
+                "a Gold Block must not replace a Naquadah Alloy Casing");
+        helper.setBlock(invalidPos, GTNABlocks.NAQUADAH_ALLOY_CASING.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(line, true),
+                "restoring the casing must reform the line: " + patternError(helper, state, controllerPos));
+
+        // Mixed tier casings are rejected by the shared tier rule.
+        var tierCells = new ArrayList<BlockPos>();
+        var source = GTOCompressedPatternReader.read("component_assembly_line");
+        for (int aisle = 0; aisle < source.slices().length; aisle++) {
+            for (int row = 0; row < source.slices()[aisle].length; row++) {
+                String text = source.slices()[aisle][row];
+                for (int column = 0; column < text.length(); column++) {
+                    if (text.charAt(column) == '[') {
+                        tierCells.add(controllerPos.offset(15 - column, row - 1, 46 - aisle));
+                    }
+                }
+            }
+        }
+        helper.setBlock(tierCells.get(0), GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_MV.get());
+        helper.assertTrue(!line.getPattern().checkPatternAt(state, false),
+                "mixed component assembly line casing tiers must be rejected");
+        helper.setBlock(tierCells.get(0), GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_LV.get());
+        helper.assertTrue(line.getPattern().checkPatternAt(state, false),
+                "restoring the tier must reform the line");
+        helper.succeed();
+    }
+
+    /**
+     * QA A3: the 'K' shell accepts the Parallel Hatch, Maintenance Hatch and IO; a pure tier-casing
+     * cell rejects a fluid hatch.
+     */
+    @GameTest(template = "empty_48", timeoutTicks = 600)
+    public static void componentAssemblyLineAcceptsItsHatches(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(16, 2, 1);
+        buildComponentAssemblyLineBase(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_LV.get());
+        BlockPos parallelPos = controllerPos.offset(2, 0, 0);
+        BlockPos maintenancePos = controllerPos.offset(1, 0, 0);
+        BlockPos itemInPos = controllerPos.offset(-1, 0, 0);
+        BlockPos fluidPos = controllerPos.offset(-2, 0, 0);
+        BlockPos energyPos = controllerPos.offset(2, 1, 0);
+        helper.setBlock(parallelPos, GCYMMachines.PARALLEL_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(maintenancePos, GTMachines.MAINTENANCE_HATCH.getBlock());
+        helper.setBlock(itemInPos, GTMachines.ITEM_IMPORT_BUS[GTValues.LuV].getBlock());
+        helper.setBlock(fluidPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(energyPos, GTMachines.ENERGY_INPUT_HATCH[GTValues.LuV].getBlock());
+        ComponentAssemblyLineMachine line = componentAssemblyLineAt(helper, controllerPos);
+        if (line == null) {
+            return;
+        }
+        MultiblockState state = line.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(line, true),
+                "the line must accept its K-cell hatches: " + patternError(helper, state, controllerPos));
+        helper.assertTrue(line.getParts().stream().anyMatch(part -> part.self().getBlockState()
+                .is(GCYMMachines.PARALLEL_HATCH[GTValues.LuV].getBlock())),
+                "the Parallel Hatch must be part of the line");
+        helper.assertTrue(line.getParts().stream().anyMatch(part -> part.self().getBlockState()
+                .is(GTMachines.MAINTENANCE_HATCH.getBlock())),
+                "the Maintenance Hatch must be part of the line");
+
+        // A '[' cell is tier casing only.
+        BlockPos tierPos = controllerPos.offset(0, 13, 35);
+        helper.setBlock(tierPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        helper.assertTrue(!line.getPattern().checkPatternAt(state, false),
+                "a Fluid Hatch must not replace a tier casing");
+        helper.setBlock(tierPos, GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_LV.get());
+        helper.assertTrue(GTNAStructureRefresh.refresh(line, true),
+                "restoring the tier casing must reform the line");
+        helper.succeed();
+    }
+
+    /**
+     * QA A4: the casing tier gates the recipes: an LV-cased line refuses the LuV/ZPM/UV batches, a
+     * ZPM-cased line accepts ZPM and refuses UV, and a UV-cased line accepts the UV batch.
+     */
+    @GameTest(template = "empty_48", timeoutTicks = 800)
+    public static void componentAssemblyLineGatesTheTier(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(16, 2, 1);
+        var tierCells = buildComponentAssemblyLineBase(helper, controllerPos,
+                GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_LV.get());
+        placeComponentAssemblyLineHatches(helper, controllerPos);
+        ComponentAssemblyLineMachine line = componentAssemblyLineAt(helper, controllerPos);
+        if (line == null) {
+            return;
+        }
+        MultiblockState state = line.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(line, true),
+                "the line must form with its hatches: " + patternError(helper, state, controllerPos));
+        GTRecipe motorLuv = recipeById(helper, GTNARecipeType.COMPONENT_ASSEMBLY_RECIPES, "motor_luv");
+        GTRecipe motorZpm = recipeById(helper, GTNARecipeType.COMPONENT_ASSEMBLY_RECIPES, "motor_zpm");
+        GTRecipe motorUv = recipeById(helper, GTNARecipeType.COMPONENT_ASSEMBLY_RECIPES, "motor_uv");
+        if (motorLuv == null || motorZpm == null || motorUv == null) {
+            return;
+        }
+        helper.assertTrue(!line.beforeWorking(motorLuv) && !line.beforeWorking(motorZpm) &&
+                !line.beforeWorking(motorUv),
+                "an LV-cased line must refuse the LuV/ZPM/UV batches");
+
+        for (BlockPos pos : tierCells) {
+            helper.setBlock(pos, GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_LUV.get());
+        }
+        helper.assertTrue(GTNAStructureRefresh.refresh(line, true) && line.getCasingTier() == GTValues.LuV,
+                "LuV casings must raise the line to the LuV tier, got " + GTValues.VN[line.getCasingTier()]);
+        helper.assertTrue(line.beforeWorking(motorLuv),
+                "a LuV-cased line must accept the LuV batch");
+        helper.assertTrue(!line.beforeWorking(motorZpm),
+                "a LuV-cased line must refuse the ZPM batch");
+
+        for (BlockPos pos : tierCells) {
+            helper.setBlock(pos, GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_ZPM.get());
+        }
+        helper.assertTrue(GTNAStructureRefresh.refresh(line, true) && line.getCasingTier() == GTValues.ZPM,
+                "ZPM casings must raise the line to the ZPM tier, got " + GTValues.VN[line.getCasingTier()]);
+        helper.assertTrue(line.beforeWorking(motorZpm),
+                "a ZPM-cased line must accept the ZPM batch");
+        helper.assertTrue(!line.beforeWorking(motorUv),
+                "a ZPM-cased line must refuse the UV batch");
+
+        for (BlockPos pos : tierCells) {
+            helper.setBlock(pos, GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_UV.get());
+        }
+        helper.assertTrue(GTNAStructureRefresh.refresh(line, true) && line.getCasingTier() == GTValues.UV,
+                "UV casings must raise the line to the UV tier, got " + GTValues.VN[line.getCasingTier()]);
+        helper.assertTrue(line.beforeWorking(motorUv),
+                "a UV-cased line must accept the UV batch");
+        helper.succeed();
+    }
+
+    /**
+     * QA A5 (execution): the LuV batch really starts on the LuV-cased line, spending EU and its first
+     * item inputs. Completion is not awaited: the batch duration is 2400 ticks.
+     */
+    @GameTest(template = "empty_48", timeoutTicks = 800)
+    public static void componentAssemblyLineRunsTheLuvBatch(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(16, 2, 1);
+        buildComponentAssemblyLineBase(helper, controllerPos, GTNABlocks.COMPONENT_ASSEMBLY_LINE_CASING_LUV.get());
+        placeComponentAssemblyLineHatches(helper, controllerPos);
+        ComponentAssemblyLineMachine line = componentAssemblyLineAt(helper, controllerPos);
+        if (line == null) {
+            return;
+        }
+        MultiblockState state = line.getMultiblockState();
+        helper.assertTrue(GTNAStructureRefresh.refresh(line, true),
+                "the line must form with its hatches: " + patternError(helper, state, controllerPos));
+
+        ((MaintenanceHatchPartMachine) metaMachineAt(helper, controllerPos.offset(1, 0, 0)))
+                .fixAllMaintenanceProblems();
+        ItemBusPartMachine inputBus = (ItemBusPartMachine) metaMachineAt(helper, controllerPos.offset(-1, 0, 0));
+        inputBus.getInventory().insertItem(0, ChemicalHelper.get(TagPrefix.rodLong, GTMaterials.SamariumMagnetic, 12),
+                false);
+        inputBus.getInventory().insertItem(1,
+                ChemicalHelper.get(TagPrefix.cableGtSingle, GTMaterials.NiobiumTitanium, 24), false);
+        inputBus.getInventory().insertItem(2, IntCircuitBehaviour.stack(1), false);
+        BlockPos[] fluidPositions = componentAssemblyLineFluidPositions(controllerPos);
+        setHatchFluid(helper, fluidPositions[0], GTMaterials.HSSS, 13680);
+        setHatchFluid(helper, fluidPositions[1], GTMaterials.Ruridit, 6912);
+        setHatchFluid(helper, fluidPositions[2], GTMaterials.SolderingAlloy, 3456);
+        setHatchFluid(helper, fluidPositions[3], GTMaterials.Lubricant, 6000);
+        setHatchFluid(helper, fluidPositions[4], GTMaterials.HSSE, 3456);
+        ((EnergyHatchPartMachine) metaMachineAt(helper, controllerPos.offset(2, 1, 0))).energyContainer
+                .changeEnergy(100_000_000L);
+        line.getRecipeLogic().updateTickSubscription();
+        for (int tick = 0; tick < 20; tick++) {
+            line.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(line.getRecipeLogic().isActive(),
+                "the LuV batch must start on the line, status=" + line.getRecipeLogic().getStatus() +
+                        " reason=" + line.getRecipeLogic().getFancyTooltip());
+        helper.succeed();
+    }
+
+    /** Places the line's mandatory K-cell parts and the five batch fluid hatches. */
+    private static void placeComponentAssemblyLineHatches(GameTestHelper helper, BlockPos controllerPos) {
+        helper.setBlock(controllerPos.offset(2, 0, 0), GCYMMachines.PARALLEL_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(1, 0, 0), GTMachines.MAINTENANCE_HATCH.getBlock());
+        helper.setBlock(controllerPos.offset(-1, 0, 0), GTMachines.ITEM_IMPORT_BUS[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(-2, 0, 0), GTMachines.ITEM_EXPORT_BUS[GTValues.LuV].getBlock());
+        helper.setBlock(controllerPos.offset(2, 1, 0), GTMachines.ENERGY_INPUT_HATCH[GTValues.LuV].getBlock());
+        for (BlockPos pos : componentAssemblyLineFluidPositions(controllerPos)) {
+            helper.setBlock(pos, GTMachines.FLUID_IMPORT_HATCH[GTValues.LuV].getBlock());
+        }
+    }
+
+    private static BlockPos[] componentAssemblyLineFluidPositions(BlockPos controllerPos) {
+        return new BlockPos[] {
+                controllerPos.offset(1, 1, 0), controllerPos.offset(-1, 1, 0),
+                controllerPos.offset(-2, 1, 0), controllerPos.offset(2, 2, 0),
+                controllerPos.offset(-1, 2, 0)
+        };
+    }
+
+    /** QA A6: the line exposes the same 64 component assembly recipes as the extended assembler. */
+    @GameTest(template = "empty_16", timeoutTicks = 40)
+    public static void componentAssemblyLineLoadsTheBatchRecipes(GameTestHelper helper) {
+        var recipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.COMPONENT_ASSEMBLY_RECIPES);
+        helper.assertTrue(recipes.size() == 64,
+                "Component Assembly Line must load the 64 component assembly batches, found " + recipes.size());
+        helper.assertTrue(recipes.stream().anyMatch(recipe -> recipe.id.getPath().endsWith("motor_luv") &&
+                recipe.data.getInt("component_casing_tier") == GTValues.LuV),
+                "the LuV batch must be part of the line's recipe family");
+        helper.assertTrue(recipes.stream().anyMatch(recipe -> recipe.id.getPath().endsWith("motor_zpm") &&
+                recipe.data.getInt("component_casing_tier") == GTValues.ZPM),
+                "the ZPM batch must be part of the line's recipe family");
+        helper.assertTrue(recipes.stream().anyMatch(recipe -> recipe.id.getPath().endsWith("motor_uv") &&
+                recipe.data.getInt("component_casing_tier") == GTValues.UV),
+                "the UV batch must be part of the line's recipe family");
+        helper.succeed();
+    }
+
+    /**
+     * QA A7: GTOCore's controller recipe needs the GTO-only Advanced Assembly Line chain, so it is
+     * omitted; the unit contract {@code ControllerRecipePolicyTest} records that decision.
+     */
+    @GameTest(template = "empty_16", timeoutTicks = 40)
+    public static void componentAssemblyLineHasNoControllerRecipe(GameTestHelper helper) {
+        boolean present = helper.getLevel().getRecipeManager().getAllRecipesFor(GTRecipeTypes.ASSEMBLY_LINE_RECIPES)
+                .stream().anyMatch(recipe -> recipe.id.getPath().endsWith("component_assembly_line"));
+        helper.assertTrue(!present,
+                "the GTO-only Component Assembly Line controller recipe must stay omitted and documented");
+        helper.succeed();
+    }
+
+    /** Builds the GTOCore {@code component_assembly_line} pattern with GTNA's documented substitutes. */
+    private static java.util.List<BlockPos> buildComponentAssemblyLineBase(GameTestHelper helper,
+                                                                           BlockPos controllerPos,
+                                                                           Block tierCasing) {
+        var source = GTOCompressedPatternReader.read("component_assembly_line");
+        java.util.List<BlockPos> tierCells = new ArrayList<>();
+        for (int aisle = 0; aisle < source.slices().length; aisle++) {
+            for (int row = 0; row < source.slices()[aisle].length; row++) {
+                String text = source.slices()[aisle][row];
+                for (int column = 0; column < text.length(); column++) {
+                    char symbol = text.charAt(column);
+                    if (symbol == ' ') {
+                        continue;
+                    }
+                    BlockPos pos = controllerPos.offset(15 - column, row - 1, 46 - aisle);
+                    switch (symbol) {
+                        case 'A', 'K' -> helper.setBlock(pos, GTNABlocks.IRIDIUM_CASING.get());
+                        case 'B' -> helper.setBlock(pos, GTBlocks.CASING_POLYTETRAFLUOROETHYLENE_PIPE.get());
+                        case 'C' -> helper.setBlock(pos, GTNABlocks.NAQUADAH_ALLOY_CASING.get());
+                        case 'D' -> helper.setBlock(pos, GCYMBlocks.CASING_NONCONDUCTING.get());
+                        case 'E' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTNAMaterials.HastelloyN));
+                        case 'F' -> helper.setBlock(pos, GTNABlocks.MOLECULAR_CASING.get());
+                        case 'G' -> helper.setBlock(pos,
+                                GTNABlocks.TITANIUM_NITRIDE_CERAMIC_IMPACT_RESISTANT_MECHANICAL_BLOCK.get());
+                        case 'H' -> helper.setBlock(pos,
+                                GTNABlocks.BORON_CARBIDE_CERAMIC_RADIATION_RESISTANT_MECHANICAL_CUBE.get());
+                        case 'I' -> helper.setBlock(pos, GTNABlocks.PRECISION_PROCESSING_MECHANICAL_CASING.get());
+                        case 'J' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.HSLASteel));
+                        case 'L' -> helper.setBlock(pos,
+                                ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Naquadria));
+                        case 'M' -> helper.setBlock(pos, GTBlocks.CASING_EXTREME_ENGINE_INTAKE.get());
+                        case 'N' -> helper.setBlock(pos,
+                                GTNABlocks.OXIDATION_RESISTANT_HASTELLOY_N_MECHANICAL_CASING.get());
+                        case 'O' -> helper.setBlock(pos, GTBlocks.HERMETIC_CASING_LuV.get());
+                        case 'P' -> helper.setBlock(pos, GTBlocks.FILTER_CASING.get());
+                        case 'Q' -> helper.setBlock(pos, GTBlocks.CLEANROOM_GLASS.get());
+                        case 'R' -> helper.setBlock(pos, GTNABlocks.ADVANCED_ASSEMBLY_LINE_UNIT.get());
+                        case 'S' -> helper.setBlock(pos, GTNABlocks.CHEMICAL_CORROSION_RESISTANT_PIPE_CASING.get());
+                        case 'T' -> helper.setBlock(pos,
+                                GTNABlocks.ZIRCONIA_CERAMIC_HIGH_STRENGTH_BENDING_RESISTANCE_MECHANICAL_BLOCK.get());
+                        case 'U' -> helper.setBlock(pos, GTBlocks.LAMPS.get(net.minecraft.world.item.DyeColor.WHITE)
+                                .get());
+                        case 'V' -> helper.setBlock(pos, GCYMBlocks.ELECTROLYTIC_CELL.get());
+                        case 'W' -> helper.setBlock(pos, GTNABlocks.MACHINE_CASING_CIRCUIT_ASSEMBLY_LINE.get());
+                        case 'X' -> helper.setBlock(pos, GTNABlocks.SPACETIME_ASSEMBLY_LINE_UNIT.get());
+                        case 'Y' -> helper.setBlock(pos, GTBlocks.CASING_ASSEMBLY_LINE.get());
+                        case 'Z' -> helper.setBlock(pos, GTNABlocks.PRESSURE_CONTAINMENT_CASING.get());
+                        case '[' -> {
+                            helper.setBlock(pos, tierCasing);
+                            tierCells.add(pos);
+                        }
+                        case '\\' -> helper.setBlock(pos, GTNAMachines3.COMPONENT_ASSEMBLY_LINE.getBlock());
+                        default -> helper.fail("unexpected Component Assembly Line symbol " + symbol);
+                    }
+                }
+            }
+        }
+        return tierCells;
+    }
+
+    private static ComponentAssemblyLineMachine componentAssemblyLineAt(GameTestHelper helper,
+                                                                        BlockPos controllerPos) {
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof ComponentAssemblyLineMachine line)) {
+            helper.fail("Component Assembly Line controller is missing: " + machine);
+            return null;
+        }
+        return line;
     }
 
     private static boolean furnaceRecipeInjected;
