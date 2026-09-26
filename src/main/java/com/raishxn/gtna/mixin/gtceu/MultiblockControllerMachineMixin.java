@@ -191,6 +191,9 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
         if (matched > 0) {
             context.set("parts", parts);
         }
+        // A missing optional module leaves its PatternError on the shared state. The base
+        // matched successfully, so keep it recipe-capable even when an extension did not match.
+        state.setError(null);
         return true;
     }
 

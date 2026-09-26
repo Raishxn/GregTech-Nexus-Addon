@@ -1379,6 +1379,16 @@ public final class GTNAMachineGameTests {
                 "EBF module must form again after removing the duplicate hatch");
         helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
                 .gtna$formedModuleCount() == 1, "module must be restored with one Accelerate Hatch");
+
+        // A missing optional module must not leave its pattern error on the shared state: GTCEu
+        // refuses to start every EBF recipe while isRecipeLogicAvailable() is false.
+        helper.setBlock(controllerPos.offset(2, 0, 4), Blocks.AIR);
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
+                "EBF base must remain formed without its auxiliary module");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
+                .gtna$formedModuleCount() == 0, "incomplete auxiliary module must not count as formed");
+        helper.assertTrue(((WorkableElectricMultiblockMachine) controller).isRecipeLogicAvailable(),
+                "EBF base must accept normal recipes without its optional module");
         helper.succeed();
     }
 

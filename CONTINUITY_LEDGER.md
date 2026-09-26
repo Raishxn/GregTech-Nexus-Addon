@@ -25,6 +25,17 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
+> **EBF sem módulo (G-0123):** a base do Electric Blast Furnace podia formar com energia e calor,
+> mas a falha da checagem do módulo opcional deixava um `PatternError` no estado compartilhado.
+> `WorkableMultiblockMachine.isRecipeLogicAvailable()` então retornava falso e bloqueava toda
+> receita. O mixin restaura o estado válido da base após conferir os módulos. O GameTest existente
+> agora remove o módulo, confirma base formada, zero módulos e lógica de receitas disponível;
+> continua cobrindo o limite de Energy Hatches e o Accelerate exclusivo do módulo. Os 98/98
+> GameTests, unitários, compilação e Spotless passaram. O primeiro `runData` desta sessão parou
+> durante um erro intermitente de registro do renderer Annihilate; uma repetição isolada passou.
+> A repetição confirmou `written: 0`. O reteste da receita no cliente, a
+> navegação JEI e a medição do bônus KubeJS aguardam o teste do autor.
+
 > **Gate final e envio para `main` (G-0122):** o Large Steam Solar Boiler aceita a saída de vapor
 > wireless GTNA e a receita deposita vapor no tanque; os Dehydrators LV–OpV e os nomes dos Rocket
 > Engines têm registros/traduções; a Flux Matrix ganhou HUD opcional de energia. O módulo KubeJS
@@ -373,6 +384,25 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0123 (2026-09-26) — EBF processa receitas sem módulo auxiliar
+
+- A captura enviada pelo autor mostra um EBF formado e energizado, sem módulo auxiliar, sem
+  iniciar receita. No GTCEu, `isRecipeLogicAvailable()` requer estrutura formada **e** estado
+  sem erro. O `MultiblockControllerMachineMixin.checkPattern()` já preservava a formação da base
+  quando o módulo opcional não casava, mas deixava no estado o `PatternError` da extensão.
+- Após checar todos os módulos, o mixin limpa esse erro porque o padrão principal casou. Não
+  altera a aceitação de hatches nem os limites: módulos só somam partes quando casam. O
+  `ebfModuleForms` remove o módulo e confirma que a base segue formada, conta zero módulos e
+  disponibiliza sua lógica de receitas. O mesmo teste cobre o terceiro Energy Hatch restrito
+  ao módulo, rejeição do segundo Energy Hatch auxiliar, wireless no módulo e Accelerate na base.
+- Verificação: `spotlessCheck`, `compileJava`, `runUnitTests`, 98/98 GameTests e `git diff --check`
+  passaram. A primeira tentativa de `runData` no worktree isolado encontrou falha intermitente
+  no registro do renderer Annihilate; repetição isolada passou e gerou recursos do cache inicial.
+  A segunda repetição confirmou datagen `written: 0`.
+- Pendências manuais: receita EBF sem módulo no client; paginação/hover da prévia JEI do Component
+  Assembler; duração/overclock do exemplo de módulo KubeJS; boiler wireless, Dehydrators,
+  Vacuum Drying Furnace, nomes Rocket Engine e HUD Flux Matrix. Cliente e save originais intactos.
 
 ### G-0122 (2026-09-26) — Boiler wireless, Dehydrator, HUD, JEI e módulos KubeJS
 
