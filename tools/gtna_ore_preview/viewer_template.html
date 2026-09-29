@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GTNA - Integrated Ore Processing: estruturas e modulos</title>
+  <style>
+    :root {
+      --bg: #0b0f16;
+      --bg-soft: #121826;
+      --panel: #161d2c;
+      --line: #24304a;
+      --text: #e8edf7;
+      --muted: #93a1bd;
+      --amber: #ffba42;
+      --cyan: #54d0ff;
+      --green: #5ce1a6;
+      --violet: #c792ea;
+      --red: #ff5c7a;
+      --font: "DejaVu Sans", "Noto Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+      --mono: "DejaVu Sans Mono", "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body.wrap { display: flex; flex-direction: column; min-height: 100%; overflow: hidden; }
+
+    header.top {
+      display: flex; align-items: center; gap: 18px;
+      padding: 14px 22px;
+      background: linear-gradient(180deg, #101725, #0d121d);
+      border-bottom: 1px solid var(--line);
+      flex: 0 0 auto;
+    }
+    header.top img.logo { width: 46px; height: 46px; image-rendering: auto; }
+    header.top h1 { margin: 0; font-size: 19px; letter-spacing: .3px; }
+    header.top p { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; }
+    header.top .spacer { flex: 1; }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 999px;
+      border: 1px solid var(--line); color: var(--muted); font-size: 11.5px;
+      background: #0f1622;
+    }
+    .badge.warn { color: #ffd9a0; border-color: #5a4520; background: #241c0d; }
+
+    main.layout { flex: 1 1 auto; display: flex; min-height: 0; }
+
+    .stage {
+      position: relative; flex: 1 1 auto; min-width: 0; min-height: 0; overflow: hidden;
+      background: radial-gradient(1200px 700px at 62% 32%, #182134 0%, #0b0f16 62%, #080b12 100%);
+    }
+    canvas#scene { position: absolute; inset: 0; display: block; width: 100%; height: 100%; cursor: grab; }
+    canvas#scene.dragging { cursor: grabbing; }
+
+    .stage-overlay { position: absolute; inset: 0; pointer-events: none; }
+    .toolbar {
+      position: absolute; left: 14px; top: 14px; display: flex; flex-direction: column; gap: 8px;
+      pointer-events: auto;
+    }
+    .group {
+      background: rgba(13, 18, 29, .86); border: 1px solid var(--line); border-radius: 10px;
+      padding: 9px 11px; backdrop-filter: blur(3px);
+    }
+    .group h4 {
+      margin: 0 0 7px; font-size: 11px; text-transform: uppercase; letter-spacing: .10em;
+      color: var(--muted); font-weight: 600;
+    }
+    .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    button.chip {
+      background: #182033; color: var(--text); border: 1px solid var(--line);
+      border-radius: 7px; padding: 4px 9px; font-size: 12px; cursor: pointer;
+      font-family: inherit;
+    }
+    button.chip:hover { border-color: #3a4b70; background: #1d2740; }
+    button.chip.on { border-color: var(--amber); color: #ffe6b8; background: #2a2110; }
+    .slider { display: flex; flex-direction: column; gap: 3px; font-size: 11.5px; color: var(--muted); }
+    input[type=range] { width: 168px; accent-color: var(--amber); }
+
+    .hud-tooltip {
+      position: absolute; pointer-events: none; padding: 5px 9px; border-radius: 7px;
+      background: rgba(8, 11, 18, .93); border: 1px solid var(--line); font-size: 12px;
+      transform: translate(12px, 12px); white-space: nowrap; display: none; z-index: 5;
+    }
+    .hud-tooltip b { color: #fff; }
+    .hud-tooltip i { color: var(--muted); font-style: normal; }
+
+    aside.panel {
+      flex: 0 0 420px; max-width: 42vw; background: var(--bg-soft);
+      border-left: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0;
+    }
+    .tabs { display: flex; gap: 2px; padding: 10px 10px 0; }
+    .tabs button {
+      flex: 1; background: transparent; border: 1px solid transparent; border-bottom: none;
+      color: var(--muted); padding: 8px 6px; border-radius: 9px 9px 0 0; cursor: pointer;
+      font-size: 12.5px; font-family: inherit;
+    }
+    .tabs button.on { background: var(--panel); border-color: var(--line); color: var(--text); }
+    .panel-body { overflow: auto; padding: 14px; border-top: 1px solid var(--line); min-height: 0; }
+    .panel-body h3 { margin: 0 0 4px; font-size: 15px; }
+    .panel-body h4 { margin: 16px 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+    .panel-body p { margin: 0 0 8px; color: #c9d3e6; font-size: 13px; }
+    .panel-body ul { margin: 0 0 8px; padding-left: 18px; }
+    .panel-body li { margin-bottom: 4px; color: #c9d3e6; font-size: 12.5px; }
+    code, pre, .mono { font-family: var(--mono); font-size: 12px; }
+    pre.snippet {
+      background: #0d1421; border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px;
+      overflow: auto; max-height: 320px; color: #d6e2f5; white-space: pre; line-height: 1.5;
+    }
+    table.kv { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    table.kv td { padding: 4px 6px; border-bottom: 1px solid #1c2537; vertical-align: top; }
+    table.kv td:first-child { color: var(--muted); white-space: nowrap; }
+    .tile-row { display: flex; align-items: center; gap: 9px; padding: 4px 0; }
+    .tile-row img { width: 26px; height: 26px; image-rendering: pixelated; border-radius: 4px;
+      border: 1px solid #26314a; background: #0a0e16; }
+    .tile-row span { flex: 1; }
+    .tile-row b { color: var(--amber); font-variant-numeric: tabular-nums; }
+
+    .card {
+      border: 1px solid var(--line); border-left-width: 3px; border-radius: 10px;
+      padding: 10px 12px; margin-bottom: 10px; background: #131a28;
+    }
+    .card h3 { font-size: 14px; margin: 0 0 2px; }
+    .card .meta { color: var(--muted); font-size: 11.5px; margin-bottom: 7px; }
+    .card .bonus { color: #ffe6b8; font-weight: 600; font-size: 12.5px; margin-bottom: 6px; }
+    .card p { font-size: 12.5px; color: #c9d3e6; }
+    .card .impl { font-size: 11.5px; color: #9fb0cf; border-top: 1px dashed #26314a; padding-top: 6px; margin-top: 6px; }
+    .pill { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 10.5px;
+      border: 1px solid #2c3550; background: #0f1622; color: #a9b8d6; margin-left: 6px; }
+    .swatch { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; }
+
+    .circuit { display: flex; gap: 9px; align-items: center; padding: 7px 0; border-bottom: 1px solid #1c2537; }
+    .circuit .n { width: 26px; height: 26px; border-radius: 7px; background: #241c0d; color: var(--amber);
+      border: 1px solid #5a4520; display: grid; place-items: center; font-weight: 700; font-size: 12px; flex: 0 0 auto; }
+    .circuit .chain { display: flex; flex-wrap: wrap; gap: 5px; }
+    .circuit .step { background: #182033; border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; font-size: 11.5px; }
+    .circuit .fluid { color: var(--cyan); font-size: 11.5px; margin-left: auto; white-space: nowrap; }
+
+    /* ---- shot mode (gallery renders) ---- */
+    body.shot { overflow: hidden; background: #070a11; }
+    body.shot main.layout { display: block; height: 100vh; }
+    body.shot .stage { position: absolute; inset: 0; }
+    body.shot .toolbar, body.shot aside.panel, body.shot header.top { display: none !important; }
+    .shot-brand {
+      position: absolute; left: 54px; top: 40px; max-width: 980px;
+      background: rgba(8, 11, 18, .74); border: 1px solid var(--line); border-radius: 14px;
+      padding: 15px 22px 17px;
+    }
+    .shot-brand .row { display: flex; align-items: center; gap: 17px; }
+    .shot-brand img { width: 60px; height: 60px; }
+    .shot-brand h1 { margin: 0; font-size: 41px; letter-spacing: -.5px; line-height: 1.1; }
+    .shot-brand .metarow { display: flex; gap: 6px; margin-top: 9px; flex-wrap: wrap; }
+    .shot-brand .tag { margin-top: 11px; color: #b9c7e0; font-size: 15px; }
+    .shot-legend {
+      position: absolute; left: 54px; right: 46px; bottom: 32px;
+      background: rgba(10, 14, 22, .82); border: 1px solid var(--line); border-radius: 12px;
+      padding: 9px 16px 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 20px;
+    }
+    .shot-legend .lhead {
+      color: var(--muted); font-size: 11px; text-transform: uppercase;
+      letter-spacing: .10em; padding-right: 6px; border-right: 1px solid var(--line);
+    }
+    .shot-legend .item { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: #d5deef; }
+    .shot-legend .item .cnt { color: var(--amber); font-variant-numeric: tabular-nums; }
+    .shot-legend img { width: 20px; height: 20px; image-rendering: pixelated; border-radius: 3px; border: 1px solid #26314a; }
+    .shot-mods { position: absolute; right: 46px; top: 132px; width: 452px; display: flex; flex-direction: column; gap: 10px; }
+    .shot-mods .mhead { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .10em; }
+    .shot-mods .m {
+      background: rgba(11, 16, 26, .88); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px; padding: 9px 13px;
+    }
+    .shot-mods .m b { display: block; font-size: 15px; }
+    .shot-mods .m span { color: #ffd9a0; font-size: 12.5px; }
+    .shot-mods .m i { display: block; color: var(--muted); font-style: normal; font-size: 11px; margin-top: 3px; }
+    .shot-foot { position: absolute; right: 46px; bottom: 108px; text-align: right; color: #6d7c99; font-size: 12px; }
+    .shot-labels { position: absolute; inset: 0; pointer-events: none; }
+    .lbl {
+      position: absolute; transform: translate(-50%, -50%);
+      background: rgba(9, 13, 21, .9); border: 1px solid #33405f; border-radius: 8px;
+      padding: 4px 9px; font-size: 12.5px; white-space: nowrap; box-shadow: 0 6px 18px rgba(0,0,0,.35);
+    }
+    .lbl b { color: #fff; }
+    .lbl small { display: block; color: var(--muted); font-size: 11px; }
+    .leader { position: absolute; height: 1px; background: linear-gradient(90deg, #6f86b5, rgba(111,134,181,0)); transform-origin: 0 0; }
+    .leader.dot::before {
+      content: ""; position: absolute; left: -3px; top: -3px; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--amber); border: 1px solid #1a1206;
+    }
+
+    /* boards (2D infographics) */
+    body.board { overflow: auto; background: radial-gradient(1300px 800px at 55% 25%, #16203a 0%, #0a0e16 65%, #070a11 100%); }
+    .board-wrap { max-width: 1740px; margin: 0 auto; padding: 42px 54px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+    .board-head { display: flex; align-items: center; gap: 18px; margin-bottom: 4px; }
+    .board-head img { width: 54px; height: 54px; }
+    .board-head h1 { margin: 0; font-size: 36px; letter-spacing: -.4px; }
+    .board-sub { color: #b9c7e0; font-size: 16.5px; margin: 4px 0 22px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid1 { display: grid; grid-template-columns: 1.35fr 1fr; gap: 18px; align-items: start; }
+    .box { background: rgba(13,18,29,.86); border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; }
+    .box h3 { margin: 0 0 10px; font-size: 17px; }
+    .mcard { display: flex; gap: 13px; }
+    .mcard .accent { width: 5px; border-radius: 4px; flex: 0 0 auto; }
+    .mcard h3 { margin: 0 0 2px; font-size: 16px; }
+    .mcard .mm { color: #93a1bd; font-size: 12px; }
+    .mcard .mb { color: #ffd9a0; font-weight: 700; margin: 7px 0 5px; font-size: 14px; }
+    .mcard .md { color: #c9d3e6; font-size: 12.5px; }
+    .mcard .mi { color: #8fa0c0; font-size: 11.5px; margin-top: 6px; border-top: 1px dashed #26314a; padding-top: 5px; }
+    .chain2 { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .chain2 .s { background: #182033; border: 1px solid var(--line); border-radius: 7px; padding: 4px 11px; font-size: 13.5px; }
+    .chain2 .a { color: var(--muted); }
+    table.circ { width: 100%; border-collapse: collapse; }
+    table.circ td { padding: 9px 8px; border-bottom: 1px solid #1c2537; vertical-align: middle; font-size: 13px; color: #d5deef; }
+    table.circ tr:last-child td { border-bottom: none; }
+    table.circ .num { width: 40px; }
+    table.circ .num span { width: 27px; height: 27px; border-radius: 8px; background: #241c0d; color: var(--amber);
+      border: 1px solid #5a4520; display: grid; place-items: center; font-weight: 700; font-size: 12.5px; }
+    .circ-note { color: #8fa0c0; font-size: 12.5px; margin-top: 12px; }
+  </style>
+</head>
+
+<body class="wrap">
+  <header class="top">
+    <img class="logo" id="logo" alt="GTNA">
+    <div>
+      <h1>Integrated Ore Processing &mdash; estruturas + modulos</h1>
+      <p>Pre-visualizacao gerada offline a partir dos patterns reais do mod (<span class="mono">GTNAMachines.java</span>) &middot; os modulos sao uma <b>proposta de design</b>, ainda nao registrados no mod</p>
+    </div>
+    <div class="spacer"></div>
+    <span class="badge">GregTech Nexus Addon</span>
+    <span class="badge warn">modulos = proposta</span>
+  </header>
+
+  <main class="layout">
+    <section class="stage" id="stage">
+      <canvas id="scene"></canvas>
+      <div class="stage-overlay">
+        <div class="toolbar" id="toolbar">
+          <div class="group">
+            <h4>Maquina</h4>
+            <div class="row" id="machine-buttons"></div>
+          </div>
+          <div class="group">
+            <h4>Vista</h4>
+            <div class="row">
+              <button class="chip" data-view="iso-sw">3/4 SO</button>
+              <button class="chip" data-view="iso-se">3/4 SE</button>
+              <button class="chip" data-view="front">Frente</button>
+              <button class="chip" data-view="side">Lateral</button>
+              <button class="chip" data-view="top">Topo</button>
+            </div>
+            <div class="slider"><label>Zoom <input type="range" id="zoom" min="40" max="260" value="105"></label></div>
+            <div class="slider"><label>Camada Y <input type="range" id="layer" min="0" max="12" value="12"></label></div>
+            <div class="slider"><label>Explodir <input type="range" id="explode" min="0" max="100" value="0"></label></div>
+          </div>
+          <div class="group">
+            <h4>Modulos</h4>
+            <div class="row" id="module-buttons"></div>
+            <div class="row" style="margin-top:6px">
+              <button class="chip on" id="toggle-parts">Hatches propostas</button>
+              <button class="chip" id="toggle-outline">Contornos</button>
+              <button class="chip on" id="toggle-labels">Rotulos</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hud-tooltip" id="tooltip"></div>
+    </section>
+
+    <aside class="panel">
+      <div class="tabs" id="tabs">
+        <button class="on" data-tab="structure">Estrutura</button>
+        <button data-tab="modules">Modulos</button>
+        <button data-tab="circuits">Circuitos</button>
+        <button data-tab="notes">Notas</button>
+      </div>
+      <div class="panel-body" id="panel-body"></div>
+    </aside>
+  </main>
+
+  <div class="shot-labels" id="shot-labels"></div>
+
+  <script>
+    /* ==================================================================================
+       Data injected by tools/gtna_ore_preview/build_preview.py
+       ================================================================================== */
+    const DATA = /*__GTNA_DATA__*/;
+
+    /* ==================================================================================
+       Small helpers
+       ================================================================================== */
+    const $ = (id) => document.getElementById(id);
+    const params = new URLSearchParams(location.search);
+    const isShot = params.get('shot') !== null;
+    const shotMode = params.get('shot') || 'hero';
+    const accentOf = (id) => (DATA.modules.find((m) => m.id === id) || {}).accent || '#8899bb';
+    const moduleOf = (id) => DATA.modules.find((m) => m.id === id);
+
+    const TILES = {};
+    const tileReady = Object.entries(DATA.tiles).map(([key, uri]) => new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => { TILES[key] = img; resolve(); };
+      img.onerror = () => { TILES[key] = null; resolve(); };
+      img.src = uri;
+    }));
+
+    /* ==================================================================================
+       Scene: orthographic voxel renderer on a 2D canvas
+       ================================================================================== */
+    const canvas = $('scene');
+    const ctx = canvas.getContext('2d');
+    const state = {
+      machine: params.get('machine') === 'advanced' ? 'advanced' : 'integrated',
+      yaw: params.has('yaw') ? Number(params.get('yaw')) : 0.66,
+      pitch: params.has('pitch') ? Number(params.get('pitch')) : 0.52,
+      zoom: params.has('zoom') ? Number(params.get('zoom')) : 1.05,
+      layer: params.has('layer') ? Number(params.get('layer')) : 99,
+      explode: params.has('explode') ? Number(params.get('explode')) : 0,
+      hidden: new Set(),
+      showParts: params.get('parts') !== '0',
+      outlines: params.get('outline') === '1',
+      labels: params.get('labels') !== '0',
+      frontMarkers: true,
+      shot: false,
+      autoScale: 1,
+      origin: [0.5, 0.5],   // projection centre as a fraction of the canvas
+      fitScale: 1,
+      shadow: false,
+    };
+
+    const FACE_DEFS = [
+      { n: [0, 1, 0], corners: [[0, 1, 0], [1, 1, 0], [1, 1, 1], [0, 1, 1]], shade: 1.00, vert: false },
+      { n: [0, -1, 0], corners: [[0, 0, 0], [0, 0, 1], [1, 0, 1], [1, 0, 0]], shade: 0.55, vert: false },
+      { n: [1, 0, 0], corners: [[1, 0, 0], [1, 0, 1], [1, 1, 1], [1, 1, 0]], shade: 0.90, vert: true },
+      { n: [-1, 0, 0], corners: [[0, 0, 0], [0, 1, 0], [0, 1, 1], [0, 0, 1]], shade: 0.78, vert: true },
+      { n: [0, 0, 1], corners: [[0, 0, 1], [0, 1, 1], [1, 1, 1], [1, 0, 1]], shade: 0.72, vert: true },
+      { n: [0, 0, -1], corners: [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]], shade: 0.88, vert: true },
+    ];
+
+    const view = {};   // per-frame camera basis
+    function updateCamera() {
+      const cy = Math.cos(state.yaw), sy = Math.sin(state.yaw);
+      const cp = Math.cos(state.pitch), sp = Math.sin(state.pitch);
+      const dir = [sy * cp, -sp, cy * cp];              // camera -> scene
+      const right = [cy, 0, -sy];
+      const up = [dir[1] * right[2] - dir[2] * right[1],
+                  dir[2] * right[0] - dir[0] * right[2],
+                  dir[0] * right[1] - dir[1] * right[0]];
+      Object.assign(view, { dir, right, up });
+    }
+
+    function normalize(structure) {
+      const voxels = structure.voxels;
+      const min = [0, 1, 2].map((i) => Math.min(...voxels.map((v) => v.p[i])));
+      const max = [0, 1, 2].map((i) => Math.max(...voxels.map((v) => v.p[i])));
+      const index = new Map();
+      const blocks = voxels.map((v) => {
+        const p = [v.p[0] - min[0], v.p[1] - min[1], v.p[2] - min[2]];
+        const b = { p, t: v.t, m: v.m || null, prop: !!v.prop, part: !!v.part };
+        index.set(p.join(','), b);
+        return b;
+      });
+      return { blocks, index, size: [max[0] - min[0] + 1, max[1] - min[1] + 1, max[2] - min[2] + 1] };
+    }
+
+    const cache = {};
+    function scene(machine) {
+      if (!cache[machine]) cache[machine] = normalize(DATA.structures[machine]);
+      return cache[machine];
+    }
+
+    function visible(block) {
+      if (block.m && state.hidden.has(block.m)) return false;
+      if (block.prop && !state.showParts) return false;
+      if (block.p[1] + 1 > state.layer) return false;
+      return true;
+    }
+
+    function render() {
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+        canvas.width = w * dpr; canvas.height = h * dpr;
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+
+      const s = scene(state.machine);
+      const centre = s.size.map((v) => (v - 1) / 2);
+      updateCamera();
+
+      const origin = [w * state.origin[0], h * state.origin[1]];
+      const unit = state.autoScale * state.zoom * Math.min(w, h) / 46;
+
+      // project every visible block, collect the visible faces
+      const project = (x, y, z) => {
+        const px = x - centre[0], py = y - centre[1], pz = z - centre[2];
+        return [
+          (px * view.right[0] + py * view.right[1] + pz * view.right[2]) * unit + origin[0],
+          -(px * view.up[0] + py * view.up[1] + pz * view.up[2]) * unit + origin[1],
+          (px * view.dir[0] + py * view.dir[1] + pz * view.dir[2]),
+        ];
+      };
+
+      if (state.shadow) {
+        const sx = s.size[0] - 1, sz = s.size[2] - 1;
+        const corners = [[0, 0, 0], [sx, 0, 0], [sx, 0, sz], [0, 0, sz]].map((c) => project(c[0], c[1], c[2]));
+        ctx.save();
+        ctx.filter = 'blur(16px)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.62)';
+        ctx.beginPath();
+        ctx.moveTo(corners[0][0] * 1.02, corners[0][1] + 10);
+        for (let i = 1; i < 4; i++) ctx.lineTo(corners[i][0] * 1.02, corners[i][1] + 10);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // front markers: a bright amber band on the floor along the controller side (-Z) and a dim
+      // grey one on the back (+Z), so the machine always reads as having a front and a back
+      if (state.frontMarkers) {
+        const sx1 = s.size[0] - 1, sz1 = s.size[2] - 1;
+        const band = (z0, z1, color) => {
+          const pts = [[-0.2, -0.04, z0], [sx1 + 0.2, -0.04, z0], [sx1 + 0.2, -0.04, z1], [-0.2, -0.04, z1]]
+            .map((p) => project(p[0], p[1], p[2]));
+          ctx.beginPath();
+          ctx.moveTo(pts[0][0], pts[0][1]);
+          for (let i = 1; i < 4; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+          ctx.closePath();
+          ctx.fillStyle = color;
+          ctx.fill();
+        };
+        ctx.save();
+        band(-0.95, -0.05, 'rgba(255, 186, 66, 0.48)');
+        band(-0.05, 0.0, 'rgba(255, 214, 140, 0.26)');
+        band(sz1 + 0.05, sz1 + 0.95, 'rgba(124, 138, 168, 0.30)');
+        ctx.restore();
+      }
+
+      const faces = [];
+      for (const b of s.blocks) {
+        if (!visible(b)) continue;
+        const jitter = ((b.p[0] * 73856093) ^ (b.p[1] * 19349663) ^ (b.p[2] * 83492791)) % 7 / 100;
+        const shift = b.p.map((v, i) => v + (v - centre[i]) * state.explode * 0.55);
+        for (let f = 0; f < 6; f++) {
+          const def = FACE_DEFS[f];
+          const nb = [b.p[0] + def.n[0], b.p[1] + def.n[1], b.p[2] + def.n[2]];
+          const neighbour = s.index.get(nb.join(','));
+          const seeThrough = neighbour && (neighbour.t === 'glass' || neighbour.t === 'borosilicate')
+            && b.t !== neighbour.t;
+          if (neighbour && !seeThrough) continue;
+          // back-face culling against the camera direction
+          if (def.n[0] * view.dir[0] + def.n[1] * view.dir[1] + def.n[2] * view.dir[2] > 0.02) continue;
+
+          const pts = def.corners.map((c) => project(shift[0] + c[0], shift[1] + c[1], shift[2] + c[2]));
+          const depth = (pts[0][2] + pts[1][2] + pts[2][2] + pts[3][2]) / 4;
+          faces.push({
+            pts, depth, tile: b.t, block: b, def, shift, nb,
+            shade: def.shade - jitter,
+            alpha: b.t === 'glass' ? 0.52 : b.t === 'borosilicate' ? 0.6 : 1,
+          });
+          // ambient occlusion strips along the edges that touch a solid block
+          for (const axis of [0, 1, 2]) {
+            if (def.n[axis] !== 0) continue;
+            for (const sign of [-1, 1]) {
+              const probe = [nb[0], nb[1], nb[2]];
+              probe[axis] += sign;
+              if (!s.index.has(probe.join(','))) continue;
+              const want = sign > 0 ? 1 : 0;
+              const edge = [];
+              for (let i = 0; i < 4; i++) if (def.corners[i][axis] === want) edge.push(i);
+              if (edge.length !== 2) continue;
+              const inset = (c) => {
+                const p = [shift[0] + c[0], shift[1] + c[1], shift[2] + c[2]];
+                p[axis] -= sign * 0.34;
+                return project(p[0], p[1], p[2]);
+              };
+              const q1 = inset(def.corners[edge[0]]), q2 = inset(def.corners[edge[1]]);
+              faces.push({
+                pts: [pts[edge[0]], pts[edge[1]], q2, q1], depth: depth + 0.002,
+                occl: true, shade: -0.22, alpha: 1,
+              });
+            }
+          }
+        }
+      }
+      faces.sort((a, b) => a.depth - b.depth);
+
+      for (const face of faces) {
+        const [p0, p1, p2, p3] = face.pts;
+        if (face.occl) {
+          ctx.beginPath();
+          ctx.moveTo(p0[0], p0[1]);
+          ctx.lineTo(p1[0], p1[1]);
+          ctx.lineTo(p2[0], p2[1]);
+          ctx.lineTo(p3[0], p3[1]);
+          ctx.closePath();
+          const a = Math.min(0.42, 1 - face.shade);
+          ctx.fillStyle = 'rgba(6, 9, 16, ' + a.toFixed(3) + ')';
+          ctx.fill();
+          continue;
+        }
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(p0[0], p0[1]);
+        ctx.lineTo(p1[0], p1[1]);
+        ctx.lineTo(p2[0], p2[1]);
+        ctx.lineTo(p3[0], p3[1]);
+        ctx.closePath();
+        ctx.clip();
+        const img = TILES[face.tile];
+        ctx.globalAlpha = face.alpha;
+        if (img) {
+          // the projected quad is a parallelogram: map the 16x16 tile onto it exactly
+          ctx.transform((p1[0] - p0[0]) / 16, (p1[1] - p0[1]) / 16,
+                        (p3[0] - p0[0]) / 16, (p3[1] - p0[1]) / 16, p0[0], p0[1]);
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(img, 0, 0, 16, 16);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        } else {
+          ctx.fillStyle = '#8b98b8';
+          ctx.fill();
+        }
+        ctx.fillStyle = 'rgba(0,0,0,' + Math.max(0, Math.min(0.45, 1 - face.shade)).toFixed(3) + ')';
+        ctx.fill();
+        if (face.def.vert) {
+          // sky-light gradient: a touch of light at the top, a touch of shade at the base
+          const top = [((p0[0] + p1[0]) / 2), ((p0[1] + p1[1]) / 2)];
+          const bottom = [((p3[0] + p2[0]) / 2), ((p3[1] + p2[1]) / 2)];
+          const grad = ctx.createLinearGradient(bottom[0], bottom[1], top[0], top[1]);
+          grad.addColorStop(0, 'rgba(0, 0, 0, 0.16)');
+          grad.addColorStop(0.55, 'rgba(0, 0, 0, 0)');
+          grad.addColorStop(1, 'rgba(255, 255, 255, 0.07)');
+          ctx.fillStyle = grad;
+          ctx.fill();
+        }
+        if (state.outlines) {
+          ctx.strokeStyle = 'rgba(4, 7, 12, 0.16)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+      drawRims(faces, project);
+      drawCompass();
+      state.faces = faces;
+      if (state.labels) drawLabels();
+    }
+
+    /** Screen-space orientation gizmo: where the machine's front (-Z) points right now. */
+    function drawCompass() {
+      if (state.shot) return;
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      const cx = 62, cy = h - 62, r = 27;
+      const dpr = window.devicePixelRatio || 1;
+      ctx.save();
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(13, 18, 29, 0.82)';
+      ctx.fill();
+      ctx.strokeStyle = '#28324c';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      const screenDir = (v) => [v[0] * view.right[0] + v[1] * view.right[1] + v[2] * view.right[2],
+                                -(v[0] * view.up[0] + v[1] * view.up[1] + v[2] * view.up[2])];
+      const arrow = (v, color, label, len) => {
+        const d = screenDir(v);
+        const mag = Math.hypot(d[0], d[1]) || 1;
+        const ux = d[0] / mag, uy = d[1] / mag;
+        const ex = cx + ux * r * len, ey = cy + uy * r * len;
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(ex + ux * 6, ey + uy * 6);
+        ctx.lineTo(ex - uy * 4.5, ey + ux * 4.5);
+        ctx.lineTo(ex + uy * 4.5, ey - ux * 4.5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.font = '600 10.5px ' + getComputedStyle(document.body).fontFamily;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, cx + ux * (r + 11), cy + uy * (r + 11));
+      };
+      arrow([0, 0, -1], '#ffba42', 'FRENTE', 0.72);
+      arrow([0, 0, 1], '#7c8aa8', 'TRAS', 0.55);
+      const side = screenDir([1, 0, 0]);
+      const sideL = screenDir([-1, 0, 0]);
+      ctx.font = '600 10px ' + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#5d6b88';
+      ctx.fillText('dir', cx + side[0] / (Math.hypot(side[0], side[1]) || 1) * (r + 12),
+                   cy + side[1] / (Math.hypot(side[0], side[1]) || 1) * (r + 12));
+      ctx.fillText('esq', cx + sideL[0] / (Math.hypot(sideL[0], sideL[1]) || 1) * (r + 12),
+                   cy + sideL[1] / (Math.hypot(sideL[0], sideL[1]) || 1) * (r + 12));
+      ctx.restore();
+    }
+
+    // module blocks get a coloured rim so the proposal reads instantly (the controller too)
+    function drawRims(faces, project) {
+      const groups = new Map();
+      for (const face of faces) {
+        if (!face.block) continue;
+        const key = face.block.m || (face.block.t === 'controller' || face.block.t === 'controller_adv'
+          ? '__controller' : null);
+        if (!key) continue;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(face);
+      }
+      const dpr = window.devicePixelRatio || 1;
+      for (const [id, list] of groups) {
+        ctx.save();
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.strokeStyle = id === '__controller' ? '#ffba42' : accentOf(id);
+        ctx.lineWidth = id === '__controller' ? 2 : 1.6;
+        ctx.globalAlpha = 0.9;
+        const drawn = new Set();
+        for (const face of list) {
+          const key = face.block.p.join(',') + ':' + face.pts[0].join(',');
+          if (drawn.has(key)) continue;
+          drawn.add(key);
+          ctx.beginPath();
+          ctx.moveTo(face.pts[0][0], face.pts[0][1]);
+          for (let i = 1; i < 4; i++) ctx.lineTo(face.pts[i][0], face.pts[i][1]);
+          ctx.closePath();
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+    }
+
+    function fitView() {
+      const s = scene(state.machine);
+      state.autoScale = 1;
+      state.zoom = 1;
+      state.layer = s.size[1];
+      $('layer').max = String(s.size[1]);
+      $('layer').value = String(s.size[1]);
+      $('zoom').value = '100';
+      const w = canvas.clientWidth || 900, h = canvas.clientHeight || 600;
+      state.userAdjusted = false;
+      state.lastFitSize = [w, h];
+      // measure the projected bounds at scale 1 and derive the auto scale
+      updateCamera();
+      let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+      const centre = s.size.map((v) => (v - 1) / 2);
+      for (const b of s.blocks) {
+        if (!visible(b)) continue;
+        const px = b.p[0] - centre[0], py = b.p[1] - centre[1], pz = b.p[2] - centre[2];
+        const sx = px * view.right[0] + py * view.right[1] + pz * view.right[2];
+        const sy = px * view.up[0] + py * view.up[1] + pz * view.up[2];
+        minX = Math.min(minX, sx); maxX = Math.max(maxX, sx);
+        minY = Math.min(minY, sy - 1); maxY = Math.max(maxY, sy);
+      }
+      const spanX = Math.max(1, maxX - minX) + 2, spanY = Math.max(1, maxY - minY) + 2;
+      const unit = Math.min(w, h) / 46;
+      state.autoScale = Math.min(w / (spanX * unit), h / (spanY * unit)) * 0.92 * state.fitScale;
+    }
+
+    /* ==================================================================================
+       Module list, panel content
+       ================================================================================== */
+    function modulesFor(machine) {
+      return DATA.modules.filter((m) => m.machine === machine);
+    }
+
+    function buildMachineButtons() {
+      const host = $('machine-buttons');
+      host.innerHTML = '';
+      for (const key of ['integrated', 'advanced']) {
+        const meta = DATA.meta[key];
+        const b = document.createElement('button');
+        b.className = 'chip' + (state.machine === key ? ' on' : '');
+        b.textContent = key === 'integrated' ? 'Integrated (EV)' : 'Advanced (endgame)';
+        b.onclick = () => {
+          state.machine = key;
+          state.hidden = new Set();
+          buildMachineButtons();
+          buildModuleButtons();
+          renderPanel();
+          fitView();
+          render();
+        };
+        host.appendChild(b);
+      }
+    }
+
+    function buildModuleButtons() {
+      const host = $('module-buttons');
+      host.innerHTML = '';
+      for (const m of modulesFor(state.machine)) {
+        const b = document.createElement('button');
+        b.className = 'chip' + (state.hidden.has(m.id) ? '' : ' on');
+        b.innerHTML = '<span class="swatch" style="background:' + m.accent + '"></span>' + m.name;
+        b.onclick = () => {
+          if (state.hidden.has(m.id)) state.hidden.delete(m.id); else state.hidden.add(m.id);
+          buildModuleButtons();
+          render();
+        };
+        host.appendChild(b);
+      }
+      if (!host.children.length) host.innerHTML = '<i style="color:#93a1bd">sem modulos propostos</i>';
+    }
+
+    function renderPanel() {
+      const body = $('panel-body');
+      const tab = document.querySelector('#tabs button.on').dataset.tab;
+      if (tab === 'structure') body.innerHTML = structureTab();
+      else if (tab === 'modules') body.innerHTML = modulesTab();
+      else if (tab === 'circuits') body.innerHTML = circuitsTab();
+      else body.innerHTML = notesTab();
+      if (tab === 'modules') wireCopyButtons();
+    }
+
+    function structureTab() {
+      const key = state.machine;
+      const meta = DATA.meta[key];
+      const st = DATA.structures[key];
+      const counts = st.counts || {};
+      const legend = DATA.legend.filter((l) => counts[l.tile]);
+      const rows = legend.map((l) => '<div class="tile-row"><img src="' + DATA.tiles[l.tile] + '">' +
+        '<span>' + l.label + '</span><b>' + counts[l.tile] + '</b></div>').join('');
+      const extra = st.stainless_min
+        ? '<p>Minimo no pattern: <b>' + st.stainless_min + 'x Clean Stainless Steel Casing</b> (celulas com abilities: IO, energia, Parallel, Maintenance, Thread).</p>'
+        : '<p>Preenchimento: <b>Robust Tungstensteel Casing</b> na casca externa + os casings internos do GTLCore.</p>';
+      return '<h3>' + meta.name + '</h3>' +
+        '<p><span class="badge">' + meta.machine_id + '</span> <span class="badge">' + meta.era + '</span></p>' +
+        '<h4>Dimensoes</h4><table class="kv">' +
+        '<tr><td>Tamanho</td><td><b>' + meta.size + '</b> (' + st.dims[0] + ' x ' + st.dims[1] + ' x ' + st.dims[2] + ' no pattern)</td></tr>' +
+        '<tr><td>Origem</td><td>' + meta.source + '</td></tr>' +
+        '</table>' +
+        '<h4>Tooltip / funcao</h4><ul>' + meta.lines.map((l) => '<li>' + l + '</li>').join('') + '</ul>' +
+        extra +
+        '<h4>Blocos do pattern (' + Object.values(counts).reduce((a, b) => a + b, 0) + ' no total)</h4>' + rows;
+    }
+
+    function modulesTab() {
+      const mods = modulesFor(state.machine);
+      if (!mods.length) return '<p>Nenhum modulo proposto para esta maquina.</p>';
+      const statusColor = (s) => s.indexOf('Estrutura') === 0 ? 'var(--green)' : (s.indexOf('Precisa codigo') === 0 ? 'var(--red)' : 'var(--amber)');
+      return '<h3>Modulos auxiliares (proposta)</h3>' +
+        '<p>Sub-patterns presos ao controller, no mesmo sistema de <span class="mono">GTNASubPatterns</span>: a contagem aparece no HUD como <span class="mono">Formed modules: n / ' + mods.length + '</span> e cada modulo libera um bonus enquanto estiver montado.</p>' +
+        mods.map((m) => '<div class="card" style="border-left-color:' + m.accent + '">' +
+          '<h3><span class="swatch" style="background:' + m.accent + '"></span>' + m.name +
+          '<span class="pill" style="color:' + statusColor(m.status) + '">' + m.status + '</span></h3>' +
+          '<div class="meta">' + m.attach + ' &middot; ' + m.size + '</div>' +
+          '<div class="bonus">' + m.bonus_short + '</div>' +
+          m.bonus.map((b) => '<p>' + b + '</p>').join('') +
+          '<div class="impl">' + m.impl + '</div>' +
+          '<h4 style="margin:10px 0 5px">KubeJS sugerido</h4>' +
+          '<pre class="snippet" id="snip-' + m.id + '">' + m.snippet.replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c])) + '</pre>' +
+          '</div>').join('');
+    }
+
+    function wireCopyButtons() { /* snippets are read-only; kept for future copy buttons */ }
+
+    function circuitsTab() {
+      const rows = DATA.circuits.map((c) => '<div class="circuit">' +
+        '<div class="n">' + c.n + '</div>' +
+        '<div class="chain">' + c.chain.map((s, i) => (i ? '<span class="a">&rarr;</span>' : '') + '<span class="step">' + s + '</span>').join('') + '</div>' +
+        '<div class="fluid">' + (c.fluid === 'none' ? 'sem fluido' : c.fluid) + '</div>' +
+        '</div>').join('');
+      return '<h3>gtna:ore_processing</h3>' +
+        '<p>Um recipe por circuito (1..7) para <b>raw ore</b> e <b>stone ore</b>, com os byproducts reais por estagio, o fluido de lavagem do material e duracao por estagio.</p>' +
+        '<table class="kv">' +
+        '<tr><td>IO</td><td>2 item in (ore + circuito) / 9 item out / 1 fluid in</td></tr>' +
+        '<tr><td>EU/t</td><td>30 (patidade GTLCore)</td></tr>' +
+        '<tr><td>Multiplier</td><td><span class="mono">integratedOreMultiplier</span> = 4 (config)</td></tr>' +
+        '<tr><td>Circuitos 5-7</td><td>exigem <span class="mono">washedIn</span> do minerio (mercurio, sodium persulfate...)</td></tr>' +
+        '</table><h4>Circuitos</h4>' + rows;
+    }
+
+    function notesTab() {
+      return '<h3>Como isso foi gerado</h3>' +
+        '<p>As estruturas 3D sao montadas lendo os <span class="mono">FactoryBlockPattern.aisle()</span> reais de ' +
+        '<span class="mono">GTNAMachines.java</span> (Integrated e Advanced Integrated Ore Processor). A convencao do GTCEu e ' +
+        '<span class="mono">charDir=LEFT, stringDir=UP, aisleDir=FRONT</span>: o char cresce para a esquerda do controller, a row cresce para cima e a aisle cresce para a frente &mdash; por isso a row 0 e o fundo e a ultima aisle fica na frente.</p>' +
+        '<p>As texturas sao as reais (GTCEu + GTNA), compostas com os overlays de hatch/bus. Os contornos coloridos marcam os blocos dos modulos propostos; os hatches com contorno fino claro sao as posicoes propostas de IO/energia (a base ja aceita esses hatches nas celulas de casing).</p>' +
+        '<h4>Modulos: proposta de design</h4>' +
+        '<p>Nenhum modulo desta pagina existe no mod ainda. Eles reaproveitam o sistema de sub-patterns (G-0063/G-0066): ' +
+        'o pattern do modulo e checado na posicao do controller, as parts detectadas sao fundidas na base e o HUD mostra ' +
+        '<span class="mono">Formed modules: n / total</span>. Os bonus marcados como <b>Estrutura apenas</b> funcionam so com o pattern; ' +
+        'os demais pedem um hook pequeno (modifier de duracao/fluido/yield) ou um pouco de codigo (GUI, wireless).</p>' +
+        '<h4>Limites desta pre-visualizacao</h4>' +
+        '<ul><li>Sem CTM: os casings aparecem com a textura base, nao com as variantes conectadas do jogo.</li>' +
+        '<li>Sombreamento/oclusao sao aproximados (sem AO por vertice).</li>' +
+        '<li>Nao substitui um screenshot real: e um mockup geometrico fiel ao pattern.</li></ul>';
+    }
+
+    /* ==================================================================================
+       Hover picking
+       ================================================================================== */
+    function pick(mx, my) {
+      const faces = state.faces || [];
+      let best = null;
+      for (let i = faces.length - 1; i >= 0; i--) {
+        const f = faces[i];
+        if (pointInQuad(mx, my, f.pts)) { best = f; break; }
+      }
+      if (!best) return null;
+      const m = best.block.m ? moduleOf(best.block.m) : null;
+      const label = (DATA.legend.find((l) => l.tile === best.tile) || {}).label || best.tile;
+      return { label, module: m, prop: best.block.prop };
+    }
+
+    function pointInQuad(x, y, pts) {
+      let sign = 0;
+      for (let i = 0; i < 4; i++) {
+        const a = pts[i], b = pts[(i + 1) % 4];
+        const cross = (b[0] - a[0]) * (y - a[1]) - (b[1] - a[1]) * (x - a[0]);
+        if (Math.abs(cross) < 1e-6) continue;
+        if (!sign) sign = Math.sign(cross);
+        else if (Math.sign(cross) !== sign) return false;
+      }
+      return true;
+    }
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mx = (e.clientX - rect.left) * (canvas.width / rect.width) / (window.devicePixelRatio || 1);
+      const my = (e.clientY - rect.top) * (canvas.height / rect.height) / (window.devicePixelRatio || 1);
+      if (state.dragging) {
+        state.yaw -= (e.movementX || 0) * 0.008;
+        state.pitch = Math.max(0.08, Math.min(1.35, state.pitch - (e.movementY || 0) * 0.006));
+        render();
+        return;
+      }
+      const hit = pick(mx, my);
+      const tip = $('tooltip');
+      if (!hit) { tip.style.display = 'none'; return; }
+      tip.style.display = 'block';
+      tip.style.left = (e.clientX - rect.left) + 'px';
+      tip.style.top = (e.clientY - rect.top) + 'px';
+      tip.innerHTML = '<b>' + hit.label + '</b>' +
+        (hit.module ? ' <i>&middot; modulo ' + hit.module.name + '</i>' : '') +
+        (hit.prop ? ' <i>&middot; hatch proposta</i>' : '');
+    });
+
+    canvas.addEventListener('mousedown', () => { state.dragging = true; canvas.classList.add('dragging'); });
+    window.addEventListener('mouseup', () => { state.dragging = false; canvas.classList.remove('dragging'); });
+    canvas.addEventListener('mouseleave', () => { $('tooltip').style.display = 'none'; state.dragging = false; });
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      state.zoom = Math.max(0.35, Math.min(3.2, state.zoom * (e.deltaY > 0 ? 0.92 : 1.08)));
+      $('zoom').value = String(Math.round(state.zoom * 100));
+      render();
+    }, { passive: false });
+
+    /* ==================================================================================
+       Toolbar wiring
+       ================================================================================== */
+    const VIEWS = {
+      'iso-sw': [0.62, 0.48], 'iso-se': [-0.62, 0.48], front: [0.0, 0.22],
+      side: [-1.5708, 0.30], top: [0.0, 1.32],
+    };
+    document.querySelectorAll('[data-view]').forEach((b) => b.onclick = () => {
+      const v = VIEWS[b.dataset.view];
+      state.yaw = v[0]; state.pitch = v[1];
+      fitView(); render();
+    });
+    $('zoom').oninput = (e) => { state.zoom = Number(e.target.value) / 100; state.userAdjusted = true; render(); };
+    $('layer').oninput = (e) => { state.layer = Number(e.target.value); state.userAdjusted = true; render(); };
+    $('explode').oninput = (e) => { state.explode = Number(e.target.value) / 100; state.userAdjusted = true; render(); };
+    $('toggle-parts').onclick = (e) => {
+      state.showParts = !state.showParts;
+      e.target.classList.toggle('on', state.showParts);
+      render();
+    };
+    $('toggle-outline').onclick = (e) => {
+      state.outlines = !state.outlines;
+      e.target.classList.toggle('on', state.outlines);
+      render();
+    };
+    $('toggle-labels').onclick = (e) => {
+      state.labels = !state.labels;
+      e.target.classList.toggle('on', state.labels);
+      render();
+    };
+    document.querySelectorAll('#tabs button').forEach((b) => b.onclick = () => {
+      document.querySelectorAll('#tabs button').forEach((o) => o.classList.remove('on'));
+      b.classList.add('on');
+      renderPanel();
+    });
+    window.addEventListener('resize', () => { fitView(); render(); });
+
+    // Browsers settle the layout (fonts, scrollbars, window restore) after the first paint; re-fit
+    // while the user has not touched the camera, so the machine never ends up tiny or off-frame.
+    function refitIfUntouched() {
+      if (state.userAdjusted) return;
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      const last = state.lastFitSize || [0, 0];
+      if (Math.abs(w - last[0]) < 2 && Math.abs(h - last[1]) < 2) return;
+      fitView();
+      render();
+    }
+    if (window.ResizeObserver) new ResizeObserver(refitIfUntouched).observe(canvas);
+    window.addEventListener('load', refitIfUntouched);
+    setTimeout(refitIfUntouched, 350);
+    setTimeout(refitIfUntouched, 1200);
+
+    /* ==================================================================================
+       Shot mode: static gallery renders
+       ================================================================================== */
+    function drawLabels() {
+      const host = $('shot-labels');
+      host.innerHTML = '';
+      const s = scene(state.machine);
+      const centre = s.size.map((v) => (v - 1) / 2);
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width, h = rect.height;
+      const unit = state.autoScale * state.zoom * Math.min(w, h) / 46;
+      const originX = rect.left + w * state.origin[0], originY = rect.top + h * state.origin[1];
+      const modCardsShown = modulesFor(state.machine).some((m) => !state.hidden.has(m.id));
+      const project = (p) => {
+        const px = p[0] - centre[0], py = p[1] - centre[1], pz = p[2] - centre[2];
+        return [px * view.right[0] + py * view.right[1] + pz * view.right[2],
+                -(px * view.up[0] + py * view.up[1] + pz * view.up[2])];
+      };
+      const anchorFor = (spec) => {
+        let best = null, bestScore = -1e9;
+        for (const b of s.blocks) {
+          if (!visible(b)) continue;
+          if (spec.tile && b.t !== spec.tile) continue;
+          if (spec.module && b.m !== spec.module) continue;
+          const d = (b.p[0] - centre[0]) * view.dir[0] + (b.p[1] - centre[1]) * view.dir[1]
+                  + (b.p[2] - centre[2]) * view.dir[2];
+          const score = -d * 100
+            + (spec.prefer || [0, 0, 0]).reduce((acc, dir, i) => acc + dir * b.p[i], 0);
+          if (score > bestScore) { bestScore = score; best = b; }
+        }
+        return best ? best.p.map((v) => v + 0.5) : null;
+      };
+      const labels = LAYOUT_LABELS[state.machine] || [];
+      labels.forEach((spec) => {
+        if (spec.when === 'base' && modCardsShown) return;
+        if (spec.when === 'modules' && !modCardsShown) return;
+        if (spec.module && state.hidden.has(spec.module)) return;
+        const p = anchorFor(spec);
+        if (!p) return;
+        const [sx, sy] = project(p);
+        const ax = originX + sx * unit;
+        const ay = originY + sy * unit;
+        const lx = Math.max(96, Math.min(rect.left + w - 96, ax + spec.dx));
+        const ly = Math.max(24, Math.min(rect.top + h - 24, ay + spec.dy));
+        const leader = document.createElement('div');
+        leader.className = 'leader dot';
+        const dx = lx - ax, dy = ly - ay;
+        leader.style.left = ax + 'px'; leader.style.top = ay + 'px';
+        leader.style.width = Math.hypot(dx, dy) + 'px';
+        leader.style.transform = 'rotate(' + Math.atan2(dy, dx) + 'rad)';
+        host.appendChild(leader);
+        const lbl = document.createElement('div');
+        lbl.className = 'lbl';
+        lbl.innerHTML = '<b>' + spec.title + '</b>' + (spec.sub ? '<small>' + spec.sub + '</small>' : '');
+        lbl.style.left = lx + 'px'; lbl.style.top = ly + 'px';
+        host.appendChild(lbl);
+      });
+    }
+
+    const LAYOUT_LABELS = {
+      integrated: [
+        { tile: 'controller', title: 'Controller (FRENTE)', sub: 'esta e a face frontal da estrutura', dx: -285, dy: 205, when: 'both' },
+        { tile: 'muffler', title: 'Muffler Hatch (ZPM)', sub: 'no topo da chamine', dx: 262, dy: -198, when: 'both' },
+        { tile: 'glass', title: 'Laminated Glass', sub: 'salao de lavagem 6x6', prefer: [1, 0, 0], dx: 350, dy: 165, when: 'base' },
+        { module: 'grinding_heads', title: 'Grinding Head Array', sub: '-20% duracao, +1 Parallel Hatch', dx: 400, dy: 95, when: 'modules' },
+        { module: 'sorting_rack', title: 'Byproduct Sorting Rack', sub: '+2 Export Buses, +10% chanced', dx: 245, dy: -195, when: 'modules' },
+        { module: 'wash_tank', title: 'Wash Recovery Tank', sub: '32 B de buffer, -25% fluido', dx: -378, dy: -125, when: 'modules' },
+        { module: 'intake_column', title: 'Auxiliary Intake Column', sub: '+1 Import Bus, +1 Fluid Hatch', dx: -350, dy: 95, when: 'modules' },
+      ],
+      advanced: [
+        { tile: 'controller_adv', title: 'Controller (FRENTE)', sub: 'unlimited parallel (laser)', dx: -430, dy: -15, when: 'both' },
+        { tile: 'borosilicate', title: 'Borosilicate Glass', sub: 'coluna central do complexo', prefer: [1, 0, 0], dx: 340, dy: 175, when: 'base' },
+        { tile: 'restraint', title: 'Restraint Device', sub: 'casing do complexo central', prefer: [0, 1, 0], dx: -330, dy: -175, when: 'base' },
+        { module: 'laser_array', title: 'Laser Array Expansion', sub: '+2 Laser Hatches, +25% conversao', dx: -400, dy: 60, when: 'modules' },
+        { module: 'reagent_complex', title: 'Reagent Complex', sub: '+15% yield nos circuitos 5-7', dx: -350, dy: 210, when: 'modules' },
+        { module: 'nexus_uplink', title: 'Nexus Uplink', sub: 'link wireless com o Terminal Nexus', dx: 320, dy: -180, when: 'modules' },
+        { module: 'parallel_governor', title: 'Parallel Governor', sub: 'cap 512/1024/2048/MAX na GUI', dx: 410, dy: 25, when: 'modules' },
+      ],
+    };
+
+    function shotHero() {
+      document.body.classList.add('shot');
+      const meta = DATA.meta[state.machine];
+      const brand = document.createElement('div');
+      brand.className = 'shot-brand';
+      brand.innerHTML = '<div class="row"><img src="' + DATA.logo + '"><div>' +
+        '<h1>' + (params.get('title') || meta.name) + '</h1>' +
+        '<div class="metarow"><span class="badge">' + meta.size + '</span>' +
+        '<span class="badge">' + meta.era + '</span>' +
+        '<span class="badge">' + meta.machine_id + '</span></div>' +
+        '</div></div>' +
+        '<div class="tag">' + (params.get('subtitle') || '') + '</div>';
+      document.body.appendChild(brand);
+
+      const st = DATA.structures[state.machine];
+      const legend = DATA.legend.filter((l) => (st.counts || {})[l.tile]);
+      const legHost = document.createElement('div');
+      legHost.className = 'shot-legend';
+      legHost.innerHTML = '<div class="lhead">Blocos do pattern (' +
+        Object.values(st.counts || {}).reduce((a, b) => a + b, 0) + ')</div>' +
+        legend.map((l) => '<div class="item"><img src="' + DATA.tiles[l.tile] + '">' +
+          l.label + '<span class="cnt">' + (st.counts[l.tile] || 0) + '</span></div>').join('');
+      document.body.appendChild(legHost);
+
+      const mods = modulesFor(state.machine).filter((m) => !state.hidden.has(m.id));
+      if (mods.length) {
+        const host = document.createElement('div');
+        host.className = 'shot-mods';
+        host.innerHTML = '<div class="mhead">Modulos auxiliares &middot; proposta</div>' +
+          mods.map((m) => '<div class="m" style="--accent:' + m.accent + '"><b>' + m.name + '</b>' +
+            '<span>' + m.bonus_short + '</span><i>' + m.attach + ' &middot; ' + m.size + ' &middot; ' + m.status + '</i></div>').join('');
+        document.body.appendChild(host);
+      }
+      const foot = document.createElement('div');
+      foot.className = 'shot-foot';
+      foot.innerHTML = 'GregTech Nexus Addon &middot; pre-visualizacao do pattern real &middot; modulos = proposta de design';
+      document.body.appendChild(foot);
+    }
+
+    function shotBoardCircuits() {
+      document.body.className = 'board';
+      const rows = DATA.circuits.map((c) => '<tr>' +
+        '<td class="num"><span>' + c.n + '</span></td>' +
+        '<td><div class="chain2">' + c.chain.map((s, i) => (i ? '<span class="a">&rarr;</span>' : '') + '<span class="s">' + s + '</span>').join('') + '</div></td>' +
+        '<td style="color:' + (c.fluid === 'none' ? '#93a1bd' : '#54d0ff') + ';white-space:nowrap">' + (c.fluid === 'none' ? 'sem fluido' : c.fluid) + '</td>' +
+        '<td style="color:#93a1bd;white-space:nowrap">' + c.needs + '</td></tr>').join('');
+      document.body.innerHTML = '<div class="board-wrap">' +
+        '<div class="board-head"><img src="' + DATA.logo + '"><h1>' +
+        (params.get('title') || 'Integrated Ore Processing &mdash; 7 circuitos') + '</h1></div>' +
+        '<div class="board-sub">' + (params.get('subtitle') || 'Um recipe por circuito para raw ore e stone ore, com byproducts reais por estagio e o fluido de lavagem do material') + '</div>' +
+        '<div class="grid1">' +
+        '<div class="box"><h3>gtna:ore_processing</h3>' +
+        '<table class="circ">' + rows + '</table></div>' +
+        '<div><div class="box" style="margin-bottom:14px"><h3>O recipe type</h3>' +
+        '<table class="kv">' +
+        '<tr><td>Input</td><td>2 item (raw ore + circuito) &middot; 1 fluido</td></tr>' +
+        '<tr><td>Output</td><td>9 item (produto + byproducts por estagio)</td></tr>' +
+        '<tr><td>EU/t</td><td>30 (paridade GTLCore)</td></tr>' +
+        '<tr><td>Crushed</td><td><span class="mono">integratedOreMultiplier</span> = 4</td></tr>' +
+        '<tr><td>Variantes</td><td>raw ore e stone ore (818 recipes no total)</td></tr>' +
+        '</table></div>' +
+        '<div class="box"><h3>Modulos que mexem na cadeia</h3>' +
+        '<div style="color:#c9d3e6;font-size:13px">' +
+        '<div style="margin-bottom:6px"><b style="color:#5ce1a6">Wash Recovery Tank</b> &middot; -25% fluido de lavagem e buffer de 32 B</div>' +
+        '<div style="margin-bottom:6px"><b style="color:#ffb347">Grinding Head Array</b> &middot; -20% duracao em todos os circuitos</div>' +
+        '<div><b style="color:#c792ea">Byproduct Sorting Rack</b> &middot; +10% nos byproducts chanced (1/3 e 1/9)</div>' +
+        '</div></div></div></div>' +
+        '<div class="circ-note">GregTech Nexus Addon &middot; dados gerados do codigo do mod (IntegratedOreRecipes / IntegratedOreMath) &middot; modulos = proposta de design</div>' +
+        '</div>';
+    }
+
+    function shotBoardModules() {
+      document.body.className = 'board';
+      const card = (m) => '<div class="box" style="border-left:4px solid ' + m.accent + ';padding:13px 16px">' +
+        '<div class="mcard"><div class="accent" style="background:' + m.accent + '"></div><div style="flex:1;min-width:0">' +
+        '<h3>' + m.name + ' <span class="pill">' + m.status + '</span></h3>' +
+        '<div class="mm">' + (m.machine === 'integrated' ? 'Integrated (EV)' : 'Advanced (endgame)') + ' &middot; ' + m.attach + ' &middot; ' + m.size + '</div>' +
+        '<div class="mb">' + m.bonus_short + '</div>' +
+        '<div class="md">' + m.bonus[0] + '</div>' +
+        '<div class="mi">' + m.impl + '</div>' +
+        '</div></div></div>';
+      const cards = DATA.modules.map(card).join('');
+      document.body.innerHTML = '<div class="board-wrap">' +
+        '<div class="board-head"><img src="' + DATA.logo + '"><h1>' +
+        (params.get('title') || 'Modulos auxiliares &mdash; proposta') + '</h1></div>' +
+        '<div class="board-sub">' + (params.get('subtitle') || '8 sub-patterns presos ao controller, no mesmo sistema do GTNASubPatterns (G-0063/G-0066)') + '</div>' +
+        '<div class="grid2">' + cards + '</div>' +
+        '<div class="circ-note">Bonus com status "Estrutura apenas" funcionam so com o sub-pattern; os outros pedem um hook pequeno (modifier de duracao/fluido/yield) ou um pouco de codigo (GUI, wireless). Nada disso esta registrado no mod ainda.</div>' +
+        '</div>';
+    }
+
+    /* ==================================================================================
+       Boot
+       ================================================================================== */
+    Promise.all(tileReady).then(() => {
+      $('logo').src = DATA.logo;
+      if (shotMode === 'circuits') return shotBoardCircuits();
+      if (shotMode === 'modules') return shotBoardModules();
+      if (isShot) {
+        if (params.get('modules') === '0') modulesFor(state.machine).forEach((m) => state.hidden.add(m.id));
+        const cards = modulesFor(state.machine).some((m) => !state.hidden.has(m.id));
+        window.modCardsShown = cards;
+        state.shot = true;
+        state.origin = [0.443, params.has('oy') ? Number(params.get('oy')) : 0.523];
+        state.fitScale = params.has('fit') ? Number(params.get('fit')) : (cards ? 0.78 : 0.94);
+        state.shadow = true;
+        const s = scene(state.machine);
+        state.layer = params.has('layer') ? Number(params.get('layer')) : s.size[1];
+        state.showParts = params.get('parts') !== '0';
+        shotHero();
+        fitView();
+        render();
+        drawLabels();
+        return;
+      }
+      state.origin = [0.60, 0.59];
+      state.fitScale = 0.86;
+      state.shadow = true;
+      const wanted = params.get('tab');
+      if (wanted) {
+        document.querySelectorAll('#tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === wanted));
+      }
+      buildMachineButtons();
+      buildModuleButtons();
+      renderPanel();
+      fitView();
+      render();
+    });
+  </script>
+</body>
+
+</html>

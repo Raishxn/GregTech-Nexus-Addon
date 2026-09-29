@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "gtna:block/casings/machine_casing_circuit_assembly_line"
+  }
+}

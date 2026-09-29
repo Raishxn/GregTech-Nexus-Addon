@@ -1,0 +1,20 @@
+{
+  "lossApplication": "MATRIX_INPUT_ONCE",
+  "lossPercentByTier": {
+    "LV": 5.0,
+    "MV": 4.0,
+    "HV": 3.0,
+    "EV": 2.0,
+    "IV": 1.0,
+    "LuV": 0.0,
+    "ZPM": 0.0,
+    "UV": 0.0,
+    "UHV": 0.0,
+    "UEV": 0.0,
+    "UIV": 0.0,
+    "UXV": 0.0,
+    "OpV": 0.0,
+    "MAX": 0.0
+  },
+  "generatorArrayAppliesSeparateLoss": false
+}

@@ -28,6 +28,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
 import com.raishxn.gtna.client.renderer.machine.AnnihilateGeneratorRenderer;
+import com.raishxn.gtna.client.renderer.machine.BallHatchRenderer;
 import com.raishxn.gtna.client.renderer.machine.EyeOfHarmonyRenderer;
 import com.raishxn.gtna.client.renderer.machine.EyeOfWoodRenderer;
 import com.raishxn.gtna.common.data.*;
@@ -120,6 +121,7 @@ public class CommonProxy {
         var ignoredAnnihilate = AnnihilateGeneratorRenderer.TYPE;
         var ignoredEyeOfHarmony = EyeOfHarmonyRenderer.TYPE;
         var ignoredEyeOfWood = EyeOfWoodRenderer.TYPE;
+        var ignoredBallHatch = BallHatchRenderer.TYPE;
     }
 
     // You MUST have this for custom materials.

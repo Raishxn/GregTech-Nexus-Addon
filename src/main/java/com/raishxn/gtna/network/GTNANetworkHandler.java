@@ -11,6 +11,7 @@ import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.network.packet.CLocateConnectionPacket;
 import com.raishxn.gtna.network.packet.CStructureRefreshPacket;
 import com.raishxn.gtna.network.packet.SKubeModuleDescriptions;
+import com.raishxn.gtna.network.packet.SModuleCountPacket;
 import com.raishxn.gtna.network.packet.SRegionHighlightPacket;
 import com.raishxn.gtna.network.packet.SStructureDetectHighlight;
 import com.raishxn.gtna.network.packet.SStructureGhostPreviewPacket;
@@ -50,6 +51,13 @@ public class GTNANetworkHandler {
                 .encoder(SRegionHighlightPacket::encode)
                 .decoder(SRegionHighlightPacket::decode)
                 .consumerMainThread(SRegionHighlightPacket::handle)
+                .add();
+
+        // S2C – formed auxiliary-module count for the machine-mode switcher
+        CHANNEL.messageBuilder(SModuleCountPacket.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SModuleCountPacket::encode)
+                .decoder(SModuleCountPacket::decode)
+                .consumerMainThread(SModuleCountPacket::handle)
                 .add();
 
         CHANNEL.messageBuilder(SStructureGhostPreviewPacket.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)

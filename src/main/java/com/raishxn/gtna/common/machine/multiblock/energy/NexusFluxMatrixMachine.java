@@ -68,6 +68,7 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
             NexusEnergyNetwork network = NexusEnergyNetwork.get(serverLevel);
             network.setMaxCapacity(getOwnerUUID(), maxCapacity);
             network.setMatrixStats(getOwnerUUID(), totalCapacitors, averageTier, efficiency, transferLimit, true);
+            network.setMatrixDimension(getOwnerUUID(), serverLevel.dimension());
         }
     }
 
@@ -77,6 +78,7 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
             NexusEnergyNetwork network = NexusEnergyNetwork.get(serverLevel);
             network.setMaxCapacity(getOwnerUUID(), Int128.ZERO());
             network.setMatrixStats(getOwnerUUID(), 0, 0, 0.0, Int128.ZERO(), false);
+            network.setMatrixDimension(getOwnerUUID(), null);
         }
         super.onStructureInvalid();
         totalCapacitors = 0;
@@ -138,6 +140,11 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         efficiency = 1.0 - (lossPercent / 100.0);
         efficiency = Math.max(balanceCfg.efficiency.minimumEfficiency,
                 Math.min(balanceCfg.efficiency.maximumEfficiency, efficiency));
+        if ("MATRIX_INPUT_ONCE".equals(GTNABalance.getNexusLossApplication())) {
+            efficiency = 1.0 - GTNABalance.getNexusLossBasisPoints(averageTier) / 10_000.0;
+        } else if ("NO_LOSS".equals(GTNABalance.getNexusLossApplication())) {
+            efficiency = 1.0;
+        }
 
         long fallbackTransfer = 2000L * (long) Math.pow(4, Math.max(0, averageTier - 1));
         transferLimit = Int128.fromString(
@@ -214,7 +221,7 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
 
         boolean crossDim = GTNABalance.isNexusCrossDimensionEnabled(averageTier);
         textList.add(Component.literal("\u00a77Cross-Dim: " +
-                (crossDim ? "\u00a7aEnabled" : "\u00a7cRequires EV+")));
+                (crossDim ? "\u00a7aEnabled" : "\u00a7cDisabled")));
 
         if (getOwnerUUID() == null || !(getLevel() instanceof ServerLevel serverLevel)) return;
 
@@ -224,6 +231,8 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         Int128 energy = network.getEnergy(getOwnerUUID());
         Int128 maxCap = maxCapacity;
         Int128 inPerTick = network.getLastInputPerTick(getOwnerUUID());
+        Int128 rawInPerTick = network.getLastRawInputPerTick(getOwnerUUID());
+        Int128 lossPerTick = network.getLastLossPerTick(getOwnerUUID());
         Int128 outPerTick = network.getLastOutputPerTick(getOwnerUUID());
 
         textList.add(Component.literal("\u00a77Status: \u00a7aONLINE"));
@@ -248,7 +257,10 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         textList.add(Component.literal(bar + " \u00a7f" + String.format(Locale.US, "%.1f%%", fill * 100.0)));
         textList.add(Component.literal("\u00a77Energy: \u00a7f" + energy.toHumanReadableString() + " / " +
                 maxCap.toHumanReadableString() + " EU"));
-        textList.add(Component.literal("\u00a7aInput: +" + inPerTick.toHumanReadableString() + " EU/t"));
+        textList.add(Component.literal("\u00a77Gross Input: \u00a7f+" +
+                rawInPerTick.toHumanReadableString() + " EU/t"));
+        textList.add(Component.literal("\u00a7aCredited Input: +" + inPerTick.toHumanReadableString() + " EU/t"));
+        textList.add(Component.literal("\u00a7cEffective Loss: -" + lossPerTick.toHumanReadableString() + " EU/t"));
         textList.add(Component.literal("\u00a7cOutput: -" + outPerTick.toHumanReadableString() + " EU/t"));
 
         Map<GlobalPos, NexusEnergyNetwork.ConnectionInfo> connections = network.getConnections(getOwnerUUID());

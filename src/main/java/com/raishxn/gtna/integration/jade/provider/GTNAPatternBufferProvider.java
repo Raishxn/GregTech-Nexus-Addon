@@ -40,6 +40,9 @@ public class GTNAPatternBufferProvider implements IBlockComponentProvider, IServ
     @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
         CompoundTag data = accessor.getServerData();
+        if (data.contains("slots", Tag.TAG_INT)) {
+            tooltip.add(Component.translatable("gtna.machine.pattern_buffer.slots", data.getInt("slots")));
+        }
         if (!data.getBoolean("formed")) {
             return;
         }
@@ -51,6 +54,7 @@ public class GTNAPatternBufferProvider implements IBlockComponentProvider, IServ
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
         if (accessor.getBlockEntity() instanceof MetaMachineBlockEntity machineBlock &&
                 machineBlock.getMetaMachine() instanceof GTNAMEPatternBufferPartMachine buffer) {
+            data.putInt("slots", buffer.getMaxPatternCount());
             data.putBoolean("formed", buffer.isFormed());
             if (!buffer.isFormed()) {
                 return;

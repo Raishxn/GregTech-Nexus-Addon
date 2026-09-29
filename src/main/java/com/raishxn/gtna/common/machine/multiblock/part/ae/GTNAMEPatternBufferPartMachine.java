@@ -101,6 +101,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
             GTNAMEPatternBufferPartMachine.class, MEBusPartMachine.MANAGED_FIELD_HOLDER);
     private static final String SLOT_CONFIGS_TAG = "gtnaPatternConfigs";
     private static final String INTERNAL_SLOTS_TAG = "gtnaPatternInternalSlots";
+    private static final String SAVED_CAPACITY_TAG = "gtnaPatternCapacity";
     private static final String PENDING_OUTPUT_TAG = "gtnaPendingNetworkOutput";
 
     /**
@@ -692,6 +693,7 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         }
         tag.put(SLOT_CONFIGS_TAG, slotConfigTag);
         tag.put(INTERNAL_SLOTS_TAG, internalSlotTag);
+        tag.putInt(SAVED_CAPACITY_TAG, maxPatternCount);
         if (!pendingNetworkOutput.isEmpty()) {
             ListTag pendingTag = new ListTag();
             for (var entry : pendingNetworkOutput.object2LongEntrySet()) {
@@ -710,7 +712,25 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
 
     @Override
     public void loadCustomPersistedData(@NotNull CompoundTag tag) {
+        int savedCapacity = Math.max(tag.getInt(SAVED_CAPACITY_TAG), patternInventory.getSlots());
+        for (String listName : new String[] { SLOT_CONFIGS_TAG, INTERNAL_SLOTS_TAG }) {
+            for (Tag entry : tag.getList(listName, Tag.TAG_COMPOUND)) {
+                if (entry instanceof CompoundTag slotTag) {
+                    savedCapacity = Math.max(savedCapacity, slotTag.getInt("slot") + 1);
+                }
+            }
+        }
+        if (savedCapacity > maxPatternCount) {
+            throw new IllegalStateException("GTNA Pattern Buffer at " + getPos() + " saved with " + savedCapacity +
+                    " slots, but the current configuration provides " + maxPatternCount +
+                    ". Restore the previous value in config/gtna/balance/pattern_buffers.json before opening this world.");
+        }
         super.loadCustomPersistedData(tag);
+        if (patternInventory.getSlots() < maxPatternCount) {
+            CompoundTag expandedInventory = patternInventory.serializeNBT();
+            expandedInventory.putInt("Size", maxPatternCount);
+            patternInventory.deserializeNBT(expandedInventory);
+        }
         for (GTNAPatternBufferSlotConfig slotConfig : slotConfigs) {
             slotConfig.deserializeNBT(new CompoundTag());
         }
@@ -1202,8 +1222,28 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
                 Collections.emptyList());
     }
 
+    /**
+     * The upgrader replaces the placed block with the larger variant and reloads the NBT saved
+     * before the swap into the new machine. {@link #onMachineRemoved()} would spill both
+     * inventories on the ground during that block change and the reload would duplicate every
+     * stack, so an upgrade marks the removal as a move instead of a drop.
+     */
+    private boolean preserveInventoryOnRemoval;
+
+    public void gtna$preserveInventoryOnUpgrade() {
+        preserveInventoryOnRemoval = true;
+    }
+
+    public void gtna$cancelUpgradeSwap() {
+        preserveInventoryOnRemoval = false;
+    }
+
     @Override
     public void onMachineRemoved() {
+        if (preserveInventoryOnRemoval) {
+            preserveInventoryOnRemoval = false;
+            return;
+        }
         clearInventory(patternInventory);
         clearInventory(shareInventory);
     }
@@ -1285,10 +1325,9 @@ public class GTNAMEPatternBufferPartMachine extends MEBusPartMachine
         for (Tag tag : patterns) {
             if (!(tag instanceof CompoundTag entry)) continue;
             int slot = entry.getInt("slot");
-            if (slot < 0 || slot >= maxPatternCount) continue;
-            if (!patternInventory.getStackInSlot(slot).isEmpty()) continue;
+            if (slot < 0) continue;
             int target = slot;
-            if (!internalPatternInventory.getStackInSlot(target).isEmpty()) {
+            if (target >= maxPatternCount || !internalPatternInventory.getStackInSlot(target).isEmpty()) {
                 target = -1;
                 for (int i = 0; i < maxPatternCount; i++) {
                     if (patternInventory.getStackInSlot(i).isEmpty()) {

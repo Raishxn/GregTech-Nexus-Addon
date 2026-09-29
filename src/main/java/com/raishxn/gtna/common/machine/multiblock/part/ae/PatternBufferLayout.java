@@ -43,8 +43,12 @@ final class PatternBufferLayout {
     static final int PATTERN_GRID_X = 8;
     static final int PATTERN_GRID_Y = 22;
     static final int PATTERN_COLUMNS = 9;
-    /** Rows a full page shows; a partially filled page only draws what it has. */
-    static final int PATTERN_ROWS = 6;
+    /**
+     * Rows a full page shows: the tallest grid that still clears the footer, so the common
+     * 72-slot buffer no longer pays a second page for unused vertical space. A partially filled
+     * page only draws what it has.
+     */
+    static final int PATTERN_ROWS = 10;
     static final int PATTERN_CELL = 18;
     static final int PATTERNS_PER_PAGE = PATTERN_COLUMNS * PATTERN_ROWS;
     /** Bottom edge of a page that is completely full of patterns. */

@@ -18,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 
 import com.raishxn.gtna.client.renderer.BlockHighlightHandler;
 import com.raishxn.gtna.common.data.NexusEnergyNetwork;
+import com.raishxn.gtna.config.GTNABalance;
 import com.raishxn.gtna.utils.datastructure.Int128;
 
 import java.util.ArrayList;
@@ -88,6 +89,8 @@ public class QuantumTerminalUI {
         Int128 energy = network.getEnergy(networkOwner);
         Int128 maxCapacity = network.getMaxCapacity(networkOwner);
         Int128 inPerTick = network.getLastInputPerTick(networkOwner);
+        Int128 rawInPerTick = network.getLastRawInputPerTick(networkOwner);
+        Int128 lossPerTick = network.getLastLossPerTick(networkOwner);
         Int128 outPerTick = network.getLastOutputPerTick(networkOwner);
 
         // Matrix structural stats (from controller)
@@ -150,8 +153,8 @@ public class QuantumTerminalUI {
                 .literal("§7Efficiency: §d" + String.format(java.util.Locale.US, "%.1f", efficiency * 100) + "%"));
         textList.add(Component.literal("§7Transfer Limit: §6" + transferLimit.toHumanReadableString() + " EU/t"));
 
-        boolean crossDim = averageTier >= 7;
-        textList.add(Component.literal("§7Cross-Dim: " + (crossDim ? "§a✅ Enabled (ZPM+)" : "§c✖ Requires ZPM+")));
+        boolean crossDim = GTNABalance.isNexusCrossDimensionEnabled(averageTier);
+        textList.add(Component.literal("§7Cross-Dim: " + (crossDim ? "§a✅ Enabled" : "§c✖ Disabled")));
 
         textList.add(Component.literal("§8───────────────────────────────"));
 
@@ -165,7 +168,9 @@ public class QuantumTerminalUI {
         textList.add(Component.literal(""));
 
         // --- IO Stats ---
-        textList.add(Component.literal("§a⬆ Avg Input:  +" + inPerTick.toHumanReadableString() + " EU/t"));
+        textList.add(Component.literal("§7⬆ Gross Input: +" + rawInPerTick.toHumanReadableString() + " EU/t"));
+        textList.add(Component.literal("§a⬆ Credited Input: +" + inPerTick.toHumanReadableString() + " EU/t"));
+        textList.add(Component.literal("§c⬇ Effective Loss: -" + lossPerTick.toHumanReadableString() + " EU/t"));
         textList.add(Component.literal("§c⬇ Avg Output: -" + outPerTick.toHumanReadableString() + " EU/t"));
 
         // --- Time to Empty ---

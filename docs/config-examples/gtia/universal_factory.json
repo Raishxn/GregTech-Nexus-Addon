@@ -1,0 +1,19 @@
+{
+  "scalingMode": "SHARED_BUDGET",
+  "capacityByTier": {
+    "LV": 1,
+    "MV": 2,
+    "HV": 4,
+    "EV": 8,
+    "IV": 16,
+    "LuV": 32,
+    "ZPM": 64,
+    "UV": 128
+  },
+  "allowUnlimited": false,
+  "technicalOperationCap": 1048576,
+  "warmupEnabled": false,
+  "batchEnabled": false,
+  "allowedRecipeTypes": [],
+  "specialHatchesEnabled": false
+}

@@ -41,6 +41,8 @@ public class UniversalFactoryMachine extends WorkableElectricMultipleRecipesMach
     @Persisted
     private int batchMultiplier = 1;
     @Persisted
+    private int selectedThreads = 1;
+    @Persisted
     @DescSynced
     private long runningSecs;
     @Persisted
@@ -78,11 +80,11 @@ public class UniversalFactoryMachine extends WorkableElectricMultipleRecipesMach
     // ------------------------------------------------------------------
 
     public int getBatchMultiplier() {
-        return batchMultiplier;
+        return GTNABalance.getUniversalFactory().batchEnabled ? batchMultiplier : 1;
     }
 
     public boolean getAutoBatch() {
-        return autoBatch;
+        return GTNABalance.getUniversalFactory().batchEnabled && autoBatch;
     }
 
     public long getRunningSecs() {
@@ -90,12 +92,13 @@ public class UniversalFactoryMachine extends WorkableElectricMultipleRecipesMach
     }
 
     public boolean getOverloadUnlocked() {
-        return runningSecs >= GTNABalance.getUniversalFactoryOverloadTime();
+        return GTNABalance.getUniversalFactory().warmupEnabled &&
+                runningSecs >= GTNABalance.getUniversalFactoryOverloadTime();
     }
 
     /** Exponential warmup: 1x when cold, up to the configured max while running. */
     public double getWarmupMultiplier() {
-        if (runningSecs <= 0) {
+        if (!GTNABalance.getUniversalFactory().warmupEnabled || runningSecs <= 0) {
             return 1.0;
         }
         double max = GTNABalance.getUniversalFactoryMaxWarmup();
@@ -115,21 +118,40 @@ public class UniversalFactoryMachine extends WorkableElectricMultipleRecipesMach
 
     /** Threads scale with the operating voltage tier (GTLsupb: baseThreads * 2^tier). */
     public int getDynamicThreads() {
-        return Math.max(1, GTNABalance.getUniversalFactoryBaseThreads() * (1 << computeVoltageTier()));
+        if (!"LEGACY".equals(GTNABalance.getUniversalFactory().scalingMode)) {
+            return getSelectedThreads();
+        }
+        long threads = (long) GTNABalance.getUniversalFactoryBaseThreads() << computeVoltageTier();
+        return (int) Math.min(Integer.MAX_VALUE, Math.max(1, threads));
+    }
+
+    public int getSelectedThreads() {
+        return Math.max(1, Math.min(selectedThreads, Math.min(256, getOperationCapacity())));
+    }
+
+    public int getOperationCapacity() {
+        var balance = GTNABalance.getUniversalFactory();
+        return balance.sharedBudget() ? balance.capacityForTier(computeVoltageTier()) :
+                balance.technicalOperationCap;
     }
 
     @Override
     public int getMaxParallel() {
+        if (!"LEGACY".equals(GTNABalance.getUniversalFactory().scalingMode)) {
+            return UniversalFactoryBudget.parallelPerThread(getOperationCapacity(), getSelectedThreads());
+        }
         int tier = computeVoltageTier();
         double warmup = getOverloadUnlocked() ? GTNABalance.getUniversalFactoryMaxWarmup() : getWarmupMultiplier();
-        long parallel = (long) GTNABalance.getUniversalFactoryBaseParallel() * (1L << tier) * batchMultiplier;
+        long parallel = (long) GTNABalance.getUniversalFactoryBaseParallel() * (1L << tier) *
+                getBatchMultiplier();
         long result = (long) (parallel * warmup);
         return (int) Math.max(1, Math.min(result, Integer.MAX_VALUE));
     }
 
     @Override
     public int getAdditionalThread() {
-        return Math.max(super.getAdditionalThread(), getDynamicThreads() - 1);
+        return "LEGACY".equals(GTNABalance.getUniversalFactory().scalingMode) ?
+                Math.max(super.getAdditionalThread(), getDynamicThreads() - 1) : getSelectedThreads() - 1;
     }
 
     // ------------------------------------------------------------------
@@ -173,10 +195,12 @@ public class UniversalFactoryMachine extends WorkableElectricMultipleRecipesMach
     }
 
     private void incBatchMultiplier(int increment) {
+        if (!GTNABalance.getUniversalFactory().batchEnabled) return;
         batchMultiplier = Math.min(batchMultiplier + increment, GTNABalance.getUniversalFactoryMaxBatchMultiplier());
     }
 
     private void decBatchMultiplier(int decrement) {
+        if (!GTNABalance.getUniversalFactory().batchEnabled) return;
         batchMultiplier = Math.max(batchMultiplier - decrement, 1);
     }
 
@@ -188,6 +212,17 @@ public class UniversalFactoryMachine extends WorkableElectricMultipleRecipesMach
     public void addDisplayText(List<Component> textList) {
         super.addDisplayText(textList);
         if (!isFormed()) {
+            return;
+        }
+
+        if (!"LEGACY".equals(GTNABalance.getUniversalFactory().scalingMode)) {
+            textList.add(Component.translatable("gtna.machine.universal_factory.budget",
+                    getOperationCapacity(), getSelectedThreads(), getMaxParallel(),
+                    getSelectedThreads() * getMaxParallel()).withStyle(ChatFormatting.AQUA));
+            textList.add(Component.empty()
+                    .append(ComponentPanelWidget.withButton(Component.literal("§c[-]"), "threads_sub"))
+                    .append(Component.literal("  "))
+                    .append(ComponentPanelWidget.withButton(Component.literal("§a[+]"), "threads_add")));
             return;
         }
 
@@ -210,16 +245,18 @@ public class UniversalFactoryMachine extends WorkableElectricMultipleRecipesMach
                 .withStyle(ChatFormatting.GRAY));
 
         textList.add(Component.translatable("gtna.machine.batch_multiplier",
-                Component.literal(String.valueOf(batchMultiplier)).withStyle(ChatFormatting.AQUA))
+                Component.literal(String.valueOf(getBatchMultiplier())).withStyle(ChatFormatting.AQUA))
                 .withStyle(ChatFormatting.GRAY));
 
-        textList.add(Component.empty()
-                .append(ComponentPanelWidget.withButton(Component.literal("§c[-]"), "batch_sub"))
-                .append(Component.literal(" ").withStyle(ChatFormatting.RESET))
-                .append(ComponentPanelWidget.withButton(Component.literal("§a[+]"), "batch_add"))
-                .append(Component.literal("  ").withStyle(ChatFormatting.RESET))
-                .append(ComponentPanelWidget.withButton(
-                        Component.literal(autoBatch ? "§d[AUTO]" : "§7[AUTO]"), "batch_auto")));
+        if (GTNABalance.getUniversalFactory().batchEnabled) {
+            textList.add(Component.empty()
+                    .append(ComponentPanelWidget.withButton(Component.literal("§c[-]"), "batch_sub"))
+                    .append(Component.literal(" ").withStyle(ChatFormatting.RESET))
+                    .append(ComponentPanelWidget.withButton(Component.literal("§a[+]"), "batch_add"))
+                    .append(Component.literal("  ").withStyle(ChatFormatting.RESET))
+                    .append(ComponentPanelWidget.withButton(
+                            Component.literal(autoBatch ? "§d[AUTO]" : "§7[AUTO]"), "batch_auto")));
+        }
     }
 
     @Override
@@ -231,7 +268,12 @@ public class UniversalFactoryMachine extends WorkableElectricMultipleRecipesMach
         switch (componentData) {
             case "batch_sub" -> decBatchMultiplier(multiplier);
             case "batch_add" -> incBatchMultiplier(multiplier);
-            case "batch_auto" -> autoBatch = !autoBatch;
+            case "batch_auto" -> {
+                if (GTNABalance.getUniversalFactory().batchEnabled) autoBatch = !autoBatch;
+            }
+            case "threads_sub" -> selectedThreads = Math.max(1, getSelectedThreads() - multiplier);
+            case "threads_add" -> selectedThreads = Math.min(Math.min(256, getOperationCapacity()),
+                    getSelectedThreads() + multiplier);
             default -> {}
         }
     }

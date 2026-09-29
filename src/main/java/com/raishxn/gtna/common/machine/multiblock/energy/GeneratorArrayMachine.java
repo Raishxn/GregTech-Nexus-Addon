@@ -40,8 +40,10 @@ import net.minecraftforge.items.IItemHandler;
 
 import com.raishxn.gtna.api.capability.WirelessEnergyManager;
 import com.raishxn.gtna.common.data.NexusEnergyNetwork;
+import com.raishxn.gtna.config.GTNABalance;
 import com.raishxn.gtna.utils.datastructure.Int128;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,6 +65,12 @@ public class GeneratorArrayMachine extends WorkableElectricMultiblockMachine {
 
     @Persisted
     private boolean wirelessMode;
+
+    public void setWirelessMode(boolean wirelessMode) {
+        this.wirelessMode = wirelessMode;
+        markDirty();
+    }
+
     @Persisted
     private final NotifiableItemStackHandler generatorStorage;
 
@@ -230,7 +238,8 @@ public class GeneratorArrayMachine extends WorkableElectricMultiblockMachine {
         }
     }
 
-    private void transferWirelessEnergy() {
+    /** Moves one tick of generated energy through the selected wireless loss policy. */
+    public void transferWirelessEnergy() {
         if (!wirelessMode || !isFormed() || !(getLevel() instanceof ServerLevel level)) return;
         UUID owner = getOwnerUUID();
         if (owner == null) return;
@@ -249,22 +258,29 @@ public class GeneratorArrayMachine extends WorkableElectricMultiblockMachine {
         if (offered <= 0) return;
         long removed = -output.changeEnergy(-offered);
         if (removed <= 0) return;
-        long afterLoss = removed - removed * WIRELESS_LOSS_PERCENT / 100;
-        if (afterLoss <= 0) {
+        boolean separateLoss = GTNABalance.isGeneratorArraySeparateLossEnabled();
+        long offeredToNetwork = separateLoss ? removed - BigInteger.valueOf(removed)
+                .multiply(BigInteger.valueOf(WIRELESS_LOSS_PERCENT)).divide(BigInteger.valueOf(100)).longValue() :
+                removed;
+        if (offeredToNetwork <= 0) {
             output.changeEnergy(removed);
             return;
         }
-        Int128 accepted = WirelessEnergyManager.addEnergy(level, owner, new Int128(afterLoss));
+        Int128 accepted = WirelessEnergyManager.addEnergy(level, owner, new Int128(offeredToNetwork));
         if (accepted.isZero()) {
             output.changeEnergy(removed);
             return;
         }
-        long acceptedEU = accepted.toLong();
-        long charged = Math.min(removed, (acceptedEU * 100 + 99 - WIRELESS_LOSS_PERCENT) /
-                (100 - WIRELESS_LOSS_PERCENT));
+        long charged = separateLoss ? accepted.toBigInteger().multiply(BigInteger.valueOf(100))
+                .add(BigInteger.valueOf(99 - WIRELESS_LOSS_PERCENT))
+                .divide(BigInteger.valueOf(100 - WIRELESS_LOSS_PERCENT))
+                .min(BigInteger.valueOf(removed)).longValueExact() : accepted.toLong();
         output.changeEnergy(removed - charged);
+        if (separateLoss && charged > accepted.toLong()) {
+            network.recordLegacySourceLoss(owner, new Int128(charged - accepted.toLong()), level);
+        }
         WirelessEnergyManager.reportConnection(level, owner, GlobalPos.of(level.dimension(), getPos()), true,
-                getTier(), 1, "Generator Array", accepted);
+                getTier(), 1, "Generator Array", new Int128(charged));
     }
 
     @Override
@@ -282,7 +298,7 @@ public class GeneratorArrayMachine extends WorkableElectricMultiblockMachine {
     @Override
     public void handleDisplayClick(String componentData, ClickData clickData) {
         if (!clickData.isRemote && "wireless_switch".equals(componentData)) {
-            wirelessMode = !wirelessMode;
+            setWirelessMode(!wirelessMode);
             markDirty();
         }
     }

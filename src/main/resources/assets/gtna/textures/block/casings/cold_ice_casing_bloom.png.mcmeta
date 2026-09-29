@@ -1,0 +1,6 @@
+{
+  "ldlib": {
+    "connection": "gtna:block/casings/cold_ice_casing_ctm_bloom",
+    "emissive": true
+  }
+}

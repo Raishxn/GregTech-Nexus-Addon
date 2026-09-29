@@ -4,6 +4,7 @@ import com.gregtechceu.gtceu.api.blockentity.MetaMachineBlockEntity;
 import com.gregtechceu.gtceu.api.item.component.IInteractionItem;
 import com.gregtechceu.gtceu.common.item.TooltipBehavior;
 
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -74,9 +75,10 @@ public class PatternBufferCopyBehavior extends TooltipBehavior implements IInter
             return InteractionResult.PASS;
         }
         int pasted = buffer.pasteBufferFromTag(tag);
+        int stored = tag.getCompound("gtnaBufferCopy").getList("patterns", Tag.TAG_COMPOUND).size();
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.displayClientMessage(
-                    Component.translatable("gtna.machine.pattern_buffer.copy.pasted", pasted), true);
+                    Component.translatable("gtna.machine.pattern_buffer.copy.pasted", pasted, stored), true);
         }
         return InteractionResult.SUCCESS;
     }

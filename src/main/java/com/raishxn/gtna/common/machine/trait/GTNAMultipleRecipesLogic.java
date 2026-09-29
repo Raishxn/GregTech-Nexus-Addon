@@ -48,9 +48,12 @@ import com.raishxn.gtna.api.machine.feature.IPatternBufferModeHost;
 import com.raishxn.gtna.api.machine.feature.IPatternBufferModeProvider;
 import com.raishxn.gtna.api.machine.feature.PatternBufferModeSelection;
 import com.raishxn.gtna.api.machine.multiblock.ParallelMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.UniversalFactoryBudget;
+import com.raishxn.gtna.common.machine.multiblock.electric.UniversalFactoryMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.WorkableElectricMultipleRecipesMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.steam.AdjustableSteamParallelMachine;
+import com.raishxn.gtna.config.GTNABalance;
 import com.raishxn.gtna.utils.GTNARecipeUtils;
 import com.raishxn.gtna.utils.GTNAUtil;
 import com.raishxn.gtna.utils.ThreadMultiplierStrategy;
@@ -76,6 +79,10 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
     }
 
     public int getMaxThreads() {
+        if (machine instanceof UniversalFactoryMachine factory &&
+                !"LEGACY".equals(GTNABalance.getUniversalFactory().scalingMode)) {
+            return factory.getSelectedThreads();
+        }
         int threads = 1;
         if (machine instanceof IThreadModifierMachine modifierMachine) {
             threads += modifierMachine.getAdditionalThread();
@@ -226,6 +233,7 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
 
             for (var recipeType : recipeTypes) {
                 if (recipeType == null) continue;
+                if (!isConfiguredRecipeTypeAllowed(recipeType)) continue;
                 int found = 0;
                 var recipeIterator = recipeType.searchRecipe(
                         (IRecipeCapabilityHolder) machine, recipe -> true);
@@ -276,11 +284,19 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
         }
     }
 
-    private static boolean isAllowedRecipeType(GTRecipe recipe, GTRecipeType[] recipeTypes) {
+    private boolean isAllowedRecipeType(GTRecipe recipe, GTRecipeType[] recipeTypes) {
+        if (!isConfiguredRecipeTypeAllowed(recipe.getType())) return false;
         for (GTRecipeType recipeType : recipeTypes) {
             if (recipeType == recipe.getType()) return true;
         }
         return false;
+    }
+
+    private boolean isConfiguredRecipeTypeAllowed(GTRecipeType recipeType) {
+        if (recipeType == null) return false;
+        if (!(machine instanceof UniversalFactoryMachine)) return true;
+        var allowed = GTNABalance.getUniversalFactory().allowedRecipeTypes;
+        return allowed.isEmpty() || allowed.contains(recipeType.registryName.toString());
     }
 
     private static boolean containsRecipe(List<GTRecipe> possibleRecipes, GTRecipe candidate) {
@@ -296,6 +312,17 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
     }
 
     private boolean tryStartRecipe(GTRecipe recipe) {
+        if (!isConfiguredRecipeTypeAllowed(recipe.getType())) return false;
+        int remainingBudget = Integer.MAX_VALUE;
+        if (machine instanceof UniversalFactoryMachine factory &&
+                !"LEGACY".equals(GTNABalance.getUniversalFactory().scalingMode)) {
+            long occupied = 0;
+            for (GTNARecipeUtils.ActiveRecipe active : activeRecipes) {
+                occupied += Math.max(1, active.recipe.parallels);
+            }
+            remainingBudget = UniversalFactoryBudget.remaining(factory.getOperationCapacity(), occupied);
+            if (remainingBudget == 0) return false;
+        }
         // --- INICIO DA LÓGICA MANUAL ---
 
         GTRecipe recipeToRun;
@@ -340,7 +367,7 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
             recipeToRun = steamMachine.createThreadedRecipe(recipe);
             if (recipeToRun == null) return false;
         } else {
-            int hatchParallel = getMaxParallel();
+            int hatchParallel = Math.min(getMaxParallel(), remainingBudget);
             int feasibleParallel = 1;
 
             if (hatchParallel > 1) {

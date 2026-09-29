@@ -86,11 +86,12 @@ public class WirelessDynamoHatchPartMachine extends TieredIOPartMachine implemen
             if (this.networkOwner == null && getOwnerUUID() != null) {
                 setNetworkOwner(getOwnerUUID());
             }
-            this.subscribeServerTick(this::updateWireless);
+            this.subscribeServerTick(this::transferWirelessEnergy);
         }
     }
 
-    private void updateWireless() {
+    /** Moves one tick of energy; the accepted amount is always the gross amount drained. */
+    public void transferWirelessEnergy() {
         if (getLevel() instanceof ServerLevel serverLevel) {
             if (getNetworkOwner() == null) setNetworkOwner(getOwnerUUID());
             if (networkOwner == null) return;

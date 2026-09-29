@@ -49,7 +49,13 @@ ficam em `src/main/resources/pattern/gto/` e o leitor em
 
 ## Próxima ação
 
-`component_assembler` ainda não foi portado; é o próximo controlador MV mantido pelo autor.
+**Atualização G-0101:** Component Assembler base (LV–IV) e Large Greenhouse já estão implementados
+no worktree, com GameTests de formação e 62/62 GameTests aprovados. A extensão grande e receitas
+ULV/LuV do Component Assembler ainda faltam; a seleção HV–LuV segue aberta. O autor autorizou
+equivalentes locais para dependências externas e receitas alternativas com os mesmos insumos para
+controladores excluídos. Nenhum commit/publicação desta leva foi autorizado.
+
+**Nota histórica:** `component_assembler` ainda não foi portado; é o próximo controlador MV mantido pelo autor.
 No GTOCore, sua estrutura está em `common/data/machines/MultiBlockC.java:299`, a classe de
 comportamento em `common/machine/multiblock/electric/assembly/ComponentAssemblerMachine.java`
 e as receitas de componentes em `data/recipe/misc/ComponentRecipes.java`. Ele depende de casings
@@ -156,3 +162,74 @@ o autor testar e autorizar publicação.
 - GameTest novo confirma MAX Output em `X` e sua rejeição em `Y`. Gate completo passou com
   59/59 GameTests e `runData` sem mudanças (`written: 0`). O usuário precisa mover/colocar as
   peças no mundo e confirmar a formação; não houve mudança na regra de produção.
+
+## Rodada de 2026-09-25 (autor ausente) — Chemical Plant e Mega Alloy Blast Smelter
+
+Seguindo a decisão do autor de portar todas as cadeias viáveis até LuV, com gate após cada máquina,
+sem commit e com receitas de controlador omitidas quando a original depende de recursos exclusivos
+do GTO:
+
+- **`chemical_plant` (G-0102):** portada e verde no gate (65/65). Receita do controlador omitida e
+  anotada. Ver `CONTINUITY_LEDGER.md`.
+- **`mega_alloy_blast_smelter`:** portado do GTOCore (id exclusivo; o `alloy_blast_smelter` normal já
+  é do GTCEu). Estrutura 11×18×11 copiada, roda `GCYMRecipeTypes.ALLOY_BLAST_RECIPES` já existente,
+  com Parallel Hatch e bônus documentado de 0,8× EU / 0,6× duração. A célula de "integral framework"
+  do GTO virou moldura de Tungstênio-Aço e as habilidades GCYM viraram `autoAbilities`. Gate
+  verificado nesta rodada.
+- **`isa_mill` (G-0104):** portado do GTOCore com o padrão comprimido, prefixo `MILLED`, data key
+  `grindball`, Ball Hatch funcional (sem renderer animado) e as 48 receitas de moagem. O gate da
+  esfera fica no `getRealRecipe` e o dano é aplicado em `beforeWorking` (o `fullModifyRecipe` do
+  GTCEu roda por candidata). Receita do controlador presente: Assembly Line com Inconel-625/792 e
+  Tantalloy-61 portados 1:1 de `MaterialA`. Gate: 69/69 GameTests e `runData written: 0`. Ver
+  `CONTINUITY_LEDGER.md` (G-0104).
+
+### Bloqueios dos candidatos restantes (pesquisa concluída)
+
+O material dos subagentes confirma que cada máquina restante depende de uma camada grande de recursos
+exclusivos do GTO (carcaças, materiais/fluidos, recipe types) e/ou de classes base do gtolib
+(compiladas, sem fonte). Port fiel exige portar essa camada primeiro. Resumo:
+
+- **Extensão grande do Component Assembler** e **módulo de atomização do Cold Ice Freezer:** são
+  `addSubPattern` no mesmo controlador. Exigem carcaças GTO que faltam
+  (`THREE_PROOF_COMPUTER_CASING`, `MACHINING_CONTROL_CASING_MK2`, `ENERGY_CONTROL_CASING_MK2`,
+  `ELECTRIC_POWER_TRANSMISSION_CASING`) e o recipe type `ATOMIZATION_CONDENSATION_RECIPES`; o
+  `NAQUADAH_ALLOY_CASING` já existe no GTNA. Precisam também de `TierCasingMultiblockMachine`
+  (gtolib) e itens do Ad Astra no atomizador.
+- **Turbinas** (`steam_mega_turbine`, `rocket_large_turbine`, `supercritical_steam_turbine`,
+  `supercritical_mega_steam_turbine`): carcaças GTO (`SUPERCRITICAL_TURBINE_CASING`,
+  `CHEMICAL_CORROSION_RESISTANT_PIPE_CASING`, `HSSS_BOROSILICATE_GLASS`, `IRIDIUM_GEARBOX`), recipe
+  types GTO (`ROCKET_ENGINE_FUELS`, `SUPERCRITICAL_STEAM_TURBINE_FUELS`), material `SupercriticalSteam`
+  e a classe `TurbineMachine` do gtolib (modo alta velocidade, mega com 4 rotores). O GTCEu já tem
+  rotores e `RotorHolderPartMachine`, mas não mega/rocket/supercritical.
+  **Atualização G-0105:** a `rocket_large_turbine` foi concluída sem blocos GTO (o `registerLargeTurbine`
+  do GTO usa carcaças GTCEu) e sem gtolib: `WorkableElectricMultiblockMachine` + `TurbineMachine`
+  adaptada, recipe type novo `gtna:rocket_engine` e só a receita de `RocketFuel` do GTCEu. Falta a
+  `supercritical_steam_turbine` (ainda exige `SUPERCRITICAL_TURBINE_CASING` e o recipe type
+  `SUPERCRITICAL_STEAM_TURBINE_FUELS`).
+  **Atualização G-0106:** a `supercritical_steam_turbine` também foi concluída: a carcaça
+  `SUPERCRITICAL_TURBINE_CASING` foi portada como bloco GTNA (texturas GTO, CC BY-NC-SA), o recipe
+  type `gtna:supercritical_steam_turbine` foi criado e a receita de combustível reusa
+  `DenseSupercriticalSteam` no lugar do `SupercriticalSteam` do GTO. As duas turbinas não-mega
+  compartilham a base `GTNALargeTurbineMachine`; só as versões **mega** (4 rotores + glass tier)
+  continuam fora do escopo. Ver `CONTINUITY_LEDGER.md` (G-0106).
+- **Processamento:**
+  - `isa_mill`: carcaças Inconel-625 (casing/gearbox/pipe), `GRIND_BALL_HATCH` + `BallHatchPartMachine`
+    + dois itens de esfera + renderer, e `ISA_MILL_RECIPES`.
+  - `industrial_flotation_cell`: carcaças Hastelloy-N75 (casing/gearbox/pipe), `FLOTATION_CELL` e
+    `FLOTATING_BENEFICIATION_RECIPES`. **Concluído em G-0107** (12 receitas, controlador em Assembly
+    Line, overclock perfeito + Parallel Hatch).
+  - `vacuum_drying_furnace`: `RED_STEEL_CASING` (textura existe no GTOCore), `VACUUM_DRYING_RECIPES`
+    e `DEHYDRATOR_RECIPES`; **concluído em G-0108** com as 12 receitas de secagem 1:1 e a receita
+    `salt_dust` do Dehydrator (as demais receitas do Dehydrator continuam omitidas por dependerem de
+    fluidos exclusivos do GTO). A cadeia flotação → secagem → RedMud está fechada.
+  - `precision_assembler`: a carcaça principal já existe no GTNA; faltam
+    `PRECISION_ASSEMBLER_RECIPES`, os predicados de tier de vidro/carcaça e receitas (muito GTO).
+- **Cadeia de purificação de água:** 8 unidades + o controlador. Exige ~12 carcaças GTO, ~15
+  materiais/fluidos GTO, os recipe types GTO e as classes gtolib
+  `WaterPurificationUnitMachine`/`IIWirelessInteractor`/`NoEnergyCustomParallelMultiblockMachine`, além
+  da réplica do `.mbs` do GTOCore lida pelo `MultiBlockFileReader` (proprietário).
+- **Advanced Fusion Reactor MK1 e módulos:** endgame; mesma situação de recursos GTO.
+
+Recomendação para a próxima fase: portar primeiro a **camada compartilhada** (carcaças GTO reusáveis
+com texturas do GTOCore + recipe types GTO equivalentes + materiais/fluidos), porque isso destrava
+várias máquinas de uma vez; só então portar as máquinas. Manter tudo local até teste in-game.

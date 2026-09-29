@@ -25,6 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import appeng.crafting.pattern.EncodedPatternItem;
 import appeng.crafting.pattern.ProcessingPatternItem;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,6 +58,7 @@ final class PatternBufferUI {
     private WidgetGroup configContent;
     private LabelWidget configHint;
     private ButtonWidget modeSelectorButton;
+    private final List<WidgetGroup> patternPages = new ArrayList<>();
     private final ItemStackTransfer circuitPreviewInventory = new ItemStackTransfer(1);
 
     PatternBufferUI(GTNAMEPatternBufferPartMachine machine) {
@@ -84,7 +86,20 @@ final class PatternBufferUI {
 
     private void addPatternColumn(WidgetGroup group) {
         WidgetGroup patternColumn = new WidgetGroup(PatternBufferLayout.PATTERN_COLUMN_X, 0,
-                PatternBufferLayout.PATTERN_COLUMN_WIDTH, PatternBufferLayout.PAGE_HEIGHT);
+                PatternBufferLayout.PATTERN_COLUMN_WIDTH, PatternBufferLayout.PAGE_HEIGHT) {
+
+            @Override
+            public void detectAndSendChanges() {
+                refreshPageVisibility();
+                super.detectAndSendChanges();
+            }
+
+            @Override
+            public void updateScreen() {
+                refreshPageVisibility();
+                super.updateScreen();
+            }
+        };
         group.addWidget(patternColumn);
 
         patternColumn.addWidget(new LabelWidget(PatternBufferLayout.PATTERN_GRID_X,
@@ -99,7 +114,42 @@ final class PatternBufferUI {
 
         int pageCount = getPageCount();
         machine.setCurrentPage(Math.max(0, Math.min(machine.getCurrentPage(), pageCount - 1)));
-        int firstSlot = machine.getCurrentPage() * PatternBufferLayout.PATTERNS_PER_PAGE;
+        for (int page = 0; page < pageCount; page++) {
+            WidgetGroup pageGroup = new WidgetGroup(0, 0, PatternBufferLayout.PATTERN_COLUMN_WIDTH,
+                    PatternBufferLayout.PAGE_HEIGHT);
+            patternPages.add(pageGroup);
+            patternColumn.addWidget(pageGroup);
+            addPatternPage(pageGroup, page);
+        }
+        refreshPageVisibility();
+
+        // Footer: navigation stays anchored to the bottom so a partially filled buffer does not
+        // leave the controls floating in the middle of the page.
+        patternColumn.addWidget(new ButtonWidget(PatternBufferLayout.NAV_LEFT_X, PatternBufferLayout.NAV_ROW_Y,
+                PatternBufferLayout.NAV_BUTTON_WIDTH, PatternBufferLayout.NAV_BUTTON_HEIGHT,
+                new GuiTextureGroup(GuiTextures.BUTTON, new TextTexture("<<")), clickData -> {
+                    if (!clickData.isRemote && machine.getCurrentPage() > 0) {
+                        machine.setCurrentPage(machine.getCurrentPage() - 1);
+                        refreshPageVisibility();
+                    }
+                }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.previous_page")));
+        patternColumn.addWidget(new LabelWidget(67, PatternBufferLayout.NAV_ROW_Y + 2,
+                () -> (machine.getCurrentPage() + 1) + " / " + getPageCount()));
+        patternColumn.addWidget(new ButtonWidget(PatternBufferLayout.NAV_RIGHT_X, PatternBufferLayout.NAV_ROW_Y,
+                PatternBufferLayout.NAV_BUTTON_WIDTH, PatternBufferLayout.NAV_BUTTON_HEIGHT,
+                new GuiTextureGroup(GuiTextures.BUTTON, new TextTexture(">>")), clickData -> {
+                    if (!clickData.isRemote && machine.getCurrentPage() + 1 < getPageCount()) {
+                        machine.setCurrentPage(machine.getCurrentPage() + 1);
+                        refreshPageVisibility();
+                    }
+                }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.next_page")));
+        patternColumn.addWidget(new LabelWidget(PatternBufferLayout.PATTERN_GRID_X,
+                PatternBufferLayout.PAGE_HINT_Y,
+                () -> Component.translatable("gtna.machine.pattern_buffer.middle_click_hint").getString()));
+    }
+
+    private void addPatternPage(WidgetGroup pageGroup, int page) {
+        int firstSlot = page * PatternBufferLayout.PATTERNS_PER_PAGE;
         int maxPatternCount = machine.getMaxPatternCount();
         int rows = getVisibleRows(firstSlot, maxPatternCount);
         int index = firstSlot;
@@ -130,29 +180,17 @@ final class PatternBufferUI {
                         tooltips.add(Component.translatable("gtna.machine.pattern_buffer.recipe_cached"));
                     }
                 });
-                patternColumn.addWidget(slotWidget);
+                pageGroup.addWidget(slotWidget);
             }
         }
+    }
 
-        // Footer: navigation stays anchored to the bottom so a partially filled buffer does not
-        // leave the controls floating in the middle of the page.
-        patternColumn.addWidget(new ButtonWidget(PatternBufferLayout.NAV_LEFT_X, PatternBufferLayout.NAV_ROW_Y,
-                PatternBufferLayout.NAV_BUTTON_WIDTH, PatternBufferLayout.NAV_BUTTON_HEIGHT,
-                new GuiTextureGroup(GuiTextures.BUTTON, new TextTexture("<<")), clickData -> {
-                    if (!clickData.isRemote && machine.getCurrentPage() > 0) machine.setCurrentPage(
-                            machine.getCurrentPage() - 1);
-                }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.previous_page")));
-        patternColumn.addWidget(new LabelWidget(67, PatternBufferLayout.NAV_ROW_Y + 2,
-                () -> (machine.getCurrentPage() + 1) + " / " + getPageCount()));
-        patternColumn.addWidget(new ButtonWidget(PatternBufferLayout.NAV_RIGHT_X, PatternBufferLayout.NAV_ROW_Y,
-                PatternBufferLayout.NAV_BUTTON_WIDTH, PatternBufferLayout.NAV_BUTTON_HEIGHT,
-                new GuiTextureGroup(GuiTextures.BUTTON, new TextTexture(">>")), clickData -> {
-                    if (!clickData.isRemote && machine.getCurrentPage() + 1 < getPageCount()) machine.setCurrentPage(
-                            machine.getCurrentPage() + 1);
-                }).setHoverTooltips(Component.translatable("gtna.machine.pattern_buffer.next_page")));
-        patternColumn.addWidget(new LabelWidget(PatternBufferLayout.PATTERN_GRID_X,
-                PatternBufferLayout.PAGE_HINT_Y,
-                () -> Component.translatable("gtna.machine.pattern_buffer.middle_click_hint").getString()));
+    private void refreshPageVisibility() {
+        for (int page = 0; page < patternPages.size(); page++) {
+            boolean visible = page == machine.getCurrentPage();
+            patternPages.get(page).setVisible(visible);
+            patternPages.get(page).setActive(visible);
+        }
     }
 
     private int getPageCount() {

@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
+import com.raishxn.gtna.config.GTNABalance;
 import com.raishxn.gtna.utils.GTNATooltips;
 
 import java.util.List;
@@ -63,25 +64,37 @@ public class PatternBufferUpgraderBehavior extends TooltipBehavior implements II
             return InteractionResult.PASS;
         }
 
-        GTNAMEPatternBufferPartMachine probe = (GTNAMEPatternBufferPartMachine) targetDefinition
-                .createMetaMachine(machineBlockEntity);
-        if (probe.getMaxPatternCount() <= machine.getMaxPatternCount()) {
+        // Compare configured capacities without instantiating a probe machine on this holder:
+        // creating a machine attaches its managed storage to the block entity, and its default
+        // fields would overwrite the real machine's values in the saved tag.
+        int targetSlots = GTNABalance.getPatternBufferSlotsOrDefault(targetDefinition.getId().getPath(),
+                machine.getMaxPatternCount());
+        if (targetSlots <= machine.getMaxPatternCount()) {
             return InteractionResult.PASS;
         }
 
         CompoundTag machineData = new CompoundTag();
-        machine.saveToItem(machineData);
+        // Full persistent state: patterns, shared inventories, slot configs and internal slots.
+        // The drop-oriented saveToItem only carries @DropSaved fields and would lose patterns.
+        machineBlockEntity.saveManagedPersistentData(machineData, false);
 
+        // Level#setBlock removes the old block entity, whose onMachineRemoved would spill both
+        // inventories saved above and duplicate every stack once the data is reloaded below.
+        machine.gtna$preserveInventoryOnUpgrade();
         if (!level.setBlock(pos, newState, 3)) {
+            machine.gtna$cancelUpgradeSwap();
             return InteractionResult.PASS;
         }
 
         if (!(level.getBlockEntity(pos) instanceof MetaMachineBlockEntity upgradedBlockEntity) ||
-                !(upgradedBlockEntity.getMetaMachine() instanceof GTNAMEPatternBufferPartMachine upgradedMachine)) {
+                !(upgradedBlockEntity.getMetaMachine() instanceof GTNAMEPatternBufferPartMachine)) {
             return InteractionResult.PASS;
         }
 
-        upgradedMachine.loadFromItem(machineData);
+        upgradedBlockEntity.loadManagedPersistentData(machineData);
+        // The transferred NBT carries the old block's render state, owned by the smaller
+        // definition; the upgraded block must render with its own model.
+        upgradedBlockEntity.setRenderState(upgradedBlockEntity.getDefinition().defaultRenderState());
         upgradedBlockEntity.setChanged();
         level.sendBlockUpdated(pos, oldState, newState, 3);
 

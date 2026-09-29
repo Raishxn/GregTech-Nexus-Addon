@@ -1,0 +1,28 @@
+{
+  "parent": "minecraft:block/block",
+  "dynamic_renders": [
+    {
+      "type": "gtna:ball_hatch/ball"
+    }
+  ],
+  "loader": "gtceu:machine",
+  "machine": "gtna:grind_ball_hatch",
+  "replaceable_textures": [
+    "bottom",
+    "top",
+    "side"
+  ],
+  "variants": {
+    "": {
+      "model": {
+        "parent": "gtceu:block/machine/template/part/hatch_machine",
+        "textures": {
+          "bottom": "gtceu:block/casings/voltage/iv/bottom",
+          "overlay": "gtna:block/overlay/machine/ball_hatch",
+          "side": "gtceu:block/casings/voltage/iv/side",
+          "top": "gtceu:block/casings/voltage/iv/top"
+        }
+      }
+    }
+  }
+}

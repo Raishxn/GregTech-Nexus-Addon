@@ -3,11 +3,13 @@ package com.raishxn.gtna.client;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
 
 import com.raishxn.gtna.client.hud.HudEditorScreen;
 import com.raishxn.gtna.client.hud.WirelessSteamHudBridge;
 import com.raishxn.gtna.client.hud.WirelessSteamHudOverlay;
 import com.raishxn.gtna.client.renderer.machine.AnnihilateGeneratorRenderer;
+import com.raishxn.gtna.client.renderer.machine.BallHatchRenderer;
 import com.raishxn.gtna.client.renderer.machine.EyeOfHarmonyRenderer;
 import com.raishxn.gtna.client.renderer.machine.EyeOfWoodRenderer;
 import com.raishxn.gtna.common.CommonProxy;
@@ -34,6 +36,8 @@ public class ClientProxy extends CommonProxy {
         var ignoredAnnihilate = AnnihilateGeneratorRenderer.TYPE;
         var ignoredHarmony = EyeOfHarmonyRenderer.TYPE;
         var ignoredWood = EyeOfWoodRenderer.TYPE;
+        var ignoredBallHatch = BallHatchRenderer.TYPE;
+        MinecraftForge.EVENT_BUS.register(ModuleCountClientHandler.class);
         init();
     }
 }

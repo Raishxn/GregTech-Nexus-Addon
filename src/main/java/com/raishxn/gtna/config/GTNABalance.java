@@ -32,6 +32,7 @@ public final class GTNABalance {
     private static NexusFluxMatrixBalance nexusFluxMatrix = NexusFluxMatrixBalance.defaults();
     private static RestrictedItemsBalance restrictedItems = RestrictedItemsBalance.defaults();
     private static UniversalFactoryBalance universalFactory = UniversalFactoryBalance.defaults();
+    private static PatternBuffersBalance patternBuffers = PatternBuffersBalance.defaults();
 
     private GTNABalance() {}
 
@@ -46,10 +47,13 @@ public final class GTNABalance {
         machines = load("machines.json", MachinesBalance.class, MachinesBalance.defaults());
         nexusFluxMatrix = load("nexus_flux_matrix.json", NexusFluxMatrixBalance.class,
                 NexusFluxMatrixBalance.defaults());
+        GTNACORE.LOGGER.info("Nexus Flux Matrix wireless loss policy: {}", nexusFluxMatrix.lossApplication);
         restrictedItems = load("restricted_items.json", RestrictedItemsBalance.class,
                 RestrictedItemsBalance.defaults());
         universalFactory = load("universal_factory.json", UniversalFactoryBalance.class,
                 UniversalFactoryBalance.defaults());
+        patternBuffers = load("pattern_buffers.json", PatternBuffersBalance.class, PatternBuffersBalance.defaults());
+        patternBuffers.applyCapacityHistory(BASE_DIR.resolve("pattern_buffer_capacity_history.json"));
     }
 
     private static <T extends DefaultsApplier<T>> T load(String fileName, Class<T> clazz, T defaults) {
@@ -92,6 +96,21 @@ public final class GTNABalance {
 
     public static NexusFluxMatrixBalance getNexusFluxMatrix() {
         return nexusFluxMatrix;
+    }
+
+    public static String getNexusLossApplication() {
+        return nexusFluxMatrix.lossApplication;
+    }
+
+    public static int getNexusLossBasisPoints(int tier) {
+        Double percent = nexusFluxMatrix.lossPercentByTier.get(tierKey(tier));
+        if (percent == null) percent = 0.0;
+        return (int) Math.round(percent * 100.0);
+    }
+
+    public static boolean isGeneratorArraySeparateLossEnabled() {
+        return "LEGACY".equals(nexusFluxMatrix.lossApplication) &&
+                nexusFluxMatrix.generatorArrayAppliesSeparateLoss;
     }
 
     public static RestrictedItemsBalance getRestrictedItems() {
@@ -151,6 +170,77 @@ public final class GTNABalance {
 
     public static int getUniversalFactoryMaxBatchMultiplier() {
         return universalFactory.maxBatchMultiplier;
+    }
+
+    public static UniversalFactoryBalance getUniversalFactory() {
+        return universalFactory;
+    }
+
+    public static int getPatternBufferSlots(String id) {
+        return patternBuffers.slots.get(id);
+    }
+
+    /** Null-safe variant used where an unknown id must not throw, e.g. upgrade-item checks. */
+    public static int getPatternBufferSlotsOrDefault(String id, int fallback) {
+        Integer slots = patternBuffers.slots.get(id);
+        return slots == null ? fallback : slots;
+    }
+
+    public static final class PatternBuffersBalance implements DefaultsApplier<PatternBuffersBalance> {
+
+        public Map<String, Integer> slots = new LinkedHashMap<>(Map.of(
+                "me_mini_pattern_buffer", 9,
+                "me_pattern_buffer", 21,
+                "me_advanced_pattern_buffer", 32,
+                "me_ultimate_pattern_buffer", 72));
+
+        public static PatternBuffersBalance defaults() {
+            return new PatternBuffersBalance();
+        }
+
+        @Override
+        public void applyDefaults(PatternBuffersBalance defaults) {
+            if (slots == null) slots = new LinkedHashMap<>();
+            slots.keySet().retainAll(defaults.slots.keySet());
+            defaults.slots.forEach((id, fallback) -> slots.put(id, validSlotCount(slots.get(id), fallback)));
+        }
+
+        private static int validSlotCount(Integer count, int fallback) {
+            return count != null && count >= 1 && count <= 540 ? count : fallback;
+        }
+
+        private void applyCapacityHistory(Path path) {
+            Map<String, Integer> history = new LinkedHashMap<>();
+            if (Files.exists(path)) {
+                try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+                    Map<String, Integer> saved = GSON.fromJson(reader, STRING_INT_MAP);
+                    if (saved == null) {
+                        throw new IllegalStateException("Empty GTNA pattern buffer capacity history: " + path);
+                    }
+                    for (var entry : saved.entrySet()) {
+                        Integer count = entry.getValue();
+                        if (count == null || count < 1 || count > 540) {
+                            throw new IllegalStateException("Invalid GTNA pattern buffer capacity history for " +
+                                    entry.getKey() + " in " + path);
+                        }
+                    }
+                    history.putAll(saved);
+                } catch (IOException | JsonParseException exception) {
+                    throw new IllegalStateException("Cannot read GTNA pattern buffer capacity history: " + path,
+                            exception);
+                }
+            }
+            slots.replaceAll((id, requested) -> {
+                int effective = Math.max(requested, history.getOrDefault(id, requested));
+                if (effective != requested) {
+                    GTNACORE.LOGGER.warn("Pattern buffer {} requested {} slots but previously used {}; keeping {} " +
+                            "to protect saved contents", id, requested, history.get(id), effective);
+                }
+                history.put(id, effective);
+                return effective;
+            });
+            writeDefaults(path, history);
+        }
     }
 
     /**
@@ -260,6 +350,14 @@ public final class GTNABalance {
     /** Tuning for the ported Universal Factory (GTLsupb parity). */
     public static final class UniversalFactoryBalance implements DefaultsApplier<UniversalFactoryBalance> {
 
+        public String scalingMode = "LEGACY";
+        public Map<String, Integer> capacityByTier = defaultUniversalFactoryCapacities();
+        public boolean allowUnlimited = false;
+        public int technicalOperationCap = 1048576;
+        public boolean warmupEnabled = true;
+        public boolean batchEnabled = true;
+        public java.util.List<String> allowedRecipeTypes = new java.util.ArrayList<>();
+        public boolean specialHatchesEnabled = false;
         public int baseParallel = 64;
         public int baseThreads = 16;
         public double maxWarmup = 8.0;
@@ -273,12 +371,37 @@ public final class GTNABalance {
 
         @Override
         public void applyDefaults(UniversalFactoryBalance defaults) {
+            if (!"LEGACY".equals(scalingMode) && !"SHARED_BUDGET".equals(scalingMode) &&
+                    !"UNLIMITED".equals(scalingMode))
+                scalingMode = defaults.scalingMode;
+            if (capacityByTier == null) capacityByTier = defaults.capacityByTier;
+            else defaults.capacityByTier.forEach(capacityByTier::putIfAbsent);
+            capacityByTier.replaceAll((tier, capacity) -> capacity == null || capacity < 1 ?
+                    defaults.capacityByTier.getOrDefault(tier, 1) :
+                    Math.min(capacity, 1048576));
+            if (technicalOperationCap < 1 || technicalOperationCap > 1048576) {
+                technicalOperationCap = defaults.technicalOperationCap;
+            }
+            if (allowedRecipeTypes == null) allowedRecipeTypes = defaults.allowedRecipeTypes;
+            allowedRecipeTypes.removeIf(type -> type == null ||
+                    net.minecraft.resources.ResourceLocation.tryParse(type) == null);
             if (baseParallel <= 0) baseParallel = defaults.baseParallel;
             if (baseThreads <= 0) baseThreads = defaults.baseThreads;
             if (maxWarmup < 1.0) maxWarmup = defaults.maxWarmup;
             if (warmupTau <= 0) warmupTau = defaults.warmupTau;
             if (overloadTime <= 0) overloadTime = defaults.overloadTime;
             if (maxBatchMultiplier <= 0) maxBatchMultiplier = defaults.maxBatchMultiplier;
+        }
+
+        public boolean sharedBudget() {
+            return "SHARED_BUDGET".equals(scalingMode) ||
+                    ("UNLIMITED".equals(scalingMode) && !allowUnlimited);
+        }
+
+        public int capacityForTier(int tier) {
+            Integer capacity = capacityByTier.get(tierKey(tier));
+            if (capacity == null) capacity = tier > GTValues.UV ? capacityByTier.getOrDefault("UV", 128) : 1;
+            return Math.min(technicalOperationCap, Math.max(1, capacity));
         }
     }
 
@@ -438,6 +561,9 @@ public final class GTNABalance {
         public Map<String, NexusTierBalance> tiers = defaultNexusTierMap();
         public EfficiencyBalance efficiency = EfficiencyBalance.defaults();
         public NexusLimitsBalance limits = NexusLimitsBalance.defaults();
+        public String lossApplication = "LEGACY";
+        public Map<String, Double> lossPercentByTier = defaultNexusLossPercentMap();
+        public boolean generatorArrayAppliesSeparateLoss = true;
 
         public static NexusFluxMatrixBalance defaults() {
             return new NexusFluxMatrixBalance();
@@ -454,6 +580,17 @@ public final class GTNABalance {
             else efficiency.applyDefaults(defaults.efficiency);
             if (limits == null) limits = defaults.limits;
             else limits.applyDefaults(defaults.limits);
+            if (!"LEGACY".equals(lossApplication) && !"MATRIX_INPUT_ONCE".equals(lossApplication) &&
+                    !"NO_LOSS".equals(lossApplication)) {
+                lossApplication = defaults.lossApplication;
+            }
+            if (lossPercentByTier == null) lossPercentByTier = new LinkedHashMap<>();
+            lossPercentByTier.keySet().retainAll(defaults.lossPercentByTier.keySet());
+            defaults.lossPercentByTier.forEach((tier, fallback) -> {
+                Double configured = lossPercentByTier.get(tier);
+                lossPercentByTier.put(tier, configured != null && Double.isFinite(configured) &&
+                        configured >= 0.0 && configured <= 100.0 ? configured : fallback);
+            });
         }
     }
 
@@ -541,6 +678,19 @@ public final class GTNABalance {
         }
     }
 
+    private static Map<String, Integer> defaultUniversalFactoryCapacities() {
+        Map<String, Integer> capacities = new LinkedHashMap<>();
+        capacities.put("LV", 1);
+        capacities.put("MV", 2);
+        capacities.put("HV", 4);
+        capacities.put("EV", 8);
+        capacities.put("IV", 16);
+        capacities.put("LuV", 32);
+        capacities.put("ZPM", 64);
+        capacities.put("UV", 128);
+        return capacities;
+    }
+
     private static Map<String, Integer> defaultThreadMap() {
         LinkedHashMap<String, Integer> values = new LinkedHashMap<>();
         values.put("ZPM", 1);
@@ -592,6 +742,14 @@ public final class GTNABalance {
         values.put("OpV", 100000);
         values.put("MAX", 250000);
         return values;
+    }
+
+    private static Map<String, Double> defaultNexusLossPercentMap() {
+        LinkedHashMap<String, Double> losses = new LinkedHashMap<>();
+        for (int tier = GTValues.LV; tier <= GTValues.MAX; tier++) {
+            losses.put(tierKey(tier), (double) Math.max(0, 6 - tier));
+        }
+        return losses;
     }
 
     private static Map<String, NexusTierBalance> defaultNexusTierMap() {

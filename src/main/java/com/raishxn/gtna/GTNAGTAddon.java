@@ -62,6 +62,13 @@ public class GTNAGTAddon implements IGTAddon {
         GTNAItemRecipes.register(provider);
         GTNAMachineRecipes.register(provider);
         GTNAGreenhouseRecipes.register(provider);
+        GTNAComponentRecipes.register(provider);
+        GTNAAtomizationRecipes.register(provider);
+        GTNAIsaMillRecipes.register(provider);
+        GTNAFlotationDryingRecipes.register(provider);
+        GTNARocketFuelRecipes.register(provider);
+        GTNASupercriticalSteamTurbineRecipes.register(provider);
+        GTNATreeGrowthRecipes.register(provider);
         GTNAHatchesRecipes.register(provider);
         GTNABlockRecipes.register(provider);
         GTNAGeneratesRecipes.register(provider);

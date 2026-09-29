@@ -4019,6 +4019,24 @@ public class GTNAMachines {
     }
 
     // ------------------------------------------------------------------
+    private static TraceabilityPredicate universalFactoryCasingPredicate() {
+        TraceabilityPredicate casing = blocks(GTNABlocks.UNIVERSAL_FACTORY_CASING.get())
+                .or(abilities(PartAbility.IMPORT_ITEMS).setPreviewCount(1))
+                .or(abilities(PartAbility.EXPORT_ITEMS).setPreviewCount(1))
+                .or(abilities(PartAbility.IMPORT_FLUIDS).setPreviewCount(1))
+                .or(abilities(PartAbility.EXPORT_FLUIDS).setPreviewCount(1))
+                .or(abilities(PartAbility.INPUT_ENERGY).setPreviewCount(1))
+                .or(abilities(PartAbility.MAINTENANCE).setMinGlobalLimited(1)
+                        .setMaxGlobalLimited(1));
+        if (com.raishxn.gtna.config.GTNABalance.getUniversalFactory().specialHatchesEnabled) {
+            casing = casing.or(abilities(GTNAPartAbility.THREAD_HATCH).setMaxGlobalLimited(1))
+                    .or(abilities(GTNAPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1))
+                    .or(abilities(GTNAPartAbility.OVERCLOCK_HATCH).setMaxGlobalLimited(1))
+                    .or(abilities(GTNAPartAbility.OUTPUT_BOOST_HATCH).setMaxGlobalLimited(1));
+        }
+        return casing;
+    }
+
     // Universal Factory (GTLsupb port, LGPLv3) - 32 recipe types, cross-recipe threads,
     // warmup / overload / batch. Uses GTNA's own multiple-recipes base.
     // ------------------------------------------------------------------
@@ -4064,14 +4082,7 @@ public class GTNAMachines {
                             .aisle("AAA", "ABA", "AAA")
                             .aisle("AAA", "A~A", "AAA")
                             .where('~', controller(blocks(definition.get())))
-                            .where('A', blocks(GTNABlocks.UNIVERSAL_FACTORY_CASING.get())
-                                    .or(abilities(PartAbility.IMPORT_ITEMS).setPreviewCount(1))
-                                    .or(abilities(PartAbility.EXPORT_ITEMS).setPreviewCount(1))
-                                    .or(abilities(PartAbility.IMPORT_FLUIDS).setPreviewCount(1))
-                                    .or(abilities(PartAbility.EXPORT_FLUIDS).setPreviewCount(1))
-                                    .or(abilities(PartAbility.INPUT_ENERGY).setPreviewCount(1))
-                                    .or(abilities(PartAbility.MAINTENANCE).setMinGlobalLimited(1)
-                                            .setMaxGlobalLimited(1)))
+                            .where('A', universalFactoryCasingPredicate())
                             .where('B', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Steel)))
                             .where(' ', any())
                             .build())

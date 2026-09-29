@@ -8,29 +8,48 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * Guards the other half of the wiring contract: a GTNA part that declares a custom ability must be
- * accepted by at least one machine pattern. Otherwise the part is craftable but can never be placed
- * (the orphan Thread Hatch class of bug, see G-0012).
+ * accepted by at least one machine pattern (base or auxiliary module). Otherwise the part is
+ * craftable but can never be placed (the orphan Thread Hatch class of bug, see G-0012).
  *
  * <p>
  * Source scan on purpose: the unit test source set does not inherit Minecraft's libraries, so this
  * mirrors {@code SteamWiringContractTest} (GTLCore style: {@code main()} + asserts).
+ *
+ * <p>
+ * QA contract B4 extends the original scan to the GTO port class: accepted sites include
+ * {@code GTNAMachines3} multiblocks and {@code GTNAModules} auxiliary structures, and declared
+ * abilities include the new Ball Hatch-family parts.
  */
 public final class PartAbilityCoverageTest {
 
     private static final Path DATA_DIR = Path.of("src/main/java/com/raishxn/gtna/common/data");
-    private static final Path MACHINES_SOURCE = DATA_DIR.resolve("GTNAMachines.java");
-    private static final Path PARTS_SOURCE = DATA_DIR.resolve("GTNAMachines2.java");
 
-    private static final Pattern GTNA_ABILITY = Pattern.compile("GTNAPartAbility\\.([A-Z_]+)");
+    /** A part registration declares an ability with the registrate builder: {@code .abilities(X)}. */
+    private static final Pattern DECLARED = Pattern.compile("\\.abilities\\(GTNAPartAbility\\.([A-Z_]+)");
+    /** A pattern accepts an ability, whoever calls it (static import or {@code Predicates.}). */
+    private static final Pattern ACCEPTED = Pattern.compile("abilities\\(GTNAPartAbility\\.([A-Z_]+)");
 
     private PartAbilityCoverageTest() {}
 
     public static void main(String[] args) throws IOException {
-        Set<String> declared = declaredByParts();
-        Set<String> accepted = acceptedByMachines();
+        Set<String> declared = new LinkedHashSet<>();
+        Set<String> accepted = new LinkedHashSet<>();
+        for (Path file : sources()) {
+            for (String line : Files.readAllLines(file, StandardCharsets.UTF_8)) {
+                if (line.contains("Predicates.abilities(GTNAPartAbility.")) {
+                    collect(ACCEPTED, line, accepted);
+                } else {
+                    collect(DECLARED, line, declared);
+                    collect(ACCEPTED, line, accepted);
+                }
+                // A pattern line that starts with "or(abilities(" uses the static import but is not a
+                // registration: the declared scan above already skips it because it needs ".abilities(".
+            }
+        }
         Set<String> orphans = new LinkedHashSet<>(declared);
         orphans.removeAll(accepted);
         if (!orphans.isEmpty()) {
@@ -42,35 +61,14 @@ public final class PartAbilityCoverageTest {
                 declared);
     }
 
-    /** Custom abilities declared by a GTNA part (registrate {@code .abilities(...)} call). */
-    private static Set<String> declaredByParts() throws IOException {
-        Set<String> declared = new LinkedHashSet<>();
-        for (String line : Files.readAllLines(PARTS_SOURCE, StandardCharsets.UTF_8)) {
-            if (line.contains(".abilities(") && !line.contains("Predicates.abilities(")) {
-                collect(line, declared);
-            }
+    private static java.util.List<Path> sources() throws IOException {
+        try (Stream<Path> walk = Files.walk(DATA_DIR)) {
+            return walk.filter(path -> path.toString().endsWith(".java")).sorted().toList();
         }
-        return declared;
     }
 
-    /** Custom abilities accepted by a machine pattern. */
-    private static Set<String> acceptedByMachines() throws IOException {
-        Set<String> accepted = new LinkedHashSet<>();
-        for (String line : Files.readAllLines(MACHINES_SOURCE, StandardCharsets.UTF_8)) {
-            if (line.contains("abilities(GTNAPartAbility.")) {
-                collect(line, accepted);
-            }
-        }
-        for (String line : Files.readAllLines(PARTS_SOURCE, StandardCharsets.UTF_8)) {
-            if (line.contains("Predicates.abilities(GTNAPartAbility.")) {
-                collect(line, accepted);
-            }
-        }
-        return accepted;
-    }
-
-    private static void collect(String line, Set<String> out) {
-        Matcher matcher = GTNA_ABILITY.matcher(line);
+    private static void collect(Pattern pattern, String line, Set<String> out) {
+        Matcher matcher = pattern.matcher(line);
         while (matcher.find()) {
             out.add(matcher.group(1));
         }

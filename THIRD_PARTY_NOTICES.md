@@ -48,8 +48,107 @@ Hypercore multiblock itself is original to GTNA and has no source attribution in
 - The Greenhouse's compressed `pattern/gto/greenhouse.mbs`, light behavior, controller recipe and
   crop recipes are adapted from the same GTOCore commit. Its nine Rich Soil positions also accept
   vanilla Mud, allowing the structure to work without Farmer's Delight installed.
+- The Component Assembler's base structure, tier matching, and LV–IV component batch recipes are
+  adapted from GTOCore at commit `dc4824d`. Its LV–IV casing and Multi Functional Casing textures
+  (including the connected texture sheet) are from GTOCore and retain CC BY-NC-SA 4.0 attribution.
+- The Component Assembler's large extension (both `addSubPattern` layers of
+  `MultiBlockC.java:328-397`), the LuV–UV batch family, the extension casing production and the
+  extension's tier cap are adapted from GTOCore at commit `dc4824d`. The `THREE_PROOF_COMPUTER_CASING`,
+  `MACHINING_CONTROL_CASING_MK2`, `ENERGY_CONTROL_CASING_MK2`, `ELECTRIC_POWER_TRANSMISSION_CASING`
+  and `TITANIUM_NITRIDE_CERAMIC_IMPACT_RESISTANT_MECHANICAL_BLOCK` textures (with their connected
+  texture sheets and `.png.mcmeta`; the two MK2 control casings are sided) and the LuV–UV casing
+  textures are from GTOCore and retain CC BY-NC-SA 4.0 attribution. The `CarbonFiberPolyphenyleneSulfideComposite`
+  and `TitaniumNitrideCeramic` material definitions are copied 1:1 (minus GTO-only flags). GTOCore's
+  MK2 control-casing recipes are Precision Assembler recipes of an excluded machine, so GTNA adds
+  documented alternative Assembler routes.
+- The `component_assembly_line`'s compressed `pattern/gto/component_assembly_line.mbs`, uniform tier
+  rule and LuV–UV batch gating are adapted from GTOCore at commit `dc4824d`. The
+  `component_assembly_line_casing_lv..uv` and `iridium_casing` textures (with their connected sheets
+  and `.png.mcmeta`) are from GTOCore and retain CC BY-NC-SA 4.0 attribution; the UHV–MAX casings are
+  out of scope. GTOCore's nine GTO-only structure casings and its cross-recipe execution are
+  substituted by documented GTNA/GTCEu equivalents (see the ledger G-0110 table); the iridium casing
+  is ported from GTO with its Assembly Line recipe (GTO's Tanmolyium plate copied 1:1), and the
+  controller recipe is omitted because it needs the GTO-only Advanced Assembly Line chain. The ZPM/UV
+  casing recipes substitute GTO's Pikyonium/ArtheriumTin/AbyssalAlloy solders with obtainable
+  GTNA/GTCEu equivalents (ledger G-0114).
+- The Blaze and Cold Ice two-layer casings, including the emissive `_bloom` overlays and their
+  connected sheets and animation metadata, and the MK2 control casings' `side_bloom` overlays are from GTOCore and retain
+  CC BY-NC-SA 4.0 attribution. `naquadah_alloy_casing` reuses the GTO `hyper_mechanical_casing` sheet
+  (the earlier GTNA copy used the water-purification sheet by mistake).
+- The Grinding Ball Hatch's `ball_hatch_idle` and `ball_hatch_spinning` rotor sprites and animation
+  metadata are copied from GTOCore under CC BY-NC-SA 4.0; the renderer is reimplemented for GTCEu 7.5.3.
+- The Large Greenhouse's compressed structure, dual greenhouse/tree recipe modes, controller recipe,
+  and tree growth family are adapted from GTOCore at commit `dc4824d`.
+- The Blaze Blast Furnace's compressed structure, molten Blaze upkeep and controller recipe are
+  adapted from GTOCore at commit `dc4824d`. Its Blaze Casing texture and connected texture sheet
+  retain the original CC BY-NC-SA 4.0 asset license. GTNA crafts that casing in the Large Chemical
+  Reactor with the same inputs because the original Reaction Furnace is excluded from this port.
+- The Cold Ice Freezer's base structure, liquid Ice upkeep, casing/controller recipes and Cold Ice
+  Casing texture (including its connected texture sheet) are adapted from GTOCore at commit
+  `dc4824d`. The textures retain CC BY-NC-SA 4.0 attribution.
+- The Chemical Plant's compressed `pattern/gto/chemical_plant.mbs`, structure, coil efficiency
+  behavior and controller recipe are adapted from GTOCore at commit `dc4824d`. GTO applies its
+  coil bonus through the closed-source gtolib `coilReductionOverclock`; GTNA reproduces the
+  behavior the controller displays (5% EU and duration reduction per coil tier plus a perfect
+  overclock). The controller reuses GTCEu's Large Chemical Reactor front overlay, which shares the
+  same inert-PTFE casing.
+- The Mega Alloy Blast Smelter's structure, 0.8× EU / 0.6× duration bonus and Parallel Hatch are
+  adapted from GTOCore at commit `dc4824d`. It reuses GTCEu's GCYM casings and `ALLOY_BLAST_RECIPES`.
+  GTO's tiered integral-framework cell and GCYM ability predicate are substituted by a TungstenSteel
+  frame and the standard auto abilities because GTNA does not port that tier-block system.
+- The ISA Mill's compressed `pattern/gto/isa_mill.mbs`, perfect overclock, grinding-ball gate and
+  durability formula, the 48 wet-grinding recipes, the Inconel-625 casing/gearbox/pipe recipes, the
+  two grinding-ball Forming Press recipes, the Grinding Ball Hatch and the Assembly Line controller
+  recipe are adapted from GTOCore at commit `dc4824d`. Its Inconel-625 casing, gearbox, pipe and
+  `ball_hatch` overlay textures, the two grinding-ball item textures and the `milled` material item
+  texture/model are from GTOCore and retain CC BY-NC-SA 4.0 attribution. The Inconel-625, Inconel-792
+  and Tantalloy-61 material definitions are copied from GTO's `MaterialA` so those recipes stay
+  faithful; GTCEu's automatic alloy-blast/EBF/mixer generation produces them.
 - GTOCore itself includes textures from other mods; see
   [GTO's `THIRD_PARTY_LICENSES.md`](https://github.com/GregTech-Odyssey/GregTech-Odyssey/blob/main/THIRD_PARTY_LICENSES.md).
+- The Rocket Large Turbine's structure and non-mega `TurbineMachine` behavior (base
+  `V[EV] * 2.5` output, rotor speed/voltage math, high-speed mode and the rocket engine module
+  bonus) are adapted from GTOCore at commit `dc4824d`. It reuses GTCEu's titanium casings, gearbox,
+  rotor holder, rotors and `RocketFuel`, so no GTO casing is copied. Its high-speed-mode GUI toggle
+  texture (`gui/overlay/high_speed_mode.png`) is from GTOCore and retains CC BY-NC-SA 4.0
+  attribution.
+- The EV, IV and LuV Rocket Engine generator textures and their shaped crafting recipes are adapted
+  from GTOCore at commit `dc4824d`. GTNA uses GTCEu's `SimpleGeneratorMachine` implementation and
+  the already ported Rocket Fuel recipe; the cable ingredients refer to GTCEu's cable blocks.
+  The generator textures retain CC BY-NC-SA 4.0
+  attribution.
+- The Component Assembly Line's Molecular, Boron Carbide, Precision Processing, Advanced Assembly
+  Line, Chemical Corrosion Resistant Pipe, Circuit Assembly Line, Spacetime Assembly Line and
+  Pressure Containment casing textures, connected sheets and animation metadata are from GTOCore
+  at commit `dc4824d` and retain CC BY-NC-SA 4.0 attribution. Their structure positions follow
+  GTOCore. Crafting inputs that require GTO-only materials or production machines are adapted to
+  GTNA/GTCEu materials in `GTNABlockRecipes`. The Component Assembly recipe layout
+  (`ui/recipe_type/component_assembly.rtui`) is copied from GTOCore under GTNA's namespace; its
+  two Component Assembly Line progress bar textures are copied under `assets/gtceu` because the
+  original binary layout references those resource paths.
+- The Supercritical Steam Turbine's structure and non-mega `TurbineMachine` behavior (base
+  `V[IV] * 2` output, rotor speed/voltage math, high-speed mode and the supercritical module bonus),
+  its controller and casing Assembler recipes and its fuel recipe are adapted from GTOCore at commit
+  `dc4824d`. GTNA substitutes its own `DenseSupercriticalSteam` for GTO's `SupercriticalSteam` in
+  the fuel recipe (same 80 mB → 8 mB distilled water / 30 ticks / `V[MV]` numbers). Its
+  `supercritical_turbine_casing` texture, connected texture sheet and `.png.mcmeta` are from
+  GTOCore and retain CC BY-NC-SA 4.0 attribution.
+- The Industrial Flotation Cell and Vacuum Drying Furnace pair (structure, machine behavior, recipe
+  types and recipes) is adapted from GTOCore at commit `dc4824d`
+  (`MultiBlockA.java:1678`/`:1707`, `pattern/industrial_flotation_cell.mbs`,
+  `pattern/vacuum_drying_furnace.mbs`, `classified/FlotatingBeneficiation.java`,
+  `classified/VacuumDrying.java`, `classified/Dehydrator.java`, the casing recipes of
+  `classified/Assembler.java`, the flotation controller of `classified/AssemblyLine.java` and the
+  red-mud neutralisation of `processing/StoneDustProcess.java`). The `hastelloy_n_75_casing`,
+  `hastelloy_n_75_gearbox`, `hastelloy_n_75_pipe`, `flotation_cell` and `red_steel_casing`
+  textures (with their connected texture sheets and `.png.mcmeta`) are from GTOCore and retain
+  CC BY-NC-SA 4.0 attribution. The Hastelloy-N75 and Stellite material definitions are copied 1:1
+  from GTO's `MaterialA` so the casing and controller recipes stay faithful; GTCEu's automatic
+  alloy-blast/EBF/mixer generation produces them.
+- The IV Dehydrator machine and the Vacuum Drying Furnace's original controller recipe are adapted
+  from GTOCore `GTOMachines.java`, `MachineRecipe.java` and `classified/Assembler.java` at commit
+  `dc4824d`. The six Dehydrator overlay textures are copied from GTOCore and retain CC BY-NC-SA
+  4.0 attribution.
 
 ### GT: Not Leisure (GTNL)
 
