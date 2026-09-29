@@ -692,6 +692,50 @@ public final class GTNAMachineGameTests {
         helper.succeed();
     }
 
+    /** The solar producer must accept the dedicated wireless steam output ability. */
+    @GameTest(template = "empty_16", timeoutTicks = 40)
+    public static void solarBoilerAcceptsWirelessSteamOutput(GameTestHelper helper) {
+        BlockPos controllerPos = new BlockPos(7, 2, 4);
+        for (int aisle = 0; aisle < 5; aisle++) {
+            String row = aisle == 0 || aisle == 4 ? "AAAAA" : "ABBBA";
+            for (int column = 0; column < 5; column++) {
+                BlockPos pos = controllerPos.offset(column - 2, 0, 4 - aisle);
+                helper.setBlock(pos, row.charAt(column) == 'B' ?
+                        GTNABlocks.SOLAR_BOILING_CELL.get() : GTBlocks.STEEL_HULL.get());
+            }
+        }
+        helper.setBlock(controllerPos, GTNAMachines.LARGE_STEAM_SOLAR_BOILER.getBlock());
+        BlockPos waterInput = controllerPos.offset(-2, 0, 0);
+        BlockPos steamOutput = controllerPos.offset(2, 0, 0);
+        helper.setBlock(waterInput, GTMachines.FLUID_IMPORT_HATCH[GTValues.LV].getBlock());
+        helper.setBlock(steamOutput, GTNAMachines.WIRELESS_STEAM_OUTPUT_HATCH_STEEL.getBlock());
+        var machine = (com.raishxn.gtna.common.machine.multiblock.steam.LargeSteamSolarBoilerMachine) metaMachineAt(
+                helper, controllerPos);
+        MultiblockState state = machine.getMultiblockState();
+        helper.assertTrue(machine.getPattern().checkPatternAt(state, false),
+                "solar boiler must accept a wireless steam output: " + patternError(helper, state, controllerPos));
+        machine.onStructureFormed();
+        helper.assertTrue(machine.isFormed(), "solar boiler must form with wireless steam output");
+        var inputHatch = (FluidHatchPartMachine) metaMachineAt(helper, waterInput);
+        var outputHatch = (com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamOutputHatch) metaMachineAt(
+                helper, steamOutput);
+        inputHatch.tank.setFluidInTank(0, GTMaterials.Water.getFluid(1000));
+        var steamRecipe = com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder
+                .of(GTNACORE.id("solar_boiler_wireless_test"), machine.getRecipeType())
+                .inputFluids(GTMaterials.Water.getFluid(1))
+                .outputFluids(GTMaterials.Steam.getFluid(100))
+                .duration(2)
+                .buildRawRecipe();
+        machine.getRecipeLogic().setupRecipe(steamRecipe);
+        for (int tick = 0; tick < 3; tick++) machine.getRecipeLogic().serverTick();
+        helper.assertTrue(outputHatch.tank.getFluidInTank(0).getAmount() == 100,
+                "formed solar boiler must deliver steam to wireless output hatch");
+        helper.setBlock(steamOutput, GTNAMachines.WIRELESS_STEAM_INPUT_HATCH_STEEL.getBlock());
+        helper.assertTrue(!machine.getPattern().checkPatternAt(state, false),
+                "a steam input cannot replace the solar boiler's output");
+        helper.succeed();
+    }
+
     /** GTOCore's eight-layer column must form and turn water into salt water. */
     @GameTest(template = "empty_16", timeoutTicks = 40)
     public static void evaporationPlantForms(GameTestHelper helper) {
@@ -1445,6 +1489,33 @@ public final class GTNAMachineGameTests {
                 "EBF module must form again after removing the duplicate hatch");
         helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
                 .gtna$formedModuleCount() == 1, "module must be restored with one Accelerate Hatch");
+
+        // The upper outer C cell is where players naturally install a hatch beside a tall-coil
+        // EBF. It must now accept Accelerate while the limit remains one across the whole module.
+        BlockPos lowerAccelerate = controllerPos.offset(1, 0, 4);
+        BlockPos upperAccelerate = controllerPos.offset(2, 3, 1);
+        helper.setBlock(lowerAccelerate, GTBlocks.CASING_INVAR_HEATPROOF.get());
+        helper.setBlock(upperAccelerate, GTNAMachines2.ACCELERATE_HATCHES[GTValues.HV].getBlock());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
+                "EBF module must accept a top-row HV Accelerate Hatch");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
+                .gtna$formedModuleCount() == 1, "top-row Accelerate Hatch must belong to the module");
+        helper.setBlock(lowerAccelerate, GTNAMachines2.ACCELERATE_HATCHES[GTValues.LV].getBlock());
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
+                "EBF base must remain formed with two Accelerate Hatches in the module");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
+                .gtna$formedModuleCount() == 0, "module must reject a second Accelerate Hatch");
+        helper.setBlock(upperAccelerate, GTBlocks.CASING_INVAR_HEATPROOF.get());
+
+        // A missing optional module must not leave its pattern error on the shared state: GTCEu
+        // refuses to start every EBF recipe while isRecipeLogicAvailable() is false.
+        helper.setBlock(controllerPos.offset(2, 0, 4), Blocks.AIR);
+        helper.assertTrue(com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh.refresh(controller, true),
+                "EBF base must remain formed without its auxiliary module");
+        helper.assertTrue(((com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost) controller)
+                .gtna$formedModuleCount() == 0, "incomplete auxiliary module must not count as formed");
+        helper.assertTrue(((WorkableElectricMultiblockMachine) controller).isRecipeLogicAvailable(),
+                "EBF base must accept normal recipes without its optional module");
         helper.succeed();
     }
 
@@ -5144,13 +5215,17 @@ public final class GTNAMachineGameTests {
         helper.assertTrue(assemblerRecipes.stream()
                 .anyMatch(recipe -> recipe.id.getPath().endsWith("vacuum_drying_furnace")),
                 "the Vacuum Drying Furnace controller must have its original GTO Assembler recipe");
-        var dehydratorCraftingRecipe = helper.getLevel().getRecipeManager()
-                .byKey(new ResourceLocation("gtceu", "shaped/iv_dehydrator"));
-        helper.assertTrue(GTNAMachines3.DEHYDRATOR[GTValues.IV] != null &&
-                dehydratorCraftingRecipe.isPresent() &&
-                dehydratorCraftingRecipe.orElseThrow().getResultItem(helper.getLevel().registryAccess()).getItem() ==
-                        GTNAMachines3.DEHYDRATOR[GTValues.IV].asStack().getItem(),
-                "the IV Dehydrator prerequisite must have a craftable machine recipe");
+        for (int tier : com.gregtechceu.gtceu.common.data.machines.GTMachineUtils.ELECTRIC_TIERS) {
+            String tierName = GTValues.VN[tier].toLowerCase(java.util.Locale.ROOT);
+            var dehydratorCraftingRecipe = helper.getLevel().getRecipeManager()
+                    .byKey(new ResourceLocation("gtceu", "shaped/" + tierName + "_dehydrator"));
+            helper.assertTrue(GTNAMachines3.DEHYDRATOR[tier] != null &&
+                    dehydratorCraftingRecipe.isPresent() &&
+                    dehydratorCraftingRecipe.orElseThrow().getResultItem(helper.getLevel().registryAccess())
+                            .getItem() ==
+                            GTNAMachines3.DEHYDRATOR[tier].asStack().getItem(),
+                    tierName + " Dehydrator must have a craftable machine recipe");
+        }
 
         // QA A5a: the Dehydrator mode. With HSSG coils the parallel cap is 2^6 = 64, so a single
         // 1000 mB batch still runs alone: 30 → 7680 EU/t and 160 → 10 ticks over four overclocks.
@@ -6425,6 +6500,41 @@ public final class GTNAMachineGameTests {
         boolean present = helper.getLevel().getRecipeManager().getAllRecipesFor(GTRecipeTypes.ASSEMBLER_RECIPES)
                 .stream().anyMatch(recipe -> recipe.id.getPath().endsWith("component_assembler_controller"));
         helper.assertTrue(present, "the GTNA Component Assembler controller recipe must exist");
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void componentCasingFamiliesHaveDistinctAssemblerInputs(GameTestHelper helper) {
+        for (String tier : new String[] { "lv", "mv", "hv", "ev", "iv", "luv", "zpm", "uv" }) {
+            GTRecipeType type = switch (tier) {
+                case "luv", "zpm", "uv" -> GTRecipeTypes.ASSEMBLY_LINE_RECIPES;
+                default -> GTRecipeTypes.ASSEMBLER_RECIPES;
+            };
+            GTRecipe assemblerCasing = recipeById(helper, type, "component_assembly_casing_" + tier);
+            GTRecipe lineCasing = recipeById(helper, type, "component_assembly_line_casing_" + tier);
+            helper.assertTrue(assemblerCasing != null && lineCasing != null,
+                    "both " + tier + " casing families need an obtainable recipe");
+            Object assemblerCircuit = assemblerCasing.getInputContents(ItemRecipeCapability.CAP).stream()
+                    .map(Content::getContent).filter(IntCircuitIngredient.class::isInstance).findFirst().orElse(null);
+            Object lineCircuit = lineCasing.getInputContents(ItemRecipeCapability.CAP).stream()
+                    .map(Content::getContent).filter(IntCircuitIngredient.class::isInstance).findFirst().orElse(null);
+            helper.assertTrue(assemblerCircuit != null && lineCircuit != null &&
+                    !assemblerCircuit.equals(lineCircuit),
+                    "the two " + tier + " casing recipes need different circuits in GTCEu's lookup");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void boronCarbideCeramicCasingHasCompleteProductionChain(GameTestHelper helper) {
+        helper.assertTrue(recipeById(helper, GTRecipeTypes.MIXER_RECIPES, "gtna_boron_carbide_dust") != null,
+                "Boron Carbide dust must have a Mixer route");
+        helper.assertTrue(recipeById(helper, GTRecipeTypes.SIFTER_RECIPES,
+                "gtna_boron_carbide_ceramics_dust") != null,
+                "Boron Carbide Ceramics dust must have a Sifter route");
+        helper.assertTrue(recipeById(helper, GTRecipeTypes.ASSEMBLER_RECIPES,
+                "boron_carbide_ceramic_radiation_resistant_mechanical_cube") != null,
+                "Boron Carbide casing must have an Assembler route");
         helper.succeed();
     }
 

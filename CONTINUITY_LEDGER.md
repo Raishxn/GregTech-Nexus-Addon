@@ -83,6 +83,44 @@ foi feito nem repetir os erros já pagos.
 > falha intermitente de registro do renderer do Annihilate Generator. UI, hatches e perfil GTIA
 > ainda exigem teste manual em jogo. Sem commit/push.
 
+> **Push de 26/09 (outra máquina) — numeração paralela:** os blocos abaixo usam os IDs
+> G-0122–G-0124 de 26/09 e convivem com os checkpoints locais de 29/09 acima; os dois históricos
+> são reais e foram mantidos.
+
+> **QA do autor e correções G-0124:** EBF sem módulo executou Aluminium Dust → Ingot em 11,05 s
+> com energia HV, bobina Tritanium e muffler IV; EMI mostra 22,1 s antes do overclock normal do
+> EBF. O Accelerate Hatch HV na carcaça superior do módulo quebrava a formação porque aquela
+> célula `C` só aceitava casing; agora aceita um Accelerate, mantendo limite global de um.
+> Paginação/hover JEI, boiler wireless, Dehydrators, Vacuum Dryer, Flux HUD, Rocket Engines e
+> Evaporation Plant passaram no client do autor. A UI da base multi-receita recebeu estado,
+> progresso, falha, energia, modo e saída. A textura CTM da carcaça Boron Carbide tinha caminho
+> incorreto; corrigida. As duas famílias de Component Assembly Casings usam circuitos diferentes
+> nos tiers LV–UV para evitar descarte de receita pelo GTCEu. A cadeia simplificada de Boron
+> Carbide e Boron Carbide Ceramics foi adicionada. O exemplo KubeJS de desempenho foi deslocado
+> para fora da base e do outro módulo. Gate: 100/100 GameTests, unitários, compilação, Spotless e
+> datagen `written: 0`. O client aberto ainda usa o código anterior; aguarda reinício e reteste.
+
+> **EBF sem módulo (G-0123):** a base do Electric Blast Furnace podia formar com energia e calor,
+> mas a falha da checagem do módulo opcional deixava um `PatternError` no estado compartilhado.
+> `WorkableMultiblockMachine.isRecipeLogicAvailable()` então retornava falso e bloqueava toda
+> receita. O mixin restaura o estado válido da base após conferir os módulos. O GameTest existente
+> agora remove o módulo, confirma base formada, zero módulos e lógica de receitas disponível;
+> continua cobrindo o limite de Energy Hatches e o Accelerate exclusivo do módulo. Os 98/98
+> GameTests, unitários, compilação e Spotless passaram. O primeiro `runData` desta sessão parou
+> durante um erro intermitente de registro do renderer Annihilate; uma repetição isolada passou.
+> A repetição confirmou `written: 0`. O reteste da receita no cliente, a
+> navegação JEI e a medição do bônus KubeJS aguardam o teste do autor.
+
+> **Gate final e envio para `main` (G-0122):** o Large Steam Solar Boiler aceita a saída de vapor
+> wireless GTNA e a receita deposita vapor no tanque; os Dehydrators LV–OpV e os nomes dos Rocket
+> Engines têm registros/traduções; a Flux Matrix ganhou HUD opcional de energia. O módulo KubeJS
+> aceita bônus de velocidade e overclock perfeito nos controladores de múltiplas receitas, com
+> exemplo carregado pelo cliente. O crash de índice do preview JEI recebeu guarda client-side.
+> Gate final verde: **98/98 GameTests**, unitários, Spotless, compilação e datagen `written: 0`
+> (`/tmp/gtna-0122-final-gate.log`). O cliente isolado carregou os scripts KubeJS e mostrou o HUD;
+> o preview JEI específico e a execução de receita com módulo KubeJS formado ainda não foram
+> retestados manualmente. O cliente e save originais do autor não foram substituídos.
+
 > **Módulos sem bloqueio + cadeia de secagem (G-0121):** a thread de checagem assíncrona do GTCEu
 > podia entrar em deadlock com o servidor: `gtna$setModuleCount` consultava o chunk para enviar o
 > pacote visual enquanto segurava o lock do padrão. O envio agora é agendado na thread do servidor.
@@ -600,6 +638,86 @@ foi feito nem repetir os erros já pagos.
   modifier + gametest); (b) confirmar in-game se cada geometria proposta encaixa no controller
   real; (c) as imagens são mockups geométricos fiéis ao pattern, **não** screenshots — vale
   incluir screenshots reais na galeria antes de publicar.
+
+> **Push de 26/09 (outra máquina) — numeração paralela:** os checkpoints abaixo usam os IDs
+> G-0122–G-0124 de 26/09 e convivem com os checkpoints locais de 29/09 acima; os dois históricos
+> são reais e foram mantidos.
+
+### G-0124 (2026-09-26) — QA em client: módulo EBF, UI, CTM, carcaças e KubeJS
+
+- O autor confirmou EBF sem módulo processando Aluminium Dust → Ingot em 11,05 s com hatch HV,
+  bobinas Tritanium e muffler IV; EMI lista 22,1 s. O EBF stock aplica `ebfOverclock` conforme
+  tensão e temperatura, portanto esse tempo menor não é evidência de bônus do módulo.
+- O Accelerate Hatch HV colocado na quarta camada, dois blocos à esquerda e um atrás do
+  controlador, ocupa a célula superior `C` do módulo. Ela só aceitava Invar Heatproof Casing.
+  O predicado agora aceita Accelerate nessa célula e o GameTest troca o hatch da base do módulo
+  pelo hatch superior, confirma a formação e rejeita dois Accelerate Hatches simultâneos.
+- A UI de `WorkableElectricMultipleRecipesMachine` mostrava apenas a linha personalizada de
+  energia porque omitira as chamadas de estado, progresso, falha de receita, modo e saída do
+  `MultiblockDisplayText`. Essas linhas foram adicionadas para o Integrated Ore Processor e os
+  demais hosts dessa classe.
+- A captura do Boron Carbide Radiation Resistant Casing mostrou o CTM roxo/preto: o `.mcmeta`
+  apontava para `gtna:block/...`, mas o atlas está em `gtna:block/casings/...`. Caminho corrigido.
+  O material GTO `BoronCarbide`/`BoronCarbideCeramics` foi adicionado com rota simplificada:
+  Mixer (4 Boron + 3 Carbon → 7 B4C), Sifter (2 B4C → cerâmica), Compressor/Cutter automáticos
+  para flocos e receita Assembler original da carcaça com 16 flocos. Omite os fornos não portados.
+- Os casings `component_assembly_casing_*` e `component_assembly_line_casing_*` tinham insumos
+  idênticos; o GTCEu descartava um resultado em seu lookup, apesar de ambos aparecerem no código.
+  Circuitos 1/2 distinguem as famílias em LV–UV. GameTest confere ambas e circuitos diferentes.
+- A página JEI do exemplo KubeJS de desempenho colocava a célula `P` dois blocos do controller,
+  coincidindo com a extremidade da base do Integrated Ore Processor. Agora `P` fica a quatro
+  blocos, fora da base e do outro exemplo de módulo.
+- O autor confirmou sem falha: paginação/hover JEI do Component Assembler, Large Steam Solar
+  Boiler wireless, Dehydrators LV–OpV, Vacuum Drying Furnace, HUD Flux Matrix, nomes Rocket
+  Engines e Evaporation Plant. Ainda faltam reteste no client das correções acima, duração do
+  Accelerate Hatch e bônus KubeJS com módulo formado.
+- Gate local: `spotlessApply compileJava runUnitTests runGameTestServer runData --offline` passou
+  com 100/100 GameTests e datagen `written: 0` (`/tmp/gtna-0124-final-gate.log`).
+
+### G-0123 (2026-09-26) — EBF processa receitas sem módulo auxiliar
+
+- A captura enviada pelo autor mostra um EBF formado e energizado, sem módulo auxiliar, sem
+  iniciar receita. No GTCEu, `isRecipeLogicAvailable()` requer estrutura formada **e** estado
+  sem erro. O `MultiblockControllerMachineMixin.checkPattern()` já preservava a formação da base
+  quando o módulo opcional não casava, mas deixava no estado o `PatternError` da extensão.
+- Após checar todos os módulos, o mixin limpa esse erro porque o padrão principal casou. Não
+  altera a aceitação de hatches nem os limites: módulos só somam partes quando casam. O
+  `ebfModuleForms` remove o módulo e confirma que a base segue formada, conta zero módulos e
+  disponibiliza sua lógica de receitas. O mesmo teste cobre o terceiro Energy Hatch restrito
+  ao módulo, rejeição do segundo Energy Hatch auxiliar, wireless no módulo e Accelerate na base.
+- Verificação: `spotlessCheck`, `compileJava`, `runUnitTests`, 98/98 GameTests e `git diff --check`
+  passaram. A primeira tentativa de `runData` no worktree isolado encontrou falha intermitente
+  no registro do renderer Annihilate; repetição isolada passou e gerou recursos do cache inicial.
+  A segunda repetição confirmou datagen `written: 0`.
+- Pendências manuais: receita EBF sem módulo no client; paginação/hover da prévia JEI do Component
+  Assembler; duração/overclock do exemplo de módulo KubeJS; boiler wireless, Dehydrators,
+  Vacuum Drying Furnace, nomes Rocket Engine e HUD Flux Matrix. Cliente e save originais intactos.
+
+### G-0122 (2026-09-26) — Boiler wireless, Dehydrator, HUD, JEI e módulos KubeJS
+
+- Large Steam Solar Boiler: o padrão estático e o dinâmico aceitam
+  `STEAM_EXPORT_FLUIDS` GTNA. GameTest forma com saída wireless, rejeita entrada wireless na
+  posição de saída e executa receita que entrega 100 mB de vapor ao tanque remoto.
+- Dehydrator: registros e receitas shaped em todos os tiers elétricos LV–OpV, com nomes
+  en_us/pt_br e recursos gerados. Rocket Engine EV/IV/LuV recebeu os nomes originais em ambas
+  as línguas. Os GameTests conferem as receitas dos Dehydrators.
+- Flux Matrix: botão de HUD, estado/sincronização de saldo e fluxo da rede, editor de posição e
+  configuração; o HUD foi observado no cliente isolado. O cliente original do autor permaneceu
+  aberto, e uma cópia do save `New World` foi usada no worktree para esse teste.
+- Preview JEI do Component Assembler: o relatório real mostrava acesso fora dos limites após
+  troca de página. Uma guarda client-side ignora slots obsoletos. Compilação e abertura geral do
+  cliente passaram; a navegação exata que causava o crash ainda não foi repetida após a correção.
+- API KubeJS: `SubPatternEventJS.add` aceita velocidade e overclock perfeito; o bônus só conta
+  para módulos aceitos e formados no controlador de múltiplas receitas. Aliases de Parallel
+  Hatch, Overclock Hatch e Accelerate Hatch estão expostos. O exemplo
+  `examples/kubejs/server_scripts/gtna_multiple_recipes_module.js` carregou sem erro e
+  registrou dois módulos no Integrated Ore Processor. A aceleração de uma receita com módulo
+  externo formado ainda não foi medida no cliente.
+- Candidatos GTO/GTNL documentados em
+  `docs/roadmap/NEXT-GTO-GTNL-CANDIDATES-2026-09-26.md`, com fontes e dependências.
+- Gate: `./gradlew spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`
+  passou com **98/98 GameTests** e datagen `written: 0` (`/tmp/gtna-0122-final-gate.log`);
+  `git diff --check` passou. O envio a `main` foi autorizado pelo autor após os testes.
 
 ### G-0121 (2026-09-26) — Dehydrator IV, receita do Vacuum Dryer e deadlock de módulos
 

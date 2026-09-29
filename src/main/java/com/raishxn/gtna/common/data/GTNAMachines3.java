@@ -74,7 +74,7 @@ import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
 /** GTOCore LV–HV multiblock ports kept separate from the older machine registry. */
 public final class GTNAMachines3 {
 
-    /** GTO's IV Dehydrator, required by the Vacuum Drying Furnace controller recipe. */
+    /** GTO's electric Dehydrator family (LV through UV). */
     public static final MachineDefinition[] DEHYDRATOR = GTMachineUtils.registerTieredMachines(
             REGISTRATE, "dehydrator",
             (holder, tier) -> new SimpleTieredMachine(holder, tier, GTMachineUtils.defaultTankSizeFunction),
@@ -90,7 +90,7 @@ public final class GTNAMachines3 {
                             GTNARecipeType.DEHYDRATOR_RECIPES,
                             GTMachineUtils.defaultTankSizeFunction.applyAsInt(tier), true))
                     .register(),
-            GTValues.IV);
+            GTMachineUtils.ELECTRIC_TIERS);
 
     /** GTO's EV, IV and LuV Rocket Engines; the EV engine is the turbine controller ingredient. */
     public static final MachineDefinition[] ROCKET_ENGINE_GENERATOR = GTMachineUtils.registerTieredMachines(

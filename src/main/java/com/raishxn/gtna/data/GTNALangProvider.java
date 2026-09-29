@@ -282,6 +282,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("material.gtna.lithium_oxide", "Lithium Oxide");
         add("material.gtna.zirconium_oxide", "Zirconium Oxide");
         add("material.gtna.zirconia_ceramic", "Zirconia Ceramic");
+        add("material.gtna.boron_carbide", "Boron Carbide");
+        add("material.gtna.boron_carbide_ceramics", "Boron Carbide Ceramics");
         // --- Hatches Translations (UPDATED) ---
 
         // Accelerate Hatch
@@ -502,9 +504,26 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.annihilate_generator", "Annihilation Generator");
         add("gtna.atomization_condensation", "Atomization Condensation");
         add("gtna.dehydrator", "Dehydrator");
+        add("block.gtna.lv_dehydrator", "Basic Dehydrator");
+        add("block.gtna.mv_dehydrator", "Advanced Dehydrator");
+        add("block.gtna.hv_dehydrator", "Advanced Dehydrator II");
+        add("block.gtna.ev_dehydrator", "Advanced Dehydrator III");
+        add("block.gtna.iv_dehydrator", "Elite Dehydrator");
+        add("block.gtna.luv_dehydrator", "Elite Dehydrator II");
+        add("block.gtna.zpm_dehydrator", "Elite Dehydrator III");
+        add("block.gtna.uv_dehydrator", "Ultimate Dehydrator");
+        add("block.gtna.uhv_dehydrator", "Epic Dehydrator");
+        add("block.gtna.uev_dehydrator", "Epic Dehydrator II");
+        add("block.gtna.uiv_dehydrator", "Epic Dehydrator III");
+        add("block.gtna.uxv_dehydrator", "Epic Dehydrator IV");
+        add("block.gtna.opv_dehydrator", "Legendary Dehydrator");
         add("gtna.flotating_beneficiation", "Flotating Beneficiation");
         add("gtna.isa_mill", "ISA Mill");
         add("gtna.rocket_engine", "Rocket Engine");
+        add("gtna.machine.auxiliary_module.kubejs.performance", "2x speed and perfect overclock when formed");
+        add("block.gtna.ev_rocket_engine", "Advanced Rocket Engine III");
+        add("block.gtna.iv_rocket_engine", "Elite Rocket Engine");
+        add("block.gtna.luv_rocket_engine", "Elite Rocket Engine II");
         add("gtna.supercritical_steam_turbine", "Supercritical Steam Turbine");
         add("gtna.vacuum_drying", "Vacuum Drying");
         add("gtna.machine.large_greenhouse.tooltip",
@@ -1560,6 +1579,9 @@ public class GTNALangProvider extends LanguageProvider {
         add("config.gtna.option.selfRestraint", "Self Restraint");
         add("config.gtna.option.disableFlyInertia", "Disable Fly Inertia");
         add("config.gtna.option.wirelessSteamHud", "Wireless Steam HUD");
+        add("config.gtna.option.wirelessEnergyHud", "Wireless Energy HUD");
+        add("config.gtna.option.wirelessEnergyHudX", "Wireless Energy HUD X Position");
+        add("config.gtna.option.wirelessEnergyHudY", "Wireless Energy HUD Y Position");
         add("config.gtna.option.wirelessSteamHudX", "Wireless Steam HUD X Position");
         add("config.gtna.option.wirelessSteamHudY", "Wireless Steam HUD Y Position");
         add("config.gtna.option.wirelessSteamHudHistorySeconds", "Wireless Steam HUD History Seconds");
@@ -1644,6 +1666,12 @@ public class GTNALangProvider extends LanguageProvider {
 
         // Wireless steam network HUD (client overlay, off by default; see ConfigHolder.Client)
         add("gtna.hud.wireless_steam.name", "Wireless Steam HUD");
+        add("gtna.hud.wireless_energy.name", "Wireless Energy HUD");
+        add("gtna.hud.wireless_energy.balance", "§bWireless Energy§7: §f%s§7 / §f%s §7EU");
+        add("gtna.hud.wireless_energy.flow", "§7Flow: §a+%s§7 / §c-%s§7 EU/t");
+        add("gtna.hud.wireless_energy.connections", "§7Connections: §f%s");
+        add("gtna.machine.wireless_energy.hud.toggle", "Toggle the wireless energy HUD");
+        add("gtna.machine.wireless_energy.hud.editor", "Right click to move the HUD");
         add("gtna.hud.wireless_steam.balance", "§bWireless Steam§7: §f%s §7mB");
         add("gtna.hud.wireless_steam.flow", "§7Flow: §a+%s§7 / §c-%s§7 mB/s");
         add("gtna.hud.wireless_steam.hatches", "§7Hatches: §f%s §7drain / §f%s §7feed");

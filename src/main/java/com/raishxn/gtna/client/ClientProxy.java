@@ -6,6 +6,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.raishxn.gtna.client.hud.HudEditorScreen;
+import com.raishxn.gtna.client.hud.WirelessEnergyHudBridge;
+import com.raishxn.gtna.client.hud.WirelessEnergyHudOverlay;
 import com.raishxn.gtna.client.hud.WirelessSteamHudBridge;
 import com.raishxn.gtna.client.hud.WirelessSteamHudOverlay;
 import com.raishxn.gtna.client.renderer.machine.AnnihilateGeneratorRenderer;
@@ -30,6 +32,11 @@ public class ClientProxy extends CommonProxy {
             hud.setEnabled(!hud.isEnabled());
         };
         WirelessSteamHudBridge.openEditor = () -> Minecraft.getInstance().setScreen(new HudEditorScreen());
+        WirelessEnergyHudBridge.toggleHud = () -> {
+            var hud = WirelessEnergyHudOverlay.INSTANCE;
+            hud.setEnabled(!hud.isEnabled());
+        };
+        WirelessEnergyHudBridge.openEditor = () -> Minecraft.getInstance().setScreen(new HudEditorScreen());
 
         // Dynamic render codecs must exist before GTCEu starts baking machine models.
         // FMLClientSetupEvent runs too late for models that reference these IDs.

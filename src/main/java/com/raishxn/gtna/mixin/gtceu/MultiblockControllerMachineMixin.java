@@ -16,6 +16,7 @@ import net.minecraftforge.network.PacketDistributor;
 import com.raishxn.gtna.api.machine.multiblock.GTNAPartAbility;
 import com.raishxn.gtna.api.machine.multiblock.GTNASubPatterns;
 import com.raishxn.gtna.api.machine.multiblock.IGTNAModuleHost;
+import com.raishxn.gtna.api.machine.multiblock.IGTNAModulePerformanceHost;
 import com.raishxn.gtna.api.machine.multiblock.ISubPatternMachine;
 import com.raishxn.gtna.network.GTNANetworkHandler;
 import com.raishxn.gtna.network.packet.SModuleCountPacket;
@@ -49,7 +50,7 @@ import java.util.Set;
  * snapshotted and restored around the sub-pattern checks.
  */
 @Mixin(MultiblockControllerMachine.class)
-public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHost {
+public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHost, IGTNAModulePerformanceHost {
 
     @Unique
     private static final List<PartAbility> GTNA$SINGLE_PER_CONTROLLER = List.of(
@@ -61,6 +62,26 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
 
     @Unique
     private volatile int gtna$formedModuleCount = 0;
+    @Unique
+    private double gtna$moduleSpeedBonus = 1.0;
+    @Unique
+    private boolean gtna$modulePerfectOverclock;
+
+    @Override
+    public double gtna$getModuleSpeedBonus() {
+        return gtna$moduleSpeedBonus;
+    }
+
+    @Override
+    public boolean gtna$hasModulePerfectOverclock() {
+        return gtna$modulePerfectOverclock;
+    }
+
+    @Override
+    public void gtna$setModulePerformance(double speedBonus, boolean perfectOverclock) {
+        gtna$moduleSpeedBonus = speedBonus;
+        gtna$modulePerfectOverclock = perfectOverclock;
+    }
 
     @Override
     public int gtna$formedModuleCount() {
@@ -78,6 +99,7 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
         MultiblockState state = self.getMultiblockState();
         if (pattern == null || !pattern.checkPatternAt(state, false)) {
             gtna$setModuleCount(self, 0);
+            gtna$setModulePerformance(1.0, false);
             return false;
         }
         List<BlockPattern> subPatterns = new ArrayList<>();
@@ -90,6 +112,7 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
         subPatterns.addAll(GTNASubPatterns.get(self.getDefinition()));
         if (subPatterns.isEmpty()) {
             gtna$setModuleCount(self, 0);
+            gtna$setModulePerformance(1.0, false);
             return true;
         }
 
@@ -114,6 +137,8 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
         }
 
         int matched = 0;
+        double speedBonus = 1.0;
+        boolean perfectOverclock = false;
         for (BlockPattern sub : subPatterns) {
             if (sub == null) {
                 continue;
@@ -134,6 +159,11 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
                 if (!gtna$hasDuplicatePerformanceHatch(candidateParts)) {
                     parts = candidateParts;
                     matched++;
+                    var performance = GTNASubPatterns.performance(sub);
+                    if (performance != null) {
+                        speedBonus *= performance.speedBonus();
+                        perfectOverclock |= performance.perfectOverclock();
+                    }
                 }
             } else {
                 // The sub-pattern stopped at its first mismatching cell. That cell is NOT added to
@@ -150,6 +180,7 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
             positionCache.addAll(state.cache);
         }
         gtna$setModuleCount(self, matched);
+        gtna$setModulePerformance(Math.min(speedBonus, 1024.0), perfectOverclock);
 
         // Restore the main context and, when a module matched, add its parts.
         context.reset();
@@ -160,6 +191,9 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
         if (matched > 0) {
             context.set("parts", parts);
         }
+        // A missing optional module leaves its PatternError on the shared state. The base
+        // matched successfully, so keep it recipe-capable even when an extension did not match.
+        state.setError(null);
         return true;
     }
 

@@ -27,6 +27,7 @@
     "kubejs.DataGeneratorMixin"
   ],
   "client": [
+    "client.MultiblockInfoSlotGuardMixin",
     "client.GTRecipeWidgetMixin",
     "client.FancyMachineUIWidgetMixin",
     "client.CoreCraftConfirmScreenMixin"

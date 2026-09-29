@@ -193,6 +193,18 @@ public class ConfigHolder {
         public boolean wirelessSteamHud = false;
 
         @Configurable
+        @Comment({ "En: Show the Nexus wireless energy HUD.", "Pt: Mostra o HUD de energia wireless do Nexus." })
+        public boolean wirelessEnergyHud = false;
+
+        @Configurable
+        @Range(min = 0, max = 100)
+        public int wirelessEnergyHudX = 5;
+
+        @Configurable
+        @Range(min = 0, max = 100)
+        public int wirelessEnergyHudY = 60;
+
+        @Configurable
         @Range(min = 0, max = 100)
         @Comment({ "En: Wireless steam HUD horizontal position: 0 = left edge, 100 = right edge.",
                 "Pt: Posicao horizontal do HUD de vapor: 0 = esquerda, 100 = direita." })

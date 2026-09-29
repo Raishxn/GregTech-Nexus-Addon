@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -39,6 +40,10 @@ public final class GTNASubPatterns {
     private static final Map<ResourceLocation, List<Component>> TOOLTIPS = new HashMap<>();
     private static final Map<ResourceLocation, List<String>> KUBE_DESCRIPTIONS = new HashMap<>();
     private static final Map<ResourceLocation, List<String>> CLIENT_KUBE_DESCRIPTIONS = new HashMap<>();
+    private static final Map<Function<MultiblockMachineDefinition, BlockPattern>, Performance> KUBE_PERFORMANCE = new IdentityHashMap<>();
+    private static final Map<BlockPattern, Performance> BUILT_PERFORMANCE = new IdentityHashMap<>();
+
+    public record Performance(double speedBonus, boolean perfectOverclock) {}
 
     private GTNASubPatterns() {}
 
@@ -52,8 +57,18 @@ public final class GTNASubPatterns {
     public static void registerKubeJS(ResourceLocation machineId,
                                       Function<MultiblockMachineDefinition, BlockPattern> factory,
                                       String descriptionKey) {
+        registerKubeJS(machineId, factory, descriptionKey, 1.0, false);
+    }
+
+    public static void registerKubeJS(ResourceLocation machineId,
+                                      Function<MultiblockMachineDefinition, BlockPattern> factory,
+                                      String descriptionKey, double speedBonus, boolean perfectOverclock) {
+        if (!Double.isFinite(speedBonus) || speedBonus < 1.0) {
+            throw new IllegalArgumentException("Module speed bonus must be finite and at least 1.0");
+        }
         KUBE_FACTORIES.computeIfAbsent(machineId, id -> new ArrayList<>()).add(factory);
         KUBE_DESCRIPTIONS.computeIfAbsent(machineId, id -> new ArrayList<>()).add(descriptionKey);
+        KUBE_PERFORMANCE.put(factory, new Performance(speedBonus, perfectOverclock));
         register(machineId, factory);
     }
 
@@ -68,6 +83,8 @@ public final class GTNASubPatterns {
         });
         KUBE_FACTORIES.clear();
         KUBE_DESCRIPTIONS.clear();
+        KUBE_PERFORMANCE.clear();
+        BUILT_PERFORMANCE.clear();
     }
 
     /**
@@ -97,10 +114,16 @@ public final class GTNASubPatterns {
                 BlockPattern pattern = factory.apply(definition);
                 if (pattern != null) {
                     patterns.add(pattern);
+                    Performance performance = KUBE_PERFORMANCE.get(factory);
+                    if (performance != null) BUILT_PERFORMANCE.put(pattern, performance);
                 }
             }
             return patterns;
         });
+    }
+
+    public static Performance performance(BlockPattern pattern) {
+        return BUILT_PERFORMANCE.get(pattern);
     }
 
     /** Tooltip lines describing the modules of {@code definition}, or an empty list. */

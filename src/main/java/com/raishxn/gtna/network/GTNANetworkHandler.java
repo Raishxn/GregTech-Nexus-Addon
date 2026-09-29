@@ -15,6 +15,7 @@ import com.raishxn.gtna.network.packet.SModuleCountPacket;
 import com.raishxn.gtna.network.packet.SRegionHighlightPacket;
 import com.raishxn.gtna.network.packet.SStructureDetectHighlight;
 import com.raishxn.gtna.network.packet.SStructureGhostPreviewPacket;
+import com.raishxn.gtna.network.packet.SWirelessEnergyStats;
 import com.raishxn.gtna.network.packet.SWirelessSteamStats;
 
 public class GTNANetworkHandler {
@@ -71,6 +72,12 @@ public class GTNANetworkHandler {
                 .encoder(SWirelessSteamStats::encode)
                 .decoder(SWirelessSteamStats::decode)
                 .consumerMainThread(SWirelessSteamStats::handle)
+                .add();
+
+        CHANNEL.messageBuilder(SWirelessEnergyStats.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SWirelessEnergyStats::encode)
+                .decoder(SWirelessEnergyStats::decode)
+                .consumerMainThread(SWirelessEnergyStats::handle)
                 .add();
 
         // C2S – Client requests a locate highlight

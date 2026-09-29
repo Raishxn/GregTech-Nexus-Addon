@@ -890,10 +890,21 @@ public class GTNABlockRecipes {
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("boron_carbide_ceramic_radiation_resistant_mechanical_cube")
                 .inputItems(TagPrefix.frameGt, GTMaterials.Ruridit)
                 .inputItems(TagPrefix.plate, GTMaterials.TitaniumTungstenCarbide, 2)
-                .inputItems(TagPrefix.dust, GTMaterials.Boron, 8)
-                .inputItems(TagPrefix.dust, GTMaterials.Carbon, 8)
+                .inputItems(GTNATagPrefix.flake, GTNAMaterials.BoronCarbideCeramics, 16)
                 .outputItems(GTNABlocks.BORON_CARBIDE_CERAMIC_RADIATION_RESISTANT_MECHANICAL_CUBE.asItem())
                 .EUt(30).duration(200).save(provider);
+
+        // GTO uses a Reaction Furnace for B4C and a Sifter for its ceramic dust. GTNA retains the
+        // materials and ceramic flakes, using available Mixer/Sifter/Compressor/Cutter steps.
+        GTRecipeTypes.MIXER_RECIPES.recipeBuilder("gtna_boron_carbide_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Boron, 4)
+                .inputItems(TagPrefix.dust, GTMaterials.Carbon, 3)
+                .outputItems(TagPrefix.dust, GTNAMaterials.BoronCarbide, 7)
+                .EUt(120).duration(550).save(provider);
+        GTRecipeTypes.SIFTER_RECIPES.recipeBuilder("gtna_boron_carbide_ceramics_dust")
+                .inputItems(TagPrefix.dust, GTNAMaterials.BoronCarbide, 2)
+                .outputItems(TagPrefix.dust, GTNAMaterials.BoronCarbideCeramics)
+                .EUt(240).duration(100).save(provider);
 
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("precision_processing_mechanical_casing")
                 .inputItems(TagPrefix.frameGt, GTNAMaterials.HastelloyN)
@@ -965,6 +976,7 @@ public class GTNABlockRecipes {
                 .inputItems(component("conveyor_module", tier), 6)
                 .inputItems(TagPrefix.gear, material, 4)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(solder))
+                .circuitMeta(2)
                 .outputItems(output.asItem())
                 .EUt(GTValues.VA[tier])
                 .duration(320)
@@ -975,7 +987,7 @@ public class GTNABlockRecipes {
     private static void assemblyLineCasing(Consumer<FinishedRecipe> provider,
                                            BlockEntry<Block> output, BlockEntry<Block> researchStack,
                                            String name) {
-        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder(name)
+        componentAssemblyLineRecipe(name)
                 .inputItems(TagPrefix.frameGt, GTMaterials.Europium)
                 .inputItems(TagPrefix.plateDense, GTMaterials.RhodiumPlatedPalladium, 6)
                 .inputItems(GTItems.FIELD_GENERATOR_LuV, 4)
@@ -1011,7 +1023,7 @@ public class GTNABlockRecipes {
     private static void assemblyLineCasingZpm(Consumer<FinishedRecipe> provider,
                                               BlockEntry<Block> output, BlockEntry<Block> researchStack,
                                               String name) {
-        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder(name)
+        componentAssemblyLineRecipe(name)
                 .inputItems(TagPrefix.frameGt, GTMaterials.NaquadahAlloy)
                 .inputItems(TagPrefix.plateDense, GTMaterials.NaquadahAlloy, 6)
                 .inputItems(GTItems.FIELD_GENERATOR_ZPM, 4)
@@ -1050,7 +1062,7 @@ public class GTNABlockRecipes {
     private static void assemblyLineCasingUv(Consumer<FinishedRecipe> provider,
                                              BlockEntry<Block> output, BlockEntry<Block> researchStack,
                                              String name) {
-        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder(name)
+        componentAssemblyLineRecipe(name)
                 .inputItems(TagPrefix.frameGt, GTMaterials.Tritanium)
                 .inputItems(TagPrefix.plateDouble, GTMaterials.Tritanium, 24)
                 .inputItems(GTItems.FIELD_GENERATOR_UV, 4)
@@ -1075,6 +1087,14 @@ public class GTNABlockRecipes {
                         .CWUt(256)
                         .EUt(491520))
                 .save(provider);
+    }
+
+    private static com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder componentAssemblyLineRecipe(String name) {
+        var builder = GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder(name);
+        // Research items do not distinguish recipes in the GTCEu lookup DB. Both casing families
+        // need distinct circuit values; one circuit and one circuit-free recipe still conflict.
+        builder.circuitMeta(name.startsWith("component_assembly_casing_") ? 1 : 2);
+        return builder;
     }
 
     private static net.minecraft.world.item.Item component(String kind, int tier) {

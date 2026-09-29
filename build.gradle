@@ -383,6 +383,7 @@ tasks.withType(JavaExec).configureEach {
 tasks.register('installIntegratedOreKubeJSExample', Copy) {
     description = 'Installs the Integrated Ore Processor KubeJS example in the local dev run.'
     from('examples/kubejs/server_scripts/gtna_integrated_ore_module.js')
+    from('examples/kubejs/server_scripts/gtna_multiple_recipes_module.js')
     into('run/kubejs/server_scripts')
 }
 tasks.named('runClient').configure {

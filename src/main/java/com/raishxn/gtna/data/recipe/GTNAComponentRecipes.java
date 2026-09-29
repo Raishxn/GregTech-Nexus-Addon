@@ -467,6 +467,9 @@ public final class GTNAComponentRecipes {
                 .inputItems(component("conveyor_module", tier), 6)
                 .inputItems(TagPrefix.gear, material, 4)
                 .inputFluids(GTMaterials.SolderingAlloy, solder)
+                // The Assembly Line casing has the same GTO ingredient list. Distinct circuits
+                // keep both outputs in the GTCEu Assembler recipe lookup.
+                .circuitMeta(1)
                 .outputItems(output)
                 .EUt(GTValues.VA[tier]).duration(320).save(provider);
     }

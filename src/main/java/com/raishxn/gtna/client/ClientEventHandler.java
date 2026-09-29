@@ -9,6 +9,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import com.raishxn.gtna.GTNACORE;
+import com.raishxn.gtna.client.hud.WirelessEnergyHudState;
 import com.raishxn.gtna.client.hud.WirelessSteamHudState;
 import com.raishxn.gtna.config.ConfigHolder;
 
@@ -33,5 +34,6 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         WirelessSteamHudState.reset();
+        WirelessEnergyHudState.reset();
     }
 }
