@@ -1,0 +1,3224 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Nexus of Steam & Steel — Documentation for GregTech Nexus Addon">
+      
+      
+        <meta name="author" content="Raishxn">
+      
+      
+        <link rel="canonical" href="https://raishxn.github.io/GregTech-Nexus-Addon/en/roadmap/NEXT-SESSION-PORTS-2026-09-25/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="../../../roadmap/NEXT-SESSION-PORTS-2026-09-25/" hreflang="pt">
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../../es/roadmap/NEXT-SESSION-PORTS-2026-09-25/" hreflang="es">
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Handoff — ports de multiblocos até LuV (2026-09-25) - GregTech Nexus Addon</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/css/custom.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#handoff-ports-de-multiblocos-ate-luv-2026-09-25" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../" title="GregTech Nexus Addon" class="md-header__button md-logo" aria-label="GregTech Nexus Addon" data-md-component="logo">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            GregTech Nexus Addon
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Handoff — ports de multiblocos até LuV (2026-09-25)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../roadmap/NEXT-SESSION-PORTS-2026-09-25/" hreflang="pt" class="md-select__link">
+              Português
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../../es/roadmap/NEXT-SESSION-PORTS-2026-09-25/" hreflang="es" class="md-select__link">
+              Español
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Raishxn/GregTech-Nexus-Addon" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Raishxn/GregTech-Nexus-Addon
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🏠 Home
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../gameplay/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🎮 Gameplay
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../development/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🔧 Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📋 Roadmap
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="GregTech Nexus Addon" class="md-nav__button md-logo" aria-label="GregTech Nexus Addon" data-md-component="logo">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    GregTech Nexus Addon
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Raishxn/GregTech-Nexus-Addon" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Raishxn/GregTech-Nexus-Addon
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏠 Home
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    🏠 Home
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/first-steps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    First Steps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../gameplay/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎮 Gameplay
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    🎮 Gameplay
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eras
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Eras
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/eras/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🗺 Eras Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/eras/steam-and-steel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ⚙ Steam and Steel Era
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../gameplay/machines/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Machines
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Machines
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_2" id="__nav_2_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Steam & Steel Era
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Steam & Steel Era
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/large-steam-furnace/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔥 Large Steam Furnace
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/large-steam-crusher/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ⚙ Large Steam Crusher
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/large-steam-alloy-smelter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔧 Large Steam Alloy Smelter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/large-steam-solar-boiler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ☀️ Large Steam Solar Boiler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/steam-cobbler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🪨 Steam Cobbler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/stone-superheater/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🌡 Stone Superheater
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/steam-manufacturer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔧 Steam Manufacturer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/steam-woodcutter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🪓 Steam Woodcutter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_3" id="__nav_2_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Electric Multiblocks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Electric Multiblocks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/electric/industrial-slaughterhouse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🐮 Industrial Slaughterhouse
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_4" id="__nav_2_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    No Electricity
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    No Electricity
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/noenergy/infernal-coke-oven/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔥 Infernal Coke Oven
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/noenergy/hyper-pressure-reactor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🌀 Hyper Pressure Reactor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/noenergy/leap-forward-blast-furnace/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏗 Leap Forward Blast Furnace
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_5" id="__nav_2_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Void Miner
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Void Miner
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/machines/steam/void-miner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ⛏ Void Miner (Steam Gate Aged)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../gameplay/parts/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hatches & Parts
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Hatches & Parts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/parts/wireless-steam-hatches/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📡 Wireless Steam Hatches
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/parts/thread-hatch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧵 Thread Hatch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/parts/accelerate-hatch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ⚡ Accelerate Hatch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/parts/overclock-hatch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔥 Overclock Hatch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/parts/advanced-parallel-hatch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📊 Advanced Parallel Hatch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/parts/huge-steam-bus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📦 Huge Steam Buses
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../gameplay/materials/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Materials
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Materials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/materials/alloys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ⚗ Metal Alloys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/materials/elements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧪 Custom Elements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/materials/fluids/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    💧 Fluids
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systems
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Systems
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/systems/wireless-steam-network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📡 Wireless Steam Network
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/systems/nexus-flux-matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ⚡ Nexus Flux Matrix — Wireless Energy System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/systems/hydraulic-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔧 Hydraulic System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tips
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tips
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/tips/optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    💡 Optimization Tips
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gameplay/tips/ae2-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔌 AE2 Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../development/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔧 Development
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    🔧 Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🛠 Environment Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏗 Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/api/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🌐 API Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/api/kubejs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔌 KubeJS Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/api/machines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏭 API: Creating Multiblocks with GTNA Hatches
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/api/materials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🧪 Materials API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🤝 Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📋 Roadmap
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    📋 Roadmap
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multiblock-port-manifest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multiblock port manifest
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../technical-audit-pattern-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔍 Auditoria Técnica — Estrutura do GTNA + Pattern Buffer Multi-Modo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pattern-buffer-fidelity-gap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🎯 Gap de Fidelidade — Pattern Buffer GTNA vs GTOCore/GTLCore
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#comece-aqui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comece aqui
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decisoes-ja-tomadas-pelo-autor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisões já tomadas pelo autor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proxima-acao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Próxima ação
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qa-de-compatibilidade-e-tooltips-g-0092" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QA de compatibilidade e tooltips — G-0092
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qa-seguinte-g-0093" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QA seguinte — G-0093
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qa-de-steam-hatches-e-greenhouse-g-0094" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QA de Steam Hatches e Greenhouse — G-0094
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qa-da-max-output-hatch-g-0095" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QA da MAX Output Hatch — G-0095
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rodada-de-2026-09-25-autor-ausente-chemical-plant-e-mega-alloy-blast-smelter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rodada de 2026-09-25 (autor ausente) — Chemical Plant e Mega Alloy Blast Smelter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rodada de 2026-09-25 (autor ausente) — Chemical Plant e Mega Alloy Blast Smelter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bloqueios-dos-candidatos-restantes-pesquisa-concluida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bloqueios dos candidatos restantes (pesquisa concluída)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="handoff-ports-de-multiblocos-ate-luv-2026-09-25">Handoff — ports de multiblocos até LuV (2026-09-25)<a class="headerlink" href="#handoff-ports-de-multiblocos-ate-luv-2026-09-25" title="Permanent link">&para;</a></h1>
+<h2 id="comece-aqui">Comece aqui<a class="headerlink" href="#comece-aqui" title="Permanent link">&para;</a></h2>
+<p>Leia <code>CONTINUITY_LEDGER.md</code> (G-0089 e G-0090), <code>docs/roadmap/multiblock-port-manifest.md</code>
+e este arquivo. O handoff <code>NEXT-SESSION-HANDOFF.md</code> cobre uma fase anterior de steam;
+suas regras de orientação e atribuição ainda são úteis, mas seu estado de progresso está antigo.</p>
+<p>O checkout contém <strong>mudanças locais sem commit</strong>. Não descarte o worktree. Os quatro ports abaixo
+passaram <code>spotlessCheck</code>, <code>compileJava</code>, <code>runUnitTests</code> (20/20) e <code>runGameTestServer</code> (58/58)
+em 2026-09-25. <code>runData</code> foi repetido após as correções de UI e idioma. O autor encontrou
+tooltips ausentes e um slot ausente no Generator Array; as correções estão neste worktree,
+aguardando nova verificação in-game. Antes de uma nova
+alteração, rode o gate descrito no ledger/<code>AGENTS.md</code> e inspecione <code>git status</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Implementado</th>
+<th>Estrutura / mecânica</th>
+<th>Cobertura automática</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>generator_array</code></td>
+<td>3×3×3 GTO; slot no controlador para quatro geradores (bus ainda aceito); hatch normal ou Nexus Flux Matrix no modo wireless</td>
+<td>formação, slot, combustível e geração</td>
+</tr>
+<tr>
+<td><code>fishing_ground</code></td>
+<td>MBS GTO 13×4×13; iscas e loot vanilla por circuito</td>
+<td>formação, isca e loot</td>
+</tr>
+<tr>
+<td><code>evaporation_plant</code></td>
+<td>coluna GTO, módulo auxiliar, salmoura e cadeia de bromo/iodo</td>
+<td>formação e as duas evaporações</td>
+</tr>
+<tr>
+<td><code>greenhouse</code></td>
+<td>MBS GTO 5×5×5; luz do céu; 84 receitas fixas de cultivo</td>
+<td>formação e receita de 12 cactus</td>
+</tr>
+</tbody>
+</table>
+<p><code>src/main/java/com/raishxn/gtna/common/data/GTNAMachines3.java</code> registra esses controladores.
+As classes de comportamento ficam em <code>common/machine/multiblock/</code>; as receitas, em
+<code>data/recipe/GTNAMachineRecipes.java</code> e <code>GTNAGreenhouseRecipes.java</code>. Os MBS copiados do GTO
+ficam em <code>src/main/resources/pattern/gto/</code> e o leitor em
+<code>common/data/multiblock/GTOCompressedPatternReader.java</code>. O GameTest está em
+<code>src/main/java/com/raishxn/gtna/gametest/GTNAMachineGameTests.java</code>.</p>
+<h2 id="decisoes-ja-tomadas-pelo-autor">Decisões já tomadas pelo autor<a class="headerlink" href="#decisoes-ja-tomadas-pelo-autor" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Portar <strong>todos os candidatos viáveis até LuV</strong>, visando ao menos dez multiblocos, com
+  estrutura, comportamento, materiais e receitas tão fiéis quanto possível. Criar materiais
+  necessários para preservar a progressão.</li>
+<li>Manter <code>greenhouse</code> e <code>component_assembler</code> na seleção. Excluir <code>lava_furnace</code>,
+  <code>tree_growth_simulator</code>, <code>reaction_furnace</code>, <code>crystallization_chamber</code>,
+  <code>polymerization_reactor</code> e <code>processing_plant</code>. <code>large_gas_turbine</code> já existe no GTCEu;
+  não registrar duplicata.</li>
+<li>Candidatos citados: <code>fishing_ground</code>, <code>evaporation_plant</code>, módulo para Alloy Blast,
+  <code>large_greenhouse</code>, <code>water_purification_plant</code>, <code>clarifier_purification_unit</code>,
+  <code>steam_mega_turbine</code>, <code>rocket_large_turbine</code>, <code>ozonation_purification_unit</code>,
+  <code>chemical_plant</code>, <code>blaze_blast_furnace</code>, <code>cold_ice_freezer</code>,
+  <code>supercritical_steam_turbine</code>, <code>supercritical_mega_steam_turbine</code>, <code>isa_mill</code>,
+  <code>industrial_flotation_cell</code>, <code>vacuum_drying_furnace</code>, <code>precision_assembler</code>,
+  <code>advanced_fusion_reactor_mk1</code> e seus módulos. Portar somente o que estiver na
+  progressão até LuV; registrar dependências e desvios concretos.</li>
+<li>Para o <code>generator_array</code>, wireless significa integração com <strong>Nexus Flux Matrix</strong>;
+  o modo normal usa hatch de energia. Não pedir nova confirmação dessas decisões.</li>
+</ul>
+<h2 id="proxima-acao">Próxima ação<a class="headerlink" href="#proxima-acao" title="Permanent link">&para;</a></h2>
+<p><strong>Atualização G-0101:</strong> Component Assembler base (LV–IV) e Large Greenhouse já estão implementados
+no worktree, com GameTests de formação e 62/62 GameTests aprovados. A extensão grande e receitas
+ULV/LuV do Component Assembler ainda faltam; a seleção HV–LuV segue aberta. O autor autorizou
+equivalentes locais para dependências externas e receitas alternativas com os mesmos insumos para
+controladores excluídos. Nenhum commit/publicação desta leva foi autorizado.</p>
+<p><strong>Nota histórica:</strong> <code>component_assembler</code> ainda não foi portado; é o próximo controlador MV mantido pelo autor.
+No GTOCore, sua estrutura está em <code>common/data/machines/MultiBlockC.java:299</code>, a classe de
+comportamento em <code>common/machine/multiblock/electric/assembly/ComponentAssemblerMachine.java</code>
+e as receitas de componentes em <code>data/recipe/misc/ComponentRecipes.java</code>. Ele depende de casings
+de tier e do <code>multi_functional_casing</code>; portar estrutura, regras de tier, receitas e produção
+dos casings antes de considerá-lo pronto. A extensão grande é um módulo separado.</p>
+<p>Depois, priorizar os candidatos HV–LuV pelo conjunto de dependências <strong>real</strong> encontrado nas
+fontes, sem trocar máquinas ou omitir receitas em silêncio. <code>blaze_blast_furnace</code> tem um impasse
+de progressão: o casing original é feito no <code>reaction_furnace</code>, que o autor excluiu; planejar uma
+rota alternativa usando os mesmos insumos e registrar claramente a diferença. O conjunto
+<code>water_purification_plant</code>/clarifier/ozonation compartilha uma lógica de unidades; estudar a
+cadeia inteira antes de registrar peças isoladas. O <code>large_greenhouse</code> usa receitas de Greenhouse
+<strong>e</strong> Tree Growth Simulator, portanto precisa da segunda família de receitas mesmo sem portar
+um controlador Tree Growth duplicado.</p>
+<p>Fontes locais: <code>/home/raishxn/MineProjects/GTOCore-Main</code> (commit <code>dc4824d</code>) e
+<code>/home/raishxn/MineProjects/GTCEu-7.5.3</code>. Outras fontes estão listadas em <code>AGENTS.md</code>.
+O autor solicitou <code>runClient</code> para os testes desta leva. Manter as mudanças locais até
+o autor testar e autorizar publicação.</p>
+<h2 id="qa-de-compatibilidade-e-tooltips-g-0092">QA de compatibilidade e tooltips — G-0092<a class="headerlink" href="#qa-de-compatibilidade-e-tooltips-g-0092" title="Permanent link">&para;</a></h2>
+<ul>
+<li>O <code>latest.log</code> do jogador com GTNA 0.5.0 e KubeJS build.26 aponta a falha fatal no
+  <code>DataGeneratorMixin</code>. O jar SRG de Minecraft 1.20.1 expõe <code>DataGenerator.m_123917_()</code>; a
+  injeção publicada usava apenas <code>run</code>, sem refmap carregado, e herdava <code>defaultRequire: 1</code>.
+  O mixin agora aceita ambos os nomes sem remapeamento, usa <code>require = 0</code> e apenas registra
+  falhas de reflexão. O ambiente de desenvolvimento usa KubeJS build.26. O contrato compilado
+  é verificado por <code>DataGeneratorMixinContractTest</code>; confirmar também em um cliente distribuído.</li>
+<li><code>MetaMachine.onAddFancyInformationTooltip</code> insere automaticamente a chave
+  <code>gtna.machine.&lt;id&gt;.tooltip</code> no começo. Nos quatro ports, ela agora contém a função principal,
+  e as chamadas <code>.tooltips(...)</code> começam em <code>.tooltip.0</code>, sem repetir essa descrição.</li>
+<li>Generator Array: o GTO usa multiplicador configurável por dificuldade, limite configurável
+  (4 no Normal/Expert) e perda sem fio configurável (5% no Normal). O GTNA usa 1,3×, quatro
+  geradores e 5% fixos, pois ainda não porta o sistema de dificuldades do GTO. O tooltip expõe
+  esses valores, o slot do controlador ou barramento legado, os hatches de fluido e o destino
+  Nexus Flux Matrix. Só três tipos de gerador GTCEu são elegíveis; semi-fluid, rocket engine e
+  naquadah reactor do GTO ainda não têm os respectivos ports/receitas no GTNA.</li>
+<li>Fishing Ground: preservadas as quatro linhas narrativas do <code>FishingFarmTooltips</code> e, em ordem,
+  os quatro circuitos do <code>fishingFarmTooltips</code>. O texto explicita isca e água, requisitos da
+  implementação GTNA. Os modos de loot não usam o Parallel Hatch; as receitas fixas usam.</li>
+<li>Evaporation Plant: o GTO não registra tooltip narrativo/funcional próprio no controlador;
+  o texto GTNA explica torre, limite de repetição, hatches e o módulo auxiliar de titânio já
+  registrado em <code>GTNAModules</code>, que aceita as hatches Paralela e de Aceleração.</li>
+<li>Greenhouse: preservadas as duas condições originais de luz solar em <code>GreenhouseTooltips</code>.
+  O GTNA informa a alternativa de lama ao solo rico do Farmer's Delight quando o mod não está
+  presente. A tradução <code>pt_br</code> acompanha todas as novas linhas; atribuição <code>Source: GTO</code> vem
+  somente de <code>GTNASources</code>.</li>
+<li>Gate final com KubeJS build.26: <code>spotlessCheck</code>, <code>compileJava</code>, <code>runUnitTests</code>,
+  <code>runGameTestServer</code> e <code>runData --offline</code> passaram. <code>runData</code> terminou os provedores e saiu
+  normalmente. <code>runClient --offline</code> abriu a janela Forge sem a falha do mixin e foi encerrado
+  após a checagem de inicialização. Ainda falta reteste com o jar distribuído no modpack completo
+  do jogador e QA visual das duas traduções. Não houve commit nem publicação.</li>
+</ul>
+<h2 id="qa-seguinte-g-0093">QA seguinte — G-0093<a class="headerlink" href="#qa-seguinte-g-0093" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Nexus Flux Matrix: modo Safe removido por decisão do autor. Não há corte de saída por carga
+  percentual; o saldo pode cair até zero. Campos antigos <code>SafeMode</code> do mundo e <code>safeMode</code> do
+  balance JSON são ignorados; novos saves não gravam <code>SafeMode</code>. Reiniciar o cliente para testar.</li>
+<li>Evaporation Plant: a Wireless Steam Input Hatch do GTNA tinha também a habilidade
+  <code>IMPORT_FLUIDS</code>, por isso passava no predicado genérico. O controlador e a torre auxiliar
+  agora aceitam entradas de fluido que <strong>não</strong> anunciam <code>STEAM</code>. O teste cobre as hatches de
+  vapor padrão/sem fio e a Fluid Input Hatch HV. A hatch de vapor padrão só registra <code>STEAM</code> no
+  GTCEu, portanto a causa de sua aparição em outro ponto da estrutura exigiria a posição exata
+  ou uma captura do autor.</li>
+<li>Gate: <code>spotlessCheck</code>, <code>compileJava</code>, <code>runUnitTests</code> e <code>runGameTestServer</code> passaram. O
+  <code>runData</code> do gate teve uma falha intermitente no registro do renderizador da Artificial Star;
+  duas repetições isoladas passaram (segunda sem arquivos alterados). Se o erro reaparecer,
+  investigar o registro do renderer. O cliente foi reiniciado com G-0093 e ficou aberto para QA.</li>
+</ul>
+<h2 id="qa-de-steam-hatches-e-greenhouse-g-0094">QA de Steam Hatches e Greenhouse — G-0094<a class="headerlink" href="#qa-de-steam-hatches-e-greenhouse-g-0094" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Por solicitação do autor, a limitação das Wireless Steam Hatches passou do predicado da
+  Evaporation Plant para o registro das quatro peças: inputs bronze/aço anunciam só <code>STEAM</code>,
+  outputs bronze/aço anunciam só <code>GTNAPartAbility.STEAM_EXPORT_FLUIDS</code>. Nenhuma é hatch universal
+  de fluidos. O output não pode anunciar <code>STEAM</code>, pois isso o faria ocupar a posição de entrada
+  de vapor e desformar máquinas steam. O predicado defensivo da Evaporation continua presente.</li>
+<li>O padrão da Evaporation é fiel ao GTO: exatamente uma entrada de fluido e uma ou duas entradas
+  de energia na base <code>Y</code>, até uma saída por camada <code>X</code>. Não exige tier ULV. O GameTest aceitou
+  Fluid Input HV em duas posições da base e Fluid Output HV em duas posições do corpo. O tooltip
+  <code>en_us</code>/<code>pt_br</code> agora explicita essas posições, quantidades e tier livre. Ainda
+  falta a camada/posição exata do caso relatado pelo autor e distinguir a hatch ULV de energia
+  da de fluido.</li>
+<li>Greenhouse: a amostra de luz foi alinhada à área 3×3 sobre o vidro temperado. A máquina
+  verifica blocos opacos desde o nível logo acima do teto, portanto uma cobertura impede sol
+  mesmo quando o valor de skylight ainda está em cache. O GameTest provou luz inicial, ausência
+  com cobertura, recuperação após removê-la e produção de 12 cactos. O nível do GameTest tinha
+  pedra gerada acima da estrutura; o teste agora limpa a camada antes de verificar a luz.</li>
+<li>Gate completo <code>spotlessCheck compileJava runUnitTests runGameTestServer runData --offline</code>
+  passou com 59/59 GameTests e datagen <code>written: 1</code> após a tradução (<code>written: 0</code> antes dela).
+  <code>runClient --offline</code> abriu a janela Forge com a versão atual e ficou aberto para QA. Ainda
+  falta testar formação e leitura no mundo do autor; manter tudo local, sem commit ou publicação.</li>
+</ul>
+<h2 id="qa-da-max-output-hatch-g-0095">QA da MAX Output Hatch — G-0095<a class="headerlink" href="#qa-da-max-output-hatch-g-0095" title="Permanent link">&para;</a></h2>
+<ul>
+<li>O log do cliente registrou diagnóstico de estrutura na Evaporation às 11:54–11:55. A prévia
+  escreve <code>ULV Output Hatch</code> como representante de <code>EXPORT_FLUIDS</code>; hatches MAX também são
+  válidas quando colocadas em estágios <code>X</code>.</li>
+<li>No mundo salvo, a torre de <code>(-13,-59,-117)</code> tem MAX Output Hatch em <code>(-14,-59,-117)</code>, que é
+  célula <code>Y</code> da base: movê-la para <code>(-14,-58,-117)</code> (casing <code>X</code> do primeiro estágio). A Fluid
+  Input Hatch MV em <code>(-12,-59,-117)</code> já atende à entrada. A torre de <code>(-8,-59,-109)</code> tem MAX
+  Output Hatch em <code>(-7,-57,-109)</code>, célula <code>X</code> válida; falta nela uma Fluid Input Hatch na base,
+  que pode ocupar <code>(-9,-59,-109)</code> no lugar do casing. Coordenadas vieram de leitura do save,
+  sem modificá-lo.</li>
+<li>GameTest novo confirma MAX Output em <code>X</code> e sua rejeição em <code>Y</code>. Gate completo passou com
+  59/59 GameTests e <code>runData</code> sem mudanças (<code>written: 0</code>). O usuário precisa mover/colocar as
+  peças no mundo e confirmar a formação; não houve mudança na regra de produção.</li>
+</ul>
+<h2 id="rodada-de-2026-09-25-autor-ausente-chemical-plant-e-mega-alloy-blast-smelter">Rodada de 2026-09-25 (autor ausente) — Chemical Plant e Mega Alloy Blast Smelter<a class="headerlink" href="#rodada-de-2026-09-25-autor-ausente-chemical-plant-e-mega-alloy-blast-smelter" title="Permanent link">&para;</a></h2>
+<p>Seguindo a decisão do autor de portar todas as cadeias viáveis até LuV, com gate após cada máquina,
+sem commit e com receitas de controlador omitidas quando a original depende de recursos exclusivos
+do GTO:</p>
+<ul>
+<li><strong><code>chemical_plant</code> (G-0102):</strong> portada e verde no gate (65/65). Receita do controlador omitida e
+  anotada. Ver <code>CONTINUITY_LEDGER.md</code>.</li>
+<li><strong><code>mega_alloy_blast_smelter</code>:</strong> portado do GTOCore (id exclusivo; o <code>alloy_blast_smelter</code> normal já
+  é do GTCEu). Estrutura 11×18×11 copiada, roda <code>GCYMRecipeTypes.ALLOY_BLAST_RECIPES</code> já existente,
+  com Parallel Hatch e bônus documentado de 0,8× EU / 0,6× duração. A célula de "integral framework"
+  do GTO virou moldura de Tungstênio-Aço e as habilidades GCYM viraram <code>autoAbilities</code>. Gate
+  verificado nesta rodada.</li>
+<li><strong><code>isa_mill</code> (G-0104):</strong> portado do GTOCore com o padrão comprimido, prefixo <code>MILLED</code>, data key
+  <code>grindball</code>, Ball Hatch funcional (sem renderer animado) e as 48 receitas de moagem. O gate da
+  esfera fica no <code>getRealRecipe</code> e o dano é aplicado em <code>beforeWorking</code> (o <code>fullModifyRecipe</code> do
+  GTCEu roda por candidata). Receita do controlador presente: Assembly Line com Inconel-625/792 e
+  Tantalloy-61 portados 1:1 de <code>MaterialA</code>. Gate: 69/69 GameTests e <code>runData written: 0</code>. Ver
+  <code>CONTINUITY_LEDGER.md</code> (G-0104).</li>
+</ul>
+<h3 id="bloqueios-dos-candidatos-restantes-pesquisa-concluida">Bloqueios dos candidatos restantes (pesquisa concluída)<a class="headerlink" href="#bloqueios-dos-candidatos-restantes-pesquisa-concluida" title="Permanent link">&para;</a></h3>
+<p>O material dos subagentes confirma que cada máquina restante depende de uma camada grande de recursos
+exclusivos do GTO (carcaças, materiais/fluidos, recipe types) e/ou de classes base do gtolib
+(compiladas, sem fonte). Port fiel exige portar essa camada primeiro. Resumo:</p>
+<ul>
+<li><strong>Extensão grande do Component Assembler</strong> e <strong>módulo de atomização do Cold Ice Freezer:</strong> são
+  <code>addSubPattern</code> no mesmo controlador. Exigem carcaças GTO que faltam
+  (<code>THREE_PROOF_COMPUTER_CASING</code>, <code>MACHINING_CONTROL_CASING_MK2</code>, <code>ENERGY_CONTROL_CASING_MK2</code>,
+  <code>ELECTRIC_POWER_TRANSMISSION_CASING</code>) e o recipe type <code>ATOMIZATION_CONDENSATION_RECIPES</code>; o
+  <code>NAQUADAH_ALLOY_CASING</code> já existe no GTNA. Precisam também de <code>TierCasingMultiblockMachine</code>
+  (gtolib) e itens do Ad Astra no atomizador.</li>
+<li><strong>Turbinas</strong> (<code>steam_mega_turbine</code>, <code>rocket_large_turbine</code>, <code>supercritical_steam_turbine</code>,
+  <code>supercritical_mega_steam_turbine</code>): carcaças GTO (<code>SUPERCRITICAL_TURBINE_CASING</code>,
+  <code>CHEMICAL_CORROSION_RESISTANT_PIPE_CASING</code>, <code>HSSS_BOROSILICATE_GLASS</code>, <code>IRIDIUM_GEARBOX</code>), recipe
+  types GTO (<code>ROCKET_ENGINE_FUELS</code>, <code>SUPERCRITICAL_STEAM_TURBINE_FUELS</code>), material <code>SupercriticalSteam</code>
+  e a classe <code>TurbineMachine</code> do gtolib (modo alta velocidade, mega com 4 rotores). O GTCEu já tem
+  rotores e <code>RotorHolderPartMachine</code>, mas não mega/rocket/supercritical.
+  <strong>Atualização G-0105:</strong> a <code>rocket_large_turbine</code> foi concluída sem blocos GTO (o <code>registerLargeTurbine</code>
+  do GTO usa carcaças GTCEu) e sem gtolib: <code>WorkableElectricMultiblockMachine</code> + <code>TurbineMachine</code>
+  adaptada, recipe type novo <code>gtna:rocket_engine</code> e só a receita de <code>RocketFuel</code> do GTCEu. Falta a
+  <code>supercritical_steam_turbine</code> (ainda exige <code>SUPERCRITICAL_TURBINE_CASING</code> e o recipe type
+  <code>SUPERCRITICAL_STEAM_TURBINE_FUELS</code>).
+  <strong>Atualização G-0106:</strong> a <code>supercritical_steam_turbine</code> também foi concluída: a carcaça
+  <code>SUPERCRITICAL_TURBINE_CASING</code> foi portada como bloco GTNA (texturas GTO, CC BY-NC-SA), o recipe
+  type <code>gtna:supercritical_steam_turbine</code> foi criado e a receita de combustível reusa
+  <code>DenseSupercriticalSteam</code> no lugar do <code>SupercriticalSteam</code> do GTO. As duas turbinas não-mega
+  compartilham a base <code>GTNALargeTurbineMachine</code>; só as versões <strong>mega</strong> (4 rotores + glass tier)
+  continuam fora do escopo. Ver <code>CONTINUITY_LEDGER.md</code> (G-0106).</li>
+<li><strong>Processamento:</strong></li>
+<li><code>isa_mill</code>: carcaças Inconel-625 (casing/gearbox/pipe), <code>GRIND_BALL_HATCH</code> + <code>BallHatchPartMachine</code><ul>
+<li>dois itens de esfera + renderer, e <code>ISA_MILL_RECIPES</code>.</li>
+</ul>
+</li>
+<li><code>industrial_flotation_cell</code>: carcaças Hastelloy-N75 (casing/gearbox/pipe), <code>FLOTATION_CELL</code> e
+    <code>FLOTATING_BENEFICIATION_RECIPES</code>. <strong>Concluído em G-0107</strong> (12 receitas, controlador em Assembly
+    Line, overclock perfeito + Parallel Hatch).</li>
+<li><code>vacuum_drying_furnace</code>: <code>RED_STEEL_CASING</code> (textura existe no GTOCore), <code>VACUUM_DRYING_RECIPES</code>
+    e <code>DEHYDRATOR_RECIPES</code>; <strong>concluído em G-0108</strong> com as 12 receitas de secagem 1:1 e a receita
+    <code>salt_dust</code> do Dehydrator (as demais receitas do Dehydrator continuam omitidas por dependerem de
+    fluidos exclusivos do GTO). A cadeia flotação → secagem → RedMud está fechada.</li>
+<li><code>precision_assembler</code>: a carcaça principal já existe no GTNA; faltam
+    <code>PRECISION_ASSEMBLER_RECIPES</code>, os predicados de tier de vidro/carcaça e receitas (muito GTO).</li>
+<li><strong>Cadeia de purificação de água:</strong> 8 unidades + o controlador. Exige ~12 carcaças GTO, ~15
+  materiais/fluidos GTO, os recipe types GTO e as classes gtolib
+  <code>WaterPurificationUnitMachine</code>/<code>IIWirelessInteractor</code>/<code>NoEnergyCustomParallelMultiblockMachine</code>, além
+  da réplica do <code>.mbs</code> do GTOCore lida pelo <code>MultiBlockFileReader</code> (proprietário).</li>
+<li><strong>Advanced Fusion Reactor MK1 e módulos:</strong> endgame; mesma situação de recursos GTO.</li>
+</ul>
+<p>Recomendação para a próxima fase: portar primeiro a <strong>camada compartilhada</strong> (carcaças GTO reusáveis
+com texturas do GTOCore + recipe types GTO equivalentes + materiais/fluidos), porque isso destrava
+várias máquinas de uma vez; só então portar as máquinas. Manter tudo local até teste in-game.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2024-2026 Raishxn — Licensed under LGPLv3
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/Raishxn/GregTech-Nexus-Addon" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://discord.gg/d3qHufwRxb" target="_blank" rel="noopener" title="discord.gg" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M492.5 69.8c-.2-.3-.4-.6-.8-.7-38.1-17.5-78.4-30-119.7-37.1-.4-.1-.8 0-1.1.1s-.6.4-.8.8c-5.5 9.9-10.5 20.2-14.9 30.6-44.6-6.8-89.9-6.8-134.4 0-4.5-10.5-9.5-20.7-15.1-30.6-.2-.3-.5-.6-.8-.8s-.7-.2-1.1-.2C162.5 39 122.2 51.5 84.1 69c-.3.1-.6.4-.8.7C7.1 183.5-13.8 294.6-3.6 404.2c0 .3.1.5.2.8s.3.4.5.6c44.4 32.9 94 58 146.8 74.2.4.1.8.1 1.1 0s.7-.4.9-.7c11.3-15.4 21.4-31.8 30-48.8.1-.2.2-.5.2-.8s0-.5-.1-.8-.2-.5-.4-.6-.4-.3-.7-.4c-15.8-6.1-31.2-13.4-45.9-21.9-.3-.2-.5-.4-.7-.6s-.3-.6-.3-.9 0-.6.2-.9.3-.5.6-.7c3.1-2.3 6.2-4.7 9.1-7.1.3-.2.6-.4.9-.4s.7 0 1 .1c96.2 43.9 200.4 43.9 295.5 0 .3-.1.7-.2 1-.2s.7.2.9.4c2.9 2.4 6 4.9 9.1 7.2.2.2.4.4.6.7s.2.6.2.9-.1.6-.3.9-.4.5-.6.6c-14.7 8.6-30 15.9-45.9 21.8-.2.1-.5.2-.7.4s-.3.4-.4.7-.1.5-.1.8.1.5.2.8c8.8 17 18.8 33.3 30 48.8.2.3.6.6.9.7s.8.1 1.1 0c52.9-16.2 102.6-41.3 147.1-74.2.2-.2.4-.4.5-.6s.2-.5.2-.8c12.3-126.8-20.5-236.9-86.9-334.5zm-302 267.7c-29 0-52.8-26.6-52.8-59.2s23.4-59.2 52.8-59.2c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.4 59.2-52.8 59.2m195.4 0c-29 0-52.8-26.6-52.8-59.2s23.4-59.2 52.8-59.2c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.2 59.2-52.8 59.2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.expand", "navigation.indexes", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.tabs.link", "toc.follow", "announce.dismiss"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
