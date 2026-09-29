@@ -31,6 +31,12 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
+> **Publicação do merge na main (G-0129):** o push de 26/09 (`origin/main`: HUD wireless de
+> energia, família de Dehydrators LV–OpV, QA do EBF, cadeia de Boron Carbide, exemplo KubeJS,
+> guarda do JEI) foi integrado ao trabalho local de 29/09 (perfis GTIA, Pattern Buffers, Nexus
+> wireless loss) e publicado. A numeração paralela G-0122–G-0124 foi mantida com nota de merge.
+> Gate do merge com **107/107 GameTests** e datagen repetido `written: 0`. Commit `45d68fc`.
+
 > **Pattern Buffers: upgrade e UI após QA do autor (G-0128):** o item de upgrade não derruba mais
 > padrões no chão: o swap salva o estado persistente completo (`forDrop=false`) e restaura no
 > buffer novo, com o drop suprimido durante a troca. Causa raiz: o `saveToItem` só carrega campos
@@ -459,6 +465,26 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0129 (2026-09-29) — Merge do push de 26/09 e publicação na main
+
+- `origin/main` (60c20e8) integrado ao trabalho local (`575fc67`) e publicado em `main`
+  (`45d68fc`). Entram o HUD wireless de energia (overlay, estado, pacote e config), a família
+  completa de Dehydrators LV–OpV com assets gerados, a QA do módulo do EBF, a cadeia de Boron
+  Carbide (materiais, Mixer/Sifter e carcaça), os circuitos distintos das duas famílias de
+  carcaça, o exemplo KubeJS de múltiplas receitas e o mixin de guarda do preview JEI.
+- Conflitos resolvidos em `GTNAMachines3`, `GTNAMaterials`, `MaterialBuilder`, `GTNALangProvider`,
+  `GTNABlockRecipes`, `GTNAComponentRecipes`, `GTNAMachineGameTests`,
+  `MultiblockControllerMachineMixin`, `gtna.mixins.json`, langs `en_us`/`en_ud`/`pt_br` e
+  `CONTINUITY_LEDGER.md`. O `en_us`/`en_ud` foram regenerados pelo `runData`. A numeração
+  paralela de checkpoints (G-0122–G-0124 de 26/09 vs. locais de 29/09) foi mantida com uma nota
+  de merge no ledger.
+- Validação da árvore do merge: `./gradlew spotlessApply spotlessCheck compileJava runUnitTests
+  runGameTestServer runData --offline` passou com **107/107 GameTests**
+  (`/tmp/gtna-merge-gate.log`); repetição do `runData` com `written: 0`
+  (`/tmp/gtna-merge-datagen-repeat.log`).
+- Publicado em `origin/main` (60c20e8..45d68fc). Sem pendências de publicação; o reteste manual
+  do HUD e da família de Dehydrators fica como próximo QA opcional.
 
 ### G-0128 (2026-09-29) — Upgrade dos Pattern Buffers sem drop e página de 90 slots
 
