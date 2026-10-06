@@ -31,15 +31,20 @@ public final class GTNASources {
     public static final String GTO = "gto";
     public static final String GTNL = "gtnl";
     public static final String GTNH = "gtnh";
+    public static final String PERSONALSPACE = "personalspace";
+    public static final String GTNEIOREPLUGIN = "gtneioreplugin";
     public static final String TST = "tst";
     public static final String GTL = "gtl";
     public static final String GTLCORE = "gtlcore";
     public static final String GTLSUPB = "gtlsupb";
     public static final String GTOEPP = "gtoepp";
+    public static final String GTLADDITIONS = "gtladditions";
     public static final String GTMTHINGS = "gtmthings";
 
     /** Machine registry path → source id. Only machines with a confirmed origin are listed. */
     private static final Map<String, String> SOURCES = Map.ofEntries(
+            Map.entry("wireless_energy_network_input_terminal", GTLADDITIONS),
+            Map.entry("wireless_energy_network_output_terminal", GTLADDITIONS),
             // --- GTO / GTOCore ---
             Map.entry("annihilate_generator", GTO),
             Map.entry("me_storage", GTO),
@@ -62,6 +67,14 @@ public final class GTNASources {
             Map.entry("eye_of_wood", TST),
             Map.entry("industrial_slaughterhouse", GTO),
             // --- GregTech Leisure ---
+            Map.entry("electric_void_miner", GTL),
+            Map.entry("incubator", GTL),
+            Map.entry("void_fluid_drilling_rig", GTL),
+            Map.entry("lv_world_data_scanner", GTL),
+            Map.entry("mv_world_data_scanner", GTL),
+            Map.entry("hv_world_data_scanner", GTL),
+            Map.entry("ev_world_data_scanner", GTL),
+            Map.entry("iv_world_data_scanner", GTL),
             Map.entry("integrated_ore_processor", GTL),
             Map.entry("advanced_integrated_ore_processor", GTL),
             // --- GTOCore (LGPLv3) ---

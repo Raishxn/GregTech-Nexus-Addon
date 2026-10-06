@@ -60,6 +60,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -109,6 +110,7 @@ import com.raishxn.gtna.common.machine.multiblock.electric.ChemicalPlantMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.ColdIceFreezerMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.ComponentAssemblerMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.ComponentAssemblyLineMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.ElectricVoidMinerMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.GreenhouseMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.IndustrialFlotationCellMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.IsaMillMachine;
@@ -3766,7 +3768,14 @@ public final class GTNAMachineGameTests {
             helper.assertTrue(!NexusBuildCheckGuard.skips(other, changed), "other checks must still run");
             helper.assertTrue(!NexusBuildCheckGuard.skips(target, center), "controller changes must still run");
         });
-        helper.assertTrue(!NexusBuildCheckGuard.skips(target, changed), "checks must resume after the build");
+        helper.assertTrue(NexusBuildCheckGuard.skips(target, changed),
+                "Forge snapshot replay after returning from the build must remain deferred until tick end");
+        helper.assertTrue(!NexusBuildCheckGuard.skips(other, changed) &&
+                !NexusBuildCheckGuard.skips(target, center),
+                "pending replay must stay scoped and never suppress controller removal");
+        NexusBuildCheckGuard.flushPending();
+        helper.assertTrue(!NexusBuildCheckGuard.skips(target, changed),
+                "checks must resume after the final refresh even when the controller no longer exists");
         helper.succeed();
     }
 
@@ -5015,6 +5024,466 @@ public final class GTNAMachineGameTests {
         helper.assertTrue(ballHatch.getBallStack().getDamageValue() == 2,
                 "one started recipe must consume 2 durability, got " +
                         ballHatch.getBallStack().getDamageValue());
+        helper.succeed();
+    }
+
+    private static boolean voidMinerTestProgramInjected;
+
+    /** Injects a short program so the runtime test does not wait for the 1200-tick defaults. */
+    private static void injectVoidMinerTestProgram() {
+        if (voidMinerTestProgramInjected) return;
+        voidMinerTestProgramInjected = true;
+        GTRecipeType type = GTNARecipeType.ELECTRIC_VOID_MINING_RECIPES;
+        type.getAdditionHandler().beginStaging();
+        type.getAdditionHandler().addStaging(type.recipeBuilder(GTNACORE.id("gametest_void_miner_program"))
+                .inputItems(GTNAItems.VEIN_ESSENCES.get("moon_vein_essence"))
+                .inputFluids(GTMaterials.DrillingFluid.getFluid(1000))
+                .outputItems(ChemicalHelper.get(TagPrefix.rawOre, GTMaterials.Nickel).getItem(), 3)
+                .duration(20)
+                .EUt(GTValues.VA[GTValues.EV])
+                .buildRawRecipe());
+        type.getAdditionHandler().completeStaging();
+    }
+
+    /** Builds the Electric Void Miner 3x3x3, controller facing NORTH, like {@code duration_tester}. */
+    private static void buildElectricVoidMiner(GameTestHelper helper, BlockPos controllerPos) {
+        BlockPos corePos = controllerPos.offset(0, 0, 1);
+        BlockPos energyPos = controllerPos.offset(-1, -1, 2);
+        BlockPos fluidPos = controllerPos.offset(0, -1, 2);
+        BlockPos inputBusPos = controllerPos.offset(1, -1, 2);
+        BlockPos outputBusPos = controllerPos.offset(-1, 0, 2);
+        BlockPos maintenancePos = controllerPos.offset(1, 0, 2);
+
+        helper.setBlock(controllerPos, GTNAMachines.ELECTRIC_VOID_MINER.getBlock());
+        helper.setBlock(corePos, ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Titanium));
+        helper.setBlock(energyPos, GTMachines.ENERGY_INPUT_HATCH[GTValues.EV].getBlock());
+        helper.setBlock(fluidPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.LV].getBlock());
+        helper.setBlock(inputBusPos, GTMachines.ITEM_IMPORT_BUS[GTValues.LV].getBlock());
+        helper.setBlock(outputBusPos, GTMachines.ITEM_EXPORT_BUS[GTValues.LV].getBlock());
+        helper.setBlock(maintenancePos, GTMachines.MAINTENANCE_HATCH.getBlock());
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = 0; dz <= 2; dz++) {
+                    BlockPos pos = controllerPos.offset(dx, dy, dz);
+                    if (pos.equals(controllerPos) || pos.equals(corePos) || pos.equals(energyPos) ||
+                            pos.equals(fluidPos) || pos.equals(inputBusPos) || pos.equals(outputBusPos) ||
+                            pos.equals(maintenancePos)) {
+                        continue;
+                    }
+                    helper.setBlock(pos, GTBlocks.CASING_TITANIUM_STABLE.get());
+                }
+            }
+        }
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void electricVoidMinerFormsAndCapsParallelAtEv(GameTestHelper helper) {
+        if (GTNAMachines.ELECTRIC_VOID_MINER == null) {
+            helper.fail("electric_void_miner is disabled by config; the machine tests cannot run");
+            return;
+        }
+        BlockPos controllerPos = new BlockPos(8, 4, 4);
+        buildElectricVoidMiner(helper, controllerPos);
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof ElectricVoidMinerMachine miner)) {
+            helper.fail("electric_void_miner controller is missing: " + machine);
+            return;
+        }
+        helper.assertTrue(GTNAStructureRefresh.refresh(miner, true),
+                "electric_void_miner must form: " + patternError(helper, miner.getMultiblockState(), controllerPos));
+        ((com.gregtechceu.gtceu.common.machine.multiblock.part.MaintenanceHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(1, 0, 2))).fixAllMaintenanceProblems();
+        helper.assertTrue(miner.parallelCap() == 1,
+                "EV must not run parallel before the configured IV gate, got " + miner.parallelCap());
+        helper.assertTrue(GTNABalance.getElectricVoidMinerMaxParallel(GTValues.IV) == 1024 &&
+                GTNABalance.getElectricVoidMinerMaxParallel(GTValues.LuV) == 1024,
+                "default parallel cap must continue above IV");
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 80)
+    public static void electricVoidMinerAcceptsAccelerationAndRunsMoreThanTwoParallels(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(8, 4, 4);
+        buildElectricVoidMiner(helper, pos);
+        helper.setBlock(pos.offset(-1, -1, 2), GTMachines.ENERGY_INPUT_HATCH[GTValues.LuV].getBlock());
+        helper.setBlock(pos.offset(-1, 1, 2), GCYMMachines.PARALLEL_HATCH[GTValues.IV].getBlock());
+        helper.setBlock(pos.offset(1, 1, 2), GTNAMachines2.ACCELERATE_HATCHES[GTValues.UV].getBlock());
+        var miner = (ElectricVoidMinerMachine) metaMachineAt(helper, pos);
+        helper.assertTrue(GTNAStructureRefresh.refresh(miner, true), "accelerate and parallel hatches must form");
+        ((com.gregtechceu.gtceu.common.machine.multiblock.part.MaintenanceHatchPartMachine) metaMachineAt(helper,
+                pos.offset(1, 0, 2))).fixAllMaintenanceProblems();
+        var input = (ItemBusPartMachine) metaMachineAt(helper, pos.offset(1, -1, 2));
+        input.getInventory().setStackInSlot(0, GTNAItems.VEIN_ESSENCES.get("moon_vein_essence").asStack(16));
+        setHatchFluid(helper, pos.offset(0, -1, 2), GTMaterials.DrillingFluid, 16000);
+        var recipe = GTNARecipeType.ELECTRIC_VOID_MINING_RECIPES.recipeBuilder(GTNACORE.id("gametest_void_hatches"))
+                .inputItems(GTNAItems.VEIN_ESSENCES.get("moon_vein_essence"))
+                .inputFluids(GTMaterials.DrillingFluid.getFluid(1000))
+                .outputItems(TagPrefix.rawOre, GTMaterials.Nickel, 1).duration(200).EUt(1920).buildRawRecipe();
+        var parallel = ElectricVoidMinerMachine.recipeModifier(miner, recipe).apply(recipe);
+        helper.assertTrue(parallel != null && parallel.parallels > 2,
+                "a powered hatch must allow more than two simultaneous runs");
+        var energy = (EnergyHatchPartMachine) metaMachineAt(helper, pos.offset(-1, -1, 2));
+        energy.energyContainer.changeEnergy(1_000_000);
+        miner.getRecipeLogic().setupRecipe(parallel);
+        var accelerate = (com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachine) metaMachineAt(
+                helper, pos.offset(1, 1, 2));
+        int expectedDuration = Math.max(1, parallel.duration * accelerate.calcDurationPercentage(GTValues.EV) / 100);
+        helper.assertTrue(miner.getRecipeLogic().isWorking(), "parallel accelerated batch must actually start");
+        helper.assertTrue(
+                miner.getRecipeLogic().getDuration() == expectedDuration && expectedDuration < parallel.duration,
+                "acceleration must apply exactly once to the running batch");
+        helper.assertTrue(miner.getRecipeLogic().getLastRecipe().getInputEUt().getTotalEU() ==
+                parallel.getInputEUt().getTotalEU(), "acceleration must preserve parallel energy cost");
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 80)
+    public static void electricVoidMinerRunsProgramAndConsumesFluidOnce(GameTestHelper helper) {
+        if (GTNAMachines.ELECTRIC_VOID_MINER == null) {
+            helper.fail("electric_void_miner is disabled by config; the program test cannot run");
+            return;
+        }
+        injectVoidMinerTestProgram();
+        BlockPos controllerPos = new BlockPos(8, 4, 4);
+        buildElectricVoidMiner(helper, controllerPos);
+        BlockPos inputPos = controllerPos.offset(1, -1, 2);
+        BlockPos outputPos = controllerPos.offset(-1, 0, 2);
+        BlockPos fluidPos = controllerPos.offset(0, -1, 2);
+        BlockPos energyPos = controllerPos.offset(-1, -1, 2);
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof ElectricVoidMinerMachine miner)) {
+            helper.fail("electric_void_miner controller is missing: " + machine);
+            return;
+        }
+        helper.assertTrue(GTNAStructureRefresh.refresh(miner, true),
+                "electric_void_miner must form: " + patternError(helper, miner.getMultiblockState(), controllerPos));
+        ((com.gregtechceu.gtceu.common.machine.multiblock.part.MaintenanceHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(1, 0, 2))).fixAllMaintenanceProblems();
+
+        ItemBusPartMachine inputBus = (ItemBusPartMachine) metaMachineAt(helper, inputPos);
+        inputBus.getInventory().setStackInSlot(0, GTNAItems.VEIN_ESSENCES.get("moon_vein_essence").asStack());
+        FluidHatchPartMachine fluid = (FluidHatchPartMachine) metaMachineAt(helper, fluidPos);
+        fluid.tank.setFluidInTank(0, GTMaterials.DrillingFluid.getFluid(1000));
+        EnergyHatchPartMachine energy = (EnergyHatchPartMachine) metaMachineAt(helper, energyPos);
+        miner.getRecipeLogic().updateTickSubscription();
+
+        int guard = 0;
+        while (!miner.getRecipeLogic().isWorking() && guard++ < 20) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            miner.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(miner.getRecipeLogic().isWorking(),
+                "the void miner must start with the program circuit and drilling fluid; status=" +
+                        miner.getRecipeLogic().getStatus() + " recipe=" + miner.getRecipeLogic().getLastRecipe() +
+                        " fluid=" + fluid.tank.getFluidInTank(0) + " failures=" +
+                        miner.getRecipeLogic().getFailureReasons());
+
+        for (int tick = 0; tick < 30; tick++) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            miner.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(fluid.tank.getFluidInTank(0).getAmount() == 0,
+                "one operation must consume exactly 1000 mB, found " + fluid.tank.getFluidInTank(0).getAmount());
+        helper.assertTrue(inputBus.getInventory().getStackInSlot(0).isEmpty(),
+                "precise mining must consume its single essence exactly once");
+        ItemBusPartMachine outputBus = (ItemBusPartMachine) metaMachineAt(helper, outputPos);
+        int nickel = 0;
+        for (int slot = 0; slot < outputBus.getInventory().getSlots(); slot++) {
+            ItemStack stack = outputBus.getInventory().getStackInSlot(slot);
+            if (stack.is(ChemicalHelper.get(TagPrefix.rawOre, GTMaterials.Nickel).getItem())) {
+                nickel += stack.getCount();
+            }
+        }
+        helper.assertTrue(nickel == 3,
+                "the program must output 3 Raw Nickel, found " + nickel + " (status=" +
+                        miner.getRecipeLogic().getStatus() + ")");
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 80)
+    public static void electricVoidMinerRandomModeConsumesFluidWithoutEssence(GameTestHelper helper) {
+        GTRecipeType type = GTNARecipeType.RANDOM_VOID_MINING_RECIPES;
+        type.getAdditionHandler().beginStaging();
+        type.getAdditionHandler().addStaging(type.recipeBuilder(GTNACORE.id("gametest_void_miner_random"))
+                .inputFluids(GTMaterials.DrillingFluid.getFluid(500))
+                .outputItems(ChemicalHelper.get(TagPrefix.rawOre, GTMaterials.Nickel).getItem(), 1)
+                .duration(20).EUt(GTValues.VA[GTValues.EV]).buildRawRecipe());
+        type.getAdditionHandler().completeStaging();
+        BlockPos pos = new BlockPos(8, 4, 4);
+        buildElectricVoidMiner(helper, pos);
+        ElectricVoidMinerMachine miner = (ElectricVoidMinerMachine) metaMachineAt(helper, pos);
+        helper.assertTrue(GTNAStructureRefresh.refresh(miner, true), "random miner must form");
+        ((com.gregtechceu.gtceu.common.machine.multiblock.part.MaintenanceHatchPartMachine) metaMachineAt(helper,
+                pos.offset(1, 0, 2))).fixAllMaintenanceProblems();
+        miner.setActiveRecipeType(1);
+        helper.assertTrue(miner.getRecipeType() == type, "the UI mode must select the random map");
+        FluidHatchPartMachine fluid = (FluidHatchPartMachine) metaMachineAt(helper, pos.offset(0, -1, 2));
+        fluid.tank.setFluidInTank(0, GTMaterials.DrillingFluid.getFluid(500));
+        EnergyHatchPartMachine energy = (EnergyHatchPartMachine) metaMachineAt(helper, pos.offset(-1, -1, 2));
+        ItemBusPartMachine output = (ItemBusPartMachine) metaMachineAt(helper, pos.offset(-1, 0, 2));
+        for (int slot = 0; slot < output.getInventory().getSlots(); slot++) {
+            output.getInventory().setStackInSlot(slot, new ItemStack(Items.COBBLESTONE, 64));
+        }
+        miner.getRecipeLogic().updateTickSubscription();
+        for (int tick = 0; tick < 10; tick++) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            miner.getRecipeLogic().serverTick();
+        }
+        helper.assertTrue(fluid.tank.getFluidInTank(0).getAmount() == 500,
+                "random mode must not consume drilling fluid when output space is full");
+        output.getInventory().setStackInSlot(0, ItemStack.EMPTY);
+        for (int tick = 0; tick < 50; tick++) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            miner.getRecipeLogic().serverTick();
+        }
+        int nickel = 0;
+        for (int slot = 0; slot < output.getInventory().getSlots(); slot++) {
+            ItemStack stack = output.getInventory().getStackInSlot(slot);
+            if (stack.is(ChemicalHelper.get(TagPrefix.rawOre, GTMaterials.Nickel).getItem()))
+                nickel += stack.getCount();
+        }
+        helper.assertTrue(nickel == 1 && fluid.tank.getFluidInTank(0).isEmpty(),
+                "random mode must finish one operation with no essence and consume exactly 500 mB");
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void electricVoidMinerConfigGatesPrograms(GameTestHelper helper) {
+        if (GTNAMachines.ELECTRIC_VOID_MINER == null) {
+            helper.fail("electric_void_miner is disabled by config; the validation test cannot run");
+            return;
+        }
+        BlockPos controllerPos = new BlockPos(8, 4, 4);
+        buildElectricVoidMiner(helper, controllerPos);
+        MetaMachine machine = metaMachineAt(helper, controllerPos);
+        if (!(machine instanceof ElectricVoidMinerMachine miner)) {
+            helper.fail("electric_void_miner controller is missing: " + machine);
+            return;
+        }
+        helper.assertTrue(GTNAStructureRefresh.refresh(miner, true),
+                "electric_void_miner must form: " + patternError(helper, miner.getMultiblockState(), controllerPos));
+        ((com.gregtechceu.gtceu.common.machine.multiblock.part.MaintenanceHatchPartMachine) metaMachineAt(helper,
+                controllerPos.offset(1, 0, 2))).fixAllMaintenanceProblems();
+        helper.assertTrue(miner.operatingTier() == GTValues.EV,
+                "the EV energy hatch must give the machine the EV operating tier, got " + miner.operatingTier());
+
+        GTRecipe valid = GTNARecipeType.ELECTRIC_VOID_MINING_RECIPES
+                .recipeBuilder(GTNACORE.id("gametest_void_miner_valid"))
+                .circuitMeta(30)
+                .inputFluids(GTMaterials.DrillingFluid.getFluid(1000))
+                .outputItems(ChemicalHelper.get(TagPrefix.rawOre, GTMaterials.Nickel).getItem(), 1)
+                .duration(20).EUt(GTValues.VA[GTValues.EV]).buildRawRecipe();
+        helper.assertTrue(miner.isProgramAllowed(valid), "a selector program inside the caps must be allowed");
+
+        GTRecipe noSelector = GTNARecipeType.ELECTRIC_VOID_MINING_RECIPES
+                .recipeBuilder(GTNACORE.id("gametest_void_miner_no_selector"))
+                .inputFluids(GTMaterials.DrillingFluid.getFluid(1000))
+                .outputItems(ChemicalHelper.get(TagPrefix.rawOre, GTMaterials.Nickel).getItem(), 1)
+                .duration(20).EUt(GTValues.VA[GTValues.EV]).buildRawRecipe();
+        helper.assertFalse(miner.isProgramAllowed(noSelector),
+                "programRequired must reject a recipe without a non-consumable selector");
+
+        GTRecipe noFluid = GTNARecipeType.ELECTRIC_VOID_MINING_RECIPES
+                .recipeBuilder(GTNACORE.id("gametest_void_miner_no_fluid"))
+                .circuitMeta(31)
+                .outputItems(ChemicalHelper.get(TagPrefix.rawOre, GTMaterials.Nickel).getItem(), 1)
+                .duration(20).EUt(GTValues.VA[GTValues.EV]).buildRawRecipe();
+        helper.assertFalse(miner.isProgramAllowed(noFluid), "a program without Drilling Fluid must be rejected");
+
+        GTRecipe wrongFluid = GTNARecipeType.ELECTRIC_VOID_MINING_RECIPES
+                .recipeBuilder(GTNACORE.id("gametest_void_miner_wrong_fluid"))
+                .circuitMeta(31)
+                .inputFluids(GTMaterials.Water.getFluid(1000))
+                .outputItems(ChemicalHelper.get(TagPrefix.rawOre, GTMaterials.Nickel).getItem(), 1)
+                .duration(20).EUt(GTValues.VA[GTValues.EV]).buildRawRecipe();
+        helper.assertFalse(miner.isProgramAllowed(wrongFluid), "water must not replace Drilling Fluid");
+
+        GTRecipe tooMuchFluid = GTNARecipeType.ELECTRIC_VOID_MINING_RECIPES
+                .recipeBuilder(GTNACORE.id("gametest_void_miner_too_much_fluid"))
+                .circuitMeta(31)
+                .inputFluids(GTMaterials.DrillingFluid.getFluid(
+                        GTNABalance.getElectricVoidMiner().maxDrillingFluidPerOperation + 1))
+                .outputItems(ChemicalHelper.get(TagPrefix.rawOre, GTMaterials.Nickel).getItem(), 1)
+                .duration(20).EUt(GTValues.VA[GTValues.EV]).buildRawRecipe();
+        helper.assertFalse(miner.isProgramAllowed(tooMuchFluid),
+                "a program above maxDrillingFluidPerOperation must be rejected");
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void electricVoidMinerAdAstraPrograms(GameTestHelper helper) {
+        if (!ModList.get().isLoaded("ad_astra")) {
+            helper.succeed();
+            return;
+        }
+        var recipes = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(GTNARecipeType.ELECTRIC_VOID_MINING_RECIPES);
+        long planets = recipes.stream()
+                .filter(recipe -> recipe.id != null && recipe.id.getPath().contains("ad_astra_"))
+                .count();
+        helper.assertTrue(planets == 5,
+                "Ad Astra must provide five planet programs (moon, mars, venus, mercury, glacio), found " +
+                        planets + " of " + recipes.size() + " programs: " +
+                        recipes.stream().map(recipe -> String.valueOf(recipe.id)).toList());
+        for (int index = 0; index < GTNAItems.PLANET_DATA_CHIP_PLANETS.length; index++) {
+            String planet = GTNAItems.PLANET_DATA_CHIP_PLANETS[index];
+            GTRecipe program = recipes.stream()
+                    .filter(recipe -> recipe.id != null &&
+                            recipe.id.getPath().contains("ad_astra_" + planet + "_program"))
+                    .findFirst().orElse(null);
+            helper.assertTrue(program != null, "missing planet program for " + planet);
+            int planetIndex = index;
+            ItemStack essence = GTNAItems.VEIN_ESSENCES.get(planet + "_vein_essence").asStack();
+            helper.assertTrue(program.getInputContents(ItemRecipeCapability.CAP).stream()
+                    .anyMatch(content -> ItemRecipeCapability.CAP.of(content.content).test(essence) &&
+                            content.chance > 0),
+                    "planet mining must consume its essence: " + planet);
+            helper.assertTrue(program.getInputContents(ItemRecipeCapability.CAP).size() == 1,
+                    "planet mining must not retain the old chip + stone selector shortcut");
+            GTRecipe chipRecipe = helper.getLevel().getRecipeManager()
+                    .getAllRecipesFor(GTNARecipeType.WORLD_DATA_SCANNER_RECIPES).stream()
+                    .filter(recipe -> recipe.id != null && recipe.id.getPath().contains("planet_data_chip_" + planet))
+                    .findFirst().orElse(null);
+            helper.assertTrue(chipRecipe != null && !chipRecipe.conditions.isEmpty(),
+                    "planet chip must require scanning its actual dimension: " + planet);
+            GTRecipe incubation = helper.getLevel().getRecipeManager()
+                    .getAllRecipesFor(GTNARecipeType.INCUBATOR_RECIPES).stream()
+                    .filter(recipe -> recipe.id != null && recipe.id.getPath().endsWith(planet + "_vein_essence"))
+                    .findFirst().orElse(null);
+            helper.assertTrue(incubation != null && incubation.getInputContents(ItemRecipeCapability.CAP).stream()
+                    .anyMatch(content -> content.chance == 0 && ItemRecipeCapability.CAP.of(content.content)
+                            .test(GTNAItems.PLANET_DATA_CHIPS[planetIndex].asStack())),
+                    "incubation must keep the scanned planet data: " + planet);
+
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 80)
+    public static void voidEssenceIncubatorFormsAndConsumesCulture(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(8, 3, 4);
+        String[][] aisles = {
+                { "bbbbb", "bbbbb", "ddddd", "ddddd", "bbbbb" },
+                { "bbbbb", "bcccb", "d   d", "d   d", "beeeb" },
+                { "bbbbb", "bcccb", "d   d", "d   d", "beeeb" },
+                { "bbbbb", "bcccb", "d   d", "d   d", "beeeb" },
+                { "bbabb", "bbbbb", "ddddd", "ddddd", "bbbbb" }
+        };
+        for (int z = 0; z < 5; z++) {
+            for (int y = 0; y < 5; y++) {
+                for (int x = 0; x < 5; x++) {
+                    net.minecraft.world.level.block.Block block = switch (aisles[z][y].charAt(x)) {
+                        case 'a' -> GTNAMachines3.INCUBATOR.getBlock();
+                        case 'b' -> GTBlocks.PLASTCRETE.get();
+                        case 'c' -> Blocks.SPONGE;
+                        case 'd' -> GTBlocks.CLEANROOM_GLASS.get();
+                        case 'e' -> GTBlocks.FILTER_CASING.get();
+                        default -> Blocks.AIR;
+                    };
+                    helper.setBlock(pos.offset(x - 2, y, 4 - z), block);
+                }
+            }
+        }
+        BlockPos energyPos = pos.offset(1, 1, 0);
+        BlockPos inputPos = pos.offset(0, 1, 0);
+        BlockPos outputPos = pos.offset(-1, 1, 0);
+        BlockPos biomassPos = pos.offset(-1, 1, 4);
+        BlockPos milkPos = pos.offset(1, 1, 4);
+        BlockPos maintenancePos = pos.offset(2, 0, 0);
+        helper.setBlock(energyPos, GTMachines.ENERGY_INPUT_HATCH[GTValues.HV].getBlock());
+        helper.setBlock(inputPos, GTMachines.ITEM_IMPORT_BUS[GTValues.LV].getBlock());
+        helper.setBlock(outputPos, GTMachines.ITEM_EXPORT_BUS[GTValues.LV].getBlock());
+        helper.setBlock(biomassPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.LV].getBlock());
+        helper.setBlock(milkPos, GTMachines.FLUID_IMPORT_HATCH[GTValues.LV].getBlock());
+        helper.setBlock(maintenancePos, GTMachines.MAINTENANCE_HATCH.getBlock());
+        var incubator = (com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine) metaMachineAt(
+                helper, pos);
+        helper.assertTrue(GTNAStructureRefresh.refresh(incubator, true),
+                "GTL incubator must form: " + patternError(helper, incubator.getMultiblockState(), pos));
+        ((com.gregtechceu.gtceu.common.machine.multiblock.part.MaintenanceHatchPartMachine) metaMachineAt(helper,
+                maintenancePos)).fixAllMaintenanceProblems();
+        GTRecipeType type = GTNARecipeType.INCUBATOR_RECIPES;
+        type.getAdditionHandler().beginStaging();
+        type.getAdditionHandler().addStaging(type.recipeBuilder(GTNACORE.id("gametest_moon_essence_culture"))
+                .notConsumable(GTNAItems.PLANET_DATA_CHIPS[0])
+                .inputItems(GTNAItems.ESSENCE_SEED)
+                .inputItems(TagPrefix.rawOre, GTMaterials.Bauxite, 2)
+                .inputItems(TagPrefix.rawOre, GTMaterials.Ilmenite, 2)
+                .inputFluids(GTMaterials.Biomass.getFluid(100))
+                .inputFluids(GTMaterials.Milk.getFluid(100))
+                .outputItems(GTNAItems.VEIN_ESSENCES.get("moon_vein_essence"), 64)
+                .duration(20).EUt(GTValues.VA[GTValues.HV]).buildRawRecipe());
+        type.getAdditionHandler().completeStaging();
+        var input = (ItemBusPartMachine) metaMachineAt(helper, inputPos);
+        input.getInventory().setStackInSlot(0, GTNAItems.PLANET_DATA_CHIPS[0].asStack());
+        input.getInventory().setStackInSlot(1, GTNAItems.ESSENCE_SEED.asStack());
+        input.getInventory().setStackInSlot(2, ChemicalHelper.get(TagPrefix.rawOre, GTMaterials.Bauxite, 2));
+        input.getInventory().setStackInSlot(3, ChemicalHelper.get(TagPrefix.rawOre, GTMaterials.Ilmenite, 2));
+        var biomass = (FluidHatchPartMachine) metaMachineAt(helper, biomassPos);
+        var milk = (FluidHatchPartMachine) metaMachineAt(helper, milkPos);
+        biomass.tank.setFluidInTank(0, GTMaterials.Biomass.getFluid(100));
+        milk.tank.setFluidInTank(0, GTMaterials.Milk.getFluid(100));
+        var energy = (EnergyHatchPartMachine) metaMachineAt(helper, energyPos);
+        incubator.getRecipeLogic().updateTickSubscription();
+        for (int tick = 0; tick < 50; tick++) {
+            energy.energyContainer.changeEnergy(1_000_000);
+            incubator.getRecipeLogic().serverTick();
+        }
+        var output = (ItemBusPartMachine) metaMachineAt(helper, outputPos);
+        helper.assertTrue(output.getInventory().getStackInSlot(0).is(
+                GTNAItems.VEIN_ESSENCES.get("moon_vein_essence").get()) &&
+                output.getInventory().getStackInSlot(0).getCount() == 64,
+                "incubator must produce 64 essences: " + incubator.getRecipeLogic().getFailureReasons());
+        helper.assertTrue(input.getInventory().getStackInSlot(0).is(GTNAItems.PLANET_DATA_CHIPS[0].get()),
+                "culture must preserve the scanned data");
+        for (int slot = 1; slot < 4; slot++) {
+            helper.assertTrue(input.getInventory().getStackInSlot(slot).isEmpty(),
+                    "culture must consume seed and samples");
+        }
+        helper.assertTrue(biomass.tank.getFluidInTank(0).isEmpty() && milk.tank.getFluidInTank(0).isEmpty(),
+                "culture must consume both fluids once");
+        helper.setBlock(pos.offset(0, 1, 2), Blocks.AIR);
+        helper.assertFalse(GTNAStructureRefresh.refresh(incubator, true), "incubator must reject a missing sponge");
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void voidEssenceCatalogAndScannerDimensionGates(GameTestHelper helper) {
+        var recipes = helper.getLevel().getRecipeManager();
+        helper.assertTrue(com.raishxn.gtna.common.data.GTNAVoidVeins.ALL.size() == 40,
+                "the verified GTL catalog contains 40 vein essences");
+        for (var vein : com.raishxn.gtna.common.data.GTNAVoidVeins.ALL) {
+            ItemStack essence = GTNAItems.VEIN_ESSENCES.get(vein.essence()).asStack();
+            helper.assertTrue(recipes.getAllRecipesFor(GTNARecipeType.INCUBATOR_RECIPES).stream()
+                    .anyMatch(recipe -> recipe.getOutputContents(ItemRecipeCapability.CAP).stream()
+                            .anyMatch(content -> ItemRecipeCapability.CAP.of(content.content).test(essence))),
+                    "every GTL essence must be cultivable: " + vein.essence());
+            helper.assertTrue(recipes.getAllRecipesFor(GTNARecipeType.ELECTRIC_VOID_MINING_RECIPES).stream()
+                    .anyMatch(recipe -> recipe.getInputContents(ItemRecipeCapability.CAP).stream()
+                            .anyMatch(content -> content.chance > 0 &&
+                                    ItemRecipeCapability.CAP.of(content.content).test(essence))),
+                    "every GTL essence must have precise mining: " + vein.essence());
+        }
+        BlockPos scannerPos = new BlockPos(2, 3, 2);
+        helper.setBlock(scannerPos, GTNAMachines3.WORLD_DATA_SCANNER[GTValues.EV].getBlock());
+        var scanner = (com.gregtechceu.gtceu.api.machine.SimpleTieredMachine) metaMachineAt(helper, scannerPos);
+        helper.assertTrue(scanner.importFluids.getTanks() == 2 && scanner.importFluids.getTankCapacity(0) == 64000,
+                "scanner must fit separate 64-bucket atmosphere and coolant inputs");
+        for (GTRecipe recipe : recipes.getAllRecipesFor(GTNARecipeType.WORLD_DATA_SCANNER_RECIPES)) {
+            var dimension = recipe.conditions.stream()
+                    .filter(condition -> condition instanceof com.gregtechceu.gtceu.common.recipe.condition.DimensionCondition)
+                    .map(condition -> (com.gregtechceu.gtceu.common.recipe.condition.DimensionCondition) condition)
+                    .findFirst().orElse(null);
+            helper.assertTrue(dimension != null, "every world scan needs a dimension gate: " + recipe.id);
+            if (recipe.id.getPath().contains("planet_data_chip_")) {
+                String planet = recipe.id.getPath().substring(recipe.id.getPath().indexOf("planet_data_chip_") + 17);
+                helper.assertTrue(
+                        dimension.getDimension().location().equals(ResourceLocation.parse("ad_astra:" + planet)),
+                        "planet scan must require its exact dimension: " + recipe.id);
+                helper.assertFalse(dimension.testCondition(recipe, scanner.getRecipeLogic()),
+                        "planet data must not be scannable in the Overworld");
+            }
+        }
         helper.succeed();
     }
 

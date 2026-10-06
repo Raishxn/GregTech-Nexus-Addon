@@ -58,7 +58,23 @@ public class BlockSelectionConfigWidget {
         WIRELESS_CAPACITOR("gtna.terminal.config.wireless_capacitor", "SelectedCapacitor"),
         MATRIX_STORAGE_MODULE("gtna.terminal.config.matrix_storage_module", "SelectedMatrixStorageModule"),
         MATRIX_CRAFTING_MODULE("gtna.terminal.config.matrix_crafting_module", "SelectedMatrixCraftingModule"),
-        ME_STORAGE_ACCESS("gtna.terminal.config.me_storage_access", "SelectedMEStorageAccess");
+        ME_STORAGE_ACCESS("gtna.terminal.config.me_storage_access", "SelectedMEStorageAccess"),
+        ABS_CASING("gtna.terminal.config.abs_casing", "SelectedABS"),
+        BATTERY("gtna.terminal.config.battery", "SelectedBattery"),
+        CLEANROOM("gtna.terminal.config.cleanroom", "SelectedCleanroom"),
+        COMPONENT_ASSEMBLY("gtna.terminal.config.component_assembly", "SelectedComponentAssembly"),
+        COMPUTER_CASING("gtna.terminal.config.computer_casing", "SelectedComputerCasing"),
+        COMPUTER_HEAT("gtna.terminal.config.computer_heat", "SelectedComputerHeat"),
+        GLASS("gtna.terminal.config.glass", "SelectedGlass"),
+        GRAVITON("gtna.terminal.config.graviton", "SelectedGraviton"),
+        HERMETIC("gtna.terminal.config.hermetic", "SelectedHermetic"),
+        INTEGRAL_FRAME("gtna.terminal.config.integral_frame", "SelectedIntegralFrame"),
+        LIGHT("gtna.terminal.config.light", "SelectedLight"),
+        SPACE_ELEVATOR("gtna.terminal.config.space_elevator", "SelectedSpaceElevator"),
+        STELLAR_CONTAINMENT("gtna.terminal.config.stellar_containment", "SelectedStellarContainment"),
+        EOH_COMPRESSION("gtna.terminal.config.eoh_compression", "SelectedEOHCompression"),
+        EOH_ACCELERATION("gtna.terminal.config.eoh_acceleration", "SelectedEOHAcceleration"),
+        EOH_STABILISATION("gtna.terminal.config.eoh_stabilisation", "SelectedEOHStabilisation");
 
         public final String translationKey;
         public final String nbtKey;
@@ -420,24 +436,120 @@ public class BlockSelectionConfigWidget {
     public static ItemStack getSelectedBlock(ItemStack terminalStack, BlockCategory category, String blueprintName) {
         CompoundTag tag = terminalStack.getTag();
         String prefix = blueprintName != null && !blueprintName.isEmpty() ? blueprintName + "_" : "";
+        if (tag != null && prefix.isEmpty()) {
+            var id = net.minecraft.resources.ResourceLocation
+                    .tryParse(tag.getCompound("NexusSelectedBlocks").getString(category.nbtKey));
+            if (id != null) {
+                var item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(id);
+                if (getEntries(category).stream().anyMatch(stack -> stack.is(item))) return item.getDefaultInstance();
+            }
+        }
         if (tag == null || !tag.contains(prefix + category.nbtKey)) return null;
         int idx = tag.getInt(prefix + category.nbtKey);
         if (idx < 0) return null;
 
-        List<ItemStack> entries = switch (category) {
-            case COILS -> getCoilEntries();
-            case MACHINE_CASING -> getMachineCasingEntries();
-            case MUFFLER -> getMufflerEntries();
-            case ROTOR_HOLDER -> getRotorHolderEntries();
-            case WIRELESS_CAPACITOR -> getWirelessCapacitorEntries();
-            case MATRIX_STORAGE_MODULE -> getMatrixStorageModuleEntries();
-            case MATRIX_CRAFTING_MODULE -> getMatrixCraftingModuleEntries();
-            case ME_STORAGE_ACCESS -> getMEStorageAccessEntries();
-        };
+        List<ItemStack> entries = getEntries(category);
 
         if (idx < entries.size()) {
             return entries.get(idx);
         }
         return null;
+    }
+
+    private static final Map<BlockCategory, List<ItemStack>> ENTRY_CACHE = new EnumMap<>(BlockCategory.class);
+
+    public static List<ItemStack> getEntries(BlockCategory category) {
+        return ENTRY_CACHE.computeIfAbsent(category, BlockSelectionConfigWidget::buildEntries);
+    }
+
+    private static List<ItemStack> buildEntries(BlockCategory category) {
+        return switch (category) {
+            case COILS -> getCoilEntries();
+            case MACHINE_CASING -> getMachineCasingEntries();
+            case MUFFLER -> getMufflerEntries();
+            case ROTOR_HOLDER -> getRotorHolderEntries();
+            case WIRELESS_CAPACITOR -> getWirelessCapacitorEntries();
+            case BATTERY -> GTCEuAPI.PSS_BATTERIES.entrySet().stream()
+                    .sorted((first, second) -> {
+                        int tier = Integer.compare(first.getKey().getTier(), second.getKey().getTier());
+                        return tier != 0 ? tier : net.minecraft.core.registries.BuiltInRegistries.BLOCK
+                                .getKey(first.getValue().get()).toString().compareTo(
+                                        net.minecraft.core.registries.BuiltInRegistries.BLOCK
+                                                .getKey(second.getValue().get()).toString());
+                    })
+                    .map(entry -> entry.getValue().get().asItem().getDefaultInstance()).toList();
+            case MATRIX_STORAGE_MODULE -> getMatrixStorageModuleEntries();
+            case MATRIX_CRAFTING_MODULE -> getMatrixCraftingModuleEntries();
+            case ME_STORAGE_ACCESS -> getMEStorageAccessEntries();
+            default -> net.minecraft.core.registries.BuiltInRegistries.BLOCK.stream()
+                    .filter(block -> matches(category,
+                            net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block).getPath()))
+                    .map(block -> block.asItem().getDefaultInstance()).filter(stack -> !stack.isEmpty())
+                    .sorted(Comparator.comparing(stack -> net.minecraft.core.registries.BuiltInRegistries.ITEM
+                            .getKey(stack.getItem()).toString()))
+                    .toList();
+        };
+    }
+
+    private static boolean matches(BlockCategory category, String id) {
+        return switch (category) {
+            case ABS_CASING -> id.contains("abs_") && id.contains("casing");
+            case BATTERY -> id.contains("battery") && !id.contains("hatch");
+            case CLEANROOM -> id.contains("filter") && !id.contains("machine");
+            case COMPONENT_ASSEMBLY -> id.contains("component_assembly") && id.contains("casing");
+            case COMPUTER_CASING -> id.contains("computer_casing") || id.equals("hpca_high_power_casing");
+            case COMPUTER_HEAT -> id.contains("heat_vent") || id.contains("hpca") && id.contains("cooler");
+            case GLASS -> id.contains("glass") && !id.contains("pane");
+            case GRAVITON -> id.contains("graviton") && id.contains("casing");
+            case HERMETIC -> id.contains("hermetic") && id.contains("casing");
+            case INTEGRAL_FRAME -> id.contains("integral") && id.contains("framework");
+            case LIGHT -> id.contains("lamp") || id.contains("light_block");
+            case SPACE_ELEVATOR -> id.contains("space_elevator") && id.contains("casing");
+            case STELLAR_CONTAINMENT -> id.contains("stellar") && id.contains("containment");
+            case EOH_COMPRESSION -> id.startsWith("spacetime_compression_field_generator_tier_");
+            case EOH_ACCELERATION -> id.startsWith("time_acceleration_field_generator_tier_");
+            case EOH_STABILISATION -> id.startsWith("stabilisation_field_generator_tier_");
+            default -> false;
+        };
+    }
+
+    public static void select(ItemStack terminal, BlockCategory category, ItemStack selected) {
+        if (getEntries(category).stream().noneMatch(stack -> ItemStack.isSameItem(stack, selected))) return;
+        var old = getSelectedBlock(terminal, category);
+        if (old != null && ItemStack.isSameItem(old, selected)) {
+            clear(terminal, category);
+            return;
+        }
+        var root = terminal.getOrCreateTag();
+        if (!root.contains("NexusSelectedBlocks", 10)) root.put("NexusSelectedBlocks", new CompoundTag());
+        root.getCompound("NexusSelectedBlocks").putString(category.nbtKey,
+                net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(selected.getItem()).toString());
+        root.remove(category.nbtKey);
+    }
+
+    public static void clear(ItemStack terminal, BlockCategory category) {
+        var tag = terminal.getOrCreateTag();
+        tag.remove(category.nbtKey);
+        tag.getCompound("NexusSelectedBlocks").remove(category.nbtKey);
+    }
+
+    public static void clearAll(ItemStack terminal) {
+        for (var category : BlockCategory.values()) clear(terminal, category);
+    }
+
+    public static List<ItemStack> applySelections(com.lowdragmc.lowdraglib.utils.BlockInfo[] infos,
+                                                  ItemStack terminal) {
+        if (infos == null) return List.of();
+        // Only a choice explicitly allowed by this cell may replace the native candidates.
+        for (var category : BlockCategory.values()) {
+            if (category == BlockCategory.GLASS || category == BlockCategory.LIGHT) continue;
+            var selected = getSelectedBlock(terminal, category);
+            if (selected == null) continue;
+            if (Arrays.stream(infos).anyMatch(info -> ItemStack.isSameItem(info.getItemStackForm(), selected))) {
+                return List.of(selected.copy());
+            }
+        }
+        return Arrays.stream(infos).map(com.lowdragmc.lowdraglib.utils.BlockInfo::getItemStackForm)
+                .filter(stack -> !stack.isEmpty()).map(ItemStack::copy).toList();
     }
 }

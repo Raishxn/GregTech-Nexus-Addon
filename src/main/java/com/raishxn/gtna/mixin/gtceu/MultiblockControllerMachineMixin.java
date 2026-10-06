@@ -20,9 +20,13 @@ import com.raishxn.gtna.api.machine.multiblock.IGTNAModulePerformanceHost;
 import com.raishxn.gtna.api.machine.multiblock.ISubPatternMachine;
 import com.raishxn.gtna.network.GTNANetworkHandler;
 import com.raishxn.gtna.network.packet.SModuleCountPacket;
+import com.raishxn.gtna.research.ResearchMachineHooks;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +55,12 @@ import java.util.Set;
  */
 @Mixin(MultiblockControllerMachine.class)
 public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHost, IGTNAModulePerformanceHost {
+
+    /** Research points: forming a multiblock can pay the owner's team (see {@code ResearchMachineHooks}). */
+    @Inject(method = "onStructureFormed", at = @At("TAIL"), remap = false)
+    private void gtna$payResearchSourcesOnForm(CallbackInfo ci) {
+        ResearchMachineHooks.onMultiblockFormed((MultiblockControllerMachine) (Object) this);
+    }
 
     @Unique
     private static final List<PartAbility> GTNA$SINGLE_PER_CONTROLLER = List.of(

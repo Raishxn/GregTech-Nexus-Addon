@@ -8,16 +8,15 @@
   "loader": "gtceu:machine",
   "machine": "gtna:eye_of_harmony",
   "texture_overrides": {
-    "all": "gtna:block/casings/dimensionally_transcendent_casing"
+    "all": "gtna:block/eye_of_harmony/spatial"
   },
   "variants": {
     "is_formed=false,recipe_logic_status=idle": {
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/dimensionally_transcendent_casing",
-          "overlay_front": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front",
-          "overlay_front_emissive": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_emissive"
+          "all": "gtna:block/eye_of_harmony/spatial",
+          "overlay_front": "gtna:block/machines/eye_of_harmony/overlay_front"
         }
       }
     },
@@ -25,9 +24,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/dimensionally_transcendent_casing",
-          "overlay_front": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_paused",
-          "overlay_front_emissive": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_paused_emissive"
+          "all": "gtna:block/eye_of_harmony/spatial",
+          "overlay_front": "gtna:block/machines/eye_of_harmony/overlay_front"
         }
       }
     },
@@ -35,9 +33,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/dimensionally_transcendent_casing",
-          "overlay_front": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_active_emissive"
+          "all": "gtna:block/eye_of_harmony/spatial",
+          "overlay_front": "gtna:block/machines/eye_of_harmony/overlay_front_active"
         }
       }
     },
@@ -45,9 +42,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/dimensionally_transcendent_casing",
-          "overlay_front": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_active_emissive"
+          "all": "gtna:block/eye_of_harmony/spatial",
+          "overlay_front": "gtna:block/machines/eye_of_harmony/overlay_front_active"
         }
       }
     },
@@ -55,9 +51,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/dimensionally_transcendent_casing",
-          "overlay_front": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front",
-          "overlay_front_emissive": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_emissive"
+          "all": "gtna:block/eye_of_harmony/spatial",
+          "overlay_front": "gtna:block/machines/eye_of_harmony/overlay_front"
         }
       }
     },
@@ -65,9 +60,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/dimensionally_transcendent_casing",
-          "overlay_front": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_paused",
-          "overlay_front_emissive": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_paused_emissive"
+          "all": "gtna:block/eye_of_harmony/spatial",
+          "overlay_front": "gtna:block/machines/eye_of_harmony/overlay_front"
         }
       }
     },
@@ -75,9 +69,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/dimensionally_transcendent_casing",
-          "overlay_front": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_active_emissive"
+          "all": "gtna:block/eye_of_harmony/spatial",
+          "overlay_front": "gtna:block/machines/eye_of_harmony/overlay_front_active"
         }
       }
     },
@@ -85,9 +78,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtna:block/casings/dimensionally_transcendent_casing",
-          "overlay_front": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/fluid_drilling_rig/overlay_front_active_emissive"
+          "all": "gtna:block/eye_of_harmony/spatial",
+          "overlay_front": "gtna:block/machines/eye_of_harmony/overlay_front_active"
         }
       }
     }

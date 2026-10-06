@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.api.registry.GTRegistries;
 
 import com.raishxn.gtna.common.data.condition.CompactCondition;
 import com.raishxn.gtna.common.data.condition.RestrictedItemsEnabledCondition;
+import com.raishxn.gtna.research.ResearchGateCondition;
 
 public class GTNARecipeConditions {
 
@@ -16,6 +17,10 @@ public class GTNARecipeConditions {
             .register("restricted_items_enabled",
                     new RecipeConditionType<>(() -> RestrictedItemsEnabledCondition.INSTANCE,
                             RestrictedItemsEnabledCondition.CODEC));
+
+    public static final RecipeConditionType<ResearchGateCondition> RESEARCH_GATE = GTRegistries.RECIPE_CONDITIONS
+            .register("research_gate",
+                    new RecipeConditionType<>(ResearchGateCondition::new, ResearchGateCondition.CODEC));
 
     public static void init() {}
 }

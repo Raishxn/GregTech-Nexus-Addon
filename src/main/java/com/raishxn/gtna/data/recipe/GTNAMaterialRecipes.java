@@ -2,10 +2,12 @@ package com.raishxn.gtna.data.recipe;
 
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
+import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialEntry;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
+import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
 
 import net.minecraft.data.recipes.FinishedRecipe;
 
@@ -33,6 +35,13 @@ public class GTNAMaterialRecipes {
                 .duration(100)
                 .EUt(GTValues.LV)
                 .save(provider);
+
+        // --- Breel by hand (GTNL: two Bronze dust and one Steel dust make three Breel dust) ---
+        VanillaRecipeHelper.addShapelessRecipe(provider, "breel_dust_manual",
+                ChemicalHelper.get(TagPrefix.dust, GTNAMaterials.Breel, 3),
+                new MaterialEntry(TagPrefix.dust, GTMaterials.Bronze),
+                new MaterialEntry(TagPrefix.dust, GTMaterials.Bronze),
+                new MaterialEntry(TagPrefix.dust, GTMaterials.Steel));
 
         // --- Clay Compound (Mixer) ---
         GTRecipeTypes.MIXER_RECIPES.recipeBuilder("clay_compound_mixing")

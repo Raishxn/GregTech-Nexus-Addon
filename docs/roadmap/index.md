@@ -1,250 +1,81 @@
-# 📋 Roadmap & Checklist
+# Roadmap público — GregTech Nexus Addon
 
-Acompanhe o progresso de desenvolvimento do GregTech Nexus Addon em tempo real.
+Atualizado em **30/09/2026**. Base de desenvolvimento: **Minecraft 1.20.1 / GTCEu 7.5.3 / GTNA 0.5.1**.
 
----
+GTNA amplia a indústria a vapor, as fábricas elétricas e a automação do GregTech com
+multiblocos, redes wireless, módulos e integração AE2. Também oferece configurações
+para que modpacks adaptem esse conteúdo à sua própria progressão.
 
-## ✅ v0.1.5 — Versão Atual (Lançada)
+## Como acompanhar
 
-### Funcionalidades Completas
+- **Implementado:** existe no desenvolvimento atual; pode ainda não estar em uma versão publicada.
+- **Em validação:** já funciona em testes, mas precisa de confirmação no jogo ou de balanceamento.
+- **Planejado:** próxima tarefa; a caixa só será marcada após implementação e verificação.
+- **Em estudo:** depende de definição de escopo e não é uma entrega prometida.
 
-- [x] **Wireless Steam Network** — Hatches de input/output sem fio (Bronze + Steel)
-- [x] **Huge Steam Buses** — Input/Output buses com mais slots
-- [x] **Large Steam Furnace** — 9x velocidade, 128 paralelos, 50% eficiência
-- [x] **Large Steam Crusher** — Triturador em massa a vapor
-- [x] **Large Steam Alloy Smelter** — 64 paralelos, 43% mais rápido
-- [x] **Large Steam Solar Boiler** — Vapor infinito via Sol (10,000 L/s por célula)
-- [x] **Steam Cobbler** — Gerador de pedra, 16 paralelos
-- [x] **Stone Superheater** — Derrete pedra em fluidos, 32 paralelos
-- [x] **Steam Manufacturer** — Assembler hidráulico a vapor
-- [x] **Steam Woodcutter** — Corte automático de madeira
-- [x] **Void Miner (Steam)** — Mineração do vazio a vapor
-- [x] **Infernal Coke Oven** — Forno de coque intensificado
-- [x] **Hyper Pressure Reactor** — Reator de alta pressão
-- [x] **Leap Forward Blast Furnace** — Alto forno avançado
-- [x] **Industrial Slaughterhouse** — Matadouro industrial (elétrico)
-- [x] **Thread Hatch** — ZPM→MAX, receitas simultâneas diferentes
-- [x] **Accelerate Hatch** — LV→MAX, reduz duração
-- [x] **Overclock Hatch** — UV→MAX, multiplicador de OC
-- [x] **Advanced Parallel Hatch** — UHV→OpV, 1K→262K paralelos
-- [x] **Duration Tester** — Multibloco de teste para hatches
-- [x] **Material: Stronze** — Liga Bronze+Steel (1:2)
-- [x] **Material: Breel** — Liga Bronze+Steel (2:1)
-- [x] **Material: Clay Compound** — Material primitivo
-- [x] **Material: Echoite** — Elemento customizado (Ec)
-- [x] **Material: Compressed Steam** — Sólido de vapor
-- [x] **Fluido: Dense Supercritical Steam**
-- [x] **Fluido: Super Heated Steam**
-- [x] **Fluido: Insanely Supercritical Steam**
-- [x] **Sistema Hidráulico** — 10 componentes (Motor, Piston, Pump, Arm, etc.)
-- [x] **Receitas Hidráulicas** — Tipo de receita customizado
-- [x] **Receitas Woodcutter** — Tipo de receita customizado
-- [x] **Receitas Superheater** — Tipo de receita customizado
-- [x] **Receitas Infernal Coke** — Tipo de receita customizado
-- [x] **Receitas High Pressure** — Tipo de receita customizado
-- [x] **Receitas Slaughterhouse** — Tipo de receita customizado
-- [x] **Vajra** — Ferramenta universal (Echoite)
-- [x] **Structure Detector** — Ferramenta de detecção de estrutura
-- [x] **Jade Integration** — HUD info para multiblocos
-- [x] **Blocos Customizados** — 12 tipos de casing
+As prioridades podem mudar conforme os testes. Não há datas de lançamento comprometidas.
+O roadmap descreve os principais sistemas; não é um inventário de todas as máquinas.
 
----
+## Implementado
 
-## 🔄 v0.2.0 — Em Desenvolvimento
+- [x] Redes wireless de vapor e energia, com monitoramento e Nexus Flux Matrix.
+- [x] Máquinas Steam e Large Steam, componentes hidráulicos e Steam Elevator com módulos.
+- [x] Nexus Structure Terminal para preview e montagem de multiblocos e módulos registrados.
+- [x] Módulos auxiliares em máquinas elétricas compatíveis e cadeia de processamento de minério.
+- [x] Hatches de aceleração, overclock, paralelo e receitas simultâneas em máquinas compatíveis.
+- [x] ME Pattern Buffers com modos de receita, capacidades configuráveis e upgrades que preservam dados.
+- [x] Universal Factory com regras configuráveis para dividir os recursos entre receitas.
+- [x] Electric Void Miner com modos preciso/aleatório, essências, World Data Scanners e Incubator.
+- [x] Void Fluid Drilling Rig com descoberta por extração real, cartões reutilizáveis e upgrades remotos.
+- [x] Integrações JEI/Jade, traduções em inglês/português e testes automatizados dos sistemas principais.
 
-### ⚡ Nexus Flux Matrix — Wireless Energy System (**PRIORIDADE**)
+## Agora — estabilizar o conteúdo em teste
 
-- [ ] **Nexus Flux Matrix** — Multibloco central de armazenamento wireless (3×7×7 a 31×7×7)
-- [ ] **Nexus Capacitor Blocks** (14 tiers, LV→MAX) — Blocos de armazenamento interno
-- [ ] **NexusEnergyNetwork** — SavedData per-player com Int128
-- [ ] **Wireless Energy Hatch** — 11 amperagens (1A→1048576A), todos os tiers
-- [ ] **Wireless Dynamo Hatch** — 11 amperagens, todos os tiers
-- [ ] **Wireless Receiver Cover** — Para singleblocks (1A, 4A, 16A, 64A)
-- [ ] **Wireless Transmitter Cover** — Para geradores singleblock
-- [ ] **Nexus Linker** — Item de vinculação (Shift+Click Controller → Click Hatch)
-- [ ] **Quantum Network Terminal** — GUI de monitoramento completo
-- [ ] **Cross-dimension** — Suporte inter-dimensional (ZPM+)
-- [ ] **Escalabilidade Quadrática** — `Capacity × Count / 2` com Int128
-- [ ] PRD completo: [prd_05_nexus_flux_matrix.md](../prd/prd_05_nexus_flux_matrix.md)
+- [ ] **GTNA-01 · Mineração Void:** confirmar no cliente os dois modos, os novos tempos, Accelerate Hatch e paralelos acima de dois; conferir consumo e saída cheia.
+- [ ] **GTNA-02 · Descoberta de fluidos:** verificar com uma pessoa a prospecção, extração, registro de petróleo e o caminho Marte → Radon → produção remota no perfil GTIA; tornar as instruções claras.
+- [ ] **GTNA-03 · Interfaces:** conferir nomes dos scanners, chances no Jade, rolagem dos grandes catálogos no JEI e escalas diferentes da interface.
+- [ ] **GTNA-04 · Equipes:** testar compartilhamento e bloqueios de dados com dois jogadores reais, incluindo saída e retorno à equipe.
+- [ ] **GTNA-05 · Segurança dos dados:** retestar Pattern Buffer upgrades, redes ME cheias/sem energia, recarregamento do mundo e migração de capacidades sem perda ou duplicação.
+- [ ] **GTNA-06 · Energia wireless:** confirmar perda única, transferências entre dimensões e recuperação de mundos existentes nos perfis configuráveis.
 
-### Novos Multiblocos (Planejados)
+**Para encerrar esta etapa:** os casos acima devem ter resultados registrados; problemas de
+perda de itens, duplicação, travamento ou custos incorretos precisam estar corrigidos.
+Testes automatizados complementam a validação no cliente e em servidor multiplayer.
 
-- [ ] **Forge of the Iron Crown** — EBF movido a vapor (≤1800K)
-- [ ] **Steam Pressure Crystallizer** — Autoclave turbinada a vapor
-- [ ] **Pneumatic Ore Washer** — Ore Washer + Chemical Bath + Centrifuge
-- [ ] **Steam Distillation Column** — Destilação a vapor
-- [ ] **Hydraulic Press Complex** — Bender+Compressor+Hammer+Press+Extruder
+## Depois — integração, balanceamento e documentação
 
-### Pattern Buffer System ✅ **Implementado** (multi-modo funcional)
+- [ ] **GTNA-07 · Fábricas em uso real:** medir autocrafting AE2, múltiplas receitas e desempenho sob carga; conferir CPUs nativas e sistemas Nexus juntos.
+- [ ] **GTNA-08 · Multiblocos e módulos:** ampliar a conferência de orientação, formação, preview e hatches nas máquinas já adicionadas.
+- [ ] **GTNA-09 · Configuração para packs:** completar os controles de custo, rendimento, paralelo e habilitação conforme as necessidades verificadas; documentar defaults e exemplos.
+- [ ] **GTNA-10 · Conteúdo de progressão:** revisar receitas, custos e rendimento das cadeias Steam, elétricas e de componentes, priorizando máquinas com uso prático.
+- [ ] **GTNA-11 · Guias e traduções:** atualizar instruções de montagem/uso e manter idiomas e tooltips coerentes com as máquinas e seus limites.
 
-- [x] **ME Mini Pattern Buffer** (9 slots) — LuV
-- [x] **ME Pattern Buffer** (21 slots) — ZPM
-- [x] **ME Advanced Pattern Buffer** (32 slots) — UV
-- [x] **ME Ultimate Pattern Buffer** (72 slots) — UHV
-- [x] GUI completa com configuração por slot (item/fluido/circuito/modo) — página de duas colunas
-      (`352x248`): grade de patterns à esquerda e painel de configuração do slot **docado** à
-      direita, mais o side tab **Buffer Tools** (cache de receitas + ferramentas de circuito dos
-      patterns). Geometria centralizada em `PatternBufferLayout` e guardada pelo unit test
-      `PatternBufferLayoutTest`.
-- [x] Integração AE2 (pattern push/pull via rede ME)
-- [x] **Troca automática de modo do multibloco** conforme o recipe type do pattern
-      (espelho de `activeRecipeType` com a fórmula oficial do GTM — ver
-      [auditoria técnica](technical-audit-pattern-buffer.md)). **Coberto por gametest end-to-end**
-      desde 2026-09-20: um `duration_tester` formado que roda uma receita do segundo tipo vira o
-      modo sozinho (`runningSecondRecipeTypeMirrorsControllerMode`).
-- [x] **Troca automática de modo também em multiblocos do GTCEu/GCYM** (Large Cutter entre cutter
-      e lathe, Multi Smelter entre furnace e alloy smelter, etc.): o pattern buffer dirige o modo
-      quando a máquina está **ociosa**, então nunca interrompe produção. Coberto pelo gametest
-      `patternBufferDrivesBaseMachineMode`; desligável em `ConfigHolder` (`bufferDrivenMachineMode`,
-      ligado por padrão).
-- [x] **Filtro de modo por buffer** — seletor na UI do próprio buffer (paridade com o
-      `MultiMachineModeFancyConfigurator` do GTOCore) que limita o buffer a um recipe type.
-- [x] **Output ME sem perda** — sobra de output vai para um buffer persistido e é drenada por um
-      `IGridTickable` com frequência adaptativa, em vez de ser voidada.
-- [x] Itens de upgrade entre tiers (preservam padrões e configuração)
-- [x] Fidelidade 1:1 com GTOCore/GTLCore — **tabela de gap toda verde**; as divergências restantes
-      são conscientes e documentadas em [gap de fidelidade](pattern-buffer-fidelity-gap.md).
+**Para encerrar esta etapa:** máquinas e configurações documentadas devem reproduzir o
+comportamento observado em uma fábrica real, com custos e limitações compreensíveis.
 
-### Estabilização após reviews externas (2026-09-20)
+## Mais adiante — expansão e preparação de versão
 
-- [x] **BUG-EXT-001 — isolamento do executor AE2**: CPUs AE2 nativas mantêm o
-      `CraftingCpuLogic` original; apenas a CPU virtual do Nexus recebe o executor otimizado.
-      Protegido pelo GameTest `nativeCraftingCpuKeepsAe2Executor`.
-- [ ] **BUG-EXT-001 — reprodução manual**: testar autocrafting com uma CPU AE2 comum e uma CPU
-      virtual Nexus em uma rede real para confirmar se o travamento reportado desapareceu.
-- [x] **BUG-EXT-002 — restauração da armadura Quantum**: velocidade de voo, `mayfly`, estado de
-      voo, altura de passo e efeito de movimento são restaurados ao remover a armadura.
-- [ ] **BUG-EXT-002 — teste interativo**: equipar/remover o set e os boots, incluindo troca entre
-      survival/creative, e conferir a visibilidade em `NORMAL` e `JOURNEY`.
-- [ ] **Visibilidade/documentação**: esclarecer na configuração que a armadura é restrita e fica
-      fora da creative tab por padrão em `NORMAL`.
-- [ ] Detalhes, evidências e comandos de validação: [Continuity Ledger](../../CONTINUITY_LEDGER.md).
+- [ ] **GTNA-12 · Novos ports:** selecionar novas máquinas por necessidade de progressão; verificar estrutura, receitas, comportamento, arte e licença antes de implementar.
+- [ ] **GTNA-13 · Qualidade técnica:** reduzir duplicação nos registros e ampliar testes de regressão nas áreas que os relatos de jogadores apontarem.
+- [ ] **GTNA-14 · Preparar uma versão:** revisar alterações, migração de saves/configs, compatibilidade, créditos, changelog e instruções de instalação antes de publicar.
 
-### Correção de wiring + primeira camada de QA (2026-09-21)
+Novas famílias complexas de máquinas permanecem **em estudo** até terem escopo e
+pré-requisitos definidos. Este roadmap não aprova automaticamente todos os ports de referência.
 
-- [x] **Wireless Steam Input Hatch aceito nas máquinas steam**: os patterns fixavam o slot de vapor
-      no bloco exato do hatch do GTCEu; agora usam a ability (`abilities(PartAbility.STEAM)`), como as
-      máquinas steam do próprio GTCEu. O hatch de saída deixou de declarar `STEAM`.
-- [x] **Guards novos**: `SteamWiringContractTest` (lint de fonte, 10º unit test) + GameTest
-      `wirelessSteamHatchIsAcceptedAsSteamSource` (7º gametest), ambos validados por teste negativo.
-- [ ] **QA em camadas**: replicar o gametest para as demais máquinas steam; mais lints de
-      registro/wiring; CI com determinismo de `runData`. Ver G-0011 no
-      [Continuity Ledger](../../CONTINUITY_LEDGER.md).
-- [x] **Thread Hatch (G-0012)**: doc alinhada à realidade (só a base
-      `WorkableElectricMultipleRecipesMachine`; hoje o Duration Tester + KubeJS) e gametest
-      `threadHatchWiresIntoMultipleRecipesMachine` travando a fundação.
-- [ ] **Fase 2 do manifest — migração dos controladores** para a base multi-receita, para que a
-      Thread Hatch seja usável em máquina de gameplay (regra 8 do
-      [manifest de port](multiblock-port-manifest.md)).
+## Relação com o GregTech Infinity Ascension
 
-### Paridade GTO nos hatches (2026-09-21)
+GTNA é um dos mods-base do GTIA, mas continua sendo um addon utilizável por outros packs.
+O GTIACore exige GTNA; o GTNA não exige GTIACore. Receitas, depósitos planetários e gates
+específicos do pack pertencem ao perfil GTIA e podem diferir dos defaults do addon.
 
-- [x] **Accelerate sem punir**: a penalidade passou a seguir o tier **pré-overclock da receita**
-      (igual ao GTOCore), não o tier da máquina; função pura + unit test.
-- [x] **Quantidade configurável** nas hatches Accelerate, Overclock e Thread (base
-      `ConfigurableAmountPartMachine`, UI `IntInputWidget`), como o
-      `WorkableAmountConfigurationPartMachine` do GTO.
-- [x] **Tooltips no padrão GTO**, explicando o efeito, a regra de penalidade e a quantidade ajustável.
-- [x] **Teste de runtime do Output Boost** (gametest completa uma receita e afirma `M`, não `M²`),
-      validado por teste negativo.
-- [ ] Conferir in-game o visual das novas UIs e traduzir as chaves novas no `pt_br.json`.
-- [ ] **Fase 2 do manifest** continua pendente para a Thread Hatch ser usável em máquina de gameplay.
+## Ajudar com os testes
 
-### Port de multiblocos do GTLsupb (2026-09-21)
+Relate versão, máquina, configuração relevante, passos para reproduzir e resultado esperado/observado.
+Para fluidos, há um [guia de teste de petróleo e Radon](void-fluid-manual-test.md).
+Para origem de código e arte, consulte os [créditos e licenças](https://github.com/Raishxn/GregTech-Nexus-Addon/blob/main/THIRD_PARTY_NOTICES.md).
 
-- [x] **Universal Factory** (`gtna:universal_factory`): 32 recipe types, cross-recipe parallel +
-      threads (engine do GTNA), warmup/overload/batch com UI, casing novo. Base de teste para a
-      lógica multi-receita.
-- [x] **Primitive Stone Furnace** (`gtna:primitive_stone_furnace`): fornalha multibloco **sem
-      energia** (FURNACE_RECIPES), padrão 3×3×3 de pedra.
-- [ ] Textura dedicada do casing, traduções `pt_br.json` e conferência in-game dos displays.
-- [ ] Detalhes, licença (LGPLv3) e evidências: [Continuity Ledger](../../CONTINUITY_LEDGER.md) G-0015.
+## Eye of Harmony
 
-### Novos Elementos
+- [ ] [Eye of Harmony fiel ao GTNH](eye-of-harmony-implementation-roadmap.md). Em andamento: conteúdo físico, estrutura e operação Overworld implementados localmente; QA no cliente pendente. Fabricação adiada; demais planetas, viewer e paralelos por etapas.
 
-- [ ] **Nexium (Nx)** — Elemento ponte vapor↔eletricidade
-- [ ] **Steamforged (Sf)** — Metal que auto-repara
-- [ ] **Crystallium (Cr★)** — Amplificador de sinais
-- [ ] **Voidessence (Vd)** — Extraído do Void
-- [ ] **Hazardium (Hz)** — Fonte de energia instável
-- [ ] **Gravitium (Gv)** — Controle gravitacional
-- [ ] **Thermium (Th★)** — Superconduta calor
-
-### Novas Ligas
-
-- [ ] **Pressurized Bronze** — Bronze+CompressedSteam
-- [ ] **Reinforced Stronze** — Stronze+Nexium
-- [ ] **Crystalline Alloy** — Crystallium+Stronze
-- [ ] **Thermosteel** — Steel+Thermium
-- [ ] **Voidsteel** — Steel+Voidessence
-- [ ] **Nexus Compound** — Nexium+Echoite+Stronze
-- [ ] **Steam-Hardened Iron** — Iron+CompressedSteam
-- [ ] **Pneumatic Steel** — Steel+CompressedSteam+Copper
-
-### KubeJS Integration
-
-- [x] Plugin KubeJS registrado (`GTNAKubeJSPlugin`)
-- [x] GTNAPartAbility exposto para scripts
-- [x] WorkableElectricMultipleRecipesMachine via KubeJS (`gtna:multiple_recipes`)
-- [ ] Documentação e exemplos completos
-- [ ] Script de teste validado
-
-### Melhorias Gerais
-
-- [ ] Smart Tooltips em todos os multiblocos
-- [ ] Wireless Steam Dashboard GUI
-- [ ] Estrutura de pastas refatorada
-- [ ] Novos fluidos (Crystal Coolant, Hydraulic Fluid, etc.)
-- [ ] JEI/EMI custom pages
-
----
-
-## 🔮 v0.3.0+ — Futuro
-
-### Era Hidráulica
-
-- [ ] **Nexus Reactor Core** — Conversor Steam→EU
-- [ ] **Industrial Electrolyzer Complex**
-- [ ] Novos casings e blocos da era
-- [ ] Receitas de transição
-
-### Era Supercrítica
-
-- [ ] Multiblocks de processamento massivo
-- [ ] Novos fluidos supercríticos
-- [ ] Gate challenges
-
-### Infraestrutura
-
-- [ ] Wiki completa (MkDocs + GitHub Pages)
-- [x] **Automated testing** — 6 unit tests (`main()` + asserts, padrão GTLCore) e **4 gametests**
-      (`@GameTest` em servidor dedicado real), todos no gate do CI.
-- [x] **CI/CD pipeline** — `gradle.yml` roda `build`, `spotlessCheck`, `runUnitTests` e
-      `runGameTestServer` (com guarda do banner `GAME TESTS COMPLETE`); `docs.yml` publica o MkDocs.
-- [ ] Community playtest program
-
-!!! tip "Auditoria Técnica"
-    A auditoria estrutural completa do mod (pacotes, registries, mixins, testes, CI) + o plano de execução detalhado do **pattern buffer multi-modo** estão em [`technical-audit-pattern-buffer.md`](technical-audit-pattern-buffer.md). O escopo mecânico do port GTOCore/GTLAdditions segue em [`multiblock-port-manifest.md`](multiblock-port-manifest.md).
-
-!!! info "Retomar o trabalho numa sessão nova"
-    O estado atual, as pendências priorizadas e as **notas de campo** (os erros já pagos, para não
-    redescobrir) ficam no `CONTINUITY_LEDGER.md`, na raiz do repositório. Comece por lá: ele diz o
-    que está verde, o que falta e quais comandos rodar antes de mexer em qualquer coisa.
-
----
-
-## 📊 Estatísticas do Projeto
-
-| Métrica | Valor |
-|---------|-------|
-| **Multiblocos** | 14 implementados, 5 planejados |
-| **Hatches Customizadas** | 4 tipos (Thread, Accelerate, Overclock, Adv. Parallel) |
-| **Materiais** | 5 ligas + 1 elemento + 3 fluidos |
-| **Recipe Types** | 6 tipos customizados |
-| **Itens Hidráulicos** | 10 componentes |
-| **Blocos** | 12 casings customizados |
-
----
-
-!!! info "Contribua!"
-    Quer ajudar no desenvolvimento? Veja o [Guia de Contribuição](../development/contributing.md) ou entre no nosso [Discord](https://discord.gg/d3qHufwRxb)!
+- [Auditoria de fabricação, materiais e planetas](eye-of-harmony-progression-port-audit.md): dependências verificadas, rota BEC, proposta adaptada e sugestões de nomes.

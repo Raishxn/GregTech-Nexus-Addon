@@ -27,6 +27,35 @@ public class GTNAEnergyHatches {
     public static final MachineDefinition[][] WIRELESS_ENERGY_HATCHES = new MachineDefinition[GTValues.MAX + 1][11];
     public static final MachineDefinition[][] WIRELESS_DYNAMO_HATCHES = new MachineDefinition[GTValues.MAX + 1][11];
 
+    public static final MachineDefinition NETWORK_INPUT_TERMINAL = registerNetworkTerminal(
+            "wireless_energy_network_input_terminal", false);
+    public static final MachineDefinition NETWORK_OUTPUT_TERMINAL = registerNetworkTerminal(
+            "wireless_energy_network_output_terminal", true);
+
+    private static MachineDefinition registerNetworkTerminal(String name, boolean output) {
+        return REGISTRATE.machine(name,
+                holder -> new com.raishxn.gtna.common.machine.multiblock.part.energy.NexusNetworkTerminalPartMachine(
+                        holder, output ? com.gregtechceu.gtceu.api.capability.recipe.IO.OUT :
+                                com.gregtechceu.gtceu.api.capability.recipe.IO.IN))
+                .tier(GTValues.MAX).rotationState(RotationState.ALL)
+                .abilities(output ? com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.OUTPUT_ENERGY :
+                        com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.INPUT_ENERGY,
+                        output ? com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.OUTPUT_LASER :
+                                com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.INPUT_LASER)
+                .langValue(output ? "Nexus Wireless Network Output Terminal" : "Nexus Wireless Network Input Terminal")
+                .modelProperty(IS_FORMED, false)
+                .model((ctx, prov, builder) -> {
+                    var model = prov.models().nested().parent(prov.models().getExistingFile(
+                            com.raishxn.gtna.GTNACORE.id("block/machine/part/wireless_energy_network_terminal")))
+                            .texture("all", com.raishxn.gtna.GTNACORE.id("block/casings/wireless_terminate_casing"));
+                    builder.forAllStatesModels(state -> model);
+                })
+                .tooltips(Component.translatable("gtna.network_terminal." + (output ? "output" : "input")),
+                        Component.translatable("gtna.network_terminal.limit"),
+                        Component.translatable("gtna.network_terminal.binding"))
+                .register();
+    }
+
     public static final MultiblockMachineDefinition NEXUS_FLUX_MATRIX = REGISTRATE
             .multiblock("nexus_flux_matrix", NexusFluxMatrixMachine::new)
             .rotationState(RotationState.NON_Y_AXIS)
@@ -70,7 +99,8 @@ public class GTNAEnergyHatches {
                     GTCEu.id("block/multiblock/implosion_compressor"))
             .tooltips(
                     Component.translatable("gtna.machine.nexus_flux_matrix.tooltip_1"),
-                    Component.translatable("gtna.machine.nexus_flux_matrix.tooltip_2"))
+                    Component.translatable("gtna.machine.nexus_flux_matrix.tooltip_2"),
+                    Component.translatable("gtna.machine.nexus_flux_matrix.tooltip_3"))
             .register();
 
     public static void init() {

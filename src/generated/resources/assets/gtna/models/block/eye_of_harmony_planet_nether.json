@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gtna:block/eye_of_harmony/planet/nether_bottom",
+    "east": "gtna:block/eye_of_harmony/planet/nether_left",
+    "north": "gtna:block/eye_of_harmony/planet/nether_back",
+    "particle": "gtna:block/eye_of_harmony/planet/nether_front",
+    "south": "gtna:block/eye_of_harmony/planet/nether_front",
+    "up": "gtna:block/eye_of_harmony/planet/nether_top",
+    "west": "gtna:block/eye_of_harmony/planet/nether_right"
+  }
+}

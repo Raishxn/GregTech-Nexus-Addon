@@ -40,6 +40,12 @@ GregTech Nexus Addon - a GTCEu Modern addon: wireless steam/energy networks, thr
         versionRange = "[${gtceu_version},)"
         ordering = "AFTER"
         side = "BOTH"
+    [[dependencies.${mod_id}]]
+        modId = "infiniverse"
+        mandatory = true
+        versionRange = "[1.0.0.5,)"
+        ordering = "AFTER"
+        side = "BOTH"
     # Soft dependency: only the space multiblock content uses Ad Astra.
     # No GTNA class imports it, so the mod must load fine without it.
     [[dependencies.${mod_id}]]

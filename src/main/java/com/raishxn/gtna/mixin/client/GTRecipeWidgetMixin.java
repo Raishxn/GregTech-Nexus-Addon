@@ -3,6 +3,7 @@ package com.raishxn.gtna.mixin.client;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
+import com.gregtechceu.gtceu.api.recipe.RecipeCondition;
 import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 import com.gregtechceu.gtceu.api.recipe.ingredient.EnergyStack;
 import com.gregtechceu.gtceu.integration.xei.widgets.GTRecipeWidget;
@@ -14,12 +15,16 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
 import com.raishxn.gtna.common.data.GTNARecipeType;
+import com.raishxn.gtna.research.ResearchGateCondition;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 /** Show the Component Assembly Line's actual EU/t as GTO does in its recipe viewer. */
 @Mixin(value = GTRecipeWidget.class, remap = false)
@@ -58,6 +63,18 @@ public abstract class GTRecipeWidgetMixin {
             inputEUt = inputEUt.multiplyVoltage(result.eutMultiplier());
         }
         gtna$setEUt(inputEUt.getTotalEU());
+    }
+
+    /**
+     * Lists the research a recipe needs among its other conditions in the recipe viewer. Ordinal 1 is the
+     * loop that prints each condition (ordinal 0 feeds the UI template); the recipe itself is untouched.
+     */
+    @Redirect(method = "setRecipeWidget",
+              at = @At(value = "FIELD",
+                       target = "Lcom/gregtechceu/gtceu/api/recipe/GTRecipe;conditions:Ljava/util/List;",
+                       ordinal = 1))
+    private List<RecipeCondition<?>> gtna$listResearchConditions(GTRecipe shown) {
+        return ResearchGateCondition.withResearch(shown.conditions, shown.id);
     }
 
     private void gtna$setEUt(long eut) {

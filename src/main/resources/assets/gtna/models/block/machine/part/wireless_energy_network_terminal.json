@@ -1,0 +1,73 @@
+{
+  "credit": "Made with Blockbench",
+  "parent": "block/block",
+  "textures": {
+    "overlay_hatch": "gtna:block/overlay/machine/wireless_energy_network_terminal"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#all",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#all",
+          "cullface": "south"
+        },
+        "east": {
+          "texture": "#all",
+          "cullface": "east"
+        },
+        "west": {
+          "texture": "#all",
+          "cullface": "west"
+        },
+        "up": {
+          "texture": "#all",
+          "cullface": "up"
+        },
+        "down": {
+          "texture": "#all",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        -0.001
+      ],
+      "to": [
+        16,
+        16,
+        -0.001
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#overlay_hatch",
+          "cullface": "north",
+          "tintindex": -101,
+          "emissivity": 15
+        }
+      }
+    }
+  ]
+}

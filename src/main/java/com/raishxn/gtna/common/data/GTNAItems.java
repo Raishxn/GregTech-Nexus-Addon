@@ -82,8 +82,88 @@ public class GTNAItems {
     /** GTOCore grind balls: durability 50 / tier 1 and durability 100 / tier 2. */
     public static ItemEntry<ComponentItem> GRINDBALL_SOAPSTONE;
     public static ItemEntry<ComponentItem> GRINDBALL_ALUMINIUM;
+    @SuppressWarnings("unchecked")
+    public static final ItemEntry<ComponentItem>[] PLANET_DATA_CHIPS = new ItemEntry[5];
+    public static final String[] PLANET_DATA_CHIP_PLANETS = { "moon", "mars", "venus", "mercury", "glacio" };
+
+    public static final java.util.Map<String, ItemEntry<ComponentItem>> VEIN_ESSENCES = new java.util.LinkedHashMap<>();
+    public static final java.util.Map<String, ItemEntry<ComponentItem>> WORLD_DATA = new java.util.LinkedHashMap<>();
+    public static ItemEntry<ComponentItem> DEPOSIT_RECORDER;
+    public static ItemEntry<ComponentItem> DEPOSIT_DATA;
+    public static ItemEntry<ComponentItem> FLUID_SEPARATION_FILTER;
+    public static final java.util.Map<String, ItemEntry<ComponentItem>> FLUID_REMOTE_UPGRADES = new java.util.LinkedHashMap<>();
+    public static ItemEntry<ComponentItem> ESSENCE;
+    public static ItemEntry<ComponentItem> ESSENCE_SEED;
+    public static final net.minecraft.tags.TagKey<net.minecraft.world.item.Item> VEIN_ESSENCE_TAG = net.minecraft.tags.ItemTags
+            .create(GTNACORE.id("vein_essences"));
+
+    private static ItemEntry<ComponentItem> essenceItem(String id, String texture, boolean vein) {
+        var builder = REGISTRATE.item(id, ComponentItem::create)
+                .lang(com.gregtechceu.gtceu.utils.FormattingUtil.toEnglishName(id))
+                .onRegister(attach(new TooltipBehavior(lines -> lines.add(GTNASources.line(GTNASources.GTL)))))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + texture)));
+        if (vein) builder.tag(VEIN_ESSENCE_TAG);
+        return builder.register();
+    }
+
+    public static ItemEntry<ComponentItem> ASTRAL_ARRAY_FABRICATOR;
 
     public static void init() {
+        GTNAEyeOfHarmonyContent.init();
+        ASTRAL_ARRAY_FABRICATOR = GTNAEyeOfHarmonyContent.ASTRAL_ARRAY_FABRICATOR;
+        REGISTRATE.creativeModeTab(() -> GTNACreativeModeTabs.ITEMS);
+        DEPOSIT_RECORDER = REGISTRATE.item("deposit_recorder", ComponentItem::create)
+                .lang("Deposit Recorder").properties(p -> p.stacksTo(1))
+                .onRegister(attach(new com.raishxn.gtna.common.item.DepositRecorderBehavior()))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + ctx.getName())))
+                .register();
+        DEPOSIT_DATA = REGISTRATE.item("deposit_data", ComponentItem::create)
+                .lang("Deposit Data").properties(p -> p.stacksTo(1))
+                .onRegister(attach(new com.raishxn.gtna.common.item.DepositDataBehavior()))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + ctx.getName())))
+                .register();
+        FLUID_SEPARATION_FILTER = REGISTRATE.item("fluid_separation_filter", ComponentItem::create)
+                .lang("Fluid Separation Filter")
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + ctx.getName())))
+                .register();
+        for (String stage : java.util.List.of("terrestrial", "t1", "t2", "t3", "t4", "t5")) {
+            FLUID_REMOTE_UPGRADES.put(stage, REGISTRATE.item("fluid_remote_upgrade_" + stage, ComponentItem::create)
+                    .lang("Remote Fluid Upgrade " + stage.toUpperCase(java.util.Locale.ROOT))
+                    .properties(p -> p.stacksTo(1))
+                    .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + ctx.getName())))
+                    .register());
+        }
+        ESSENCE = essenceItem("essence", "essence", false);
+        ESSENCE_SEED = essenceItem("essence_seed", "essence_seed", false);
+        for (var vein : GTNAVoidVeins.ALL) {
+            VEIN_ESSENCES.put(vein.essence(), essenceItem(vein.essence(),
+                    "essence/" + vein.essence().replace("_essence", ""), true));
+        }
+        for (String world : new String[] { "overworld", "nether", "end" }) {
+            WORLD_DATA.put(world, REGISTRATE.item(world + "_data", ComponentItem::create)
+                    .lang(com.gregtechceu.gtceu.utils.FormattingUtil.toEnglishName(world + "_data"))
+                    .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + ctx.getName())))
+                    .register());
+        }
+        for (String planet : PLANET_DATA_CHIP_PLANETS) {
+            VEIN_ESSENCES.put(planet + "_vein_essence",
+                    essenceItem(planet + "_vein_essence", "essence/" + planet + "_vein", true));
+        }
+
+        for (int index = 0; index < PLANET_DATA_CHIPS.length; index++) {
+            String planet = PLANET_DATA_CHIP_PLANETS[index];
+            PLANET_DATA_CHIPS[index] = REGISTRATE.item("planet_data_chip_" + planet, ComponentItem::create)
+                    .lang(switch (planet) {
+                        case "moon" -> "Moon Planet Data Chip";
+                        case "mars" -> "Mars Planet Data Chip";
+                        case "venus" -> "Venus Planet Data Chip";
+                        case "mercury" -> "Mercury Planet Data Chip";
+                        default -> "Glacio Planet Data Chip";
+                    })
+                    .properties(properties -> properties.stacksTo(1))
+                    .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/" + ctx.getName())))
+                    .register();
+        }
         CELL_COMPONENT_1M = registerCellComponent(1);
         CELL_COMPONENT_4M = registerCellComponent(4);
         CELL_COMPONENT_16M = registerCellComponent(16);

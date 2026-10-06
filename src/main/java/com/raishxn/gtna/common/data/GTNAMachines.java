@@ -19,6 +19,7 @@ import com.gregtechceu.gtceu.common.data.GCYMBlocks;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTMachines;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
+import com.gregtechceu.gtceu.common.data.GTRecipeModifiers;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
@@ -36,11 +37,11 @@ import com.raishxn.gtna.client.renderer.machine.AnnihilateGeneratorRenderer;
 import com.raishxn.gtna.client.renderer.machine.EyeOfHarmonyRenderer;
 import com.raishxn.gtna.client.renderer.machine.EyeOfWoodRenderer;
 import com.raishxn.gtna.common.data.multiblock.DimensionallyTranscendentPatterns;
-import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyAisles;
 import com.raishxn.gtna.common.data.multiblock.EyeOfWoodAisles;
 import com.raishxn.gtna.common.data.multiblock.GTNAMultiBlockFileReader;
 import com.raishxn.gtna.common.machine.multiMachineBase.SteamMultiMachineBase;
 import com.raishxn.gtna.common.machine.multiblock.electric.AdvancedIntegratedOreProcessorMachine;
+import com.raishxn.gtna.common.machine.multiblock.electric.ElectricVoidMinerMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.IntegratedOreProcessorMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.LiquefactionFurnaceMachine;
 import com.raishxn.gtna.common.machine.multiblock.electric.UniversalFactoryMachine;
@@ -69,6 +70,7 @@ import com.raishxn.gtna.common.machine.multiblock.part.steam.WirelessSteamOutput
 import com.raishxn.gtna.common.machine.multiblock.steam.*;
 import com.raishxn.gtna.common.machine.noenergy.platformdeployment.PlatformDeploymentMachine;
 import com.raishxn.gtna.config.ConfigHolder;
+import com.raishxn.gtna.config.GTNABalance;
 import com.raishxn.gtna.utils.Registries;
 
 import java.lang.reflect.Field;
@@ -3411,6 +3413,48 @@ public class GTNAMachines {
                                     .withStyle(ChatFormatting.BLUE))
                     .register());
 
+    /**
+     * GTIA-era electric Void Miner (GTIA-D-159..D-162). Registration honours
+     * {@code electric_void_miner.json}'s {@code enabled}; the controller recipe is EV-only and
+     * uses terrestrial Titanium without Lua, samples, Planet Data Chips or the Steam miner.
+     */
+    public static final MultiblockMachineDefinition ELECTRIC_VOID_MINER = GTNABalance.getElectricVoidMiner().enabled ?
+            registerMachine("electricVoidMiner", () -> REGISTRATE
+                    .multiblock("electric_void_miner", ElectricVoidMinerMachine::new)
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .recipeTypes(GTNARecipeType.ELECTRIC_VOID_MINING_RECIPES, GTNARecipeType.RANDOM_VOID_MINING_RECIPES)
+                    .recipeModifiers(ElectricVoidMinerMachine::recipeModifier, GTRecipeModifiers.OC_NON_PERFECT)
+                    .appearanceBlock(GTBlocks.CASING_TITANIUM_STABLE)
+                    .pattern(definition -> FactoryBlockPattern.start()
+                            .aisle("CCC", "CCC", "CCC")
+                            .aisle("CCC", "CAC", "CCC")
+                            .aisle("CCC", "CSC", "CCC")
+                            .where('C', blocks(GTBlocks.CASING_TITANIUM_STABLE.get())
+                                    .or(abilities(PartAbility.INPUT_ENERGY).setMinGlobalLimited(1)
+                                            .setMaxGlobalLimited(2))
+                                    .or(abilities(PartAbility.IMPORT_ITEMS).setMaxGlobalLimited(1))
+                                    .or(abilities(PartAbility.EXPORT_ITEMS).setMinGlobalLimited(1))
+                                    .or(abilities(PartAbility.IMPORT_FLUIDS).setExactLimit(1))
+                                    .or(abilities(PartAbility.MAINTENANCE).setExactLimit(1))
+                                    .or(abilities(PartAbility.PARALLEL_HATCH).setMaxGlobalLimited(1))
+                                    .or(abilities(GTNAPartAbility.ACCELERATE_HATCH).setMaxGlobalLimited(1)))
+                            .where('A', blocks(ChemicalHelper.getBlock(TagPrefix.frameGt, GTMaterials.Titanium)))
+                            .where('S', controller(blocks(definition.get())))
+                            .build())
+                    .workableCasingModel(
+                            GTCEu.id("block/casings/solid/machine_casing_stable_titanium"),
+                            GTCEu.id("block/multiblock/large_miner"))
+                    .tooltips(
+                            Component.translatable("gtna.machine.electric_void_miner.tooltip.program")
+                                    .withStyle(ChatFormatting.GRAY),
+                            Component.translatable("gtna.machine.electric_void_miner.tooltip.fluid")
+                                    .withStyle(ChatFormatting.GRAY),
+                            Component.translatable("gtna.machine.electric_void_miner.tooltip.random"),
+                            Component.translatable("gtna.machine.electric_void_miner.tooltip.parallel")
+                                    .withStyle(ChatFormatting.GRAY))
+                    .register()) :
+            null;
+
     // ... imports
 
     public static final MultiblockMachineDefinition INDUSTRIAL_SLAUGHTERHOUSE = registerMachine(
@@ -3713,21 +3757,13 @@ public class GTNAMachines {
             .recipeType(GTNARecipeType.COSMOS_SIMULATION_RECIPES)
             .tooltips(
                     Component.translatable("gtna.machine.eye_of_harmony.tooltip.0"),
-                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.1"),
-                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.2"),
-                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.3"),
-                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.4"),
-                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.5"),
-                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.6"),
-                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.7"),
-                    Component.translatable("gtceu.machine.available_recipe_map_1.tooltip",
-                            Component.translatable("gtna.cosmos_simulation")))
+                    Component.translatable("gtna.machine.eye_of_harmony.tooltip.1"))
             .recipeModifier(EyeOfHarmonyMachine::recipeModifier)
-            .appearanceBlock(GTBlocks.HIGH_POWER_CASING)
+            .appearanceBlock(GTNAEyeOfHarmonyContent.SPATIAL_CASING)
             .pattern(GTNAMachines::createEyeOfHarmonyPattern)
             .model(createWorkableCasingMachineModel(
-                    GTNACORE.id("block/casings/dimensionally_transcendent_casing"),
-                    GTCEu.id("block/multiblock/fluid_drilling_rig"))
+                    GTNACORE.id("block/eye_of_harmony/spatial"),
+                    GTNACORE.id("block/machines/eye_of_harmony"))
                     .andThen(builder -> builder.addDynamicRenderer(EyeOfHarmonyRenderer::new)))
             .register());
 
@@ -3833,7 +3869,7 @@ public class GTNAMachines {
                 .where('H', blocks(GTNABlocks.RHENIUM_REINFORCED_ENERGY_GLASS.get()))
                 .where('P', blocks(GTNABlocks.DYSON_CONTROL_CASING.get()))
                 .where('S', blocks(GTBlocks.HIGH_POWER_CASING.get())
-                        .or(abilities(OUTPUT_ENERGY).setMaxGlobalLimited(1))
+                        .or(abilities(OUTPUT_ENERGY).setMaxGlobalLimited(16).setPreviewCount(1))
                         .or(abilities(OUTPUT_LASER))
                         .or(abilities(IMPORT_ITEMS))
                         .or(abilities(EXPORT_ITEMS)))
@@ -3844,23 +3880,7 @@ public class GTNAMachines {
     }
 
     private static BlockPattern createEyeOfHarmonyPattern(MultiblockMachineDefinition definition) {
-        var pattern = FactoryBlockPattern.start();
-        for (String[] aisle : EyeOfHarmonyAisles.AISLES) {
-            pattern.aisle(aisle);
-        }
-        return pattern.where('~', controller(blocks(definition.get())))
-                .where('A', blocks(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.get()))
-                .where('B', blocks(GTBlocks.HIGH_POWER_CASING.get())
-                        .or(abilities(EXPORT_ITEMS).setPreviewCount(1))
-                        .or(abilities(IMPORT_ITEMS).setPreviewCount(1))
-                        .or(abilities(EXPORT_FLUIDS).setPreviewCount(1))
-                        .or(abilities(IMPORT_FLUIDS).setPreviewCount(1)))
-                .where('D', blocks(GTNABlocks.DIMENSION_INJECTION_CASING.get()))
-                .where('E', blocks(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.get()))
-                .where('F', blocks(GTNABlocks.SPACETIME_COMPRESSION_FIELD_GENERATOR.get()))
-                .where('G', blocks(GTNABlocks.DIMENSIONAL_STABILITY_CASING.get()))
-                .where(' ', any())
-                .build();
+        return com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyStructure.create(definition);
     }
 
     private static BlockPattern createEyeOfWoodPattern(MultiblockMachineDefinition definition) {

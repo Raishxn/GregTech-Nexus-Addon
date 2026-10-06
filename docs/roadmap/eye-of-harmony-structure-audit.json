@@ -1,0 +1,32 @@
+{
+  "reference_commit": "a3e1e11241a814c9fa0dd0973d5699548428f689",
+  "source_path": "src/main/java/tectech/thing/metaTileEntity/multi/MTEEyeOfHarmony.java",
+  "source_file_sha256": "bca08c14b4c0ad37fa52ddb76168860204a0d8f4bbc533db6e5df530b3ca710a",
+  "canonical_coordinate_transform": "local[z][y][x] = original[y][32-z][x]",
+  "symbols": {
+    "C": "A (spatial casing)",
+    "D": "D (temporal casing)",
+    "H": "B (boundary/ports)",
+    "E": "E (acceleration)",
+    "A": "F (compression)",
+    "S": "G (stabilisation)"
+  },
+  "dimensions": [
+    33,
+    33,
+    33
+  ],
+  "cells": {
+    " ": 34116,
+    "A": 896,
+    "D": 534,
+    "E": 168,
+    "F": 138,
+    "G": 48,
+    "B": 36,
+    "~": 1
+  },
+  "canonical_rows_sha256": "6dd122943140a9cc9b4d37bad365200d8d1f26018944944577d2f66a4796b29f",
+  "result": "all 35937 cells match the existing geometry; no shape edit required",
+  "recipe_policy": "Author deferred new fabrication recipes on 2026-10-04; prioritize structure and operation."
+}

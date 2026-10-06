@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
+import com.raishxn.gtna.common.data.GTNAEyeOfHarmonyContent;
 import com.raishxn.gtna.common.data.GTNAMachines2;
 import com.raishxn.gtna.utils.TextUtil;
 import org.apache.commons.lang3.text.WordUtils;
@@ -81,7 +82,188 @@ public class GTNALangProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        // PersonalSpace (GTNH) strings, original keys and English text
+        add("block.gtna.personal_space_portal", "Personal Dimension Portal");
+        add("chat.overworldPersonalDimension", "Personal dimensions can only be created from the overworld");
+        add("chat.personalWorld.created", "Personal dimension successfully created!");
+        add("chat.personalWorld.updated", "Personal dimension successfully updated!");
+        add("chat.personalWorld.relinked", "Portal successfully relinked in dimension %s");
+        add("chat.personalWorld.relinked.error",
+                "Portal was not relinked, it would cause losing access to the dimension.");
+        add("chat.personalWorld.proximity", "Too close to another portal.");
+        add("chat.personalWorld.denied", "Settings not changed: access denied.");
+        add("chat.personalWorld.badLayers", "Settings not changed: using forbidden block layers.");
+        add("chat.personalWorld.badBlocks", "Settings not changed: boundary, gap or center uses a forbidden block.");
+        add("gui.personalWorld.voidWorld", "Void world");
+        add("gui.personalWorld.biome", "Biome name");
+        add("gui.personalWorld.presets", "Presets");
+        add("gui.personalWorld.layers", "Layers");
+        add("gui.personalWorld.skyColor", "Sky color");
+        add("gui.personalWorld.skyColor.red", "Red: ");
+        add("gui.personalWorld.skyColor.green", "Green: ");
+        add("gui.personalWorld.skyColor.blue", "Blue: ");
+        add("gui.personalWorld.starBrightness", "Star brightness");
+        add("gui.personalWorld.vegetation", "Foliage");
+        add("gui.personalWorld.trees", "Trees");
+        add("gui.personalWorld.weather", "Weather");
+        add("gui.personalWorld.clouds", "Clouds");
+        add("gui.personalWorld.invalidSyntax", "Invalid syntax");
+        add("gui.personalWorld.notAllowed", "Not allowed by the server's configuration");
+        add("gui.personalWorld.skyType.VANILLA", "Vanilla sky");
+        add("gui.personalWorld.skyType.BARNADA_C", "Barnada C sky");
+        add("gui.personalWorld.skyType.GARDEN_OF_GLASS", "Garden of Glass sky");
+        add("gui.personalWorld.boundary", "Boundary");
+        add("gui.personalWorld.boundary.a.short", "A");
+        add("gui.personalWorld.boundary.b.short", "B");
+        add("gui.personalWorld.boundary.chunks", "Boundary Chunks X x Z (0-20)");
+        add("gui.personalWorld.boundary.range", "0-20");
+        add("gui.personalWorld.gap", "Gap Chunks (0-5)");
+        add("gui.personalWorld.gap.a.short", "A");
+        add("gui.personalWorld.gap.b.short", "B");
+        add("gui.personalWorld.gap.c.short", "C");
+        add("gui.personalWorld.gap.widthRange", "0-5");
+        add("gui.personalWorld.gap.preset.ROAD", "Road");
+        add("gui.personalWorld.gap.preset.SOLID", "Solid");
+        add("gui.personalWorld.applyToAllSurfaceLayers", "Apply to all surface layers");
+        add("gui.personalWorld.center.enable", "Center Marker");
+        add("gui.personalWorld.center.block.short", "C");
+        add("gui.personalWorld.center.dir.SE", "SE (X+ Z+)");
+        add("gui.personalWorld.center.dir.SW", "SW (X- Z+)");
+        add("gui.personalWorld.center.dir.NE", "NE (X+ Z-)");
+        add("gui.personalWorld.center.dir.NW", "NW (X- Z-)");
+        add("gui.personalWorld.button.plus", "+");
+        add("gui.personalWorld.button.minus", "-");
+        add("gui.personalWorld.multiply", "x");
+        add("gui.personalWorld.moreSettings", "More Settings");
+        add("gui.personalWorld.moreSettings.tooltip", "More Settings");
+        add("gui.personalWorld.backToMain", "Back");
+        add("gui.personalWorld.backToMain.tooltip", "Back to Main");
+        add("commands.pspace.badDimension", "The specified dimension doesn't exist");
+        add("commands.pspace.where", "Player %s is in dimension %s");
+        add("commands.pspace.tpx", "Player %s was teleported to %s: %d, %d, %d");
+        add("commands.pspace.allow-worldgen-change", "Player %s unlocked worldgen settings for dimension %d");
+        add("commands.pspace.reload-config.success", "Configuration reloaded and synced to all clients.");
+        add("commands.pspace.reload-config.fail", "Failed to reload configuration: config file not found.");
+        add("gtna.source.personalspace", "PersonalSpace (GTNH)");
         addManualTranslations();
+        addEyeOfHarmonyContentNames();
+        for (Material material : java.util.List.of(
+                com.raishxn.gtna.common.data.GTNAMaterials.SpaceTime,
+                com.raishxn.gtna.common.data.GTNAMaterials.RawStarMatter,
+                com.raishxn.gtna.common.data.GTNAMaterials.WhiteDwarfMatter,
+                com.raishxn.gtna.common.data.GTNAMaterials.BlackDwarfMatter,
+                com.raishxn.gtna.common.data.GTNAMaterials.Universium,
+                com.raishxn.gtna.common.data.GTNAMaterials.Time,
+                com.raishxn.gtna.common.data.GTNAMaterials.Space)) {
+            add(material.getUnlocalizedName(), material.getDefaultTranslation());
+        }
+        for (int tier = GTValues.LV; tier <= GTValues.IV; tier++) {
+            add("block.gtna." + GTValues.VN[tier].toLowerCase(Locale.ROOT) + "_world_data_scanner",
+                    GTValues.VN[tier] + " World Data Scanner");
+        }
+        add("gtna.jade.void_random_pool", "Random mining: %s possible ores");
+        add("gtna.jade.void_random_chance", "Chance per ore/run: %s%%. Not all ores drop each cycle.");
+        add("gtna.machine.incubator.tooltip.1",
+                "Each culture consumes 10,000 mB of Biomass and Milk and yields 64 essences.");
+        add("item.gtna.deposit_recorder", "Deposit Recorder");
+        add("item.gtna.deposit_data", "Deposit Data");
+        add("item.gtna.fluid_separation_filter", "Fluid Separation Filter");
+        add("item.gtna.essence", "Essence");
+        add("item.gtna.essence_seed", "Essence Seed");
+        for (String stage : java.util.List.of("terrestrial", "t1", "t2", "t3", "t4", "t5")) {
+            add("item.gtna.fluid_remote_upgrade_" + stage,
+                    "Remote Fluid Upgrade " + stage.toUpperCase(Locale.ROOT));
+        }
+        for (String id : com.raishxn.gtna.common.data.GTNAItems.VEIN_ESSENCES.keySet()) {
+            add("item.gtna." + id, com.gregtechceu.gtceu.utils.FormattingUtil.toEnglishName(id));
+        }
+        for (String world : java.util.List.of("overworld", "nether", "end")) {
+            add("item.gtna." + world + "_data",
+                    com.gregtechceu.gtceu.utils.FormattingUtil.toEnglishName(world) + " Data Chip");
+        }
+        for (String planet : com.raishxn.gtna.common.data.GTNAItems.PLANET_DATA_CHIP_PLANETS) {
+            add("item.gtna.planet_data_chip_" + planet,
+                    com.gregtechceu.gtceu.utils.FormattingUtil.toEnglishName(planet) + " Planet Data Chip");
+        }
+        add("gtna.machine.void_fluid_drilling_rig.tooltip",
+                "Produces a fluid after its natural deposit has been extracted and recorded.");
+        add("gtna.machine.void_fluid_drilling_rig.tooltip.0",
+                "EV entry; requires reusable Deposit Data and Drilling Fluid.");
+        add("gtna.machine.void_fluid_drilling_rig.tooltip.1",
+                "Initially operates in the origin dimension; remote production requires the corresponding upgrade.");
+        add("gtna.machine.void_fluid_drilling_rig.tooltip.2",
+                "Parallel scales energy, reagents and output. Full output pauses the paid cycle.");
+        add("gtna.void_fluid_drilling", "Void Fluid Drilling");
+        add("key.gtna.research_tree", "Open Research Tree");
+        add("key.categories.gtna", "GregTech Nexus Addon");
+        add("gtna.research.screen.title", "Research");
+        add("gtna.research.screen.empty", "No research is available in this world.");
+        add("gtna.research.screen.progress", "%1$s of %2$s unlocked");
+        add("gtna.research.tier", "Tier %s");
+        add("gtna.research.state.unlocked", "Unlocked");
+        add("gtna.research.state.available", "Available");
+        add("gtna.research.state.locked", "Locked");
+        add("gtna.research.kind.trunk", "Trunk");
+        add("gtna.research.kind.branch", "Branch");
+        add("gtna.research.kind.leaf", "Leaf");
+        add("gtna.research.screen.select",
+                "Click a node to see what it costs and what it needs. Drag or scroll to move around.");
+        add("gtna.research.screen.click", "Click for details");
+        add("gtna.research.screen.cost", "Cost (you have):");
+        add("gtna.research.screen.free", "Free");
+        add("gtna.research.screen.requirement", "Hold once: %s");
+        add("gtna.research.screen.eureka.found", "Eureka found: %s%% off");
+        add("gtna.research.screen.eureka.hint", "Eureka: analyse %s for %s%% off");
+        add("gtna.research.screen.research", "Research");
+        add("gtna.research.tooltip.obtain", "Obtain: %s");
+        add("gtna.research.tooltip.requires", "Requires: %s");
+        add("gtna.research.tooltip.recipes", "Unlocks %s machine recipes");
+        add("gtna.research.task", "Research: %s");
+        add("gtna.research.task.type", "Research node");
+        add("gtna.research.unlocked", "Research unlocked: %s");
+        add("gtna.research.viewer", "Research: %s");
+        add("gtna.research.requires", "Requires research: %s");
+        add("gtna.research.command.list", "%1$s: %2$s of %3$s research nodes unlocked");
+        add("gtna.research.command.entry.unlocked", "[x] %1$s (tier %2$s)");
+        add("gtna.research.command.entry.locked", "[ ] %1$s (tier %2$s)");
+        add("gtna.research.command.info", "%1$s: tier %2$s, requires %3$s");
+        add("gtna.research.command.none", "nothing");
+        add("gtna.research.command.unknown", "Unknown research node %s");
+        add("gtna.research.command.unlock.done", "Unlocked %1$s for %2$s");
+        add("gtna.research.command.unlock.already", "%1$s is already unlocked for %2$s");
+        add("gtna.research.command.unlock.missing", "%1$s needs: %2$s (add 'force' to unlock the whole chain)");
+        add("gtna.research.command.reset", "Removed %1$s research entries from %2$s");
+        add("gtna.research.points.gained", "+%s %s research");
+        add("gtna.research.eureka", "Eureka! Analysing it taught you something: %s now costs less.");
+        add("gtna.research.requirement_met", "Research requirement met: %s. You can now buy it with research points.");
+        add("gtna.research.command.buy.done", "Researched %s.");
+        add("gtna.research.command.buy.requirement", "%s needs %s to have been held once by your team first.");
+        add("gtna.research.command.buy.points", "Not enough research points for %s: it costs %s.");
+        add("gtna.research.command.points", "Research points of %s: %s");
+        add("gtna.research.command.points.add", "%s is now %s for %s.");
+        add("gtna.fluid.recorder.tooltip",
+                "Use on a Fluid Drilling Rig after extraction. Use in air with Deposit Data in the other hand to copy. Requires a Data Stick.");
+        add("gtna.fluid.data.tooltip",
+                "Reusable discovery program for one fluid and origin. Shared with the discovering machine owner/team.");
+        add("gtna.fluid.data.origin", "Origin: %s");
+        add("gtna.fluid.recipe.origin", "Discovery origin: %s");
+        add("gtna.fluid.recipe.remote", "Remote production: upgrade %s + matching power tier");
+        add("gtna.fluid.data.fluid", "Fluid: %s");
+        add("gtna.fluid.recorder.owner", "This discovery belongs to another player/team.");
+        add("gtna.fluid.recorder.extract_first", "Complete an extraction cycle with available output space first.");
+        add("gtna.fluid.recorder.unsupported", "No production program is configured for this fluid and origin.");
+        add("gtna.fluid.recorder.stick", "A Data Stick is required in your inventory.");
+        add("gtna.fluid.recorder.recorded", "Deposit recorded. The data is reusable.");
+        add("gtna.fluid.recorder.copied", "Deposit Data copied.");
+        add("gtna.fluid.rig.tooltip",
+                "EV entry. Requires a recorded extraction, reusable Deposit Data and Drilling Fluid. Remote production needs the origin upgrade.");
+        add("gtna.fluid.rig.reagent", "%s: %s mB/cycle");
+        add("gtna.fluid.rig.rate", "Output rate: %s mB/s");
+        add("gtna.fluid.rig.parallel", "Parallel cap: %s");
+        add("gtna.fluid.rig.no_program", "Insert your recorded Deposit Data in the input bus.");
+        add("gtna.fluid.rig.program", "Program: %s");
+        add("gtna.fluid.rig.cost", "%s EU/t \u00b7 %s s/cycle \u00b7 %s parallel");
+        add("gtna.fluid.rig.gated", "Waiting for valid discovery data, origin or remote upgrade.");
         addStaticTranslations();
         addTagPrefixCategories();
         for (Material material : GTCEuAPI.materialManager.getRegisteredMaterials()) {
@@ -102,6 +284,25 @@ public class GTNALangProvider extends LanguageProvider {
                 }
             }
         }
+    }
+
+    private void addEyeOfHarmonyContentNames() {
+        var families = java.util.List.of(GTNAEyeOfHarmonyContent.COMPRESSION_FIELDS,
+                GTNAEyeOfHarmonyContent.ACCELERATION_FIELDS, GTNAEyeOfHarmonyContent.STABILISATION_FIELDS);
+        for (var family : families) {
+            for (var entry : family) {
+                var block = entry.get();
+                add(block, GTNAEyeOfHarmonyContent.TIER_NAMES[block.getFieldTier()] + " " +
+                        block.getFamily().englishName + " Field Generator");
+            }
+        }
+        add(GTNAEyeOfHarmonyContent.BOUNDARY_CASING.get(), "Infinite Spacetime Energy Boundary Casing");
+        add(GTNAEyeOfHarmonyContent.SPATIAL_CASING.get(), "Reinforced Spatial Structure Casing");
+        add(GTNAEyeOfHarmonyContent.TEMPORAL_CASING.get(), "Reinforced Temporal Structure Casing");
+        add(GTNAEyeOfHarmonyContent.OVERWORLD_PLANET.get(), "Overworld Planet Block");
+        add(GTNAEyeOfHarmonyContent.NETHER_PLANET.get(), "Nether Planet Block");
+        add(GTNAEyeOfHarmonyContent.END_PLANET.get(), "End Planet Block");
+        add(GTNAEyeOfHarmonyContent.ASTRAL_ARRAY_FABRICATOR.get(), "Astral Array Fabricator");
     }
 
     private void addManualTranslations() {
@@ -220,12 +421,122 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.source.gto", "GregTech Odyssey (GTO)");
         add("gtna.source.gtnl", "GT: Not Leisure (GTNL)");
         add("gtna.source.gtnh", "GT: New Horizons (GTNH)");
+        add("gtna.source.gtneioreplugin", "GTNH NEI Ore Plugin");
+        add("gtna.eoh.structure.uniform_compression", "All compression fields must use the same tier.");
+        add("gtna.eoh.structure.uniform_acceleration", "All acceleration fields must use the same tier.");
+        add("gtna.eoh.structure.uniform_stabilisation", "All stabilisation fields must use the same tier.");
+        add("gtna.eoh.structure.fields",
+                "138 compression, 168 acceleration and 48 stabilisation fields; uniform tier per family.");
+        add("gtna.eoh.structure.ports",
+                "Exactly 1 ME item input bus, 2 ME fluid input hatches, 1 ME item output bus and 1 ME fluid output hatch. No stocking, crafting buffers, dual or energy hatches.");
+        add("gtna.eoh.structure.tiers", "Field tiers: Compression %1$s/9 · Acceleration %2$s/9 · Stabilisation %3$s/9");
+        add("gtna.eoh.structure.component", "Eye of Harmony structure component. Crafting is not available yet.");
+        add("gtna.eoh.field_tier", "Field Tier: %s / 9");
+        add("gtna.eoh.field.compression", "Sets the supported planet tier; higher fields reduce processing time.");
+        add("gtna.eoh.field.acceleration", "Accelerates time at the cost of recipe success chance.");
+        add("gtna.eoh.field.stabilisation", "Improves success chance at the cost of material yield.");
+        add("gtna.eoh.planet_dimension", "Planet Dimension: %s");
+        add("gtna.eoh.component_stage",
+                "Planet selector: only Overworld operates currently. Component crafting is not available yet.");
+        add("gtna.eoh.jei.title", "Eye of Harmony");
+        add("gtna.eoh.jei.page", "Products · Page %s/%s");
+        add("gtna.eoh.jei.amount_item", "Base output: %s items");
+        add("gtna.eoh.jei.amount_fluid", "Base amount: %s mB");
+        add("gtna.eoh.jei.time", "Base time: %s ticks");
+        add("gtna.eoh.jei.hydrogen", "Hydrogen: %s B");
+        add("gtna.eoh.jei.helium", "Helium: %s B");
+        add("gtna.eoh.jei.tier", "Spacetime Tier: %s");
+        add("gtna.eoh.jei.input", "EU Input: %s EU");
+        add("gtna.eoh.jei.output", "EU Output: %s EU");
+        add("gtna.eoh.jei.chance", "Base Recipe Chance: %s%%");
+        add("gtna.eoh.jei.efficiency", "Recipe Energy Efficiency: %s%%");
+        add("gtna.eoh.jei.amount_buckets", "Base amount: %s buckets (%s mB)");
+        add("gtna.eoh.jei.warning_base", "Warning: base outputs; fields and gas excess change quantities.");
+        add("gtna.eoh.jei.warning", "Warning: Not all outputs displayed here (%s/%s)");
+        add("emi.category.gtna.eye_of_harmony", "Eye of Harmony");
+        add("gtna.eoh.jei.base", "Before fields, circuit, gas excess and Nexus loss");
+        add("gtna.eoh.manual.hint", "Press Z for the next page");
+        add("gtna.eoh.manual.page", "Eye of Harmony — page %s/%s");
+        add("gtna.eoh.manual.page1", "Eye of Harmony — fields (1/2)");
+        add("gtna.eoh.manual.page2", "Eye of Harmony — operation (2/2)");
+        add("gtna.eoh.manual.fields",
+                "Each field family has 9 tiers. Use a uniform tier within each family; the three families can differ.");
+        add("gtna.eoh.manual.compression",
+                "Compression: unlocks programs by minimum tier. Each tier above the minimum multiplies duration by 0.97 (3% faster).");
+        add("gtna.eoh.manual.acceleration",
+                "Time acceleration: each tier above the first halves duration and subtracts 9.25 percentage points from success chance.");
+        add("gtna.eoh.manual.stabilisation",
+                "Stabilisation: each tier above the first adds 5 percentage points to success chance and subtracts 5 points from output yield.");
+        add("gtna.eoh.manual.energy",
+                "The first stabilisation tier reduces base EU return by 40%. Each higher tier removes 5 points of this penalty.");
+        add("gtna.eoh.manual.circuit",
+                "Circuit 0–24: configuration k multiplies EU input by (k+1)^2 and duration by 2^-k. EU return and product yield are unchanged by the circuit.");
+        add("gtna.eoh.manual.gas",
+                "While idle and enabled, absorbs hydrogen and helium once per second. Starting a cycle consumes ALL stored gas, including excess.");
+        add("gtna.eoh.manual.ratio", "For each gas: overflow ratio = stored / required - 1.");
+        add("gtna.eoh.manual.penalty",
+                "Penalty = 1 - exp(-(30 × overflow ratio)^2). Both gas penalties are subtracted from success chance and product yield, clamped to 0–100%.");
+        add("gtna.eoh.manual.failure",
+                "A failed Overworld cycle produces chance × 28,800 mB of molten SpaceTime instead of regular products. Failure still returns the same gross EU.");
+        add("gtna.eoh.manual.pity",
+                "Repeated failures at the same chance accumulate progress toward a guaranteed success. Gas excess still applies to the next cycle.");
+        add("gtna.eoh.manual.ports",
+                "Exactly one item input, two fluid inputs, one item output and one fluid output. Only finite-buffer ME inputs and ME outputs are supported; ordinary, stocking, crafting and dual ports are rejected.");
+        add("gtna.eoh.manual.delivery",
+                "Wireless energy uses the bound Nexus owner. EU input is charged once; outputs wait when ports or the network are full. Nexus transfer losses apply to the EU return.");
+        add("gtna.eoh.manual.scope",
+                "Current program: Overworld. Select its Planet Block in the controller slot. Astral Arrays, parallel operation and other planets are not implemented yet. Component crafting remains deferred.");
+        add("gtna.eoh.operation.gas_excess", "Gas excess: Hydrogen %s%% / Helium %s%%");
+        add("gtna.eoh.operation.planet", "Planet: %s");
+        add("gtna.eoh.operation.no_planet", "None");
+        add("gtna.eoh.operation.circuit", "Circuit: %s (0–24)");
+        add("gtna.eoh.operation.gas_required", "Required per gas: %s mB");
+        add("gtna.eoh.operation.preview", "Preview after minimum gas fill: %s ticks");
+        add("gtna.eoh.operation.chance_yield", "Chance: %s%% / Yield: %s%%");
+        add("gtna.eoh.operation.return", "Gross return before Nexus loss: %s EU");
+        add("gtna.eoh.operation.net", "Net before Nexus loss: %s EU");
+        add("gtna.eoh.operation.pending_eu", "Gross EU still pending: %s");
+        add("gtna.eoh.operation.planet_slot", "Planet catalyst");
+        add("gtna.eoh.operation.summary_progress", "Progress: %s%% · Remaining: %s");
+        add("gtna.eoh.operation.state.structure", "Incomplete structure.");
+        add("gtna.eoh.operation.state.paused", "Operation paused.");
+        add("gtna.eoh.operation.consumed_gases", "Consumed this cycle: Hydrogen %s B / Helium %s B");
+        add("gtna.eoh.operation.consumed_unknown", "Consumed gas: unavailable for this older cycle.");
+        add("gtna.nexus.direct_debit", "Last direct withdrawal: %s — %s EU");
+        add("gtna.nexus.direct_debit_details", "One-time debit: %s EU\nPosition: %s\nDimension: %s\nServer tick: %s");
+        add("gtna.eoh.operation.progress", "Progress: %s / %s ticks");
+        add("gtna.eoh.operation.rebind_busy", "Finish the pending operation before changing the network owner.");
+        add("gtna.eoh.operation.state.planet", "Insert an Overworld Planet Block.");
+        add("gtna.eoh.operation.state.owner", "Bind a network owner with a Data Stick.");
+        add("gtna.eoh.operation.state.gas", "Insufficient hydrogen or helium.");
+        add("gtna.eoh.operation.state.catalog", "No supported planetary resource catalog.");
+        add("gtna.eoh.operation.state.energy", "Insufficient accessible Nexus energy.");
+        add("gtna.eoh.operation.state.running", "Planetary operation running.");
+        add("gtna.eoh.operation.state.outputs", "Waiting for product space or Nexus capacity.");
+        add("gtna.eoh.operation.state.ready", "Ready for another operation.");
+        add("gtna.eoh.astral_array",
+                "Astral Array Fabricator: a physical upgrade for the future planetary parallel system.");
         add("gtna.source.tst", "Twist Space Technology (TST)");
         add("gtna.source.gtl", "GregTech Leisure (GTL)");
         add("gtna.source.gtlcore", "GTLCore");
         add("gtna.source.gtlsupb", "GTLsupb");
         add("gtna.source.gtoepp", "GTO Extended Platform Presets");
         add("gtna.source.gtmthings", "GTMThings");
+        add("gtna.source.gtladditions", "GTLAdditions");
+        add("block.gtna.wireless_energy_network_input_terminal", "Nexus Wireless Network Input Terminal");
+        add("block.gtna.wireless_energy_network_output_terminal", "Nexus Wireless Network Output Terminal");
+        add("gtna.nexus.capacity", "§7Max Capacity: §e%s EU");
+        add("gtna.nexus.transfer", "§7Transfer Limit: §6%s EU/t");
+        add("gtna.nexus.energy", "§7Energy: §f%s / %s EU");
+        add("gtna.nexus.unlimited", "§dUnlimited storage and network transfer: 750 MAX capacitors");
+        add("gtna.network_terminal.input", "Supplies recipe energy directly from the bound Nexus network.");
+        add("gtna.network_terminal.output", "Sends generated recipe energy directly to the bound Nexus network.");
+        add("gtna.network_terminal.limit",
+                "Up to Long.MAX_VALUE EU per operation; respects matrix capacity, dimension and loss. No cable IO.");
+        add("gtna.network_terminal.binding",
+                "Binds to placer. Data Stick: right-click to bind, left-click to unbind. Supports Nexus Linker.");
+        add("gtna.network_terminal.bound", "Nexus network bound to %s");
+        add("gtna.network_terminal.unbound", "Nexus network unbound");
 
         // --- Multiple-recipes machine UI (previously hardcoded literals) ---
         add("gtna.machine.modules_amount", "Formed modules: %s / %s");
@@ -901,6 +1212,28 @@ public class GTNALangProvider extends LanguageProvider {
 
         // Nexus Structure Terminal
         add("item.gtna.nexus_structure_terminal", "Nexus Structure Terminal");
+        add("gtna.terminal.nexus.clear_all", "Clear all choices");
+        add("gtna.terminal.nexus.clear_choice", "Clear this choice");
+        add("gtna.terminal.nexus.select_hint",
+                "Click to select; click again to clear. Applies only to compatible structure cells.");
+        add("gtna.terminal.config.abs_casing", "ABS Casings");
+        add("gtna.terminal.config.battery", "Capacitors");
+        add("gtna.terminal.config.cleanroom", "Cleanroom Filters");
+        add("gtna.terminal.config.component_assembly", "Component Assembly Casings");
+        add("gtna.terminal.config.computer_casing", "Computer Casings");
+        add("gtna.terminal.config.computer_heat", "Computer Heat Vents");
+        add("gtna.terminal.config.glass", "Glass");
+        add("gtna.terminal.config.graviton", "Graviton Casings");
+        add("gtna.terminal.config.hermetic", "Hermetic Casings");
+        add("gtna.terminal.config.integral_frame", "Integral Frameworks");
+        add("gtna.terminal.config.light", "Lights");
+        add("gtna.terminal.config.space_elevator", "Space Elevator Casings");
+        add("gtna.terminal.config.stellar_containment", "Stellar Containment");
+        add("gtna.terminal.config.eoh_compression", "EOH Compression Fields");
+        add("gtna.terminal.config.eoh_acceleration", "EOH Time Fields");
+        add("gtna.terminal.config.eoh_stabilisation", "EOH Stabilisation Fields");
+        add("gtna.terminal.nexus.tiered_block", "Tiered Block");
+        add("gtna.terminal.nexus.select", "Select");
         add("gtna.terminal.nexus.title", "§l§5Nexus Terminal");
 
         // Toggle settings
@@ -916,8 +1249,8 @@ public class GTNALangProvider extends LanguageProvider {
 
         add("gtna.terminal.nexus.demolition_mode", "Demolition Mode");
         add("gtna.terminal.nexus.demolition_mode.tooltip",
-                "When enabled, removes blocks that don't\nbelong to the multiblock pattern.");
-        add("gtna.terminal.nexus.demolition_mode.hint", "§7Remove blocks outside the pattern");
+                "When enabled, clears blocks in cells that\nrequire air; ignored cells are preserved.");
+        add("gtna.terminal.nexus.demolition_mode.hint", "§7Clear blocks in required air cells");
 
         add("gtna.terminal.nexus.use_ae", "Use AE Items");
         add("gtna.terminal.nexus.use_ae.tooltip",
@@ -970,6 +1303,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.nexus_flux_matrix", "Nexus Flux Matrix");
         add("gtna.machine.nexus_flux_matrix.tooltip_1",
                 "§6Main Function:§r §7Massive wireless energy storage and distribution hub.");
+        add("gtna.machine.nexus_flux_matrix.tooltip_3",
+                "§d750 MAX capacitors unlock unlimited storage and network transfer. Deposited energy remains the balance.");
         add("gtna.machine.nexus_flux_matrix.tooltip_2",
                 "§7Generates a global energy network accessible from anywhere.");
 
@@ -1139,7 +1474,8 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.me_storage", "ME Storage");
         add("gtceu.annihilate_generator", "Annihilation Generator");
         add("gtna.cosmos_simulation", "Cosmos Simulation");
-        add("gtna.machine.artificial_star.output", "§7Supports §bLaser§7 or §bWireless Dynamo§7 output.");
+        add("gtna.machine.artificial_star.output",
+                "§7Supports §bLaser§7 or up to §b16 Wireless Dynamos§7. Infinity supports one Nexus Network Output Terminal or 16 MAX 1,048,576A dynamos at base speed.");
         add("gtna.machine.nexus_molecular_forge.tooltip.0",
                 "§6Main Function:§r §7Ultra-fast AE2 mass crafting forge.");
         add("gtna.machine.nexus_molecular_forge.tooltip.1",
@@ -1157,17 +1493,19 @@ public class GTNALangProvider extends LanguageProvider {
                 "§6Main Function:§r §7Creates a miniature universe and extracts its resources.");
         add("gtna.machine.eye_of_harmony.tooltip.1", "§7Startup power comes directly from the GTNA wireless network.");
         add("gtna.machine.eye_of_harmony.tooltip.2", "§8Bind with a Data Stick to swap the network owner.");
-        add("gtna.machine.eye_of_harmony.tooltip.3", "§eCircuits 1-4:§r §7choose 0-3 special overclocks.");
+        add("gtna.machine.eye_of_harmony.tooltip.3",
+                "§eCircuit 0–24:§r §7each step halves time; startup EU = base x (circuit+1)^2.");
         add("gtna.machine.eye_of_harmony.tooltip.4",
-                "§eRequires:§r §b1024 buckets§7 each of Hydrogen and Helium before startup.");
-        add("gtna.machine.eye_of_harmony.tooltip.5", "§7Consumes those gases internally in 100-bucket batches.");
+                "§eOverworld requires:§r §b1,000,000 buckets§7 each of Hydrogen and Helium.");
+        add("gtna.machine.eye_of_harmony.tooltip.5",
+                "§7Consumes all buffered gases at startup; excess reduces chance and yield.");
         add("gtna.machine.eye_of_harmony.tooltip.6", "§8No conventional energy hatches are used here.");
         add("gtna.machine.eye_of_harmony.tooltip.7", "§7Outputs are handled through the regular item and fluid ports.");
         add("gtna.machine.eye_of_harmony.owner", "Network Owner: %s");
         add("gtna.machine.eye_of_harmony.network_eu", "Stored Network EU: %s");
         add("gtna.machine.eye_of_harmony.startup_eu", "Startup Energy: %s EU");
-        add("gtna.machine.eye_of_harmony.hydrogen", "Hydrogen Storage: %s mB");
-        add("gtna.machine.eye_of_harmony.helium", "Helium Storage: %s mB");
+        add("gtna.machine.eye_of_harmony.hydrogen", "Hydrogen for next cycle: %s B");
+        add("gtna.machine.eye_of_harmony.helium", "Helium for next cycle: %s B");
         add("gtna.machine.eye_of_harmony.rebound", "[GTNA] Eye of Harmony rebound to your network.");
         add("gtna.machine.eye_of_wood.tooltip.0",
                 "§6Main Function:§r §7Overworld-only ore condenser based on the original Twist Space Technology machine.");
@@ -1401,7 +1739,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.steam_cactus_wonder.offer",
                 "§7Burns cactus-era carbon fuels and returns their value as steam blessings.");
         add("gtna.tooltip.steam_cactus_wonder.fuel",
-                "§7Fuels: charcoal/coal -> steam, coke -> superheated, coke block -> dense supercritical.");
+                "§7Steam per fuel (GTNL values): coal/charcoal 8000 mB, their blocks 90000 mB, coke 16000 mB, coke block 180000 mB.");
         add("gtna.tooltip.steam_cactus_wonder.structure",
                 "§8Requires fully grown cacti on the sand floor to form.");
         add("block.gtna.steam_cracking", "Steam Cracker");
@@ -1548,6 +1886,40 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.tooltip.void_miner.tier_insane", "§a  + Insanely:§r §75x Output | 5x Speed | 4x EU Cost");
         add("gtna.tooltip.void_miner.outputs", "§7Outputs: §bRaw Gold, Copper, Iron, Cobalt, Coal.");
         add("gtna.machine.void_miner.steam_tier", "Steam Injection Tier");
+        add("block.gtna.electric_void_miner", "Electric Void Miner");
+        add("gtna.machine.electric_void_miner.tooltip",
+                "§6Main Function:§r §7Mines vein programs for Raw Ores using energy and Drilling Fluid.");
+        add("gtna.machine.electric_void_miner.tooltip.program",
+                "§7Precise mode consumes a vein essence. Cultivate essences in the Incubator using scanned world data. Terrestrial: circuit 1 = EV basics, circuit 2 = LuV/ZPM veins.");
+        add("gtna.machine.electric_void_miner.tooltip.fluid",
+                "§eRequires:§r §bDrilling Fluid§7 per operation; each program declares its own volume.");
+        add("gtna.machine.electric_void_miner.tooltip.parallel",
+                "§7One program per machine; EV has no parallel. From §bIV§7 a Parallel Control Hatch adds parallelism up to the configured cap.");
+        add("gtna.machine.electric_void_miner.parallel_cap", "Parallel cap: §b%s");
+        add("gtna.machine.electric_void_miner.no_program", "§7No active recipe");
+        add("gtna.machine.electric_void_miner.active_program", "Recipe: §b%s");
+        add("gtna.machine.electric_void_miner.active_cost",
+                "Cost: §b%s mB Drilling Fluid§7, §b%s EU/t§7; Parallel: §b%s");
+        add("item.gtna.planet_data_chip_moon", "Moon Planet Data Chip");
+        add("item.gtna.planet_data_chip_mars", "Mars Planet Data Chip");
+        add("item.gtna.planet_data_chip_venus", "Venus Planet Data Chip");
+        add("item.gtna.planet_data_chip_mercury", "Mercury Planet Data Chip");
+        add("item.gtna.planet_data_chip_glacio", "Glacio Planet Data Chip");
+        add("gtna.electric_void_mining", "Precise Void Mining");
+        add("gtna.random_void_mining", "Random Void Mining");
+        add("gtna.world_data_scanner", "World Data Scanner");
+        add("gtna.incubator", "Incubator");
+        add("block.gtna.incubator", "Incubator");
+        add("gtna.machine.incubator.tooltip",
+                "Cultivates vein essences from seeds, ore samples, Biomass and Milk. World data is reusable.");
+        add("gtna.machine.incubator.tooltip.0", "Cultivates vein essences from seeds and ore samples.");
+        add("gtna.machine.incubator.tooltip.1",
+                "Consumes 10,000 mB each of Biomass and Milk per culture; produces 64 essences.");
+        add("gtna.machine.incubator.tooltip.2",
+                "World and planet data is reusable. Culture time is configurable and reduced by overclock.");
+        add("gtna.machine.electric_void_miner.mode", "Mode: §b%s");
+        add("gtna.machine.electric_void_miner.tooltip.random",
+                "Random mode consumes Drilling Fluid with no essence and takes longer. Switch mode in the machine UI; circuit 1 = EV basics, circuit 2 = full ZPM pool. Allow enough output space.");
         add("block.gtna.industrial_slaughterhouse", "Industrial Slaughterhouse");
         add("gtna.machine.slaughterhouse.desc", "§6Main Function:§r §7High-tier industrial mob processing system.");
         add("gtna.machine.slaughterhouse.mechanics", "§7Scale drops based on voltage tier (virtual mode).");
@@ -1872,6 +2244,7 @@ public class GTNALangProvider extends LanguageProvider {
         // client with 'Missing config translation'. Keep these in sync with GTNAJadePlugin.
         add("config.jade.plugin_gtna.multiple_recipes_provider", "Multiple Recipes Machine Info");
         add("config.jade.plugin_gtna.isa_mill_status", "ISA Mill Status");
+        add("config.jade.plugin_gtna.void_miner_random", "Void Miner Random Chances");
         add("config.jade.plugin_gtna.block_stats", "Block Hardness and Blast Resistance");
         add("config.jade.plugin_gtna.gto_status", "GTO Machine Status");
         add("config.jade.plugin_gtna.me_pattern_buffer", "ME Pattern Buffer Info");

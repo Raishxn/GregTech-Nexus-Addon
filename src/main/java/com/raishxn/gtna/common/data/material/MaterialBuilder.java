@@ -37,7 +37,7 @@ public class MaterialBuilder {
                 .dust().ingot().fluid()
                 .color(0x506040).iconSet(MaterialIconSet.SHINY)
                 .components(Bronze, 2, Steel, 1)
-                .blastTemp(1123, BlastProperty.GasTier.LOW)
+                // No blast temperature, as in GTNL: Breel is a Steam-age metal (hand-mixed dust, furnace ingot).
                 .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW,
                         GENERATE_FRAME, GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_RING,
                         GENERATE_ROUND, GENERATE_SPRING, GENERATE_SPRING_SMALL,

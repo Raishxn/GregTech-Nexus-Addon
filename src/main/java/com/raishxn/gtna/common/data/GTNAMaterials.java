@@ -82,8 +82,18 @@ public class GTNAMaterials {
     public static Material BoronCarbide;
     public static Material BoronCarbideCeramics;
 
+    /** GTNH Eye of Harmony core; acquisition/working recipes follow the audited progression. */
+    public static Material SpaceTime;
+    public static Material RawStarMatter;
+    public static Material WhiteDwarfMatter;
+    public static Material BlackDwarfMatter;
+    public static Material Universium;
+    public static Material Time;
+    public static Material Space;
+
     public static void init() {
         MaterialBuilder.init();
+        com.raishxn.gtna.common.data.material.EyeOfHarmonyMaterials.init();
         MaterialAdd.init();
     }
 }

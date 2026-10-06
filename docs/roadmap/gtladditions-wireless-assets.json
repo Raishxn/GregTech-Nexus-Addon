@@ -1,0 +1,32 @@
+{
+  "commit": "8caff5e93a5e65914d10dd176d48d66e7ec8c329",
+  "license": "GPL-3.0 (upstream LICENSE; metadata discrepancy documented)",
+  "assets": [
+    {
+      "source": "textures/block/casings/wireless_terminate_casing.png",
+      "destination": "src/main/resources/assets/gtna/textures/block/casings/wireless_terminate_casing.png",
+      "sha256": "57708d190b87f19ce13d68e157f1da750546c24dd7945170b771d4f49780ba73"
+    },
+    {
+      "source": "textures/block/casings/wireless_terminate_casing.png.mcmeta",
+      "destination": "src/main/resources/assets/gtna/textures/block/casings/wireless_terminate_casing.png.mcmeta",
+      "sha256": "fdddb578fcda427e8b7b75be8b0b5f49a2078fba4044c58083333cdc9eae7456"
+    },
+    {
+      "source": "textures/block/overlay/machine/wireless_energy_network_terminal.png",
+      "destination": "src/main/resources/assets/gtna/textures/block/overlay/machine/wireless_energy_network_terminal.png",
+      "sha256": "b63a924dba8713c408eb03ec3a2fc0e02301d6aece4c29028bb1e70ccac4faaf"
+    },
+    {
+      "source": "textures/block/overlay/machine/wireless_energy_network_terminal.png.mcmeta",
+      "destination": "src/main/resources/assets/gtna/textures/block/overlay/machine/wireless_energy_network_terminal.png.mcmeta",
+      "sha256": "0d8292b7c29c145ea98a7ad20448a15441810ecc24f37781536caa4525fe1ef3"
+    },
+    {
+      "source": "models/block/machine/part/wireless_energy_network_terminal.json",
+      "source_sha256": "02d56b8f6e039101b06004b7cacc5d6990f5eae21047d3eb7425693690c0f6cf",
+      "destination": "src/main/resources/assets/gtna/models/block/machine/part/wireless_energy_network_terminal.json",
+      "adaptation": "Namespace gtna; added base cube for GTCEu 7.5.3; north overlay offset -0.001 to avoid z-fighting; emissivity retained."
+    }
+  ]
+}

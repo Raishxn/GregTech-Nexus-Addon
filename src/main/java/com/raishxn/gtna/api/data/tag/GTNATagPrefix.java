@@ -103,6 +103,12 @@ public class GTNATagPrefix {
             .generateItem(true)
             .generationCondition(hasDustProperty.and(mat -> mat.hasFlag(GTNAMaterialFlags.GENERATE_QUINTUPLE_PLATE)));
 
+    // Other addons can register this shared GTCEu icon before GTNA's tag prefixes.
+    private static MaterialIconType sharedSuperdenseIcon() {
+        MaterialIconType existing = MaterialIconType.getByName("plate_superdense");
+        return existing != null ? existing : new MaterialIconType("plateSuperdense");
+    }
+
     public static final TagPrefix superdensePlate = new TagPrefix("superdensePlate")
             .idPattern("superdense_%s_plate")
             .defaultTagPath("superdense_plates/%s")
@@ -110,7 +116,7 @@ public class GTNATagPrefix {
             .langValue("Superdense %s Plate")
             .materialAmount(GTValues.M * 64)
             .maxStackSize(16)
-            .materialIconType(new MaterialIconType("plateSuperdense"))
+            .materialIconType(sharedSuperdenseIcon())
             .unificationEnabled(true)
             .enableRecycling()
             .generateItem(true)

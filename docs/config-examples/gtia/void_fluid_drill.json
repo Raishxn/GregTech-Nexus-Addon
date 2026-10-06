@@ -1,0 +1,148 @@
+{
+  "enabled": true,
+  "minimumTier": 4,
+  "maxOutputPerOperation": 1000000,
+  "maxParallelByTier": {
+    "EV": 1,
+    "IV": 2,
+    "LuV": 4,
+    "ZPM": 8,
+    "UV": 16,
+    "UHV": 32,
+    "UEV": 64,
+    "UIV": 128,
+    "UXV": 256,
+    "OpV": 512,
+    "MAX": 1024
+  },
+  "programs": [
+    {
+      "id": "oil",
+      "fluid": "gtceu:oil",
+      "dimension": "minecraft:overworld",
+      "remoteUpgrade": "terrestrial",
+      "minimumTier": 4,
+      "duration": 400,
+      "euPerTick": 1920,
+      "drillingFluid": 100,
+      "nitrogen": 0,
+      "filters": 0,
+      "output": 2000
+    },
+    {
+      "id": "heavy_oil",
+      "fluid": "gtceu:oil_heavy",
+      "dimension": "minecraft:overworld",
+      "remoteUpgrade": "terrestrial",
+      "minimumTier": 4,
+      "duration": 400,
+      "euPerTick": 1920,
+      "drillingFluid": 100,
+      "nitrogen": 0,
+      "filters": 0,
+      "output": 1500
+    },
+    {
+      "id": "light_oil",
+      "fluid": "gtceu:oil_light",
+      "dimension": "minecraft:overworld",
+      "remoteUpgrade": "terrestrial",
+      "minimumTier": 4,
+      "duration": 400,
+      "euPerTick": 1920,
+      "drillingFluid": 100,
+      "nitrogen": 0,
+      "filters": 0,
+      "output": 2500
+    },
+    {
+      "id": "natural_gas",
+      "fluid": "gtceu:natural_gas",
+      "dimension": "minecraft:overworld",
+      "remoteUpgrade": "terrestrial",
+      "minimumTier": 4,
+      "duration": 400,
+      "euPerTick": 1920,
+      "drillingFluid": 100,
+      "nitrogen": 100,
+      "filters": 0,
+      "output": 1500
+    },
+    {
+      "id": "salt_water",
+      "fluid": "gtceu:salt_water",
+      "dimension": "minecraft:overworld",
+      "remoteUpgrade": "terrestrial",
+      "minimumTier": 4,
+      "duration": 400,
+      "euPerTick": 1920,
+      "drillingFluid": 100,
+      "nitrogen": 0,
+      "filters": 0,
+      "output": 4000
+    },
+    {
+      "id": "raw_oil",
+      "fluid": "gtceu:oil_medium",
+      "dimension": "minecraft:overworld",
+      "remoteUpgrade": "terrestrial",
+      "minimumTier": 4,
+      "duration": 400,
+      "euPerTick": 1920,
+      "drillingFluid": 100,
+      "nitrogen": 0,
+      "filters": 0,
+      "output": 2000
+    },
+    {
+      "id": "mars_radon",
+      "fluid": "gtceu:radon",
+      "dimension": "ad_astra:mars",
+      "remoteUpgrade": "t2",
+      "minimumTier": 4,
+      "duration": 400,
+      "euPerTick": 1920,
+      "drillingFluid": 100,
+      "nitrogen": 100,
+      "filters": 1,
+      "output": 50
+    }
+  ],
+  "upgrades": {
+    "terrestrial": {
+      "tier": 5,
+      "researchItems": [
+        "gtna:overworld_data"
+      ]
+    },
+    "t1": {
+      "tier": 5,
+      "researchItems": [
+        "gtna:planet_data_chip_moon"
+      ]
+    },
+    "t2": {
+      "tier": 6,
+      "researchItems": [
+        "gtna:planet_data_chip_mars"
+      ]
+    },
+    "t3": {
+      "tier": 6,
+      "researchItems": [
+        "gtna:planet_data_chip_venus",
+        "gtna:planet_data_chip_mercury"
+      ]
+    },
+    "t4": {
+      "tier": 6,
+      "researchItems": []
+    },
+    "t5": {
+      "tier": 7,
+      "researchItems": []
+    }
+  },
+  "controllerRigTier": 2,
+  "controllerSensorTier": 3
+}

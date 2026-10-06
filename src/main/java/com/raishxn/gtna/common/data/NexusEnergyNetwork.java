@@ -37,9 +37,12 @@ public class NexusEnergyNetwork extends SavedData {
         public long currentTick;
     }
 
+    public record DirectDebit(GlobalPos source, String machineType, Int128 amount, long tick) {}
+
     public static class NetworkState {
 
-        public Int128 energy = Int128.ZERO();
+        public BigInteger energy = BigInteger.ZERO;
+        public boolean unlimited;
         public Int128 maxCapacity = Int128.ZERO();
         public Int128 inputPerTick = Int128.ZERO();
         public Int128 rawInputPerTick = Int128.ZERO();
@@ -50,6 +53,7 @@ public class NexusEnergyNetwork extends SavedData {
         public Int128 lastLossPerTick = Int128.ZERO();
         public Int128 lastOutputPerTick = Int128.ZERO();
         public long lastTickTime = 0;
+        private DirectDebit lastDirectDebit;
 
         public Map<GlobalPos, ConnectionInfo> connections = new ConcurrentHashMap<>();
 
@@ -73,15 +77,32 @@ public class NexusEnergyNetwork extends SavedData {
             if (!entry.hasUUID("Owner")) continue;
 
             NetworkState state = new NetworkState();
-            state.energy = Int128.fromString(entry.getString("Amount"), Int128.ZERO());
+            try {
+                state.energy = new BigInteger(entry.getString("Amount")).max(BigInteger.ZERO);
+            } catch (NumberFormatException ignored) {
+                state.energy = BigInteger.ZERO;
+            }
             state.maxCapacity = Int128.fromString(entry.getString("MaxCapacity"), Int128.ZERO());
             state.totalCapacitors = entry.getLong("TotalCapacitors");
             state.averageTier = entry.getInt("AvgTier");
             state.efficiency = entry.getDouble("Efficiency");
             state.transferLimit = Int128.fromString(entry.getString("TransferLimit"), Int128.ZERO());
             state.matrixFormed = entry.getBoolean("MatrixFormed");
+            state.unlimited = entry.getBoolean("Unlimited") && state.matrixFormed && state.totalCapacitors == 750 &&
+                    state.averageTier == 14;
             state.matrixDimension = entry.getString("MatrixDimension");
             state.lossRemainder = Math.max(0, Math.min(9_999, entry.getInt("LossRemainder")));
+            if (entry.contains("DirectDebit", Tag.TAG_COMPOUND)) {
+                var debit = entry.getCompound("DirectDebit");
+                var dimension = net.minecraft.resources.ResourceLocation.tryParse(debit.getString("Dimension"));
+                if (dimension != null) {
+                    state.lastDirectDebit = new DirectDebit(GlobalPos.of(ResourceKey.create(
+                            net.minecraft.core.registries.Registries.DIMENSION, dimension),
+                            net.minecraft.core.BlockPos.of(debit.getLong("Position"))),
+                            debit.getString("MachineType"), Int128.fromString(debit.getString("Amount"), Int128.ZERO()),
+                            debit.getLong("Tick"));
+                }
+            }
             energyStorage.put(entry.getUUID("Owner"), state);
         }
     }
@@ -104,8 +125,19 @@ public class NexusEnergyNetwork extends SavedData {
             entry.putDouble("Efficiency", state.efficiency);
             entry.putString("TransferLimit", state.transferLimit.toString());
             entry.putBoolean("MatrixFormed", state.matrixFormed);
+            entry.putBoolean("Unlimited", state.unlimited);
             entry.putString("MatrixDimension", state.matrixDimension);
             entry.putInt("LossRemainder", state.lossRemainder);
+            if (state.lastDirectDebit != null) {
+                var info = state.lastDirectDebit;
+                var debit = new CompoundTag();
+                debit.putString("Dimension", info.source().dimension().location().toString());
+                debit.putLong("Position", info.source().pos().asLong());
+                debit.putString("MachineType", info.machineType());
+                debit.putString("Amount", info.amount().toString());
+                debit.putLong("Tick", info.tick());
+                entry.put("DirectDebit", debit);
+            }
             list.add(entry);
         });
         tag.put("EnergyNetworks", list);
@@ -162,14 +194,37 @@ public class NexusEnergyNetwork extends SavedData {
         }
 
         if (amountTransferred != null && !amountTransferred.isZero()) {
-            info.euTransferred.add(amountTransferred);
+            info.euTransferred.set(saturate(info.euTransferred.toBigInteger().add(amountTransferred.toBigInteger())));
         }
 
         setDirty();
     }
 
+    private static Int128 saturate(BigInteger amount) {
+        return Int128.fromBigInteger(amount.max(BigInteger.ZERO).min(Int128.MAX_VALUE.toBigInteger()));
+    }
+
+    public BigInteger getExactEnergy(UUID owner) {
+        return getState(owner).energy;
+    }
+
+    public boolean isUnlimited(UUID owner) {
+        return getState(owner).unlimited;
+    }
+
+    public void setUnlimited(UUID owner, boolean unlimited) {
+        NetworkState state = getState(owner);
+        state.unlimited = unlimited && state.matrixFormed && state.totalCapacitors == 750 && state.averageTier == 14;
+        setDirty();
+    }
+
+    public void setExactEnergy(UUID owner, BigInteger amount) {
+        getState(owner).energy = amount.max(BigInteger.ZERO);
+        setDirty();
+    }
+
     public Int128 getEnergy(UUID owner) {
-        return getState(owner).energy.copy();
+        return saturate(getState(owner).energy);
     }
 
     public Int128 getLastInputPerTick(UUID owner) {
@@ -208,6 +263,7 @@ public class NexusEnergyNetwork extends SavedData {
         state.efficiency = efficiency;
         state.transferLimit = transferLimit.copy();
         state.matrixFormed = matrixFormed;
+        if (!matrixFormed || totalCapacitors != 750 || averageTier != 14) state.unlimited = false;
         setDirty();
     }
 
@@ -238,7 +294,7 @@ public class NexusEnergyNetwork extends SavedData {
     }
 
     public Int128 getTransferLimit(UUID owner) {
-        return getState(owner).transferLimit.copy();
+        return isUnlimited(owner) ? Int128.MAX_VALUE.copy() : getState(owner).transferLimit.copy();
     }
 
     public boolean isMatrixFormed(UUID owner) {
@@ -252,7 +308,31 @@ public class NexusEnergyNetwork extends SavedData {
     }
 
     public Int128 getMaxCapacity(UUID owner) {
-        return getState(owner).maxCapacity.copy();
+        return isUnlimited(owner) ? Int128.MAX_VALUE.copy() : getState(owner).maxCapacity.copy();
+    }
+
+    /** Read-only quote for direct recipe output; uses the same capacity and fractional loss as commit. */
+    public Int128 quoteInsertion(UUID owner, Int128 amount, ServerLevel level) {
+        if (owner == null || amount == null || amount.isZero() || amount.isNegative() ||
+                !canTransfer(owner, level.dimension()))
+            return Int128.ZERO();
+        NetworkState state = getState(owner);
+        boolean matrixPolicy = "MATRIX_INPUT_ONCE".equals(GTNABalance.getNexusLossApplication());
+        if (matrixPolicy && !state.matrixFormed) return Int128.ZERO();
+        BigInteger capacity = state.unlimited ? state.energy.add(amount.toBigInteger()) :
+                state.maxCapacity.isZero() ? Int128.MAX_VALUE.toBigInteger() :
+                        state.maxCapacity.toBigInteger();
+        int loss = matrixPolicy ? GTNABalance.getNexusLossBasisPoints(state.averageTier) : 0;
+        return Int128.fromBigInteger(NexusWirelessLoss.accept(amount.toBigInteger(),
+                capacity.subtract(state.energy), loss, state.lossRemainder).gross());
+    }
+
+    public Int128 availableForTransfer(UUID owner, ServerLevel level) {
+        if (owner == null || !canTransfer(owner, level.dimension())) return Int128.ZERO();
+        NetworkState state = getState(owner);
+        if ("MATRIX_INPUT_ONCE".equals(GTNABalance.getNexusLossApplication()) && !state.matrixFormed)
+            return Int128.ZERO();
+        return saturate(state.energy);
     }
 
     public Int128 addEnergy(UUID owner, Int128 amount, ServerLevel level) {
@@ -264,9 +344,10 @@ public class NexusEnergyNetwork extends SavedData {
 
         String policy = GTNABalance.getNexusLossApplication();
         if ("MATRIX_INPUT_ONCE".equals(policy) && !state.matrixFormed) return Int128.ZERO();
-        BigInteger maxEnergy = state.maxCapacity.isZero() ? Int128.MAX_VALUE.toBigInteger() :
-                state.maxCapacity.toBigInteger();
-        BigInteger space = maxEnergy.subtract(state.energy.toBigInteger());
+        BigInteger maxEnergy = state.unlimited ? state.energy.add(amount.toBigInteger()) :
+                state.maxCapacity.isZero() ? Int128.MAX_VALUE.toBigInteger() :
+                        state.maxCapacity.toBigInteger();
+        BigInteger space = maxEnergy.subtract(state.energy);
         if (space.signum() <= 0) return Int128.ZERO();
         int basisPoints = "MATRIX_INPUT_ONCE".equals(policy) ?
                 GTNABalance.getNexusLossBasisPoints(state.averageTier) : 0;
@@ -275,10 +356,11 @@ public class NexusEnergyNetwork extends SavedData {
         if (transfer.gross().signum() <= 0) return Int128.ZERO();
         Int128 gross = Int128.fromBigInteger(transfer.gross());
         Int128 credited = Int128.fromBigInteger(transfer.credited());
-        state.energy.add(credited);
-        state.inputPerTick.add(credited);
-        state.rawInputPerTick.add(gross);
-        state.lossPerTick.add(Int128.fromBigInteger(transfer.lost()));
+        state.energy = state.energy.add(credited.toBigInteger());
+        state.inputPerTick.set(saturate(state.inputPerTick.toBigInteger().add(credited.toBigInteger())));
+        state.rawInputPerTick.set(saturate(state.rawInputPerTick.toBigInteger().add(gross.toBigInteger())));
+        state.lossPerTick.set(
+                saturate(state.lossPerTick.toBigInteger().add(Int128.fromBigInteger(transfer.lost()).toBigInteger())));
         state.lossRemainder = transfer.remainder();
 
         setDirty();
@@ -291,15 +373,30 @@ public class NexusEnergyNetwork extends SavedData {
         if (lost.isZero() || lost.isNegative()) return;
         NetworkState state = getState(owner);
         handleTick(state, level.getGameTime());
-        state.rawInputPerTick.add(lost);
-        state.lossPerTick.add(lost);
+        state.rawInputPerTick.set(saturate(state.rawInputPerTick.toBigInteger().add(lost.toBigInteger())));
+        state.lossPerTick.set(saturate(state.lossPerTick.toBigInteger().add(lost.toBigInteger())));
         setDirty();
     }
 
     public void setEnergy(UUID owner, Int128 amount) {
         NetworkState state = getState(owner);
-        state.energy = amount.copy();
+        state.energy = amount.toBigInteger().max(BigInteger.ZERO);
         setDirty();
+    }
+
+    public DirectDebit getLastDirectDebit(UUID owner) {
+        var debit = getState(owner).lastDirectDebit;
+        return debit == null ? null : new DirectDebit(debit.source(), debit.machineType(), debit.amount().copy(),
+                debit.tick());
+    }
+
+    /** A lump-sum transaction remains visible after its one-tick transfer rate has returned to zero. */
+    public boolean consumeDirectEnergy(UUID owner, Int128 amount, GlobalPos source, String machineType,
+                                       ServerLevel level) {
+        if (source == null || machineType == null || !consumeEnergy(owner, amount, level)) return false;
+        getState(owner).lastDirectDebit = new DirectDebit(source, machineType, amount.copy(), level.getGameTime());
+        setDirty();
+        return true;
     }
 
     public boolean consumeEnergy(UUID owner, Int128 amount, ServerLevel level) {
@@ -310,10 +407,10 @@ public class NexusEnergyNetwork extends SavedData {
         if ("MATRIX_INPUT_ONCE".equals(GTNABalance.getNexusLossApplication()) && !state.matrixFormed) return false;
         handleTick(state, level.getGameTime());
 
-        if (state.energy.compareTo(amount) < 0) return false;
+        if (state.energy.compareTo(amount.toBigInteger()) < 0) return false;
 
-        state.energy.subtract(amount);
-        state.outputPerTick.add(amount);
+        state.energy = state.energy.subtract(amount.toBigInteger());
+        state.outputPerTick.set(saturate(state.outputPerTick.toBigInteger().add(amount.toBigInteger())));
         setDirty();
         return true;
     }

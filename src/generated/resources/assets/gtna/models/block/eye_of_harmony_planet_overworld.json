@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gtna:block/eye_of_harmony/planet/overworld_bottom",
+    "east": "gtna:block/eye_of_harmony/planet/overworld_left",
+    "north": "gtna:block/eye_of_harmony/planet/overworld_back",
+    "particle": "gtna:block/eye_of_harmony/planet/overworld_front",
+    "south": "gtna:block/eye_of_harmony/planet/overworld_front",
+    "up": "gtna:block/eye_of_harmony/planet/overworld_top",
+    "west": "gtna:block/eye_of_harmony/planet/overworld_right"
+  }
+}

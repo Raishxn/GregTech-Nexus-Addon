@@ -8,7 +8,6 @@ import com.gregtechceu.gtceu.api.pattern.MultiblockState;
 import com.gregtechceu.gtceu.api.pattern.TraceabilityPredicate;
 import com.gregtechceu.gtceu.api.pattern.predicates.SimplePredicate;
 import com.gregtechceu.gtceu.api.pattern.util.RelativeDirection;
-import com.gregtechceu.gtceu.common.block.CoilBlock;
 
 import com.lowdragmc.lowdraglib.utils.BlockInfo;
 
@@ -153,12 +152,13 @@ public class NexusBlockPattern extends BlockPattern {
         BlockPos centerPos = controller.self().getPos();
         Direction facing = controller.self().getFrontFacing();
         Direction upwardsFacing = controller.self().getUpwardsFacing();
-        boolean isFlipped = controller.self().isFlipped();
+        boolean isFlipped = setting.isMirrorBuild() || controller.self().isFlipped();
         Object2IntOpenHashMap<SimplePredicate> cacheGlobal = worldState.getGlobalCount();
         Object2IntOpenHashMap<SimplePredicate> cacheLayer = worldState.getLayerCount();
         Map<BlockPos, Object> blocks = new HashMap<>();
         Set<BlockPos> placeBlockPos = new HashSet<>();
         blocks.put(centerPos, controller);
+        Map<TraceabilityPredicate, List<ItemStack>> candidateCache = new IdentityHashMap<>();
 
         int[] repeat = new int[this.fingerLength];
         for (int h = 0; h < this.fingerLength; h++) {
@@ -181,9 +181,33 @@ public class NexusBlockPattern extends BlockPattern {
                 for (int b = 0, y = -centerOffset[1]; b < this.thumbLength; b++, y++) {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
+                        // Ignored space dominates huge structures; no world access or reflection is needed.
+                        if (predicate.common.contains(SimplePredicate.ANY)) continue;
                         BlockPos pos = setActualRelativeOffset(x, y, z, facing, upwardsFacing, isFlipped)
                                 .offset(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                         updateWorldState(worldState, pos, predicate);
+                        // Never replace the root controller or edit ignored cells.
+                        if (pos.equals(centerPos) || predicate.common.contains(SimplePredicate.ANY)) continue;
+                        // Replace upgrades structural blocks, never installed parts or their inventories/NBT.
+                        if (replaceMode && world.getBlockState(pos).hasBlockEntity() &&
+                                MetaMachine.getMachine(world,
+                                        pos) instanceof com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart) {
+                            blocks.put(pos, world.getBlockState(pos));
+                            for (SimplePredicate limit : predicate.limited) limit.testLimited(worldState);
+                            continue;
+                        }
+                        if (setting.isDemolitionMode() && predicate.limited.isEmpty() &&
+                                predicate.common.size() == 1 && predicate.common.contains(SimplePredicate.AIR)) {
+                            var existing = world.getBlockState(pos);
+                            if (!existing.isAir() && existing.getDestroySpeed(world, pos) >= 0 &&
+                                    world.mayInteract(player, pos) && player.mayBuild() &&
+                                    !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(
+                                            new net.minecraftforge.event.level.BlockEvent.BreakEvent(world, pos,
+                                                    existing, player))) {
+                                world.destroyBlock(pos, !player.isCreative(), player);
+                            }
+                            continue;
+                        }
 
                         ItemStack replaceItemStack = null;
                         if (!world.isEmptyBlock(pos)) {
@@ -262,10 +286,19 @@ public class NexusBlockPattern extends BlockPattern {
                             }
                         }
 
-                        List<ItemStack> candidates = applySetting(infos, setting, terminalStack);
+                        List<ItemStack> candidates;
+                        if (predicate.limited.isEmpty()) {
+                            BlockInfo[] selectedInfos = infos;
+                            candidates = candidateCache.computeIfAbsent(predicate,
+                                    key -> applySetting(selectedInfos, setting, terminalStack));
+                        } else {
+                            // Limited choices depend on global/layer counts and cannot share this cache.
+                            candidates = applySetting(infos, setting, terminalStack);
+                        }
 
-                        if (replaceMode && replaceItemStack != null &&
-                                !candidates.isEmpty() && ItemStack.isSameItem(candidates.get(0), replaceItemStack)) {
+                        ItemStack existingItem = replaceItemStack;
+                        if (replaceMode && existingItem != null && candidates.stream()
+                                .anyMatch(candidate -> ItemStack.isSameItem(candidate, existingItem))) {
                             continue;
                         }
 
@@ -371,20 +404,23 @@ public class NexusBlockPattern extends BlockPattern {
      * based on the noHatch setting.
      */
     private boolean isPlaceHatch(BlockInfo[] blockInfos, boolean noHatch) {
-        if (!noHatch) return true;
-        if (blockInfos != null && blockInfos.length > 0) {
-            var blockInfo = blockInfos[0];
-            return !(blockInfo.getBlockState()
-                    .getBlock() instanceof com.gregtechceu.gtceu.api.block.MetaMachineBlock machineBlock) ||
-                    !isHatchBlock(machineBlock);
-        }
-        return true;
+        if (!noHatch || blockInfos == null || blockInfos.length == 0) return true;
+        return Arrays.stream(blockInfos)
+                .anyMatch(info -> !(info.getBlockState()
+                        .getBlock() instanceof com.gregtechceu.gtceu.api.block.MetaMachineBlock block) ||
+                        !isHatchBlock(block));
     }
 
     /**
      * Check if a MetaMachineBlock is a hatch (multiblock part machine).
      */
+    private final Map<com.gregtechceu.gtceu.api.block.MetaMachineBlock, Boolean> hatchKinds = new HashMap<>();
+
     private boolean isHatchBlock(com.gregtechceu.gtceu.api.block.MetaMachineBlock machineBlock) {
+        return hatchKinds.computeIfAbsent(machineBlock, this::detectHatchBlock);
+    }
+
+    private boolean detectHatchBlock(com.gregtechceu.gtceu.api.block.MetaMachineBlock machineBlock) {
         try {
             var def = machineBlock.getDefinition();
             var machine = def.createMetaMachine(
@@ -401,74 +437,15 @@ public class NexusBlockPattern extends BlockPattern {
      */
     private List<ItemStack> applySetting(BlockInfo[] blockInfos, NexusTerminalUIFactory.AutoBuildSetting setting,
                                          ItemStack terminalStack) {
-        List<ItemStack> candidates = new ArrayList<>();
-        if (blockInfos != null && blockInfos.length > 0) {
-            boolean processed = false;
-
-            // Check if this block info array matches a configurable BlockCategory
-            com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory category = null;
-
-            if (Arrays.stream(blockInfos).anyMatch(info -> info.getBlockState().getBlock() instanceof CoilBlock)) {
-                category = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory.COILS;
-            } else if (Arrays.stream(blockInfos)
-                    .anyMatch(info -> info.getItemStackForm().getDescriptionId().contains("me_storage_core"))) {
-                        category = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory.MATRIX_STORAGE_MODULE;
-                    } else
-                if (Arrays.stream(blockInfos)
-                        .anyMatch(
-                                info -> info.getItemStackForm().getDescriptionId().contains("crafting_storage_core"))) {
-                                    category = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory.MATRIX_CRAFTING_MODULE;
-                                } else
-                    if (Arrays.stream(blockInfos)
-                            .anyMatch(info -> info.getItemStackForm().getDescriptionId()
-                                    .contains("me_storage_access_hatch") ||
-                                    info.getItemStackForm().getDescriptionId()
-                                            .contains("me_big_storage_access_hatch") ||
-                                    info.getItemStackForm().getDescriptionId().contains("me_io_port_hatch"))) {
-                                        category = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory.ME_STORAGE_ACCESS;
-                                    } else
-                        if (Arrays.stream(blockInfos)
-                                .anyMatch(info -> info.getItemStackForm().getDescriptionId()
-                                        .contains("machine_casing"))) {
-                                            category = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory.MACHINE_CASING;
-                                        } else
-                            if (Arrays.stream(blockInfos).anyMatch(info -> info.getBlockState()
-                                    .getBlock() instanceof com.raishxn.gtna.common.block.NexusCapacitorBlock)) {
-                                        category = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory.WIRELESS_CAPACITOR;
-                                    } else
-                                if (Arrays.stream(blockInfos).anyMatch(info -> isHatchBlock(info))) {
-                                    // Determine if it's a muffler or rotor holder hatch based on the blocks
-                                    // (simplified)
-                                    if (Arrays.stream(blockInfos)
-                                            .anyMatch(info -> info.getItemStackForm().getDescriptionId()
-                                                    .contains("muffler"))) {
-                                        category = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory.MUFFLER;
-                                    } else if (Arrays.stream(blockInfos)
-                                            .anyMatch(info -> info.getItemStackForm().getDescriptionId()
-                                                    .contains("rotor"))) {
-                                                        category = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.BlockCategory.ROTOR_HOLDER;
-                                                    }
-                                }
-
-            if (category != null) {
-                ItemStack selectedBlock = com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget
-                        .getSelectedBlock(terminalStack, category);
-                if (selectedBlock != null && !selectedBlock.isEmpty()) {
-                    candidates.add(selectedBlock.copy());
-                    processed = true;
-                }
-            }
-
-            // Fallback: Just return available candidates if nothing was overriden by UI selection
-            if (!processed) {
-                for (BlockInfo info : blockInfos) {
-                    if (info.getBlockState().getBlock() != net.minecraft.world.level.block.Blocks.AIR) {
-                        candidates.add(info.getItemStackForm());
-                    }
-                }
-            }
+        if (setting.isNoHatchMode() && blockInfos != null) {
+            blockInfos = Arrays.stream(blockInfos)
+                    .filter(info -> !(info.getBlockState()
+                            .getBlock() instanceof com.gregtechceu.gtceu.api.block.MetaMachineBlock block) ||
+                            !isHatchBlock(block))
+                    .toArray(BlockInfo[]::new);
         }
-        return candidates;
+        return com.raishxn.gtna.common.item.terminal.ui.BlockSelectionConfigWidget.applySelections(blockInfos,
+                terminalStack);
     }
 
     private boolean isHatchBlock(BlockInfo info) {

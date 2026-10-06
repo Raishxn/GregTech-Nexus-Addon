@@ -294,6 +294,33 @@ public class GTNARecipeType {
             .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.ARC);
 
+    /** Precise mining consumes a vein essence; legacy pack selector recipes are also supported. */
+    public static final String ELECTRIC_VOID_MINING = "electric_void_mining";
+    public static final GTRecipeType ELECTRIC_VOID_MINING_RECIPES = register("electric_void_mining",
+            ELECTRIC_VOID_MINING)
+            .setMaxIOSize(3, 9, 1, 0)
+            .setEUIO(IO.IN)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.MINER);
+
+    public static final GTRecipeType RANDOM_VOID_MINING_RECIPES = register("random_void_mining", "random_void_mining")
+            .setMaxIOSize(1, 216, 1, 0).setEUIO(IO.IN)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT).setSound(GTSoundEntries.MINER);
+    public static final GTRecipeType VOID_FLUID_DRILLING_RECIPES = register("void_fluid_drilling",
+            "void_fluid_drilling")
+            .setMaxIOSize(3, 0, 2, 1).setEUIO(IO.IN)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT).setSound(GTSoundEntries.MINER)
+            .addDataInfo(
+                    data -> LocalizationUtils.format("gtna.fluid.recipe.origin", data.getString("gtna_fluid_origin")))
+            .addDataInfo(data -> LocalizationUtils.format("gtna.fluid.recipe.remote",
+                    data.getString("gtna_fluid_remote_upgrade").toUpperCase(java.util.Locale.ROOT)));
+    public static final GTRecipeType WORLD_DATA_SCANNER_RECIPES = register("world_data_scanner", "world_data_scanner")
+            .setMaxIOSize(3, 1, 2, 0).setEUIO(IO.IN)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT).setSound(GTSoundEntries.SCIENCE);
+    public static final GTRecipeType INCUBATOR_RECIPES = register("incubator", "incubator")
+            .setMaxIOSize(6, 1, 2, 1).setEUIO(IO.IN)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, LEFT_TO_RIGHT).setSound(GTSoundEntries.COOLING);
+
     public static GTRecipeType register(String name, String group, RecipeType<?>... proxyRecipes) {
         GTRecipeType recipeType = new GTRecipeType(GTNACORE.id(name), group, proxyRecipes);
         GTRegistries.register(BuiltInRegistries.RECIPE_TYPE, recipeType.registryName, recipeType);
@@ -302,5 +329,8 @@ public class GTNARecipeType {
         return recipeType;
     }
 
-    public static void init() {}
+    public static void init() {
+        RANDOM_VOID_MINING_RECIPES.setRecipeUI(
+                new com.raishxn.gtna.api.machine.gui.ScrollableRecipeTypeUI(RANDOM_VOID_MINING_RECIPES));
+    }
 }

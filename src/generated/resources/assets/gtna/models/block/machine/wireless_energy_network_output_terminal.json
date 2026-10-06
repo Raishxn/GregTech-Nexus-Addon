@@ -1,0 +1,23 @@
+{
+  "parent": "minecraft:block/block",
+  "loader": "gtceu:machine",
+  "machine": "gtna:wireless_energy_network_output_terminal",
+  "variants": {
+    "is_formed=false": {
+      "model": {
+        "parent": "gtna:block/machine/part/wireless_energy_network_terminal",
+        "textures": {
+          "all": "gtna:block/casings/wireless_terminate_casing"
+        }
+      }
+    },
+    "is_formed=true": {
+      "model": {
+        "parent": "gtna:block/machine/part/wireless_energy_network_terminal",
+        "textures": {
+          "all": "gtna:block/casings/wireless_terminate_casing"
+        }
+      }
+    }
+  }
+}

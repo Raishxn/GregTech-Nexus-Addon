@@ -3,10 +3,18 @@ package com.raishxn.gtna.mixin.gtceu;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
+import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.recipe.ActionResult;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+
+import com.raishxn.gtna.research.KnowledgeNode;
+import com.raishxn.gtna.research.KnowledgeRegistry;
+import com.raishxn.gtna.research.KnowledgeScope;
+import com.raishxn.gtna.research.KnowledgeService;
 import com.raishxn.gtna.utils.GTNASpecialPartUtil;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,6 +27,29 @@ import java.util.Map;
 
 @Mixin(RecipeHelper.class)
 public class RecipeHelperMixin {
+
+    /**
+     * Research gates: a recipe named by a node's {@code recipe_condition} grant only runs for an owner
+     * whose team holds the node. Ungated recipes and empty graphs take the first two returns.
+     */
+    @Inject(method = "checkConditions", at = @At("HEAD"), cancellable = true, remap = false)
+    private static void gtna$checkResearchGates(GTRecipe recipe, RecipeLogic recipeLogic,
+                                                CallbackInfoReturnable<ActionResult> cir) {
+        var graph = KnowledgeRegistry.graph();
+        if (graph.isEmpty() || recipe.id == null || graph.gatesFor(recipe.id).isEmpty()) {
+            return;
+        }
+        var machine = recipeLogic.getMachine();
+        if (!(machine.getLevel() instanceof ServerLevel level)) {
+            return;
+        }
+        // The owner is a player id; progress belongs to that player's effective team, so map it first.
+        var owner = machine.getOwnerUUID();
+        KnowledgeService.firstMissingGate(level.getServer(), owner == null ? null : KnowledgeScope.of(owner), recipe.id)
+                .ifPresent(node -> cir.setReturnValue(ActionResult.fail(
+                        Component.translatable("gtna.research.requires", KnowledgeNode.displayName(node)), null,
+                        null)));
+    }
 
     @Inject(method = "matchContents", at = @At("HEAD"), cancellable = true, remap = false)
     private static void gtna$matchSpecialContents(IRecipeCapabilityHolder holder, GTRecipe recipe,

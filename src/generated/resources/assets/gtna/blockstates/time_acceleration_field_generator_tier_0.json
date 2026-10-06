@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "gtna:block/time_acceleration_field_generator_tier_0"
+    }
+  }
+}

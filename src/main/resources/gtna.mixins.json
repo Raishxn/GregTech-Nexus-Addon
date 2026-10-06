@@ -2,7 +2,7 @@
   "required": true,
   "package": "com.raishxn.gtna.mixin",
   "compatibilityLevel": "JAVA_17",
-  "refmap": "gtna.refmap.json",
+  "refmap": "mixins.gtna.refmap.json",
   "minVersion": "0.8",
   "mixins": [
     "ae2.CPUSelectionListMixin",
@@ -15,6 +15,7 @@
     "ae2.PatternProviderLogicMixin",
     "ae2.TooltipsMixin",
     "gtceu.GTNAPlateDoubleMixin",
+    "gtceu.FluidDrillLogicMixin",
     "gtceu.BlockPatternAccessor",
     "gtceu.FancyMachineUIWidgetStructureMixin",
     "gtceu.MetaMachineBlockMixin",
@@ -24,13 +25,18 @@
     "gtceu.WorkableElectricMultiblockMachineMixin",
     "gtceu.GTRecipeLogicMixin",
     "gtceu.RecipeHelperMixin",
-    "kubejs.DataGeneratorMixin"
+    "kubejs.DataGeneratorMixin",
+    "personalspace.LevelDataAccessor",
+    "personalspace.ServerLevelDataAccessor"
   ],
   "client": [
     "client.MultiblockInfoSlotGuardMixin",
     "client.GTRecipeWidgetMixin",
+    "client.ModularEmiRecipeMixin",
+    "client.EyeOfHarmonyEmiScreenMixin",
     "client.FancyMachineUIWidgetMixin",
-    "client.CoreCraftConfirmScreenMixin"
+    "client.CoreCraftConfirmScreenMixin",
+    "client.PersonalSpaceClientLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

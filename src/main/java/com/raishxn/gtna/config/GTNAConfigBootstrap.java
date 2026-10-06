@@ -7,5 +7,6 @@ public final class GTNAConfigBootstrap {
     public static void init() {
         ConfigHolder.init();
         GTNABalance.init();
+        VoidFluidDrillConfig.init();
     }
 }

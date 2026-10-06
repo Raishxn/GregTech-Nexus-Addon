@@ -236,15 +236,9 @@ public class GTNABlocks {
             "dimensionally_transcendent_casing");
     public static final BlockEntry<Block> DIMENSION_INJECTION_CASING = createCasingBlock(
             "dimension_injection_casing");
-    public static final BlockEntry<Block> DIMENSIONAL_BRIDGE_CASING = createCasingBlock(
-            "dimensional_bridge_casing",
-            GTNACORE.id("block/dimensional_bridge_casing"));
-    public static final BlockEntry<Block> DIMENSIONAL_STABILITY_CASING = createCasingBlock(
-            "dimensional_stability_casing",
-            GTNACORE.id("block/dimensional_stability_casing"));
-    public static final BlockEntry<Block> SPACETIME_COMPRESSION_FIELD_GENERATOR = createCasingBlock(
-            "spacetime_compression_field_generator",
-            GTNACORE.id("block/spacetime_compression_field_generator"));
+    /** Physical GTNH Eye of Harmony components, kept separate from the published legacy casings. */
+    public static final BlockEntry<Block> EYE_OF_HARMONY_BOUNDARY_CASING = GTNAEyeOfHarmonyContent.BOUNDARY_CASING;
+
     public static final BlockEntry<Block> NEXUS_HYPERCORE_CASING = createCasingBlock(
             "nexus_hypercore_casing",
             GTCEu.id("block/casings/gcym/nonconducting_casing"));

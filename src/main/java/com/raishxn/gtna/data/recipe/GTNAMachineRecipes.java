@@ -4,6 +4,7 @@ import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
+import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialEntry;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.recipe.ingredient.IntCircuitIngredient;
@@ -11,6 +12,7 @@ import com.gregtechceu.gtceu.common.data.*;
 import com.gregtechceu.gtceu.common.data.machines.GCYMMachines;
 import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
+import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
 
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -21,15 +23,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.fml.ModList;
 
 import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.common.data.*;
+import com.raishxn.gtna.config.GTNABalance;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -159,11 +164,12 @@ public class GTNAMachineRecipes {
         }
         if (enabled(GTNAMachines.LARGE_STEAM_EXTRACTOR)) {
             // GTNL: reinforced glass, hydraulic piston, Breel tiny pipe, hydraulic pump, steam extractor.
+            // GTIA: plain glass in place of reinforced glass, so it stays a Steam-age machine (author, 2026-10-04).
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_EXTRACTOR.asStack().getItem())
                     .pattern("ABA")
                     .pattern("CDC")
                     .pattern("EFE")
-                    .define('A', GTBlocks.CASING_TEMPERED_GLASS.get())
+                    .define('A', Blocks.GLASS)
                     .define('B', GTNAItems.HYDRAULIC_PISTON.get())
                     .define('C', ChemicalHelper.get(TagPrefix.pipeTinyFluid, GTNAMaterials.Breel).getItem())
                     .define('D', GTNAItems.HYDRAULIC_PUMP.get())
@@ -205,11 +211,12 @@ public class GTNAMachineRecipes {
         }
         if (enabled(GTNAMachines.LARGE_STEAM_MIXER)) {
             // GTNL: reinforced glass, steel rotor, hydraulic motor, precision mechanism, mixer.
+            // GTIA: plain glass in place of reinforced glass, so it stays a Steam-age machine (author, 2026-10-04).
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GTNAMachines.LARGE_STEAM_MIXER.asStack().getItem())
                     .pattern("ABA")
                     .pattern("ACA")
                     .pattern("DED")
-                    .define('A', GTBlocks.CASING_TEMPERED_GLASS.get())
+                    .define('A', Blocks.GLASS)
                     .define('B', ChemicalHelper.get(TagPrefix.rotor, GTMaterials.Steel).getItem())
                     .define('C', GTNAItems.HYDRAULIC_MOTOR.get())
                     .define('D', GTNAItems.PRECISION_STEAM_COMPONENT.get())
@@ -424,8 +431,8 @@ public class GTNAMachineRecipes {
         // ------------------------------------------------------------------
         if (enabled(GTNAMachines.STEAM_ELEVATOR)) {
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator")
-                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
-                    .inputItems(Blocks.BRICKS, 64)
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem(), 4)
+                    .inputItems(Blocks.BRICKS.asItem(), 64)
                     .inputItems(ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Steel).getItem(), 48)
                     .inputItems(GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get(), 8)
                     .inputItems(GTNAItems.PRECISION_STEAM_COMPONENT.get(), 16)
@@ -437,7 +444,7 @@ public class GTNAMachineRecipes {
         }
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_ORE_PROCESSOR_MODULE)) {
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_ore_processor_module")
-                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem(), 4)
                     .inputItems(ChemicalHelper.get(TagPrefix.dust, GTMaterials.Diamond).getItem(), 16)
                     .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 32)
                     .inputItems(GTNAItems.HYDRAULIC_PISTON.get(), 32)
@@ -451,7 +458,7 @@ public class GTNAMachineRecipes {
         }
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_FLIGHT_MODULE_I)) {
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_flight_module_i")
-                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 1)
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem(), 1)
                     .inputItems(GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get(), 4)
                     .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 4)
                     .inputItems(GTNAItems.HYDRAULIC_STEAM_RECEIVER.get(), 2)
@@ -486,7 +493,7 @@ public class GTNAMachineRecipes {
         }
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_BEACON_MODULE_I)) {
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_beacon_module_i")
-                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 1)
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem(), 1)
                     .inputItems(Items.BREWING_STAND, 1)
                     .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 4)
                     .inputItems(GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get(), 8)
@@ -523,7 +530,7 @@ public class GTNAMachineRecipes {
         }
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_MONSTER_REPELLENT_MODULE_I)) {
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_monster_repellent_module_i")
-                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 1)
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem(), 1)
                     .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 8)
                     .inputItems(Items.TORCH, 64)
                     .inputItems(GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get(), 2)
@@ -534,7 +541,7 @@ public class GTNAMachineRecipes {
                     .EUt(GTValues.VA[GTValues.LV])
                     .save(provider);
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_monster_repellent_module_ii")
-                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 2)
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem(), 2)
                     .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 8)
                     .inputItems(Items.SOUL_TORCH, 32)
                     .inputItems(GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get(), 2)
@@ -545,7 +552,7 @@ public class GTNAMachineRecipes {
                     .EUt(GTValues.VA[GTValues.LV])
                     .save(provider);
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_monster_repellent_module_iii")
-                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem(), 4)
                     .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 8)
                     .inputItems(Items.SOUL_TORCH, 64)
                     .inputItems(GTNAItems.HYDRAULIC_STEAM_JET_SPEWER.get(), 2)
@@ -558,7 +565,7 @@ public class GTNAMachineRecipes {
         }
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_WEATHER_MODULE_I)) {
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_weather_module_i")
-                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 1)
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem(), 1)
                     .inputItems(Items.SNOWBALL, 64)
                     .inputItems(Items.AMETHYST_SHARD, 2)
                     .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 4)
@@ -593,7 +600,7 @@ public class GTNAMachineRecipes {
         }
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_ENTITY_CRUSHER_MODULE_I)) {
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_entity_crusher_module_i")
-                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem(), 4)
                     .inputItems(ChemicalHelper.get(TagPrefix.dust, GTMaterials.Diamond).getItem(), 9)
                     .inputItems(CustomTags.LV_CIRCUITS)
                     .inputItems(GTNAItems.HYDRAULIC_PISTON.get(), 8)
@@ -624,10 +631,12 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
         IntegratedOreRecipes.register(provider);
+        VoidMinerEssenceRecipes.register(provider);
+        VoidFluidDrillingRecipes.register(provider);
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_OIL_DRILL_MODULE_I)) {
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_oil_drill_module_i")
-                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
-                    .inputItems(GTNABlocks.BREEL_PLATED_CASING.get(), 12)
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem(), 4)
+                    .inputItems(GTNABlocks.BREEL_PLATED_CASING.asItem(), 12)
                     .inputItems(CustomTags.LV_CIRCUITS)
                     .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 8)
                     .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 12)
@@ -638,7 +647,7 @@ public class GTNAMachineRecipes {
                     .save(provider);
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_oil_drill_module_ii")
                     .inputItems(GTNAMachines2.STEAM_ELEVATOR_OIL_DRILL_MODULE_I.asStack())
-                    .inputItems(GTNABlocks.HYPER_PRESSURE_BREEL_CASING.get(), 12)
+                    .inputItems(GTNABlocks.HYPER_PRESSURE_BREEL_CASING.asItem(), 12)
                     .inputItems(IntCircuitIngredient.of(2))
                     .inputItems(GTNAItems.HYDRAULIC_PUMP.get(), 4)
                     .inputItems(GTNAItems.HYDRAULIC_REGULATOR.get(), 6)
@@ -649,7 +658,7 @@ public class GTNAMachineRecipes {
                     .save(provider);
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_oil_drill_module_iii")
                     .inputItems(GTNAMachines2.STEAM_ELEVATOR_OIL_DRILL_MODULE_II.asStack())
-                    .inputItems(GTNABlocks.HYPER_PRESSURE_BREEL_CASING.get(), 16)
+                    .inputItems(GTNABlocks.HYPER_PRESSURE_BREEL_CASING.asItem(), 16)
                     .inputItems(IntCircuitIngredient.of(3))
                     .inputItems(GTNAItems.HYDRAULIC_REGULATOR.get(), 8)
                     .inputItems(GTNAItems.HYDRAULIC_VAPOR_GENERATOR.get(), 3)
@@ -661,8 +670,8 @@ public class GTNAMachineRecipes {
         }
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_GREENHOUSE_MODULE)) {
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_greenhouse_module")
-                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
-                    .inputItems(Blocks.DIRT, 64)
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem(), 4)
+                    .inputItems(Blocks.DIRT.asItem(), 64)
                     .inputItems(Items.STICK, 64)
                     .inputItems(GTNAItems.HYDRAULIC_CONVEYOR.get(), 16)
                     .inputItems(GTNAItems.HYDRAULIC_ARM.get(), 16)
@@ -675,7 +684,7 @@ public class GTNAMachineRecipes {
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_APIARY_MODULE)) {
             // GTNL: compact pipe casing, Forestry alvearies + honey, LV.
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_apiary_module")
-                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem(), 4)
                     .inputItems(Items.HONEYCOMB, 16)
                     .inputItems(Items.HONEY_BLOCK, 4)
                     .inputItems(GTNAItems.HYDRAULIC_CONVEYOR.get(), 16)
@@ -689,7 +698,7 @@ public class GTNAMachineRecipes {
         if (enabled(GTNAMachines2.STEAM_ELEVATOR_BEE_BREEDING_MODULE)) {
             // GTNL: compact pipe casing, Forestry royal jelly/beeswax/pollen + honey, MV.
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_elevator_bee_breeding_module")
-                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.get(), 4)
+                    .inputItems(GTNABlocks.STEAM_COMPACT_PIPE_CASING.asItem(), 4)
                     .inputItems(Items.HONEYCOMB, 8)
                     .inputItems(Items.HONEY_BOTTLE, 8)
                     .inputItems(Items.HONEY_BLOCK, 2)
@@ -713,39 +722,21 @@ public class GTNAMachineRecipes {
             }
         }
         if (enabled(GTNAMachines.STEAM_CACTUS_WONDER)) {
-            // GTNL CactusWonderFakeRecipes: GT++ cactus charcoal/coke -> steam at one recipe per
-            // 20 ticks. GTNA has no cactus carbon items, so the closest GTNA fuels are used and the
-            // steam grade follows the GTNL tier (regular / superheated / dense supercritical).
-            GTNARecipeType.CACTUS_WONDER_RECIPES.recipeBuilder("cactus_wonder_steam_from_charcoal")
-                    .inputItems(Items.CHARCOAL)
-                    .outputFluids(GTMaterials.Steam.getFluid(64000))
-                    .duration(20)
-                    .EUt(0)
-                    .save(provider);
-            GTNARecipeType.CACTUS_WONDER_RECIPES.recipeBuilder("cactus_wonder_steam_from_coal")
-                    .inputItems(Items.COAL)
-                    .outputFluids(GTMaterials.Steam.getFluid(64000))
-                    .duration(20)
-                    .EUt(0)
-                    .save(provider);
-            GTNARecipeType.CACTUS_WONDER_RECIPES.recipeBuilder("cactus_wonder_steam_from_coal_block")
-                    .inputItems(Items.COAL_BLOCK)
-                    .outputFluids(GTMaterials.Steam.getFluid(64000))
-                    .duration(20)
-                    .EUt(0)
-                    .save(provider);
-            GTNARecipeType.CACTUS_WONDER_RECIPES.recipeBuilder("cactus_wonder_superheated_from_coke")
-                    .inputItems(ChemicalHelper.get(TagPrefix.gem, GTMaterials.Coke).getItem())
-                    .outputFluids(GTNAMaterials.SuperHeatedSteam.getFluid(128000))
-                    .duration(20)
-                    .EUt(0)
-                    .save(provider);
-            GTNARecipeType.CACTUS_WONDER_RECIPES.recipeBuilder("cactus_wonder_supercritical_from_coke_block")
-                    .inputItems(ChemicalHelper.get(TagPrefix.block, GTMaterials.Coke).getItem())
-                    .outputFluids(GTNAMaterials.DenseSupercriticalSteam.getFluid(512000))
-                    .duration(20)
-                    .EUt(0)
-                    .save(provider);
+            // GTNL SteamCactusWonder: steam per fuel item comes from its TOTAL_VALUE table, not from the fake
+            // recipes' 64000 display amount. GTNA has no GT++ cactus charcoal/coke, so the nearest carbon fuels
+            // get GTNL's values: charcoal/coal = cactus charcoal (8000), their blocks = block (90000),
+            // coke = cactus coke (16000), coke block = block (180000). Superheated and supercritical steam come
+            // only from GTNL's double-compressed blocks and up, which do not exist here, so all output is
+            // plain steam (GTIA balance, 2026-10-05).
+            cactusWonder(provider, "cactus_wonder_steam_from_charcoal", new ItemStack(Items.CHARCOAL), 8_000);
+            cactusWonder(provider, "cactus_wonder_steam_from_coal", new ItemStack(Items.COAL), 8_000);
+            cactusWonder(provider, "cactus_wonder_steam_from_charcoal_block",
+                    ChemicalHelper.get(TagPrefix.block, GTMaterials.Charcoal), 90_000);
+            cactusWonder(provider, "cactus_wonder_steam_from_coal_block", new ItemStack(Items.COAL_BLOCK), 90_000);
+            cactusWonder(provider, "cactus_wonder_steam_from_coke",
+                    ChemicalHelper.get(TagPrefix.gem, GTMaterials.Coke), 16_000);
+            cactusWonder(provider, "cactus_wonder_steam_from_coke_block",
+                    ChemicalHelper.get(TagPrefix.block, GTMaterials.Coke), 180_000);
         }
 
         // GTOCore MachineRecipe.java: steel plates, LV circuits and an LV emitter.
@@ -932,7 +923,8 @@ public class GTNAMachineRecipes {
             // GTNL SteamManufacturer parity: StronzeWrappedCasing + 2 hydraulic motors + Stronze/Breel
             // medium pipes -> lava maker (200 t @ 200 EU/t).
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("steam_lava_maker")
-                    .inputItems(GTNABlocks.STRONZE_WRAPPED_CASING.get())
+                    .circuitMeta(1)
+                    .inputItems(GTNABlocks.STRONZE_WRAPPED_CASING.asItem())
                     .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 2)
                     .inputItems(ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Stronze).getItem(), 2)
                     .inputItems(ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Breel).getItem(), 2)
@@ -1085,7 +1077,8 @@ public class GTNAMachineRecipes {
                             InventoryChangeTrigger.TriggerInstance.hasItems(GTNAItems.PRECISION_STEAM_COMPONENT.get()))
                     .save(provider);
             GTNARecipeType.HYDRAULIC_MANUFACTURING.recipeBuilder("stone_superheater_controller")
-                    .inputItems(GTNABlocks.STRONZE_WRAPPED_CASING.get(), 1)
+                    .circuitMeta(2)
+                    .inputItems(GTNABlocks.STRONZE_WRAPPED_CASING.asItem(), 1)
                     .inputItems(GTNAItems.HYDRAULIC_MOTOR.get(), 2)
                     .inputItems(ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Stronze).getItem(), 2)
                     .inputItems(ChemicalHelper.get(TagPrefix.pipeNormalFluid, GTNAMaterials.Breel).getItem(), 2)
@@ -1292,6 +1285,38 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
 
+        if (GTNAMachines.ELECTRIC_VOID_MINER != null) {
+            // GTIA-D-161: EV controller with terrestrial Titanium and EV components; no Lua,
+            // samples, Planet Data Chips or the Steam miner.
+            GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("electric_void_miner")
+                    .inputItems(ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Titanium).getItem(), 4)
+                    .inputItems(ChemicalHelper.get(TagPrefix.plateDouble, GTMaterials.Titanium).getItem(), 4)
+                    .inputItems(GTItems.ELECTRIC_MOTOR_EV, 4)
+                    .inputItems(GTItems.ELECTRIC_PISTON_EV, 4)
+                    .inputItems(GTItems.ROBOT_ARM_EV, 2)
+                    .inputItems(GTItems.SENSOR_EV, 2)
+                    .inputItems(CustomTags.EV_CIRCUITS, 4)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                    .outputItems(GTNAMachines.ELECTRIC_VOID_MINER.asStack())
+                    .duration(600)
+                    .EUt(GTValues.VA[GTValues.EV])
+                    .save(provider);
+
+            if (GTNABalance.getElectricVoidMiner().allowFixedFallbackRecipe) {
+                // Fixed fallback for packs that remove the selector programs: generic mining at the
+                // configured base values. It has no selector, so programRequired exempts it by id.
+                GTNARecipeType.ELECTRIC_VOID_MINING_RECIPES.recipeBuilder("electric_void_mining_fallback")
+                        .inputFluids(GTMaterials.DrillingFluid.getFluid(
+                                GTNABalance.getElectricVoidMiner().defaultDrillingFluidPerOperation))
+                        .outputItems(Items.COBBLESTONE, 1)
+                        .duration(GTNABalance.getElectricVoidMiner().baseDuration)
+                        .EUt(GTNABalance.getElectricVoidMiner().baseEUt)
+                        .save(provider);
+            }
+
+            electricVoidMinerPlanetPrograms(provider);
+        }
+
         if (enabled(GTNAMachines.INDUSTRIAL_SLAUGHTERHOUSE)) {
             GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("industrial_slaughterhouse")
                     .inputItems(ChemicalHelper.get(TagPrefix.frameGt, GTMaterials.Steel).getItem(), 1)
@@ -1344,41 +1369,18 @@ public class GTNAMachineRecipes {
                     .save(provider);
         }
 
-        if (enabled(GTNAMachines.EYE_OF_HARMONY, GTNAMachines.ARTIFICIAL_STAR)) {
-            GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("eye_of_harmony")
-                    .inputItems(GTNABlocks.DIMENSION_INJECTION_CASING.asItem(), 16)
-                    .inputItems(GTNABlocks.SPACETIME_COMPRESSION_FIELD_GENERATOR.asItem(), 16)
-                    .inputItems(GTNABlocks.DIMENSIONAL_STABILITY_CASING.asItem(), 16)
-                    .inputItems(GTNAMachines.ARTIFICIAL_STAR.asStack().getItem(), 4)
-                    .inputItems(GTItems.FIELD_GENERATOR_OpV, 16)
-                    .inputItems(GTItems.EMITTER_OpV, 16)
-                    .inputItems(GTItems.SENSOR_OpV, 16)
-                    .inputItems(GTItems.ROBOT_ARM_OpV, 16)
-                    .inputItems(GTItems.ELECTRIC_PUMP_OpV, 8)
-                    .inputItems(GTItems.ELECTRIC_MOTOR_OpV, 8)
-                    .inputItems(GTItems.GRAVI_STAR, 8)
-                    .inputItems(CustomTags.OpV_CIRCUITS, 16)
-                    .inputItems(ChemicalHelper.get(TagPrefix.plateDouble, GTMaterials.Neutronium).getItem(), 32)
-                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(48000))
-                    .inputFluids(GTMaterials.Neutronium.getFluid(57600))
-                    .inputFluids(GTMaterials.Europium.getFluid(32000))
-                    .inputFluids(GTMaterials.Naquadria.getFluid(16000))
-                    .outputItems(GTNAMachines.EYE_OF_HARMONY.asStack())
-                    .duration(2400)
-                    .EUt(8053063680L)
-                    .stationResearch(b -> b.researchStack(GTNABlocks.SPACETIME_COMPRESSION_FIELD_GENERATOR.asStack())
-                            .CWUt(16384)
-                            .EUt(8053063680L))
-                    .save(provider);
-        }
-
-        if (enabled(GTNAMachines.NEXUS_MOLECULAR_FORGE, GTNAMachines2.ME_CRAFT_PATTERN_HATCH)) {
+        if (enabled(GTNAMachines.NEXUS_MOLECULAR_FORGE, GTNAMachines2.ME_CRAFT_PATTERN_HATCH) &&
+                GTNARecipeItems.present("expatternprovider:assembler_matrix_crafter",
+                        "expatternprovider:assembler_matrix_pattern", "expatternprovider:assembler_matrix_speed")) {
             GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("nexus_molecular_forge")
                     .inputItems(GTMachines.ASSEMBLER[GTValues.ZPM].asStack().getItem())
                     .inputItems(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.asStack().getItem(), 4)
-                    .inputItems("expatternprovider:assembler_matrix_crafter", 32)
-                    .inputItems("expatternprovider:assembler_matrix_pattern", 32)
-                    .inputItems("expatternprovider:assembler_matrix_speed", 32)
+                    .inputItems(BuiltInRegistries.ITEM
+                            .get(ResourceLocation.parse("expatternprovider:assembler_matrix_crafter")), 32)
+                    .inputItems(BuiltInRegistries.ITEM
+                            .get(ResourceLocation.parse("expatternprovider:assembler_matrix_pattern")), 32)
+                    .inputItems(BuiltInRegistries.ITEM
+                            .get(ResourceLocation.parse("expatternprovider:assembler_matrix_speed")), 32)
                     .inputItems(GTItems.ROBOT_ARM_ZPM.asStack().getItem(), 4)
                     .inputItems(GTItems.EMITTER_ZPM.asStack().getItem(), 8)
                     .inputItems(CustomTags.ZPM_CIRCUITS, 8)
@@ -1447,32 +1449,49 @@ public class GTNAMachineRecipes {
         }
 
         registerMEStorageCoreRecipes(provider);
+        for (boolean output : new boolean[] { false, true }) {
+            var terminal = output ? GTNAEnergyHatches.NETWORK_OUTPUT_TERMINAL :
+                    GTNAEnergyHatches.NETWORK_INPUT_TERMINAL;
+            var precursor = output ? GTNAEnergyHatches.WIRELESS_DYNAMO_HATCHES[GTValues.UHV][5] :
+                    GTNAEnergyHatches.WIRELESS_ENERGY_HATCHES[GTValues.UHV][5];
+            GTRecipeTypes.ASSEMBLY_LINE_RECIPES
+                    .recipeBuilder("nexus_network_" + (output ? "output" : "input") + "_terminal")
+                    .inputItems(precursor.asStack(), 16)
+                    .inputItems(GTItems.SENSOR_UV.asStack(), 16)
+                    .inputItems(GTItems.FIELD_GENERATOR_UV.asStack(), 16)
+                    .inputItems(GTItems.GRAVI_STAR.asStack(), 64)
+                    .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 64)
+                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(46_080))
+                    .outputItems(terminal.asStack()).duration(2400).EUt(GTValues.VA[GTValues.MAX])
+                    .stationResearch(b -> b.researchStack(precursor.asStack()).CWUt(512).EUt(GTValues.VA[GTValues.MAX]))
+                    .save(provider);
+        }
 
         GTNARecipeType.ARTIFICIAL_STAR_RECIPES.recipeBuilder("neutronium_antimatter_fuel_rod")
                 .inputItems(GTNAItems.NEUTRONIUM_ANTIMATTER_FUEL_ROD.get())
                 .chancedOutput(GTNAItems.ANNIHILATION_CONSTRAINER.asStack(), 9000, 0)
-                .EUt(-549755813888L)
+                .EUt(-8796093022208L)
                 .duration(200)
                 .save(provider);
 
         GTNARecipeType.ARTIFICIAL_STAR_RECIPES.recipeBuilder("draconium_antimatter_fuel_rod")
                 .inputItems(GTNAItems.DRACONIUM_ANTIMATTER_FUEL_ROD.get())
                 .chancedOutput(GTNAItems.ANNIHILATION_CONSTRAINER.asStack(), 8000, 0)
-                .EUt(-8796093022208L)
+                .EUt(-140737488355328L)
                 .duration(200)
                 .save(provider);
 
         GTNARecipeType.ARTIFICIAL_STAR_RECIPES.recipeBuilder("cosmic_neutronium_antimatter_fuel_rod")
                 .inputItems(GTNAItems.COSMIC_NEUTRONIUM_ANTIMATTER_FUEL_ROD.get())
                 .chancedOutput(GTNAItems.ANNIHILATION_CONSTRAINER.asStack(), 7000, 0)
-                .EUt(-140737488355328L)
+                .EUt(-2251799813685248L)
                 .duration(200)
                 .save(provider);
 
         GTNARecipeType.ARTIFICIAL_STAR_RECIPES.recipeBuilder("infinity_antimatter_fuel_rod")
                 .inputItems(GTNAItems.INFINITY_ANTIMATTER_FUEL_ROD.get())
                 .chancedOutput(GTNAItems.ANNIHILATION_CONSTRAINER.asStack(), 6000, 0)
-                .EUt(-2251799813685248L)
+                .EUt(-36028797018963968L)
                 .duration(200)
                 .save(provider);
 
@@ -2179,6 +2198,14 @@ public class GTNAMachineRecipes {
 
         // Brick Kiln (GTOCore port, G-0060): fires bricks/ceramics from compressed clay + coal.
         if (enabled(GTNAMachines.BRICK_KILN)) {
+            // GTOCore's controller recipe (wrought iron long rods, screws and double plate around a primitive
+            // hatch). GTO's Primitive Blast Furnace Hatch does not exist here; the Coke Oven Hatch takes its place.
+            VanillaRecipeHelper.addShapedRecipe(provider, "brick_kiln", GTNAMachines.BRICK_KILN.asStack(),
+                    "wAB", "BCD", "hAB",
+                    'A', new MaterialEntry(TagPrefix.rodLong, GTMaterials.WroughtIron),
+                    'B', new MaterialEntry(TagPrefix.screw, GTMaterials.WroughtIron),
+                    'C', GTMachines.COKE_OVEN_HATCH.asStack(),
+                    'D', new MaterialEntry(TagPrefix.plateDouble, GTMaterials.WroughtIron));
             GTNARecipeType.BRICK_FURNACE_RECIPES.recipeBuilder("brick")
                     .inputItems(Items.COAL)
                     .inputItems(GTItems.COMPRESSED_CLAY, 8)
@@ -2196,6 +2223,14 @@ public class GTNAMachineRecipes {
                     .inputItems(GTItems.COMPRESSED_FIRECLAY, 8)
                     .outputItems(GTBlocks.CASING_PRIMITIVE_BRICKS.asItem(), 2)
                     .duration(150)
+                    .save(provider);
+            // GTNL's Primitive Brick Kiln: Clay Compound in the Steam age, before any Mixer.
+            GTNARecipeType.BRICK_FURNACE_RECIPES.recipeBuilder("clay_compound")
+                    .inputItems(TagPrefix.dust, GTMaterials.Clay, 8)
+                    .inputItems(TagPrefix.dust, GTMaterials.Stone, 8)
+                    .inputItems(TagPrefix.dust, GTMaterials.Flint, 8)
+                    .outputItems(TagPrefix.ingot, GTNAMaterials.ClayCompound, 16)
+                    .duration(200)
                     .save(provider);
         }
 
@@ -2292,5 +2327,53 @@ public class GTNAMachineRecipes {
             throw new IllegalStateException("Missing machine item id: " + id);
         }
         return item;
+    }
+
+    /**
+     * Ad Astra planet programs (optional dependency): the planet's surface stone is the
+     * non-consumable sample that selects the vein. Registered only when Ad Astra and its items are
+     * present, so GTNA keeps working standalone.
+     */
+    private static void electricVoidMinerPlanetPrograms(Consumer<FinishedRecipe> provider) {
+        if (!ModList.get().isLoaded("ad_astra")) {
+            return;
+        }
+        // Materials mirror the GTO ore veins of each planet (GTOOres), keeping the GTIA decisions
+        // for the Moon (D-150) and Mars (D-158/D-164).
+        planetProgram(provider, 0, "moon_stone", 2000, 1200,
+                rawOre(GTMaterials.Bauxite, 2), rawOre(GTMaterials.Ilmenite, 2));
+        planetProgram(provider, 1, "mars_stone", 3000, 1800,
+                rawOre(GTMaterials.Scheelite, 2), rawOre(GTMaterials.Tungstate, 1),
+                rawOre(GTMaterials.Cooperite, 1));
+        planetProgram(provider, 2, "venus_stone", 2500, 1500,
+                rawOre(GTMaterials.Sulfur, 2), rawOre(GTMaterials.Pyrite, 1),
+                rawOre(GTMaterials.Galena, 1), rawOre(GTMaterials.Chromite, 1));
+        planetProgram(provider, 3, "mercury_stone", 2500, 1500,
+                rawOre(GTMaterials.Garnierite, 2), rawOre(GTMaterials.Nickel, 1),
+                rawOre(GTMaterials.Cobaltite, 1));
+        planetProgram(provider, 4, "glacio_stone", 2000, 1200,
+                rawOre(GTMaterials.Bastnasite, 2), rawOre(GTMaterials.Tungstate, 1),
+                rawOre(GTMaterials.Tantalite, 1));
+    }
+
+    private static void planetProgram(Consumer<FinishedRecipe> provider, int planetIndex, String stoneId, int fluid,
+                                      int duration, ItemStack... outputs) {
+        Item selector = BuiltInRegistries.ITEM.get(ResourceLocation.parse("ad_astra:" + stoneId));
+        if (selector == Items.AIR) {
+            return;
+        }
+        VoidMinerEssenceRecipes.planet(provider, planetIndex, selector, fluid, duration, outputs);
+    }
+
+    private static ItemStack rawOre(Material material, int count) {
+        return ChemicalHelper.get(TagPrefix.rawOre, material, count);
+    }
+
+    private static void cactusWonder(Consumer<FinishedRecipe> provider, String id, ItemStack fuel, int steam) {
+        GTNARecipeType.CACTUS_WONDER_RECIPES.recipeBuilder(id)
+                .inputItems(fuel)
+                .outputFluids(GTMaterials.Steam.getFluid(steam))
+                .duration(20)
+                .save(provider);
     }
 }

@@ -87,6 +87,7 @@ public class QuantumTerminalUI {
 
         NexusEnergyNetwork network = NexusEnergyNetwork.get((ServerLevel) player.level());
         Int128 energy = network.getEnergy(networkOwner);
+        boolean unlimited = network.isUnlimited(networkOwner);
         Int128 maxCapacity = network.getMaxCapacity(networkOwner);
         Int128 inPerTick = network.getLastInputPerTick(networkOwner);
         Int128 rawInPerTick = network.getLastRawInputPerTick(networkOwner);
@@ -102,7 +103,7 @@ public class QuantumTerminalUI {
 
         // Calculate fill %
         double fillPercentage = 0;
-        if (!maxCapacity.isZero()) {
+        if (!unlimited && !maxCapacity.isZero()) {
             if (maxCapacity.compareTo(Int128.fromBigInteger(java.math.BigInteger.valueOf(100000L))) < 0) {
                 fillPercentage = (double) energy.toLong() / maxCapacity.toLong();
             } else {
@@ -142,7 +143,7 @@ public class QuantumTerminalUI {
         // ═══════════════════════════
         textList.add(Component.literal("§6§l⚙ Matrix Stats"));
         textList.add(Component.literal("§7Capacitors: §a" + totalCapacitors));
-        textList.add(Component.literal("§7Max Capacity: §e" + maxCapacity.toHumanReadableString() + " EU"));
+        textList.add(NexusNetworkDisplay.capacity(unlimited, maxCapacity));
 
         String tierName = "N/A";
         if (averageTier > 0 && averageTier < com.gregtechceu.gtceu.api.GTValues.VN.length) {
@@ -151,7 +152,8 @@ public class QuantumTerminalUI {
         textList.add(Component.literal("§7Average Tier: §e" + tierName + " §7(Tier " + averageTier + ")"));
         textList.add(Component
                 .literal("§7Efficiency: §d" + String.format(java.util.Locale.US, "%.1f", efficiency * 100) + "%"));
-        textList.add(Component.literal("§7Transfer Limit: §6" + transferLimit.toHumanReadableString() + " EU/t"));
+        textList.add(NexusNetworkDisplay.transfer(unlimited, transferLimit));
+        if (unlimited) textList.add(Component.translatable("gtna.nexus.unlimited"));
 
         boolean crossDim = GTNABalance.isNexusCrossDimensionEnabled(averageTier);
         textList.add(Component.literal("§7Cross-Dim: " + (crossDim ? "§a✅ Enabled" : "§c✖ Disabled")));
@@ -162,9 +164,9 @@ public class QuantumTerminalUI {
         // ENERGY STATUS
         // ═══════════════════════════
         textList.add(Component.literal("§b§l🔋 Energy"));
-        textList.add(Component.literal(bar.toString() + " §f" + String.format("%.1f%%", fillPercentage * 100.0)));
-        textList.add(Component.literal(
-                "§7Energy: §f" + energy.toHumanReadableString() + " / " + maxCapacity.toHumanReadableString() + " EU"));
+        if (!unlimited)
+            textList.add(Component.literal(bar.toString() + " §f" + String.format("%.1f%%", fillPercentage * 100.0)));
+        textList.add(NexusNetworkDisplay.energy(network, networkOwner));
         textList.add(Component.literal(""));
 
         // --- IO Stats ---
@@ -172,9 +174,10 @@ public class QuantumTerminalUI {
         textList.add(Component.literal("§a⬆ Credited Input: +" + inPerTick.toHumanReadableString() + " EU/t"));
         textList.add(Component.literal("§c⬇ Effective Loss: -" + lossPerTick.toHumanReadableString() + " EU/t"));
         textList.add(Component.literal("§c⬇ Avg Output: -" + outPerTick.toHumanReadableString() + " EU/t"));
+        NexusDirectDebitDisplay.append(textList, network, networkOwner);
 
         // --- Time to Empty ---
-        String timeToEmpty = calculateTimeToEmpty(energy, inPerTick, outPerTick);
+        String timeToEmpty = calculateTimeToEmpty(network.getExactEnergy(networkOwner), inPerTick, outPerTick);
         textList.add(Component.literal("§7⏱ Time to Empty: §f" + timeToEmpty));
 
         textList.add(Component.literal("§8───────────────────────────────"));
@@ -199,8 +202,9 @@ public class QuantumTerminalUI {
 
             textList.add(
                     Component
-                            .literal(dirColor + dirLabel + " §f" + info.amperage + "A " + connTierName + " " +
-                                    info.machineType + " §7" + amount + " EU/t")
+                            .literal(dirColor + dirLabel + " §f" + info.amperage + "A " + connTierName + " ")
+                            .append(NexusNetworkDisplay.machineName(info.machineType))
+                            .append(Component.literal(" §7" + amount + " EU/t"))
                             .withStyle(style -> style
                                     .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                             Component.literal("§ePos: " + posStr + "\n§7Dim: " + dim +
@@ -214,34 +218,11 @@ public class QuantumTerminalUI {
         }
     }
 
-    private String calculateTimeToEmpty(Int128 energy, Int128 inPerTick, Int128 outPerTick) {
-        if (energy.isZero()) return "§c0s (EMPTY)";
-
-        // Net drain = output - input per tick
-        Int128 netDrain = outPerTick.copy();
-        if (netDrain.compareTo(inPerTick) <= 0) {
-            return "§a∞ (Charging)";
-        }
-        netDrain.subtract(inPerTick);
-
-        if (netDrain.isZero() || netDrain.isNegative()) {
-            return "§a∞ (Charging)";
-        }
-
-        try {
-            long drainLong = netDrain.toLong();
-            if (drainLong <= 0) return "§a∞";
-            long energyLong = energy.toLong();
-            long ticks = energyLong / drainLong;
-            return formatTickDuration(ticks);
-        } catch (Exception e) {
-            java.math.BigInteger energyBig = energy.toBigInteger();
-            java.math.BigInteger drainBig = netDrain.toBigInteger();
-            if (drainBig.signum() <= 0) return "§a∞";
-            java.math.BigInteger ticks = energyBig.divide(drainBig);
-            long ticksLong = ticks.min(java.math.BigInteger.valueOf(Long.MAX_VALUE)).longValue();
-            return formatTickDuration(ticksLong);
-        }
+    private String calculateTimeToEmpty(java.math.BigInteger energy, Int128 inPerTick, Int128 outPerTick) {
+        if (energy.signum() == 0) return "§c0s (EMPTY)";
+        var drain = outPerTick.toBigInteger().subtract(inPerTick.toBigInteger());
+        if (drain.signum() <= 0) return "§a∞ (Charging)";
+        return formatTickDuration(energy.divide(drain).min(java.math.BigInteger.valueOf(Long.MAX_VALUE)).longValue());
     }
 
     private String formatTickDuration(long ticks) {

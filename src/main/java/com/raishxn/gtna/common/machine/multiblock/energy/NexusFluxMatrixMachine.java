@@ -49,6 +49,7 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
     private int maxTier = 1;
     private Int128 transferLimit = Int128.ZERO();
     private double efficiency = 0.85;
+    private boolean unlimited;
 
     private final List<NexusEnergyNetwork.ConnectionInfo> cachedConnections = new ArrayList<>();
 
@@ -72,6 +73,7 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
             network.setMaxCapacity(getOwnerUUID(), maxCapacity);
             network.setMatrixStats(getOwnerUUID(), totalCapacitors, averageTier, efficiency, transferLimit, true);
             network.setMatrixDimension(getOwnerUUID(), serverLevel.dimension());
+            network.setUnlimited(getOwnerUUID(), unlimited);
         }
     }
 
@@ -84,6 +86,7 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
             network.setMatrixDimension(getOwnerUUID(), null);
         }
         super.onStructureInvalid();
+        unlimited = false;
         totalCapacitors = 0;
         sumCapacities = Int128.ZERO();
         sumTiers = 0;
@@ -100,27 +103,21 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         sumTiers = 0;
         maxTier = 1;
 
+        unlimited = false;
         if (getLevel() != null) {
-            BlockPos startPos = getPos();
-            for (int x = -16; x <= 16; x++) {
-                for (int y = -16; y <= 35; y++) {
-                    for (int z = -16; z <= 16; z++) {
-                        BlockPos pos = startPos.offset(x, y, z);
-                        BlockState blockState = getLevel().getBlockState(pos);
-                        if (blockState.getBlock() instanceof NexusCapacitorBlock capacitor) {
-                            totalCapacitors++;
-                            long configuredCapacity = GTNABalance
-                                    .getNexusCapacitorCapacity(capacitor.getTier(), capacitor.getUnitCapacity());
-                            sumCapacities.add(new Int128(configuredCapacity));
-                            sumTiers += capacitor.getTier();
-                            if (capacitor.getTier() > maxTier) {
-                                maxTier = capacitor.getTier();
-                            }
-                        }
-                    }
+            for (BlockPos pos : getMultiblockState().getCache()) {
+                BlockState blockState = getLevel().getBlockState(pos);
+                if (blockState.getBlock() instanceof NexusCapacitorBlock capacitor) {
+                    totalCapacitors++;
+                    long capacity = GTNABalance.getNexusCapacitorCapacity(capacitor.getTier(),
+                            capacitor.getUnitCapacity());
+                    sumCapacities.add(new Int128(capacity));
+                    sumTiers += capacitor.getTier();
+                    maxTier = Math.max(maxTier, capacitor.getTier());
                 }
             }
         }
+        unlimited = totalCapacitors == 750 && sumTiers == 750 * GTValues.MAX;
 
         if (totalCapacitors <= 0) {
             maxCapacity = Int128.ZERO();
@@ -153,6 +150,14 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         transferLimit = Int128.fromString(
                 GTNABalance.getNexusTransferLimit(averageTier, Long.toString(fallbackTransfer)),
                 new Int128(fallbackTransfer));
+        if (unlimited) {
+            maxCapacity = Int128.MAX_VALUE.copy();
+            transferLimit = Int128.MAX_VALUE.copy();
+        }
+    }
+
+    public boolean isUnlimited() {
+        return unlimited;
     }
 
     public Int128 getMaxCapacity() {
@@ -219,15 +224,15 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         textList.add(Component.literal("\u00a7b\u00a7lNexus Flux Matrix"));
         textList.add(Component.literal("\u00a78--------------------------------"));
         textList.add(Component.literal("\u00a77Capacitors: \u00a7a" + totalCapacitors));
-        textList.add(Component.literal("\u00a77Max Capacity: \u00a7e" + maxCapacity.toHumanReadableString() + " EU"));
+        textList.add(com.raishxn.gtna.common.item.NexusNetworkDisplay.capacity(unlimited, maxCapacity));
 
         String tierName = GTValues.VN[Math.min(averageTier, GTValues.VN.length - 1)];
         textList.add(
                 Component.literal("\u00a77Average Tier: \u00a7e" + tierName + " \u00a77(Tier " + averageTier + ")"));
         textList.add(Component.literal("\u00a77Efficiency: \u00a7d" +
                 String.format(Locale.US, "%.1f", efficiency * 100) + "%"));
-        textList.add(Component.literal("\u00a77Transfer Limit: \u00a76" +
-                transferLimit.toHumanReadableString() + " EU/t"));
+        textList.add(com.raishxn.gtna.common.item.NexusNetworkDisplay.transfer(unlimited, transferLimit));
+        if (unlimited) textList.add(Component.translatable("gtna.nexus.unlimited"));
 
         boolean crossDim = GTNABalance.isNexusCrossDimensionEnabled(averageTier);
         textList.add(Component.literal("\u00a77Cross-Dim: " +
@@ -248,7 +253,7 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         textList.add(Component.literal("\u00a77Status: \u00a7aONLINE"));
 
         double fill = 0.0;
-        if (!maxCap.isZero()) {
+        if (!unlimited && !maxCap.isZero()) {
             try {
                 fill = energy.toBigInteger().doubleValue() / maxCap.toBigInteger().doubleValue();
             } catch (Exception ignored) {
@@ -264,14 +269,15 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
         }
         bar.append("\u00a7b]");
 
-        textList.add(Component.literal(bar + " \u00a7f" + String.format(Locale.US, "%.1f%%", fill * 100.0)));
-        textList.add(Component.literal("\u00a77Energy: \u00a7f" + energy.toHumanReadableString() + " / " +
-                maxCap.toHumanReadableString() + " EU"));
+        if (!unlimited)
+            textList.add(Component.literal(bar + " \u00a7f" + String.format(Locale.US, "%.1f%%", fill * 100.0)));
+        textList.add(com.raishxn.gtna.common.item.NexusNetworkDisplay.energy(network, getOwnerUUID()));
         textList.add(Component.literal("\u00a77Gross Input: \u00a7f+" +
                 rawInPerTick.toHumanReadableString() + " EU/t"));
         textList.add(Component.literal("\u00a7aCredited Input: +" + inPerTick.toHumanReadableString() + " EU/t"));
         textList.add(Component.literal("\u00a7cEffective Loss: -" + lossPerTick.toHumanReadableString() + " EU/t"));
         textList.add(Component.literal("\u00a7cOutput: -" + outPerTick.toHumanReadableString() + " EU/t"));
+        com.raishxn.gtna.common.item.NexusDirectDebitDisplay.append(textList, network, getOwnerUUID());
 
         Map<GlobalPos, NexusEnergyNetwork.ConnectionInfo> connections = network.getConnections(getOwnerUUID());
         cachedConnections.clear();
@@ -290,7 +296,9 @@ public class NexusFluxMatrixMachine extends WorkableMultiblockMachine implements
             String dimension = info.pos.dimension().location().toString();
 
             textList.add(Component.literal(directionColor + directionLabel + " \u00a7f" + info.amperage + "A " +
-                    connectionTier + " " + info.machineType + " \u00a77" + amount + " EU/t")
+                    connectionTier + " ")
+                    .append(com.raishxn.gtna.common.item.NexusNetworkDisplay.machineName(info.machineType))
+                    .append(Component.literal("\u00a77 " + amount + " EU/t"))
                     .withStyle(style -> style
                             .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                     Component.literal("\u00a7ePos: " + pos + "\n\u00a77Dim: " + dimension +

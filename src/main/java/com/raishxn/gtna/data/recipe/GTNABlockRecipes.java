@@ -21,7 +21,6 @@ import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.common.data.GTNABlocks;
 import com.raishxn.gtna.common.data.GTNAItems;
-import com.raishxn.gtna.common.data.GTNAMachines;
 import com.raishxn.gtna.common.data.GTNAMaterials;
 import com.raishxn.gtna.common.data.GTNARecipeType;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -177,7 +176,7 @@ public class GTNABlockRecipes {
         // Circuito 4: Basalt (com Blue Ice - Não Consumido)
         GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_basalt_gen")
                 .circuitMeta(4)
-                .chancedInput(Items.BLUE_ICE.getDefaultInstance(), 0, 0)
+                .notConsumable(Items.BLUE_ICE)
                 .outputItems(Items.BASALT)
                 .duration(40)
                 .EUt(30)
@@ -186,7 +185,7 @@ public class GTNABlockRecipes {
         // Circuito 5: Cobbled Deepslate (com Magma Block - Não Consumido)
         GTRecipeTypes.ROCK_BREAKER_RECIPES.recipeBuilder("steam_deepslate_gen")
                 .circuitMeta(5)
-                .chancedInput(Items.MAGMA_BLOCK.getDefaultInstance(), 0, 0)
+                .notConsumable(Items.MAGMA_BLOCK)
                 .outputItems(Items.COBBLED_DEEPSLATE)
                 .duration(40)
                 .EUt(30)
@@ -317,7 +316,7 @@ public class GTNABlockRecipes {
                 .save(provider);
 
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_high_strength_concrete")
-                .inputItems(Blocks.REINFORCED_DEEPSLATE)
+                .inputItems(Blocks.REINFORCED_DEEPSLATE.asItem())
                 .inputItems(TagPrefix.plate, GTMaterials.Steel, 2)
                 .inputItems(TagPrefix.dust, GTMaterials.Concrete, 4)
                 .inputFluids(GTMaterials.Concrete.getFluid(576))
@@ -618,69 +617,6 @@ public class GTNABlockRecipes {
                         .CWUt(1024)
                         .EUt(125829120))
                 .save(provider);
-
-        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_dimensional_bridge_casing")
-                .inputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.asItem())
-                .inputItems(GTNABlocks.DIMENSION_INJECTION_CASING.asItem(), 2)
-                .inputItems(GTItems.FIELD_GENERATOR_UIV, 2)
-                .inputItems(GTItems.EMITTER_UIV, 2)
-                .inputItems(CustomTags.UIV_CIRCUITS, 2)
-                .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 8)
-                .inputItems(TagPrefix.plateDouble, GTMaterials.NaquadahAlloy, 8)
-                .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
-                .inputFluids(GTMaterials.Europium.getFluid(2304))
-                .inputFluids(GTMaterials.Naquadria.getFluid(2304))
-                .outputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.asItem())
-                .EUt(503316480)
-                .duration(800)
-                .stationResearch(b -> b
-                        .researchStack(GTNABlocks.DIMENSION_INJECTION_CASING.asStack())
-                        .CWUt(2048)
-                        .EUt(503316480))
-                .save(provider);
-
-        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_dimensional_stability_casing")
-                .inputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.asItem())
-                .inputItems(GTNABlocks.DYSON_CONTROL_CASING.asItem(), 2)
-                .inputItems(GTNABlocks.DYSON_CONTROL_TOROID.asItem(), 2)
-                .inputItems(GTItems.FIELD_GENERATOR_UXV, 2)
-                .inputItems(GTItems.ELECTRIC_PUMP_UXV, 2)
-                .inputItems(CustomTags.UXV_CIRCUITS, 2)
-                .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 8)
-                .inputFluids(GTMaterials.SolderingAlloy.getFluid(2304))
-                .inputFluids(GTMaterials.Europium.getFluid(2304))
-                .inputFluids(GTMaterials.Neutronium.getFluid(2304))
-                .outputItems(GTNABlocks.DIMENSIONAL_STABILITY_CASING.asItem())
-                .EUt(2013265920)
-                .duration(1000)
-                .stationResearch(b -> b
-                        .researchStack(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.asStack())
-                        .CWUt(4096)
-                        .EUt(2013265920))
-                .save(provider);
-
-        if (GTNAMachines.ARTIFICIAL_STAR != null) {
-            GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder("gtna_spacetime_compression_field_generator")
-                    .inputItems(GTNABlocks.DIMENSIONALLY_TRANSCENDENT_CASING.asItem())
-                    .inputItems(GTNABlocks.DIMENSIONAL_STABILITY_CASING.asItem())
-                    .inputItems(GTNABlocks.DIMENSIONAL_BRIDGE_CASING.asItem())
-                    .inputItems(GTNABlocks.ANNIHILATE_CORE.asItem())
-                    .inputItems(GTNAMachines.ARTIFICIAL_STAR.asStack().getItem())
-                    .inputItems(GTItems.FIELD_GENERATOR_OpV, 2)
-                    .inputItems(CustomTags.OpV_CIRCUITS, 2)
-                    .inputItems(TagPrefix.plateDouble, GTMaterials.Neutronium, 8)
-                    .inputFluids(GTMaterials.SolderingAlloy.getFluid(4608))
-                    .inputFluids(GTMaterials.Europium.getFluid(4608))
-                    .inputFluids(GTMaterials.Naquadria.getFluid(4608))
-                    .outputItems(GTNABlocks.SPACETIME_COMPRESSION_FIELD_GENERATOR.asItem())
-                    .EUt(8053063680L)
-                    .duration(1200)
-                    .stationResearch(b -> b
-                            .researchStack(GTNABlocks.DIMENSIONAL_STABILITY_CASING.asStack())
-                            .CWUt(8192)
-                            .EUt(8053063680L))
-                    .save(provider);
-        }
     }
 
     @SuppressWarnings("unchecked")

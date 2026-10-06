@@ -1,0 +1,9 @@
+{
+  "tier": 1,
+  "prerequisites": [ "example:steam/bronze_age" ],
+  "trigger": { "type": "obtain_item", "item": "gtceu:steel_ingot" },
+  "grants": [
+    { "type": "flag", "id": "example:steel_age" },
+    { "type": "recipe_condition", "recipes": [ "gtceu:electric_blast_furnace/blast_aluminium" ] }
+  ]
+}

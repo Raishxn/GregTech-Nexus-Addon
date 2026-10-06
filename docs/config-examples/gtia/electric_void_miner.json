@@ -1,0 +1,29 @@
+{
+  "enabled": true,
+  "minimumTier": "EV",
+  "programRequired": true,
+  "baseDuration": 200,
+  "baseEUt": 2048,
+  "defaultDrillingFluidPerOperation": 1000,
+  "maxDrillingFluidPerOperation": 100000,
+  "maxOutputStacksPerOperation": 16,
+  "parallelEnabledFromTier": "IV",
+  "maxParallelByTier": {
+    "EV": 1,
+    "IV": 1024,
+    "LuV": 1024,
+    "ZPM": 1024,
+    "UV": 1024,
+    "UHV": 1024,
+    "UEV": 1024,
+    "UIV": 1024,
+    "UXV": 1024,
+    "OpV": 1024,
+    "MAX": 1024
+  },
+  "allowFixedFallbackRecipe": false,
+  "maxRandomOutputStacksPerOperation": 216,
+  "randomDrillingFluidPerOperation": 10000,
+  "randomDuration": 600,
+  "incubationDuration": 1200
+}

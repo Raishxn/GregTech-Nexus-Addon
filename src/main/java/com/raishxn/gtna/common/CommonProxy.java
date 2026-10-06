@@ -32,12 +32,17 @@ import com.raishxn.gtna.client.renderer.machine.BallHatchRenderer;
 import com.raishxn.gtna.client.renderer.machine.EyeOfHarmonyRenderer;
 import com.raishxn.gtna.client.renderer.machine.EyeOfWoodRenderer;
 import com.raishxn.gtna.common.data.*;
+import com.raishxn.gtna.common.world.personalspace.PersonalSpaceChunkGenerators;
+import com.raishxn.gtna.common.world.personalspace.PersonalSpaceConfig;
+import com.raishxn.gtna.common.world.personalspace.PersonalSpaceEvents;
+import com.raishxn.gtna.common.world.personalspace.PersonalSpacePortalRegistry;
 import com.raishxn.gtna.data.GTNALangProvider;
 import com.raishxn.gtna.data.recipe.GTNARecipeConditions;
 import com.raishxn.gtna.gametest.GTNAGameTestReport;
 import com.raishxn.gtna.integration.kubejs.GTNAKubeJSSubPatternLoader;
 import com.raishxn.gtna.network.GTNANetworkHandler;
 import com.raishxn.gtna.network.packet.SKubeModuleDescriptions;
+import com.raishxn.gtna.research.KnowledgeEvents;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -48,6 +53,8 @@ public class CommonProxy {
     public CommonProxy() {
         CommonProxy.init();
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        PersonalSpaceChunkGenerators.register(eventBus);
+        PersonalSpacePortalRegistry.register(eventBus);
         REGISTRATE.registerEventListeners(eventBus);
         eventBus.addListener(this::clientSetup);
         eventBus.addListener(this::registerAdditionalModels);
@@ -59,8 +66,12 @@ public class CommonProxy {
         eventBus.addGenericListener(GTRecipeType.class, this::registerRecipeTypes);
         eventBus.addGenericListener(MachineDefinition.class, this::registerMachines);
         eventBus.addListener(this::gatherData);
+        MinecraftForge.EVENT_BUS.addListener(EyeOfHarmonyLegacyMappings::remap);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
+        PersonalSpaceConfig.load();
+        PersonalSpaceEvents.register();
         MinecraftForge.EVENT_BUS.addListener(this::playerLoggedIn);
+        KnowledgeEvents.register(MinecraftForge.EVENT_BUS);
     }
 
     public static void init() {
@@ -88,6 +99,9 @@ public class CommonProxy {
      */
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(GTNANetworkHandler::init);
+        if (ModList.get().isLoaded("ftbquests")) {
+            event.enqueueWork(com.raishxn.gtna.integration.ftb.GTNAQuestTypes::init);
+        }
     }
 
     public void gatherData(GatherDataEvent event) {

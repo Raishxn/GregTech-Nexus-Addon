@@ -52,37 +52,55 @@ public class NexusLinkerItem extends Item {
                             Component.translatable("gtna.message.linker.copied").withStyle(ChatFormatting.GREEN), true);
                     return InteractionResult.SUCCESS;
                 }
-            } else if (machine instanceof WirelessEnergyHatchPartMachine energyHatch) {
-                if (player.isShiftKeyDown()) {
-                    energyHatch.setNetworkOwner(null);
-                    player.displayClientMessage(Component.translatable("gtna.message.linker.unbound", "Energy Hatch")
-                            .withStyle(ChatFormatting.YELLOW), true);
-                    return InteractionResult.SUCCESS;
+            } else
+                if (machine instanceof com.raishxn.gtna.common.machine.multiblock.part.energy.NexusNetworkTerminalPartMachine terminal) {
+                    if (player.isShiftKeyDown()) {
+                        terminal.setNetworkOwner(null);
+                        player.displayClientMessage(Component.translatable("gtna.network_terminal.unbound"), true);
+                        return InteractionResult.SUCCESS;
+                    }
+                    CompoundTag tag = stack.getTag();
+                    if (tag != null && tag.hasUUID("NetworkID")) {
+                        terminal.setNetworkOwner(tag.getUUID("NetworkID"));
+                        player.displayClientMessage(
+                                Component.translatable("gtna.message.linker.linked", "Network Terminal"), true);
+                        return InteractionResult.SUCCESS;
+                    }
+                } else if (machine instanceof WirelessEnergyHatchPartMachine energyHatch) {
+                    if (player.isShiftKeyDown()) {
+                        energyHatch.setNetworkOwner(null);
+                        player.displayClientMessage(
+                                Component.translatable("gtna.message.linker.unbound", "Energy Hatch")
+                                        .withStyle(ChatFormatting.YELLOW),
+                                true);
+                        return InteractionResult.SUCCESS;
+                    }
+                    CompoundTag tag = stack.getTag();
+                    if (tag != null && tag.hasUUID("NetworkID")) {
+                        UUID netId = tag.getUUID("NetworkID");
+                        energyHatch.setNetworkOwner(netId);
+                        player.displayClientMessage(Component.translatable("gtna.message.linker.linked", "Energy Hatch")
+                                .withStyle(ChatFormatting.AQUA), true);
+                        return InteractionResult.SUCCESS;
+                    }
+                } else if (machine instanceof WirelessDynamoHatchPartMachine dynamoHatch) {
+                    if (player.isShiftKeyDown()) {
+                        dynamoHatch.setNetworkOwner(null);
+                        player.displayClientMessage(
+                                Component.translatable("gtna.message.linker.unbound", "Dynamo Hatch")
+                                        .withStyle(ChatFormatting.YELLOW),
+                                true);
+                        return InteractionResult.SUCCESS;
+                    }
+                    CompoundTag tag = stack.getTag();
+                    if (tag != null && tag.hasUUID("NetworkID")) {
+                        UUID netId = tag.getUUID("NetworkID");
+                        dynamoHatch.setNetworkOwner(netId);
+                        player.displayClientMessage(Component.translatable("gtna.message.linker.linked", "Dynamo Hatch")
+                                .withStyle(ChatFormatting.AQUA), true);
+                        return InteractionResult.SUCCESS;
+                    }
                 }
-                CompoundTag tag = stack.getTag();
-                if (tag != null && tag.hasUUID("NetworkID")) {
-                    UUID netId = tag.getUUID("NetworkID");
-                    energyHatch.setNetworkOwner(netId);
-                    player.displayClientMessage(Component.translatable("gtna.message.linker.linked", "Energy Hatch")
-                            .withStyle(ChatFormatting.AQUA), true);
-                    return InteractionResult.SUCCESS;
-                }
-            } else if (machine instanceof WirelessDynamoHatchPartMachine dynamoHatch) {
-                if (player.isShiftKeyDown()) {
-                    dynamoHatch.setNetworkOwner(null);
-                    player.displayClientMessage(Component.translatable("gtna.message.linker.unbound", "Dynamo Hatch")
-                            .withStyle(ChatFormatting.YELLOW), true);
-                    return InteractionResult.SUCCESS;
-                }
-                CompoundTag tag = stack.getTag();
-                if (tag != null && tag.hasUUID("NetworkID")) {
-                    UUID netId = tag.getUUID("NetworkID");
-                    dynamoHatch.setNetworkOwner(netId);
-                    player.displayClientMessage(Component.translatable("gtna.message.linker.linked", "Dynamo Hatch")
-                            .withStyle(ChatFormatting.AQUA), true);
-                    return InteractionResult.SUCCESS;
-                }
-            }
         }
 
         return InteractionResult.PASS;

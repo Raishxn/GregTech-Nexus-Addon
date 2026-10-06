@@ -393,12 +393,15 @@ public class GTNAItemRecipes {
                     .save(provider);
         }
 
-        if (GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER != null && GTNAMachines2.ME_PATTERN_BUFFER != null) {
+        if (GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER != null && GTNAMachines2.ME_PATTERN_BUFFER != null &&
+                GTNARecipeItems.present("expatternprovider:ex_pattern_provider", "expatternprovider:ex_interface")) {
             GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_me_advanced_pattern_buffer")
                     .inputItems(GTNAMachines2.ME_PATTERN_BUFFER.asStack())
                     .inputItems(GTNAItems.PATTERN_BUFFER_UPGRADE_32.get())
-                    .inputItems("expatternprovider:ex_pattern_provider", 3)
-                    .inputItems("expatternprovider:ex_interface", 3)
+                    .inputItems(
+                            BuiltInRegistries.ITEM.get(ResourceLocation.parse("expatternprovider:ex_pattern_provider")),
+                            3)
+                    .inputItems(BuiltInRegistries.ITEM.get(ResourceLocation.parse("expatternprovider:ex_interface")), 3)
                     .inputItems(AEItems.SPEED_CARD.asItem(), 4)
                     .inputItems(AEItems.CAPACITY_CARD.asItem(), 4)
                     .inputItems(CustomTags.ZPM_CIRCUITS, 4)
@@ -411,13 +414,16 @@ public class GTNAItemRecipes {
                     .save(provider);
         }
 
-        if (GTNAMachines2.ME_ULTIMATE_PATTERN_BUFFER != null && GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER != null) {
+        if (GTNAMachines2.ME_ULTIMATE_PATTERN_BUFFER != null && GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER != null &&
+                GTNARecipeItems.present("expatternprovider:ex_pattern_provider", "expatternprovider:ex_interface")) {
             GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_me_ultimate_pattern_buffer")
                     .inputItems(GTNAMachines2.ME_ADVANCED_PATTERN_BUFFER.asStack())
                     .inputItems(GTNAItems.PATTERN_BUFFER_UPGRADE_72.get())
-                    .inputItems("expatternprovider:ex_pattern_provider", 4)
-                    .inputItems("expatternprovider:ex_interface", 4)
-                    .inputItems("ae2:quantum_ring", 4)
+                    .inputItems(
+                            BuiltInRegistries.ITEM.get(ResourceLocation.parse("expatternprovider:ex_pattern_provider")),
+                            4)
+                    .inputItems(BuiltInRegistries.ITEM.get(ResourceLocation.parse("expatternprovider:ex_interface")), 4)
+                    .inputItems(BuiltInRegistries.ITEM.get(ResourceLocation.parse("ae2:quantum_ring")), 4)
                     .inputItems(AEItems.SPEED_CARD.asItem(), 8)
                     .inputItems(AEItems.CAPACITY_CARD.asItem(), 8)
                     .inputItems(CustomTags.UV_CIRCUITS, 4)
@@ -430,14 +436,17 @@ public class GTNAItemRecipes {
                     .save(provider);
         }
 
-        if (GTNAMachines2.ME_PATTERN_BUFFER != null && GTNAMachines2.ME_CRAFT_PATTERN_HATCH != null) {
+        if (GTNAMachines2.ME_PATTERN_BUFFER != null && GTNAMachines2.ME_CRAFT_PATTERN_HATCH != null && GTNARecipeItems
+                .present("expatternprovider:assembler_matrix_crafter", "expatternprovider:assembler_matrix_speed")) {
             GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder("gtna_me_craft_pattern_hatch")
                     .inputItems(GTNAMachines2.ME_PATTERN_BUFFER.asStack())
                     .inputItems(GTItems.ROBOT_ARM_ZPM.get())
                     .inputItems(GTItems.SENSOR_ZPM.get())
                     .inputItems(GTItems.TOOL_DATA_ORB.get())
-                    .inputItems("expatternprovider:assembler_matrix_crafter", 2)
-                    .inputItems("expatternprovider:assembler_matrix_speed", 2)
+                    .inputItems(BuiltInRegistries.ITEM
+                            .get(ResourceLocation.parse("expatternprovider:assembler_matrix_crafter")), 2)
+                    .inputItems(BuiltInRegistries.ITEM
+                            .get(ResourceLocation.parse("expatternprovider:assembler_matrix_speed")), 2)
                     .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
                     .outputItems(GTNAMachines2.ME_CRAFT_PATTERN_HATCH.asStack())
                     .duration(400)

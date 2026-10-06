@@ -32,6 +32,7 @@ public final class GTNAGameTestReport {
                 @Override
                 public void onTestFailed(GameTestInfo test) {
                     log.onTestFailed(test);
+                    GTNACORE.LOGGER.error("GameTest {} failed", test.getTestName(), test.getError());
                     junit.onTestFailed(test);
                 }
 

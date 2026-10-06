@@ -31,6 +31,244 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
+> **Personal Space / port do DimensionConfig, editor e céu (G-0175):** configurações completas do
+> original (visual, worldgen, preset `|B|G|S|C`, nomes 1.7.10), gerador lendo a configuração viva
+> (mudança liberada por `/pspace allow-worldgen-change` só afeta chunks novos), modo S, void em y=128,
+> portal/relink/item do original, `/pspace` completo, editor GUI portado com widgets.png original,
+> tempo/clima próprios por dimensão, cor do céu/estrelas/nuvens. Gate PASS 195 GameTests. QA no
+> cliente pendente (GUI, céu, reinício).
+
+> **Personal Space / portal provisório (G-0174):** bloco e item próprios conectam
+> as dimensões; primeiro uso cria mundo, retorno é colocado na plataforma e o
+> item preserva o ID ao quebrar. Agachar alterna entre quatro presets antes da
+> criação. Editor GTNH completo, visuais, alteração de worldgen e QA no cliente
+> ainda faltam. Gate final `spotlessCheck compileJava runUnitTests runGameTestServer
+> runData --offline` PASS, com 193 GameTests e verificação do drop real do portal.
+
+> **Personal Space / núcleo inicial (G-0173):** geração de camadas planas e ruas
+> do original, dimensão dinâmica por ID, configurações persistidas e comandos de
+> operador implementados localmente. 192 GameTests passaram, inclusive criação de
+> dimensão e chunk de rua. Ainda faltam portal, editor, alteração autorizada do
+> worldgen, visuais, reinício real e QA de cliente. Infiniverse virou dependência
+> obrigatória; não instalar jar/publicar antes do QA do autor.
+
+> **EOH / auditoria de progressão (G-0172):** dependências de fabricação verificadas
+> contra revisão GTNH congelada, inventário material e comparação GTCEu/GTNA. Documento
+> propõe rota BEC integral ou adaptação Crude independente, nomes/substituições e planetas.
+> Não implementa receitas ou materiais; fechamento recursivo dos mods externos pendente
+> se escolhido port BEC. Gate PASS 30 classes / 190 GameTests.
+
+> **Personal Space / PDim (G-0171):** autor pediu port fiel ao GTNH, com destaque
+> para mundo plano editável e ruas. Referência PersonalSpace 1.7.10 no commit
+> `a292401e0a067e37e7e02abee8bd48b58a6e1571` auditada; contrato e diferenças
+> técnicas para Forge 1.20.1 em `docs/roadmap/personal-space-port.md`.
+> Nenhuma parte da dimensão foi implementada ou validada no cliente ainda.
+
+> **Wireless / acabamento e Matrix ilimitada (G-0170):** nomes EN/PT emitidos pelo
+> addon e traduzidos nas conexões; casing/overlay animados originais GTLAdditions,
+> origem/licença/hashes documentados. Matrix com 750 capacitores internos todos MAX
+> tem armazenamento BigInteger sem teto e limite de rede ∞; saldo real depositado
+> permanece finito. Formação real, downgrade, invalidação e reload testados.
+> Gate PASS 30 classes / 186 GameTests; QA visual permanece manual.
+
+> **Port wireless GTLAdditions (G-0169):** dois terminais de rede Nexus registrados,
+> entrada/saída energy+laser, vínculo persistente por Data Stick/Nexus Linker e receitas
+> adaptadas. Sem buffer/segunda rede; mantém capacity, dimensão, matrix e perdas.
+> Um terminal aceita a receita Infinity real com modifier do Star. Somatórias/vistas
+> long protegidas inclusive com múltiplos parts. Gate PASS 30 classes / 179 GameTests;
+> formação física de 109 slices e QA visual continuam manuais.
+
+> **EOH / página única e rebalanceamento (G-0167):** EMI registra uma receita com
+> catálogo completo indexado, preview único até 81 itens/18 fluidos e warning de
+> omitidos. Circuito usa débito base × (k+1)²; tempo mantém 2^-k e piso de um tick.
+> Artificial Star gera 16× por combustível e permite até 16 dynamos, suficientes
+> para Infinity base com 16 MAX 1.048.576A. Gate final/QA no checkpoint abaixo.
+
+> **EOH / operação normal e hatches preservados (G-0166):** Replace conserva os
+> IMultiParts instalados e seus dados, inclusive com No Hatch/Demolition. Aceleração
+> dev de 600× removida; circuito 0–24 e tiers verificados. Controller distingue gás
+> consumido no ciclo e reserva seguinte; Quantum Terminal/Flux Matrix mostram última
+> retirada direta com valor exato na tooltip. Gate completo PASS: 30 classes / 173
+> GameTests. Cliente novo iniciado com EMI, sem FastQA; conferência visual pendente.
+
+> **EOH / QA de grades, unidades e preview (G-0165):** grades EMI separadas
+> (até 9×9 itens + 9×2 fluidos), aviso sempre presente e quantidade após ícone.
+> Plasmas de ciclos novos: 8 milhões de baldes, 8 bilhões mB, exibidos 8MB;
+> energia do programa e planos já pagos preservados. Height global 1024 desfeito,
+> hook opcional aumenta apenas aba EOH e restaura normal ao trocar para preview.
+> Compilação/contrato EMI e 172 GameTests PASS; gate completo e QA abaixo.
+
+> **EOH / formato vertical de referência (G-0164):** autor pediu grade grande acima
+> dos dados, como a captura GTNH, substituindo as duas colunas de G-0163. EMI agora
+> tem planeta central no topo, 9 colunas × até 11 linhas e dados abaixo; altura do
+> rodapé medida pelas traduções. Limite local EMI aumentado de 256 para 1024 pixels
+> GUI, respeitando tela/escala. Cliente vertical iniciado após gate; QA pendente.
+
+> **EOH / painel ampliado e teste rápido (G-0163):** autor rejeitou o tamanho do EMI
+> e a apresentação do controlador. EMI agora 360 pixels GUI com produtos e dados
+> em colunas separadas. Controller maior, resumo fixo de estado/progresso/tempo
+> restante/chance/rendimento; EU abreviado com valor exato na tooltip. Perfil dev
+> `-PeohFastQA` avança ciclos novos/existentes em 600× (base: ~30 s a 20 TPS), sem
+> alterar custos/produtos. Aparência ainda aguarda conferência do autor.
+
+> **Retomada / QA (G-0162):** log do cliente corrigido mostra Artificial Star em 618 ms
+> e atividade do servidor depois, sem confirmação visual do autor. Erro assíncrono
+> de BlockState null durante construção permanece pendente; possível concorrência
+> no estado compartilhado do pattern. Gate de retomada PASS, 171 GameTests.
+> Novo cliente com EMI iniciado a pedido do autor em 05/10; QA ainda pendente.
+
+> **Travamento do Nexus Terminal / Artificial Star (G-0161):** duas capturas do cliente
+> mostraram checks GTCEu disparados pelo replay de snapshots Forge após useOn; construção
+> havia terminado em 1882 ms. Refresh movido para END do tick, guard cobre notificações
+> tardias e libera checks normais depois; remoção do controller continua imediata.
+> Espaços ignorados pulados antes de acesso ao mundo, seleções não limitadas em cache
+> por operação. Gate 30 classes / 171 GameTests PASS. Desempenho no Artificial Star
+> precisa de teste no cliente reiniciado; colocação ainda síncrona. Nenhum kill do cliente.
+
+
+> **Correção visual EMI (G-0160):** textos de informação pretos, aviso vermelho,
+> quantidades compactas por ícone e setas internas conforme a altura real do painel.
+> A versão G-0159 truncava a área visível (18/97 numa única página) embora indexasse
+> o catálogo completo; essa apresentação foi rejeitada pelo autor. Reflow agora mantém
+> acesso a todos os produtos. Gate 30 classes / 171 GameTests PASS; QA visual pendente.
+
+
+> **EOH / portas ME, viewer e terminal (G-0159):** controlador usa Spatial Casing;
+> cinco portas exclusivamente ME (entradas de buffer finito; stocking/crafting/duais
+> recusados), mesmo filtro no preview/construtor. Entrega ME em lotes grandes preserva
+> long e orçamento por tick. Terminal inicia centralizado; Battery mostra capacitores
+> PSS registrados, sem Battery Buffers. Viewer próprio EMI opcional e JEI compartilham
+> catálogo, grade adaptável até 99 produtos, Spacetime Tier por nome, prefixos EU,
+> Recipe Energy Efficiency e aviso de saídas fora da página. Tooltip mantém cores ao
+> paginar/quebrar linhas. Gate **30 classes / 171 GameTests**, datagen PASS. Cliente
+> com EMI iniciado para QA visual do autor. Nenhuma nova HUD Jade, fabricação ou publicação.
+
+
+> **Correções do QA do autor (G-0158):** três casings EOH agora usam as texturas específicas
+> do BlockGTCasingsBA0 GTNH (o import inicial usava incorretamente BlockGTCasingsTT).
+> Terminal abre somente controles; botão Blocos por tier → Selecionar abre categorias,
+> e clicar numa categoria abre a grade. Painéis fecham com ×; vidro/iluminação excluídos,
+> inclusive da aplicação de escolhas antigas. Gate final **30 classes / 171 GameTests**,
+> datagen PASS. QA visual do novo fluxo e texturas permanece manual. Tudo local.
+
+
+> **EOH apresentação / Nexus Terminal (G-0157):** frente dedicada com overlays importados;
+> renderer acompanha o ciclo planetário, com estrela central e um Overworld em órbita.
+> Manual aparece naturalmente ao passar o mouse; Z avança sem Shift. Nexus Terminal
+> roxo/preto em três painéis (controles, categorias, tiers), escolhas compatíveis por ID
+> com leitura do NBT antigo; Mirror e Demolition agora atuam na construção. Três aliases
+> de blocos duplicados removidos com remapeamento para saves. Gate: **30 classes unitárias /
+> 171 GameTests**, datagen PASS. Aparência, rede AE real e migração de save antigo ainda
+> precisam de QA do autor; roteiros `nexus-terminal-advanced-manual-test.md` e
+> `eye-of-harmony-visual-cleanup-manual-test.md`. Sem novas receitas, commit/push/publicação.
+
+
+> **Eye of Harmony / JEI e manual (G-0156):** categoria própria JEI usa o mesmo catálogo
+> Overworld da operação, grade 9 × 6 paginada com todos os produtos, quantidade exata longa
+> na tooltip, gases, duração, tier e energia/chance base. Cosmos legado oculto apenas no JEI.
+> Tooltip Shift/Z em EN/PT paginada pela altura da tela explica as regras implementadas;
+> Astral Arrays/paralelos/outros planetas declarados pendentes. Gate: **30 unitários / 167
+> GameTests**, datagen confirmado. QA visual: `docs/roadmap/eye-of-harmony-viewer-manual-test.md`.
+> REI/EMI, demais planetas e invalidação do cache de operação em /reload continuam pendentes.
+> Sem novas receitas de fabricação, commit, push ou publicação.
+
+> **Eye of Harmony / Overworld integrado (G-0155):** slot de planeta, circuito 0–24, coleta
+> integral de gases, débito único, ciclo/resultado persistidos, entrega parcial e crédito Nexus
+> sem dupla perda. Plano calculado congelado; pausa ao desabilitar/desmontar, dono bloqueado.
+> Catálogo GTCEu moderno com adaptação declarada do fluxo/processamento GTNH; demais planetas
+> não operam ainda. Nova busca Cosmos desativada, ciclos antigos pagos terminam uma vez.
+> Gate: **30 classes unitárias / 166 GameTests**, datagen `written: 1` (textos EN atualizados).
+> QA manual de UI, relog/unload e drop/reposição: `docs/roadmap/eye-of-harmony-operation-manual-test.md`.
+> Viewer JEI substituído em G-0156; renderer ainda legado; EOH-05/06/07 seguintes. Sem fabricação nova ou publicação.
+
+> **Eye of Harmony / cálculo serial (G-0154; integrado em G-0155):** fórmulas GTNH isoladas em planos imutáveis,
+> com teste determinístico de circuito 0–24, gases/excesso, tiers, EU, sucesso/falha e pity.
+> Gate dessa base: 30 unitários/**158 GameTests**, datagen `written: 0`.
+> A integração que faltava foi implementada em G-0155; não usar a descrição histórica dessa
+> fase como estado atual do controlador. Fabricação continua adiada.
+
+> **Eye of Harmony / estrutura (G-0153):** novos casings e 27 campos ligados à estrutura;
+> tiers uniformes por família e independentes; exatamente cinco portas sem stocking/crafting/dual/energia.
+> Geometria 33³ coincide célula por célula com o GTNH. Gate: 29 unitários/**158 GameTests**, datagen `written: 0`.
+> Fabricação adiada pelo autor; sete materiais centrais registrados sem receitas automáticas.
+> Operação planetária implementada posteriormente em G-0155; Nova busca Cosmos desativada.
+> QA estrutural pendente: `docs/roadmap/eye-of-harmony-structure-manual-test.md`. Sem publicação.
+
+> **Eye of Harmony / conteúdo físico (G-0146):** 27 campos tierados, três casings, três
+> Planet Blocks e Astral Array registrados; 51 texturas/32 animações com proveniência e licenças.
+> Texturas dos blocos e do item aprovadas pelo autor em 04/10/2026; demais checks manuais pendentes.
+> Roteiro em `docs/roadmap/eye-of-harmony-content-manual-test.md`.
+> Componentes ainda sem fabricação/integração à operação fiel; próximos marcos EOH-02/03/04.
+> Mudanças locais, sem publicação.
+
+> **Relato do jogador / GTCEu 7.5.3 (G-0142):** corrigidos o display do Eye of Harmony
+> (String passada a DecimalFormat), 31 entradas de receita rejeitadas (blocos/IDs como texto),
+> dois catalisadores com chance inválida e o nome do refmap. Lava Maker/Superheater agora usam
+> circuitos 1/2 para evitar colisão. Gate: 28 unitários, **139/139 GameTests**, datagen `written: 0`,
+> jar com refmap configurado presente. Hatches restritos descartados no modo Normal são comportamento
+> intencional. Mudanças locais; QA manual e revisão de limites de entradas de receitas pendentes.
+
+> **Roadmaps públicos (G-0138):** GTNA tem roadmap/TODO atualizado em PT/EN/ES, com 14 tarefas
+> priorizadas; GTIA tem roadmap próprio no modpack, com 21 tarefas e critérios por etapa.
+> Conteúdo implementado, validação humana e propostas estão separados. Arquivos locais, sem publicação.
+
+> **QA do autor (G-0137):** minerador aceita Accelerate Hatch e paralelo IV+ acompanha o hatch
+> até teto configurável de 1.024; EV serial. Ritmo escolhido: preciso 10 s / aleatório 30 s /
+> cultura 60 s antes do overclock. Scanners LV–IV têm en_us; Jade aleatório resume pool/chances.
+> Novo lançador dev inclui GTIACore e perfil GTIA com Radon. Guia manual de petróleo/Radon:
+> `docs/roadmap/void-fluid-manual-test.md`. Gate final: **28 unitários/127 GameTests**, datagen
+> `written: 0`. Mudanças locais; conferência visual pelo autor ainda necessária.
+
+> **Extração marciana e equipes (G-0135):** perfil GTIA agora percorre depósito gerado normalmente
+> em Marte → extração nativa MV → registro → produção remota T2 na Terra. Corrigido escopo FTB:
+> `FTBOwner.getUUID()` era pessoal; agora usa `Team.getTeamId()` (equipe efetiva).
+> Teste FTB cobre compartilhamento/cópia, recusa a terceiros e saída/reentrada da equipe.
+> Gate sem FTB: **28 unitários/125 GameTests**, runData `written: 0`; perfil com FTB **125/125**.
+> Jogadores são simulados nos testes; inspeção visual e duas pessoas conectadas continuam pendentes.
+> Novo GTNA instalado na Prism; reabertura entrou no Test World sem novo crash. Tudo local, sem commit/push.
+
+> **QA conjunto GTIA (G-0134):** corrigida colisão `plate_superdense` entre GTNA e
+> GTIACore, reusando o tipo de ícone compartilhado em ambos. O pack entrou no Test World
+> e carregou o datapack de Radon. QA revelou colisões no índice dos programas do Void Miner;
+> circuito 1 agora seleciona básicos EV, circuito 2 as veias LuV/ZPM e pool aleatório ZPM.
+> Gate GTNA **28 unitários/124 GameTests**, core **13 GameTests/build/QA estático**.
+> Jars ativos na Prism, backups preservados; reabertura final entrou no mundo; perfil GTIA **124/124**.
+> UI/montagem manual, primeira extração em Marte e equipes reais ainda pendentes. Sem commit/push.
+
+> **Fluidos descobertos / Void Fluid Drilling Rig (G-0133):** nova máquina EV 3×7×3,
+> independente do minerador de minérios, com registro de extração nativa real, dados reutilizáveis
+> por fluido/origem/proprietário/equipe, produção local e upgrades remotos por etapa. Configuração
+> `void_fluid_drill.json`; seis programas terrestres no default, Radon de Marte no perfil GTIA.
+> Receita de bootstrap corrigida para perfuradora MV + Sensors HV, mantendo montagem EV.
+> Gate: 28 unitários e **123/123 GameTests**; perfil GTIA/deposito também **123/123**;
+> datagen repetido `written: 0`. T4/T5 aguardam dados de pesquisa; QA cliente/equipes reais,
+> primeira extração em Marte e balanceamento/campanha do pack pendentes. Sem commit/push.
+
+> **Void Miner: preciso/aleatório e cadeia GTL (G-0132):** a elétrica agora consome essências
+> no preciso e tem recipe map aleatória separada. Portados World Data Scanners LV–IV,
+> Incubator 5×5×5, Essence/Essence Seed, 40 essências GTL e cinco planetárias. Chips são
+> escaneados nos planetas e reutilizados na cultura; deixaram de ser fabricados no Assembler.
+> Entrada EV preservada com três programas terrestres e cinco planetários; veias completas
+> mantêm energia LuV/ZPM e o pool aleatório completo exige ZPM. Custos/rendimentos adaptados
+> estão em `docs/roadmap/void-miner-essence-chain.md`. Gate: 28 unitários e **114/114 GameTests**;
+> datagen repetido `written: 0`. Restam QA em cliente, paralelos IV+ e balanceamento no pack.
+> Sem commit/push.
+
+> **Void Miner EV: programas planetários e custos corrigidos (G-0131):** cinco Planet Data Chips
+> do GTNA têm receitas EV com amostra planetária não consumível; os programas do Ad Astra exigem chip e
+> amostra não consumíveis. A validação agora requer Drilling Fluid positivo e rejeita outros
+> fluidos. O teto padrão de paralelo é 2 de IV até MAX, configurável por tier. A tela informa
+> programa ativo, custo efetivo de fluido e EU/t e paralelo. Gate completo: **111/111 GameTests**;
+> resta QA em cliente e operação real com Parallel Control Hatch IV+. Sem commit/push.
+
+> **Void Miner elétrico EV (G-0130):** nova máquina `gtna:electric_void_miner` (GTIA-D-159..D-162)
+> com um programa por máquina, seletor não consumível, energia + Drilling Fluid por operação e
+> validação por `config/gtna/balance/electric_void_miner.json` (tier mínimo, tetos de fluido e
+> saída, paralelo a partir de IV, fallback opcional). Três programas terrestres por circuito,
+> cinco programas planetários do Ad Astra (pedra do planeta como amostra) e controller EV com
+> Titanium terrestre. Gate: 111/111 GameTests e datagen `written: 0`. Sem commit/push; aguarda
+> teste manual e os programas planetários do pack.
+
 > **Publicação do merge na main (G-0129):** o push de 26/09 (`origin/main`: HUD wireless de
 > energia, família de Dehydrators LV–OpV, QA do EBF, cadeia de Boron Carbide, exemplo KubeJS,
 > guarda do JEI) foi integrado ao trabalho local de 29/09 (perfis GTIA, Pattern Buffers, Nexus
@@ -465,6 +703,856 @@ foi feito nem repetir os erros já pagos.
   visível na escala capturada. Outra escala de GUI ainda não foi testada.
 
 ## Checkpoints
+
+### G-0156 (2026-10-04) — Eye of Harmony: catálogo JEI e manual paginado
+
+- Referência visual: três capturas GTNH fornecidas pelo autor. Implementação usa dados do
+  catálogo moderno real, não quantidades/tempo de captura de outro pack. Tempo Overworld
+  base 360.000 ticks, 1B mB de H/He cada, tier mínimo 1, chance base 100%, EU base/retorno 60%.
+- `EyeOfHarmonyOverworld.build(RecipeManager)` compartilhado entre servidor e JEI;
+  overload ServerLevel conserva chamadas anteriores. Novo `EyeOfHarmonyDisplay` copia os
+  tags dos produtos e divide a lista completa em páginas de 54 (nove colunas/seis linhas),
+  sem truncar long ou descartar itens/fluidos. Páginas são partes do mesmo programa.
+- Plugin/categoria JEI exclusivos do Eye: controlador como catalisador, Planet Block
+  Overworld no topo, H/He como entradas, produtos indexados como saídas. Abreviação no
+  ícone e quantidade exata na tooltip; fluidos desenhados cheios. Dados-base explícitos
+  antes dos campos, circuito, excesso e perda Nexus. Sem transferência/fabricação fictícia.
+- Categoria Cosmos antiga oculta via runtime JEI (inclui dev); recipes permanecem carregadas
+  para ciclos antigos já pagos. Ausência de catálogo real é registrada sem inventar saídas.
+  REI/EMI não recebem esta categoria própria ainda.
+- Tooltip do controlador resumida; detalhes via Shift/Z, páginas dimensionadas pela altura
+  da tela, textos EN/PT: campos/energia/circuito/gases/fórmulas/falha/pity/portas/entrega/escopo.
+  Astral Arrays/paralelos/planetas futuros apresentados como não implementados. Nenhuma
+  promessa de clique direto/controle de animação. Sem receitas novas de fabricação.
+- Novo GameTest confere completude, ordem/identidade/quantidades contra catálogo real,
+  valores acima de int e isolamento de tags de produto após mutação do catálogo original.
+- Gate final PASS: `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`;
+  **30 classes unitárias / 167 GameTests**. Log `/tmp/gtna-eoh-viewer-final.log`.
+  Datagen anterior desta etapa atualizou EN (`written: 1`); gate final `written: 0`.
+  Fonte GTCEu reconfirmada `v7.5.3-1.20.1`. Chaves requeridas EN/PT conferidas.
+- Roadmap EOH-05 registra progresso parcial; roteiro visual em
+  `docs/roadmap/eye-of-harmony-viewer-manual-test.md` aberto no painel. QA visual ainda
+  depende do autor: ícones, tipografia/escala, navegação/indexação, Shift/Z, reconexão/reload.
+  Invalidação do cache de operação após /reload sem unload segue pendente separada.
+- Cliente atualizado iniciado após o gate; resources/atlases, inclusive JEI, carregados.
+  Log `/tmp/gtna-eoh-viewer-client.log`; ingresso no mundo e abertura da categoria ainda manuais.
+  Nenhuma aprovação visual inferida da compilação/testes. Tudo local, sem commit/push/publicação.
+
+### G-0155 (2026-10-04) — Eye of Harmony: operação Overworld, transações e recuperação
+
+- EOH-04/Overworld integrado localmente: slot de seletor real/reutilizável persistido, somente
+  Overworld habilitado. Circuito virtual GTCEu prioritário, depois primeiro circuito físico,
+  ausência=0 e clamp 0–24. H₂/He absorvidos integralmente a cada 20 ticks, apenas ocioso,
+  formado e habilitado; buffers long com proteção de overflow, demais líquidos preservados.
+- EyeOfHarmonyOverworld usa veios modernos Overworld de peso/densidade positivos, chances
+  das entradas normalizadas e soma de 2.25 fluxos VM3 GTNH. OreProperty para multiplicador,
+  smelt/subprodutos/fallbacks/separação/lavagem; diferenças legadas documentadas. Plasmas são
+  interseção da whitelist GTNH com os sete disponíveis; combustível carregado define EU/litro,
+  com dois fatores 3.85/truncamentos conservados. RawStarMatter 100k + WhiteDwarfMatter 1152.
+  Não inventar plasmas/segunda distribuição small ores/GTPP ausentes do GTCEu. Cache reconstruído
+  no load do controlador; invalidação por /reload sem unload ainda pendente de EOH-05.
+- Modifier agora retorna NULL sem mutação. Nova busca Cosmos desativada. RecipeLogic permite
+  concluir ciclo antigo pago uma vez, limpa lastRecipe e impede repetição automática.
+- Único débito no commit server-side; só após sucesso limpa TODOS os gases (incluindo excesso).
+  Duração, custo, retorno, chance/rendimento, UUID de crédito, resultado e produtos finais
+  congelados. Sorteio ocorre uma vez no começo e resultado/histórico salvo; resultado nunca
+  recalculado ao retomar. Pity resolvido no início (adaptação, sem mudar sequência serial seguinte).
+- Estados idle/running/delivery persistidos, progresso, EU bruto restante, filas/cursores.
+  CustomData versionado também em forDrop; anotação persiste slot/campos. Desabilitar ou invalidar
+  pausa sem perder pagamento; reformar retoma. Data Stick não muda dono com dívida/ciclo.
+  Reposicionar controlador pago conserva vínculo existente; UUID de crédito congelado.
+- Entrega Nexus desconta retorno bruto aceito (não líquido), mantendo dívida parcial sem dupla
+  perda. Produtos inseridos internamente nas portas OUT (não pela capacidade de entrada externa).
+  Orçamento: 64 tentativas de pilha + um lote de até 1M mB por tick; round-robin impede starvation.
+  Máquina só volta a idle após quitar todos os produtos e o crédito. Garantia é save/load normal;
+  não foi implementada transação atômica entre arquivos SavedData/bloco contra crash do processo.
+- UI EN/PT: slot, planeta, tiers, circuito, gases/mínimo/excesso, prévia após completar gases,
+  chance/rendimento, tempo, custo/retorno/saldo antes da perda Nexus, progresso/pendências/bloqueio.
+  Tooltips antigos de circuitos 1–4/1024 baldes/lote fixo corrigidos. Renderer/viewer Cosmos ainda
+  legados para EOH-05/07; RawStarMatter como entrada Astral Array aguarda EOH-06.
+- Oito GameTests adicionados: catálogo real e custo dos plasmas; bloqueios/modifier sem cobrança;
+  coleta/circuito/disable; save/load completo do bloco + pausa/reformação/rebind/estado de drop;
+  crédito parcial + saídas cheias + reload + perdas; falha com retorno; legado termina sem repetir;
+  filas round-robin não bloqueiam produtos compatíveis. Fixture transacional tem 3 ticks/saídas
+  pequenas, separada do teste de catálogo real. Nenhuma nova receita de fabricação.
+- Gate final **PASS**: `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`,
+  **30 classes unitárias / 166 GameTests**, datagen `written: 1` (EN). Log
+  `/tmp/gtna-eoh-operation-verified.log`. GTCEu fonte confirmado `v7.5.3-1.20.1`.
+- Auditoria/roteiro em `docs/roadmap/eye-of-harmony-operation-math.md` e
+  `eye-of-harmony-operation-manual-test.md`; roadmap e índices PT/EN/ES atualizados,
+  proveniência/licença do processamento registrada em THIRD_PARTY_NOTICES.
+- QA humano ainda pendente: layout/slot/UI, relog real, unload de chunks, drop/reposição e fluxo
+  externo de saídas. Nenhum cliente Forge existente detectado antes de iniciar. Primeira abertura
+  (68923, `/tmp/gtna-eoh-operation-client.log`) falhou no GuideME: configuração lida antes de
+  carregar, fora do Eye. Segunda abertura (95724, `/tmp/gtna-eoh-operation-client-retry.log`)
+  passou pelo resource reload/atlases, iniciou o servidor integrado e Dev entrou no mundo. Não adicionado workaround
+  de código para a corrida de inicialização do GuideME. Roteiro manual aberto no painel Codex.
+  Tudo local, sem commit/push/publicação; fabricação segue adiada pelo autor.
+
+### G-0154 (2026-10-04) — Eye of Harmony: cálculos seriais GTNH, primeiro bloco de EOH-04
+
+- Implementado `EyeOfHarmonyMath`: programa Overworld com custo de plasma explícito, campos
+  independentes 0–8, circuito limitado a 0–24, custo BigInteger `4^k`, crédito com penalidade
+  por estabilização, duração com compressão/aceleração/circuito, excesso dos dois gases,
+  chance/rendimento, SpaceTime de falha e histórico pity conforme código GTNH fixado.
+- Plano imutável não acessa mundo/rede/inventários/RNG. Resolução usa roll fornecido 0–9999;
+  retorno EU devido mesmo na falha. Sentinel Double.MIN_VALUE e comparação exata do pity
+  conservados; pity inicial pode ser negativo em programas avançados. Discount usa a ordem
+  de multiplicação por squaring do original para conservar truncamento de ticks.
+- `EyeOfHarmonyMathTest` registrado no gate: números de referência, dois gases excedentes,
+  limites de sorteio, alteração/repetição de chance, sentinel/pity, longo→Int128, clamps,
+  recursos/tier insuficientes, entradas inválidas, overflow e repetibilidade.
+- Primeiro gate encontrou uma corrida no teste estrutural da fase anterior: checkPatternAt
+  direto competia com o async assembler, corrompendo contexto de match. Três chamadas dos
+  testes EOH agora usam a API GTCEu `checkPatternWithLock`, recomendada por IMultiController.
+  Não mudada a lógica estrutural de produção nem relaxadas asserções.
+- Gate final **PASS**: `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`,
+  **30 classes unitárias / 158 GameTests / datagen written: 0**. Log `/tmp/gtna-eoh-math-final.log`.
+- Documentadas regras, limites e próximos passos em `docs/roadmap/eye-of-harmony-operation-math.md`;
+  roadmap EOH-04 marcado em andamento e atribuição LGPL-3.0 atualizada em THIRD_PARTY_NOTICES.
+  Atenção: custo dos plasmas GTNH usa fuelEU/litro, fator 3.85 com truncamento, soma por quantidade,
+  depois outro fator 3.85/truncamento; não equivale a custo de fusão.
+- **Limite explícito:** base de cálculo ainda não integrada ao EyeOfHarmonyMachine. Ciclo Cosmos
+  continua legado, incluindo débito dentro do modifier; não anunciar esse bug como corrigido.
+  Faltam catálogo de saídas/custos moderno auditado, slot, coleta, plano/débito/progresso/sorteio
+  persistidos, Nexus gross credit parcial e saídas pendentes, GUI e testes de ciclo/reload.
+  Nenhuma fabricação nova. Nenhum teste humano novo para cálculo isolado; QA estrutural anterior
+  continua pendente. runClient não relançado nesta etapa. Tudo local, sem commit/push.
+
+### G-0153 (2026-10-04) — Eye of Harmony: estrutura GTNH, tiers e montagem validados
+
+- Autor mudou a prioridade: **não formular receitas do multibloco/componentes agora; focar
+  funcionalidade e estrutura**. EOH-02 fabricação adiado; nenhum recipe loader/receita nova.
+  Auditoria descobriu que a referência fixada usa BEC Condensate Assembler/nanites/condensados
+  em BECRecipes para campos/casings/Astral Array; controlador ainda usa ResearchStationAssemblyLine.
+  Não substituir essa fabricação por Assembly Line genérica. Decisão futura ainda aberta.
+- **EOH-03 implementado:** a malha existente coincide nas 35.937 células com o GTNH fixado,
+  usando `local[z][y][x] = original[y][32-z][x]` e mapa de símbolos. Evidência/hash em
+  `docs/roadmap/eye-of-harmony-structure-audit.json`. Linha zero base/controller última aisle preservados.
+- Eye agora usa 896 casings espaciais, 534 temporais, 138 campos de compressão, 168 de aceleração,
+  48 de estabilização e 36 posições de fronteira. Exatamente cinco portas: um input bus,
+  dois input fluid hatches, um output bus e um output fluid hatch; 31 Boundary Casings restantes.
+  Uniformidade por família, tiers independentes 0–8 internos/1–9 na interface; invalidar zera
+  leituras para -1. Espaços permanecem any conforme a referência, não ar obrigatório.
+- Predicado/candidatos de preview rejeitam stocking ME, pattern buffers/proxies, dual e energia.
+  GTCEu distingue ME buffers físicos comuns de stocking; essa adaptação está documentada.
+  Saídas ME comuns possíveis. Appearance/model base do controlador usa o Boundary Casing novo;
+  overlay/renderização planetária ainda não portados.
+- Sete materiais compartilhados pelas progressões clássica/BEC foram registrados para operação:
+  SpaceTime, RawStarMatter, White/Black Dwarf Matter, Universium, Time e Space. Quatro metais
+  têm formas estruturais; autogeração de receitas desabilitada (nenhum atalho de fabricação).
+  RawStarMatter é líquido normal a 295 K, não plasma-fuel; demais líquidos 0 K conforme fonte.
+  Nomes EN/PT, ícones/modelos GTCEu existentes; renderers/GALAXY privado GTNH não portados.
+- Seis testes novos: referência geométrica e formas/materiais, formação N/S/E/W, tiers/reset,
+  rejeição de cada porta ausente/extra, casings/tiers inválidos, stocking/crafting/dual/energia,
+  preview real e auto-build pelo Nexus Terminal em Creative. Regressão GUI usa conteúdo textual
+  sem depender do índice da linha, pois agora há display de tiers.
+- **Gate completo passou:** Spotless/compile, 29 unitários, **158/158 GameTests**, datagen
+  `written: 0`. Log `/tmp/gtna-eoh-structure-verified.log`. Falha inicial era setup de teste
+  usando Dual Hatch IV ausente; corrigido para selecionar um tier registrado e repetido o gate.
+- **Pendente humano:** preview/montagem, aparência de hatches e leitura/diagnóstico na GUI:
+  `docs/roadmap/eye-of-harmony-structure-manual-test.md`. Texturas EOH-01 já aprovadas pelo autor.
+  Cliente anteriormente aberto precisa reiniciar para carregar as novas classes; não reiniciado
+  automaticamente aqui. Alterações locais, sem commit/push/publicação.
+- **Limites/migração:** estruturas legadas com blocos substitutos deixam de formar; reconstruir
+  com os novos blocos mantendo controlador/NBT/dono/gases. Sem substituição automática/limpeza.
+  A operação cosmos ainda é legada; tiers não aplicam fórmulas planetárias até EOH-04.
+  O débito no recipeModifier legado permanece pendência conhecida para o ciclo transacional.
+
+### G-0152 (2026-10-04) — Servidor dedicado com o pack completo do GTIA (109 mods)
+
+- Correção de rumo pedida pelo autor: o GTIA se testa **inteiro**, não num subconjunto. O lockfile padrão do projeto
+  GTIA (`full.lock.json`) trava os 109 jars da instância auditada, menos Re-Avaritia, GTMThings e Pretty Rain
+  (decisões 8.5 e 8.6 e o crash); GTIACore e GTNA entram como builds locais.
+- `server_smoke.py` com o pack completo: **"Done" em 45 s**, 106 de 109 mods (Oculus, FastQuit e Nolijium são só de cliente e
+  não constroem em servidor dedicado). O GTNA carregou os **29 nós** de pesquisa sem pular nenhum, inclusive o do foguete.
+- Achados do log (todos já listados em G-0151 ou sem relação com o GTNA): as 14 linhas de receitas do GTNA continuam, e
+  surgiram 5 de mods opcionais ausentes (ProjectE, Patchouli, Chipped e um mod de `advanced_ae`), sem efeito em Start → LV.
+- **Não verificado:** o cliente. Sem commit/push.
+
+### G-0151 (2026-10-04) — Servidor de teste com o lockfile do GTIA: erros de receita do GTNA encontrados
+
+- Ao subir um servidor dedicado só com os 16 mods do lockfile (`GTIA Modpack/tools/server_smoke.py`), o GTNA carregou sem
+  problema (**"Done" em 22 a 42 s**, 28 nós de pesquisa), mas o GTCEu registrou **14 linhas ERROR de receitas do GTNA**. Não mexi
+  nelas: estão em arquivos que a árvore de trabalho já modifica.
+- **8 × `EUt can't be explicitly set to 0`** (`.EUt(0)` em `GTNAInfernalCokeRecipes` e no bloco do Cactus Wonder de
+  `GTNAMachineRecipes`: `infernal_coke_from_coal`, `infernal_coke_block_from_coal_block`, `infernal_charcoal_from_logs`,
+  `cactus_wonder_steam_from_charcoal|coal|coal_block`, `cactus_wonder_superheated_from_coke`,
+  `cactus_wonder_supercritical_from_coke_block`). No `GTRecipeBuilder` do GTCEu 7.5.3 o erro só é logado e a receita fica sem
+  energia, que é a intenção; **basta tirar o `.EUt(0)` para o log ficar limpo**.
+- **6 × `Tried to set output item stack that doesn't exist`**: `outputItems(dust, material)` devolve vazio e **descarta o output** em
+  `redstone_front_pro` (itérbio), `almandine_front_pro` (itérbio), `monazite_front_pro` (érbio), `grossular_front_pro` (tálio) e
+  `stellar_superheavy_synthesis` (rênio 2048 e háfnio 1024). Esses materiais não têm pó no GTCEu 7.5.3 sem uma flag
+  extra; **decidir se o GTNA gera os pós ou remove os outputs**. Não afeta Start a LV.
+- Pendente: nenhum teste automatizado falha por isso, porque os GameTests não leem o log do GTCEu. Sugestão (não feita): um teste
+  que falhe quando o log de registro trouxer ERROR do GTCEu atribuído a receitas `gtna:`/`gtceu:` do addon. Sem commit/push.
+
+### G-0150 (2026-10-04) — Nós de HV do GTIA e `requires_mods` no motor
+
+- **Motor (GTNA):** novo campo opcional `requires_mods` (lista de ids de mod) em cada nó. Se algum mod faltar, o
+  `KnowledgeLoader` pula o nó sem erro e conta em "skipped for missing mods". Existe para o pack trazer nós de mods
+  opcionais; **não faça outro nó depender dele**, pois o dependente seria descartado como pré-requisito ausente.
+  Teste `research_nodes_for_missing_mods_are_skipped_not_broken`; documentado em `research-engine` (PT e EN).
+- **Conteúdo (GTIACore):** 12 nós de HV (tier 4), total 29. Três bloqueiam receitas da EBF: `gtia:hv/nichrome`
+  (`blast_nichrome` e `_gas`) e `gtia:hv/titanium` (`blast_titanium` e `_gas`); os demais são marcos com flag:
+  hull, Vacuum Freezer, Implosion Compressor, Distillation Tower, Cracker, Large Chemical Reactor, PTFE, Cleanroom,
+  Plastic Circuit Board e Rocket T1. **Rascunho meu, não aprovado pelo autor:** é fácil vetar um nó, é só apagar o
+  JSON. O primeiro gate de HV segue a cadeia natural de coils (Kanthal chega a 2700 K para o Nichrome).
+- `gtia:hv/rocket_t1` usa `requires_mods: ["ad_astra"]`. **O Ad Astra não existe no ambiente mínimo de
+  desenvolvimento do core**, então o GameTest o pula ("Loaded 28 research nodes (29 files, 1 skipped for missing
+  mods, 0 problems)") e o id `ad_astra:tier_1_rocket` **não foi verificado por automação**; vem das quests do GTO e
+  do GTL. No pack o nó carrega (29).
+- O jogador automático do core percorreu os 28 nós carregados sem falhas (**17/17**); nesse caminho ele achou o
+  problema do Ad Astra antes de qualquer teste manual. GTNA: **152/152** (`runGameTestServer` isolado).
+- `runData` do core gerou as 29 chaves de nome; `spotlessCheck build` e `qa_static` passaram dos dois lados.
+- Jars instalados na Prism (backup dos anteriores em `/home/raishxn/MineProjects/GTIA-arquivo/prism-jars-before-
+  hv-nodes-2026-10-04/`): GTNA `326e9af569e1198b2bdd823f86ffbd0e2579b51c2de6ab4f35ed8e432ed80b42`; GTIACore `df132c3af6df3e70ec1f7ef0a40b2baaf92a15f19a6f2bf8ff73d555ccfdb784`.
+- **Pendente: teste humano** só do que a automação não vê: o desenho da árvore com 3 blocos de tier e a nova
+  quantidade de nós (a tela de 29 nós pode precisar de ajuste de espaçamento) e o nó do foguete com o Ad Astra real.
+  Sem commit/push.
+
+### G-0149 (2026-10-04) — Testes automáticos da pesquisa e correção do gate por time
+
+- **Pedido do autor:** automatizar por GameTest o que vinha sendo testado à mão, para não abrir o pack a cada
+  verificação básica.
+- **Bug real encontrado pela automação:** o `@Inject` em `RecipeHelper.checkConditions` passava o UUID do **dono da
+  máquina** como escopo, mas o progresso é guardado pelo **time FTB efetivo**. Em time, a máquina de um membro
+  continuava bloqueada mesmo com o nó liberado para o time. Solo nunca aparece (escopo = jogador), então os testes
+  manuais de G-0142 a G-0148 não podiam pegar. Corrigido: o mixin converte o dono com `KnowledgeScope.of`.
+  **Isto afeta jogo real em time; o jar anterior da Prism tem o bug.**
+- Novos testes (todos em `runGameTestServer`, **151/151**; o de time só roda com FTB Teams carregado):
+  - `research_teams_share_progress_and_machine_gates` (`FTBResearchTeamTests`): escopo único no time, desbloqueio
+    por um membro vale para o outro, máquina do membro roda a receita, máquina de estranho continua bloqueada,
+    sair e voltar do time revoga e restaura.
+  - Comandos `/gtna research list|info|unlock|reset` executados pelo despachante real: permissão nível 2,
+    pré-requisitos, `force` com a cadeia inteira, `reset` contando o que removeu.
+  - `KnowledgePlaythrough` (código principal, reutilizável): um jogador roteirizado percorre a árvore carregada;
+    confere que um nó não libera fora de ordem, que libera em ordem, e que cada receita gateada fica bloqueada
+    antes e liberada depois. 3 testes com árvores sintéticas, inclusive uma quebrada de propósito.
+  - **No GTIACore**, `shippedResearchTreePlaysThroughFromStartToEnd` roda esse jogador nos 17 nós reais
+    (**17/17** com o jar de desenvolvimento do GTNA atual).
+  - `ClientMixinContractTest` (unitário, ASM): os mixins de cliente não rodam em GameTest, então ele lê o bytecode
+    do GTCEu e do LDLib e confere que `GTRecipeWidget.setRecipeWidget` ainda lê `GTRecipe.conditions` exatamente
+    2 vezes, que o `@Redirect` declara `ordinal = 1`, que `getDisplayHeight` e `GTEmiRecipe.getId` existem e que
+    os dois mixins estão na lista `client`. Verificado quebrando o ordinal de propósito: o teste falhou, e voltou a
+    passar ao restaurar.
+- **Continua sem automação:** a aparência da tela (K), a linha no EMI e a legibilidade; o servidor dedicado com
+  rede real; e `/reload` com a tela aberta.
+- Gate: `spotlessCheck compileJava runUnitTests` OK, `runData` `written: 0`, `runGameTestServer` isolado 151/151.
+  Jar instalado na Prism (backup em `/home/raishxn/MineProjects/GTIA-arquivo/prism-jars-before-team-fix-2026-
+  10-04/`): GTNA SHA-256 `90919fbe8f15f02454b4a8bc0fc506e803a3d24b7c1491cbfe3c45517e8c5fdb`. Sem commit/push.
+
+### G-0148 (2026-10-04) — Nós de MV da árvore do GTIA (lado GTIACore)
+
+- Sem mudança de Java no GTNA nesta entrada. O GTIACore ganhou 8 nós de MV (total 17); ver `GTIACore/docs/QA.md`
+  e a seção 11 do plano de pesquisa no workspace GTIA. Dois bloqueiam receitas da EBF (Kanthal e boule de silício).
+- O GameTest do core carregou os 17 nós pelo motor do GTNA ("Loaded 17 research nodes (17 files, 0 problems)") e
+  conferiu todos os ids. Foi preciso refazer o jar de desenvolvimento do GTNA (`./gradlew jar`) para o core usar o
+  motor atual. Jar do GTIACore instalado na Prism, SHA-256 `1edef43e4470417665456f43c032670d0dc4e13006e681ddf409e5ccfeaaf7df`.
+- **Pendente: teste humano dos nós de MV** (cadeia, e as receitas de Kanthal e `silicon_boule` bloqueadas na EBF).
+  Sem commit/push.
+
+### G-0147 (2026-10-04) — Teste humano de G-0146 aprovado e documentação do motor
+
+- **Teste humano aprovado pelo autor ("funcionando perfeitamente"):** a linha de pesquisa no EMI está legível, sem
+  sobrepor o ícone da máquina, com a moldura do painel correta e a cor mudando ao liberar o nó. Isso confirma na
+  prática o `@Redirect` de `GTRecipeWidgetMixin` e o `ModularEmiRecipeMixin`.
+- Estado verificado em jogo até aqui (G-0142 a G-0146): cadeia de gatilhos por item, gate do Aluminium na EBF,
+  tarefa de quest, tela da árvore (tecla K) e linha no EMI. **Ainda sem teste humano:** servidor dedicado, dois
+  jogadores no mesmo time e `/reload` com a tela aberta.
+- Documentação pública: `docs/gameplay/systems/research-engine` em PT, EN e ES (o ES é resumido e aponta para o
+  EN), item no `nav` do `mkdocs.yml`, e um datapack de exemplo em `examples/datapack` (JSON validado).
+  `mkdocs` não está instalado aqui, então o build do site **não** foi rodado.
+- Sem mudança de Java nesta entrada. Sem commit/push.
+
+### G-0146 (2026-10-04) — Eye of Harmony: conteúdo físico e primeira parada para QA humano
+
+- **Retorno humano posterior:** autor confirmou “texturas dos blocos OK e a do item também”
+  e enviou captura da galeria no cliente de desenvolvimento. Aparência das texturas aprovada;
+  animações ao longo do tempo, seis faces planetárias, drops, idiomas e JEI/EMI não foram
+  confirmados individualmente. Roteiro e roadmap atualizados com esse escopo. Só documentação
+  alterada neste retorno; não houve nova rodada de testes nem publicação.
+- Autor autorizou prosseguir até a primeira etapa que exige teste humano. EOH-01 ganhou
+  **27 campos (3 famílias × 9 tiers), três casings, três Planet Blocks e um Astral Array**.
+  `GTNAEyeOfHarmonyContent` registra o lote com blocos/BlockItems próprios, identidade de
+  família/tier/dimensão, arrays ordenados, tooltips de função/origem e nomes EN/PT.
+- Tiers internos 0–8, apresentação 1–9 e nomes Crude..Gallifreyan seguem a revisão congelada
+  GT5U. Planetas iniciais referenciam minecraft:overworld/the_nether/the_end. Casings espacial,
+  temporal e fronteira têm IDs novos; IDs/estrutura/operação anteriores permanecem existentes.
+- Importados **51 PNGs e 32 mcmetas** sem alteração dos bytes: 39 PNGs Modernity (iguais
+  ao checkout local) e 12 GT5U. Ausências Modernity usam os originais, incluindo estabilização
+  0–7 e Astral Array. Manifest guarda revisão/caminho/licença/SHA por arquivo; avisos e textos
+  de licença estão no projeto/jar. Planet Block: identidade/faces verificadas no GTNEIOrePlugin.
+  Dois overlays estão preservados como assets, ainda sem aplicação ao renderer. Sem CTM importado.
+- Datagen produz blockstates, modelos de blocos/itens, loot e tags. Corrigida a integração de
+  nomes EN com o GTNALangProvider próprio, que sobrescrevia os nomes do Registrate no datagen.
+  Auditoria independente verificou 33 modelos/texturas e 34 nomes EN/PT, hashes e animações.
+- Dois GameTests novos verificam 27 registros únicos, família/tier, colocação, mining tags,
+  drops do próprio tier, modelos/texturas/traduções, dimensões planetárias e Astral Array.
+- Validação final: gate obrigatório completo passou — Spotless/compile, 28 unitários,
+  **146/146 GameTests**, datagen `written: 0`; jar local auditado com as 51 texturas,
+  32 animações, três licenças e nomes EN presentes. Log: `/tmp/gtna-eoh-content-verified.log`.
+  Tentativa inicial do baseline encontrou classe ausente durante recompilação concorrente;
+  a rodada posterior carregou os registros normalmente e os testes foram executados de fato.
+- Primeira necessidade humana: aparência/animação dos 27 tiers, casings, seis faces dos planetas,
+  ícones, idiomas e exposição creative/JEI no cliente. Roteiro:
+  `docs/roadmap/eye-of-harmony-content-manual-test.md`. Cliente ainda não aberto neste marco.
+- Roadmap atualizado: EOH-01 aguardando QA visual; fabricação/materiais (EOH-02), estrutura
+  (EOH-03), operação fiel (EOH-04) e paralelos/renderer/migração continuam futuros. Tooltips
+  informam que os componentes ainda não têm fabricação nem integração operacional.
+  Nenhuma publicação/commit/push e nenhuma alegação de autorização individual pendente concedida.
+
+### G-0146 (2026-10-04) — Legibilidade da linha de pesquisa no EMI
+
+- **O teste humano de G-0145 passou:** a linha apareceu no EMI. Print (`Prints for analise/`): ficou difícil de
+  ler. Três defeitos visíveis: (1) "Requires research: Aluminium Smelting" passava por baixo do ícone da máquina,
+  cortando o fim do nome; (2) a linha extra empurrava "Temp" e "Coil" para fora da moldura; (3) tinha a mesma
+  cor das outras linhas.
+- **Texto e cor:** nova chave `gtna.research.viewer` ("Research: %s"), com código de cor dentro do texto (vermelho
+  enquanto bloqueado, verde depois de liberado), porque o `GTRecipeWidget` imprime `getTooltips().getString()` e
+  perde estilos de componente. O nome é limitado a 24 caracteres com reticências para não passar do ícone.
+  A mensagem do controller (servidor) continua "Requires research: <nome completo>".
+- **Altura do painel:** o EMI guarda o tamanho da receita ao registrá-la, antes de o cliente conhecer o grafo,
+  então a altura não pode ser fixada na criação. Novo `ModularEmiRecipeMixin` (alvo por texto, pois o EMI não é
+  dependência de compilação) soma 10 px por nó que bloqueia a receita ao retornar `getDisplayHeight`, só para a
+  classe `GTEmiRecipe` (id obtido por reflexão de `EmiRecipe#getId`). Registrado na lista `client` do
+  `gtna.mixins.json`.
+- **Limites conhecidos:** o JEI continua sem a altura extra (o jogador usa EMI); o recálculo depende de o EMI
+  consultar `getDisplayHeight` ao exibir (a leitura do bytecode do LDLib mostra que é um getter simples), o que
+  só o cliente confirma. Se o alvo do mixin falhar, o log traz `InvalidInjectionException`.
+- Validação: `spotlessCheck compileJava runUnitTests` OK; `runData` OK (`written: 0` na segunda execução);
+  `runGameTestServer` isolado **146/146** (inclui testes da árvore de trabalho do autor).
+- Jar instalado (backup do anterior em `/home/raishxn/MineProjects/GTIA-arquivo/prism-jars-before-emi-
+  readability-2026-10-04/`): GTNA SHA-256 `5e4db4631207a227579dc184e97e1abaadf6746b0605ddf32615b54d502ecea7`.
+- **Pendente: teste humano** (leitura, sobreposição, altura do painel). Sem commit/push.
+
+### G-0145 (2026-10-04) — Roadmap detalhado do Eye of Harmony: conteúdo primeiro
+
+- Pedido do autor: aproximar ao máximo do GTNH e começar pelos blocos, itens e texturas.
+- Criado `docs/roadmap/eye-of-harmony-implementation-roadmap.md`: EOH-00..07, inventário,
+  dependências, tarefas/aceitação, cadeia de fabricação, tiers/hatches/estrutura, ciclo, catálogo,
+  Astral Arrays, viewer/renderer, migração e validação. EOH-01 é a primeira implementação.
+- `docs/roadmap/eye-of-harmony-assets.json` mapeia 27 candidatos (3 famílias × 9 tiers),
+  IDs/destinos propostos, origem, dimensões, animação e SHA-256 dos arquivos locais encontrados.
+  Modernity local existe: EM_DIM 0–8 e EM_FIELD 0–8 + STABILITY_CASING 8 (**19/27**).
+  STABILITY_CASING 0–7 e Astral Array não encontrados no caminho correspondente do Modernity;
+  arquivos originais encontrados na árvore do GT5U. Direitos ainda devem ser conferidos por asset.
+- Fonte dos ícones conferida nas classes GTNH SpacetimeCompressionFieldCasing,
+  TimeAccelerationFieldCasing e StabilisationFieldCasing, na revisão congelada de G-0144.
+  Recipe loader ResearchStationAssemblyLine foi localizado; mapa de fabricação completo pendente.
+- Estudo anterior aponta para a nova ordem, e roadmaps públicos PT/EN/ES vinculam o plano.
+- Somente documentação/inventário; **nenhum bloco/item/textura importado ou comportamento alterado**.
+  Escopo desta entrega documental; implementação dos marcos permanece planejada.
+- Validação: manifest com 27 IDs únicos, 19 PNGs e 19 animações JSON válidos. Gate completo
+  passou: Spotless, compilação, 28 unitários, **144/144 GameTests** do checkout compartilhado,
+  datagen `written: 0` (`/tmp/gtna-eoh-roadmap-gate.log`). Não valida o port ainda planejado.
+  Revisão de formatação após o checkpoint passou. Sem publicação.
+
+### G-0145 (2026-10-04) — Correção: "Requires research" não aparecia no EMI
+
+- **Relato do autor** após G-0144: a tela da árvore funciona (tecla K), mas o EMI não mostra a linha na receita do
+  Aluminium. O log do cliente confirmou que o servidor carregou os 9 nós; o problema estava na injeção.
+- **Causa (duas, por leitura do código do GTCEu 7.5.3):** (1) a lista de receitas do EMI vem de
+  `GTRecipeType.getRecipesInCategory`, montada em `RecipeManagerMixin` no `RecipeManager.apply` do **servidor**;
+  em mundo local o EMI usa os objetos do servidor integrado, não a cópia que o cliente decodifica da rede, então
+  injetar na cópia do cliente não chegava ao EMI. (2) `GTRecipe.conditions` de receitas lidas do JSON costuma ser
+  `List.of()` (imutável) e o `add` do injetor falhava em silêncio.
+- **Correção:** removidos `ResearchGateInjector` e o gancho `RecipesUpdatedEvent`. Em vez de mudar a receita,
+  `GTRecipeWidgetMixin` ganhou um `@Redirect` na leitura de `GTRecipe.conditions` do laço que imprime as condições
+  em `GTRecipeWidget.setRecipeWidget` (**ordinal 1**; o ordinal 0 alimenta o template da UI), que devolve a lista
+  da receita mais uma linha por nó que a bloqueia (`ResearchGateCondition.withResearch`, consultando
+  `ClientKnowledge.gatesFor(id da receita)`). Não altera receita nenhuma, então vale para objetos do servidor.
+- **Verificação do alvo do mixin:** `javap -c` no `gtceu-1.20.1-7.5.3.jar` da Prism mostra exatamente 2
+  `getfield GTRecipe.conditions` em `setRecipeWidget` (offsets 79 e 529). Mixins de cliente **não rodam nos
+  GameTests**, então a aplicação real do redirect só se confirma no cliente. `defaultRequire = 1`: se o alvo
+  falhasse, o cliente não carregaria (visível no log como `InvalidInjectionException`).
+- Teste novo `research_viewer_lists_research_without_touching_the_recipe` (substitui o do injetor): a lista exibida
+  ganha a linha, a receita fica intacta, o texto muda quando o nó é liberado e receitas sem gate não mudam.
+- Validação: `spotlessCheck compileJava runUnitTests` OK; `runGameTestServer` isolado com FTB Quests **144/144**;
+  `runData` OK (`written: 0`). **Duas execuções anteriores do `runData` falharam** (render dinâmico não registrado
+  e `ClassMetadataNotFoundException` de `PlanningOrigin`, classe que existe no `build`) e a terceira passou sem
+  mudança de código; trato como interferência transitória do ambiente (há outros processos Gradle/IDE ativos),
+  mas **não identifiquei a causa**.
+- Jar instalado na Prism (backup do anterior em `/home/raishxn/MineProjects/GTIA-arquivo/prism-jars-before-emi-
+  fix-2026-10-04/`): GTNA SHA-256 `a616e687ad1d5ce77faf2082aacdbc0100e7a0d9f53b9da11d94f2dd5dea56ab`.
+- **Pendente: teste humano no cliente** (a linha no EMI). Sem commit/push.
+
+### G-0144 (2026-10-04) — Estudo do Eye of Harmony original do GTNH
+
+- Pedido do autor: estudar fidelidade/viabilidade e propor caminho, sem iniciar o port nesta etapa.
+- Estudo em `docs/roadmap/eye-of-harmony-gtnh-study.md`, com fontes fixadas no GT5-Unofficial
+  `a3e1e11241a814c9fa0dd0973d5699548428f689`. Wiki respondeu 403; código, catálogo e tooltip
+  oficiais foram lidos. Fonte consultada é master, não foi identificada como release de pack.
+- Estrutura GTNA/original: grade 33³ e contagens de peças correspondentes; transformação
+  geométrica completa não validada. As 168 posições de aceleração temporal são Bridge Casings
+  no GTNA. Faltam campos com tiers, seletor planetário, chance/rendimento/excesso/pity, retorno
+  wireless e Astral Arrays; atuais três receitas e custos fixos são simplificação.
+- Risco verificado por leitura: modifier atual cobra EU/gases antes de check/setup do GTCEu;
+  tentativa posteriormente rejeitada pode cobrar sem iniciar. Reproduzir e mover débito para
+  início confirmado na implementação; não afirmar que este risco foi corrigido pelo G-0142.
+- Proposta: compatibilidade/migração → ciclo completo Overworld → campos/estrutura → chance,
+  retorno e saída persistida → catálogo adaptado → paralelos/visual. Modelo legado/fiel é
+  proposta, não config implementada ou decisão aprovada. A rede Nexus exige tratar capacidade,
+  perda e créditos parciais; não herdar suposição de rede sem limite do GTNH.
+- Nenhum código de jogo/asset alterado nesta pesquisa, sem publicação. Gate completo passou:
+  Spotless, compilação, 28 unitários, **142/142 GameTests** do checkout compartilhado e
+  datagen `written: 0` (`/tmp/gtna-eoh-study-gate.log`). Esses testes validam o estado atual,
+  não o port proposto. Revisão final de formatação após registrar o resultado também passou.
+
+### G-0144 (2026-10-04) — Tela da árvore de pesquisa (P5) e tecla K
+
+- Nova `KnowledgeTreeScreen` (tela vanilla desenhada com `GuiGraphics`, sem LDLib; a decisão D-209 dizia
+  "LDLib", mas o resultado para o jogador é o mesmo e o controle de desenho é total). Aberta com a tecla
+  **K** (rebindável em Controles, categoria "GregTech Nexus Addon"). Colunas por tier e por profundidade,
+  linhas entre nó e pré-requisitos (verde = feito, amarelo = próximo, cinza = bloqueado), borda do nó por
+  estado (liberado, disponível, bloqueado), arrastar para mover, tooltip com tier, estado, "Obtain: <item>",
+  "Requires: <nós>" e quantas receitas o nó libera. Se existir a chave `<nome do nó>.desc`, mostra a descrição.
+  Atualiza sozinha enquanto aberta, porque lê o `ClientKnowledge` que o servidor sincroniza (G-0143).
+- `KnowledgeTreeLayout` (código comum, sem desenho): posiciona os nós e é coberto por 2 GameTests, inclusive
+  ciclos e pré-requisitos desconhecidos. `NodeView` ganhou o campo `icon` (pacote e snapshot atualizados).
+- Textos EN/PT no `GTNALangProvider` e `pt_br.json`; datagen estável (`written: 0`).
+- Gate: `spotlessCheck compileJava runUnitTests runData` OK; `runGameTestServer` isolado com FTB Quests,
+  **144/144**. Jar instalado na Prism (backup em `/home/raishxn/MineProjects/GTIA-arquivo/prism-jars-before-
+  tree-screen-2026-10-04/`): GTNA SHA-256 `1b297b1a746040f385eddff795490fa032e4bc0b62793cbdcceafb5f7cad539b`.
+- **Não verificado em jogo:** tudo da tela (nenhum teste automatizado abre a tela): abertura com K, desenho,
+  arrasto, tooltip, cores, atualização ao liberar um nó, e o texto cortado em resoluções pequenas.
+- Fora do escopo desta entrega: categoria própria no EMI listando nós, zoom, busca e filtro por tier.
+- Sem commit/push.
+
+### G-0143 (2026-10-04) — "Requires research" visível no EMI/JEI e sincronização com o cliente
+
+- Pedido do autor após o teste em jogo de G-0142 (prints em `GTIA Private and Tests/Prints for analise/`): a
+  receita bloqueada precisa dizer isso no recipe viewer. **O teste humano de G-0142 passou** (cadeia, gate da
+  EBF e tarefa de quest); o único defeito visto foi a mensagem do controller cortada pela largura do painel.
+- Novo `SKnowledgeSync` (S2C): o grafo (id, tier, pré-requisitos, item gatilho, receitas gateadas) mais os
+  nós liberados do escopo do jogador. Enviado no login e a cada `/reload` (`OnDatapackSyncEvent`) e quando o
+  progresso do escopo muda (`KnowledgeService.grant/reset` chamam `KnowledgeSync.syncScope`, que atinge o time
+  inteiro). O cliente guarda tudo em `ClientKnowledge` (dados puros, em código comum).
+- `ResearchGateCondition` (tipo `gtna:research_gate`): o `KnowledgeClientHandler` a adiciona às receitas do
+  cliente (`ResearchGateInjector`), e o `GTRecipeWidget` do GTCEu já imprime as condições como linhas de texto.
+  A linha diz "Requires research: <nó>" ou, se já liberado, "Research unlocked: <nó>". O injetor remove o que
+  adicionou antes de reaplicar, então reload ou grafo menor não deixa cadeado velho. Avaliada num servidor, a
+  condição concorda com o mixin.
+- **Decisão técnica:** a condição só entra na cópia do cliente, onde o GTCEu decodifica receitas da rede em
+  `ArrayList` mutável; no servidor o bloqueio continua por id no `RecipeHelperMixin`.
+- Mensagem do controller sem o prefixo "Condition Fails:" (que o GTCEu já acrescentava): agora só
+  "Requires research: <nó>", para caber no painel.
+- Testes novos: sincronização (ida e volta do pacote), injetor (mostra, remove, não empilha) e a condição
+  contra a regra do servidor. Gate: `spotlessCheck compileJava runUnitTests runData` OK (`written: 0`) e
+  `runGameTestServer` isolado com FTB Quests, **142/142**.
+- Jar instalado na Prism (backup do anterior em `/home/raishxn/MineProjects/GTIA-arquivo/prism-jars-before-emi-
+  research-2026-10-04/`): GTNA SHA-256 `5f00ffa912e70919530faff16cfbee74fb524601ca149da42e903cae48561993`.
+- **Não verificado em jogo:** se o EMI mostra a linha (depende de o EMI usar a mesma instância de receita que
+  o cliente recebeu e de a ordem entre o pacote e a lista de receitas), a atualização do "unlocked" sem reabrir
+  o EMI, e servidor dedicado com dois jogadores. Sem commit/push.
+
+### G-0142 (2026-10-04) — Relato de bugs do jogador em GTNA 0.5.1 / GTCEu 7.5.3
+
+- `EyeOfHarmonyMachine.addDisplayText`: saldo wireless e energia de partida passam `BigInteger`
+  ao `FormattingUtil.formatNumbers`, preservando precisão de 128 bits. A versão anterior passava
+  `String`, que o `DecimalFormat` rejeita. Regressão cobre display/UI com zero, dono ausente e
+  saldo/partida maiores que `Long.MAX_VALUE`; o estado formado é isolado no teste, sem montar estrutura.
+- Corrigidas **31 entradas** em `GTNAItemRecipes`, `GTNAMachineRecipes`, `GTNABlockRecipes`:
+  21 blocos viraram itens explícitos; 10 IDs textuais de ExtendedAE/AE2 viraram itens do registro.
+  A API local do GTCEu 7.5.3 foi conferida: `inputItems(Object)` rejeita `Block` e `String` e
+  retorna o builder sem adicionar ingrediente. Os quatro crafts dependentes de ExtendedAE só
+  são gerados se todos os seus ingredientes externos estiverem registrados.
+- Lava Maker e Stone Superheater tinham entradas idênticas e o lookup descartava uma receita.
+  Adicionados circuitos 1 e 2 respectivamente. Regressão confere as entradas recuperadas, suas
+  quantidades e a presença de ambas as receitas; log final sem colisão entre esses dois controllers.
+- `GTNABlockRecipes`: Basalt/Deepslate usam `notConsumable` para Blue Ice/Magma Block.
+  `chancedInput(..., 0, 0)` era inválido e produzia dois rastros de `GTNAGTAddon.addRecipes` no
+  ambiente local, além de omitir catalisadores. Regressão verifica presença e chance zero correta.
+  Sem o `latest.log` completo do jogador, não se afirma que seus rastros têm a mesma origem.
+- Refmap no config mudou de `gtna.refmap.json` para `mixins.gtna.refmap.json`, o nome produzido
+  pelo build. Jar reobfuscado inspecionado: o recurso apontado existe e seu JSON é legível.
+  Aviso de refmap ainda ocorre nos runs de desenvolvimento por diretórios; não equivale a jar ausente.
+- Receitas `infinite_input_*`/`output_boost_*` usam condição Forge
+  `gtna:restricted_items_enabled`. No default `modDifficulty=NORMAL`, retorno null e mensagem
+  de descarte são esperados. Para habilitar: JOURNEY, `selfRestraint=false`,
+  `restrictedItems.disableUsage=false` e `restrictedItems.disableRecipes=false`.
+- Validação final: `spotlessApply spotlessCheck compileJava runUnitTests runGameTestServer runData jar
+  --offline`, **BUILD SUCCESSFUL**, 28 unitários, **139/139 GameTests**, relatório XML dos dois novos
+  testes sem falhas, datagen `written: 0`. Log: `/tmp/gtna-player-report-validated-gate.log`.
+  Sem os erros `Input item is not one of`, `Cannot format given Object as a Number` ou rastros
+  `GTNAGTAddon.addRecipes` nesse gate. O gate combinado não carrega as integrações FTB opcionais.
+- Pendências: abertura visual/clique real no Eye of Harmony, fabricação no pack do jogador,
+  habilitação dos hatches via config e teste do jar em produção. Há avisos de limite de entradas
+  no Ultimate Pattern Buffer (10 entradas / tipo Assembler com máximo declarado 9) e Nexus
+  Molecular Forge (21 / Assembly Line com máximo 16); presença dos ingredientes foi testada,
+  fabricação dessas duas receitas ainda precisa de revisão. Outros avisos de materiais/receitas
+  antigos seguem fora deste reparo. Tudo local; sem commit, push ou publicação.
+
+### G-0142 (2026-10-04) — Nós do GTIA (P6) e jar de teste instalado na Prism
+
+- O GTIACore ganhou 9 nós em `data/gtia/gtna_research/` (5 de Steam e 4 de LV, ver `GTIA Private and
+  Tests/docs/PLANO_TECNICO_ARVORE_DE_PESQUISA_v01.md`). **Só um gate real:** `gtia:lv/aluminium` bloqueia
+  `gtceu:electric_blast_furnace/blast_aluminium` e `..._gas`; os outros 8 só concedem flags.
+- Cada nó libera pelo **item de prontidão** do tier (por exemplo, o controller da EBF e o pó de alumínio),
+  nunca por um item que dependa do próprio gate.
+- GameTests do core (`ResearchContentGameTests`, 3 casos): ids de item e receita existem, grafo sem ciclos e
+  sem pré-requisito em tier posterior, e o GTNA carrega todos os nós. **16/16** com
+  `-PgtnaDevJar=.../build/devlibs/gtna-0.5.1.jar`; log "Loaded 9 research nodes (9 files, 0 problems)".
+- Jars construídos e instalados na Prism de teste (backup dos anteriores em
+  `/home/raishxn/MineProjects/GTIA-arquivo/prism-jars-before-research-2026-10-04/`):
+  GTNA `gtna-0.5.1.jar` SHA-256 `07546614da2855c0aa62f92233d01a1921dec7982d861a42b5bf870b47bdb933`
+  (inclui as mudanças em andamento do autor na árvore); GTIACore `gtia-0.1.0.jar` SHA-256
+  `2da8c9cdda04bb1c893be4ab77a9fe6dd5eb37e058076fd48a498d7fafc5f94c`.
+- **Pendente: teste humano no cliente** (lista no fim da conversa): mensagem e som de liberação, ordem da
+  cadeia, o bloqueio do Aluminium na EBF, a tarefa no FTB Quests e o escopo de time.
+
+### G-0141 (2026-10-04) — Motor de pesquisa (P3 e P4): gatilho por item e tarefa FTB Quests
+
+- **P4, gatilho `obtain_item`** (`KnowledgeTriggers`): o jogador "obteve" o item se ele está no inventário
+  (itens, armadura, mão secundária) ou acabou de ser fabricado, fundido ou coletado. Varredura a cada 20
+  ticks mais os eventos `ItemCrafted/ItemPickup/ItemSmelted`; repete até estabilizar, então uma cadeia cujos
+  itens já estão todos no inventário libera numa passada. Só libera se os pré-requisitos estiverem
+  satisfeitos. Vale para o escopo (um membro do time basta). Mensagem `gtna.research.unlocked` e som.
+  Custo quando não há gatilhos de item: um teste de `isEmpty` por varredura.
+- **Limite conhecido:** itens só em baús, máquinas ou na rede AE2 não contam até alguém os pegar; Curios e
+  mochilas (Sophisticated Backpacks) não são varridos.
+- **P3, tarefa FTB Quests `gtna:research_node`** (`ResearchNodeTask`, `GTNAQuestTypes`): `AbstractBooleanTask`
+  com o campo `node`; conclui sozinha (checagem a cada 20 ticks e no login) quando o escopo tem o nó.
+  Registrada no `commonSetup` só se `ftbquests` estiver carregado. `build.gradle` ganhou
+  `modCompileOnly` e `modRuntimeOnly` de `ftb-quests-forge-289412:8078538` (mesma versão do pack, 2001.4.22).
+- **Armadilha de teste:** `runData` no mesmo comando desliga as dependências de execução
+  (`isDataRun`), inclusive FTB Teams e FTB Quests. Os GameTests do FTB só rodam de verdade com
+  `./gradlew runGameTestServer` sozinho.
+- Testes novos: `research_item_trigger_unlocks_chains_only_when_prerequisites_are_met` e
+  `research_quest_task_completes_from_the_node_state` (corpo em `FTBResearchTaskTests`, só com FTB Quests).
+- Validação: gate combinado BUILD SUCCESSFUL (137/137); `runGameTestServer` isolado com FTB Quests
+  carregado, **137/137**, relatório JUnit conferido; datagen estável.
+- **Não verificado em jogo:** a tarefa no livro de quests (ícone, título, conclusão automática), a mensagem
+  e o som, e a detecção com um item fabricado de verdade.
+- Sem commit/push; revisão do autor pendente.
+
+### G-0140 (2026-10-04) — Motor de pesquisa (P2): nó bloqueia receita de máquina
+
+- `RecipeHelperMixin` ganhou `gtna$checkResearchGates` no HEAD de `RecipeHelper.checkConditions`
+  (`remap = false`, mesmo padrão dos injetores já existentes no arquivo). Receita cujo id consta num
+  `recipe_condition` só roda se o dono da máquina (escopo = time FTB efetivo ou jogador) tiver o nó.
+  Grafo vazio, receita sem gate e cliente passam sem custo (um `HashMap.get`).
+- **Desvio do plano, de propósito:** o plano previa uma `RecipeCondition` anexada às receitas. Não foi feito
+  porque as receitas lidas do JSON podem ter listas de condições imutáveis (`List.of()` do codec) e o campo é
+  `final`; mutar exigiria reflexão e dependeria da ordem do reload. O gancho por id cobre também receitas de
+  KubeJS e cópias modificadas (`copy` preserva o `id`). **Custo:** o JEI/EMI ainda não mostra o bloqueio na
+  receita; isso fica para a fase da interface (P5).
+- Máquina sem dono bloqueia receita com gate (sem escopo). Outras receitas da mesma máquina continuam;
+  a busca do GTCEu segue para o próximo candidato quando um falha.
+- Mensagem: `gtceu.recipe_logic.condition_fails: gtna.research.requires` ("Requires research: <nó>"),
+  EN no `GTNALangProvider` e PT em `pt_br.json`. `KnowledgeService.firstMissingGate` concentra a regra.
+- GameTest `research_gate_blocks_the_recipe_until_the_owner_unlocks_the_node`, com um Macerator LV real:
+  receita livre antes do grafo, bloqueada sem o nó, bloqueada sem dono, outra receita livre, liberada após
+  `unlock`, e dono diferente não herda.
+- Gate `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`: BUILD SUCCESSFUL,
+  **135/135 GameTests** (134 + 1) e datagen `written: 0` na segunda execução (a primeira regenerou o `en_us.json`).
+- **Não verificado:** jogo real com uma receita de produção gateada, máquinas multiblock (o hook vale para
+  qualquer `RecipeLogic`, mas só o Macerator foi exercitado), e o comportamento de uma receita **em andamento**
+  quando o nó é resetado (`handleRecipeWorking` reavalia as condições a cada tick, então deve interromper).
+- **Fora de alcance por desenho:** crafting de bancada, receitas do AE2 e padrões não passam por
+  `checkConditions`; a planta como ingrediente (P8) é a rota para isso.
+- Sem commit/push; revisão do autor pendente.
+
+### G-0139 (2026-10-04) — Motor de pesquisa (P1): nós em JSON, escopo por time e comandos
+
+- Novo pacote `com.raishxn.gtna.research` (12 classes). **Escrito do zero** a partir do plano do GTIA
+  (`GTIA Private and Tests/docs/PLANO_TECNICO_ARVORE_DE_PESQUISA_v01.md`); o GTO foi só referência de
+  conceito (bytecode lido apenas por assinatura, sem copiar código, nomes de classe, tags ou texturas).
+  Vocabulário próprio: `KnowledgeNode/Graph/Data/Service`, gatilho `obtain_item`, sem pontos, tags ou CWU.
+- Nós: `data/<ns>/gtna_research/**.json` com `tier`, `icon`, `prerequisites`, `trigger`
+  (`obtain_item` | `manual`), `grants` (`recipe_condition` | `flag`) e `quest`. O id é o caminho do arquivo.
+  `KnowledgeLoader` recarrega com os dados; nós inválidos são logados e descartados.
+- **Campos opcionais estritos** (`StrictFields`): o `optionalFieldOf` do DFU 6 engole erro e usa o padrão,
+  o que deixaria um nó com grant inválido carregar **sem o bloqueio**. Um GameTest cobre o caso.
+- `KnowledgeGraph.build` remove nós com pré-requisito ausente, ciclos (inclui auto-referência), tier < 1 e
+  dependentes; ordena por tier e dependência; indexa gates por receita e gatilhos por item.
+- `KnowledgeData` (SavedData `gtna_knowledge`, `DATA_VERSION` 1) guarda nós por escopo e **preserva ids que
+  saíram do pack**. Escopo: `KnowledgeScope` reutiliza `DepositRecorderBehavior.scope` (time FTB efetivo ou
+  jogador), a mesma regra das descobertas de fluido.
+- `KnowledgeService`: `unlock` (com `force` para a cadeia), `isUnlocked`, `hasFlag`, `recipeAllowed`, `reset`;
+  evento `KnowledgeUnlockedEvent` no barramento Forge. Comandos `/gtna research list|info|unlock|reset`
+  (nível 2 para alterar progresso). Textos EN no `GTNALangProvider` e PT em `pt_br.json`.
+- Ligação: duas linhas em `CommonProxy` (`KnowledgeEvents.register`). Sem nós embutidos no GTNA; sem mudança
+  de receitas, itens, máquinas ou assets.
+- Testes: `GTNAKnowledgeGameTests` com 7 casos (JSON, rejeição de tipos/ids inválidos, grafo, índices,
+  SavedData, serviço com prerequisitos/flags/gates/eventos/isolamento por escopo, escopo vs. fluidos).
+  Testes unitários `main()` não servem aqui: o classpath de teste não carrega classes do Minecraft.
+- Gate `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`: BUILD SUCCESSFUL,
+  **134/134 GameTests** (127 anteriores + 7), datagen `written: 0`. Observação: `runData` sobrescreve
+  `run/logs/latest.log`, então `tools/check_gametest_report.py` só vale logo após `runGameTestServer`.
+- **Não verificado:** os comandos em jogo (os GameTests não executam Brigadier), a leitura de nós pelo
+  recarregamento real de datapack (o log mostra "Loaded 0 research nodes", pois não há nós), e o escopo com
+  time FTB real e dois jogadores.
+- **Pendências do plano (P2–P8):** `ResearchNodeCondition` sobre receitas, tarefa FTB Quests, detecção do
+  gatilho `obtain_item`, tela LDLib e categoria EMI, nós do GTIA no GTIACore.
+- Árvore de trabalho já tinha mudanças do autor; só foram adicionados arquivos novos, duas linhas em
+  `CommonProxy`, entradas no `GTNALangProvider`/`pt_br.json` e a regeneração do `en_us.json`.
+  Sem commit/push; revisão do autor pendente.
+
+### G-0138 (2026-09-30) — Roadmaps públicos e TODO de GTNA e GTIA
+
+- Atualizado `docs/roadmap/index.md` e equivalentes EN/ES: baseline de desenvolvimento,
+  sistemas implementados, 14 tarefas com IDs estáveis, prioridades Agora/Depois/Mais adiante,
+  critérios de conclusão e distinção entre conteúdo em validação e propostas em estudo.
+  Flux Matrix e cadeia Void deixaram de aparecer como funcionalidades futuras.
+- Criado `GTIA Modpack/ROADMAP.md` no projeto irmão: base existente, 21 tarefas por etapa
+  Start → Steam → LV, LV → MV → HV, espaço EV/IV e escala industrial. Quests seguem adiadas
+  para autoria manual; não foi prometida distribuição reproduzível nem campanha pronta.
+- READMEs GTNA, GTIA Modpack e GTIACore apontam para os roadmaps. README do core corrigido
+  para Draconium próprio, dependência GTNA e 13 GameTests, conforme código/validações existentes.
+- QA documental GTIA: 52 Markdown/catálogo/cópias históricas OK. IDs sequenciais, links locais
+  dos roadmaps/READMEs e ausência de caminhos privados verificados. Traduções GTNA com as mesmas
+  14 tarefas. Créditos usam link do repositório para funcionar também no site MkDocs.
+- Gate GTNA `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`:
+  BUILD SUCCESSFUL, unitários OK, **127/127 GameTests** e datagen `written: 0`.
+  Log: `/tmp/gtna-g0138-roadmap-gate.log`. `git diff --check` dos documentos GTNA OK.
+- Nenhuma mudança de Java, receitas, assets, configs ou quests nesta etapa. Problemas reportados
+  de prospecção Radon/JEI e QA manual continuam no TODO; esta etapa não afirma tê-los resolvido.
+- Roadmaps preparados localmente. Sem commit/push/publicação; revisão e testes do autor pendentes.
+
+### G-0137 (2026-09-30) — QA do autor: hatches, tempos, Jade e cliente GTIA
+
+- Electric Void Miner aceita um Accelerate Hatch nas posições de casing e aplica seu percentual
+  pelo hook de RecipeLogic já existente, após o overclock, usando tier original da receita.
+  Nenhum segundo multiplicador no recipeModifier. Novo GameTest forma a máquina com
+  Accelerate + Parallel, confirma >2 operações e duração reduzida sem mudar EU/t do lote.
+- O antigo default IV+ =2 era um teto do minerador, não defeito do Parallel Hatch. Default IV+
+  agora permite até 1.024, respeitando ajuste do hatch, energia, insumos e saída; EV segue serial.
+  Display mostra o menor limite entre config e ajuste do hatch, sem anunciar 1.024 sem hatch.
+- Autor escolheu 10 s preciso, 30 s aleatório e 60 s cultivo antes do overclock. Defaults e perfil
+  GTIA atualizados; starter/planetas usam baseDuration; novo incubationDuration configurável.
+  Configs existentes do dev/Prism atualizadas com backup `/tmp/gtna-g0137-config-backup`.
+- Jade aleatório passa a remover a lista GTCEu de resultados potenciais e mostra pool/chances;
+  não altera as probabilidades. Chance base permanece 25% EV / 2% ZPM por minério/execução,
+  com bônus de overclock. Conferência visual ainda necessária. Config key Jade adicionada após
+  teste unitário detectar sua ausência; correção validada antes de iniciar cliente novo.
+- Provider en_us agora inclui os cinco World Data Scanners LV–IV; nomes conferidos no jar.
+  JEI de fluidos inclui origem da descoberta e upgrade de produção remota: a mesma receita
+  marciana serve na Terra com cartão certificado, T2 e energia LuV, sem segundo programa.
+- O runClient anterior não carregava GTIACore nem perfil GTIA. Novo lançador
+  `tools/run_gtia_client.py --core-dev-jar <jar mapeado>` instala perfil e depósito KubeJS com
+  backups persistentes. GTNA pode receber gtiaDevJar só no runtime dev, selecionando GTMThings
+  1.6.0 nesse caso. Dev jar do core relaxa apenas integrações de teste, preservando GTNA obrigatório;
+  build final do core restaurado com dependências obrigatórias e QA estático aprovado.
+- Gate de código anterior à melhoria final de display: 28 unitários / **127/127 GameTests**,
+  datagen e assemble. Perfil integrado GTIA + core: **127/127**, incluindo marcadores Marte
+  e FTB, sem ausência do core no runtime. Gate final e reabertura registrados abaixo após término.
+- Guia manual: `docs/roadmap/void-fluid-manual-test.md`, com extração nativa, registro,
+  produção local de Oil e produção remota de Radon. Não foi dispensado certificado por criativo.
+- Gate final `/tmp/gtna-g0137-gate-final-2.log`: spotlessCheck/compileJava/runUnitTests/
+  runGameTestServer/runData --offline, **28 unitários/127 GameTests**, datagen `written: 0`.
+  Teste de aceleração agora inicia o lote real e exige percentual exato uma vez. Uma tentativa
+  anterior de datagen abortou por renderer dinâmico não registrado; processo encerrado e gate
+  repetido com sucesso, sem alteração nos renderers.
+- Perfil final integrado `/tmp/gtna-g0137-integrated-profile-final.log`: **127/127** e dois
+  marcadores obrigatórios, com GTIACore 0.1.0 confirmado no runtime. Assemble/spotlessCheck
+  finais passaram. GTNA instalado na Prism com backup, SHA-256
+  `ee606ece744ef8e6487fbd16eb0c654eef469910b244f70e67f55320ebba21a3`.
+  Cliente novo iniciado pelo lançador integrado; log `/tmp/gtna-g0137-integrated-client.log`.
+- Sem commit/push; QA visual, montagem humana e demais pendências de G-0135 continuam abertas.
+
+### G-0136 (2026-09-30) — Traduções da cadeia Void, viewport e dependência GTIACore
+
+- QA do autor revelou nomes crus em inglês e grade Random Void Mining fora da janela. O provider
+  manual de en_us sobrescrevia as traduções Registrate: agora inclui todas as 45 essências de veios,
+  sementes, dados mundiais/planetários, Deposit Recorder/Data, filtro e seis upgrades remotos.
+  Conferidos os nomes reportados no jar final; pt_br já contém essas chaves.
+- Random Void Mining declara uma entrada para o circuito. Template usa viewport de seis linhas,
+  scrollbar e clipping LDLib, preservando os 216 candidatos e seus IDs. Slots são filhos diretos
+  do scroll para integração de tooltips no viewer. Novo GameTest verifica altura <200, clipping,
+  catálogo completo e acesso à última saída por rolagem; inspeção visual pelo autor ainda pendente.
+- Gate `/tmp/gtna-g0136-gate.log`: spotlessCheck, compileJava, 28 classes unitárias,
+  **126/126 GameTests**, runData --offline; datagen escreveu um arquivo de idioma. Assemble
+  posterior passou e confirmou os nomes no jar. Cliente dev iniciado por runClient --offline,
+  log `/tmp/gtna-g0136-runclient.log`; manter aberto para teste do autor.
+- Pedido explícito do autor: GTIACore exige GTNA >=0.5.1 em ambos os lados, ordering AFTER.
+  GTNA continua independente de GTIACore. Core aceita jar dev mapeado via `gtnaDevJar`, com
+  bibliotecas de runtime correspondentes. Teste conjunto de 13 GameTests do core passou com
+  GTNA carregado e GTMThings 1.6.0; primeira tentativa detectou 1.5.4 incompatível e foi corrigida.
+  Ver QA do core para manifesto empacotado/build final e instalação na Prism de teste.
+- Sem commit/push. Restam QA visual pelo autor e pendências manuais de G-0135.
+
+### G-0135 (2026-09-29) — Caminho marciano completo e escopo efetivo FTB
+
+- O teste GTIA de Radon deixou de conceder certificado por chamada direta ao SavedData. Agora monta
+  perfuradora MV em `ad_astra:mars`, consulta geração normal de bedrock GTCEu, extrai Radon no hatch,
+  registra com Deposit Recorder e leva esse cartão à rig remota LuV com T2 no Overworld. Registra
+  `GTIA Mars native extraction -> recorded data -> remote Radon: PASS`. O fixture limpa os blocos
+  planetários e restaura o cache anterior; só usa o mundo de GameTests, sem alterar mundos da Prism.
+- Auditoria GTCEu `FTBOwner` + API FTB Teams 2001.3.2 confirmou: `getPlayerTeamForPlayerID` fornece
+  a equipe pessoal e `FTBOwner.getUUID()` retorna `getId()`, não a party efetiva. O novo helper
+  opcional `FTBFluidDiscoveryOwner` usa `Team.getTeamId()`; outras integrações/UUID individual
+  mantêm a regra anterior. Não transfere automaticamente certificados pessoais antigos para parties.
+- Novo GameTest usa manager/modelos FTB reais e três identidades isoladas com jogadores simulados:
+  colegas compartilham/copiam, terceiros não acessam/copiam, sair revoga a produção e voltar a restaura.
+  Não é evidência de dois clientes humanos. Mapa de identidades de teste limpo em finally.
+- O corpo opcional está em `FTBFluidDiscoveryTests`, sem annotation de registro. O primeiro gate
+  conjunto com runData remove FTB do runtime e revelou verificação antecipada de tipos opcionais;
+  mover o corpo para helper separado corrigiu o carregamento do holder sem FTB. Processo de teste
+  com main abortada encerrado antes de repetir. Dependências de API são compile-only, sem classes
+  FTB empacotadas ou requisito obrigatório no mods.toml.
+- Gate final `/tmp/gtna-mars-team-final-gate-2.log`: spotlessCheck/compileJava/runUnitTests/
+  runGameTestServer/runData/assemble --offline após spotlessApply, **28 unitários/125 GameTests**,
+  datagen `written: 0`. Esse gate não carrega FTB; cenário opcional não é contado como exercitado nele.
+- Perfil final `/tmp/gtna-mars-team-profile-final.log` e `build/test-results/void-fluid-gtia/profile.log`:
+  **125/125**, com os dois marcadores obrigatórios (Marte e FTB). Runner exige esses marcadores
+  para evitar falso positivo de cenários pulados. Config dev restaurada a seis programas e depósito
+  temporário removido. Jar FTB Teams usado no dev tem SHA-256 idêntico ao da Prism 2001.3.2.
+- GTNA instalado com backup: SHA-256 `5c42081f4300e91c7a7813bf97371554c7e5296859b10758e0492d50101c99c7`.
+  GTIACore permanece no hash do G-0134. Reabertura entrou no Test World sem crash de
+  classes opcionais ou descarte de programas void; log `mars-team-fixed-client.log` no QA da Prism.
+- Restam conferência visual/montagem manual, teste com duas pessoas, percurso espacial normal,
+  demanda/balanceamento e dados de pesquisa T4/T5. Nenhuma quest, commit ou push criado.
+
+
+### G-0134 (2026-09-29) — Testes do cliente GTIA e correções de integração
+
+- Protótipo de fluidos EV segue o Estado atual e `docs/roadmap/void-fluid-drilling.md`:
+  registro de extração nativa real, dados por fluido/origem/proprietário, upgrades remotos,
+  consumo proporcional, paralelos e pausa com saída bloqueada. O checkpoint G-0133 passou
+  a documentar a rodada paralela de texturas; esta rodada preservou todas essas alterações.
+- Gate pré-cliente com 28 unitários/123 GameTests, datagen e assemble passou. `runClient
+  --offline` chegou ao carregamento completo de atlas sem aviso de textura/modelo ausente
+  do GTNA; encerrado depois dessa verificação. Não equivale a inspeção visual das UIs.
+- Instância de QA: `GregTech Infinity Ascension`; GTNA antes `.jar.disabled`, agora ativo.
+  Perfil `void_fluid_drill.json` com sete programas instalado. Sem KubeJS nessa instância,
+  depósito colocado como datapack em `saves/Test World/datapacks/gtia-void-fluids.zip`.
+  Backups específicos em `gtna-qa-backups/` junto da instância. Quests não alteradas.
+- Primeiro cliente conjunto abortou: `MaterialIconType plate_superdense already registered`.
+  GTIACore `GTIAExtraForms` e GTNA `GTNATagPrefix` agora consultam `getByName` usando a chave
+  normalizada `plate_superdense` e reutilizam a entrada. Mantidos IDs de formas/receitas.
+  Core validado com 13 GameTests, runData, build final sem dependências opcionais e QA estático;
+  wrapper bwrap exige `--no-daemon` para não reutilizar daemon fora do namespace montado.
+- Cliente seguinte entrou no Test World e carregou automaticamente o datapack, mas revelou
+  `failed to add recipe ... electric_void_mining/iron_vein_essence` e programa terrestre
+  Tin/Lead: índice GTCEu não distingue apenas EU/t/duração. Preciso terrestre agora usa
+  circuito 1 nos três básicos EV e circuito 2 nas 40 veias completas LuV/ZPM; aleatório
+  usa circuito 1 no pool EV e 2 no completo ZPM. Planetários preservados sem circuito extra.
+  Tooltips en/pt e documento da cadeia atualizados.
+- `GTNAVoidMinerLookupGameTests.everyProductionVoidRecipeSurvivesLookupBaking` monta índice
+  isolado a partir do catálogo real do RecipeManager e verifica seleção de cada ID,
+  cobrindo receitas descartadas que testes de fixture/RecipeManager não detectavam.
+- Gate final: `spotlessCheck compileJava runUnitTests runGameTestServer runData assemble
+  --offline`, após spotlessApply: 28 unitários, **124/124 GameTests**, build verde.
+  Log `/tmp/gtna-void-lookup-gate-20260929.log`; perfil GTIA repetido **124/124**.
+  Reabertura final entrou no Test World sem crash de ícone ou descarte de programas
+  `void_mining`/`void_fluid_drilling`; `build/test-results/prism-void-qa/results.json`.
+- Jars instalados: GTNA SHA-256 `6de2957c4f595c62795ffe2c663cda5847fd54de9b0032bdb9b56cc0a00ac52c`;
+  GTIACore `71719b6f2de0a18564a40dea00f83804e8cf971f96b1fefbeaa0b31617394f90`.
+  Logs do primeiro crash e carregamento conjunto preservados em `build/test-results/prism-void-qa/`.
+- Pendências: montagem/UI manual, operação marciana nativa, dois jogadores/equipes,
+  balanceamento real e dados T4/T5. O mundo antigo também acusa mappings removidos e receitas
+  de outros sistemas inválidas; não considerar a primeira fatia/campanha toda validada.
+  Tudo local, sem commit/push.
+
+
+### G-0133 (2026-09-30) — Redesign de Texturas: 47 Essências, 8 Itens HD Animados, 17 Itens GT-Authentic (Remote/Deposit/Data Chips) e 29 Overlays de Hatches
+
+- `src/main/resources/assets/gtna/textures/item/essence.png` e `essence_seed.png` refeitos em pixel art `16x16` nítida (drusa/pó cristalino de vazio e cluster de 3 esporos biominerais facetados com fissura ciano).
+- Todas as 40 texturas de veios em `src/main/resources/assets/gtna/textures/item/essence/` e 5 novas texturas planetárias (`moon_vein.png`, `mars_vein.png`, `venus_vein.png`, `mercury_vein.png`, `glacio_vein.png`) foram geradas seguindo o **Protótipo A**, com modelos planetários atualizados em `GTNAItems.java`.
+- Os 8 itens (`neutronium_antimatter_fuel_rod`, `draconium_antimatter_fuel_rod`, `cosmic_neutronium_antimatter_fuel_rod`, `infinity_antimatter_fuel_rod`, `annihilation_constrainer`, `nexus_linker`, `tesseract_target_marker`, `command_wand`) foram atualizados com tiras animadas `.png` + `.png.mcmeta` preservando a escala `64x64` nas cápsulas de antimatéria e no constrainer (`cosmic_neutronium` com blindagem vermelha + fluido interno preto, fundo opaco removido do constrainer, e `quantum_wireless_tool.png` do `UFO-Future-1.21.1` aplicado ao `nexus_linker`).
+- Os 17 itens (`fluid_remote_upgrade_terrestrial..t5`, `deposit_recorder`, `deposit_data`, `fluid_separation_filter`, `overworld_data`, `nether_data`, `end_data`, `planet_data_chip_moon..glacio`) ganharam texturas animadas `.png` + `.png.mcmeta` em `16x16` trabalhadas diretamente sobre os sprites originais do GTCEu/GTO (`data_orb`, `portable_scanner`, `data_stick`, `fluid_filter`, `planet_data_chip`), com evolução progressiva de complexidade/frames do `terrestrial` (2 frames) até o `t5` (16 frames arco-íris), e tiveram seus modelos vinculados em `GTNAItems.java`.
+- Os 29 conjuntos de overlays de hatches (`thread_hatch_mk1..mk8`, `accelerate_hatch_mk1..mk14`, `overclock_hatch_mk1..mk7`) foram atualizados para animações contínuas de 16 frames sem efeito de reset (`2*pi` periódico), com bisel chanfrado e borda externa `1px` transparente.
+- Validação completa executada: `./gradlew spotlessApply spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`. Resta conferência visual em cliente (`runClient`). Sem commit/push.
+
+### G-0132 (2026-09-29) — Void Miner com modos preciso/aleatório e cadeia de essências GTL
+
+- Fonte corrigida e verificada: pack completo em
+  `/home/raishxn/.local/share/PrismLauncher/instances/GregTech-Leisure-1.4.5.1/minecraft`,
+  `kubejs/server_scripts/gtceu.js:6255–6729` e `startup_scripts/item.js:75–96`.
+  O antigo caminho Downloads está vazio; AGENTS.md local agora aponta para a instância Prism.
+  GTLCore `gtl-1431-skyblock`, commit `18c7814`, fornece o scanner e a estrutura da incubadora.
+- A elétrica registra `electric_void_mining` e `random_void_mining`, com seletor nativo de
+  modos do GTCEu, identificação do modo na tela e vários output buses para o pool aleatório.
+  Preciso aceita essência consumível (receitas nativas) ou seletor legado de packs; aleatório
+  dispensa ambos. Validações de fluido, teto de saídas e paralelo continuam aplicadas.
+- `GTNAVoidVeins` registra os fatos das 40 veias GTL. World Data Scanner LV–IV tem dois tanques
+  de 64.000 mB e crafting original por hull/cable/sensor/circuit. Incubator conserva pattern,
+  blocos e crafting GTL (Greenhouse + Plascrete + Filter Casing + Field Generator HV).
+- Essence Seed tem receita Mixer original. Bootstrap de Essence usa Bone Block + Biomass
+  no Chemical Bath HV, substituindo o Block Conversion Room que não faz parte deste escopo.
+  Culturas conservam 10.000 mB Biomass/Milk, 12.000 ticks, HV e 64 essências; dados reutilizáveis
+  de Overworld/Nether/End são 16/32/64. Amostras aceitam ore tags ou Raw Ore/Dust correspondente;
+  Ancient Debris é tratado como item direto, não como tag `ores/`.
+- Dados dos três mundos vanilla e cinco planetas usam dimension gates. Chips Ad Astra exigem
+  scanner EV no planeta e pedra local não consumida; os chips são reutilizados pela incubadora.
+  Os programas planetários agora consomem a essência, mantendo custos/rendimentos G-0131.
+  Sem Ad Astra, o registro dos cinco scans/culturas/programas planetários é omitido.
+- Progressão: três programas terrestres EV consomem essência, preservando as saídas antigas.
+  As 40 veias completas conservam energia LuV (Overworld/Nether) e ZPM (End), mas usam o custo
+  de fluido/duração configurável GTNA e quantidades GTL divididas por dez. Aleatório EV só
+  inclui Iron/Copper/Tin/Lead/Gold/Silver; pool completo é ZPM. Os dois aleatórios usam por
+  padrão 10.000 mB e 4.800 ticks. As diferenças para o GTL (1M/10M mB, 200/1.200 ticks e
+  saídas maiores) estão documentadas; não alegar port numérico 1:1.
+- MaterialAdd habilita Dust de Rubidium/Strontium/Tellurium/Zirconium, declarados sem item
+  forms no GTCEu. Zircon/Celestine/Trinium Compound usam Zirconium/Strontium/Trinium; sem
+  Raw Ore, saídas usam Dust. Não foram adicionados minérios ao worldgen.
+- Assets de Essence/Seed/veias/scanner vêm do GTOCore (CC BY-NC-SA 4.0, permissão existente),
+  com variantes OW/End reutilizando os ícones genéricos; nenhum asset de licença indefinida
+  do pack foi copiado. Atribuição central GTL e THIRD_PARTY_NOTICES atualizados.
+- Validação final: `./gradlew spotlessApply spotlessCheck compileJava runUnitTests
+  runGameTestServer runData --offline`, `/tmp/gtna-void-chain-final-gate.log`: **28 unitários,
+  114/114 GameTests**, sem parsing error de receita GTNA. Os testes novos cobrem aleatório
+  sem essência e sem gasto com output cheio; incubadora formada/produção/consumo/preservação
+  dos dados e recusa de sponge ausente; catálogo completo e dimensão/capacidade dos scanners.
+  O teste preciso verifica consumo de uma essência; os cinco planetas verificam a nova cadeia.
+  Datagen repetido `/tmp/gtna-void-chain-data-repeat.log`: `written: 0`. `git diff --check` verde.
+- Pendências: QA client de ícones/tooltips/aba de modo/preview/orientação da incubadora; scans
+  reais nos cinco planetas; operação de paralelos IV+; rendimento/custo das adaptações no pack
+  e migração das antigas automações por circuitos/chips. Tudo local, sem commit/push.
+
+
+### G-0131 (2026-09-29) — Correção dos programas do Void Miner EV
+
+- Adicionados cinco itens `planet_data_chip_*` ao GTNA, com nomes em inglês/português e modelo
+  provisório baseado no Data Stick do GTCEu. Quando Ad Astra está presente, cada chip tem receita
+  no Assembler EV usando a pedra do planeta sem consumi-la, mais Data Stick, circuito EV e
+  Soldering Alloy.
+  O programa planetário exige tanto a amostra quanto o chip correspondente, sem consumi-los.
+- `ElectricVoidMinerMachine` só aceita receita com um custo positivo de Drilling Fluid dentro do
+  teto configurado; rejeita ausência de fluido e fluido alternativo. Configuração inválida de
+  fluido-base zero volta ao padrão. A UI exibe ID do programa, fluido, EU/t e paralelo efetivos,
+  além das saídas já exibidas.
+- `maxParallelByTier` agora tem entrada padrão para EV–MAX: 1 em EV e 2 de IV em diante. O
+  exemplo GTIA explicita esses valores e continua permitindo ajuste individual por tier.
+- Validação: `./gradlew spotlessApply spotlessCheck compileJava runUnitTests runGameTestServer
+  runData --offline` passou após a correção final da amostra em
+  `/tmp/gtna-voidminer-chip-final-gate.log`, com **111/111 GameTests** e `written: 0`;
+  a primeira geração criou os modelos/traduções novos. Repetição do datagen em
+  `/tmp/gtna-voidminer-fix-datagen-repeat.log` passou com `written: 0`; `git diff --check` passou.
+  Sem commit/push.
+- Pendências: QA manual de visual dos chips e da UI, obtenção de amostra/chip no pack, operação
+  real de paralelo IV+ com consumo proporcional e compatibilidade com mundos existentes.
+
+### G-0130 (2026-09-29) — Void Miner elétrico EV configurável
+
+- `gtna:electric_void_miner` (GTIA-D-159..D-162): multibloco EV 3×3×3 de Titanium Stable Casing
+  com núcleo de frame de Titânio; `gtna:void_miner_steam_gate_aged` permanece intocado.
+- Programas são receitas de `gtna:electric_void_mining`: seletor não consumível (circuito, amostra
+  ou Planet Data Chip), saídas de Raw Ore e custo de Drilling Fluid por receita. Três programas
+  terrestres padrão (circuitos 1–3) e fallback de cobblestone opcional.
+- Programas do Ad Astra (dependência opcional, `ModList.get().isLoaded("ad_astra")`): Lua, Marte,
+  Vênus, Mercúrio e Glácio usam a pedra do planeta como amostra não consumível e espelham os
+  veios do GTO (`GTOOres`): Bauxite/Ilmenite; Scheelite/Tungstate/Cooperite;
+  Sulfur/Pyrite/Galena/Chromite; Garnierite/Nickel/Cobaltite; Bastnasite/Tungstate/Tantalite.
+  Sem o Ad Astra nada é registrado.
+- `config/gtna/balance/electric_void_miner.json` controla `enabled` (registro), `minimumTier`,
+  `programRequired`, `baseDuration`/`baseEUt`/`defaultDrillingFluidPerOperation` do fallback,
+  `maxDrillingFluidPerOperation`, `maxOutputStacksPerOperation`, `parallelEnabledFromTier`,
+  `maxParallelByTier` e `allowFixedFallbackRecipe`. O tier operacional vem dos hatches de energia;
+  o paralelo fica em 1 em EV e é limitado pelo mapa por tier. Overclock elétrico padrão.
+- Controller EV em Assembler com frame/placa dupla de Titânio, componentes EV, circuitos EV e
+  Soldering Alloy; sem Lua, amostra, Planet Data Chip ou minerador Steam (GTIA-D-161).
+- Testes novos: `electricVoidMinerFormsAndCapsParallelAtEv`,
+  `electricVoidMinerRunsProgramAndConsumesFluidOnce` (1000 mB consumidos uma única vez e 3 Raw
+  Nickel), `electricVoidMinerConfigGatesPrograms` (seletor obrigatório e teto de fluido) e
+  `electricVoidMinerAdAstraPrograms` (cinco programas planetários).
+- Validação: `./gradlew spotlessApply spotlessCheck compileJava runUnitTests runGameTestServer
+  runData --offline` passou com **111/111 GameTests** (`/tmp/gtna-voidminer-gate8.log`); repetição
+  do `runData` com `written: 0` (`/tmp/gtna-voidminer-datagen-repeat2.log`). `git diff --check`
+  passou. Sem commit/push.
+- Pendências: teste manual do autor (formação, UI/JEI, custo real e paralelo); definição dos
+  programas planetários (amostra + Planet Data Chip) no pack; GTIA-D-172 (fluidos) fora de escopo.
 
 ### G-0129 (2026-09-29) — Merge do push de 26/09 e publicação na main
 
@@ -4499,3 +5587,739 @@ grep -q "GAME TESTS COMPLETE" run/logs/latest.log && echo OK || echo "NAO RODOU"
   `~/MineProjects/GTOCore-Main`, `~/MineProjects/GTLAdditions`
 - Projeto irmão com o mesmo harness (e sourceset de teste separado):
   `~/MineProjects/UFO-Future-1.21.1` (ver `CONTINUITY_LEDGER.md` de lá)
+
+### G-0157 (2026-10-04) — EOH apresentação e Nexus Terminal avançado
+
+- Autor pediu cinco ajustes: frente, renderer, terminal no fluxo Advanced Terminal GTO,
+  manual natural/Z e retirada dos três blocos antigos duplicados. Fabricação segue adiada.
+- Frente usa cópias das texturas inactive/active já importadas e atribuídas; manifest
+  `eye-of-harmony-assets.json` registra os caminhos. Estado do modelo acompanha o ciclo
+  pago sem alterar o RecipeLogic legado. Renderer corrigido sobre modelos existentes:
+  centro a 16 blocos atrás do controlador, escala/orbita independentes, um Overworld,
+  animação congelada em pausa/entrega e caixa de render centrada. Não é um port completo
+  dos efeitos GTNH; revisão artística permanece manual.
+- Manual EOH sem gate Shift; Z avança uma página por pressão. Textos EN/PT ajustados.
+- Terminal 500×232, três painéis simultâneos e tema roxo/preto. Números com -1/+1, roda
+  e digitação; modos visíveis; categorias roláveis e grade de escolhas/limpeza. Catálogo
+  original preserva índices antigos; novas escolhas em `NexusSelectedBlocks` usam ID
+  validado contra categoria e candidatos reais da célula. Famílias EOH independentes.
+  Cache de categorias evita percorrer o registro a cada frame. PT-BR dos controles ampliado.
+- Referência inspecionada: jar GTO `gtocore-forge-1.20.1-26.9.5.jar`,
+  `com.gtolib.gtm.AdvancedTerminalBehavior` (native/uipro incompatível com GTCEu 7.5.3),
+  catálogo BlockMap do GTOCore local `dc4824d`. Implementação própria LDLib, sem importar
+  a classe nativa. Notas de atribuição em THIRD_PARTY_NOTICES.
+- Mirror agora aplica o flip ao construtor; Demolition limpa somente células AIR estritas,
+  respeitando interação/quebra cancelada e preservando controlador, ANY e bedrock.
+  Replace preserva blocos já compatíveis. Orientação/módulos existentes mantidos.
+- Retirados registros e receitas legados de Bridge, Stability e Compression sem tier,
+  e receita legada do controlador dependente deles. MissingMappingsEvent remapeia bloco
+  e item para Spatial, Stabilisation[0] e Compression[0]; os aliases sem graduação usam
+  conservadoramente o primeiro tier. Datagen removeu 12 arquivos antigos nesta etapa.
+- Quatro GameTests novos: NBT/compatibilidade/limites; substituição dos 138 campos de
+  compressão do EOH preservando controlador e célula ignorada; Mirror/Demolition em
+  pattern assimétrico delimitado; ausência de registro canônico legado e destinos vivos.
+  Uma falha da fixture foi corrigida usando helper.absolutePos para consultar células
+  locais; não se afrouxou a exigência de tier uniforme. Relatório registra stack completo
+  de falha para diagnósticos futuros.
+- Gate PASS: `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`,
+  **30 classes unitárias / 171 GameTests**. Log persistente
+  `build/gtna-terminal-validation.log`, XML `build/test-results/gametest/TEST-gtna.xml`.
+- QA pendente: interface real/escala/servidor, renderer nas quatro direções e pausa/relog,
+  saves antigos reais, Survival/retorno de blocos e trocas de portas com conteúdo/NBT,
+  extração de rede AE vinculada com alcance/permissões, módulos e orientação. Roteiros
+  específicos em docs/roadmap. Nenhuma aprovação visual inferida dos testes.
+- Trabalho local, sem commit/push/publicação.
+- Conferência final de formatação/compilação e datagen após limpeza de código e texto:
+  `build/gtna-terminal-final-resources.log`, PASS (`written: 1`, texto EN de demolição).
+  `runClient --offline` iniciado para QA do autor, log persistente
+  `build/gtna-eoh-terminal-client.log`; abertura no mundo e aprovação visual continuam manuais.
+
+### G-0158 (2026-10-04) — casings EOH corretos e seletor sob demanda
+
+- Autor apresentou capturas do preview GTNA, do EOH GTNH e do Advanced Terminal e
+  esclareceu o fluxo desejado: controles → botão Tiered Block → categorias → escolhas.
+- Erro do import inicial confirmado no código da revisão GTNH
+  `a3e1e11241a814c9fa0dd0973d5699548428f689`: MTEEyeOfHarmony usa
+  BlockGTCasingsBA0 metadata 11/10 e Boundary. BlockGTCasingsBA0 liga 10 ao
+  EM_INNER_SPACETIME_REINFORCED_EOH_CASING, 11 ao EM_OUTER_SPACETIME_REINFORCED_EOH_CASING
+  e 12 ao EM_POWER_INFINITE. Substituídos temporal/spatial/boundary por esses PNGs
+  upstream sem modificações; mcmeta incorretos removidos (originais não animados).
+  Nenhum candidato correspondente no Modernity local inspecionado. Manifesto atualizado
+  com hashes/origem e auditoria de vínculo; THIRD_PARTY_NOTICES registra correção LGPL-3.0.
+  IDs, geometria e regras de operação não mudaram.
+- Terminal mantém roxo/preto; somente painel principal visível inicialmente. Linha
+  Tiered Block/Blocos por tier com Selecionar e × para limpar todas as escolhas.
+  Botão abre lista de categorias; categoria abre grade. × fecha grade ou lista;
+  fechar lista fecha também a grade. Fundo externo transparente. Área total 500×248.
+- Glass/Light retirados do seletor e ignorados ao aplicar escolhas antigas. NBT restante
+  permanece compatível. Teste de persistência/compatibilidade ampliado para conferir que
+  vidro antigo não restringe candidatos nativos; sem testes artificiais de layout.
+- Gate final PASS: spotlessCheck compileJava runUnitTests runGameTestServer runData
+  --offline, **30 classes unitárias / 171 GameTests**; log
+  `build/gtna-terminal-popup-final.log`. Datagen inicial escreveu 1 arquivo (EN novas
+  chaves); rodada final written: 0. Hashes dos três PNGs conferidos contra manifesto.
+- Roteiros de terminal e visual EOH atualizados. Abertura/fechamento dos painéis, escala,
+  persistência em UI real e aparência dos três casings no preview/mundo dependem do autor.
+  Mantidas pendências de Survival/portas com NBT, AE real e save antigo de G-0157.
+- Sem novas receitas de fabricação, commit/push/publicação.
+- Cliente atualizado iniciado com runClient --offline para QA do autor; log
+  `build/gtna-terminal-popup-client.log`. Abertura no mundo e aprovação visual não inferidas.
+
+### G-0159 (2026-10-04) — Steam: Breel, Clay Compound e vidro dos Large steam como no GTNL
+
+- Pedido do autor (via GTIA): as versões Large a vapor portadas do GTNL devem ser fabricáveis na era Steam,
+  como no GTNL. Comparado com `/home/raishxn/MineProjects/GTNL` (`GTNLMaterials`, `CraftingTableRecipes`,
+  `MixerRecipes`, `PrimitiveBrickKilnRecipes`):
+  - **Breel** sem `blastTemp` (o GTNL não tem temperatura de alto-forno): lingote na fornalha; nova receita
+    à mão `breel_dust_manual` (2 pó de Bronze + 1 pó de Aço → 3 pó de Breel). O mixer continua.
+  - **Clay Compound** no Brick Kiln (`brick_furnace/clay_compound`: 8 pó de argila + 8 de pedra + 8 de sílex
+    → 16 lingotes), receita do Primitive Brick Kiln do GTNL.
+  - **Brick Kiln** ganhou receita de controlador (a do GTOCore: hastes longas, parafusos e placa dupla de
+    Wrought Iron; o Primitive Blast Furnace Hatch do GTO, inexistente aqui, trocado pelo Coke Oven Hatch).
+  - **Large Steam Mixer** e **Large Steam Extractor**: Tempered Glass trocado por vidro comum (o GTNL usa
+    Reinforced Glass, que é de início de jogo; decisão do autor do GTIA, opção a).
+- Verificação: `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` PASS duas vezes
+  (171/171 GameTests; datagen written: 0), logs `build/gtna-steam-breel-gate.log` e `gate2.log`. No pack GTIA
+  completo, a checagem de alcançabilidade confirma que Large Steam Furnace, Mixer, Compressor, Hammer, Extractor,
+  Alloy Smelter e o Brick Kiln são alcançáveis na era Steam.
+- O jar instalado na Prism do GTIA (`de27883e…`) inclui também o trabalho local não commitado de G-0157/G-0158.
+- Sem commit/push. Falta teste do autor no cliente.
+
+### G-0159 (2026-10-04) — restrição ME, apresentação EMI/JEI e terminal
+
+- Autor pediu Spatial Casing no controlador, ME exclusivo para entradas/saídas, terminal
+  inicialmente centralizado e Battery contendo só capacitores. Após esclarecer o pedido
+  de HUD, corrigiu o alvo para o painel de receita e tooltips; não se adicionou provider Jade.
+- Controller appearance e textura all do modelo agora Spatial, mantendo overlays de frente.
+  Modelo gerado conferido (`texture_overrides.all = gtna:block/eye_of_harmony/spatial`).
+- Matching/preview/autobuild aceitam somente MEInputBus/MEInputHatch de buffer finito e
+  MEOutputBus/MEOutputHatch. IMEStockingPart, crafting, duais, energia e portas normais
+  não formam. Cinco limites exatos permanecem. Esta é política explícita do autor,
+  distinta da aceitação anterior de entradas físicas finitas; geometria GTNH mantida.
+  Estruturas existentes com portas normais precisam trocar essas portas para reformar.
+- Entrega para ME usa batches até Integer.MAX_VALUE, uma inserção por produto por visita,
+  máximo 64 inserções/tick e um batch de fluido/tick. Evita milhares de ticks entregando
+  pacotes de 64 itens em uma fila ME de long. Filas nativas GTCEu persistem e aceitam
+  produtos offline, depois exportam à rede. Ciclo só encerra após EU/produtos aceitos.
+- Fixture estrutural agora cinco portas ME. Teste substitui cada uma por equivalente
+  normal para provar rejeição. Operação confere gases nos slots ME reais, circuito,
+  fila offline/serialização, relog sem dupla entrega/crédito, fim legado e bulk com
+  100×3.000.000.000 itens acima de int, orçamento/cursor e conservação total.
+- Terminal inicial x162 dentro da área 500 centraliza painel 176; abrir categorias
+  move controles a x6, fechar lista centraliza. Battery usa PSS_BATTERIES, como
+  GTOCore BlockMap: casings de capacitor vazio e capacitores carregados, sem máquinas
+  Battery Buffer. Wireless Capacitors continua a família Nexus independente.
+  Teste confirma catálogo e tipo BatteryBlock, não busca genérica por nome.
+- Integração própria EMI (opcional API Forge 1.1.13, publicada via Modrinth), receitas
+  por página com long, catalisador planeta, workstation controlador, sem transferência
+  ou receita-tree fictícia. Cosmos legado oculto do viewer; ciclos pagos preservados.
+  API/dependência compile-only; `-PeohEmiQA` adiciona runtime apenas ao dev.
+  Fonte API oficial inspecionada, não UI/Jade GTL importada.
+- JEI e EMI compartilham EyeOfHarmonyRecipePresentation e catálogo. Páginas de 9 colunas,
+  4–11 linhas conforme altura inicial; até 99 produtos. Páginas e quantidades continuam
+  completas e indexadas. EMI respeita a altura recebida e avisa se reduzir área visível.
+  Texto Spacetime Tier usa nome GTNH; EU Input/Output abreviados k/M/G/T/P/E; Recipe
+  Energy Efficiency deriva returnEU/startupEU (Overworld 60%). Aviso vermelho quando
+  não exibe catálogo completo naquela página. Valores são base antes de campos/circuito.
+- AmountOverlay JEI removido do z200, evitando letras por cima da tooltip. Manual EOH
+  colore títulos azul, números vermelho e fórmulas verde e conserva estilo em cada
+  codepoint após font.split. Z/natural hover permanecem. Textos EN/PT e roteiros revisados.
+- Gate final PASS: spotlessCheck compileJava runUnitTests runGameTestServer runData --offline,
+  **30 classes / 171 GameTests**, log `build/gtna-eoh-me-final.log`. Datagen atualizado
+  nesta etapa; último gate written: 0. Teste display confere capacidades 36/54/99,
+  identidade/ordem/quantidade sem truncar long. Dois ajustes de fixture foram necessários:
+  slots ME não respondem a setFluidInTank; Battery deve testar família PSS, não Nexus.
+- Cliente `runClient --offline -PeohEmiQA` iniciado, log `build/gtna-eoh-emi-client.log`.
+  QA visual de EMI/JEI, cores/navegação, escalas, centralização e rede ME real é do autor.
+  Preview/ports e matemática de operação cobertos por testes; partida do cliente não
+  valida interação no mundo. REI e reload do catálogo operacional sem unload seguem pendentes.
+- Sem receitas de fabricação, commit/push/publicação.
+- QA de inicialização EMI: log confirma plugin gtna inicializado e recarregado (8 ms),
+  catálogo EMI baked/reloaded, sem aviso de catálogo EOH indisponível. O cliente entrou
+  no mundo durante a conferência. O ambiente com JEI+EMI também registrou avisos de
+  duplicação de IDs de previews de outros multiblocos e exceções JEMI de crafting;
+  ficaram registrados como pendência de compatibilidade geral, sem atribuí-los ao novo
+  programa EOH nem afirmar que são inofensivos. Não se validou o desenho via automação.
+
+### G-0160 (2026-10-04) — corrigir contraste e paginação real do EMI
+
+- Autor rejeitou o painel G-0159: letras brancas sobre fundo cinza, quantidade grande
+  sobreposta e só 18 de 97 produtos acessíveis. Texto compartilhado JEI/EMI agora preto;
+  aviso permanece vermelho. Não se considerou a inicialização anterior aprovação visual.
+- EMI usa altura efetivamente fornecida pelo WidgetHolder, com setas para páginas internas.
+  Slots dinâmicos mudam ícone, interação e tooltip juntos; catálogo indexado mantém long.
+  Quantidade compacta desenhada dentro do ícone, tooltip conserva quantidade exata.
+  API oficial EMI SlotWidget/WidgetHolder e setas inspecionadas no sources jar 1.1.13.
+- EyeOfHarmonyDisplay.reflow testado para capacidades 9/18/36/99, conservando todos os
+  produtos, ordem, identidade e quantidades. Mesmo programa operacional, sem fabricação.
+- Gate PASS: spotlessCheck compileJava runUnitTests runGameTestServer runData --offline,
+  30 classes / 171 GameTests, build/gtna-eoh-emi-fix-gate.log, datagen written: 0.
+- Autor confirmou que erro de hatch distante sumiu ao inserir os dois ME Input Hatches.
+  GTCEu verifica mínimos globais depois do loop e SinglePredicateError conserva a posição
+  final do scanner; não é posição obrigatória de hatch. Geometria não alterada.
+- Cliente aberto não recebe as classes novas; QA de contraste/setas/escala requer reinício.
+  Compatibilidade geral JEMI registrada em G-0159 permanece pendente. Sem commit/push.
+
+### G-0161 (2026-10-04) — tempestade de validações após construção com o Terminal
+
+- Autor congelou cliente ao construir Artificial Star. Log do processo dev 173212 mostra
+  Nexus Terminal built gtna:annihilate_generator in 1882 ms às 21:16:09; às 21:19:08
+  cliente tentou parar. Duas capturas (Thread.print) às 21:19–21:21 mostram Server thread
+  em BlockPattern.checkPatternAt via MultiblockState.onBlockStateChanged,
+  Level.markAndNotifyBlock e ForgeHooks.onPlaceItemIntoWorld. Segunda captura mostra também
+  consultas/carga de chunks nesse mesmo caminho. Arquivos build/gtna-terminal-freeze-threads*.txt.
+- Causa verificada: guard antigo terminava no retorno do autoBuild, e refresh imediato
+  registrava mapping antes de Forge terminar replay das colocações capturadas. Cada
+  notificação então podia revalidar a estrutura 109 aisles, muito maior que o EOH.
+- Referência GTMThings do runtime (arquivo Curse 6843500, mods.toml versão **1.5.4**, LGPLv3):
+  AdvancedTerminalBehavior e AdvancedBlockPattern inspecionados com Vineflower local,
+  build/gtmthings-terminal-reference. Fluxo também síncrono, sem fila por tick, e não
+  força o refresh GTNA antecipado antes de retornar de useOn. Não se copiou código novo.
+- NexusBuildCheckGuard mantém alvos pendentes no thread do servidor até END do tick.
+  Notificações tardias do alvo agrupadas; refresh final uma vez por estado. Estados
+  de outros controllers não são bloqueados; remoção do controller não é suprimida;
+  alvo removido/unloaded é ignorado no flush e pending é liberado. Cleanup no server stop.
+- TerminalBehavior remove refresh imediato. Builder pula ANY antes de transformar posição/
+  atualizar world state e reutiliza seleção de candidatos não limitados por identidade
+  de predicado, só naquela operação; limites de layer/global seguem calculados por célula.
+- GameTest de replace EOH agora forma tier 0, muda campos para 8, simula 100 notificações
+  após retorno, confirma tier antigo até flush, forma tier 8 após flush e quebra um casing
+  para verificar invalidação normal. Teste de escopo confere alvo/terceiros/controller
+  e liberação mesmo se não houver controller. Primeiro gate falhou no contrato antigo
+  que exigia liberar checks imediatamente; atualizado para fim do tick, como exigido
+  pelo replay. Teste funcional de 100 notificações já havia passado nessa rodada.
+- Gate final PASS: spotlessCheck compileJava runUnitTests runGameTestServer runData --offline,
+  **30 classes / 171 GameTests**, build/gtna-terminal-freeze-final.log, datagen written: 0.
+- Roteiro de terminal atualizado. Ainda precisa medir Artificial Star no cliente novo;
+  cliente congelado usa classes anteriores. Não se encerrou o processo à força e não
+  se alterou o save. Colocação permanece síncrona e pode pausar em estruturas gigantes;
+  fila com orçamento por tick é melhoria futura, não foi implementada nesta correção.
+  Survival/AE/proteções em jogo real permanecem pendentes. Sem commit/push/publicação.
+
+- QA G-0161: autor pediu reiniciar o cliente travado. Processo dev antigo 173212
+  encerrado com SIGTERM (sem precisar SIGKILL); runClient --offline -PeohEmiQA iniciado
+  novamente, log build/gtna-terminal-fixed-client.log. Recursos/atlas carregados às
+  21:30:05 America/Sao_Paulo; teste no mundo e desempenho dependem do autor.
+
+### G-0162 (2026-10-05) — retomada e novo cliente para QA Terminal/EMI
+
+- AGENTS.md, Estado atual, G-0159/G-0160/G-0161 e convenção de orientação relidos;
+  alterações locais de outras etapas preservadas. Nenhuma alteração Java nesta retomada.
+- Log `build/gtna-terminal-fixed-client.log` do cliente anterior confirma construção de
+  `gtna:annihilate_generator` em **618 ms** às 21:30:43 de 04/10, salvamento às 21:30:53
+  e avanço do jogador às 21:36:11. Evidência de atividade posterior à construção;
+  não substitui confirmação do autor sobre responsividade/formação.
+- Mesmo log contém erro no GTCEu Multiblock Async Thread-0 durante a construção:
+  `MultiblockState.getBlockState()` retornou null. Inspeção GTCEu 7.5.3 confirma
+  `checkPatternWithTryLock` no worker; NexusBlockPattern limpa/atualiza o mesmo estado
+  sem adquirir patternLock. Possível corrida concorrente fica pendente de correção/teste,
+  sem afirmar que o erro é inofensivo ou que essa causa já foi reproduzida.
+- Gate de retomada PASS: spotlessCheck compileJava runUnitTests runGameTestServer runData
+  --offline, **171 GameTests**, datagen written: 0;
+  log `build/gtna-session-continuation-gate.log`.
+- Autor pediu “inicie novamente para eu ver”. Nenhum runClient do projeto estava ativo;
+  instância GregTech Odyssey no Prism preservada. Iniciado runClient --offline -PeohEmiQA,
+  log `build/gtna-terminal-emi-qa-2026-10-05.log`. Inicialização e QA visual registrados
+  separadamente; aprovação EMI, formação/desempenho Artificial Star, Survival/AE/proteções
+  e avisos JEMI continuam pendentes. Sem fabricação EOH, commit, push ou publicação.
+- Novo cliente carregou recursos/atlas às 02:59:23 America/Sao_Paulo de 05/10
+  (log usa 05:59:23 UTC); sem afirmar aprovação visual ou teste no mundo.
+
+### G-0163 (2026-10-05) — ampliar EMI/controlador e acelerar QA planetário
+
+- Quatro capturas do autor demonstram painel EMI estreito, só 7 produtos na última
+  página interna e controller com números longos ocultando progresso/estado.
+- EMI width 180 → 360 pixels GUI; grade 9 colunas à esquerda, dados à direita.
+  Reserva vertical de informações sai da grade: altura solicitada 60 + rows×18,
+  capacidade calculada pela altura efetivamente recebida. Dados com quebra de linha,
+  setas internas e indexação completa mantidas. Cabeçalho agora distingue página
+  de quantidade de produtos (antes “Products 11/11” significava página 11/11).
+- Controller: widget 190×125 → 302×199, resumo fixo com estado, porcentagem,
+  tempo restante hh:mm:ss, chance/rendimento e selo QA; detalhes em área separada
+  com rolagem, slot planetário identificado. EU abreviado com BigDecimal, sem
+  converter Int128 para long; tooltip preserva inteiro exato. EN/PT atualizados.
+- `-PeohFastQA` configura somente runClient com gtna.eoh.qaTicksPerTick=600.
+  Tick planetário avança até 600 ticks simulados, limitado ao tempo restante;
+  ciclos já pagos aceleram sem novo débito/roll. Pausa, estrutura, ME e liquidação
+  permanecem nas rotinas existentes. Sem o parâmetro, normal 1 tick/tick.
+  Programa/viewer conservam base 360.000 ticks; selo e tempo do controller mostram
+  a velocidade real de teste (~30 s para ciclo base a 20 TPS). Sem fabricação EOH.
+- GameTest novo cobre ciclo já iniciado, pausa, limite final, produtos congelados,
+  débito único e crédito sem duplicação. Regressão Int128 verifica agora tooltip
+  exata em vez de exigir inteiro completo no texto compacto.
+- Primeiro gate detectou contrato antigo de texto exato e expectativa fixa de perda
+  de 5% no teste novo; ajustado para tooltip e política de perda Nexus configurada.
+  Os 172 GameTests da rodada final passaram; resultado completo abaixo.
+- Cliente anterior encerrou normalmente (log antigo BUILD SUCCESSFUL); Odyssey Prism
+  preservado. Roteiro de viewer documenta perfil acelerado. QA visual e desempenho
+  no mundo continuam manuais; corrida assíncrona G-0162 e avisos JEMI não foram
+  corrigidos nesta etapa. Tudo local, sem commit/push/publicação.
+- Gate final PASS: spotlessCheck compileJava runUnitTests runGameTestServer runData
+  --offline, **30 classes / 172 GameTests**, datagen written: 1;
+  log `build/gtna-eoh-ui-expand-final.log`. Cliente com EMI e FastQA iniciado;
+  log `build/gtna-eoh-ui-fastqa-client.log`. Inicialização não é aprovação visual.
+- Cliente novo carregou recursos/atlas; clientRunVmArgs.txt confirma
+  gtna.eoh.qaTicksPerTick=600. Conferência visual e teste no mundo ainda pendentes.
+
+### G-0164 (2026-10-05) — EMI vertical conforme referência GTNH
+
+- Autor enviou referência de painel alto com planeta, grade 9×11 e informações
+  abaixo; corrigida interpretação de G-0163 que colocava dados ao lado dos produtos.
+- EMI width 198 pixels GUI; planeta central, entradas de gás nas laterais superiores,
+  indicador de página sobre a grade; 9 colunas com capacidade até 99 produtos.
+  Dados abaixo, pretos, aviso vermelho só quando catálogo repartido. Ordem e long
+  preservados, setas internas mantidas. Não foram copiados tempo/quantidades GTNH.
+- Reserva de altura calculada a partir das linhas traduzidas com font.split (182px),
+  incluindo espaço do aviso e botões; linhas de produtos usam a altura real do holder.
+  Observação sobre valores base foi para tooltip dos produtos para liberar rodapé.
+- API EMI 1.1.13 sources local confirma RecipeScreen limita altura por configuração
+  maximumRecipeScreenHeight=256 e pela tela/margem. `run/config/emi.css` local agora
+  maximum-recipe-screen-height=1024, sem mudar opções do Odyssey ou escala de GUI.
+  Essa preferência local não impõe configuração global do EMI aos futuros usuários.
+- Roteiro manual atualizado. Controlador e aceleração dev de 600× de G-0163 preservados;
+  sem receitas EOH, mudanças de geometria, commit/push/publicação.
+- Gate inicial PASS, 30 classes / 172 GameTests, datagen written: 0,
+  build/gtna-eoh-vertical-gate.log. Último ajuste mede a reserva do rodapé pela fonte;
+  validação final em andamento, resultado registrado abaixo após conclusão.
+- Cliente anterior permanece ativo e não foi encerrado sem autorização; imagem nova
+  ainda não foi verificada no jogo. Corrida assíncrona do Terminal e avisos JEMI seguem
+  pendentes conforme G-0162/G-0163.
+- Gate final PASS após cálculo de altura pela tradução: spotlessCheck compileJava
+  runUnitTests runGameTestServer runData --offline, **30 classes / 172 GameTests**,
+  datagen written: 0; build/gtna-eoh-vertical-final.log.
+- Antes do lançamento final não havia mais processo de cliente GTNA ativo (nenhum
+  modFolders=gtna após o término do gate); não foi necessário encerrar processo.
+  Novo runClient --offline -PeohEmiQA -PeohFastQA iniciado, log
+  build/gtna-eoh-vertical-client.log. QA visual ainda depende do autor.
+
+### G-0165 (2026-10-05) — separar fluidos/itens, corrigir baldes e isolar altura EMI
+
+- Autor pediu 9×9 itens + 9×2 fluidos, warning de produtos fora da página, quantidade
+  acima do ícone, plasmas em 8 milhões de baldes e preview em altura normal. Rejeitou
+  efeito global da alteração de maximum-recipe-screen-height em G-0164.
+- GTLCore existe, branch gtl-1431-skyblock, commit 18c7814, LGPLv3.0 em gradle.properties.
+  COSMOS_SIMULATION declara 120 itens/18 fluidos; preview usa widget independente.
+  Inspecionado como referência; nenhum código/arte copiado. THIRD_PARTY_NOTICES atualizado.
+- EyeOfHarmonyDisplay.separatedPages/separated paginam itens e fluidos em regiões
+  independentes, sem repetir fluidos para cada página de itens. Capacidade máxima
+  81/18; em telas menores as duas famílias continuam separadas. Todos os produtos
+  permanecem indexados, em ordem por família, com long e snapshots imutáveis.
+- Slot EMI desenha somente RENDER_ICON na fase do ícone e quantidade na fase overlay,
+  após flush da geometria, com pose restaurada. Quantidades compactas em baldes B/kB/MB;
+  tooltip mantém valor exato em baldes e mB. Entradas gasosas também usam essa unidade.
+  JEI usa rótulo compacto em baldes para suas saídas fluidas. QA visual ainda pendente.
+- Aviso vermelho sempre: catálogo parcial mantém contagem página/total; catálogo
+  completo explica quantidades base alteradas por campos/excesso. Não se inventou
+  sorteio/produtos ocultos não implementados para imitar a frase GTNH.
+- Correção real solicitada para plasmas: 8.000.000 mB → 8.000.000.000 mB por plasma,
+  isto é 8.000.000 baldes. Raw Star Matter/White Dwarf conservam quantidades anteriores.
+  Cálculo de energia do programa não rebalanceado nesta correção de saída; pendências
+  de ciclos pagos continuam congeladas e não recebem quantidades retroativas.
+- run/config/emi.css retorna maximum height a 256. EyeOfHarmonyEmiScreenMixin opcional
+  @Pseudo, alvo RecipeScreen.setPage após atribuir tab e antes de construir widgets,
+  amplia só gtna:eye_of_harmony; troca para qualquer categoria/preview restaura altura
+  configurada, recalcula centro e rebake. Não modifica EmiConfig global. Tela/escala
+  seguem como limite físico. EMI 1.1.13 fonte oficial local inspecionada.
+- ClientMixinContractTest verifica métodos e ordem de atribuição do tab/hook; EMI só
+  no testRuntimeOnly para leitura de bytecode, mantendo runtime do mod opcional.
+  GameTests conferem plasma long de 8 bilhões mB, conservação por família para grades
+  1/4/9 de itens e 1/2 de fluidos, e reflow sem perda/duplicação.
+- Compilação PASS; runUnitTests (30 classes) e 172 GameTests PASS na rodada atual.
+  Resultado completo do gate abaixo. Roteiro manual atualizado. Cliente antigo ativo
+  preservado; reinício e conferência do autor pendentes. Sem fabricação EOH,
+  commit/push/publicação. Corrida Terminal/JEMI de etapas anteriores continuam pendentes.
+- Gate final PASS: spotlessCheck compileJava runUnitTests runGameTestServer runData
+  --offline, **30 classes / 172 GameTests**, datagen written: 1;
+  build/gtna-eoh-separated-gate.log. Solicitada autorização para reiniciar apenas
+  o cliente dev GTNA ativo, pois não recebe classes novas sem reinício; nenhuma
+  autorização presumida. QA visual e execução do hook no cliente seguem pendentes.
+
+### G-0166 (2026-10-05) — Replace seguro, tempo normal, gases e débito direto EOH
+
+- Replace no Nexus Terminal protege máquinas IMultiPart já instaladas antes da
+  demolição/substituição, preservando BlockEntity/NBT/inventário. Blocos estruturais
+  continuam substituíveis. Hatches incompatíveis não são removidos automaticamente.
+  GameTest conserva cinco hatches/buses, identidade e marcador persistente ao trocar
+  campos para tier 8, com No Hatch ligado e desligado.
+- Removidos eohFastQA/qaTicksPerTick e badge 600×. Operação avança um tick por tick;
+  duração restante usa 20 TPS. Testes cobrem circuitos reais 0–24 no ME bus e fórmula
+  de tiers 0–8: circuito/aceleração dividem tempo por 2 por nível; compressão aplica
+  fator 0,97 por tier; estabilização não altera duração. Plano pago mantém duração
+  congelada até terminar, mesmo ao trocar circuito.
+- EOH registra e sincroniza Hydrogen/Helium consumidos no início do ciclo, em baldes;
+  controller separa consumo ativo de reservas para o próximo ciclo. Excesso ativo usa
+  snapshot consumido. Reload conserva snapshot; ciclos antigos sem esse dado mostram
+  desconhecido, sem inventar consumo. Reserva zero após início é consumo imediato.
+- NexusEnergyNetwork.consumeDirectEnergy registra última retirada bem-sucedida
+  (fonte GlobalPos, máquina, Int128, tick) e persiste no NBT da rede. EOH usa essa rota
+  para o único débito inicial. Quantum Terminal e Nexus Flux Matrix compartilham linha
+  de última retirada e tooltip exata/localização; não simulam extração contínua EU/t.
+  Testes cobrem débito, saldo, reload, precisão acima de long e falha sem trocar histórico.
+  Ciclos anteriores não recebem histórico retroativo; registro guarda só último evento.
+- Roteiros manuais de EOH/viewer e Terminal atualizados. Primeiro gate falhou apenas
+  na asserção de tooltip localizada antes de datagen; teste passou a inspecionar também
+  argumentos semânticos de TranslatableContents. Gate final PASS: spotlessCheck
+  compileJava runUnitTests runGameTestServer runData --offline, 30 classes / 173
+  GameTests, datagen written: 1; build/gtna-eoh-normal-terminal-final.log.
+- Autor optou por fechar cliente manualmente. Ausência de cliente GTNA confirmada
+  antes de iniciar runClient --offline -PeohEmiQA; nenhum processo foi encerrado.
+  Log build/gtna-eoh-normal-separated-client.log; args não contêm qaTicksPerTick,
+  configuração EMI maximum-recipe-screen-height=256. QA visual de G-0165, ME real,
+  retirada nos dois painéis e testes manuais de proteção/sobrevivência pendentes.
+- Sem commit/push/publicação e sem receitas de fabricação EOH. Corrida assíncrona
+  GTCEu/avisos JEMI anteriores continuam pendentes conforme checkpoints anteriores.
+- Cliente carregou recursos/atlas e áudio às 06:58:47; nenhum InvalidMixinException,
+  InjectionError ou falha de aplicação do mixin encontrado no log de inicialização.
+  Abertura efetiva da aba EMI e aparência ainda exigem conferência no jogo.
+
+### G-0160 (2026-10-05) — Cactus Wonder com os valores do GTNL
+
+- O port lia o valor de vitrine das receitas falsas do GTNL (64000 mB) como saída real e trocava o combustível
+  (Cactus Charcoal/Coke do GT++) por carvão comum, com vapor superaquecido/supercrítico a partir de coque.
+  No GTNL o vapor por item vem de `SteamCactusWonder.TOTAL_VALUE`: 8000 (cactus charcoal), 90000 (bloco),
+  16000 (cactus coke), 180000 (bloco de coke); superaquecido e supercrítico só a partir de blocos
+  duplamente comprimidos, que não existem aqui.
+- Agora: carvão e carvão vegetal 8000 mB, seus blocos 90000 mB, coque 16000 mB, bloco de coque 180000 mB, tudo
+  vapor comum, 20 ticks por item. `.EUt(0)` removido (gerava "EUt can't be explicitly set to 0" no log). Tooltip
+  de combustível atualizado.
+- Portão PASS: spotlessCheck compileJava runUnitTests runGameTestServer runData --offline, 173/173 GameTests
+  (datagen written: 1, a chave nova do tooltip). Jar na Prism do GTIA `9d2c26e8…`. Sem commit.
+
+### G-0167 (2026-10-05) — EMI único e economia EOH/Artificial Star
+
+- Autor pediu uma página EMI com warning em vez de duas e escolheu explicitamente
+  rebalancear EOH/Artificial Star para viabilizar circuito 24.
+- EMI singlePage conserva o catálogo completo para getOutputs/indexação. singlePreview
+  limita independentemente itens/fluidos aos slots disponíveis, sempre 1/1, sem setas
+  internas. Warning conta visíveis/total; saídas ocultas no desenho continuam produzidas.
+  JEI e snapshots de produção não truncados. GameTest verifica capacidade das regiões,
+  identidades/longs e conservação de indexação ao recortar o desenho.
+- Débito inicial trocado de GTNH 4^k para GTNA (k+1)^2 (0=1×, 4=25×, 8=81×,
+  12=169×, 24=625×). startupDebit compartilhado entre plano e cotação controller;
+  manuais/tooltips EN/PT atualizados. Circuito não aumenta produtos/crédito/gás.
+  Tempo mantém redução por dois e piso de um tick: após atingir piso, circuito maior
+  não oferece mais velocidade. Ciclos pagos preservam seus snapshots antigos.
+- Quatro combustíveis Artificial Star recebem 16× EU/t mantendo duração base 200,
+  ingredientes/chances. Infinity 36.028.797.018.963.968 EU/t, energia por barra
+  7.205.759.403.792.793.600 EU. Quatro barras a 95% cobrem débito Overworld circuito 24;
+  não significa sustentar ciclos de um tick continuamente.
+- Verificação adicional encontrou gargalo de saída: um Wireless Dynamo MAX 1.048.576A
+  transporta apenas 2.251.799.813.685.248 EU/t. Pattern agora aceita até 16 dynamos,
+  preview default conserva um. Tooltip indica configuração Infinity; hatches/tensões
+  novos não criados. GameTest monta 16 hatches existentes e verifica capacidade conjunta
+  via EnergyContainerList e buffers sem overflow, além de preços/geração reais carregados.
+- Testes verificam custos/duração 0–24, cotação real no ME bus, clamp 32→24 e precisão
+  acima de long. Primeiro gate encontrou dois cenários antigos (clamp com 4^24 e
+  circuito 6 acima de long); atualizados para custo quadrático/circuito 24. Rodada
+  seguinte PASS 30 classes / 174 GameTests; ampliada verificação de transporte depois.
+- Roteiros e THIRD_PARTY_NOTICES identificam adaptações GTNA. Sem cópia upstream nova,
+  fabricação EOH, commit/push/publicação. QA visual e formação no mundo com 16 dynamos
+  ainda manuais. Corrida assíncrona GTCEu/JEMI anteriores continuam pendentes.
+- Gate final após verificação de transporte PASS: spotlessCheck compileJava runUnitTests
+  runGameTestServer runData --offline; 30 classes / 174 GameTests, datagen written: 0,
+  build/gtna-eoh-single-star-transfer-final.log. git diff --check PASS.
+- Ausência de cliente GTNA ativo confirmada antes de iniciar runClient --offline
+  -PeohEmiQA, sem encerrar processos; build/gtna-eoh-single-star-client.log.
+  Abertura/QA visual e testes manuais do autor não presumidos como aprovação.
+- Cliente carregou atlas/recursos; log de inicialização sem InvalidMixinException,
+  InjectionError ou falha de aplicação do mixin. Conferência visual não realizada.
+
+### G-0168 (2026-10-05) — auditoria dos terminais wireless GTLAdditions
+
+- Autor indicou checkout GTLAdditions como candidato a port. Caminho existe, master,
+  commit 8caff5e93a5e65914d10dd176d48d66e7ec8c329; GTCEu declarado 1.4.4 versus 7.5.3
+  do GTNA. Inspecionados registro, base/handler dos dois parts, NetworkEnergyContainer,
+  guide, receitas e mixin GTMThings do backend/telemetria.
+- São terminais diretos para conta UUID, abilities energy/laser em entrada e saída;
+  interface comum Long.MAX_VALUE por operação, handler especializado BigInteger para
+  máquinas compatíveis. Saldo BigInteger não torna ilimitada cada chamada GTCEu comum.
+  Saída nominal suficiente para Star Infinity buffado, podendo substituir 16 dynamos.
+  Overclock/busca/transferência reais ainda precisam ser testados no port.
+- Recomenda-se adaptar dois parts à rede Nexus existente: manter capacity/matrix,
+  perdas, dimensão, vínculo e monitoramento. EOH já opera direto em Int128 e não deve
+  ganhar hatch obrigatório/débito duplicado. Escopo solicitado ao autor via pergunta
+  assíncrona: dois parts ou também máquinas/lógica wireless do GTLAdditions.
+- Fonte tem getOutputAmperage retornando tensão e somas Long sem proteção; não portar
+  essas inconsistências. Saída Nexus precisa simular corretamente recusa/capacidade
+  parcial; UUID vinculado sozinho não prova que energia será aceita.
+- LICENSE da origem GPL-3.0; metadata declara LGPLv3.0, divergência registrada sem
+  presumir autorização/licença mais permissiva. Nenhum código/asset copiado.
+- Auditoria salva em docs/roadmap/gtladditions-wireless-network-port-audit.md.
+  Só documentação alterada nesta etapa, diff check PASS; gate Java não repetido.
+  Implementação, QA e publicação não realizados; cliente existente preservado.
+
+### G-0169 (2026-10-05) — port dos Network Terminals GTLAdditions para Nexus
+
+- Autor autorizou "vamos portar"; aplicado escopo mínimo dos dois parts indicado na
+  auditoria G-0168, sem máquinas/lógica wireless adicionais nem conta GTMThings nova.
+- IDs wireless_energy_network_input_terminal / wireless_energy_network_output_terminal,
+  GTNAEnergyHatches.NETWORK_INPUT_TERMINAL/NETWORK_OUTPUT_TERMINAL. Tier nominal MAX,
+  abilities energy e laser correspondentes, não compartilháveis, sem cabos/buffer local.
+- NexusNetworkTerminalPartMachine mantém UUID persistido, vínculo ao colocar, Data
+  Stick direito/esquerdo para bind/unbind e Nexus Linker existente (shift desvincula).
+  Heartbeat/conexão/transferências reportados ao mesmo NexusEnergyNetwork dos painéis.
+- NexusNetworkEnergyContainer adapta EnergyStack GTCEu 7.5.3 (origem usava Long na
+  API antiga); BigInteger para multiplicação/soma e rejeição sem mutação acima de long.
+  Teto por operação Long.MAX_VALUE; saldo real Int128 e vista long saturada. Orçamento
+  nominal de tensão/capacidade compartilhado entre parts, reservando hatches ordinários,
+  evita overflow no EnergyContainerList; não multiplica saldo com terminais adicionais.
+- quoteInsertion/availableForTransfer na rede respeitam mesma matrix/dimensão/capacidade/
+  perda fracionária do commit. Matching sem débito/crédito/telemetria. Receita de saída
+  exige aceitação integral; full/offline não descarta energia. API changeEnergy permite
+  inserção parcial retornando somente gross realmente aceito. Perda Nexus aplicada uma vez.
+- Modelos usam overlays GTNA/GTO e hull GTCEu já existentes; nenhum asset GTLAdditions
+  importado. Source GTLAdditions em GTNASources/tooltips; EN/PT e dica Artificial Star
+  indicam alternativa de um terminal de saída aos 16 dynamos.
+- Assembly Line adaptada usa 16 wireless hatches UHV 4096A correspondentes, sensores
+  UV/field generators UV (16 cada), 64 Gravi Stars/placas duplas Neutronium, 46080mB
+  Soldering Alloy; duração 2400, EU/t MAX, pesquisa do precursor 512 CWU/t. Não usa
+  componentes/KubeJS ausentes. Ambos IDs de receita carregados verificados.
+- Arquivos adaptados de comportamento NexusNetworkTerminalPartMachine e
+  NexusNetworkEnergyContainer retêm GPL-3.0-only; licença upstream incluída em
+  META-INF/licenses/gtladditions/GPL-3.0.txt. LICENSE GPL versus metadata LGPL da
+  origem documentados em THIRD_PARTY_NOTICES; nenhuma permissão especial presumida.
+- Cinco GameTests novos: simulação sem alterar NBT, input/output/custo exato, perdas,
+  valores >long, rejeição de soma overflow, full/partial/offline/dimensão/disable,
+  vínculo reload, capacidades sem cabos, receita Infinity real + modifier Star por
+  um part, múltiplos terminais input/output com hatch comum e receitas registradas.
+  Teste Star isola modifier/capability; não afirma formação física inteira automática.
+- Gate final PASS: spotlessCheck compileJava runUnitTests runGameTestServer runData
+  --offline, 30 classes / 179 GameTests, datagen written: 0;
+  build/gtna-network-terminal-complete.log. Primeira geração dos novos modelos/lang
+  escreveu 11 arquivos em build/gtna-network-terminal-data-final.log. diff check/JSON PASS.
+- Roteiro manual na auditoria atualizado: formação Star 109 slices com terminal,
+  vínculo/linker, pausa por rede cheia, relog e painéis continuam para QA do autor.
+  EOH não ganha hatch obrigatório nem muda débito/tempo/produtos. Sem commit/push/
+  publicação; corrida assíncrona GTCEu/JEMI anteriores permanecem pendentes.
+- Ausência de cliente GTNA ativo confirmada antes de lançar cliente atualizado;
+  nenhum processo encerrado. QA visual/ aprovação do autor não presumidos.
+- Cliente atualizado runClient --offline -PeohEmiQA carregou recursos/atlas;
+  build/gtna-network-terminal-client.log, sem falha de mixin ou aviso de modelo/textura
+  dos novos terminais encontrado na inicialização. Conferência visual permanece manual.
+
+
+## G-0170 — 2026-10-05 — Lang/visuais GTLAdditions e Matrix máxima ilimitada
+
+- Pedido do autor: corrigir lang, utilizar assets upstream e liberar armazenamento/
+  transfer rate quando a Flux Matrix atingir 750 capacitores máximos.
+- Nomes dos dois terminais adicionados explicitamente ao GTNALangProvider; langValue
+  do registro não os emitia no datagen do addon. EN gerado, PT existente e conexões
+  novas passam chave tradutível em vez de texto inglês fixo. Linhas capacity/transfer/
+  energy/unlimited e tooltip de condição ilimitada têm EN/PT.
+- Quatro arquivos upstream casing/overlay/mcmeta importados sem alteração; hashes
+  confirmados contra manifesto docs/roadmap/gtladditions-wireless-assets.json.
+  Modelo upstream emissivo adaptado para GTCEu 7.5.3, cube base e face afastada.
+  Registro preserva casing original quando formado. GPL/commit/origem documentados
+  em THIRD_PARTY_NOTICES, licença upstream já distribuída. Sem permissão presumida.
+- Matrix conta somente posições no cache do pattern validado. Modo ilimitado exige
+  750 capacitores internos todos MAX; capacitor externo não substitui um ausente.
+  Capacity/transfer exibem ∞ em Matrix/Quantum Terminal, sem barra percentual enganosa.
+- Saldo persistido migrado de Int128 para BigInteger (mesma chave Amount decimal),
+  aceita depósitos além de 128 bits sem criar energia. getExactEnergy alimenta os
+  painéis/tooltip do EOH; vistas compatíveis Int128 e contadores saturam sem overflow.
+  Hatches/receitas mantêm limites GTCEu long por operação; ∞ remove teto da rede.
+- Downgrade/749/invalidação remove modo ilimitado e conserva saldo. Se saldo exceder
+  capacidade finita nova, depósitos são recusados até haver espaço. Flag NBT valida
+  matrix formed/count/tier antes de restaurar.
+- Dois novos GameTests: formação física 32 camadas com 750 MAX, tier menor, 749+
+  capacitor externo, reparo/invalidação; simulação sem mutação, depósito >Int128,
+  consumo exato, reload, downgrade, contadores sem wrap e apresentação ∞.
+- Gate completo PASS: spotlessCheck compileJava runUnitTests runGameTestServer runData
+  --offline; 30 classes / 186 GameTests, datagen written: 0. Log
+  build/gtna-matrix-unlimited-gate.log. Primeira geração alterou 3/removeu 2 modelos
+  provisórios em build/gtna-matrix-unlimited-data.log. JSON/lang/hashes/diff check PASS.
+- Sem cliente GTNA ativo detectado antes de iniciar runClient --offline -PeohEmiQA;
+  nenhum processo encerrado. Log build/gtna-matrix-unlimited-client.log.
+- Sem commit/push/publicação; QA visual de emissão/animação/nomes e formação inteira
+  do Artificial Star continuam para o autor. Não altera tempo/circuitos EOH.
+- Cliente carregou recursos e atlas; nenhum aviso de modelo/textura dos terminais
+  encontrado na inicialização. Conferência visual de emissão/animação segue manual.
+
+### G-0161 (2026-10-05) — Pesquisa v02, P1: pontos por área, custo e compra
+
+- Desenho aprovado no GTIA (GTIA-D-224, `PLANO_PESQUISA_v02_PROPOSTA.md`). Motor reutilizável; nada muda para
+  packs que não definem custo.
+- `KnowledgeNode`: campos `cost` (área → pontos), `kind` (`trunk`/`branch`/`leaf`) e `eureka` (item e desconto);
+  construtor antigo mantido (nó grátis de tronco). Nó com custo é **comprado**: o gatilho `obtain_item` vira
+  requisito (o item precisa ter sido segurado uma vez) e não libera mais o nó sozinho.
+- `KnowledgeData` versão 2: por escopo, nós, pontos por área, requisitos cumpridos e eurekas; lê a versão 1 sem
+  perda; saldo nunca negativo; gasto atômico.
+- `KnowledgeService`: `purchase` (ordem: desconhecido, já liberado, pré-requisitos, requisito, pontos), `cost` com
+  desconto de eureka (arredondado para cima), `addPoints`, `markRequirement`, `markEureka`.
+- Sincronização: `NodeView` e `SKnowledgeSync` levam custo, tipo, eureka, pontos, requisitos e eurekas (construtores
+  antigos mantidos). Comandos `/gtna research buy <nó>`, `points`, `points <jogador> add <área> <qtd>`.
+- `KnowledgePlaythrough` compra nós com custo e acusa nó com custo que libera só por segurar o item.
+- 5 GameTests novos (JSON, compra, item não libera nó comprado, dados v1→v2, pacote). Portão: spotless, compilação,
+  testes unitários e **184/184 GameTests** passaram; `runData` caiu por `ClassNotFoundException` porque um
+  `runClient --offline -PeohEmiQA` (de outra sessão/do autor) recompilava o mesmo projeto ao mesmo tempo. Repetir
+  `runData` (chaves de idioma novas) quando o cliente fechar. Jar não instalado na Prism. Sem commit.
+- (Atualização G-0161) `runData` repetido depois que o cliente fechou: BUILD SUCCESSFUL, chaves de idioma geradas.
+
+### G-0162 (2026-10-05) — Pesquisa v02, P2: fontes de pontos com retorno decrescente
+
+- `ResearchSource` (`data/<ns>/gtna_research_sources/*.json`): evento (`obtain`, `craft`, `smelt`, `machine_recipe`,
+  `multiblock_formed`), alvo (item, tipo de receita, máquina), área, `first` (paga na primeira vez) e `milestones`
+  (pagam quando o total acumulado cruza a contagem). Validação na carga: cada evento exige o alvo que usa; fonte que
+  não paga nada é rejeitada.
+- `ResearchSources`: índice por evento, carregador (reload listener), `record` que avança o contador do escopo e paga
+  só o que cruzou; mensagem na action bar "+N <área> research".
+- Ganchos: varredura de inventário (obtain), `ItemCraftedEvent`/`ItemSmeltedEvent` (craft/smelt, contam a pilha),
+  `RecipeLogic.onRecipeFinish` (machine_recipe, 1 por receita) e `MultiblockControllerMachine.onStructureFormed`
+  (multiblock_formed), creditando sempre o **dono** da máquina (escopo do time); máquina sem dono não paga.
+  Ambos saem na hora quando nenhum pack define fontes.
+- `KnowledgeData` guarda os contadores por fonte e escopo (persistidos).
+- 3 GameTests novos (validação do JSON, primeira vez e marcos, receitas e multiblocos por dono). Portão PASS:
+  spotlessCheck compileJava runUnitTests runGameTestServer runData --offline, **189/189 GameTests**, datagen
+  written: 1. Jar na Prism do GTIA `39f5a0d8…`. Sem commit.
+
+### G-0163 (2026-10-05) — Pesquisa v02, P3 (motor) e P5: análise, Eureka, compra pela tela
+
+- `ResearchSource` ganhou o evento `analyze` (exige `item` e `recipe_type`): máquina do time termina receita do tipo
+  que consome o item. `ResearchSources.analyze` paga as fontes e, na primeira vez, marca o Eureka de todo nó cujo
+  `eureka.item` é o item, avisando o time no chat (`gtna.research.eureka`). Gancho em
+  `ResearchMachineHooks.onRecipeFinished` (só para tipos que têm fonte `analyze`).
+- Pacote C→S `CKnowledgePurchase` (id de pacote novo no fim da lista): o servidor refaz todas as checagens via
+  `KnowledgeService.purchase` e responde na action bar. Mensagem extraída para `KnowledgeCommands.purchaseMessage`
+  (usada também por `/gtna research buy`).
+- `KnowledgeTreeScreen` reescrita no visual GTCEu: `GuiTextures.BACKGROUND` no painel, `DISPLAY` na área da árvore
+  (arrastar, rolar; Shift+rolar = horizontal) e no painel lateral; molduras por tipo em
+  `<ns>:textures/gui/research/frame_<kind>.png` (fallback `GuiTextures.SLOT`); ícones de área
+  `<ns>:textures/gui/research/area_<área>.png` com saldo na barra de título; painel lateral com custo (saldo atual,
+  verde/vermelho), requisito, Eureka (achado ou dica), pré-requisitos, receitas, texto `.desc` e botão Pesquisar
+  (`GuiTextures.BUTTON`), ativo só quando o cliente acha que a compra passa.
+- Chaves novas: `gtna.research.eureka`, `kind.*`, `screen.select|click|cost|free|requirement|eureka.found|eureka.hint|research`.
+- 1 GameTest novo (análise paga uma vez só na máquina certa, acha só o Eureka certo, custo cai pela metade,
+  pacote ida e volta, compra com o custo reduzido). Portão PASS: spotlessCheck compileJava runUnitTests
+  runGameTestServer runData --offline, **190/190 GameTests**. Jar na Prism do GTIA `baa04c97…` (backup em
+  `GTIA-arquivo/jar-backups/2026-10-05-p3-analysis/`). Visual da tela ainda não testado no cliente. Sem commit.
+
+### G-0164 (2026-10-05) — GTIA abandona a pesquisa; P6 desfeita
+
+- O autor do GTIA abandonou a árvore de pesquisa (GTIA-D-226) após auditoria: espelhava o livro, a escolha era ilusória
+  e os efeitos eram pequenos. O GTIA não define mais nós nem fontes; o motor do GTNA fica como está (P1–P3, P5), inerte
+  sem conteúdo de pack. P4 (consumidores de flag) e P6 não serão feitas.
+- Desfeito o que esta sessão tinha acrescentado para a P6: modo `budget` do `KnowledgePlaythrough` e o GameTest dele
+  (os dois arquivos voltaram ao estado do HEAD). Antes de desfazer, o portão tinha passado com 191/191 GameTests.
+- Sem commit.
+
+## G-0171 — 2026-10-06 — Auditoria inicial Personal Space / PDim
+
+- Pedido do autor: portar a Personal Dim do GTNH com fidelidade 1:1, sobretudo a
+  personalização e o mundo plano com ruas.
+- Verificado o código do PersonalSpace `a292401e0a067e37e7e02abee8bd48b58a6e1571`
+  (Minecraft 1.7.10; licença LGPL-3.0). Os três presets upstream padrão não incluem
+  ruas: o gerador de `ROAD` está nas opções estendidas de limites/espaços.
+- `docs/roadmap/personal-space-port.md` registra comportamento, algoritmo das ruas,
+  preservação de portais/destinos e gates de fidelidade. O projeto GTNA é Forge 1.20.1;
+  registro dinâmico/persistente de dimensões ainda requer prova técnica.
+- Alterações nesta etapa: documentação somente. Nenhum código, asset, receita ou
+  dimensão Personal Space adicionado; nenhum cliente/manual QA executado. Gate
+  `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` PASS,
+  190/190 GameTests, datagen `written: 0`; log
+  `build/gtna-personal-space-audit-gate.log`. Sem commit/push.
+
+
+## G-0172 — 2026-10-06 — Auditoria de fabricação/progressão EOH
+
+- Pedido do autor: auditar conteúdo a portar, método e sugestões de substituições/nomes.
+- Novo docs/roadmap/eye-of-harmony-progression-port-audit.md: estado atual, dependências
+  do controller/BEC/campos/casings/Astral Array, nove tiers, materiais, funções de máquinas,
+  propostas de nomes e substituições, mineração espacial versus veias físicas, ordem de
+  entregas e critérios de aquisição/validação. Links nos índices PT/EN/ES.
+- Referência GTNH a3e1e11241a814c9fa0dd0973d5699548428f689 conferida por fontes raw
+  e loaders. BECMetaMaterialRecipes, CondensateType, NaniteTier, BECAssembler/Generator,
+  BECFactoryNetwork, Godforge/NanoForge também lidos para delimitar dependências.
+- Novo eye-of-harmony-progression-inventory.json: extração de símbolos diretos e loader
+  de metamateriais, presença declarada em GTCEu/GTNA, tiers de nanites, materiais de campo,
+  hashes das fontes. Presença não certifica obtenção/forma. Sem fechamento recursivo
+  completo dos mods upstream; isso fica explícito, não é afirmada paridade da cadeia.
+- Fontes locais GTCEu/GTLCore/GTOCore/GTNL conferidas nos commits registrados na auditoria.
+  GTL é candidato moderno, não prova de cadeia fiel. Fuel rods Infinity/Cosmic não
+  equivalem a metais registrados. Programas Ad Astra Void Miner não equivalem a worldgen.
+- Recomendação proposta, não aprovada/implementada: cadeia pré-EOH para Crude sem produtos
+  exclusivos da própria máquina; síntese estelar e upgrades depois. Manter IDs e identidade
+  de SpaceTime/anãs/Universium; não colocar esses produtos sintéticos em veias naturais.
+- Gate obrigatório PASS: spotlessCheck compileJava runUnitTests runGameTestServer runData
+  --offline, 30 classes / 190 GameTests, written: 0;
+  build/gtna-eoh-progression-audit-gate.log. Confirma estado do checkout; nenhuma cadeia
+  de fabricação nova existe para validar. JSON e links locais conferidos.
+- Somente documentos alterados neste trabalho; sem commit/push/publicação ou reinício
+  do cliente. Nomes, custos, rota BEC/adaptada e máquinas novas permanecem propostas.
+
+## G-0173 — 2026-10-06 — Personal Space: terreno e criação dinâmica inicial
+
+- A partir de PersonalSpace GTNH `a292401e0a067e37e7e02abee8bd48b58a6e1571`,
+  `PersonalSpaceTerrain` reproduz lotes, ruas, listras, cruzamentos e centro em
+  coordenadas positivas/negativas. `PersonalSpaceChunkGenerator` gera camadas,
+  superfície e plataforma inicial; não implementa ainda todas as opções originais.
+- `PersonalSpaceDirectory` guarda IDs desde 180 e opções no `SavedData` do Overworld.
+  `PersonalSpaceWorlds` cria/carrega `gtna:personal_space/pdim_<id>` via Infiniverse
+  1.0.0.5 (MIT; dependência obrigatória Forge 1.20.1). Fonte e licença em
+  `THIRD_PARTY_NOTICES.md`; a arquitetura de chunk generator moderna foi conferida
+  no PersonalSpace Unofficial `dab12d35325aef2c65b79e9a79ef0025f1274fa4`.
+- Comandos de operador provisórios `/gtna personalspace create void|flat|roads`,
+  `list`, `tp <id>` e `return` para testar a base sem portal; `mining` acrescentado
+  após o gate abaixo. Nenhuma receita, portal ou GUI foi adicionada.
+- Gate PASS: `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`,
+  192/192 GameTests, datagen `written: 1` (textos de comando);
+  `build/gtna-personalspace-worlds-gate.log`. Um GameTest criou dimensão real,
+  leu um chunk de rua e fez roundtrip do catálogo. Reinício real, teleporte no
+  cliente e worldgen editável permanecem sem validação. Sem commit/push/publicação.
+
+## G-0174 — 2026-10-06 — Personal Space: portal inicial e vínculo no item
+
+- `gtna:personal_space_portal` registrado como bloco, item e block entity. Primeiro
+  uso no Overworld cria uma dimensão; agachar antes da criação alterna entre Void,
+  Flat, Mining e Roads. Uso seguinte entra no mundo já vinculado. Um portal de
+  retorno é criado na plataforma e atualizado para o local atual do portal origem.
+- Drop do bloco usa o `BlockEntityTag` para guardar ID e destino de retorno. Item
+  mostra ID e `Source: PersonalSpace (GTNH)`. Aparência provisória usa textura
+  vanilla Crying Obsidian, sem asset upstream copiado. Sem receita, como original.
+- Posição de retorno ocupada causa recusa de entrada em vez de teleporte sem saída.
+  Ainda faltam editor completo, ajustes visuais, worldgen editável após comando,
+  restrições de blocos, comandos GTNH completos e teste no cliente/reinício real.
+- Gate completo do estado atual: `spotlessCheck`, `compileJava`, `runUnitTests`,
+  `runGameTestServer` (193/193) e `runData` PASS em
+  `build/gtna-personalspace-final-validation.log`. O teste cobre criação de dimensão,
+  rua, NBT e drop real do portal. `runData` escreveu 1 arquivo. Ainda é necessário
+  testar portal, retorno e persistência no cliente após reinício. Sem commit/push/publicação.
+
+## G-0175 — 2026-10-06 — Personal Space: DimensionConfig, editor GUI, portal e céu
+
+- `PersonalSpaceSettings` virou port de `DimensionConfig`: cor do céu, estrelas, ciclo SUN/MOON/CYCLE,
+  nuvens, clima, sky type, bioma, árvores, vegetação, trava de worldgen, camadas, limites, ruas, S e
+  centro; string completa `camadas|B,..|G,..|S,..|C,..` com aplicação atômica; nomes/metas 1.7.10
+  (`minecraft:wool:14`, `grass`, `double_stone_slab`...) convertidos por `PersonalSpaceBlocks`.
+- `PersonalSpaceConfig` (`config/gtna/personal_space.json`): presets (3 originais + ruas GTNA),
+  allow-lists com sintaxe original de meta, `#tags`, biomas, firstDimensionId, block event checks.
+- Gerador reescrito seguindo `PersonalChunkProvider`: void com chão 128, plataforma de laje dupla,
+  modo S (todas as superfícies expostas), sem bloco A não gera rua, sem mobs naturais, árvores/vegetação.
+  Lê a configuração viva: alteração liberada só afeta chunks novos (GameTest confirma).
+- Tipo de dimensão `gtna:personal_space` (y 0..255, cama não funciona). Infiniverse grava as dimensões
+  no level.dat: codec tolerante e setup em `LevelEvent.Load`; pré-carga no ServerStarted.
+- Tempo e clima próprios por dimensão (`PersonalSpaceLevelData` via accessor mixins), persistidos;
+  SUN/MOON fixam meio-dia/meia-noite. Cliente: efeitos `gtna:personal_space` (nuvens 256/sem nuvens,
+  névoa) e mixin em `ClientLevel` (cor do céu, estrelas, brilho do sol) como o original.
+- Portal: forma 0.75, obsidiana/portal/mesa de encantamento + livro animado (BER), facing, alvo
+  (8, chão+1, 8), teleporte para frente do alvo, relink com proteção, item com DIMn: x,y,z, brilho,
+  não despawna/indestrutível, proximidade 2 blocos, picareta obrigatória. Editor GUI completo
+  (páginas 1/2, camadas, presets, dropdowns com busca, preview) validado no servidor (spawn protection,
+  BreakEvent, camadas e blocos de decoração permitidos, bioma).
+- `/pspace ls|where|tpx|give-portal|allow-worldgen-change|reload-config`; comandos `/gtna personalspace`
+  provisórios removidos. widgets.png copiado (LGPL-3.0, hash em THIRD_PARTY_NOTICES).
+- Gate `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` PASS, 195/195
+  GameTests, `written: 0`; `build/gtna-personalspace-editor-gate.log`. Lacunas: céus GalaxySpace/Botania
+  não portados; GUI, céu, clima e reinício real não testados no cliente. Sem commit/push.
+
+## G-0176 — 2026-10-06 — Personal Space: correções do QA do autor
+
+- Travada de minutos ao criar/teleportar e "mundo vazio": loop infinito em
+  `PersonalSpacePortalItem.createEntity` (o Forge substituía de novo o ItemEntity comum). Agora retorna
+  subclasse. Thread dump confirmou a causa; o gerador também passou a calcular por coluna.
+- Preset 4 segue o `personalspace.cfg` do GTNH (concreto branco y=53 e y=63, lotes 2x2, ruas 1),
+  com equivalentes vanilla para blocos etfuturum/chisel/ExtraUtilities.
+- Allow-lists padrão ampliadas (blocos de construção vanilla, `xtonesreworked:*`, `xtones:*`,
+  `factory_blocks:*`); regra `modid:*` aceita no config.
+- Plataforma de chegada reduzida de 9x9 para 5x5 a pedido do autor (diferença intencional do original).
+- Autor testou no cliente: criação, teleporte e preset 4 OK. Gate PASS 195/195,
+  `build/gtna-personalspace-platform-gate.log`. Sem commit/push.

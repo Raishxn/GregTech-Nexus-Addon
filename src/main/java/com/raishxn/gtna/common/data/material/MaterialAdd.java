@@ -10,6 +10,12 @@ import static com.gregtechceu.gtceu.common.data.GTMaterials.*;
 public class MaterialAdd {
 
     public static void init() {
+        // Stock GTCEu declares these elements without item forms. The GTL vein catalog needs
+        // dust fallbacks for its fork-only ores; do not generate extra worldgen ore blocks.
+        for (var material : new com.gregtechceu.gtceu.api.data.chemical.material.Material[] {
+                Rubidium, Strontium, Tellurium, Zirconium }) {
+            if (!material.hasProperty(PropertyKey.DUST)) material.setProperty(PropertyKey.DUST, new DustProperty());
+        }
         Bronze.addFlags(GENERATE_SPRING_SMALL, GENERATE_SPRING);
         Beryllium.addFlags(GENERATE_ROD, GENERATE_FRAME);
         // GTOCore's Cold Ice Freezer auxiliary tower is framed in Naquadah; GTCEu 7.5.3 does not

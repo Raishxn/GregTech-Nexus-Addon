@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gtna:block/machine/mv_world_data_scanner",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtna:block/machine/mv_world_data_scanner"
+    },
+    "facing=south": {
+      "model": "gtna:block/machine/mv_world_data_scanner",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gtna:block/machine/mv_world_data_scanner",
+      "y": 270
+    }
+  }
+}

@@ -26,6 +26,7 @@ import com.raishxn.gtna.common.machine.multiblock.part.AccelerateHatchPartMachin
 import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine;
 import com.raishxn.gtna.common.machine.trait.GTNAMultipleRecipesLogic;
 import com.raishxn.gtna.config.ConfigHolder;
+import com.raishxn.gtna.research.ResearchMachineHooks;
 import com.raishxn.gtna.utils.GTNASpecialPartUtil;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -51,6 +52,17 @@ public abstract class GTRecipeLogicMixin {
 
     @Shadow(remap = false)
     protected int duration;
+
+    @Shadow(remap = false)
+    protected GTRecipe lastRecipe;
+
+    /** Research points: a finished recipe can pay the owner's team (see {@code ResearchMachineHooks}). */
+    @Inject(method = "onRecipeFinish", at = @At("HEAD"), remap = false)
+    private void gtna$payResearchSources(CallbackInfo ci) {
+        if (this.machine instanceof MetaMachine metaMachine) {
+            ResearchMachineHooks.onRecipeFinished(metaMachine, this.lastRecipe);
+        }
+    }
 
     @ModifyVariable(method = "setupRecipe", at = @At("HEAD"), argsOnly = true, remap = false)
     private GTRecipe gtna$applyMufflerEfficiencyBonus(GTRecipe recipe) {

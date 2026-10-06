@@ -74,6 +74,82 @@ import static com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE;
 /** GTOCore LV–HV multiblock ports kept separate from the older machine registry. */
 public final class GTNAMachines3 {
 
+    /** GTL's 3x7x3 rig, with EV materials and GTNA discovery programs. */
+    public static final MultiblockMachineDefinition VOID_FLUID_DRILLING_RIG = REGISTRATE
+            .multiblock("void_fluid_drilling_rig",
+                    com.raishxn.gtna.common.machine.multiblock.electric.VoidFluidDrillingRigMachine::new)
+            .rotationState(RotationState.NON_Y_AXIS)
+            .recipeType(GTNARecipeType.VOID_FLUID_DRILLING_RECIPES)
+            .recipeModifiers(
+                    com.raishxn.gtna.common.machine.multiblock.electric.VoidFluidDrillingRigMachine::recipeModifier,
+                    GTRecipeModifiers.OC_NON_PERFECT)
+            .appearanceBlock(GTBlocks.CASING_TITANIUM_STABLE)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle("XXX", "#F#", "#F#", "#F#", "###", "###", "###")
+                    .aisle("XXX", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
+                    .aisle("XSX", "#F#", "#F#", "#F#", "###", "###", "###")
+                    .where('S', controller(blocks(definition.get())))
+                    .where('X', blocks(GTBlocks.CASING_TITANIUM_STABLE.get())
+                            .or(abilities(PartAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(2))
+                            .or(abilities(PartAbility.IMPORT_ITEMS).setExactLimit(1))
+                            .or(abilities(PartAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setMaxGlobalLimited(2))
+                            .or(abilities(PartAbility.EXPORT_FLUIDS).setExactLimit(1))
+                            .or(abilities(PartAbility.MAINTENANCE).setExactLimit(1))
+                            .or(abilities(PartAbility.PARALLEL_HATCH).setMaxGlobalLimited(1)))
+                    .where('C', blocks(GTBlocks.CASING_TITANIUM_STABLE.get()))
+                    .where('F', frames(GTMaterials.Steel))
+                    .where('#', any()).build())
+            .workableCasingModel(GTCEu.id("block/casings/solid/machine_casing_stable_titanium"),
+                    GTCEu.id("block/multiblock/fluid_drilling_rig"))
+            .tooltips(Component.translatable("gtna.machine.void_fluid_drilling_rig.tooltip.0"),
+                    Component.translatable("gtna.machine.void_fluid_drilling_rig.tooltip.1"),
+                    Component.translatable("gtna.machine.void_fluid_drilling_rig.tooltip.2"))
+            .register();
+
+    /** GTL world scanner: independent 64-bucket tanks, LV through IV for the base worlds. */
+    public static final MachineDefinition[] WORLD_DATA_SCANNER = GTMachineUtils.registerTieredMachines(
+            REGISTRATE, "world_data_scanner", (holder, tier) -> new SimpleTieredMachine(holder, tier, ignored -> 64000),
+            (tier, builder) -> builder
+                    .langValue("%s World Data Scanner %s".formatted(GTValues.VLVH[tier], GTValues.VLVT[tier]))
+                    .editableUI(SimpleTieredMachine.EDITABLE_UI_CREATOR.apply(GTNACORE.id("world_data_scanner"),
+                            GTNARecipeType.WORLD_DATA_SCANNER_RECIPES))
+                    .rotationState(RotationState.NON_Y_AXIS)
+                    .recipeType(GTNARecipeType.WORLD_DATA_SCANNER_RECIPES)
+                    .recipeModifier(GTRecipeModifiers.OC_NON_PERFECT)
+                    .workableTieredHullModel(GTNACORE.id("block/machines/world_data_scanner"))
+                    .tooltips(GTMachineUtils.workableTiered(tier, GTValues.V[tier], GTValues.V[tier] * 64,
+                            GTNARecipeType.WORLD_DATA_SCANNER_RECIPES, 64000, true))
+                    .register(),
+            GTValues.LV, GTValues.MV, GTValues.HV, GTValues.EV, GTValues.IV);
+
+    /** GTL's original 5x5x5 incubator, controller in the last aisle. */
+    public static final MultiblockMachineDefinition INCUBATOR = REGISTRATE.multiblock("incubator",
+            WorkableElectricMultiblockMachine::new)
+            .rotationState(RotationState.NON_Y_AXIS)
+            .recipeType(GTNARecipeType.INCUBATOR_RECIPES)
+            .recipeModifier(GTRecipeModifiers.OC_NON_PERFECT)
+            .appearanceBlock(GTBlocks.PLASTCRETE)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle("bbbbb", "bbbbb", "ddddd", "ddddd", "bbbbb")
+                    .aisle("bbbbb", "bcccb", "d   d", "d   d", "beeeb")
+                    .aisle("bbbbb", "bcccb", "d   d", "d   d", "beeeb")
+                    .aisle("bbbbb", "bcccb", "d   d", "d   d", "beeeb")
+                    .aisle("bbabb", "bbbbb", "ddddd", "ddddd", "bbbbb")
+                    .where('a', controller(blocks(definition.get())))
+                    .where('b', blocks(GTBlocks.PLASTCRETE.get()).setMinGlobalLimited(40)
+                            .or(autoAbilities(definition.getRecipeTypes()))
+                            .or(abilities(PartAbility.MAINTENANCE).setExactLimit(1)))
+                    .where('c', blocks(Blocks.SPONGE))
+                    .where('d', blocks(GTBlocks.CLEANROOM_GLASS.get()))
+                    .where('e', com.gregtechceu.gtceu.api.pattern.Predicates.cleanroomFilters())
+                    .where(' ', air()).build())
+            .workableCasingModel(GTCEu.id("block/casings/cleanroom/plascrete"),
+                    GTCEu.id("block/multiblock/gcym/large_maceration_tower"))
+            .tooltips(Component.translatable("gtna.machine.incubator.tooltip.0"),
+                    Component.translatable("gtna.machine.incubator.tooltip.1"),
+                    Component.translatable("gtna.machine.incubator.tooltip.2"))
+            .register();
+
     /** GTO's electric Dehydrator family (LV through UV). */
     public static final MachineDefinition[] DEHYDRATOR = GTMachineUtils.registerTieredMachines(
             REGISTRATE, "dehydrator",

@@ -1,0 +1,5 @@
+{
+  "tier": 1,
+  "trigger": { "type": "obtain_item", "item": "gtceu:bronze_ingot" },
+  "grants": [ { "type": "flag", "id": "example:bronze_age" } ]
+}

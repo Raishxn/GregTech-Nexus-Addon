@@ -33,6 +33,7 @@ public final class GTNABalance {
     private static RestrictedItemsBalance restrictedItems = RestrictedItemsBalance.defaults();
     private static UniversalFactoryBalance universalFactory = UniversalFactoryBalance.defaults();
     private static PatternBuffersBalance patternBuffers = PatternBuffersBalance.defaults();
+    private static ElectricVoidMinerBalance electricVoidMiner = ElectricVoidMinerBalance.defaults();
 
     private GTNABalance() {}
 
@@ -54,6 +55,10 @@ public final class GTNABalance {
                 UniversalFactoryBalance.defaults());
         patternBuffers = load("pattern_buffers.json", PatternBuffersBalance.class, PatternBuffersBalance.defaults());
         patternBuffers.applyCapacityHistory(BASE_DIR.resolve("pattern_buffer_capacity_history.json"));
+        electricVoidMiner = load("electric_void_miner.json", ElectricVoidMinerBalance.class,
+                ElectricVoidMinerBalance.defaults());
+        GTNACORE.LOGGER.info("Electric Void Miner: enabled={}, minimumTier={}, parallelFrom={}",
+                electricVoidMiner.enabled, electricVoidMiner.minimumTier, electricVoidMiner.parallelEnabledFromTier);
     }
 
     private static <T extends DefaultsApplier<T>> T load(String fileName, Class<T> clazz, T defaults) {
@@ -255,6 +260,28 @@ public final class GTNABalance {
         return machines.voidMinerSteamGateAged.denseSteam;
     }
 
+    public static ElectricVoidMinerBalance getElectricVoidMiner() {
+        return electricVoidMiner;
+    }
+
+    /** Configured minimum tier as a {@link GTValues} index; falls back to EV when unknown. */
+    public static int getElectricVoidMinerMinimumTier() {
+        int tier = tierFromName(electricVoidMiner.minimumTier);
+        return tier < 0 ? GTValues.EV : tier;
+    }
+
+    /** Tier from which the Parallel Control Hatch may add parallelism; falls back to IV. */
+    public static int getElectricVoidMinerParallelTier() {
+        int tier = tierFromName(electricVoidMiner.parallelEnabledFromTier);
+        return tier < 0 ? GTValues.IV : tier;
+    }
+
+    /** Parallel cap for the machine's tier, honouring the per-tier map; at least 1. */
+    public static int getElectricVoidMinerMaxParallel(int tier) {
+        Integer configured = electricVoidMiner.maxParallelByTier.get(tierKey(tier));
+        return configured == null ? 1 : Math.max(1, configured);
+    }
+
     public static VoidMinerSteamTierBalance getVoidMinerSuperHeatedSteam() {
         return machines.voidMinerSteamGateAged.superHeatedSteam;
     }
@@ -316,6 +343,20 @@ public final class GTNABalance {
             return GTValues.VN[tier];
         }
         return String.valueOf(tier);
+    }
+
+    /** Resolves a tier name such as {@code "EV"} to its {@link GTValues} index, or -1. */
+    public static int tierFromName(String name) {
+        if (name == null) {
+            return -1;
+        }
+        String trimmed = name.trim();
+        for (int tier = 0; tier < GTValues.VN.length; tier++) {
+            if (GTValues.VN[tier].equalsIgnoreCase(trimmed)) {
+                return tier;
+            }
+        }
+        return -1;
     }
 
     public interface DefaultsApplier<T> {
@@ -556,6 +597,63 @@ public final class GTNABalance {
         }
     }
 
+    /**
+     * Balance of the GTIA-era electric Void Miner. Program recipes (datapack/KubeJS) define the
+     * outputs and the Drilling Fluid cost; these values bound what a program may declare and
+     * parameterize the optional fixed fallback recipe.
+     */
+    public static final class ElectricVoidMinerBalance implements DefaultsApplier<ElectricVoidMinerBalance> {
+
+        public boolean enabled = true;
+        public String minimumTier = "EV";
+        public boolean programRequired = true;
+        public int baseDuration = 200;
+        public int baseEUt = 2048;
+        public int defaultDrillingFluidPerOperation = 1000;
+        public int maxDrillingFluidPerOperation = 100000;
+        public int maxOutputStacksPerOperation = 16;
+        public int maxRandomOutputStacksPerOperation = 216;
+        public int randomDrillingFluidPerOperation = 10000;
+        public int randomDuration = 600;
+        public int incubationDuration = 1200;
+        public String parallelEnabledFromTier = "IV";
+        public Map<String, Integer> maxParallelByTier = defaultElectricVoidMinerParallelMap();
+        public boolean allowFixedFallbackRecipe = false;
+
+        public static ElectricVoidMinerBalance defaults() {
+            return new ElectricVoidMinerBalance();
+        }
+
+        @Override
+        public void applyDefaults(ElectricVoidMinerBalance defaults) {
+            if (tierFromName(minimumTier) < 0) minimumTier = defaults.minimumTier;
+            if (baseDuration <= 0) baseDuration = defaults.baseDuration;
+            if (baseEUt <= 0) baseEUt = defaults.baseEUt;
+            if (defaultDrillingFluidPerOperation <= 0) {
+                defaultDrillingFluidPerOperation = defaults.defaultDrillingFluidPerOperation;
+            }
+            if (maxDrillingFluidPerOperation < defaultDrillingFluidPerOperation) {
+                maxDrillingFluidPerOperation = Math.max(defaults.maxDrillingFluidPerOperation,
+                        defaultDrillingFluidPerOperation);
+            }
+            if (maxOutputStacksPerOperation <= 0) maxOutputStacksPerOperation = defaults.maxOutputStacksPerOperation;
+            if (maxRandomOutputStacksPerOperation <= 0)
+                maxRandomOutputStacksPerOperation = defaults.maxRandomOutputStacksPerOperation;
+            if (randomDrillingFluidPerOperation <= 0)
+                randomDrillingFluidPerOperation = defaults.randomDrillingFluidPerOperation;
+            if (randomDuration <= 0) randomDuration = defaults.randomDuration;
+            if (incubationDuration <= 0) incubationDuration = defaults.incubationDuration;
+            if (tierFromName(parallelEnabledFromTier) < 0) parallelEnabledFromTier = defaults.parallelEnabledFromTier;
+            if (maxParallelByTier == null) maxParallelByTier = new LinkedHashMap<>();
+            maxParallelByTier.keySet().retainAll(defaults.maxParallelByTier.keySet());
+            defaults.maxParallelByTier.forEach((tier, fallback) -> {
+                Integer configured = maxParallelByTier.get(tier);
+                maxParallelByTier.put(tier, configured != null && configured >= 1 && configured <= 1024 ? configured :
+                        fallback);
+            });
+        }
+    }
+
     public static final class NexusFluxMatrixBalance implements DefaultsApplier<NexusFluxMatrixBalance> {
 
         public Map<String, NexusTierBalance> tiers = defaultNexusTierMap();
@@ -741,6 +839,14 @@ public final class GTNABalance {
         values.put("UXV", 50000);
         values.put("OpV", 100000);
         values.put("MAX", 250000);
+        return values;
+    }
+
+    private static Map<String, Integer> defaultElectricVoidMinerParallelMap() {
+        LinkedHashMap<String, Integer> values = new LinkedHashMap<>();
+        for (int tier = GTValues.EV; tier <= GTValues.MAX; tier++) {
+            values.put(tierKey(tier), tier == GTValues.EV ? 1 : 1024);
+        }
         return values;
     }
 

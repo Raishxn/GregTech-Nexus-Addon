@@ -65,4 +65,10 @@ public class WirelessEnergyManager {
         NexusEnergyNetwork data = NexusEnergyNetwork.get(level);
         data.reportConnection(userUuid, pos, isInput, tier, amperage, machineType, amountTransferred, level);
     }
+
+    public static boolean consumeDirectEnergy(ServerLevel level, UUID owner, Int128 amount,
+                                              net.minecraft.core.GlobalPos source, String machineType) {
+        if (level == null || owner == null || amount == null || amount.isZero() || amount.isNegative()) return false;
+        return NexusEnergyNetwork.get(level).consumeDirectEnergy(owner, amount, source, machineType, level);
+    }
 }

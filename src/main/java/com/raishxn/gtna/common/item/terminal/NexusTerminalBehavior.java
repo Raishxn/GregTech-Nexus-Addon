@@ -4,7 +4,6 @@ import com.gregtechceu.gtceu.api.item.component.IAddInformation;
 import com.gregtechceu.gtceu.api.item.component.IItemUIFactory;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
-import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 
 import com.lowdragmc.lowdraglib.gui.factory.HeldItemUIFactory;
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
@@ -30,7 +29,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 
 import com.raishxn.gtna.GTNACORE;
-import com.raishxn.gtna.api.machine.multiblock.GTNAStructureRefresh;
 import com.raishxn.gtna.client.ClientPlayerLookup;
 import com.raishxn.gtna.common.item.terminal.ui.NexusTerminalUIFactory;
 import com.raishxn.gtna.integration.ae2.NexusAE2Link;
@@ -92,13 +90,11 @@ public class NexusTerminalBehavior implements IItemUIFactory, IAddInformation {
                 // Build when the controller is unformed, when replace mode is on, or when a module
                 // build is requested (the module must be addable to an already-formed multiblock).
                 boolean buildModule = setting.getModuleBuild() > 0;
-                if (!controller.isFormed() || buildModule || setting.isReplaceMode()) {
+                if (!controller.isFormed() || buildModule || setting.isReplaceMode() ||
+                        setting.isDemolitionMode() || setting.isMirrorBuild()) {
                     if (!level.isClientSide()) {
                         long started = System.nanoTime();
                         NexusAutoBuilder.autoBuild(player, controller, terminalStack);
-                        if (controller instanceof MultiblockControllerMachine multiblockController) {
-                            GTNAStructureRefresh.refresh(multiblockController, true);
-                        }
                         GTNACORE.LOGGER.info("Nexus Terminal built {} in {} ms",
                                 controller.self().getDefinition().getId(),
                                 java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started));
