@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "gtna:block/casings/godforge/transcendentally_amplified_magnetic_confinement_casing"
+  }
+}

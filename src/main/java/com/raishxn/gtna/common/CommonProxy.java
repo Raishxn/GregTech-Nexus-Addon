@@ -99,6 +99,7 @@ public class CommonProxy {
      */
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(GTNANetworkHandler::init);
+        event.enqueueWork(com.raishxn.gtna.data.recipe.GTNAGodforgeProgression::registerExtraCosts);
         if (ModList.get().isLoaded("ftbquests")) {
             event.enqueueWork(com.raishxn.gtna.integration.ftb.GTNAQuestTypes::init);
         }
@@ -136,6 +137,7 @@ public class CommonProxy {
         var ignoredEyeOfHarmony = EyeOfHarmonyRenderer.TYPE;
         var ignoredEyeOfWood = EyeOfWoodRenderer.TYPE;
         var ignoredBallHatch = BallHatchRenderer.TYPE;
+        var ignoredForgeOfGods = com.raishxn.gtna.client.renderer.machine.ForgeOfGodsRenderer.TYPE;
     }
 
     // You MUST have this for custom materials.

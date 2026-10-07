@@ -1,0 +1,91 @@
+{
+  "parent": "minecraft:block/block",
+  "dynamic_renders": [
+    {
+      "type": "gtna:forge_of_gods/render"
+    }
+  ],
+  "loader": "gtceu:machine",
+  "machine": "gtna:forge_of_gods",
+  "texture_overrides": {
+    "all": "gtna:block/casings/godforge/transcendentally_amplified_magnetic_confinement_casing"
+  },
+  "variants": {
+    "is_formed=false,recipe_logic_status=idle": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtna:block/casings/godforge/transcendentally_amplified_magnetic_confinement_casing",
+          "overlay_front": "gtna:block/machines/forge_of_gods/overlay_front"
+        }
+      }
+    },
+    "is_formed=false,recipe_logic_status=suspend": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtna:block/casings/godforge/transcendentally_amplified_magnetic_confinement_casing",
+          "overlay_front": "gtna:block/machines/forge_of_gods/overlay_front"
+        }
+      }
+    },
+    "is_formed=false,recipe_logic_status=waiting": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtna:block/casings/godforge/transcendentally_amplified_magnetic_confinement_casing",
+          "overlay_front": "gtna:block/machines/forge_of_gods/overlay_front_active",
+          "overlay_front_emissive": "gtna:block/machines/forge_of_gods/overlay_front_active_emissive"
+        }
+      }
+    },
+    "is_formed=false,recipe_logic_status=working": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtna:block/casings/godforge/transcendentally_amplified_magnetic_confinement_casing",
+          "overlay_front": "gtna:block/machines/forge_of_gods/overlay_front_active",
+          "overlay_front_emissive": "gtna:block/machines/forge_of_gods/overlay_front_active_emissive"
+        }
+      }
+    },
+    "is_formed=true,recipe_logic_status=idle": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtna:block/casings/godforge/transcendentally_amplified_magnetic_confinement_casing",
+          "overlay_front": "gtna:block/machines/forge_of_gods/overlay_front"
+        }
+      }
+    },
+    "is_formed=true,recipe_logic_status=suspend": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtna:block/casings/godforge/transcendentally_amplified_magnetic_confinement_casing",
+          "overlay_front": "gtna:block/machines/forge_of_gods/overlay_front"
+        }
+      }
+    },
+    "is_formed=true,recipe_logic_status=waiting": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtna:block/casings/godforge/transcendentally_amplified_magnetic_confinement_casing",
+          "overlay_front": "gtna:block/machines/forge_of_gods/overlay_front_active",
+          "overlay_front_emissive": "gtna:block/machines/forge_of_gods/overlay_front_active_emissive"
+        }
+      }
+    },
+    "is_formed=true,recipe_logic_status=working": {
+      "model": {
+        "parent": "gtceu:block/machine/template/cube_all/sided",
+        "textures": {
+          "all": "gtna:block/casings/godforge/transcendentally_amplified_magnetic_confinement_casing",
+          "overlay_front": "gtna:block/machines/forge_of_gods/overlay_front_active",
+          "overlay_front_emissive": "gtna:block/machines/forge_of_gods/overlay_front_active_emissive"
+        }
+      }
+    }
+  }
+}

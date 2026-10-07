@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "active=false": {
+      "model": "gtna:block/hypogen_coil"
+    },
+    "active=true": {
+      "model": "gtna:block/hypogen_coil_active"
+    }
+  }
+}

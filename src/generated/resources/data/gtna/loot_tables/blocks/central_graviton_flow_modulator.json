@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "gtna:central_graviton_flow_modulator"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "gtna:blocks/central_graviton_flow_modulator"
+}

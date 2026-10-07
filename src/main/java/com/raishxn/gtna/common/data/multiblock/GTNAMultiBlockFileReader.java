@@ -32,7 +32,8 @@ public final class GTNAMultiBlockFileReader {
         return pattern;
     }
 
-    private static String[][] loadAisles(String name) {
+    /** Raw aisles of a pattern resource: [aisle toward front][row bottom-up][column toward left]. */
+    public static String[][] loadAisles(String name) {
         String resource = "pattern/" + name + ".mbs";
         try (InputStream stream = GTNAMultiBlockFileReader.class.getClassLoader().getResourceAsStream(resource)) {
             if (stream == null) {

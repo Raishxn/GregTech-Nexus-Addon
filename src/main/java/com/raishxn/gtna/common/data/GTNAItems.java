@@ -110,6 +110,7 @@ public class GTNAItems {
 
     public static void init() {
         GTNAEyeOfHarmonyContent.init();
+        GTNAGodforgeContent.init();
         ASTRAL_ARRAY_FABRICATOR = GTNAEyeOfHarmonyContent.ASTRAL_ARRAY_FABRICATOR;
         REGISTRATE.creativeModeTab(() -> GTNACreativeModeTabs.ITEMS);
         DEPOSIT_RECORDER = REGISTRATE.item("deposit_recorder", ComponentItem::create)

@@ -363,37 +363,45 @@ public class GTNAMultipleRecipesLogic extends RecipeLogic {
             if (forcedDuration > 0) {
                 recipeToRun.duration = forcedDuration;
             }
-        } else if (machine instanceof AdjustableSteamParallelMachine steamMachine) {
-            recipeToRun = steamMachine.createThreadedRecipe(recipe);
-            if (recipeToRun == null) return false;
-        } else {
-            int hatchParallel = Math.min(getMaxParallel(), remainingBudget);
-            int feasibleParallel = 1;
+        } else
+            if (machine instanceof com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine module) {
+                // Each thread is priced and paid by the module's own GTNH modifier (wireless EU in beforeWorking).
+                var modifier = com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine
+                        .recipeModifier(module, recipe);
+                if (modifier == ModifierFunction.NULL) return false;
+                recipeToRun = modifier.apply(recipe);
+                if (recipeToRun == null) return false;
+            } else if (machine instanceof AdjustableSteamParallelMachine steamMachine) {
+                recipeToRun = steamMachine.createThreadedRecipe(recipe);
+                if (recipeToRun == null) return false;
+            } else {
+                int hatchParallel = Math.min(getMaxParallel(), remainingBudget);
+                int feasibleParallel = 1;
 
-            if (hatchParallel > 1) {
-                feasibleParallel = ParallelLogic.getParallelAmount((MetaMachine) machine, recipe, hatchParallel);
+                if (hatchParallel > 1) {
+                    feasibleParallel = ParallelLogic.getParallelAmount((MetaMachine) machine, recipe, hatchParallel);
+                }
+
+                // 1. Modificador de Paralelo
+                recipeToRun = recipe.copy();
+                if (feasibleParallel > 1) {
+                    var parallelModifier = ModifierFunction.builder()
+                            .modifyAllContents(ContentModifier.multiplier(feasibleParallel))
+                            .eutMultiplier(feasibleParallel)
+                            .parallels(feasibleParallel)
+                            .build();
+                    recipeToRun = parallelModifier.apply(recipeToRun);
+                }
+
+                OverclockingLogic overclockingLogic = machine instanceof WorkableElectricMultipleRecipesMachine customMachine ?
+                        customMachine.getOverclockingLogic() :
+                        OverclockingLogic.NON_PERFECT_OVERCLOCK;
+                var overclockModifier = GTRecipeModifiers.ELECTRIC_OVERCLOCK.apply(overclockingLogic)
+                        .getModifier((MetaMachine) machine, recipeToRun);
+                recipeToRun = overclockModifier.apply(recipeToRun);
+
+                if (recipeToRun == null) return false;
             }
-
-            // 1. Modificador de Paralelo
-            recipeToRun = recipe.copy();
-            if (feasibleParallel > 1) {
-                var parallelModifier = ModifierFunction.builder()
-                        .modifyAllContents(ContentModifier.multiplier(feasibleParallel))
-                        .eutMultiplier(feasibleParallel)
-                        .parallels(feasibleParallel)
-                        .build();
-                recipeToRun = parallelModifier.apply(recipeToRun);
-            }
-
-            OverclockingLogic overclockingLogic = machine instanceof WorkableElectricMultipleRecipesMachine customMachine ?
-                    customMachine.getOverclockingLogic() :
-                    OverclockingLogic.NON_PERFECT_OVERCLOCK;
-            var overclockModifier = GTRecipeModifiers.ELECTRIC_OVERCLOCK.apply(overclockingLogic)
-                    .getModifier((MetaMachine) machine, recipeToRun);
-            recipeToRun = overclockModifier.apply(recipeToRun);
-
-            if (recipeToRun == null) return false;
-        }
 
         if (machine instanceof WorkableElectricMultipleRecipesMachine customMachine) {
             double durationMultiplier = customMachine.getDurationMultiplier(RecipeHelper.getRecipeEUtTier(recipe));

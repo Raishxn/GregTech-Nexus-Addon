@@ -44,6 +44,17 @@ public class ClientProxy extends CommonProxy {
         var ignoredHarmony = EyeOfHarmonyRenderer.TYPE;
         var ignoredWood = EyeOfWoodRenderer.TYPE;
         var ignoredBallHatch = BallHatchRenderer.TYPE;
+        var ignoredForgeOfGods = com.raishxn.gtna.client.renderer.machine.ForgeOfGodsRenderer.TYPE;
+        MinecraftForge.EVENT_BUS.addListener(
+                com.raishxn.gtna.client.renderer.machine.ForgeOfGodsRenderer::onRenderLevelStage);
+        net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus()
+                .addListener((net.minecraftforge.client.event.RegisterShadersEvent event) -> {
+                    try {
+                        com.raishxn.gtna.client.renderer.machine.GodforgeShaders.register(event);
+                    } catch (java.io.IOException e) {
+                        throw new java.io.UncheckedIOException(e);
+                    }
+                });
         MinecraftForge.EVENT_BUS.register(ModuleCountClientHandler.class);
         MinecraftForge.EVENT_BUS.register(EyeOfHarmonyTooltips.class);
         MinecraftForge.EVENT_BUS.register(com.raishxn.gtna.client.research.KnowledgeClientHandler.class);

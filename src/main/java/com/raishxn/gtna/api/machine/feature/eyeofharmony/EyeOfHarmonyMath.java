@@ -111,9 +111,8 @@ public final class EyeOfHarmonyMath {
     /** Shared by controller quotes and execution so balance changes cannot desynchronize the UI. */
     public static BigInteger startupDebit(Program program, int circuitSetting) {
         int circuit = Math.max(0, Math.min(24, circuitSetting));
-        // GTNA balance: quadratic startup cost keeps circuit 24 reachable with endgame generation.
-        long multiplier = (long) (circuit + 1) * (circuit + 1);
-        return BigInteger.valueOf(program.startupEU).multiply(BigInteger.valueOf(multiplier));
+        // GTNH: each circuit level multiplies the startup cost by 4 (4^24 at circuit 24).
+        return BigInteger.valueOf(program.startupEU).shiftLeft(2 * circuit);
     }
 
     public static Result resolve(Plan plan, int roll) {

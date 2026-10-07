@@ -1,0 +1,8 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "gtceu:item/material_sets/mhdcsm/round",
+    "layer1": "gtceu:item/material_sets/mhdcsm/round_secondary",
+    "layer2": "gtceu:item/material_sets/mhdcsm/round_overlay"
+  }
+}

@@ -29,8 +29,8 @@ public final class EyeOfHarmonyMathTest {
         for (int circuit = 0; circuit <= 24; circuit++) {
             int expected = Math.max(360_000 >> circuit, 1);
             check(plan(program, new Fields(0, 0, 0), circuit, GAS, GAS, History.fresh()).debitEU()
-                    .equals(baseline.debitEU().multiply(BigInteger.valueOf((long) (circuit + 1) * (circuit + 1)))),
-                    "quadratic startup debit for every circuit: " + circuit);
+                    .equals(baseline.debitEU().shiftLeft(2 * circuit)),
+                    "GTNH 4^k startup debit for every circuit: " + circuit);
             check(plan(program, new Fields(0, 0, 0), circuit, GAS, GAS, History.fresh()).durationTicks() == expected,
                     "every circuit halves time down to the one-tick floor: " + circuit);
         }
@@ -46,8 +46,8 @@ public final class EyeOfHarmonyMathTest {
         }
         Plan accelerated = plan(program, new Fields(1, 2, 3), 4, GAS, GAS, History.fresh());
         check(accelerated.durationTicks() == 5456, "compression, acceleration and circuit duration");
-        check(accelerated.debitEU().equals(baseline.debitEU().multiply(BigInteger.valueOf(25))),
-                "quadratic circuit debit");
+        check(accelerated.debitEU().equals(baseline.debitEU().shiftLeft(8)),
+                "GTNH 4^k circuit debit");
         close(0.965, accelerated.chance(), "fields act independently");
         close(0.85, accelerated.yield(), "stabilisation trades yield for chance");
         check(accelerated.outputAmount(1152) == 979, "fractional output truncates");

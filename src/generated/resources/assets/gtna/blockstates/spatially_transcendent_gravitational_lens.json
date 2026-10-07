@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "gtna:block/spatially_transcendent_gravitational_lens"
+    }
+  }
+}

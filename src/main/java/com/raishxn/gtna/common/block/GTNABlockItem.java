@@ -27,6 +27,20 @@ public class GTNABlockItem extends BlockItem {
                                 TooltipFlag flag) {
         super.appendHoverText(stack, level, tooltip, flag);
         Block block = getBlock();
+        // Ported casing lore (GTNH ItemCasingsGodforge: mark, description, bold aqua flavour line).
+        String key = getDescriptionId();
+        var language = net.minecraft.locale.Language.getInstance();
+        if (language.has(key + ".tooltip.0")) {
+            if (key.startsWith("block.gtna.") && com.raishxn.gtna.common.data.GTNAGodforgeContent.isGodforgeBlock(
+                    key.substring("block.gtna.".length()))) {
+                tooltip.add(Component.translatable("gtna.godforge.casing_mark"));
+            }
+            tooltip.add(Component.translatable(key + ".tooltip.0").withStyle(ChatFormatting.GRAY));
+            if (language.has(key + ".tooltip.1")) {
+                tooltip.add(Component.translatable(key + ".tooltip.1").withStyle(ChatFormatting.AQUA,
+                        ChatFormatting.BOLD));
+            }
+        }
         tooltip.add(Component.translatable("gtna.tooltip.block_properties",
                 FormattingUtil.formatNumbers(block.defaultDestroyTime()),
                 FormattingUtil.formatNumbers(block.getExplosionResistance())).withStyle(ChatFormatting.GRAY));

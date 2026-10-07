@@ -621,6 +621,100 @@ public final class GTNAMachines3 {
 
     private GTNAMachines3() {}
 
+    /** GTNH Forge of Gods controller; it runs no recipes itself, see {@code ForgeOfGodsMachine}. */
+    public static final MultiblockMachineDefinition FORGE_OF_GODS = REGISTRATE
+            .multiblock("forge_of_gods", com.raishxn.gtna.common.machine.multiblock.godforge.ForgeOfGodsMachine::new)
+            .langValue("Forge of the Gods")
+            .tooltips(godforgeTooltip("forge_of_gods", "stellar_forge", 15))
+            .rotationState(RotationState.ALL)
+            .allowExtendedFacing(false)
+            .recipeType(GTRecipeTypes.DUMMY_RECIPES)
+            .appearanceBlock(GTNAGodforgeContent.MAGNETIC_CONFINEMENT_CASING)
+            .pattern(com.raishxn.gtna.common.machine.multiblock.godforge.ForgeOfGodsMachine::createPattern)
+            .modelProperty(com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.RECIPE_LOGIC_STATUS,
+                    com.gregtechceu.gtceu.api.machine.trait.RecipeLogic.Status.IDLE)
+            .model(com.gregtechceu.gtceu.common.data.models.GTMachineModels.createWorkableCasingMachineModel(
+                    GTNACORE.id("block/casings/godforge/transcendentally_amplified_magnetic_confinement_casing"),
+                    GTNACORE.id("block/machines/forge_of_gods"))
+                    .andThen(builder -> builder.addDynamicRenderer(
+                            com.raishxn.gtna.client.renderer.machine.ForgeOfGodsRenderer::new)))
+            .register();
+
+    public static final MultiblockMachineDefinition GODFORGE_SMELTING_MODULE = REGISTRATE
+            .multiblock("godforge_smelting_module",
+                    holder -> new com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine(
+                            holder, com.raishxn.gtna.api.machine.feature.godforge.GodforgeModuleStats.Type.SMELTING))
+            .langValue("Helioflare Power Forge")
+            .rotationState(RotationState.ALL)
+            .allowExtendedFacing(false)
+            .recipeTypes(GTRecipeTypes.BLAST_RECIPES, GTRecipeTypes.FURNACE_RECIPES)
+            .recipeModifier(com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine::recipeModifier)
+            .appearanceBlock(GTNAGodforgeContent.SINGULARITY_SHIELDING_CASING)
+            .pattern(definition -> com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine
+                    .createPattern(definition,
+                            com.raishxn.gtna.api.machine.feature.godforge.GodforgeModuleStats.Type.SMELTING))
+            .workableCasingModel(
+                    GTNACORE.id("block/casings/godforge/singularity_reinforced_stellar_shielding_casing"),
+                    GTNACORE.id("block/machines/godforge_module"))
+            .tooltips(godforgeTooltip("godforge_smelting_module", "blast_furnace", 8))
+            .register();
+
+    public static final MultiblockMachineDefinition GODFORGE_MOLTEN_MODULE = REGISTRATE
+            .multiblock("godforge_molten_module",
+                    holder -> new com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine(
+                            holder, com.raishxn.gtna.api.machine.feature.godforge.GodforgeModuleStats.Type.MOLTEN))
+            .langValue("Helioflux Melting Core")
+            .rotationState(RotationState.ALL)
+            .allowExtendedFacing(false)
+            .recipeTypes(GTNARecipeType.GODFORGE_MOLTEN_RECIPES)
+            .recipeModifier(com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine::recipeModifier)
+            .appearanceBlock(GTNAGodforgeContent.SINGULARITY_SHIELDING_CASING)
+            .pattern(definition -> com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine
+                    .createPattern(definition,
+                            com.raishxn.gtna.api.machine.feature.godforge.GodforgeModuleStats.Type.MOLTEN))
+            .workableCasingModel(
+                    GTNACORE.id("block/casings/godforge/singularity_reinforced_stellar_shielding_casing"),
+                    GTNACORE.id("block/machines/godforge_module"))
+            .tooltips(godforgeTooltip("godforge_molten_module", "blast_smelter", 8))
+            .register();
+
+    public static final MultiblockMachineDefinition GODFORGE_PLASMA_MODULE = REGISTRATE
+            .multiblock("godforge_plasma_module",
+                    holder -> new com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine(
+                            holder, com.raishxn.gtna.api.machine.feature.godforge.GodforgeModuleStats.Type.PLASMA))
+            .langValue("Heliothermal Plasma Fabricator")
+            .rotationState(RotationState.ALL)
+            .allowExtendedFacing(false)
+            .recipeTypes(GTNARecipeType.GODFORGE_PLASMA_RECIPES)
+            .recipeModifier(com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine::recipeModifier)
+            .appearanceBlock(GTNAGodforgeContent.SINGULARITY_SHIELDING_CASING)
+            .pattern(definition -> com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine
+                    .createPattern(definition,
+                            com.raishxn.gtna.api.machine.feature.godforge.GodforgeModuleStats.Type.PLASMA))
+            .workableCasingModel(
+                    GTNACORE.id("block/casings/godforge/singularity_reinforced_stellar_shielding_casing"),
+                    GTNACORE.id("block/machines/godforge_module"))
+            .tooltips(godforgeTooltip("godforge_plasma_module", "plasma_fabricator", 8))
+            .register();
+
+    public static final MultiblockMachineDefinition GODFORGE_EXOTIC_MODULE = REGISTRATE
+            .multiblock("godforge_exotic_module",
+                    com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeExoticModuleMachine::new)
+            .langValue("Heliofusion Exoticizer")
+            .rotationState(RotationState.ALL)
+            .allowExtendedFacing(false)
+            .recipeTypes(GTRecipeTypes.DUMMY_RECIPES)
+            .recipeModifier(com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine::recipeModifier)
+            .appearanceBlock(GTNAGodforgeContent.SINGULARITY_SHIELDING_CASING)
+            .pattern(definition -> com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine
+                    .createPattern(definition,
+                            com.raishxn.gtna.api.machine.feature.godforge.GodforgeModuleStats.Type.EXOTIC))
+            .workableCasingModel(
+                    GTNACORE.id("block/casings/godforge/singularity_reinforced_stellar_shielding_casing"),
+                    GTNACORE.id("block/machines/godforge_module"))
+            .tooltips(godforgeTooltip("godforge_exotic_module", "exotic_matter_producer", 9))
+            .register();
+
     public static void init() {}
 
     /**
@@ -931,5 +1025,15 @@ public final class GTNAMachines3 {
             }
         }
         return true;
+    }
+
+    /**
+     * GTNH {@code MultiblockTooltipBuilder} text of the Forge of Gods machines: machine type, then the markdown lines.
+     */
+    private static Component[] godforgeTooltip(String id, String machineType, int lines) {
+        // The machine type is the automatic gtna.machine.<id>.tooltip description line (GTNA convention).
+        Component[] tooltip = new Component[lines];
+        for (int i = 0; i < lines; i++) tooltip[i] = Component.translatable("gtna.machine." + id + ".tooltip." + i);
+        return tooltip;
     }
 }

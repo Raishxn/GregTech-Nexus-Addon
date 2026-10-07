@@ -16,16 +16,18 @@ public final class EyeOfHarmonyMaterials {
     public static void init() {
         // GTCEu 7.5.3 has none of these identities. Acquisition and working recipes are
         // intentionally explicit: stock low-tier material autogen would bypass their progression.
-        SpaceTime = metal("space_time", "SpaceTime", 0xffffff, MaterialIconSet.SHINY).setFormula("Φ");
-        WhiteDwarfMatter = metal("white_dwarf_matter", "White Dwarf Matter", 0xffffff, MaterialIconSet.SHINY)
-                .setFormula("∅");
-        BlackDwarfMatter = metal("black_dwarf_matter", "Black Dwarf Matter", 0x000000, MaterialIconSet.METALLIC)
-                .setFormula(">>∅<<");
-        Universium = metal("universium", "Universium", 0x263145, MaterialIconSet.METALLIC)
+        // GTNH texture sets (untinted) and fluid textures, as in MaterialsInit.
+        SpaceTime = metal("space_time", "SpaceTime", 0xffffff, GodforgeIconSets.SPACETIME, true).setFormula("Φ");
+        WhiteDwarfMatter = metal("white_dwarf_matter", "White Dwarf Matter", 0xffffff,
+                GodforgeIconSets.WHITE_DWARF_MATTER, true).setFormula("∅");
+        BlackDwarfMatter = metal("black_dwarf_matter", "Black Dwarf Matter", 0xffffff,
+                GodforgeIconSets.BLACK_DWARF_MATTER, false).setFormula(">>∅<<");
+        Universium = metal("universium", "Universium", 0xffffff, GodforgeIconSets.UNIVERSIUM, true)
                 .setFormula("Σ§kX");
         // RawStarMatter is a normal liquid in GTNH, despite "plasma" in its display name.
         RawStarMatter = new Material.Builder(GTNACORE.id("raw_star_matter"))
-                .langValue("Condensed Raw Stellar Plasma Mixture").liquid(295)
+                .langValue("Condensed Raw Stellar Plasma Mixture")
+                .liquid(new com.gregtechceu.gtceu.api.fluids.FluidBuilder().temperature(295).customStill())
                 .color(0x6401ff).flags(DISABLE_DECOMPOSITION, DISABLE_MATERIAL_RECIPES).buildAndRegister();
         Time = new Material.Builder(GTNACORE.id("temporal_fluid"))
                 .langValue("Tachyon Rich Temporal Fluid").liquid(0)
@@ -35,9 +37,12 @@ public final class EyeOfHarmonyMaterials {
                 .color(0x6401ff).flags(DISABLE_DECOMPOSITION, DISABLE_MATERIAL_RECIPES).buildAndRegister();
     }
 
-    private static Material metal(String id, String name, int color, MaterialIconSet iconSet) {
+    private static Material metal(String id, String name, int color, MaterialIconSet iconSet,
+                                  boolean customFluid) {
         // Only the structural forms needed by EOH and its dependencies; no ore/worldgen/tools.
-        return new Material.Builder(GTNACORE.id(id)).langValue(name).ingot().liquid(0)
+        var fluid = new com.gregtechceu.gtceu.api.fluids.FluidBuilder().temperature(0);
+        if (customFluid) fluid.customStill();
+        return new Material.Builder(GTNACORE.id(id)).langValue(name).ingot().liquid(fluid)
                 .color(color).iconSet(iconSet)
                 .flags(GENERATE_PLATE, GENERATE_DENSE, GENERATE_FRAME, GENERATE_ROD, GENERATE_LONG_ROD,
                         GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_BOLT_SCREW,

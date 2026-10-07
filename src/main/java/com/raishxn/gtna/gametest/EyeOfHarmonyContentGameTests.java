@@ -27,6 +27,19 @@ import java.util.List;
 @PrefixGameTestTemplate(false)
 public final class EyeOfHarmonyContentGameTests {
 
+    @GameTest(template = "empty_16", timeoutTicks = 100)
+    public static void eyeOfHarmonyConstructionRecipesLoad(GameTestHelper helper) {
+        var lines = helper.getLevel().getRecipeManager()
+                .getAllRecipesFor(com.gregtechceu.gtceu.common.data.GTRecipeTypes.ASSEMBLY_LINE_RECIPES);
+        for (String id : new String[] { "boundary_casing", "spatial_casing", "temporal_casing", "controller",
+                "overworld_planet", "compression_tier_0", "acceleration_tier_0", "stabilisation_tier_0",
+                "compression_tier_8", "acceleration_tier_8", "stabilisation_tier_8" }) {
+            helper.assertTrue(lines.stream().anyMatch(r -> r.id.getPath().endsWith("eye_of_harmony/" + id)),
+                    "assembly line recipe for " + id);
+        }
+        helper.succeed();
+    }
+
     @GameTest(template = "empty_16", timeoutTicks = 40)
     public static void eyeOfHarmonyFieldsPreserveAll27TiersAndDrops(GameTestHelper helper) {
         var families = List.of(GTNAEyeOfHarmonyContent.COMPRESSION_FIELDS,

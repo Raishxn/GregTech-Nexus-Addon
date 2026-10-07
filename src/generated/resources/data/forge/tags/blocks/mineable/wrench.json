@@ -160,6 +160,16 @@
     "gtna:nexus_capacitor_uiv",
     "gtna:nexus_capacitor_uxv",
     "gtna:nexus_capacitor_opv",
-    "gtna:nexus_capacitor_max"
+    "gtna:nexus_capacitor_max",
+    "gtna:singularity_reinforced_stellar_shielding_casing",
+    "gtna:celestial_matter_guidance_casing",
+    "gtna:boundless_gravitationally_severed_structure_casing",
+    "gtna:transcendentally_amplified_magnetic_confinement_casing",
+    "gtna:stellar_energy_siphon_casing",
+    "gtna:remote_graviton_flow_modulator",
+    "gtna:medial_graviton_flow_modulator",
+    "gtna:central_graviton_flow_modulator",
+    "gtna:harmonic_phonon_transmission_conduit",
+    "gtna:spatially_transcendent_gravitational_lens"
   ]
 }

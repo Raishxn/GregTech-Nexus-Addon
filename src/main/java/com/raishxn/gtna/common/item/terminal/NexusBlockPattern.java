@@ -189,9 +189,12 @@ public class NexusBlockPattern extends BlockPattern {
                         // Never replace the root controller or edit ignored cells.
                         if (pos.equals(centerPos) || predicate.common.contains(SimplePredicate.ANY)) continue;
                         // Replace upgrades structural blocks, never installed parts or their inventories/NBT.
+                        // Other multiblock controllers (e.g. Forge of Gods modules in their slots) are kept too.
                         if (replaceMode && world.getBlockState(pos).hasBlockEntity() &&
-                                MetaMachine.getMachine(world,
-                                        pos) instanceof com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart) {
+                                (MetaMachine.getMachine(world,
+                                        pos) instanceof com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart ||
+                                        MetaMachine.getMachine(world,
+                                                pos) instanceof com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController)) {
                             blocks.put(pos, world.getBlockState(pos));
                             for (SimplePredicate limit : predicate.limited) limit.testLimited(worldState);
                             continue;

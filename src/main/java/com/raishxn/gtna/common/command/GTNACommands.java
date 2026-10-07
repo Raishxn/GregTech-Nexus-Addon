@@ -87,9 +87,59 @@ public class GTNACommands {
                                 .executes(context -> steamReport(context.getSource(),
                                         EntityArgument.getPlayer(context, "player"))))));
 
+        // Testing helper: /gtna godforge shards <amount> on the looked-at (or nearest) Forge of Gods
+        dispatcher.register(Commands.literal("gtna")
+                .then(Commands.literal("godforge")
+                        .requires(source -> source.hasPermission(2))
+                        .then(Commands.literal("shards")
+                                .then(Commands.argument("amount", IntegerArgumentType.integer())
+                                        .executes(context -> godforgeShards(context.getSource(),
+                                                IntegerArgumentType.getInteger(context, "amount")))))));
+
         dispatcher.register(Commands.literal("gtna")
                 .then(Commands.literal("planner")
                         .executes(context -> plannerReport(context.getSource()))));
+    }
+
+    private static int godforgeShards(CommandSourceStack source, int amount) {
+        ServerPlayer player = source.getPlayer();
+        if (player == null) return 0;
+        ServerLevel level = player.serverLevel();
+        com.raishxn.gtna.common.machine.multiblock.godforge.ForgeOfGodsMachine target = null;
+        var hit = player.pick(64, 1f, false);
+        if (hit instanceof net.minecraft.world.phys.BlockHitResult bhr &&
+                com.gregtechceu.gtceu.api.machine.MetaMachine.getMachine(level, bhr
+                        .getBlockPos()) instanceof com.raishxn.gtna.common.machine.multiblock.godforge.ForgeOfGodsMachine fog) {
+            target = fog;
+        }
+        if (target == null) {
+            double best = Double.MAX_VALUE;
+            BlockPos center = player.blockPosition();
+            int r = 8;
+            for (int cx = (center.getX() >> 4) - r; cx <= (center.getX() >> 4) + r; cx++) {
+                for (int cz = (center.getZ() >> 4) - r; cz <= (center.getZ() >> 4) + r; cz++) {
+                    var chunk = level.getChunkSource().getChunkNow(cx, cz);
+                    if (chunk == null) continue;
+                    for (var be : chunk.getBlockEntities().values()) {
+                        if (be instanceof com.gregtechceu.gtceu.api.machine.IMachineBlockEntity mbe &&
+                                mbe.getMetaMachine() instanceof com.raishxn.gtna.common.machine.multiblock.godforge.ForgeOfGodsMachine fog) {
+                            double d = be.getBlockPos().distSqr(center);
+                            if (d < best) {
+                                best = d;
+                                target = fog;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (target == null) {
+            source.sendFailure(Component.literal("No Forge of Gods controller found nearby."));
+            return 0;
+        }
+        int total = target.addGravitonShards(amount);
+        source.sendSuccess(() -> Component.literal("Forge of Gods graviton shards: " + total), true);
+        return total;
     }
 
     private static int plannerReport(CommandSourceStack source) {

@@ -1,0 +1,11 @@
+{
+  "godforge.loop": {
+    "subtitle": "gtna.subtitle.godforge.loop",
+    "sounds": [
+      {
+        "name": "gtna:godforge/forge_of_gods",
+        "stream": true
+      }
+    ]
+  }
+}

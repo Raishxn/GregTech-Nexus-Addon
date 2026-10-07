@@ -219,6 +219,7 @@ tasks.register('runUnitTests') {
             'com.raishxn.gtna.UniversalFactoryBudgetTest',
             'com.raishxn.gtna.NexusWirelessLossTest',
             'com.raishxn.gtna.PersonalSpaceLegacyNamesTest',
+            'com.raishxn.gtna.GodforgeMathTest',
             'com.raishxn.gtna.ClientMixinContractTest',
             'com.raishxn.gtna.common.machine.multiblock.part.ae.PatternBufferLayoutTest',
     ]

@@ -82,6 +82,166 @@ public class GTNALangProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        // Forge of Gods (GTNH)
+        com.raishxn.gtna.data.lang.GodforgeLang.add(this);
+        add("gtna.godforge.gui.threads", "Threads: %s");
+        add("gtna.godforge.gui.threads.locked", "Thread Hatch locked: needs %s (unlocked up to %s)");
+        add("gtna.machine.forge_of_gods.tooltip", "Machine Type: §eStellar Forge");
+        add("gtna.machine.godforge_smelting_module.tooltip", "Machine Type: §eBlast Furnace, Furnace");
+        add("gtna.machine.godforge_molten_module.tooltip", "Machine Type: §eBlast Smelter");
+        add("gtna.machine.godforge_plasma_module.tooltip", "Machine Type: §ePlasma Fabricator");
+        add("gtna.machine.godforge_exotic_module.tooltip", "Machine Type: §eExotic Matter Producer");
+        add("gtna.machine.forge_of_gods.tooltip.0", "§7§oAlso known as Godforge or Gorge for short");
+        add("gtna.machine.forge_of_gods.tooltip.1",
+                "§b§m                                                                        ");
+        add("gtna.machine.forge_of_gods.tooltip.2", "§7A massive structure harnessing the thermal, gravitational and");
+        add("gtna.machine.forge_of_gods.tooltip.3",
+                "§7kinetic energy of a stabilized neutron star for material processing");
+        add("gtna.machine.forge_of_gods.tooltip.4",
+                "§7This multiblock can house §cup to 16 modules §7which utilize the star to energize materials");
+        add("gtna.machine.forge_of_gods.tooltip.5",
+                "§7to varying degrees, ranging from regular smelting to matter degeneration");
+        add("gtna.machine.forge_of_gods.tooltip.6",
+                "§7EU requirements for all modules are handled via wireless energy directly");
+        add("gtna.machine.forge_of_gods.tooltip.7",
+                "§b§m                                                                        ");
+        add("gtna.machine.forge_of_gods.tooltip.8",
+                "§7This multiblock has an §6extensive upgrade tree §7which influences all of its functions,");
+        add("gtna.machine.forge_of_gods.tooltip.9",
+                "§7such as §6unlocking new module types§7, §6increasing heat levels §7and §6granting");
+        add("gtna.machine.forge_of_gods.tooltip.10",
+                "§6various processing speed bonuses§7. These upgrades can be unlocked by reaching");
+        add("gtna.machine.forge_of_gods.tooltip.11", "§7certain milestones and/or spending materials");
+        add("gtna.machine.forge_of_gods.tooltip.12",
+                "§b§m                                                                        ");
+        add("gtna.machine.forge_of_gods.tooltip.13",
+                "§aClicking on the logo in the controller gui opens an extensive information window§7,");
+        add("gtna.machine.forge_of_gods.tooltip.14", "§7explaining everything there is to know about this multiblock");
+        add("gtna.machine.godforge_smelting_module.tooltip.0", "§7This is a module of the Godforge");
+        add("gtna.machine.godforge_smelting_module.tooltip.1", "§7Must be part of a Godforge to function");
+        add("gtna.machine.godforge_smelting_module.tooltip.2",
+                "§7Used for basic smelting operations at various temperatures");
+        add("gtna.machine.godforge_smelting_module.tooltip.3",
+                "§b§m                                                                        ");
+        add("gtna.machine.godforge_smelting_module.tooltip.4",
+                "§7As the first of the Godforge modules, this module performs the most basic");
+        add("gtna.machine.godforge_smelting_module.tooltip.5",
+                "§7thermal processing, namely smelting materials identically to a furnace or blast furnace");
+        add("gtna.machine.godforge_smelting_module.tooltip.6",
+                "§7The desired method of processing can be selected in the gui");
+        add("gtna.machine.godforge_smelting_module.tooltip.7",
+                "§7This module is specialized towards speed and high heat levels");
+        add("gtna.machine.godforge_molten_module.tooltip.0", "§7This is a module of the Godforge");
+        add("gtna.machine.godforge_molten_module.tooltip.1", "§7Must be part of a Godforge to function");
+        add("gtna.machine.godforge_molten_module.tooltip.2", "§7Used for high temperature material liquefaction");
+        add("gtna.machine.godforge_molten_module.tooltip.3",
+                "§b§m                                                                        ");
+        add("gtna.machine.godforge_molten_module.tooltip.4",
+                "§7The second module of the Godforge, this module melts materials directly into");
+        add("gtna.machine.godforge_molten_module.tooltip.5",
+                "§7their liquid form. If an output material does not have a liquid form, it will be output");
+        add("gtna.machine.godforge_molten_module.tooltip.6", "§7as a regular solid instead");
+        add("gtna.machine.godforge_molten_module.tooltip.7",
+                "§7This module is specialized towards parallel processing");
+        add("gtna.machine.godforge_plasma_module.tooltip.0", "§7This is a module of the Godforge");
+        add("gtna.machine.godforge_plasma_module.tooltip.1", "§7Must be part of a Godforge to function");
+        add("gtna.machine.godforge_plasma_module.tooltip.2", "§7Used for extreme temperature matter ionization");
+        add("gtna.machine.godforge_plasma_module.tooltip.3",
+                "§b§m                                                                        ");
+        add("gtna.machine.godforge_plasma_module.tooltip.4",
+                "§7The third module of the Godforge, this module infuses materials with extreme amounts");
+        add("gtna.machine.godforge_plasma_module.tooltip.5",
+                "§7of heat, ionizing and turning them into plasma directly. Not all plasmas can be produced");
+        add("gtna.machine.godforge_plasma_module.tooltip.6",
+                "§7right away, some of them require certain upgrades to be unlocked");
+        add("gtna.machine.godforge_plasma_module.tooltip.7",
+                "§7This module is specialized towards energy and overclock efficiency");
+        add("gtna.machine.godforge_exotic_module.tooltip.0", "§7This is a module of the Godforge");
+        add("gtna.machine.godforge_exotic_module.tooltip.1", "§7Must be part of a Godforge to function");
+        add("gtna.machine.godforge_exotic_module.tooltip.2", "§7Used for ultra high temperature matter degeneration");
+        add("gtna.machine.godforge_exotic_module.tooltip.3",
+                "§b§m                                                                        ");
+        add("gtna.machine.godforge_exotic_module.tooltip.4",
+                "§7The fourth and final module of the Godforge, this module breaks apart the very");
+        add("gtna.machine.godforge_exotic_module.tooltip.5",
+                "§7building blocks of matter, producing exotic mixtures in the process. Quark-Gluon Plasma");
+        add("gtna.machine.godforge_exotic_module.tooltip.6",
+                "§7can be manufactured right away, but production of Magnetic Monopole Matter (Magmatter)");
+        add("gtna.machine.godforge_exotic_module.tooltip.7", "§7requires a fully upgraded Godforge");
+        add("gtna.machine.godforge_exotic_module.tooltip.8",
+                "§7This module is specialized towards acquisition of unique materials");
+        add("gtna.godforge.machine_type.stellar_forge", "Stellar Forge");
+        add("gtna.godforge.machine_type.blast_furnace", "Blast Furnace, Furnace");
+        add("gtna.godforge.machine_type.blast_smelter", "Blast Smelter");
+        add("gtna.godforge.machine_type.plasma_fabricator", "Plasma Fabricator");
+        add("gtna.godforge.machine_type.exotic_matter_producer", "Exotic Matter Producer");
+        add("block.gtna.singularity_reinforced_stellar_shielding_casing",
+                "Singularity Reinforced Stellar Shielding Casing");
+        add("block.gtna.singularity_reinforced_stellar_shielding_casing.tooltip.0",
+                "Shielded by the event horizon of a singularity");
+        add("block.gtna.singularity_reinforced_stellar_shielding_casing.tooltip.1", "Don't get too close...");
+        add("block.gtna.celestial_matter_guidance_casing", "Celestial Matter Guidance Casing");
+        add("block.gtna.celestial_matter_guidance_casing.tooltip.0",
+                "Designed to route stellar matter using spacetime distortion");
+        add("block.gtna.celestial_matter_guidance_casing.tooltip.1", "Reality Distortion");
+        add("block.gtna.boundless_gravitationally_severed_structure_casing",
+                "Boundless Gravitationally Severed Structure Casing");
+        add("block.gtna.boundless_gravitationally_severed_structure_casing.tooltip.0",
+                "Unaffected by gravitational forces");
+        add("block.gtna.boundless_gravitationally_severed_structure_casing.tooltip.1",
+                "Not even a black hole could tear it apart.");
+        add("block.gtna.transcendentally_amplified_magnetic_confinement_casing",
+                "Transcendentally Amplified Magnetic Confinement Casing");
+        add("block.gtna.transcendentally_amplified_magnetic_confinement_casing.tooltip.0",
+                "Creates enormous magnetic fields capable of constraining entire stars");
+        add("block.gtna.transcendentally_amplified_magnetic_confinement_casing.tooltip.1", "It's super effective!");
+        add("block.gtna.stellar_energy_siphon_casing", "Stellar Energy Siphon Casing");
+        add("block.gtna.stellar_energy_siphon_casing.tooltip.0",
+                "Taps into streams of stellar matter to harness their heat energy");
+        add("block.gtna.stellar_energy_siphon_casing.tooltip.1", "Turn up the heat!");
+        add("block.gtna.remote_graviton_flow_modulator", "Remote Graviton Flow Modulator");
+        add("block.gtna.remote_graviton_flow_modulator.tooltip.0",
+                "Controls the flow of gravitons to manipulate gravity");
+        add("block.gtna.remote_graviton_flow_modulator.tooltip.1", "Exponential scaling past 800 Galaxies");
+        add("block.gtna.medial_graviton_flow_modulator", "Medial Graviton Flow Modulator");
+        add("block.gtna.medial_graviton_flow_modulator.tooltip.0",
+                "Controls the flow of gravitons to manipulate gravity");
+        add("block.gtna.medial_graviton_flow_modulator.tooltip.1", "Getting closer...");
+        add("block.gtna.central_graviton_flow_modulator", "Central Graviton Flow Modulator");
+        add("block.gtna.central_graviton_flow_modulator.tooltip.0",
+                "Controls the flow of gravitons to manipulate gravity");
+        add("block.gtna.central_graviton_flow_modulator.tooltip.1", "Gravity Central");
+        add("block.gtna.harmonic_phonon_transmission_conduit", "Harmonic Phonon Transmission Conduit");
+        add("block.gtna.harmonic_phonon_transmission_conduit.tooltip.0",
+                "Transfers and stores extreme amounts of heat without any loss");
+        add("block.gtna.harmonic_phonon_transmission_conduit.tooltip.1", "<<<Thermal<<< >>>Wave>>>");
+        add("block.gtna.spatially_transcendent_gravitational_lens", "Spatially Transcendent Gravitational Lens");
+        add("block.gtna.spatially_transcendent_gravitational_lens.tooltip.0", "Gravitational lensing taken literal");
+        add("block.gtna.spatially_transcendent_gravitational_lens.tooltip.1", "GraviLens 9000!");
+        add("block.gtna.hypogen_coil", "Hypogen Coil Block");
+        add("gtna.godforge.casing_mark", "§9Tec§1Tech§9: Project Godforge");
+        add("block.gtna.forge_of_gods", "Forge of the Gods");
+        add("block.gtna.godforge_smelting_module", "Helioflare Power Forge");
+        add("block.gtna.godforge_molten_module", "Helioflux Melting Core");
+        add("block.gtna.godforge_plasma_module", "Heliothermal Plasma Fabricator");
+        add("block.gtna.godforge_exotic_module", "Heliofusion Exoticizer");
+        add("gtna.godforge.animations.enabled", "Animations are now enabled.");
+        add("gtna.godforge.animations.disabled", "Animations are now disabled.");
+        add("gtna.godforge.info.rings", "Number of Rings: %s");
+        add("gtna.subtitle.godforge.loop", "Forge of the Gods hums");
+        add("gtna.godforge.info.upgrades", "Total Upgrades Unlocked: %s");
+        add("gtna.godforge.info.connected", "Connected Modules: %s/%s");
+        add("gtna.godforge.gui.no_extra_cost", "No upgrade needs extra materials");
+        add("gtna.godforge.gui.battery_locked", "Requires Relativistic Electron Capacitor (upgrade)");
+        add("gtna.godforge.gui.voltage_config", "Voltage Config");
+        add("gtna.godforge.gui.max_parallel", "Max");
+        add("gtna.godforge.gui.max_parallel.tooltip", "Always use the maximum parallel");
+        add("gtna.godforge_plasma", "Godforge Plasma");
+        add("gtna.godforge_molten", "Helioflux Melting Core");
+        add("gtna.godforge.exotic.mode.qgp", "Mode: Quark Gluon Plasma");
+        add("gtna.godforge.exotic.mode.magmatter", "Mode: Magmatter");
+        add("gtna.godforge.exotic.requires", "Requires %s: %s mB");
+        add("gtna.godforge.exotic.mode.locked", "Magmatter mode needs the forge's Effortless Existence (EE) upgrade.");
         // PersonalSpace (GTNH) strings, original keys and English text
         add("block.gtna.personal_space_portal", "Personal Dimension Portal");
         add("chat.overworldPersonalDimension", "Personal dimensions can only be created from the overworld");
@@ -470,7 +630,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.eoh.manual.energy",
                 "The first stabilisation tier reduces base EU return by 40%. Each higher tier removes 5 points of this penalty.");
         add("gtna.eoh.manual.circuit",
-                "Circuit 0–24: configuration k multiplies EU input by (k+1)^2 and duration by 2^-k. EU return and product yield are unchanged by the circuit.");
+                "Circuit 0–24: configuration k multiplies EU input by 4^k and duration by 2^-k. EU return and product yield are unchanged by the circuit.");
         add("gtna.eoh.manual.gas",
                 "While idle and enabled, absorbs hydrogen and helium once per second. Starting a cycle consumes ALL stored gas, including excess.");
         add("gtna.eoh.manual.ratio", "For each gas: overflow ratio = stored / required - 1.");

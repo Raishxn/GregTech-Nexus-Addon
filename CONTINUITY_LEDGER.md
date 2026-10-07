@@ -31,6 +31,10 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
+> **EOH / receitas de teste e texturas (G-0183):** 32 receitas adaptadas de construção EOH
+> carregam na Assembly Line; os materiais sólidos especiais têm modelos GTCEu e sprites Modernity
+> ou GTO. Gate PASS 202 GameTests. QA visual e fechamento da cadeia Survival do Godforge pendentes.
+
 > **Personal Space / port do DimensionConfig, editor e céu (G-0175):** configurações completas do
 > original (visual, worldgen, preset `|B|G|S|C`, nomes 1.7.10), gerador lendo a configuração viva
 > (mudança liberada por `/pspace allow-worldgen-change` só afeta chunks novos), modo S, void em y=128,
@@ -6323,3 +6327,97 @@ grep -q "GAME TESTS COMPLETE" run/logs/latest.log && echo OK || echo "NAO RODOU"
 - Plataforma de chegada reduzida de 9x9 para 5x5 a pedido do autor (diferença intencional do original).
 - Autor testou no cliente: criação, teleporte e preset 4 OK. Gate PASS 195/195,
   `build/gtna-personalspace-platform-gate.log`. Sem commit/push.
+
+## G-0177 — 2026-10-06 — EOH: custo inicial volta a 4^k (GTNH)
+
+- Pedido do autor: com a rede wireless absorvendo toda a geração do Artificial Star, restaurar o
+  multiplicador original do GTNH. `EyeOfHarmonyMath.startupDebit` = startupEU × 4^circuito
+  (circuito 24 = 4^24 ≈ 2,8×10^14×), substituindo (k+1)^2. Combustíveis do Artificial Star mantêm 16×
+  EU/t (escolha do autor). Manual EN/PT, teste unitário e GameTests atualizados; removida a asserção
+  de que quatro barras Infinity pagam um ciclo de circuito 24 (deixa de ser verdade).
+- Gate PASS 195/195, `build/gtna-eoh-4k-gate.log`, datagen written: 1. Sem commit/push.
+
+## G-0178 — 2026-10-06 — Forge of Gods: auditoria e fases 1–3 (núcleo, estrutura, controlador)
+
+- Auditoria em `docs/roadmap/forge-of-gods-port-audit.md` (GT5-Unofficial a3e1e112; GTO como base visual).
+- Fase 1: `api/machine/feature/godforge` — 31 upgrades (pré-requisitos, custos, splits, posições da árvore),
+  armazenamento de custos, `GodforgeData`, `GodforgeMath` (combustível, calor, paralelos, velocidade,
+  desconto, voltagem, milestones, inversão, shards) com a mesma ordem de operações do GTNH.
+  `GodforgeMathTest` (unitário) confere fórmulas e regras da árvore.
+- Fase 2: estrutura convertida das strings do GTNH por `tools/convert_godforge_structure.py` em três `.mbs`
+  alinhados (principal com anel 1; anéis 2 e 3); contagens batem com o tooltip do GTNH. 8 casings + lente
+  com texturas GTOCore (CC BY-NC-SA). Materiais DTR, MHDCSM, Magmatter, QGP e Graviton Shard registrados.
+- Fase 3 (base): `ForgeOfGodsMachine` — combustível de partida (bloco de Neutronium, fallback do GTNH sem
+  Avaritia), bateria, drenagem de DTR/Raw Star Matter/MHDCSM, anéis 2/3 checados com CD/END, compra/
+  reembolso de upgrades, ejeção de shards, coleta de módulos nas vagas J, NBT com chaves do GTNH.
+- GameTests: estrutura do preview forma (7561 blocos), estrela acende com o combustível e apaga sem fluido.
+  Receita do controlador omitida e documentada (depende da fase de progressão).
+- Gate PASS 197/197, `build/gtna-godforge-phase2-gate.log`. Pendentes: módulos, render, GUI, receitas.
+  Sem commit.
+
+## G-0179 — 2026-10-06 — Forge of Gods: fase 4 (módulos)
+
+- `GodforgeModuleMachine` (estrutura 7x7x13 do GTNH, OC do GT5, débito wireless em `beforeWorking`):
+  Smelting (BLAST + FURNACE), Molten (BLAST com saídas fundidas), Plasma (tabela de tier/multistep).
+- `GodforgeExoticModuleMachine`: sorteio ponderado de 7 entradas, plasmas exatos, saída QGP ou Magmatter
+  (Time/Space), modo trocado com chave de fenda e liberado pelo upgrade Effortless Existence.
+- Receitas de plasma do Godforge em `GTNAGodforgeRecipes`; GameTests de forma, estrela, anéis, smelting e plasma.
+- Gate completo: 199/199 GameTests. Pendente: GameTest do módulo exótico, render da estrela (fase 5), GUI (fase 6).
+
+## G-0180 — 2026-10-06 — Forge of Gods: fases 5 e 6 (render, anéis, GUI, sons, idiomas)
+
+- Render (GTNH `RenderForgeOfGods`): estrela 122 blocos atrás do controlador com as três camadas
+  (`star` GLSL portado para core shader 1.20.1, cor YIQ + gamma, rotação por camada), anéis girando em
+  torno do eixo do feixe (malha dos blocos reais em `VertexBuffer`) e feixe suave + intenso
+  (`gorgeBeam` com geometria na CPU, meia-casca voltada à câmera). Ciclo de cores dos presets e cores
+  customizadas (`GodforgeStarColor`, formato `StarColorV1` do GTNH).
+- Anéis "entram no controlador": com a estrela acesa os blocos dos anéis viram ar e o padrão checado é
+  o eixo + anéis vazios (`god_forge_active`, `*_ring_N_air`); ao apagar, os anéis são recolocados
+  (`GodforgeRings`). GameTest confere 6044 blocos removidos, forma vazia e forma cheia depois.
+- GUI (GTNH `MTEForgeOfGodsGui` + painéis) como abas do Fancy UI: tela principal, árvore de upgrades
+  (31 nós, conectores rotacionados, detalhe com corpo/lore/custos, construir/reembolsar, segredo),
+  marcos (barras normal/invertida, próximos limites, fragmentos), combustível, bateria, cosméticos
+  (lista de cores, giro, tamanho, animações, editor e importação), estatísticas com prévia de fator,
+  inserção manual de custos extras (16 slots), info geral e agradecimentos. Módulos: tela de status e
+  estatísticas, aba de tensão/paralelo (TBF), botões Magmatéria e "reiniciar receita" no exótico.
+- Idiomas: 340 textos EN extraídos do GTNH (`tools/extract_godforge_lang.py` → `GodforgeLang`) e
+  tradução PT-BR (`tools/merge_godforge_lang_pt_br.py`). Som de loop do GTNH tocando no controlador.
+- Gate: GameTests 200/200 (EOH `normal_speed_circuit` falhou uma vez por corrida no check assíncrono
+  do GTCEu e passou na nova execução). Fase 7 (receitas/custos extras) aguarda decisão do autor:
+  `docs/roadmap/forge-of-gods-recipes-proposal.md`.
+
+## G-0181 — 2026-10-06 — Forge of Gods: fase 7 (receitas e custos extras, provisório)
+
+- `GTNAGodforgeProgression`: assembly lines com pesquisa do controlador, 4 casings, lente, modulador,
+  conduto e 4 módulos (estrutura/quantidades/tiers do GTNH) e custos extras dos 7 upgrades do GTNH.
+  Materiais ausentes usam substitutos documentados em `docs/roadmap/forge-of-gods-recipes-proposal.md`
+  (escolha provisória feita sem o autor presente — revisar: opção 1/3 trocam só os substitutos).
+- GameTest novo confere receitas e custos; teste da estrutura agora carrega os chunks que ela ocupa.
+- Gate: spotless, unit, runData e 201/201 GameTests.
+## G-0182 — 2026-10-07 — Forge of Gods: decisão sobre materiais
+
+- Autor decidiu portar a cadeia completa do GTNH (máquinas e intermediários) em sessão futura; plano em
+  `docs/roadmap/forge-of-gods-recipes-proposal.md`. Substitutos seguem ativos; agora o autor testa o
+  multibloco em `runClient`.
+
+## G-0183 — 2026-10-07 — Receitas de construção EOH e sprites dos materiais
+
+- Rota provisória do EOH em `GTNAEyeOfHarmonyProgression`: 32 receitas de Assembly Line com pesquisa
+  para três casings, 27 campos (tiers 0–8), controlador e Planet Block Overworld. O primeiro tier usa
+  componentes GTCEu anteriores ao EOH; os tiers seguintes consomem quatro campos do tier anterior.
+  É uma adaptação GTNA, não um port das receitas BEC do GTNH. GameTest novo confirma as receitas
+  carregadas, inclusive início/fim das três famílias.
+- O conjunto de PNGs de materiais foi trocado pelas versões Modernity-GTNH para SpaceTime,
+  White Dwarf Matter, Universium, MHDCSM, Magmatter e Graviton Shard; conjuntos Infinity e Eternity
+  ficam preparados, mas os materiais ainda não são registrados. O conjunto de Black Dwarf Matter
+  veio de GTOCore. Modelos GTCEu de itens e blocos e camadas secundárias transparentes foram
+  gerados; um verificador local encontrou zero referências a texturas ausentes. Origem/licença em
+  `THIRD_PARTY_NOTICES.md`.
+- Gate `./gradlew spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` PASS:
+  202/202 GameTests, datagen `written: 0`; log `build/gtna-eoh-godforge-recipes-textures-gate.log`.
+  Sem commit/push. QA visual no cliente ainda pendente. A progressão completa de Survival do
+  Godforge continua pendente: SpaceTime/White/Black Dwarf Matter/Universium têm autogen de receitas
+  desativado, e DTR não tem fonte de aquisição; as receitas provisórias do Forge podem ser
+  conferidas com ingredientes fornecidos para teste, mas ainda não fecham a cadeia inteira.
+
+- 2026-10-07 (Forge of Gods): `/gtna godforge shards <n>` (OP 2; ajusta gravitonShardsSpent, porque o disponível é recalculado a cada tick). Módulos Smelting/Molten/Plasma aceitam 1 Thread Hatch via GTNAMultipleRecipesLogic, com o modificador GTNH aplicado em cada thread. Um hatch acima do tier liberado forma, mas não adiciona threads (base UHV, GPCI→UIV, CD→OpV, END→MAX). O Exotic continua com uma thread só. O controller usa RotationState.ALL (para cima/para baixo). Gate verde: 202/202. Sem commit.

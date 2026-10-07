@@ -63,6 +63,11 @@ public final class GTNASources {
             Map.entry("nexus_molecular_forge", GTO),
             // --- GT: New Horizons ---
             Map.entry("eye_of_harmony", GTNH),
+            Map.entry("forge_of_gods", GTNH),
+            Map.entry("godforge_smelting_module", GTNH),
+            Map.entry("godforge_molten_module", GTNH),
+            Map.entry("godforge_plasma_module", GTNH),
+            Map.entry("godforge_exotic_module", GTNH),
             // --- Twist Space Technology (GPL-3.0) ---
             Map.entry("eye_of_wood", TST),
             Map.entry("industrial_slaughterhouse", GTO),

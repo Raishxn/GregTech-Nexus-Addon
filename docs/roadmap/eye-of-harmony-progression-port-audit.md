@@ -1,7 +1,11 @@
 # Eye of Harmony — auditoria de fabricação, materiais e planetas
 
 Data: 06/10/2026. Destino: GTNA / Minecraft 1.20.1 / GTCEu 7.5.3.
-Escopo: auditoria e propostas; nenhuma receita, material, dimensão ou mecânica implementada.
+Escopo original: auditoria e propostas. Em 2026-10-07, foi acrescentada uma rota
+adaptada de 32 receitas de construção na Assembly Line (três casings, 27 campos,
+controlador e planeta Overworld). Ela usa componentes GTCEu pré-EOH e pesquisa;
+não implementa a rede BEC nem a cadeia completa de materiais GTNH. A auditoria
+abaixo continua sendo a referência para as lacunas da progressão fiel.
 
 ## Resultado e recomendação
 

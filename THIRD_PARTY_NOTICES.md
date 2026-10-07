@@ -26,6 +26,7 @@ If you are a rightsholder and want an entry corrected or removed, please open an
 | GTLCore | [nutant233/GTLCore](https://github.com/nutant233/GTLCore) | Declared LGPLv3.0 (`gradle.properties`; no `LICENSE` file found) | Textures (including Pattern Buffer Copy/Cut Card icons), pattern-buffer parity code, **Integrated / Advanced Integrated Ore Processor** (structure + faithful recipe generation) | Attribution (license to confirm) |
 | GTLsupb | GTLsupb (LGPLv3) | LGPLv3 | Universal Factory, Primitive Stone Furnace | Attribution only |
 | GregTech CEu Modern | [GregTechCEu/GregTech-Modern](https://github.com/GregTechCEu/GregTech-Modern) | LGPL-3.0 | Base API / framework | Attribution only |
+| GT5-Unofficial (GTNH TecTech) | [GTNewHorizons/GT5-Unofficial](https://github.com/GTNewHorizons/GT5-Unofficial/tree/a3e1e11241a814c9fa0dd0973d5699548428f689) | LGPL-3.0 | Forge of Gods: rules (`GodforgeMath`, upgrades, data, star colors), structure strings converted to `pattern/god_forge*.mbs`; star/beam GLSL (`shaders/core/godforge_*`), star and beam textures (`textures/render/godforge`), GUI textures (`textures/gui/godforge`), loop sound (`sounds/godforge`), GUI layout and en_US strings (`data/lang/GodforgeLang`, generated) | Licensed reuse with attribution; no individual permission claimed |
 | PersonalSpace (GTNH) | [GTNewHorizons/PersonalSpace](https://github.com/GTNewHorizons/PersonalSpace/tree/a292401e0a067e37e7e02abee8bd48b58a6e1571) | LGPL-3.0 | Personal dimension port for 1.20.1: `DimensionConfig` settings and preset strings, chunk provider (layers, lots, streets, boundaries, center marker, surface layers), portal/teleport/relink logic, `/pspace` commands, the editor GUI and its widget toolkit, and the GUI sheet `assets/gtna/textures/gui/personalspace/widgets.png` (copied unchanged from `assets/personalspace/textures/widgets.png`, SHA-256 `68db48c6826c3cb46df9d83eff1bc7d56ec73cb679281f21d609a352ab70a97d`) | Licensed reuse with attribution under LGPL-3.0; no individual permission claimed |
 | PersonalSpace Unofficial | [Crazerium/PersonalSpace-Unofficial](https://github.com/Crazerium/PersonalSpace-Unofficial/tree/dab12d35325aef2c65b79e9a79ef0025f1274fa4) | LGPL-3.0 | Forge 1.20.1 chunk generator API structure used as implementation reference; its ownership and simplified road rules are not adopted | Licensed reuse with attribution; no individual permission claimed |
 | Infiniverse | [Commoble/infiniverse](https://github.com/Commoble/infiniverse) | MIT | Forge 1.20.1 runtime dimension API dependency for Personal Space | Separate required mod; no source or assets copied |
@@ -337,3 +338,21 @@ is changed to gtna and a base cube/overlay offset is added for GTCEu 7.5.3.
 Source/destination hashes and adaptations: `docs/roadmap/gtladditions-wireless-assets.json`.
 Retain upstream LICENSE GPL-3.0 terms (bundled in META-INF/licenses/gtladditions);
 metadata LGPL discrepancy remains documented. No special permission is claimed.
+
+### Eye of Harmony / Forge of Gods material sprites (2026-10-07)
+
+- The item and material-block PNGs under `assets/gtceu/textures/{item,block}/material_sets/`
+  for SpaceTime, Universium, White Dwarf Matter, MHDCSM, Magmatter, Graviton Shard,
+  Infinity and Eternity were copied from the author's local Modernity-GTNH pack, whose
+  source revision is `1b52340349b92a11676eefb149eaec3b934eafcf` and whose art is
+  **CC BY-NC-SA 4.0**. The filenames were mapped from GTNH material icon names to GTCEu
+  names. Animation metadata was preserved. Corresponding GTCEu models and transparent
+  secondary layers were generated locally. Infinity and Eternity are prepared texture
+  sets; no GTNA material registration is claimed for them.
+- Black Dwarf Matter item sprites and its block sprite came from GTOCore revision
+  `dc4824d1608ffad3bb0e2d53a2a068a739da3e84`, from its
+  `black_dwarf_mtter` set. These are **CC BY-NC-SA 4.0** GTO assets, renamed to
+  `black_dwarf_matter` for GTNA. GTO has no corresponding frame or dense-plate sprite;
+  those forms use the GTCEu parent set.
+- The new EOH construction recipes are a GTNA adaptation using GTCEu components.
+  They do not reproduce GTNH's BEC material, nanite or condensate requirements.

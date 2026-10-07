@@ -90,10 +90,17 @@ public class GTNAMaterials {
     public static Material Universium;
     public static Material Time;
     public static Material Space;
+    // Forge of Gods fuels and products (GTNH identities)
+    public static Material DimensionallyTranscendentResidue;
+    public static Material MagnetohydrodynamicallyConstrainedStarMatter;
+    public static Material MagMatter;
+    public static Material QuarkGluonPlasma;
+    public static Material GravitonShard;
 
     public static void init() {
         MaterialBuilder.init();
         com.raishxn.gtna.common.data.material.EyeOfHarmonyMaterials.init();
+        com.raishxn.gtna.common.data.material.GodforgeMaterials.init();
         MaterialAdd.init();
     }
 }

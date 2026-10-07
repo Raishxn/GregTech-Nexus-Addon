@@ -321,6 +321,37 @@ public class GTNARecipeType {
             .setMaxIOSize(6, 1, 2, 1).setEUIO(IO.IN)
             .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, LEFT_TO_RIGHT).setSound(GTSoundEntries.COOLING);
 
+    /** GTNH {@code godforgePlasmaRecipes}: Forge of Gods Plasma Module, one solid/fluid in, one plasma out. */
+    public static final GTRecipeType GODFORGE_PLASMA_RECIPES = register("godforge_plasma",
+            com.gregtechceu.gtceu.common.data.GTRecipeTypes.MULTIBLOCK)
+            .setMaxIOSize(1, 0, 1, 1).setEUIO(IO.IN)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT).setSound(GTSoundEntries.ARC);
+
+    /**
+     * GTNH {@code godforgeMoltenRecipes} ("Helioflux Melting Core"): every Electric Blast Furnace recipe again, with
+     * outputs that have a molten form turned into fluid ({@code Godforge.initMoltenModuleRecipes}).
+     */
+    public static final GTRecipeType GODFORGE_MOLTEN_RECIPES = register("godforge_molten",
+            com.gregtechceu.gtceu.common.data.GTRecipeTypes.MULTIBLOCK)
+            .setMaxIOSize(6, 6, 1, 2).setEUIO(IO.IN)
+            .addDataInfo(data -> LocalizationUtils.format("gtceu.recipe.temperature",
+                    FormattingUtil.formatTemperature(data.getInt("ebf_temp"))))
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.FURNACE);
+
+    static {
+        var blast = com.gregtechceu.gtceu.common.data.GTRecipeTypes.BLAST_RECIPES;
+        var previous = blast.recipeBuilder("gtna_probe").onSave;
+        blast.onRecipeBuild((builder, provider) -> {
+            if (previous != null) previous.accept(builder, provider);
+            var molten = GODFORGE_MOLTEN_RECIPES.copyFrom(builder);
+            molten.id = GTNACORE.id("godforge_molten/" + builder.id.getNamespace() + "/" + builder.id.getPath());
+            com.raishxn.gtna.common.machine.multiblock.godforge.GodforgeModuleMachine
+                    .convertOutputsToMolten(molten.output);
+            molten.save(provider);
+        });
+    }
+
     public static GTRecipeType register(String name, String group, RecipeType<?>... proxyRecipes) {
         GTRecipeType recipeType = new GTRecipeType(GTNACORE.id(name), group, proxyRecipes);
         GTRegistries.register(BuiltInRegistries.RECIPE_TYPE, recipeType.registryName, recipeType);

@@ -77,6 +77,10 @@ public class GTNAGTAddon implements IGTAddon {
         GTNAHighPressureRecipes.register(provider);
         GTNALavaMakerRecipes.register(provider);
         VoidminerRecipes.register(provider);
+        com.raishxn.gtna.data.recipe.GTNAGodforgeRecipes.register(provider);
+        com.raishxn.gtna.data.recipe.GTNAGodforgeProgression.register(provider);
+        com.raishxn.gtna.data.recipe.GTNAGodforgeProgression.registerExtraCosts();
+        com.raishxn.gtna.data.recipe.GTNAEyeOfHarmonyProgression.register(provider);
     }
 
     @Override

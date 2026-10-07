@@ -205,7 +205,7 @@ public final class EyeOfHarmonyOperationGameTests {
         machine.tickPlanetary(true);
         helper.assertTrue(gas(machine, "hydrogen") == 2468,
                 "each hatch must drain its entire available gas, not a fixed batch");
-        helper.assertTrue(machine.getStartupEnergy().toBigInteger().equals(BigInteger.valueOf(625_000)),
+        helper.assertTrue(machine.getStartupEnergy().toBigInteger().equals(BigInteger.valueOf(1000L).shiftLeft(48)),
                 "modern virtual circuit slot must clamp 32 to 24");
         helper.assertTrue(machine.getCycleState() == 0 && balance(helper, fixture.owner) == 10_000,
                 "gas absorption is not an operation debit");
@@ -458,8 +458,8 @@ public final class EyeOfHarmonyOperationGameTests {
             input.getCircuitInventory().setStackInSlot(0, IntCircuitBehaviour.stack(circuit));
             machine.tickPlanetary(true);
             helper.assertTrue(machine.getStartupEnergy().toBigInteger().equals(
-                    BigInteger.valueOf(1000L * (circuit + 1) * (circuit + 1))),
-                    "controller quote must match quadratic execution cost: " + circuit);
+                    BigInteger.valueOf(1000L).shiftLeft(2 * circuit)),
+                    "controller quote must match the 4^k execution cost: " + circuit);
             helper.assertTrue((int) get(machine, "previewDuration") == Math.max(360_000 >> circuit, 1),
                     "real virtual ME circuit slot must halve duration in the controller preview: " + circuit);
         }
@@ -512,12 +512,8 @@ public final class EyeOfHarmonyOperationGameTests {
         var plan = EyeOfHarmonyMath.plan(catalog.program(), new EyeOfHarmonyMath.Fields(0, 0, 0), 24,
                 1_000_000_000L, 1_000_000_000L, EyeOfHarmonyMath.History.fresh());
         helper.assertTrue(plan.durationTicks() == 1 && plan.debitEU().equals(
-                BigInteger.valueOf(catalog.program().startupEU()).multiply(BigInteger.valueOf(625))),
-                "circuit 24 must use a one-tick cycle and quadratic 625x startup cost");
-        var netFourRods = infinityEnergy.multiply(BigInteger.valueOf(4)).multiply(BigInteger.valueOf(95))
-                .divide(BigInteger.valueOf(100));
-        helper.assertTrue(netFourRods.compareTo(plan.debitEU()) >= 0,
-                "four Infinity rods at 95 percent Nexus efficiency must fund a circuit-24 Overworld cycle");
+                BigInteger.valueOf(catalog.program().startupEU()).shiftLeft(48)),
+                "circuit 24 must use a one-tick cycle and the GTNH 4^24 startup cost");
         helper.succeed();
     }
 
