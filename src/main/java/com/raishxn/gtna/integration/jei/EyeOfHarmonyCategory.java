@@ -25,15 +25,23 @@ import java.util.Locale;
 
 import static com.raishxn.gtna.client.EyeOfHarmonyRecipePresentation.exact;
 
-/** All products are indexed by JEI; pages are portions of one program, not separate crafts. */
+/**
+ * Same layout as the EMI category: hydrogen, planet and helium on top, a 9-wide item grid, a separate fluid grid
+ * below it, then the program information. Pages are portions of one program, not separate crafts.
+ */
 public final class EyeOfHarmonyCategory implements IRecipeCategory<Page> {
 
     public static final RecipeType<Page> TYPE = RecipeType.create("gtna", "eye_of_harmony", Page.class);
     private final IDrawable icon;
-    private final int rows = com.raishxn.gtna.client.EyeOfHarmonyRecipePresentation.rowsForScreen();
+    static final int FLUID_ROWS = 2;
+    /** Eight info lines plus a two-line warning. */
+    private static final int INFO_HEIGHT = 106;
+    /** Full EMI-like page: 9 item rows; {@code JeiRecipeGuiHeightMixin} grows JEI's window to fit it. */
+    private final int itemRows = 9;
+    public static final int FULL_HEIGHT = 52 + (9 + FLUID_ROWS) * 18 + INFO_HEIGHT;
 
-    public int pageSize() {
-        return rows * 9;
+    public int itemRows() {
+        return itemRows;
     }
 
     public EyeOfHarmonyCategory(IGuiHelper helper) {
@@ -52,12 +60,13 @@ public final class EyeOfHarmonyCategory implements IRecipeCategory<Page> {
 
     @Override
     public int getWidth() {
-        return 180;
+        return 198;
     }
 
     @Override
     public int getHeight() {
-        return 144 + rows * 18;
+        // Gas row, page line, both grids, then the info lines and the warning: fits inside JEI's window.
+        return 52 + (itemRows + FLUID_ROWS) * 18 + INFO_HEIGHT;
     }
 
     @Override
@@ -67,20 +76,22 @@ public final class EyeOfHarmonyCategory implements IRecipeCategory<Page> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Page page, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.CATALYST, 8, 4).setStandardSlotBackground()
-                .addItemStack(page.catalog().definition().planetStack());
         var program = page.catalog().program();
-        builder.addSlot(RecipeIngredientRole.INPUT, 134, 4).setStandardSlotBackground()
+        builder.addSlot(RecipeIngredientRole.INPUT, 18, 3).setStandardSlotBackground()
                 .addFluidStack(GTMaterials.Hydrogen.getFluid(), program.hydrogen())
                 .addRichTooltipCallback((slot, tooltip) -> tooltip
                         .add(Component.translatable("gtna.eoh.jei.amount_fluid", exact(program.hydrogen()))));
-        builder.addSlot(RecipeIngredientRole.INPUT, 152, 4).setStandardSlotBackground()
+        builder.addSlot(RecipeIngredientRole.CATALYST, 90, 3).setStandardSlotBackground()
+                .addItemStack(page.catalog().definition().planetStack());
+        builder.addSlot(RecipeIngredientRole.INPUT, 162, 3).setStandardSlotBackground()
                 .addFluidStack(GTMaterials.Helium.getFluid(), program.helium())
                 .addRichTooltipCallback((slot, tooltip) -> tooltip
                         .add(Component.translatable("gtna.eoh.jei.amount_fluid", exact(program.helium()))));
-        for (int i = 0; i < page.products().size(); i++) {
-            Product product = page.products().get(i);
-            var slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 8 + (i % 9) * 18, 32 + (i / 9) * 18)
+        int item = 0, fluidIndex = 0;
+        for (Product product : page.products()) {
+            int index = product.fluid() ? fluidIndex++ : item++;
+            int y = product.fluid() ? 46 + itemRows * 18 + index / 9 * 18 : 40 + index / 9 * 18;
+            var slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 18 + index % 9 * 18, y)
                     .setStandardSlotBackground().setOverlay(new AmountOverlay(product.amount(), product.fluid()), 0, 0)
                     .addRichTooltipCallback((view, tooltip) -> tooltip.add(Component.translatable(
                             product.fluid() ? "gtna.eoh.jei.amount_fluid" : "gtna.eoh.jei.amount_item",
@@ -88,15 +99,22 @@ public final class EyeOfHarmonyCategory implements IRecipeCategory<Page> {
             if (product.fluid()) {
                 // Fill the fluid icon fully; exact long quantities remain in the custom tooltip.
                 var fluid = FluidStack.loadFluidStackFromNBT(product.tag());
-                slot.addFluidStack(fluid.getFluid(), product.amount())
-                        .setFluidRenderer(product.amount(), false, 16, 16);
+                // Billions of mB overflow JEI's fill ratio (a thin strip); draw a full slot.
+                slot.addFluidStack(fluid.getFluid(), 1000).setFluidRenderer(1000, false, 16, 16);
             } else slot.addItemStack(ItemStack.of(product.tag()));
         }
+        // Empty slots keep both grids visible, as in the EMI layout.
+        for (int i = item; i < itemRows * 9; i++)
+            builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 18 + i % 9 * 18, 40 + i / 9 * 18)
+                    .setStandardSlotBackground();
+        for (int i = fluidIndex; i < FLUID_ROWS * 9; i++)
+            builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 18 + i % 9 * 18, 46 + itemRows * 18 + i / 9 * 18)
+                    .setStandardSlotBackground();
     }
 
     @Override
     public void draw(Page page, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
-        com.raishxn.gtna.client.EyeOfHarmonyRecipePresentation.drawInfo(page, graphics);
+        com.raishxn.gtna.client.EyeOfHarmonyRecipePresentation.drawEmiInfo(page, graphics);
     }
 
     private record AmountOverlay(long amount, boolean fluid) implements IDrawable {

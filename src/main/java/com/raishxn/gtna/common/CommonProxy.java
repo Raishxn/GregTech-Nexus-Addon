@@ -65,6 +65,9 @@ public class CommonProxy {
         eventBus.addGenericListener(RecipeConditionType.class, this::registerRecipeConditions);
         eventBus.addGenericListener(GTRecipeType.class, this::registerRecipeTypes);
         eventBus.addGenericListener(MachineDefinition.class, this::registerMachines);
+        eventBus.addGenericListener(com.gregtechceu.gtceu.api.data.DimensionMarker.class,
+                (GTCEuAPI.RegisterEvent<ResourceLocation, com.gregtechceu.gtceu.api.data.DimensionMarker> event) -> com.raishxn.gtna.GTNAGTAddon
+                        .registerPlanetDimensionMarkers());
         eventBus.addListener(this::gatherData);
         MinecraftForge.EVENT_BUS.addListener(EyeOfHarmonyLegacyMappings::remap);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);

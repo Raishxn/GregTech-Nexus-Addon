@@ -42,6 +42,8 @@ public final class EyeOfHarmonyMaterials {
         // Only the structural forms needed by EOH and its dependencies; no ore/worldgen/tools.
         var fluid = new com.gregtechceu.gtceu.api.fluids.FluidBuilder().temperature(0);
         if (customFluid) fluid.customStill();
+        // GTNH Black Dwarf Matter is black (ARGB ff000000); it has no fluid texture, so colour the liquid only.
+        if ("black_dwarf_matter".equals(id)) fluid.color(0x16141e);
         return new Material.Builder(GTNACORE.id(id)).langValue(name).ingot().liquid(fluid)
                 .color(color).iconSet(iconSet)
                 .flags(GENERATE_PLATE, GENERATE_DENSE, GENERATE_FRAME, GENERATE_ROD, GENERATE_LONG_ROD,

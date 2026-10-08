@@ -219,6 +219,15 @@ public final class GTNARecipeCoverageGameTests {
         Set<String> orphanTypes = new TreeSet<>();
         for (String type : usedTypes) if (!served.contains(type)) orphanTypes.add(type);
         section(lines, "Recipe types with recipes but no machine", orphanTypes);
+        Set<String> dry = new TreeSet<>();
+        long uhv = com.gregtechceu.gtceu.api.GTValues.VA[com.gregtechceu.gtceu.api.GTValues.UHV];
+        for (var recipe : server.getRecipeManager().getRecipes()) {
+            if (!(recipe instanceof GTRecipe gt) || !GTNACORE.MOD_ID.equals(gt.id.getNamespace())) continue;
+            long eut = gt.getInputEUt().getTotalEU();
+            if (eut >= uhv && gt.getInputContents(FluidRecipeCapability.CAP).isEmpty())
+                dry.add(gt.recipeType.registryName.getPath() + "  " + gt.id.getPath());
+        }
+        section(lines, "Endgame (>= UHV) gtna recipes without any fluid input", dry);
         // Non-gtna items used by recipes but produced by no recipe at all (e.g. GTCEu UEV+ components).
         Set<String> producedAny = new HashSet<>();
         for (Node node : nodes) producedAny.addAll(node.outputs());

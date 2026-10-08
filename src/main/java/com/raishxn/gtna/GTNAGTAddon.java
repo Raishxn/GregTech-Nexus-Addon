@@ -44,6 +44,20 @@ public class GTNAGTAddon implements IGTAddon {
         GTNAModules.init();
     }
 
+    /**
+     * GTCEu shows dimension conditions (World Data Scanner, ore veins…) through dimension markers; without one an Ad
+     * Astra planet appears as a raw ResourceKey. The GTNA Planet Blocks are the icons, tiers follow the rocket tiers.
+     */
+    public static void registerPlanetDimensionMarkers() {
+        String[][] planets = { { "moon", "1" }, { "mars", "2" }, { "venus", "3" }, { "mercury", "3" },
+                { "glacio", "4" } };
+        for (String[] planet : planets) {
+            new com.gregtechceu.gtceu.api.data.DimensionMarker(Integer.parseInt(planet[1]),
+                    GTNACORE.id("eye_of_harmony_planet_" + planet[0]), null)
+                    .register(new net.minecraft.resources.ResourceLocation("ad_astra", planet[0]));
+        }
+    }
+
     @Override
     public void registerSounds() {}
 

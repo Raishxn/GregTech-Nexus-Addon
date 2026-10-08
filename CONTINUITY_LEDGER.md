@@ -6778,3 +6778,14 @@ grep -q "GAME TESTS COMPLETE" run/logs/latest.log && echo OK || echo "NAO RODOU"
   GT:IA).
 - EMI do EOH: o código do layout é idêntico ao do commit 18368a0/3e600a7; aguardando print do autor.
 - Gate PASS 217/217.
+
+## G-0203 — 2026-10-07 — QA do EOH no JEI, fluidos e ciclos (release 0.5.2 substituída)
+
+- JEI do EOH no layout do EMI (gases + planeta, grade de itens, grade de fluidos separada, info), uma página por
+  simulação; `JeiRecipeGuiHeightMixin` sobe o limite `RecipeGuiHeight` do JEI para a moldura externa caber.
+  Fluidos de bilhões de mB desenhados cheios. Autor aprovou no cliente.
+- Texturas de fluido originais (Modernity; GT5U para Hypogen/Chromatic/Rhugnor); BDM/Pt-Mn-Sb/Shijima com cor própria.
+- Receitas do EOH com fluidos (base GTNH); ciclos de bootstrap quebrados (Space/Time/SpaceTime só saem do EOH):
+  EOH, carcaças, campos, planeta Overworld, Tesserato, base SC UIV e célula Sp usam metais pré-EOH.
+- Dimension markers do GTCEu para os planetas do Ad Astra (via `GTCEuAPI.RegisterEvent`).
+- Relatório de cobertura lista receitas ≥ UHV sem fluido. Gate PASS 217/217.

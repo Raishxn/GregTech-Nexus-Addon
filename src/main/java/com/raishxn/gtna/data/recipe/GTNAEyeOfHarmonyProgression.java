@@ -33,6 +33,10 @@ public final class GTNAEyeOfHarmonyProgression {
                 .inputItems(TagPrefix.plateDense, GTMaterials.Neutronium, 16)
                 .inputItems(GTItems.FIELD_GENERATOR_UIV, 4)
                 .inputItems(GTItems.ENERGY_CLUSTER, 2)
+                .inputFluids(GTMaterials.Neutronium.getFluid(1024 * 144))
+                .inputFluids(com.raishxn.gtna.common.data.material.GodforgeChainMaterials.Infinity.getFluid(128 * 144))
+                .inputFluids(com.raishxn.gtna.common.data.material.GodforgeChainMaterials.MutatedLivingSolder
+                        .getFluid(16 * 144))
                 .outputItems(boundary.asStack(16)).duration(1200).EUt(eut)
                 .stationResearch(b -> b.researchStack(new ItemStack(GTItems.FIELD_GENERATOR_UIV.get()))
                         .CWUt(256).EUt(eut))
@@ -41,6 +45,11 @@ public final class GTNAEyeOfHarmonyProgression {
                 .inputItems(boundary.asStack(4))
                 .inputItems(TagPrefix.plateDense, GTMaterials.Neutronium, 16)
                 .inputItems(GTItems.EMITTER_UIV, 4)
+                .inputFluids(GTMaterials.Neutronium.getFluid(512 * 144))
+                .inputFluids(com.raishxn.gtna.common.data.material.GodforgeChainMaterials.CelestialTungsten
+                        .getFluid(10 * 144))
+                .inputFluids(com.raishxn.gtna.common.data.material.GodforgeChainMaterials.MutatedLivingSolder
+                        .getFluid(8 * 144))
                 .outputItems(spatial.asStack(16)).duration(1200).EUt(eut)
                 .stationResearch(b -> b.researchStack(boundary.asStack()).CWUt(256).EUt(eut))
                 .save(provider);
@@ -48,6 +57,10 @@ public final class GTNAEyeOfHarmonyProgression {
                 .inputItems(boundary.asStack(4))
                 .inputItems(TagPrefix.plateDense, GTMaterials.Neutronium, 16)
                 .inputItems(GTItems.SENSOR_UIV, 4)
+                .inputFluids(GTMaterials.Neutronium.getFluid(512 * 144))
+                .inputFluids(com.raishxn.gtna.common.data.material.GodforgeChainMaterials.Hypogen.getFluid(10 * 144))
+                .inputFluids(com.raishxn.gtna.common.data.material.GodforgeChainMaterials.MutatedLivingSolder
+                        .getFluid(8 * 144))
                 .outputItems(temporal.asStack(16)).duration(1200).EUt(eut)
                 .stationResearch(b -> b.researchStack(boundary.asStack()).CWUt(256).EUt(eut))
                 .save(provider);
@@ -64,6 +77,18 @@ public final class GTNAEyeOfHarmonyProgression {
                         .inputItems(spatial.asStack(2)).inputItems(temporal.asStack(2))
                         .inputItems(TagPrefix.plateDense, GTMaterials.Neutronium, 8)
                         .inputItems(GTItems.FIELD_GENERATOR_UIV, 2 + tier)
+                        // GTNH BEC condensates; Space/Time/SpaceTime only come from the EOH in GTNA, so pre-EOH metals
+                        // stand in.
+                        .inputFluids(com.raishxn.gtna.common.data.material.GodforgeChainMaterials.MutatedLivingSolder
+                                .getFluid(16 * 144 * (tier + 1)))
+                        .inputFluids(
+                                (family == com.raishxn.gtna.common.block.EyeOfHarmonyFieldBlock.Family.ACCELERATION ?
+                                        com.raishxn.gtna.common.data.material.GodforgeChainMaterials.Hypogen :
+                                        com.raishxn.gtna.common.data.material.GodforgeChainMaterials.CelestialTungsten)
+                                        .getFluid(10 * 144 * (tier + 1)))
+                        .inputFluids(com.raishxn.gtna.common.data.material.GodforgeChainMaterials.Infinity
+                                .getFluid(10 * 144))
+                        .inputFluids(GTMaterials.Neutronium.getFluid(20 * 144 * (tier + 1)))
                         .outputItems(fields[tier].asStack(4)).duration(1200 + tier * 400).EUt(eut);
                 if (tier == 0) {
                     builder.stationResearch(b -> b.researchStack(spatial.asStack()).CWUt(256).EUt(eut));
@@ -80,6 +105,13 @@ public final class GTNAEyeOfHarmonyProgression {
                 .inputItems(boundary.asStack(8)).inputItems(spatial.asStack(8))
                 .inputItems(temporal.asStack(8)).inputItems(GTItems.FIELD_GENERATOR_UIV, 16)
                 .inputItems(GTItems.ENERGY_CLUSTER, 4)
+                .inputFluids(com.raishxn.gtna.common.data.material.GodforgeChainMaterials.Hypogen.getFluid(144_000))
+                .inputFluids(com.raishxn.gtna.common.data.material.GodforgeChainMaterials.CelestialTungsten
+                        .getFluid(144_000))
+                .inputFluids(com.raishxn.gtna.common.data.material.GodforgeChainMaterials.MetastableOganesson
+                        .getFluid(16 * 64 * 144))
+                .inputFluids(
+                        com.raishxn.gtna.common.data.material.GodforgeChainMaterials.Shirabon.getFluid(16 * 64 * 144))
                 .outputItems(GTNAMachines.EYE_OF_HARMONY.asStack()).duration(6000).EUt(eut)
                 .stationResearch(b -> b.researchStack(spatial.asStack()).CWUt(256).EUt(eut))
                 .save(provider);
@@ -87,6 +119,9 @@ public final class GTNAEyeOfHarmonyProgression {
                 .inputItems(spatial.asStack(4)).inputItems(temporal.asStack(4))
                 .inputItems(TagPrefix.block, GTMaterials.Neutronium, 1)
                 .inputItems(GTItems.EMITTER_UIV, 4)
+                .inputFluids(
+                        com.raishxn.gtna.common.data.material.GodforgeChainMaterials.CelestialTungsten.getFluid(1440))
+                .inputFluids(com.raishxn.gtna.common.data.material.GodforgeChainMaterials.Hypogen.getFluid(1440))
                 .outputItems(GTNAEyeOfHarmonyContent.OVERWORLD_PLANET.asStack()).duration(2400).EUt(eut)
                 .stationResearch(b -> b.researchStack(temporal.asStack()).CWUt(256).EUt(eut))
                 .save(provider);
@@ -132,7 +167,9 @@ public final class GTNAEyeOfHarmonyProgression {
         if (rocketTier > 0) builder.inputItems(GTItems.FIELD_GENERATOR_UIV, 2 * rocketTier);
         if (extra != null) builder.inputItems(extra);
         if (dataChip != null) builder.notConsumable(GTNAItems.PLANET_DATA_CHIPS[dataChip].asStack());
-        builder.outputItems(output).duration(2400 * (rocketTier + 1)).EUt(eut)
+        builder.inputFluids(com.raishxn.gtna.common.data.GTNAMaterials.Space.getFluid(1440 * (rocketTier + 1)))
+                .inputFluids(com.raishxn.gtna.common.data.GTNAMaterials.Time.getFluid(1440 * (rocketTier + 1)))
+                .outputItems(output).duration(2400 * (rocketTier + 1)).EUt(eut)
                 .stationResearch(b -> b.researchStack(research).CWUt(256).EUt(eut))
                 .save(provider);
     }

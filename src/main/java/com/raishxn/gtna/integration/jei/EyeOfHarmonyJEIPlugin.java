@@ -50,9 +50,12 @@ public final class EyeOfHarmonyJEIPlugin implements IModPlugin {
         if (level == null) return;
         for (var program : com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyPrograms.all()) {
             try {
-                registration.addRecipes(EyeOfHarmonyCategory.TYPE,
-                        com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyDisplay.pages(
-                                EyeOfHarmonyCatalog.build(level.getRecipeManager(), program), category.pageSize()));
+                // One page per simulation (as in EMI); the warning reports outputs that do not fit.
+                var catalog = EyeOfHarmonyCatalog.build(level.getRecipeManager(), program);
+                registration.addRecipes(EyeOfHarmonyCategory.TYPE, java.util.List.of(
+                        com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyDisplay.singlePreview(
+                                com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyDisplay.singlePage(catalog),
+                                category.itemRows(), EyeOfHarmonyCategory.FLUID_ROWS)));
             } catch (IllegalStateException | ArithmeticException exception) {
                 GTCEu.LOGGER.debug("Eye of Harmony JEI catalog unavailable: {}", exception.getMessage());
             }

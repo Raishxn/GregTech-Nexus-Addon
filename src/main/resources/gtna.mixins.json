@@ -34,6 +34,7 @@
     "client.GTRecipeWidgetMixin",
     "client.ModularEmiRecipeMixin",
     "client.EyeOfHarmonyEmiScreenMixin",
+    "client.JeiRecipeGuiHeightMixin",
     "client.FancyMachineUIWidgetMixin",
     "client.CoreCraftConfirmScreenMixin",
     "client.PersonalSpaceClientLevelMixin"

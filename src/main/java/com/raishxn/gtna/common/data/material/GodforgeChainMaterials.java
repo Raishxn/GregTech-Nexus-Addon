@@ -80,6 +80,22 @@ public final class GodforgeChainMaterials {
 
     private GodforgeChainMaterials() {}
 
+    /** Materials whose liquid uses its original GTNH/Modernity still texture (gtna:block/fluids/fluid.<id>). */
+    private static final java.util.Set<String> CUSTOM_FLUIDS = java.util.Set.of("infinity", "eternity", "hypogen",
+            "chronomatic_glass", "rhugnor", "dragon_metal", "primordial_matter", "phonon_crystal_solution",
+            "phonon_medium", "stable_baryonic_matter");
+    /** Liquids with no texture anywhere get their own colour instead of a white material tint. */
+    private static final java.util.Map<String, Integer> FLUID_COLORS = java.util.Map.of(
+            "shijima", 0xc4d6f2, "platinum_manganese_antimony_heusler_alloy", 0xb0bcc8);
+
+    private static FluidBuilder liquid(String id, int temperature) {
+        var builder = new FluidBuilder().temperature(temperature);
+        if (CUSTOM_FLUIDS.contains(id)) builder.customStill();
+        Integer color = FLUID_COLORS.get(id);
+        if (color != null) builder.color(color);
+        return builder;
+    }
+
     public static void init() {
         Creon = metal("creon", "Creon", 0x460046, MaterialIconSet.SHINY, true, true).setFormula("⸎");
         Mellion = metal("mellion", "Mellion", 0x3c0505, MaterialIconSet.SHINY, false, true);
@@ -173,7 +189,7 @@ public final class GodforgeChainMaterials {
 
     private static Material metal(String id, String lang, int color, MaterialIconSet icon, boolean plasma,
                                   boolean superdense) {
-        var builder = builder(id, lang, color, icon).ingot().liquid(new FluidBuilder().temperature(10_000))
+        var builder = builder(id, lang, color, icon).ingot().liquid(liquid(id, 10_000))
                 .flags(GENERATE_PLATE, GENERATE_DENSE, GENERATE_ROD, GENERATE_LONG_ROD, GENERATE_GEAR,
                         GENERATE_SMALL_GEAR, GENERATE_BOLT_SCREW, GENERATE_FRAME, GENERATE_FINE_WIRE, GENERATE_FOIL,
                         GENERATE_RING, GENERATE_SPRING, NO_SMELTING, DISABLE_DECOMPOSITION);
@@ -194,12 +210,12 @@ public final class GodforgeChainMaterials {
     }
 
     private static Material fluid(String id, String lang, int color) {
-        return builder(id, lang, color, MaterialIconSet.FLUID).liquid(new FluidBuilder().temperature(300))
+        return builder(id, lang, color, MaterialIconSet.FLUID).liquid(liquid(id, 300))
                 .flags(DISABLE_DECOMPOSITION).buildAndRegister();
     }
 
     private static Material alloy(String id, String lang, int color, int blast, Object... components) {
-        return builder(id, lang, color, MaterialIconSet.METALLIC).ingot().liquid(new FluidBuilder().temperature(blast))
+        return builder(id, lang, color, MaterialIconSet.METALLIC).ingot().liquid(liquid(id, blast))
                 .components(components).blastTemp(blast)
                 .flags(GENERATE_PLATE, GENERATE_FRAME, GENERATE_ROD, GENERATE_LONG_ROD, GENERATE_GEAR,
                         GENERATE_SMALL_GEAR, DISABLE_DECOMPOSITION)

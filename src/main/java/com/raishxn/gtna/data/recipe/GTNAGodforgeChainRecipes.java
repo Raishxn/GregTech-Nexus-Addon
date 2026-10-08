@@ -286,7 +286,7 @@ public final class GTNAGodforgeChainRecipes {
                 .inputItems(com.gregtechceu.gtceu.common.data.GTItems.QUANTUM_STAR, 4)
                 .inputItems(com.gregtechceu.gtceu.common.data.GTItems.FIELD_GENERATOR_UEV, 2)
                 .inputItems(TagPrefix.plateDense, GTMaterials.Neutronium, 4)
-                .inputFluids(GTNAMaterials.SpaceTime.getFluid(576)).inputFluids(Mellion.getFluid(1152))
+                .inputFluids(CelestialTungsten.getFluid(576)).inputFluids(Mellion.getFluid(1152))
                 .outputItems(tesseract.asStack()).duration(1200).EUt(uiv)
                 .stationResearch(b -> b.researchStack(com.gregtechceu.gtceu.common.data.GTItems.QUANTUM_STAR.asStack())
                         .CWUt(256).EUt(uiv))
@@ -331,7 +331,7 @@ public final class GTNAGodforgeChainRecipes {
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder(GTNACORE.id("godforge_chain/space_coolant_cell"))
                 .inputItems(TagPrefix.plate, GTMaterials.Tritanium, 6)
                 .inputItems(TagPrefix.plate, GTMaterials.Neutronium, 2)
-                .inputFluids(GTNAMaterials.Space.getFluid(1000))
+                .inputFluids(GTMaterials.Helium.getFluid(FluidStorageKeys.LIQUID, 1000))
                 .outputItems(com.raishxn.gtna.common.data.GTNAGodforgeComponents.SPACE_COOLANT_CELL.asStack())
                 .duration(400).EUt(uhv).save(provider);
         GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder(GTNACORE.id("godforge_chain/thermal_superconductor"))
@@ -618,7 +618,7 @@ public final class GTNAGodforgeChainRecipes {
                 .inputItems(TagPrefix.dust, GTMaterials.Carbon, 14).inputItems(TagPrefix.dust, GTMaterials.Osmium, 11)
                 .inputItems(TagPrefix.dust, GTMaterials.Silver, 3).inputItems(TagPrefix.dust, TranscendentMetal)
                 .inputFluids(GTMaterials.Oxygen.getFluid(7000))
-                .inputFluids(GTNAMaterials.SpaceTime.getFluid(144))
+                .inputFluids(Infinity.getFluid(144))
                 .outputItems(TagPrefix.dust, SuperconductorUIVBase, 4).duration(600).EUt(uiv).save(provider);
         melt(provider, "superconductor_uiv_base", SuperconductorUIVBase, 12_700, GTValues.UIV);
         GTRecipeTypes.MIXER_RECIPES.recipeBuilder(GTNACORE.id("godforge_chain/superconductor_umv_base"))
