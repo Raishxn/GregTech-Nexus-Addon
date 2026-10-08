@@ -6768,3 +6768,13 @@ grep -q "GAME TESTS COMPLETE" run/logs/latest.log && echo OK || echo "NAO RODOU"
 - EMI do EOH: o código só trocou ids/catalisador por planeta; aguardando o autor dizer o que piorou.
 - Nova dependência obrigatória desde a 0.5.1: Infiniverse 1.0.0.5 (Personal Space). Opcionais: Ad Astra, SGJourney.
 - Gate PASS 217/217. Versão 0.5.2.
+
+## G-0202 — 2026-10-07 — Circuitos Optical e Exotic
+
+- Autor: portar circuitos "básicos"; os melhores ficam para o GT:IA. `GTNACircuits`: famílias Optical (UV/UHV/UEV/UIV)
+  e Exotic (UHV/UEV/UIV/UXV) do GTNH, texturas Modernity animadas, tags de tier do GTCEu. Receitas padrão:
+  processor/assembly/computer no Circuit Assembler (cleanroom), mainframe na Assembly Line com pesquisa.
+- Com isso os componentes UEV–UXV ficam craftáveis. OpV/MAX continuam sem circuito (Cosmic/Transcendent ficam para o
+  GT:IA).
+- EMI do EOH: o código do layout é idêntico ao do commit 18368a0/3e600a7; aguardando print do autor.
+- Gate PASS 217/217.

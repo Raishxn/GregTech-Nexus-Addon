@@ -2157,5 +2157,13 @@
   "gtna.machine.nano_forge.tooltip.3": "§7Carbono §8→ T1§7, Neutrônio §8→ T2§7, Metal Transcendente §8→ T3§7; o nanite não é consumido",
   "gtna.machine.nano_forge.tooltip.4": "§7O tier 4 tem mecânicas extras §8(ainda não portado)",
   "gtna.machine.nano_forge.tooltip.5": "§b§m                                                                        ",
-  "gtna.machine.nano_forge.tooltip.6": "§7Faz §doverclocks perfeitos§7 em receitas de tier menor"
+  "gtna.machine.nano_forge.tooltip.6": "§7Faz §doverclocks perfeitos§7 em receitas de tier menor",
+  "item.gtna.optical_processor": "Processador Óptico",
+  "item.gtna.optical_assembly": "Montagem Óptica",
+  "item.gtna.optical_computer": "Computador Óptico",
+  "item.gtna.optical_mainframe": "Mainframe Óptico",
+  "item.gtna.exotic_processor": "Processador Exótico",
+  "item.gtna.exotic_assembly": "Montagem Exótica",
+  "item.gtna.exotic_computer": "Computador Exótico",
+  "item.gtna.exotic_mainframe": "Mainframe Exótico"
 }

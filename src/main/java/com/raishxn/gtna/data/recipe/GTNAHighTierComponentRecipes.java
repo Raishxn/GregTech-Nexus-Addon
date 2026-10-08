@@ -77,6 +77,7 @@ public final class GTNAHighTierComponentRecipes {
                 .inputItems(TagPrefix.dustTiny, GTMaterials.Neutronium).inputFluids(GTMaterials.Helium.getFluid(1000))
                 .outputFluids(GTMaterials.UUMatter.getFluid(100)).duration(200).EUt(GTValues.VA[GTValues.UV])
                 .save(provider);
+        circuits(provider);
         String[] previous = { "UV", "UHV", "UEV", "UIV", "UXV" };
         for (int i = 0; i < tiers.length; i++) components(provider, tiers[i], previous[i]);
 
@@ -115,6 +116,72 @@ public final class GTNAHighTierComponentRecipes {
                     .outputItems(GTMachines.ENERGY_OUTPUT_HATCH[t].asStack()).duration(400)
                     .EUt(GTValues.VA[t - 1]).save(provider);
         }
+    }
+
+    /** Default recipes for the GTNA Optical (UV–UIV) and Exotic (UHV–UXV) circuits. */
+    private static void circuits(Consumer<FinishedRecipe> provider) {
+        var opt = new com.tterrag.registrate.util.entry.ItemEntry<?>[] {
+                com.raishxn.gtna.common.data.GTNACircuits.OPTICAL_PROCESSOR,
+                com.raishxn.gtna.common.data.GTNACircuits.OPTICAL_ASSEMBLY,
+                com.raishxn.gtna.common.data.GTNACircuits.OPTICAL_COMPUTER,
+                com.raishxn.gtna.common.data.GTNACircuits.OPTICAL_MAINFRAME };
+        var exo = new com.tterrag.registrate.util.entry.ItemEntry<?>[] {
+                com.raishxn.gtna.common.data.GTNACircuits.EXOTIC_PROCESSOR,
+                com.raishxn.gtna.common.data.GTNACircuits.EXOTIC_ASSEMBLY,
+                com.raishxn.gtna.common.data.GTNACircuits.EXOTIC_COMPUTER,
+                com.raishxn.gtna.common.data.GTNACircuits.EXOTIC_MAINFRAME };
+        family(provider, "optical", opt, GTValues.UV, GTItems.WETWARE_CIRCUIT_BOARD.get(), GTMaterials.Neutronium,
+                GTMaterials.RutheniumTriniumAmericiumNeutronate, GTNAMaterials.Indalloy140);
+        family(provider, "exotic", exo, GTValues.UHV, GTItems.WETWARE_CIRCUIT_BOARD.get(), CelestialTungsten,
+                GTMaterials.RutheniumTriniumAmericiumNeutronate, GTNAMaterials.Indalloy140);
+    }
+
+    private static void family(Consumer<FinishedRecipe> provider, String name,
+                               com.tterrag.registrate.util.entry.ItemEntry<?>[] items, int baseTier, Item board,
+                               Material metal, Material wire, Material solder) {
+        Item processor = items[0].get(), assembly = items[1].get(), computer = items[2].get(),
+                mainframe = items[3].get();
+        GTRecipeTypes.CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder(GTNACORE.id("high_tier/" + name + "_processor"))
+                .inputItems(new ItemStack(board)).inputItems(GTItems.HIGHLY_ADVANCED_SOC.get())
+                .inputItems(new ItemStack(GTItems.ADVANCED_SMD_TRANSISTOR.get(), 16))
+                .inputItems(new ItemStack(GTItems.ADVANCED_SMD_CAPACITOR.get(), 16))
+                .inputItems(TagPrefix.bolt, metal, 8).inputItems(TagPrefix.wireFine, GTMaterials.Americium, 16)
+                .inputFluids(solder.getFluid(144)).outputItems(new ItemStack(processor, 2))
+                .duration(200).EUt(GTValues.VA[baseTier]).cleanroom(
+                        com.gregtechceu.gtceu.api.machine.multiblock.CleanroomType.CLEANROOM)
+                .save(provider);
+        GTRecipeTypes.CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder(GTNACORE.id("high_tier/" + name + "_assembly"))
+                .inputItems(new ItemStack(board)).inputItems(new ItemStack(processor, 2))
+                .inputItems(new ItemStack(GTItems.ADVANCED_SMD_INDUCTOR.get(), 16))
+                .inputItems(new ItemStack(GTItems.ADVANCED_SMD_RESISTOR.get(), 16))
+                .inputItems(new ItemStack(GTItems.HIGHLY_ADVANCED_SOC.get(), 2))
+                .inputItems(TagPrefix.wireGtSingle, wire, 4)
+                .inputFluids(solder.getFluid(288)).outputItems(new ItemStack(assembly))
+                .duration(400).EUt(GTValues.VA[baseTier]).cleanroom(
+                        com.gregtechceu.gtceu.api.machine.multiblock.CleanroomType.CLEANROOM)
+                .save(provider);
+        GTRecipeTypes.CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder(GTNACORE.id("high_tier/" + name + "_computer"))
+                .inputItems(new ItemStack(board)).inputItems(new ItemStack(assembly, 2))
+                .inputItems(new ItemStack(GTItems.ADVANCED_SMD_DIODE.get(), 32))
+                .inputItems(new ItemStack(GTItems.HIGHLY_ADVANCED_SOC.get(), 4))
+                .inputItems(TagPrefix.plate, metal, 4).inputItems(TagPrefix.wireGtSingle, wire, 8)
+                .inputFluids(solder.getFluid(576)).outputItems(new ItemStack(computer))
+                .duration(600).EUt(GTValues.VA[baseTier + 1]).cleanroom(
+                        com.gregtechceu.gtceu.api.machine.multiblock.CleanroomType.CLEANROOM)
+                .save(provider);
+        long eut = GTValues.VA[baseTier + 2];
+        GTRecipeTypes.ASSEMBLY_LINE_RECIPES.recipeBuilder(GTNACORE.id("high_tier/" + name + "_mainframe"))
+                .inputItems(TagPrefix.frameGt, metal, 2).inputItems(new ItemStack(computer, 2))
+                .inputItems(new ItemStack(GTItems.ADVANCED_SMD_DIODE.get(), 64))
+                .inputItems(new ItemStack(GTItems.ADVANCED_SMD_CAPACITOR.get(), 64))
+                .inputItems(new ItemStack(GTItems.ADVANCED_SMD_TRANSISTOR.get(), 64))
+                .inputItems(new ItemStack(GTItems.ADVANCED_SMD_RESISTOR.get(), 64))
+                .inputItems(new ItemStack(GTItems.ADVANCED_SMD_INDUCTOR.get(), 64))
+                .inputItems(TagPrefix.wireGtDouble, wire, 16).inputItems(TagPrefix.plateDense, metal, 4)
+                .inputFluids(solder.getFluid(144 * 16)).inputFluids(GTMaterials.Naquadria.getFluid(144 * 8))
+                .outputItems(new ItemStack(mainframe)).duration(1200).EUt(eut)
+                .stationResearch(b -> b.researchStack(new ItemStack(computer)).CWUt(64).EUt(eut))
+                .save(provider);
     }
 
     private static Material Neutronium() {

@@ -180,6 +180,7 @@ public class CommonProxy {
         com.raishxn.gtna.common.data.GTNATranscendentPlasmaMixer.init();
         com.raishxn.gtna.common.data.GTNANanoForge.init();
         com.raishxn.gtna.common.data.GTNAGodforgeComponents.init();
+        com.raishxn.gtna.common.data.GTNACircuits.init();
         GTNAEnergyHatches.init();
         // Append the shared high-pressure line before the source attribution, so the tooltip reads
         // stats -> high pressure -> Source.
