@@ -15,4 +15,12 @@ public interface IGTNAModuleHost {
     int gtna$formedModuleCount();
 
     void gtna$setFormedModuleCount(int count);
+
+    /**
+     * Which modules matched on the last structure check: bit {@code i} is the {@code i}-th sub-pattern, the
+     * machine's own ({@link ISubPatternMachine}) first, then the registry ones. Only the first 64 are tracked.
+     */
+    default long gtna$formedModuleMask() {
+        return 0L;
+    }
 }

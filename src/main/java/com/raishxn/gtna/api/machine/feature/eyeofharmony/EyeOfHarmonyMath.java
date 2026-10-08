@@ -26,12 +26,38 @@ public final class EyeOfHarmonyMath {
         }
 
         public static Program overworld(long plasmaEU) {
+            return planet(0, plasmaEU);
+        }
+
+        /**
+         * GTNH {@code EyeOfHarmonyRecipeStorage} for a dimension at {@code blockRocketTier}: 18000 s * 1.4^tier,
+         * 10^9 * (tier + 1) of each gas, base chance 1 - 0.05 * tier and return efficiency 0.6 + tier / 10. The
+         * recipe tier (failed SpaceTime, required compression) is tier - 1, with tier 0 kept at 0.
+         */
+        public static Program planet(int blockRocketTier, long plasmaEU) {
             if (plasmaEU < 0) throw new IllegalArgumentException("Negative plasma cost");
-            long seconds = 18_000;
-            long ticks = seconds * 20;
+            long ticks = Math.multiplyExact(miningSeconds(blockRocketTier), 20L);
             long cost = Math.addExact(plasmaEU, Math.multiplyExact(ticks, (1L << 19) + 100_000_000_000L));
+            int recipeTier = recipeTier(blockRocketTier);
+            long gas = Math.multiplyExact(1_000_000_000L, blockRocketTier + 1L);
             // Preserve the upstream floating point multiplication followed by long truncation.
-            return new Program(0, 0, ticks, 1_000_000_000L, 1_000_000_000L, cost, (long) (cost * 0.6), 1);
+            return new Program(recipeTier, Math.min(8, recipeTier), ticks, gas, gas, cost,
+                    (long) (cost * (0.6 + blockRocketTier / 10.0)), 1.0 - 0.05 * blockRocketTier);
+        }
+
+        public static int recipeTier(int blockRocketTier) {
+            return Math.max(blockRocketTier, 1) - 1;
+        }
+
+        public static long miningSeconds(int blockRocketTier) {
+            if (blockRocketTier < 0 || blockRocketTier > 9) throw new IllegalArgumentException("Rocket tier 0-9");
+            // GTUtility.powInt(1.4, tier): same multiplication order, truncated like the upstream cast.
+            double base = 1.4, result = 1;
+            for (int exponent = blockRocketTier; exponent > 0; exponent >>= 1) {
+                if ((exponent & 1) == 1) result *= base;
+                base *= base;
+            }
+            return (long) (18_000L * result);
         }
     }
 

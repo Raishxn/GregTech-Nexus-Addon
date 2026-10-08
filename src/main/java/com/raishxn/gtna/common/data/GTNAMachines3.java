@@ -876,9 +876,8 @@ public final class GTNAMachines3 {
      * documented GTNA/GTCEu equivalents because the original depends on nine GTO-only casings and
      * materials (see the ledger G-0110 table); the tier casing family
      * {@code component_assembly_line_casing_lv..uv} is ported with GTOCore's textures and the
-     * LV–UV tiers (UHV..MAX stay out of scope). GTOCore's controller recipe is an Assembly Line
-     * recipe using GTO-only machines/blocks (Advanced Assembly Line, Advanced Assembly Line Unit,
-     * Mithril), so it is omitted and recorded in {@code ControllerRecipePolicyTest}.
+     * LV–UV tiers (UHV..MAX stay out of scope). GTOCore's controller recipe is adapted in
+     * {@code GTNAMachineRecipes}: GTCEu Assembly Line for the Advanced Assembly Line, Tritanium for Mithril.
      *
      * <p>
      * The gtolib base {@code TierCasingCrossRecipeMultiblockMachine} is substituted by a

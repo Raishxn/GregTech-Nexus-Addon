@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "gtna:block/uev_hermetic_casing"
+    }
+  }
+}

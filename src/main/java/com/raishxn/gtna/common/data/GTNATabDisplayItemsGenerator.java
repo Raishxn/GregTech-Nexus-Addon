@@ -70,6 +70,10 @@ public class GTNATabDisplayItemsGenerator implements CreativeModeTab.DisplayItem
                 }
             }
         });
+        // PersonalSpace registers outside Registrate (plain DeferredRegister), so it is added by hand.
+        if ("custom_blocks".equals(tabType)) {
+            output.accept(com.raishxn.gtna.common.world.personalspace.PersonalSpacePortalRegistry.PORTAL_ITEM.get());
+        }
     }
 
     private boolean shouldInclude(Item item) {

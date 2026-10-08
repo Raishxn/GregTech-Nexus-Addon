@@ -5,6 +5,8 @@ import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMachines;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
+import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
+import com.gregtechceu.gtceu.common.data.machines.GTAEMachines;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
@@ -25,6 +27,7 @@ import static com.gregtechceu.gtceu.api.GTValues.*;
 public class GTNAHatchesRecipes {
 
     public static void register(Consumer<FinishedRecipe> provider) {
+        createHighTierModuleHatches(provider);
         // --- Thread Hatch ZPM ---
         // Segue o padrão explícito do GTNAMachineRecipes
         if (GTNAMachines2.THREAD_HATCHES[ZPM] != null) {
@@ -71,24 +74,23 @@ public class GTNAHatchesRecipes {
         createAccelerateRecipe(provider, LuV, GTItems.SENSOR_LuV, GTItems.FIELD_GENERATOR_LuV);
         createAccelerateRecipe(provider, ZPM, GTItems.SENSOR_ZPM, GTItems.FIELD_GENERATOR_ZPM);
         createAccelerateRecipe(provider, UV, GTItems.SENSOR_UV, GTItems.FIELD_GENERATOR_UV);
-        createOutputBoostRecipe(provider, LV, GTItems.EMITTER_LV, GTItems.SENSOR_LV);
-        createOutputBoostRecipe(provider, MV, GTItems.EMITTER_MV, GTItems.SENSOR_MV);
-        createOutputBoostRecipe(provider, HV, GTItems.EMITTER_HV, GTItems.SENSOR_HV);
-        createOutputBoostRecipe(provider, EV, GTItems.EMITTER_EV, GTItems.SENSOR_EV);
-        createOutputBoostRecipe(provider, IV, GTItems.EMITTER_IV, GTItems.SENSOR_IV);
-        createOutputBoostRecipe(provider, LuV, GTItems.EMITTER_LuV, GTItems.SENSOR_LuV);
-        createOutputBoostRecipe(provider, ZPM, GTItems.EMITTER_ZPM, GTItems.SENSOR_ZPM);
-        createOutputBoostRecipe(provider, UV, GTItems.EMITTER_UV, GTItems.SENSOR_UV);
-        for (int tier = LV; tier <= OpV; tier++) {
-            createInfiniteInputBusRecipe(provider, tier, getEmitter(tier), getSensor(tier));
-            createInfiniteInputHatchRecipe(provider, tier, getEmitter(tier), getFieldGenerator(tier));
-            createOutputBoostItemBusRecipe(provider, tier, getEmitter(tier), getSensor(tier));
-            createOutputBoostFluidHatchRecipe(provider, tier, getEmitter(tier), getFieldGenerator(tier));
+        for (int tier = LV; tier <= MAX; tier++) {
+            restrictedPart(provider, "output_boost_hatch_", GTNAMachines2.OUTPUT_BOOST_HATCHES, tier,
+                    GTMachines.HULL[tier].asStack(), "emitter", "sensor");
+            restrictedPart(provider, "infinite_input_bus_", GTNAMachines2.INFINITE_INPUT_BUSES, tier,
+                    GTMachines.ITEM_IMPORT_BUS[tier].asStack(), "robot_arm", "conveyor_module");
+            restrictedPart(provider, "infinite_input_hatch_", GTNAMachines2.INFINITE_INPUT_HATCHES, tier,
+                    GTMachines.FLUID_IMPORT_HATCH[tier].asStack(), "electric_pump", "fluid_regulator");
+            restrictedPart(provider, "output_boost_item_bus_", GTNAMachines2.OUTPUT_BOOST_ITEM_BUSES, tier,
+                    GTMachines.ITEM_EXPORT_BUS[tier].asStack(), "emitter", "conveyor_module");
+            restrictedPart(provider, "output_boost_fluid_hatch_", GTNAMachines2.OUTPUT_BOOST_FLUID_HATCHES, tier,
+                    GTMachines.FLUID_EXPORT_HATCH[tier].asStack(), "emitter", "electric_pump");
         }
 
         createOverclockRecipe(provider, UV, GTItems.FIELD_GENERATOR_UV, GTItems.VOLTAGE_COIL_UV);
         createCraftingCPUInterfaceRecipe(provider);
         createMEStorageAccessRecipes(provider);
+        createMEExportBufferRecipe(provider);
     }
 
     private static void createCraftingCPUInterfaceRecipe(Consumer<FinishedRecipe> provider) {
@@ -106,6 +108,24 @@ public class GTNAHatchesRecipes {
                 .define('D', hull)
                 .define('E', GTItems.FIELD_GENERATOR_HV.asStack().getItem())
                 .unlockedBy("has_hull_hv", InventoryChangeTrigger.TriggerInstance.hasItems(hull))
+                .save(provider);
+    }
+
+    /** Merges one ME output bus and one ME output hatch; the unbounded buffer costs LuV logistics parts. */
+    private static void createMEExportBufferRecipe(Consumer<FinishedRecipe> provider) {
+        if (GTNAMachines2.ME_EXPORT_BUFFER == null) return;
+        GTRecipeTypes.ASSEMBLER_RECIPES.recipeBuilder(GTNACORE.id("me_export_buffer"))
+                .inputItems(GTMachines.HULL[LuV].asStack())
+                .inputItems(GTAEMachines.ITEM_EXPORT_BUS_ME.asStack())
+                .inputItems(GTAEMachines.FLUID_EXPORT_HATCH_ME.asStack())
+                .inputItems(AEBlocks.CRAFTING_STORAGE_256K.stack())
+                .inputItems(GTItems.CONVEYOR_MODULE_LuV.asStack(2))
+                .inputItems(GTItems.ELECTRIC_PUMP_LuV.asStack(2))
+                .inputItems(CustomTags.LuV_CIRCUITS, 2)
+                .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
+                .outputItems(GTNAMachines2.ME_EXPORT_BUFFER.asStack())
+                .EUt(VA[LuV])
+                .duration(400)
                 .save(provider);
     }
 
@@ -185,91 +205,6 @@ public class GTNAHatchesRecipes {
                 .save(provider);
     }
 
-    private static void createOutputBoostRecipe(Consumer<FinishedRecipe> provider, int tier, ItemLike emitter,
-                                                ItemLike sensor) {
-        if (GTNAMachines2.OUTPUT_BOOST_HATCHES[tier] == null) return;
-        ItemLike hull = GTMachines.HULL[tier].asStack().getItem();
-        GTNARecipeVisibility.saveRestricted(provider, id("output_boost_hatch_", tier),
-                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                        GTNAMachines2.OUTPUT_BOOST_HATCHES[tier].asStack().getItem())
-                        .pattern("ABA")
-                        .pattern("BCB")
-                        .pattern("ABA")
-                        .define('A', emitter)
-                        .define('B', sensor)
-                        .define('C', hull)
-                        .unlockedBy("has_hull", InventoryChangeTrigger.TriggerInstance.hasItems(hull))
-                        .save(restrictedProvider));
-    }
-
-    private static void createInfiniteInputBusRecipe(Consumer<FinishedRecipe> provider, int tier, ItemLike emitter,
-                                                     ItemLike sensor) {
-        if (GTNAMachines2.INFINITE_INPUT_BUSES[tier] == null) return;
-        ItemLike baseBus = GTMachines.ITEM_IMPORT_BUS[tier].asStack().getItem();
-        GTNARecipeVisibility.saveRestricted(provider, id("infinite_input_bus_", tier),
-                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                        GTNAMachines2.INFINITE_INPUT_BUSES[tier].asStack().getItem())
-                        .pattern("ABA")
-                        .pattern("BCB")
-                        .pattern("ABA")
-                        .define('A', emitter)
-                        .define('B', sensor)
-                        .define('C', baseBus)
-                        .unlockedBy("has_base_bus", InventoryChangeTrigger.TriggerInstance.hasItems(baseBus))
-                        .save(restrictedProvider));
-    }
-
-    private static void createInfiniteInputHatchRecipe(Consumer<FinishedRecipe> provider, int tier, ItemLike emitter,
-                                                       ItemLike fieldGenerator) {
-        if (GTNAMachines2.INFINITE_INPUT_HATCHES[tier] == null) return;
-        ItemLike baseHatch = GTMachines.FLUID_IMPORT_HATCH[tier].asStack().getItem();
-        GTNARecipeVisibility.saveRestricted(provider, id("infinite_input_hatch_", tier),
-                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                        GTNAMachines2.INFINITE_INPUT_HATCHES[tier].asStack().getItem())
-                        .pattern("ABA")
-                        .pattern("BCB")
-                        .pattern("ABA")
-                        .define('A', emitter)
-                        .define('B', fieldGenerator)
-                        .define('C', baseHatch)
-                        .unlockedBy("has_base_hatch", InventoryChangeTrigger.TriggerInstance.hasItems(baseHatch))
-                        .save(restrictedProvider));
-    }
-
-    private static void createOutputBoostItemBusRecipe(Consumer<FinishedRecipe> provider, int tier, ItemLike emitter,
-                                                       ItemLike sensor) {
-        if (GTNAMachines2.OUTPUT_BOOST_ITEM_BUSES[tier] == null) return;
-        ItemLike baseBus = GTMachines.ITEM_EXPORT_BUS[tier].asStack().getItem();
-        GTNARecipeVisibility.saveRestricted(provider, id("output_boost_item_bus_", tier),
-                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                        GTNAMachines2.OUTPUT_BOOST_ITEM_BUSES[tier].asStack().getItem())
-                        .pattern("ABA")
-                        .pattern("BCB")
-                        .pattern("ABA")
-                        .define('A', emitter)
-                        .define('B', sensor)
-                        .define('C', baseBus)
-                        .unlockedBy("has_base_bus", InventoryChangeTrigger.TriggerInstance.hasItems(baseBus))
-                        .save(restrictedProvider));
-    }
-
-    private static void createOutputBoostFluidHatchRecipe(Consumer<FinishedRecipe> provider, int tier, ItemLike emitter,
-                                                          ItemLike fieldGenerator) {
-        if (GTNAMachines2.OUTPUT_BOOST_FLUID_HATCHES[tier] == null) return;
-        ItemLike baseHatch = GTMachines.FLUID_EXPORT_HATCH[tier].asStack().getItem();
-        GTNARecipeVisibility.saveRestricted(provider, id("output_boost_fluid_hatch_", tier),
-                restrictedProvider -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
-                        GTNAMachines2.OUTPUT_BOOST_FLUID_HATCHES[tier].asStack().getItem())
-                        .pattern("ABA")
-                        .pattern("BCB")
-                        .pattern("ABA")
-                        .define('A', emitter)
-                        .define('B', fieldGenerator)
-                        .define('C', baseHatch)
-                        .unlockedBy("has_base_hatch", InventoryChangeTrigger.TriggerInstance.hasItems(baseHatch))
-                        .save(restrictedProvider));
-    }
-
     private static ResourceLocation id(String prefix, int tier) {
         return GTNACORE.id(prefix + VN[tier].toLowerCase());
     }
@@ -329,5 +264,89 @@ public class GTNAHatchesRecipes {
             case OpV -> GTItems.FIELD_GENERATOR_OpV;
             default -> GTItems.FIELD_GENERATOR_LV;
         }).asStack().getItem();
+    }
+
+    /**
+     * UHV-MAX module hatches that had no recipe. Each tier consumes the previous tier of the same hatch on the
+     * Assembly Line and is researched from it; MAX reuses the OpV components, which GTCEu does not go beyond.
+     */
+    private static void createHighTierModuleHatches(Consumer<FinishedRecipe> provider) {
+        moduleChain(provider, "accelerate_hatch", GTNAMachines2.ACCELERATE_HATCHES, UHV,
+                GTNAMachines2.ACCELERATE_HATCHES[UV], "sensor", "emitter");
+        moduleChain(provider, "overclock_hatch", GTNAMachines2.OVERCLOCK_HATCHES, UHV,
+                GTNAMachines2.OVERCLOCK_HATCHES[UV], "field_generator",
+                "electric_pump");
+        moduleChain(provider, "thread_hatch", GTNAMachines2.THREAD_HATCHES, UEV, GTNAMachines2.THREAD_HATCHES[UHV],
+                "robot_arm",
+                "conveyor_module");
+        var gtParallel = com.gregtechceu.gtceu.common.data.machines.GCYMMachines.PARALLEL_HATCH;
+        moduleChain(provider, "parallel_hatch", GTNAMachines2.ADVANCED_PARALLEL_HATCH, UHV,
+                gtParallel.length > UV ? gtParallel[UV] : null, "robot_arm", "field_generator");
+    }
+
+    private static void moduleChain(Consumer<FinishedRecipe> provider, String name,
+                                    com.gregtechceu.gtceu.api.machine.MachineDefinition[] hatches, int from,
+                                    com.gregtechceu.gtceu.api.machine.MachineDefinition belowFrom, String first,
+                                    String second) {
+        for (int tier = from; tier <= MAX; tier++) {
+            if (hatches[tier] == null) continue;
+            var previous = tier == from ? belowFrom : hatches[tier - 1];
+            if (previous == null) continue;
+            int part = Math.min(tier, OpV);
+            var a = component(part, first);
+            var b = component(part, second);
+            if (a == null || b == null) continue;
+            long eut = VA[tier];
+            var research = previous.asStack();
+            GTRecipeTypes.ASSEMBLY_LINE_RECIPES
+                    .recipeBuilder(GTNACORE.id(name + "_" + VN[tier].toLowerCase(java.util.Locale.ROOT)))
+                    .inputItems(GTMachines.HULL[tier].asStack())
+                    .inputItems(previous.asStack())
+                    .inputItems(a, tier == MAX ? 8 : 4)
+                    .inputItems(b, tier == MAX ? 8 : 2)
+                    .inputItems(CustomTags.CIRCUITS_ARRAY[tier], 4)
+                    .inputItems(TagPrefix.plateDense, GTMaterials.Neutronium, 2 * (tier - UV))
+                    .inputFluids(com.raishxn.gtna.common.data.GTNAMaterials.Indalloy140.getFluid(1152 * (tier - UV)))
+                    .outputItems(hatches[tier].asStack())
+                    .duration(400 + 200 * (tier - UV)).EUt(eut)
+                    .stationResearch(r -> r.researchStack(research).CWUt(256).EUt(eut))
+                    .save(provider);
+        }
+    }
+
+    private static net.minecraft.world.item.Item component(int tier, String kind) {
+        var item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+                new ResourceLocation("gtceu", VN[tier].toLowerCase(java.util.Locale.ROOT) + "_" + kind));
+        return item == net.minecraft.world.item.Items.AIR ? null : item;
+    }
+
+    /**
+     * Restricted parts (only with restricted items enabled): deliberately expensive for their tier, with circuits
+     * of the next tier, four field generators and a long Assembler run. They only act on recipes of their own tier
+     * ({@code GTNASpecialPartUtil.matchesTier}).
+     */
+    private static void restrictedPart(Consumer<FinishedRecipe> provider, String prefix,
+                                       com.gregtechceu.gtceu.api.machine.MachineDefinition[] parts, int tier,
+                                       net.minecraft.world.item.ItemStack base, String first, String second) {
+        if (parts[tier] == null || base.isEmpty()) return;
+        int part = Math.min(tier, OpV);
+        var a = component(part, first);
+        var b = component(part, second);
+        var field = component(part, "field_generator");
+        if (a == null || b == null || field == null) return;
+        int next = Math.min(tier + 1, MAX);
+        GTNARecipeVisibility.saveRestricted(provider, id(prefix, tier), restricted -> GTRecipeTypes.ASSEMBLER_RECIPES
+                .recipeBuilder(id(prefix, tier))
+                .inputItems(base)
+                .inputItems(a, 4)
+                .inputItems(b, 4)
+                .inputItems(field, 4)
+                .inputItems(CustomTags.CIRCUITS_ARRAY[tier], 8)
+                .inputItems(CustomTags.CIRCUITS_ARRAY[next], 2)
+                .inputFluids((tier <= LuV ? GTMaterials.SolderingAlloy :
+                        com.raishxn.gtna.common.data.GTNAMaterials.Indalloy140).getFluid(576 * tier))
+                .outputItems(parts[tier].asStack())
+                .duration(1200 + 400 * tier).EUt(VA[tier])
+                .save(restricted));
     }
 }

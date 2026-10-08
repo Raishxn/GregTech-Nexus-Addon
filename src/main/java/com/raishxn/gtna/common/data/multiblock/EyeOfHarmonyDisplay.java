@@ -20,10 +20,10 @@ public final class EyeOfHarmonyDisplay {
         }
     }
 
-    public record Page(EyeOfHarmonyOverworld.Catalog catalog, List<Product> products, int number, int total,
+    public record Page(EyeOfHarmonyCatalog.Catalog catalog, List<Product> products, int number, int total,
                        int rows) {}
 
-    public static List<Page> pages(EyeOfHarmonyOverworld.Catalog catalog) {
+    public static List<Page> pages(EyeOfHarmonyCatalog.Catalog catalog) {
         return pages(catalog, PAGE_SIZE);
     }
 
@@ -41,7 +41,7 @@ public final class EyeOfHarmonyDisplay {
     }
 
     /** One EMI recipe indexes the complete catalog, regardless of the preview capacity. */
-    public static Page singlePage(EyeOfHarmonyOverworld.Catalog catalog) {
+    public static Page singlePage(EyeOfHarmonyCatalog.Catalog catalog) {
         var all = pages(catalog).stream().flatMap(page -> page.products().stream()).toList();
         return new Page(catalog, all, 1, 1, 11);
     }
@@ -53,7 +53,7 @@ public final class EyeOfHarmonyDisplay {
     }
 
     /** Each EMI page has independent item and fluid regions, without duplicating indexed outputs. */
-    public static List<Page> separatedPages(EyeOfHarmonyOverworld.Catalog catalog, int itemRows, int fluidRows) {
+    public static List<Page> separatedPages(EyeOfHarmonyCatalog.Catalog catalog, int itemRows, int fluidRows) {
         var all = pages(catalog).stream().flatMap(page -> page.products().stream()).toList();
         return separated(new Page(catalog, all, 1, 1, 11), itemRows, fluidRows);
     }
@@ -80,7 +80,7 @@ public final class EyeOfHarmonyDisplay {
         return List.copyOf(result);
     }
 
-    public static List<Page> pages(EyeOfHarmonyOverworld.Catalog catalog, int pageSize) {
+    public static List<Page> pages(EyeOfHarmonyCatalog.Catalog catalog, int pageSize) {
         if (pageSize < 9 || pageSize > 99 || pageSize % 9 != 0)
             throw new IllegalArgumentException("Page size must be 9–99 in rows of nine");
         List<Product> products = new ArrayList<>();

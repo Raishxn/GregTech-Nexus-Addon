@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gtna:block/eye_of_harmony/planet/moon_bottom",
+    "east": "gtna:block/eye_of_harmony/planet/moon_left",
+    "north": "gtna:block/eye_of_harmony/planet/moon_back",
+    "particle": "gtna:block/eye_of_harmony/planet/moon_front",
+    "south": "gtna:block/eye_of_harmony/planet/moon_front",
+    "up": "gtna:block/eye_of_harmony/planet/moon_top",
+    "west": "gtna:block/eye_of_harmony/planet/moon_right"
+  }
+}

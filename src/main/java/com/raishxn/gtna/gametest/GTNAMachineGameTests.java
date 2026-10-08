@@ -7428,14 +7428,18 @@ public final class GTNAMachineGameTests {
 
     /**
      * QA A7: GTOCore's controller recipe needs the GTO-only Advanced Assembly Line chain, so it is
-     * omitted; the unit contract {@code ControllerRecipePolicyTest} records that decision.
+     * adapted with GTCEu/GTNA substitutes (G-0188).
      */
     @GameTest(template = "empty_16", timeoutTicks = 40)
-    public static void componentAssemblyLineHasNoControllerRecipe(GameTestHelper helper) {
-        boolean present = helper.getLevel().getRecipeManager().getAllRecipesFor(GTRecipeTypes.ASSEMBLY_LINE_RECIPES)
-                .stream().anyMatch(recipe -> recipe.id.getPath().endsWith("component_assembly_line"));
-        helper.assertTrue(!present,
-                "the GTO-only Component Assembly Line controller recipe must stay omitted and documented");
+    public static void componentAssemblyLineHasAdaptedControllerRecipe(GameTestHelper helper) {
+        var recipe = helper.getLevel().getRecipeManager().getAllRecipesFor(GTRecipeTypes.ASSEMBLY_LINE_RECIPES)
+                .stream().filter(r -> r.id.getPath().endsWith("component_assembly_line")).findFirst();
+        helper.assertTrue(recipe.isPresent(), "the adapted Component Assembly Line controller recipe must load");
+        helper.assertTrue(recipe.get().getOutputContents(
+                com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability.CAP).stream()
+                .anyMatch(c -> com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability.CAP.of(c.content)
+                        .test(GTNAMachines3.COMPONENT_ASSEMBLY_LINE.asStack())),
+                "the recipe must output the Component Assembly Line controller");
         helper.succeed();
     }
 

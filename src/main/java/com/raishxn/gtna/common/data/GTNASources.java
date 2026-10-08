@@ -58,6 +58,7 @@ public final class GTNASources {
             Map.entry("large_steam_storage_tank", GTO),
             Map.entry("directed_tesseract_generator", GTO),
             Map.entry("me_storage_access_hatch", GTO),
+            Map.entry("me_export_buffer", GTMTHINGS),
             Map.entry("me_big_storage_access_hatch", GTO),
             Map.entry("me_io_port_hatch", GTO),
             Map.entry("nexus_molecular_forge", GTO),
@@ -68,6 +69,10 @@ public final class GTNASources {
             Map.entry("godforge_molten_module", GTNH),
             Map.entry("godforge_plasma_module", GTNH),
             Map.entry("godforge_exotic_module", GTNH),
+            Map.entry("dimensionally_transcendent_plasma_forge", GTNH),
+            Map.entry("transcendent_plasma_mixer", GTNH),
+            Map.entry("nano_forge", GTNH),
+            Map.entry("advanced_fusion_reactor", GTO),
             // --- Twist Space Technology (GPL-3.0) ---
             Map.entry("eye_of_wood", TST),
             Map.entry("industrial_slaughterhouse", GTO),

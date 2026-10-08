@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gtna:item/nanites/glowstone",
+    "layer1": "gtna:item/nanites/glowstone_overlay"
+  }
+}

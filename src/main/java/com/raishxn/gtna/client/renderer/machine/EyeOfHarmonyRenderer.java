@@ -65,7 +65,7 @@ public class EyeOfHarmonyRenderer extends DynamicRender<EyeOfHarmonyMachine, Eye
         poseStack.pushPose();
         poseStack.translate(x, y, z);
         renderStar(tick, poseStack, buffer);
-        renderPlanet(tick, poseStack, buffer);
+        renderPlanet(machine.getPlanetId(), tick, poseStack, buffer);
         renderOuterSpaceShell(poseStack, buffer);
         poseStack.popPose();
     }
@@ -78,14 +78,27 @@ public class EyeOfHarmonyRenderer extends DynamicRender<EyeOfHarmonyMachine, Eye
         poseStack.popPose();
     }
 
-    private static void renderPlanet(float tick, PoseStack poseStack, MultiBufferSource buffer) {
-        // A paid planetary cycle currently always selects Overworld. One body, not all dimensions.
+    /** Sphere textured with the planet in the controller slot; unknown (KubeJS) planets show the Overworld. */
+    private static ResourceLocation planetModel(String planetId) {
+        String prefix = GTNACORE.MOD_ID + ":eye_of_harmony_planet_";
+        if (!planetId.startsWith(prefix)) return GTNACORE.id("obj/overworld");
+        return switch (planetId.substring(prefix.length())) {
+            case "nether" -> GTNACORE.id("obj/the_nether");
+            case "end" -> GTNACORE.id("obj/the_end");
+            case "moon", "mars", "venus", "mercury", "glacio" -> GTNACORE.id(
+                    "obj/planet_" + planetId.substring(prefix.length()));
+            default -> GTNACORE.id("obj/overworld");
+        };
+    }
+
+    private static void renderPlanet(String planetId, float tick, PoseStack poseStack, MultiBufferSource buffer) {
+        // One body: the planet of the paid cycle, not all dimensions.
         poseStack.pushPose();
         double angle = tick / 80D;
         poseStack.translate(7 * Math.sin(angle), 0, 7 * Math.cos(angle));
         poseStack.mulPose(new Quaternionf().fromAxisAngleDeg(0F, 1F, 0F, (tick / 3F) % 360F));
         poseStack.scale(.014F, .014F, .014F);
-        renderModel(poseStack, buffer, GTNACORE.id("obj/overworld"), RenderType.solid());
+        renderModel(poseStack, buffer, planetModel(planetId), RenderType.solid());
         poseStack.popPose();
     }
 

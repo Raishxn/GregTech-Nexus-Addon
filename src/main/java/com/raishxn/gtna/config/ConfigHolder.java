@@ -163,6 +163,7 @@ public class ConfigHolder {
             case "meStorageAccessHatch" -> INSTANCE.hatchToggles.meStorageAccessHatch;
             case "meBigStorageAccessHatch" -> INSTANCE.hatchToggles.meBigStorageAccessHatch;
             case "meIOPortHatch" -> INSTANCE.hatchToggles.meIOPortHatch;
+            case "meExportBuffer" -> INSTANCE.hatchToggles.meExportBuffer;
             default -> true;
         };
     }
@@ -445,6 +446,8 @@ public class ConfigHolder {
         public boolean meBigStorageAccessHatch = true;
         @Configurable
         public boolean meIOPortHatch = true;
+        @Configurable
+        public boolean meExportBuffer = true;
     }
 
     public static class Machines {

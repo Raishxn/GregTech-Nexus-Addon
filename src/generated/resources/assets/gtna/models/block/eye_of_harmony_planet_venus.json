@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gtna:block/eye_of_harmony/planet/venus_bottom",
+    "east": "gtna:block/eye_of_harmony/planet/venus_left",
+    "north": "gtna:block/eye_of_harmony/planet/venus_back",
+    "particle": "gtna:block/eye_of_harmony/planet/venus_front",
+    "south": "gtna:block/eye_of_harmony/planet/venus_front",
+    "up": "gtna:block/eye_of_harmony/planet/venus_top",
+    "west": "gtna:block/eye_of_harmony/planet/venus_right"
+  }
+}

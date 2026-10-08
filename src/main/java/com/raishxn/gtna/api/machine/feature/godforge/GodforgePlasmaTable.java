@@ -5,9 +5,10 @@ import java.util.List;
 
 /**
  * Plasma Module recipe table of GTNH {@code Godforge.run()} (GT5-Unofficial a3e1e112), with GTCEu material IDs.
- * GTNH materials with no GTCEu/GTNA counterpart (Ardite, Desh, Oriharukon, Meteoric Iron, Force, GT++ alloys,
- * Rhugnor, Dragon Metal, Chronomatic Glass, Bedrockium, Draconium, Ichorium, Hypogen, Six-Phased Copper, Cosmic
- * Neutronium) are left out; the GT++ Thorium-232 duplicate maps to GTCEu Thorium once.
+ * GTNH materials with no GTCEu/GTNA counterpart (Ardite, Desh, Oriharukon, Meteoric Iron, Force, Runite, GT++
+ * alloys, Bedrockium, Draconium, Cosmic Neutronium) are left out; the GT++ metals ported for the Forge chain
+ * (G-0189+: Celestial Tungsten, Astral Titanium, Advanced Nitinol, Rhugnor, Dragon Metal, Chromatic Glass, Ichorium,
+ * Hypogen, Six-Phased Copper) are in; the GT++ Thorium-232 duplicate maps to GTCEu Thorium once.
  */
 public final class GodforgePlasmaTable {
 
@@ -28,11 +29,11 @@ public final class GodforgePlasmaTable {
                 "zirconium", "germanium", "thallium", "ruthenium", "rhenium", "rhodium", "iodine", "hafnium",
                 "curium");
         add(list, 0, true, 80, true, "bismuth", "boron", "iridium", "naquadah", "osmium", "platinum",
-                "plutonium_239", "californium");
+                "plutonium_239", "californium", "advanced_nitinol", "astral_titanium", "celestial_tungsten");
         add(list, 1, false, 200, true, "lead", "plutonium_241", "thorium", "naquadria", "redstone");
         add(list, 1, true, 280, true, "neptunium", "fermium");
-        add(list, 2, false, 600, true, "infinity");
-        add(list, 2, true, 1000, true, "tritanium", "flerovium", "neutronium");
+        add(list, 2, false, 600, true, "infinity", "rhugnor", "dragon_metal", "chronomatic_glass", "ichorium");
+        add(list, 2, true, 1000, true, "tritanium", "flerovium", "neutronium", "hypogen", "six_phased_copper");
         add(list, 0, false, 40, false, "helium", "nitrogen", "argon", "chlorine", "deuterium", "fluorine", "hydrogen",
                 "radon", "tritium", "mercury");
         add(list, 0, true, 120, false, "neon", "oxygen", "krypton", "xenon");

@@ -13,6 +13,7 @@ import com.raishxn.gtna.api.data.info.GTNAMaterialFlags;
 import com.raishxn.gtna.api.data.tag.GTNATagPrefix;
 import com.raishxn.gtna.api.registry.GTNARegistry;
 import com.raishxn.gtna.common.data.*;
+import com.raishxn.gtna.common.data.worldgen.GTNAPlanetOres;
 import com.raishxn.gtna.data.recipe.*;
 
 import java.util.function.Consumer;
@@ -78,6 +79,9 @@ public class GTNAGTAddon implements IGTAddon {
         GTNALavaMakerRecipes.register(provider);
         VoidminerRecipes.register(provider);
         com.raishxn.gtna.data.recipe.GTNAGodforgeRecipes.register(provider);
+        com.raishxn.gtna.data.recipe.GTNAGodforgeChainRecipes.register(provider);
+        com.raishxn.gtna.data.recipe.GTNAHighTierComponentRecipes.register(provider);
+        com.raishxn.gtna.data.recipe.GTNAAdvancedFusionRecipes.register(provider);
         com.raishxn.gtna.data.recipe.GTNAGodforgeProgression.register(provider);
         com.raishxn.gtna.data.recipe.GTNAGodforgeProgression.registerExtraCosts();
         com.raishxn.gtna.data.recipe.GTNAEyeOfHarmonyProgression.register(provider);
@@ -95,5 +99,16 @@ public class GTNAGTAddon implements IGTAddon {
     public void registerTagPrefixes() {
         GTNAMaterialFlags.register();
         GTNATagPrefix.register();
+        GTNAPlanetOres.registerTagPrefixes();
+    }
+
+    @Override
+    public void registerWorldgenLayers() {
+        GTNAPlanetOres.registerWorldgenLayers();
+    }
+
+    @Override
+    public void registerOreVeins() {
+        GTNAPlanetOres.registerOreVeins();
     }
 }

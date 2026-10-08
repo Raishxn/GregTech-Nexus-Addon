@@ -279,6 +279,7 @@
   "config.gtna.option.meStorageAccessHatch": "ME Storage Access Hatch",
   "config.gtna.option.meBigStorageAccessHatch": "ME Big Storage Access Hatch",
   "config.gtna.option.meIOPortHatch": "ME IO Port Hatch",
+  "config.gtna.option.meExportBuffer": "ME Export Buffer",
   "config.gtna.option.steamCobbler": "Steam Cobbler",
   "config.gtna.option.stoneSuperheater": "Stone Superheater",
   "config.gtna.option.steamManufacturer": "Steam Manufacturer",

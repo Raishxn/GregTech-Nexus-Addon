@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "ad_astra:moon_stone",
+      "required": false
+    },
+    {
+      "id": "ad_astra:mars_stone",
+      "required": false
+    },
+    {
+      "id": "ad_astra:venus_stone",
+      "required": false
+    },
+    {
+      "id": "ad_astra:mercury_stone",
+      "required": false
+    },
+    {
+      "id": "ad_astra:glacio_stone",
+      "required": false
+    }
+  ]
+}

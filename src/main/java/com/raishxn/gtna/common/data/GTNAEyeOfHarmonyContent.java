@@ -47,9 +47,20 @@ public final class GTNAEyeOfHarmonyContent {
             "Reinforced Spatial Structure Casing", "spatial");
     public static final BlockEntry<Block> TEMPORAL_CASING = casing("reinforced_temporal_structure_casing",
             "Reinforced Temporal Structure Casing", "temporal");
-    public static final BlockEntry<EyeOfHarmonyPlanetBlock> OVERWORLD_PLANET = planet("overworld");
-    public static final BlockEntry<EyeOfHarmonyPlanetBlock> NETHER_PLANET = planet("nether");
-    public static final BlockEntry<EyeOfHarmonyPlanetBlock> END_PLANET = planet("end");
+    public static final BlockEntry<EyeOfHarmonyPlanetBlock> OVERWORLD_PLANET = planet("overworld",
+            "minecraft:overworld", "Overworld");
+    public static final BlockEntry<EyeOfHarmonyPlanetBlock> NETHER_PLANET = planet("nether", "minecraft:the_nether",
+            "Nether");
+    public static final BlockEntry<EyeOfHarmonyPlanetBlock> END_PLANET = planet("end", "minecraft:the_end", "End");
+    // Ad Astra planets; the block exists without Ad Astra, its program just has no ore veins to read.
+    public static final BlockEntry<EyeOfHarmonyPlanetBlock> MOON_PLANET = planet("moon", "ad_astra:moon", "Moon");
+    public static final BlockEntry<EyeOfHarmonyPlanetBlock> MARS_PLANET = planet("mars", "ad_astra:mars", "Mars");
+    public static final BlockEntry<EyeOfHarmonyPlanetBlock> VENUS_PLANET = planet("venus", "ad_astra:venus",
+            "Venus");
+    public static final BlockEntry<EyeOfHarmonyPlanetBlock> MERCURY_PLANET = planet("mercury", "ad_astra:mercury",
+            "Mercury");
+    public static final BlockEntry<EyeOfHarmonyPlanetBlock> GLACIO_PLANET = planet("glacio", "ad_astra:glacio",
+            "Glacio");
 
     public static final ItemEntry<ComponentItem> ASTRAL_ARRAY_FABRICATOR;
     static {
@@ -101,17 +112,12 @@ public final class GTNAEyeOfHarmonyContent {
                 .item(EyeOfHarmonyBlockItem::new).build().register();
     }
 
-    private static BlockEntry<EyeOfHarmonyPlanetBlock> planet(String world) {
+    private static BlockEntry<EyeOfHarmonyPlanetBlock> planet(String world, String dimension, String englishName) {
         return REGISTRATE.block("eye_of_harmony_planet_" + world,
-                props -> new EyeOfHarmonyPlanetBlock(props,
-                        ResourceLocation.parse("minecraft:" + ("overworld".equals(world) ? world : "the_" + world))))
+                props -> new EyeOfHarmonyPlanetBlock(props, ResourceLocation.parse(dimension)))
                 .initialProperties(() -> Blocks.STONE)
                 .properties(props -> props.strength(1.5f, 6.0f).requiresCorrectToolForDrops())
-                .lang(switch (world) {
-                    case "overworld" -> "Overworld Planet Block";
-                    case "nether" -> "Nether Planet Block";
-                    default -> "End Planet Block";
-                })
+                .lang(englishName + " Planet Block")
                 .addLayer(() -> RenderType::solid)
                 .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models().cube(ctx.getName(),
                         planetTexture(world, "bottom"), planetTexture(world, "top"),

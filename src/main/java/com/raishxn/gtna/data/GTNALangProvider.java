@@ -49,6 +49,30 @@ public class GTNALangProvider extends LanguageProvider {
             GTNATagPrefix.MILLED
     };
 
+    /**
+     * Registrate's lang provider and this one both target {@code assets/gtna/lang/en_us.json}; two writers erase each
+     * other. Feed these translations into Registrate's provider instead (GTNA values win over Registrate defaults).
+     */
+    public static void feed(com.tterrag.registrate.providers.RegistrateLangProvider registrate, PackOutput output) {
+        java.util.Map<String, String> data;
+        try {
+            var field = net.minecraftforge.common.data.LanguageProvider.class.getDeclaredField("data");
+            field.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            var map = (java.util.Map<String, String>) field.get(registrate);
+            data = map;
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("cannot merge GTNA translations into Registrate", e);
+        }
+        new GTNALangProvider(output) {
+
+            @Override
+            public void add(String key, String value) {
+                data.put(key, value);
+            }
+        }.addTranslations();
+    }
+
     public GTNALangProvider(PackOutput output) {
         super(output, GTNACORE.MOD_ID, "en_us");
         this.output = output;
@@ -645,7 +669,7 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.eoh.manual.delivery",
                 "Wireless energy uses the bound Nexus owner. EU input is charged once; outputs wait when ports or the network are full. Nexus transfer losses apply to the EU return.");
         add("gtna.eoh.manual.scope",
-                "Current program: Overworld. Select its Planet Block in the controller slot. Astral Arrays, parallel operation and other planets are not implemented yet. Component crafting remains deferred.");
+                "Programs: Overworld, Nether, End, Moon, Mars, Venus, Mercury and Glacio (planets need Ad Astra). Put the Planet Block in the controller slot; higher tier planets need more gas, more time and better compression fields. Astral Arrays and parallel operation are not implemented yet.");
         add("gtna.eoh.operation.gas_excess", "Gas excess: Hydrogen %s%% / Helium %s%%");
         add("gtna.eoh.operation.planet", "Planet: %s");
         add("gtna.eoh.operation.no_planet", "None");
@@ -666,9 +690,11 @@ public class GTNALangProvider extends LanguageProvider {
         add("gtna.nexus.direct_debit_details", "One-time debit: %s EU\nPosition: %s\nDimension: %s\nServer tick: %s");
         add("gtna.eoh.operation.progress", "Progress: %s / %s ticks");
         add("gtna.eoh.operation.rebind_busy", "Finish the pending operation before changing the network owner.");
-        add("gtna.eoh.operation.state.planet", "Insert an Overworld Planet Block.");
+        add("gtna.eoh.operation.state.planet", "Insert a Planet Block with a planetary program.");
         add("gtna.eoh.operation.state.owner", "Bind a network owner with a Data Stick.");
-        add("gtna.eoh.operation.state.gas", "Insufficient hydrogen or helium.");
+        add("gtna.eoh.operation.state.gas", "Insufficient hydrogen or helium for this planet.");
+        add("gtna.eoh.operation.state.compression",
+                "This planet needs a higher Spacetime Compression Field tier.");
         add("gtna.eoh.operation.state.catalog", "No supported planetary resource catalog.");
         add("gtna.eoh.operation.state.energy", "Insufficient accessible Nexus energy.");
         add("gtna.eoh.operation.state.running", "Planetary operation running.");
@@ -1602,6 +1628,86 @@ public class GTNALangProvider extends LanguageProvider {
         add("block.gtna.t4_crafting_storage_core", "T4 Matrix Crafting Module");
         add("block.gtna.t5_crafting_storage_core", "T5 Matrix Crafting Module");
         add("gtna.machine.me_storage_access_hatch.tooltip", "Connects ME Storage to an AE2 network.");
+        for (var planet : com.raishxn.gtna.common.data.worldgen.GTNAPlanetOres.Planet.values()) {
+            add("tagprefix." + planet.id + "_stone", planet.englishName + " %s Ore");
+        }
+        add("gtna.machine.restricted_part.tier_lock", "§eOnly acts on %s recipes (recipe tier before overclock).");
+        add("block.gtna.coolant_pip_casing", "Coolant Pipe Casing");
+        add("block.gtna.uev_hermetic_casing", "UEV Hermetic Casing");
+        add("gtna.machine.advanced_fusion_reactor.tooltip.0",
+                "Runs every Fusion Reactor recipe with Parallel, Accelerate, Thread and Overclock hatches.");
+        add("gtna.machine.advanced_fusion_reactor.tooltip.1",
+                "Starts at LuV; each extension structure built in order raises the tier by one, up to UEV.");
+        add("gtna.machine.advanced_fusion_reactor.tooltip.2",
+                "Energy buffer: energy inputs × 2^(tier − LuV) × 10,000,000 EU; a recipe needs its start energy to fit.");
+        add("gtna.machine.advanced_fusion_reactor.tooltip.3",
+                "Accepts up to 16 laser and 16 energy (including wireless) hatches.");
+        add("gtna.machine.advanced_fusion_reactor.module", "Extension %s: raises the tier to %s");
+        add("gtna.machine.advanced_fusion_reactor.cross_recipe",
+                "Cross-recipe extension: holds 1 Thread Hatch and 1 Overclock Hatch");
+        add("gtna.machine.advanced_fusion_reactor.tier", "Tier: %s (%s tier extensions)");
+        add("block.gtna.plasma_forge_bridge_casing", "Dimensional Bridge Casing");
+        add("block.gtna.eternal_coil", "Eternal Coil Block");
+        add("gtna.machine.plasma_forge.discount", "Catalyst discount: %s%% (%s h of run time)");
+        add("gtna.machine.transcendent_plasma_mixer.no_energy", "Not enough wireless EU: needs %s EU");
+        add("gtna.recipe.wireless_cost", "Wireless cost: %s EU");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip", "Machine Type: §ePlasma Forge, DTPF");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip.0",
+                "§7§oTranscending Dimensional Boundaries.");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip.1",
+                "§7Takes §c8§7 hours of continuous run time to fully breach dimensional");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip.2",
+                "§7boundaries and achieve maximum efficiency, reducing fuel consumption by up to §c50§7%");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip.3",
+                "§7When no recipe is running, fuel discount decays x§c100§7 as fast as it builds up, draining");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip.4", "§7the total amount of stored runtime");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip.5",
+                "§b§m                                                                        ");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip.6",
+                "§7Multidimensional spaces can be perfectly aligned and synchronized in this state,");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip.7",
+                "§7allowing §6Dimensional Convergence §7to occur. To reach the required stability threshold,");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip.8",
+                "§7a §bTransdimensional Alignment Matrix §7must be placed in the controller §8(not ported yet)");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip.9",
+                "§7When §6Convergence §7is active, it allows the forge to perform §dPerfect Overclocks§7,");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip.10",
+                "§7but the extra power cost is instead added in form of increased catalyst amounts");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip.11",
+                "§b§m                                                                        ");
+        add("gtna.machine.dimensionally_transcendent_plasma_forge.tooltip.12",
+                "§7At least §61250§7 Dimensional Injection Casings; up to §62§7 energy hatches or §61§7 laser");
+        add("gtna.machine.transcendent_plasma_mixer.tooltip", "Machine Type: §eTranscendent Mixer, TPM");
+        add("gtna.machine.transcendent_plasma_mixer.tooltip.0", "§7§oAssisting in all your DTPF needs!");
+        add("gtna.machine.transcendent_plasma_mixer.tooltip.1",
+                "§7Set the amount of parallels with a §6Parallel Hatch");
+        add("gtna.machine.transcendent_plasma_mixer.tooltip.2", "§7All inputs scale, except time...");
+        add("gtna.machine.transcendent_plasma_mixer.tooltip.3", "§7Power is only pulled from §bwireless networks");
+        add("gtna.machine.transcendent_plasma_mixer.tooltip.4",
+                "§7Cost per parallel: §6EU multiplier (10) × EU/t × duration§7, paid when the recipe starts");
+        add("gtna.machine.nano_forge.tooltip", "Machine Type: §eNanite Fabricator");
+        add("gtna.machine.nano_forge.tooltip.0", "§7Requires insane amounts of power to create nanites");
+        add("gtna.machine.nano_forge.tooltip.1", "§7Each tier requires some structural changes");
+        add("gtna.machine.nano_forge.tooltip.2",
+                "§7Machine tier depends on the §6Nanite in any input bus §8(GTNA: no controller slot)");
+        add("gtna.machine.nano_forge.tooltip.3",
+                "§7Carbon §8→ T1§7, Neutronium §8→ T2§7, Transcendent Metal §8→ T3§7; the nanite is never consumed");
+        add("gtna.machine.nano_forge.tooltip.4", "§7Tier 4 has additional mechanics §8(not ported yet)");
+        add("gtna.machine.nano_forge.tooltip.5",
+                "§b§m                                                                        ");
+        add("gtna.machine.nano_forge.tooltip.6", "§7Performs §dperfect overclocks§7 on lower-tier recipes");
+        add("gtna.machine.nano_forge.module",
+                "Extension: tier %s");
+        add("gtna.machine.nano_forge.tier",
+                "Nano Forge tier %s (structure %s, nanite %s)");
+        add("gtna.machine.nano_forge.low_tier",
+                "Needs Nano Forge tier %s");
+        add("gtna.recipe.nano_forge_tier",
+                "Nano Forge tier: %s");
+        add("gtna.machine.me_export_buffer.tooltip",
+                "Output bus and output hatch in one block: sends items and fluids straight to the ME network.");
+        add("gtna.machine.me_export_buffer.capacity",
+                "Internal buffer with no practical limit (up to 9.2 quintillion per item or fluid); recipes never stall on full output.");
         add("gtna.machine.me_big_storage_access_hatch.tooltip",
                 "Connects ME Storage to an AE2 network with BigInteger storage mode.");
         add("gtna.machine.me_io_port_hatch.tooltip", "Connects ME Storage to an AE2 network through IO Port mode.");

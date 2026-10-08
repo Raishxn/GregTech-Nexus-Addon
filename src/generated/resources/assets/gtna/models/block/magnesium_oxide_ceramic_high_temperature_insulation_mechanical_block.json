@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "gtna:block/casings/magnesium_oxide_ceramic_high_temperature_insulation_mechanical_block"
+  }
+}

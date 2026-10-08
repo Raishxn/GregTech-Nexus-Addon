@@ -31,6 +31,41 @@ foi feito nem repetir os erros já pagos.
 
 ## Estado atual
 
+> **Forge of Gods — etapa 4 (G-0192):** DTPF do GTNH (estrutura 33×24×33, desconto de catalisador, calor de bobina),
+> bobina Eternal, Dimensional Bridge Casing, Special Laser Lens; Six-Phased Copper, DTR, Celestial Tungsten, Astral
+> Titanium, Chromatic Glass, Advanced Nitinol. Gate PASS 212.
+
+> **Forge of Gods — etapa 3 (G-0191):** Advanced Fusion Reactor do GTO portado (estrutura base + 4 extensões de
+> tier até UEV + extensão cross-recipe), 34 blocos GTO com textura e receita, controlador com receita; fusões de
+> Hypogen, Rhugnor e Metastable Oganesson. Gate PASS 211. Montagem das extensões no cliente pendente.
+
+> **Forge of Gods — etapa 2 (G-0190):** plasmas por fusão (11) e cadeia dos catalisadores DT (DTCC→DTSC + Excited)
+> no Mixer/Laser Engraver; Mixer passou a 6 fluidos e Laser Engraver a 1 fluido. Gate PASS 209.
+
+> **Cadeia do Forge of Gods (G-0189):** 47 materiais GTNH registrados (`GodforgeChainMaterials`) e mapa da cadeia
+> em `docs/roadmap/forge-of-gods-material-chain.md`; receitas vêm por etapas. Matrix modules e Nexus Hypercore
+> Casing removidos; Personal Space Portal com receita EV. Gate PASS 208.
+
+> **Peças restritas por tier e controladores (G-0188):** infinite input / output boost só agem em receitas do
+> próprio tier (antes do overclock) e têm receita cara LV–MAX; Chemical Plant, Component Assembly Line,
+> Thermal Power Pump e ME Pattern Buffer Proxy ganharam receita. Gate PASS 208.
+
+> **Receitas wireless e endgame (G-0187):** todas as hatches wireless (LV–MAX, 1A–1.048.576A) têm receita;
+> Nexus Capacitor UEV–MAX e hatches accelerate/overclock/thread/parallel até MAX também. Blocos sem receita:
+> 353 → 88 (70 são itens restritos por config). Gate PASS 207.
+
+> **EOH nos planetas (G-0186):** programas para Overworld, Nether, End, Lua, Marte, Vênus, Mercúrio e Glacio
+> com parâmetros GTNH por tier; catálogo lido dos veios de cada dimensão; 5 Planet Blocks novos com receita;
+> evento KubeJS `GTNAStartupEvents.eyeOfHarmony`. Gate PASS 207. Falta a arte de Glacio (autor) e QA no cliente.
+
+> **Veios nos planetas (G-0185):** com Ad Astra, Lua/Marte/Vênus/Mercúrio/Glacio têm veios GTCEu reais
+> (33 portados do GTO; 7/12/8/6/10 por planeta) em pedras próprias de cada planeta. Gate PASS 205.
+> Só chunks novos recebem os veios. QA no mundo pendente.
+
+> **ME Export Buffer e relatório de cobertura (G-0184):** parte LuV `gtna:me_export_buffer` (bus +
+> hatch de saída → ME, buffer long sem travar receita) e GameTest que grava
+> `run/gtna-recipe-coverage.txt` com o que não tem receita. Gate PASS 204 GameTests; QA no cliente pendente.
+
 > **EOH / receitas de teste e texturas (G-0183):** 32 receitas adaptadas de construção EOH
 > carregam na Assembly Line; os materiais sólidos especiais têm modelos GTCEu e sprites Modernity
 > ou GTO. Gate PASS 202 GameTests. QA visual e fechamento da cadeia Survival do Godforge pendentes.
@@ -6421,3 +6456,315 @@ grep -q "GAME TESTS COMPLETE" run/logs/latest.log && echo OK || echo "NAO RODOU"
   conferidas com ingredientes fornecidos para teste, mas ainda não fecham a cadeia inteira.
 
 - 2026-10-07 (Forge of Gods): `/gtna godforge shards <n>` (OP 2; ajusta gravitonShardsSpent, porque o disponível é recalculado a cada tick). Módulos Smelting/Molten/Plasma aceitam 1 Thread Hatch via GTNAMultipleRecipesLogic, com o modificador GTNH aplicado em cada thread. Um hatch acima do tier liberado forma, mas não adiciona threads (base UHV, GPCI→UIV, CD→OpV, END→MAX). O Exotic continua com uma thread só. O controller usa RotationState.ALL (para cima/para baixo). Gate verde: 202/202. Sem commit.
+
+## G-0184 — 2026-10-07 — ME Export Buffer e relatório de cobertura de receitas
+
+- `GTNAMEExportBufferPartMachine` (`gtna:me_export_buffer`, LuV, toggle `meExportBuffer`): EXPORT_ITEMS +
+  EXPORT_FLUIDS numa parte; saídas de receita vão a `KeyStorage` com contagem long (fluido não limitado a
+  int como no ME Output Hatch do GTCEu) e são enviadas à rede ME no intervalo AE2; ao remover, devolve o
+  buffer à rede. Não aceita extração; screwdriver não troca IO. Receita de Assembler LuV: hull LuV, ME
+  Output Bus, ME Output Hatch, 256k Crafting Storage, 2 esteiras e 2 bombas LuV, 2 circuitos LuV,
+  576 mB de solda. Escrito sobre GTCEu (LGPL), sem código do GTMThings (licença pendente).
+- `GTNARecipeCoverageGameTests` grava `gtna-recipe-coverage.txt` no diretório do servidor de teste:
+  1ª execução — 353 blocos/máquinas, 96 itens (maioria baldes), 79 itens de material e 10 fluidos sem
+  receita. Lacunas reais: hatches wireless energy/dynamo (quase todos os tiers), hatches
+  accelerate/output boost/infinite input (todos) e overclock/parallel/thread acima de UV,
+  chemical_plant, component_assembly_line, thermal_power_pump, matrix_module_i–iv, nexus_capacitor
+  UEV+, nexus_hypercore_casing, planet blocks Nether/End, hypogen_coil, graviton flow modulators,
+  restraint_device, singularity_reinforced_stellar_shielding_casing, personal_space_portal,
+  me_pattern_buffer_proxy; formas sólidas de SpaceTime/WDM/BDM/Universium/MHDCSM/Magmatter/Graviton.
+- Gate `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` PASS, 204/204.
+  Sem commit. QA no cliente do buffer (GUI, rede ME, quebrar com buffer cheio) pendente.
+
+## G-0185 — 2026-10-07 — Veios de minério nos planetas do Ad Astra
+
+- Decisão do autor: veios reais nos planetas (base para o Void Miner e as simulações do EOH); Fusion
+  Mk4/Mk5 do GTNH a ser substituído pelo Advanced Fusion Reactor do GTO com módulos (em avaliação).
+- `common/data/worldgen/GTNAPlanetOres`: só ativo com Ad Astra. Prefixos de minério `moon_stone`,
+  `mars_stone`, `venus_stone`, `mercury_stone`, `glacio_stone` (blocos `gtceu:<planeta>_stone_<mat>_ore`),
+  cada um limitado aos materiais dos veios daquele planeta (~140 blocos no total). Camada de worldgen
+  `gtna_planet_stone` (tag `gtna:planet_ore_replaceables`, entradas opcionais) e 33 veios `gtna:planet/*`
+  traduzidos do GTOCore `GTOOres` para a API GTCEu 7.5.3. Excluídos os veios só-GTO (Celestine, Desh,
+  Calorite, Ostrum, Zircon); Desh/Ostrum/Calorite continuam vindo do worldgen do Ad Astra.
+- Borax recebe OreProperty (só com Ad Astra), porque é o minério principal do veio de borax de Marte e
+  Vênus e não é minério no GTCEu 7.5.3; isso também cria blocos de minério de Borax nas pedras comuns,
+  sem veio novo no Overworld. Veio de Scheelite do End (GTIA-D-164) intocado.
+- Lang EN gerado e PT manual (`tagprefix.<planeta>_stone`). GameTest `planetVeinsHaveOreBlocksOnTheirStones`:
+  cada planeta tem veio, cada material de veio tem bloco na pedra do planeta, pedras na tag e
+  resolução pedra → prefixo. Contagem: Lua 7, Marte 12, Vênus 8, Mercúrio 6, Glacio 10.
+- Gate `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline` PASS, 205/205.
+  Sem commit. Pendente: QA no mundo (gerar chunks novos em cada planeta, conferir textura, drops, ore
+  processing, indicadores), balanceamento conforme GTIA-D-150/158/164 e catálogo EOH lendo esses veios.
+
+## G-0186 — 2026-10-07 — Simulações planetárias do Eye of Harmony e KubeJS
+
+- `EyeOfHarmonyPrograms`: programas por item seletor → dimensão + tier de foguete GTNH (Overworld/Nether/End 0,
+  Lua 1, Marte 2, Vênus e Mercúrio 4; Glacio 5, escolha GTNA por não existir no GTNH). `EyeOfHarmonyOverworld`
+  virou `EyeOfHarmonyCatalog` e lê os veios GTCEu de qualquer dimensão; `Program.planet(tier, plasma)` aplica
+  18000 s × 1,4^tier, gás 10^9 × (tier+1), chance 1 − 0,05·tier, retorno 0,6 + tier/10, tier de receita
+  max(tier,1)−1 (compressão mínima e SpaceTime em falha), plasmas e Raw Star Matter × (casing+1) e fluido
+  especial WDM/BDM/Universium do GTNH. Overworld idêntico ao anterior.
+- Controlador: aceita qualquer item com programa; bloqueia com `compression` se o campo for menor que o exigido;
+  gás exigido por programa; orçamento com slot vazio continua usando o Overworld. Planeta sincronizado para o
+  renderer, que mostra a esfera do planeta do slot (`obj/planet_<nome>`).
+- Planet Blocks Lua/Marte/Vênus/Mercúrio/Glacio; texturas Modernity Mo/Ma/Ve/Me copiadas; Glacio aguarda a
+  arte do autor (`eye_of_harmony/planet/glacio_{top,bottom,front,back,left,right}.png`, 16×16), até lá aparece
+  sem textura. Receitas de Assembly Line para Nether, End e os 5 planetas (pesquisa do planeta anterior,
+  64 blocos da superfície, Planet Data Chip não consumido, custo crescente por tier). EMI/JEI: uma página por
+  programa.
+- KubeJS: `GTNAStartupEvents.eyeOfHarmony(event => event.add(item, dimensão, tier[, pó]) / remove(item))`,
+  postado no common setup; exemplo em `examples/kubejs/startup_scripts/gtna_eye_of_harmony_programs.js`.
+- GameTests novos: parâmetros GTNH de todos os programas, Lua com Ilmenite, Marte com Tungstate, registro e
+  remoção de programa custom. Gate `spotlessCheck compileJava runUnitTests runGameTestServer runData --offline`
+  PASS 207/207. Sem commit. QA no cliente pendente (EMI por planeta, render, operação real em Marte+).
+
+## G-0187 — 2026-10-07 — Receitas das hatches wireless, Nexus Capacitors e hatches de módulo
+
+- Textura de Glacio entregue pelo autor (6 faces 16×16); arte do autor, não alterada.
+- Bug corrigido: as receitas de laser 256A/1024A/4096A geravam as hatches wireless de 64A/256A/1024A
+  (índice de amperagem deslocado). `registerWirelessHatchRecipes` reescrito: LV–MAX, entrada e saída; cada
+  amperagem com par GTCEu (energy 1A/4A/16A, substation 64A, laser 256A/1024A/4096A) sai no Assembler a partir
+  dele; 16384A+ (e lacunas de tier sem hatch GTCEu) vêm de 4 hatches wireless da amperagem anterior, na
+  Assembly Line com pesquisa a partir de 16384A. Solda Indalloy 140 acima de LuV; MAX usa componentes OpV.
+- Nexus Capacitor UEV–MAX (Assembly Line, cadeia a partir do UHV); UXV pede White Dwarf Matter, OpV Black
+  Dwarf Matter, MAX Black Dwarf Matter + Raw Star Matter (saídas do EOH).
+- Accelerate/overclock UHV–MAX, thread UEV–MAX e parallel UHV–OpV: Assembly Line consumindo o tier anterior.
+- Cobertura (`run/gtna-recipe-coverage.txt`): 88 blocos sem receita, dos quais 70 são output boost e
+  infinite input (receitas restritas por `RestrictedItemsEnabled`, intencional). Restam: FOG (graviton flow
+  modulators, singularity casing, hypogen coil, restraint device — aguardam a cadeia GTNH), matrix modules,
+  nexus hypercore casing, ME pattern buffer proxy, chemical plant, component assembly line, thermal power
+  pump, personal space portal, infinite steam input bus, output boost steam bus, duration tester (dev).
+- Gate PASS 207/207. Sem commit. Balanceamento das quantidades ainda não jogado.
+
+## G-0188 — 2026-10-07 — Trava de tier das peças restritas e receitas de controladores
+
+- Decisão do autor: output boost e infinite input continuam atrás da condição de itens restritos (Journey),
+  com receita cara para o tier, e só funcionam em receitas do tier da peça.
+- `GTNASpecialPartUtil.matchesTier`: peça com tier (ITieredMachine) só age se o tier dela for igual ao tier
+  da receita antes do overclock e dos paralelos (`RecipeHelper.getPreOCRecipeEuTier`; receitas ULV contam
+  como LV). Peças a vapor (sem tier) continuam agindo sempre. Tooltip `gtna.machine.restricted_part.tier_lock`.
+  GameTest `restrictedPartsOnlyActOnTheirTier`.
+- Receitas restritas novas LV–MAX (Assembler): peça base do tier, 4+4 componentes do tier, 4 field generators,
+  8 circuitos do tier + 2 do tier seguinte, solda 576·tier mB, 1200+400·tier ticks. Ainda condicionais.
+- Chemical Plant: receita GTO 1:1 (o motivo antigo de omissão estava errado: Watertight Steel existe no GCYM).
+  Component Assembly Line: receita GTO adaptada (Assembly Line GTCEu ×16 no lugar do Advanced Assembly Line,
+  Advanced Assembly Line Unit do GTNA, Tritanium no lugar de Mithril), pesquisa do Component Assembler; o
+  GameTest que exigia a omissão foi trocado por um que exige a receita. Thermal Power Pump: shaped do GTO com
+  Bronze Reinforced Wood no lugar do Reinforced Wood Casing. ME Pattern Buffer Proxy do GTNA: receita GTCEu
+  pesquisada a partir do buffer GTNA.
+- Sem receita, por decisão pendente do autor: matrix_module_i–iv e nexus_hypercore_casing (nenhuma estrutura
+  usa), personal_space_portal (upstream sem receita). FOG aguarda a cadeia GTNH. duration_tester é dev.
+- Gate PASS 208/208. Sem commit.
+
+## G-0189 — 2026-10-07 — Remoções, portal e materiais da cadeia do Forge of Gods
+
+- Removidos (pedido do autor): `matrix_module_i`–`iv` e `nexus_hypercore_casing` (nenhuma estrutura usava;
+  texturas `wireless_energy_unit/*` mantidas porque os Nexus Capacitors usam). Mundos com esses blocos os perdem.
+- Personal Space Portal: Assembler EV (4 frames de Titanium, 8 Crying Obsidian, 2 field generators, 2 emitters,
+  2 sensors EV, 8 placas de Ender Eye, 4 circuitos EV, solda). Upstream não tem receita; tier escolhido pela
+  ideia de dimensão-fábrica do GT:IA (D-238 J).
+- Forge of Gods: rastreio da cadeia GTNH (master atual do GT5-Unofficial) documentado em
+  `docs/roadmap/forge-of-gods-material-chain.md` (multiblocos, materiais, intermediários, itens, ordem).
+  `GodforgeChainMaterials`: Creon, Mellion, Transcendent Metal, Six-Phased Copper, Tengam (raw/purified/attuned),
+  Infinity, Eternity, Ichorium, Shijima, Churitsu, Superconductor Base UIV/UMV + fios supercondutores UIV/UXV,
+  Hypogen, Rhugnor, Celestial Tungsten, Astral Titanium, Chromatic Glass, Nitinol 60, Advanced Nitinol, Quantum,
+  Dragonblood, Metastable Oganesson, Shirabon, Atomic Separation Catalyst, Dilithium, Orundum, Magneto Resonatic,
+  DTCC/DTPC/DTRC/DTEC/DTSC e Excited, Phonon Medium/Crystal Solution, Mutated Living Solder, Primordial Matter,
+  Stabilised Baryonic Matter, Heavy Radox. Nomes, cores e fórmulas do GTNH; sem temperatura de EBF e sem fundição
+  de pó (nenhum atalho até a receita própria). Icon sets Infinity/Eternity ligados às texturas já importadas;
+  os demais usam SHINY/METALLIC/DIAMOND por enquanto (texturas próprias pendentes). Nome PT dos materiais pendente.
+- Gate PASS 208/208. Sem commit. Os substitutos em `GTNAGodforgeProgression` continuam até as etapas 2–8.
+
+## G-0190 — 2026-10-07 — Forge of Gods, etapa 2: plasmas e catalisadores DT
+
+- `GTNAGodforgeChainRecipes` (novo, registrado antes de `GTNAGodforgeProgression`):
+  - Fusão GTNH: Calcium, Sulfur, Zinc, Niobium, Silver, Bismuth, Radon, Thorium (Thorium com início de 1 bi EU,
+    como o GTO, no lugar de 6 bi). GTO: Titanium, Boron (o GTNH não tem fusão para eles). Lead: o GTNH usa
+    Telúrio, que não tem forma no GTCEu; trocado por Ouro + Lítio (79+3 prótons), 1 bi EU.
+  - Mixer GTNH 1:1 (5 fluidos, circuitos 9–13, 50.000 ticks, ZPM→UIV): DTCC, DTPC, DTRC, DTEC, DTSC. O DTSC pede
+    plasma de Naquadria (módulo de plasma do Forge) e Raw Star Matter (EOH): continua pós-Forge, como no GTNH.
+  - Laser Engraver em cleanroom: os cinco Excited, 50.000 ticks cada.
+- `GTNARecipeType.init`: `MIXER_RECIPES.setMaxIOSize(6,1,6,1)` e `LASER_ENGRAVER_RECIPES.setMaxIOSize(2,1,1,1)`,
+  como o GTO; mixers e gravadores singleblock ganham os tanques extras.
+- GameTest `stageTwoCatalystChainLoads`: as 21 receitas carregam e nenhum fluido ficou vazio.
+- Gate PASS 209/209. Sem commit. QA no cliente: UI do Mixer/Laser Engraver com os tanques novos.
+
+## G-0191 — 2026-10-07 — Forge of Gods, etapa 3: Advanced Fusion Reactor (GTO)
+
+- `gtna:advanced_fusion_reactor` ("Advanced Fusion Reactor MK-I"), `AdvancedFusionReactorMachine` sobre
+  `WorkableElectricMultipleRecipesMachine`: roda `FUSION_RECIPES` com Parallel/Accelerate (base) e
+  Thread/Overclock (extensão cross-recipe). Tier = LuV + extensões formadas em ordem (até UEV). Buffer interno
+  `entradas × 2^(tier−LuV) × 10⁷` EU (16 entradas em UEV = 2,56 bi), preenchido pelas hatches; regra de calor do
+  GTCEu (`eu_to_start` precisa caber no buffer; calor esfria 10.000/tick parado). Aceita 16 laser + 16 energia
+  (inclusive wireless); Control Hatch do GTO não portado. Sem renderer de anel (GTO tem `AdvancedFusionReactorRenderer`).
+- Extensões via `GTNASubPatterns` (kuangbiao2..5 + crossrecipe). `IGTNAModuleHost.gtna$formedModuleMask` novo
+  (mixin registra quais sub-patterns formaram), usado para contar extensões consecutivas.
+- 34 blocos GTO portados (`GTNABlocks`, texturas GTO), helpers novos `createColumnCasingBlock` e
+  `createHermeticCasingBlock`. Materiais: Platinum-Manganese-Antimony Heusler Alloy e Odyssey Nano Superalloy
+  (frames; EBF pela composição). Amprosium do GTO = Neutronium.
+- Receitas (`GTNAAdvancedFusionRecipes`): controlador por Assembly Line (Precision Assembler do GTO não existe;
+  circuitos HUI → circuitos do tier); 34 blocos — fiéis quando todos os insumos existem, adaptados no resto.
+- Fusões novas: Metastable Oganesson (Enriched Naquadah + Radônio no lugar de Oganesson, 1 bi EU), Rhugnor
+  (Infinity + Quantum, 2 bi; e QGP + Quantum), Hypogen (Dragonblood + Rhugnor, 1,2 bi). Infinity, Quantum e
+  Dragonblood ainda sem rota (etapa 7).
+- GameTests: `advancedFusionAndChainRecipesHaveNoEmptyIngredient` (≥50 receitas, nenhum insumo vazio) e
+  `advancedFusionBaseFormsAtLuV` (estrutura base forma pelo preview; tier LuV; buffer UEV 2,56 bi).
+- Gate PASS 211/211. Sem commit. QA no cliente: montar base e extensões, conferir tier/buffer na UI, rodar uma
+  fusão de 1 bi EU, texturas dos 34 blocos e nomes PT.
+
+## G-0192 — 2026-10-07 — Forge of Gods, etapa 4: Dimensionally Transcendent Plasma Forge
+
+- `gtna:dimensionally_transcendent_plasma_forge` (`PlasmaForgeMachine` sobre `CoilWorkableElectricMultiblockMachine`):
+  estrutura convertida de `MTEPlasmaForge` (`tools/convert_dtpf_structure.py` → `pattern/dtpf_gtnh.mbs`; 2121
+  Transcendent, 1273 Injection com mínimo 1250, 2112 bobinas, 120 Bridge). Até 2 energy hatches ou 1 laser.
+  Modificadores: `catalystDiscount` (tempo de receita acumulado; 8 h → −50% nos Excited DTxC; parada drena 100/tick)
+  + `ebfOverclock` do GTCEu. Convergence (Transdimensional Alignment Matrix) não portada. `dtpf.mbs` antigo segue sem uso.
+- Tipo `gtna:plasma_forge` (9/2 itens, 6/2 fluidos, `ebf_temp`). Bobina Eternal 13.500 K (tier 9); Dimensional Bridge
+  Casing com id novo `plasma_forge_bridge_casing` (o id `dimensional_bridge_casing` é remapeamento legado do EOH).
+  Item `laser_lens_special`.
+- Receitas: controlador, Bridge Casing, bobinas Hypogen e Eternal (Assembly Line com pesquisa); lente pela Assembly
+  Line (UV, sem DTPF) e pelo DTPF (Excited DTRC + Duranium → lente + DTR); DTR (Excited DTCC + Neutronium, bootstrap
+  GTNA); Six-Phased Copper (receita GT5U, Singularity do Avaritia → 8 Gravi Stars); Laser Engraver com a lente para
+  Celestial Tungsten, Astral Titanium, Chromatic Glass e Advanced Nitinol; Nitinol 60 no Alloy Blast Smelter; EBF
+  pó → lingote dos quatro metais GT++. Substituições: Mutated Living Solder → Indalloy 140 (sem rota ainda),
+  Oganesson → Radon, Exothermic Hearth → Mega Blast Furnace.
+- GameTest `plasmaForgeFormsAndDiscountsCatalysts`. Gate PASS 212/212. Sem commit. QA cliente: montar o DTPF,
+  conferir desconto na UI e as texturas novas.
+
+
+## G-0193 — 2026-10-07 — Forge of Gods, etapa 5: Transcendent Plasma Mixer
+
+- `gtna:transcendent_plasma_mixer` (`TranscendentPlasmaMixerMachine`): estrutura do `MTETranscendentPlasmaMixer`;
+  energia só da rede wireless do dono, custo total pago no início (`multiplicador × tpm_eut × duração` por paralelo);
+  paralelos pelo Parallel Hatch, limitados por insumos e saldo; sem overclock. Receitas sem EU (dados `tpm_eut`,
+  `tpm_duration`, `eu_multiplier`).
+- Receitas: controlador (Assembly Line UIV com pesquisa do DTPF; energy tunnels → energy hatches UIV, ProtoHalkonite
+  → Six-Phased Copper); Excited DTCC..DTSC; Primordial Matter; plasma de Creon (Fermium → Americium); Harmonic
+  Compound (EBF 14.000 K) e separação no Vacuum Freezer → Mellion + Creon; Mellion no Mixer (sem circuito, limite de 6
+  itens; Fiery Steel → Blaze, Firestone → Redstone); Orundum (Tiberium → Naquadria); Atomic Separation Catalyst.
+- Item `harmonic_compound` usa o modelo do Quantum Eye do GTCEu (sem textura no Modernity) — autor decide a arte.
+- GameTests `excitedDtscCostMatchesGtnh`, `plasmaMixerForms`. Gate PASS 214/214. Sem commit.
+- Aviso pré-existente (G-0191): `metastable_oganesson` conflita com a fusão GTCEu enriched naquadah + radon.
+- QA cliente: montar o TPM, rodar com saldo wireless, conferir custo na receita (JEI/EMI) e nomes PT.
+
+## G-0194 — 2026-10-07 — Forge of Gods, etapa 6: Phonon, Tengam, supercondutores, Shirabon
+
+- Receitas em `GTNAGodforgeChainRecipes.phonon`: Raw Tengam (Mixer de terras raras — sem minério ainda) →
+  Purified (Electromagnetic Separator) → lingote (EBF 10.800 K) → Attuned (Polarizer); Dilithium (Autoclave Li +
+  diamante + hélio); Magneto Resonatic (Mixer + Autoclave); bases supercondutoras UIV/UMV (Mixer, composições GTNA
+  guiadas pelas fórmulas GTNH) → EBF 12.700 / 13.500 K → Vacuum Freezer com hélio líquido → Superconductor UIV/UMV;
+  Phononic Seed Crystal (Autoclave; água grau 8 → DTR); Phonon Crystal Solution (DTPF 13.500 K, GTNH 17.000 K limitado
+  pela bobina Eternal); Phonon Medium (Alloy Blast Smelter); Shirabon (DTPF, receita adaptada).
+- Item `phononic_seed_crystal` usa o modelo da Gravi Star do GTCEu — autor decide a arte.
+- Dimensionally Shifted Superfluid não existe como material; fica para a etapa 7/8.
+- Datagen: o lang en_us gerado podia ficar sem as entradas do `GTNALangProvider` quando o HashCache pulava o provider
+  e o Registrate sobrescrevia o arquivo; resolvido apagando a entrada do cache (`.cache/c622…`). Se o
+  `ConfigLangKeysTest` acusar 115 chaves faltando, é isso.
+- GameTest `phononChainIsComplete`. Gate PASS 215/215. Sem commit.
+
+## G-0195 — 2026-10-07 — Forge of Gods, etapas 7 e 8 (parcial): rotas exóticas e troca de substitutos
+
+- `GTNAGodforgeChainRecipes.exoticRoutes` (rotas GTNA; sem Avaritia/Thaumcraft/Draconic/Chemical Plant GT++):
+  Infinity (DTPF: Neutronium + Excited DTRC + Gravi Stars), Churitsu (Mixer) → Quantum + Shijima (Centrífuga, EBF),
+  Dragonblood (Mixer com Dragon's Breath), Ichorium (Alloy Blast Smelter), Mutated Living Solder (Mixer sobre
+  Indalloy 140 + Infinity), Eternity (DTPF até o Nano Forge ser portado).
+- `GTNAGodforgeProgression`: substitutos trocados pelos materiais reais — Transcendent Metal, Creon, Mellion,
+  Six-Phased Copper, Hypogen, Metastable Oganesson, Eternity, Superconductor UIV e Mutated Living Solder.
+  Controladores do DTPF/TPM seguem com Indalloy 140 (bootstrap: MLS depende do DTPF).
+- Pendente: Nano Forge (nanites; Eternity sai do DTPF), itens próprios dos custos (doc §4), Dimensionally
+  Shifted Superfluid, Convergence do DTPF.
+- Gate PASS 215/215. Sem commit.
+
+## G-0196 — 2026-10-07 — Nano Forge (tiers 1-3), texturas originais, conflito de fusão
+
+- Autor (2026-10-07): usar as texturas originais; conflito de receita fica a meu critério; título PNG apagado de
+  propósito; vai testar no fim.
+- Texturas originais: Phononic Seed Crystal (Modernity `gt.metaitem.03/761`), Harmonic Compound (GT5U `762`).
+- Metastable Oganesson agora funde Enriched Naquadah + **Xenon** (Radon colidia com a fusão GTCEu de plasma de
+  Naquadria).
+- `gtna:nano_forge` (`NanoForgeMachine`): peças main/tier2/tier3 do `MTENanoForge` convertidas por
+  `tools/convert_nano_forge_structure.py` (`pattern/nano_forge_{main,tier2,tier3}.mbs`); tiers 2/3 são sub-padrões
+  (`GTNASubPatterns`). Tier = menor entre extensões formadas e nanite num input bus (Carbon 1, Neutronium 2,
+  Transcendent Metal 3; não consumido — GTCEu não tem slot no controlador). Receita abaixo do tier → OC perfeito.
+  Tier 4 (MagMatter/render) não portado.
+- Blocos/materiais: Radiant Naquadah Alloy Casing (Modernity, CTM), Stellar Alloy (frames; ABS, composição GTNA).
+- 11 nanites (texturas GT5U/Modernity: genérica tingida + custom Eternity/Universium/Glowstone/White Dwarf).
+- Receitas: as 11 do `NaniteChain` (tiers 1-3, substituições documentadas na Javadoc), controlador e Carbon Nanites
+  na Assembly Line com pesquisa de scanner.
+- GameTests `naniteRecipesAreRegistered`, `nanoForgeBaseFormsAtTierOne`. Gate PASS 217/217. Sem commit.
+- QA cliente: montar base + extensões tier 2/3 (o preview do JEI mostra só a base), conferir tier na UI.
+
+## G-0197 — 2026-10-07 — Forge of Gods, etapa 8: componentes e progressão fiel ao GTNH
+
+- `GTNAGodforgeComponents` (texturas GT5U/Modernity): Stable Boson Containment Unit, Superconductor Composite,
+  Tengam Electromagnet, Raw Tesseract, Thermal Superconductor, Relativistic Heat Capacitor, Neutronium Heat Capacitor,
+  1080k Sp Coolant Cell, Graviton Anomaly. Blocos: Cosmic Fabric Manipulator, Force Field Glass (CTM), Field
+  Restriction Coil T3.
+- Receitas (`GTNAGodforgeChainRecipes.components`): receita final GTNH de cada um, intermediários ausentes
+  substituídos (lista na Javadoc). **Transcendent Metal agora tem rota** (GTNH): Raw Tesseract → Macerador (8 pó) →
+  EBF 11.701 K com Tungsten fundido (+ Celestial Tungsten).
+- `GTNAGodforgeProgression` reescrito a partir de `addGodforgeRecipes` e `Godforge.java` (custos): itens e fluidos
+  do GTNH (Excited DTEC, Phonon Medium, nanites de prata, módulos com TPM/Advanced Fusion/Fluid Heater…).
+  Substitutos restantes: ZPM4/ZPM6 → Ultimate Battery, Eternal Singularity → Gravi Stars, energy tunnel → laser
+  hatch 4096A UIV, energy distributor → power transformer UXV, Exothermic Hearth → Mega Blast Furnace, Plasma
+  Generator UV ×64 → Large Plasma Turbine ×4, TFFT field → Quantum Tank UHV; Transdimensional Alignment Matrix e
+  nanites de MagMatter fora dos custos (não portados).
+- Gate PASS 217/217 (cache do lang limpo de novo antes do runData). Sem commit.
+
+## G-0198 — 2026-10-07 — Baterias ZPM3-ZPM6 e Dimensionally Shifted Superfluid
+
+- Itens Really/Extremely/Insanely/Mega Ultimate Battery (GTNH ZPM3-ZPM6, ícone de carga cheia do Modernity) com as
+  receitas de Assembly Line do GTNH (substituições na Javadoc de `batteries`). Progressão: ZPM4 → Extremely,
+  ZPM6 → Mega (ZPM2 continua a Ultimate Battery do GTCEu).
+- Material `dimensionally_shifted_superfluid` + 4 receitas do DTPF (tiers 2-5 do GTNH; Stable Baryonic Matter → Raw
+  Star Matter, Radox → Naquadria, água grau 8 → água destilada ×10). Field Restriction Coil T3 agora usa o DSS.
+- Fora: Transdimensional Alignment Matrix / Convergence (dependem do Bose-Einstein Condensate do GTNH), Eternal
+  Singularity (sem textura original), Nano Forge tier 4.
+- Gate PASS 217/217. Sem commit.
+
+## G-0199 — 2026-10-07 — Auditoria de craftabilidade (alcançabilidade)
+
+- `GTNARecipeCoverageGameTests` agora também calcula ponto fixo de alcançabilidade (tudo fora do namespace gtna conta
+  como obtível), lista o conteúdo gtna inalcançável, a primeira entrada faltante de cada receita bloqueada, exporta
+  `run/gtna-blocked-graph.json` e lista tipos de receita sem máquina (0).
+- Raízes encontradas e corrigidas: plasmas GT++ fora da tabela do Plasma Module (Celestial Tungsten, Astral Titanium,
+  Advanced Nitinol, Rhugnor, Dragon Metal, Chromatic Glass, Ichorium, Hypogen, Six-Phased Copper — agora na tabela,
+  tiers do GTNH); Space/Time (centrífuga GT5U de SpaceTime com Tesseract + lente); cadeia de flotação sem rota
+  (CS2, etilatos, xantatos e Turpentine do GTO, etilato de potássio por K + etanol); Singularity Shielding Casing e
+  Medial/Central Graviton Flow Modulator (no GTNH 2.9 saem do BEC Condensate Assembler — receita provisória de
+  Assembly Line até portar o BEC); Restraint Device (GTO); CF-PPS (banho químico GTO); solidificação de WDM/BDM/
+  Universium/SpaceTime; rod/bolt/screw de SpaceTime (Eternal coil).
+- Resultado: com as saídas de máquina do EOH (Raw Star Matter, WDM, BDM, Universium, SpaceTime) tudo do GTNA é
+  alcançável; EOH → Forge of Gods → 4 módulos sem ciclo; só MagMatter/MHDCSM/QGP dependem do próprio Forge.
+- Flaky conhecido: `eye_of_harmony_normal_speed_circuit_preview...` falhou 1× por corrida no check assíncrono de
+  padrão do GTCEu (HashMap); passou na repetição.
+- Gate PASS 217/217. Sem commit.
+
+## G-0200 — 2026-10-07 — Roadmap de multiblocos e mecânicas
+
+- Direção do autor: o GTNA porta todo multibloco viável **e** mecânicas, com KubeJS; receitas e linhas ficam com o
+  modpack; máquinas "atalho" entram (caras no GT:IA); o Research Center do GTO é do research padrão do GTCEu e entra.
+- `docs/roadmap/auditoria-multiblocos.md` (vereditos, blocos faltando) e `docs/roadmap/ROADMAP-multiblocos.md`
+  (princípios, checklist de port, pendências P1–P6, fases A–G, APIs transversais, ordem sugerida).
+- **Próxima sessão:** começar pelo ROADMAP §2 (QA/commit/datagen/flaky) e §5.
+
+## G-0201 — 2026-10-07 — Correções do QA do autor + release 0.5.2
+
+- Lang: Registrate e `GTNALangProvider` gravavam o mesmo `en_us.json` (o último apagava o outro: 71 itens sem nome
+  ou 115 chaves de config). Agora há um único escritor: `GTNALangProvider.feed` injeta no provider de lang do
+  Registrate. Removido o hack de cache.
+- Componentes sem receita no GTCEu: motor/piston/pump/conveyor/robot arm/emitter/sensor/field generator UHV→OpV,
+  casings UEV→MAX, energy hatches UEV→MAX e UU Matter (`GTNAHighTierComponentRecipes`, ids `gtna:*/high_tier/*`,
+  receitas padrão para o pack trocar). Pendente: **circuitos acima de UHV não existem** (tags UEV+ vazias).
+- Iconsets: Hypogen e Chromatic Glass com sets próprios (GT5U), Dragonblood no set Hypogen, prefixos superdense/
+  triple/quadruple/quintuple portados, BDM completado (texturas faltantes geradas escurecidas do set metallic).
+- Nanites de Glowstone: faltava o `.mcmeta` do overlay animado. Baterias: ZPM3 com textura própria do GT5U; ZPM4–6
+  (mesmo ícone no GTNH) tingidas por tier.
+- Tooltips no padrão: DTPF, TPM e Nano Forge no formato GTNH (Machine Type + linhas originais + separadores),
+  Advanced Fusion no formato GTO; os quatro com linha de fonte.
+- Nano Forge: o bloco "A" dos tiers 2/3 é a Assembly Line Casing (corrigido).
+- Personal Space: aparece na aba de blocos; receita LV com obsidian normal.
+- Eternal coil: a receita do GTNH também não usa Eternity (SpaceTime + Hypogen); mantida.
+- EMI do EOH: o código só trocou ids/catalisador por planeta; aguardando o autor dizer o que piorou.
+- Nova dependência obrigatória desde a 0.5.1: Infiniverse 1.0.0.5 (Personal Space). Opcionais: Ad Astra, SGJourney.
+- Gate PASS 217/217. Versão 0.5.2.

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "active=false": {
+      "model": "gtna:block/eternal_coil"
+    },
+    "active=true": {
+      "model": "gtna:block/eternal_coil_active"
+    }
+  }
+}

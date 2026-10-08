@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import com.raishxn.gtna.common.data.GTNAMachines;
 import com.raishxn.gtna.common.data.GTNARecipeType;
-import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyOverworld;
+import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyCatalog;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
@@ -48,12 +48,14 @@ public final class EyeOfHarmonyJEIPlugin implements IModPlugin {
         if (!enabled()) return;
         var level = Minecraft.getInstance().level;
         if (level == null) return;
-        try {
-            registration.addRecipes(EyeOfHarmonyCategory.TYPE,
-                    com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyDisplay
-                            .pages(EyeOfHarmonyOverworld.build(level.getRecipeManager()), category.pageSize()));
-        } catch (IllegalStateException exception) {
-            GTCEu.LOGGER.warn("Eye of Harmony JEI catalog unavailable: {}", exception.getMessage());
+        for (var program : com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyPrograms.all()) {
+            try {
+                registration.addRecipes(EyeOfHarmonyCategory.TYPE,
+                        com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyDisplay.pages(
+                                EyeOfHarmonyCatalog.build(level.getRecipeManager(), program), category.pageSize()));
+            } catch (IllegalStateException | ArithmeticException exception) {
+                GTCEu.LOGGER.debug("Eye of Harmony JEI catalog unavailable: {}", exception.getMessage());
+            }
         }
     }
 

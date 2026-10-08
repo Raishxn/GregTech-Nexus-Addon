@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "gtna:block/containment_field_generator"
+    }
+  }
+}

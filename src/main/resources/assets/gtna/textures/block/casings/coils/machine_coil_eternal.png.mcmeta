@@ -1,0 +1,8 @@
+{
+  "animation": {
+    "frametime": 3
+  },
+  "ldlib": {
+    "connection": "gtna:block/casings/coils/machine_coil_eternal_ctm"
+  }
+}

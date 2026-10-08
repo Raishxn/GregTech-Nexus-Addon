@@ -47,8 +47,11 @@ public final class GTNAGodforgeContent {
      * GTNH Hypogen heating coil ({@code HeatingCoilLevel.UXV}, 12601K in GTNH; 12600K on the GTCEu scale). The
      * Smelting Module core; also a regular heating coil for every coil multiblock.
      */
-    public static final BlockEntry<com.gregtechceu.gtceu.common.block.CoilBlock> HYPOGEN_COIL = coil(
+    public static final BlockEntry<com.gregtechceu.gtceu.common.block.CoilBlock> HYPOGEN_COIL = coil("hypogen_coil",
             HypogenCoil.INSTANCE);
+    /** GTNH Eternal heating coil, one step (900 K) above Hypogen; reaches the DTPF's 13,500 K recipes. */
+    public static final BlockEntry<com.gregtechceu.gtceu.common.block.CoilBlock> ETERNAL_COIL = coil("eternal_coil",
+            EternalCoil.INSTANCE);
     /** Letter H. */
     public static final BlockEntry<Block> GRAVITATIONAL_LENS = GTNABlocks.createCasingBlock(
             "spatially_transcendent_gravitational_lens", GlassBlock::new,
@@ -99,10 +102,51 @@ public final class GTNAGodforgeContent {
         }
     }
 
-    private static BlockEntry<com.gregtechceu.gtceu.common.block.CoilBlock> coil(
+    /** GTNH Eternal coil (Modernity-GTNH textures). */
+    public enum EternalCoil implements com.gregtechceu.gtceu.api.block.ICoilType {
+
+        INSTANCE;
+
+        @Override
+        public String getName() {
+            return "eternal";
+        }
+
+        @Override
+        public int getCoilTemperature() {
+            return 13500;
+        }
+
+        @Override
+        public int getLevel() {
+            return 64;
+        }
+
+        @Override
+        public int getEnergyDiscount() {
+            return 32;
+        }
+
+        @Override
+        public int getTier() {
+            return 9;
+        }
+
+        @Override
+        public com.gregtechceu.gtceu.api.data.chemical.material.Material getMaterial() {
+            return com.raishxn.gtna.common.data.material.GodforgeChainMaterials.Eternity;
+        }
+
+        @Override
+        public net.minecraft.resources.ResourceLocation getTexture() {
+            return GTNACORE.id("block/casings/coils/machine_coil_eternal");
+        }
+    }
+
+    private static BlockEntry<com.gregtechceu.gtceu.common.block.CoilBlock> coil(String name,
                                                                                  com.gregtechceu.gtceu.api.block.ICoilType type) {
         var block = REGISTRATE
-                .block("hypogen_coil", p -> new com.gregtechceu.gtceu.common.block.CoilBlock(p, type))
+                .block(name, p -> new com.gregtechceu.gtceu.common.block.CoilBlock(p, type))
                 .initialProperties(() -> Blocks.IRON_BLOCK)
                 .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
                 .addLayer(() -> RenderType::cutoutMipped)

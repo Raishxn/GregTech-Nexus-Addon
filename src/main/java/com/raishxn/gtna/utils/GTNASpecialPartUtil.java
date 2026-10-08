@@ -1,5 +1,6 @@
 package com.raishxn.gtna.utils;
 
+import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.capability.recipe.EURecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder;
@@ -7,9 +8,11 @@ import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
 import com.gregtechceu.gtceu.api.cover.CoverBehavior;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
+import com.gregtechceu.gtceu.api.machine.feature.ITieredMachine;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.content.ContentModifier;
 
@@ -64,40 +67,53 @@ public final class GTNASpecialPartUtil {
         return hasInfiniteElectricSingleblockCover(holder) || hasInfiniteSteamSingleblockCover(holder);
     }
 
-    public static boolean hasNoConsumeItems(IRecipeCapabilityHolder holder) {
+    /**
+     * Infinite input and output boost parts only act on recipes of their own voltage tier, measured before
+     * overclocking and parallels (ULV recipes count as LV). Parts without a tier (steam) always act.
+     */
+    public static boolean matchesTier(IMultiPart part, GTRecipe recipe) {
+        if (!(part instanceof ITieredMachine tiered)) return true;
+        return tiered.getTier() == recipeTier(recipe);
+    }
+
+    public static int recipeTier(GTRecipe recipe) {
+        return Math.max(GTValues.LV, RecipeHelper.getPreOCRecipeEuTier(recipe));
+    }
+
+    public static boolean hasNoConsumeItems(IRecipeCapabilityHolder holder, GTRecipe recipe) {
         if (hasSingleblockInfinityCover(holder)) {
             return true;
         }
         if (!(holder instanceof IMultiController controller)) return false;
         for (IMultiPart part : controller.getParts()) {
-            if (part instanceof GTNANoConsumeItemPart) {
+            if (part instanceof GTNANoConsumeItemPart && matchesTier(part, recipe)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean hasNoConsumeFluids(IRecipeCapabilityHolder holder) {
+    public static boolean hasNoConsumeFluids(IRecipeCapabilityHolder holder, GTRecipe recipe) {
         if (hasSingleblockInfinityCover(holder)) {
             return true;
         }
         if (!(holder instanceof IMultiController controller)) return false;
         for (IMultiPart part : controller.getParts()) {
-            if (part instanceof GTNANoConsumeFluidPart) {
+            if (part instanceof GTNANoConsumeFluidPart && matchesTier(part, recipe)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static int getItemOutputMultiplier(IRecipeCapabilityHolder holder) {
+    public static int getItemOutputMultiplier(IRecipeCapabilityHolder holder, GTRecipe recipe) {
         int multiplier = 1;
         if (hasSingleblockInfinityCover(holder)) {
             multiplier = Math.max(multiplier, SINGLEBLOCK_OUTPUT_MULTIPLIER);
         }
         if (holder instanceof IMultiController controller) {
             for (IMultiPart part : controller.getParts()) {
-                if (part instanceof GTNAOutputBoostItemPart boostPart) {
+                if (part instanceof GTNAOutputBoostItemPart boostPart && matchesTier(part, recipe)) {
                     multiplier = Math.max(multiplier, boostPart.gtna$getOutputMultiplier());
                 }
             }
@@ -105,14 +121,14 @@ public final class GTNASpecialPartUtil {
         return multiplier;
     }
 
-    public static int getFluidOutputMultiplier(IRecipeCapabilityHolder holder) {
+    public static int getFluidOutputMultiplier(IRecipeCapabilityHolder holder, GTRecipe recipe) {
         int multiplier = 1;
         if (hasSingleblockInfinityCover(holder)) {
             multiplier = Math.max(multiplier, SINGLEBLOCK_OUTPUT_MULTIPLIER);
         }
         if (holder instanceof IMultiController controller) {
             for (IMultiPart part : controller.getParts()) {
-                if (part instanceof GTNAOutputBoostFluidPart boostPart) {
+                if (part instanceof GTNAOutputBoostFluidPart boostPart && matchesTier(part, recipe)) {
                     multiplier = Math.max(multiplier, boostPart.gtna$getOutputMultiplier());
                 }
             }
@@ -133,8 +149,8 @@ public final class GTNASpecialPartUtil {
 
     public static GTRecipe adjustRecipeForMatching(IRecipeCapabilityHolder holder, GTRecipe recipe) {
         boolean hasSingleblockCover = hasSingleblockInfinityCover(holder);
-        int itemMultiplier = getItemOutputMultiplier(holder);
-        int fluidMultiplier = getFluidOutputMultiplier(holder);
+        int itemMultiplier = getItemOutputMultiplier(holder, recipe);
+        int fluidMultiplier = getFluidOutputMultiplier(holder, recipe);
         if (!hasSingleblockCover && itemMultiplier <= 1 && fluidMultiplier <= 1) {
             return null;
         }
@@ -156,8 +172,8 @@ public final class GTNASpecialPartUtil {
     }
 
     public static GTRecipe stripNoConsumeInputs(IRecipeCapabilityHolder holder, GTRecipe recipe, boolean tick) {
-        boolean stripItems = hasNoConsumeItems(holder);
-        boolean stripFluids = hasNoConsumeFluids(holder);
+        boolean stripItems = hasNoConsumeItems(holder, recipe);
+        boolean stripFluids = hasNoConsumeFluids(holder, recipe);
         if (!stripItems && !stripFluids) {
             return null;
         }
@@ -178,8 +194,8 @@ public final class GTNASpecialPartUtil {
     }
 
     public static GTRecipe applyOutputBoosts(IRecipeCapabilityHolder holder, GTRecipe recipe, boolean tick) {
-        int itemMultiplier = getItemOutputMultiplier(holder);
-        int fluidMultiplier = getFluidOutputMultiplier(holder);
+        int itemMultiplier = getItemOutputMultiplier(holder, recipe);
+        int fluidMultiplier = getFluidOutputMultiplier(holder, recipe);
         if (itemMultiplier <= 1 && fluidMultiplier <= 1) {
             return null;
         }

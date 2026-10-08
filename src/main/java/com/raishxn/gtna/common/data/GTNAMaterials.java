@@ -54,6 +54,11 @@ public class GTNAMaterials {
     public static Material SodiumEthylxanthate;
     public static Material PotassiumEthylxanthate;
     public static Material Turpentine;
+    public static Material CarbonDisulfide;
+    public static Material SodiumEthylate;
+    public static Material PotassiumEthylate;
+    public static Material LeachedTurpentine;
+    public static Material SteamCrackedTurpentine;
     /**
      * GTOCore flotation products: the {@code *Front} ore foams produced by the Industrial Flotation
      * Cell and dried back into GTCEu dusts by the Vacuum Drying Furnace. Every one of them has a
@@ -101,6 +106,7 @@ public class GTNAMaterials {
         MaterialBuilder.init();
         com.raishxn.gtna.common.data.material.EyeOfHarmonyMaterials.init();
         com.raishxn.gtna.common.data.material.GodforgeMaterials.init();
+        com.raishxn.gtna.common.data.material.GodforgeChainMaterials.init();
         MaterialAdd.init();
     }
 }

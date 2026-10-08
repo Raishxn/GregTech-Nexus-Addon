@@ -49,6 +49,7 @@ import com.raishxn.gtna.common.machine.multiblock.part.OverclockHatchPartMachine
 import com.raishxn.gtna.common.machine.multiblock.part.ThreadPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftPatternPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNACraftingCPUInterfacePartMachine;
+import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEExportBufferPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEPatternBufferProxyPartMachine;
 import com.raishxn.gtna.common.machine.multiblock.part.ae.GTNAMEStorageAccessPartMachine;
@@ -85,6 +86,7 @@ public class GTNAMachines2 {
     public static MachineDefinition ME_STORAGE_ACCESS_HATCH;
     public static MachineDefinition ME_BIG_STORAGE_ACCESS_HATCH;
     public static MachineDefinition ME_IO_PORT_HATCH;
+    public static MachineDefinition ME_EXPORT_BUFFER;
     public static MachineDefinition DIRECTED_TESSERACT_GENERATOR;
     /** GTOCore {@code GRIND_BALL_HATCH}: single-slot grinding-ball part for the ISA Mill. */
     public static MachineDefinition GRIND_BALL_HATCH;
@@ -117,6 +119,7 @@ public class GTNAMachines2 {
         registerPatternBuffers();
         registerCraftingCpuInterface();
         registerMEStorageAccessHatches();
+        registerMEExportBuffer();
         registerGrindBallHatch();
         registerDirectedTesseract();
         registerParallelHatch(GTValues.UHV, 1024);
@@ -316,6 +319,23 @@ public class GTNAMachines2 {
                 .tooltips(
                         Component.translatable("gtna.machine.me_storage_access_hatch.network"),
                         Component.translatable("gtceu.part_sharing.disabled"))
+                .register();
+    }
+
+    /** Item bus and fluid hatch in one part, with unbounded long buffers flushed to ME (GTMThings role). */
+    private static void registerMEExportBuffer() {
+        if (!ConfigHolder.isHatchEnabled("meExportBuffer")) return;
+        ME_EXPORT_BUFFER = REGISTRATE
+                .machine("me_export_buffer", GTNAMEExportBufferPartMachine::new)
+                .langValue("ME Export Buffer")
+                .tier(GTValues.LuV)
+                .rotationState(RotationState.ALL)
+                .abilities(PartAbility.EXPORT_ITEMS, PartAbility.EXPORT_FLUIDS)
+                .colorOverlayTieredHullModel(GTCEu.id("block/overlay/appeng/me_output_bus"))
+                .tooltips(
+                        Component.translatable("gtna.machine.me_export_buffer.capacity"),
+                        Component.translatable("gtceu.machine.me.export.tooltip"),
+                        Component.translatable("gtceu.part_sharing.enabled"))
                 .register();
     }
 
@@ -650,6 +670,7 @@ public class GTNAMachines2 {
                 .tooltips(
                         Component.translatable("gtna.machine.output_boost_hatch.main_function"),
                         Component.translatable("gtna.machine.output_boost_hatch.multiplier", multiplier),
+                        Component.translatable("gtna.machine.restricted_part.tier_lock", GTValues.VNF[tier]),
                         Component.translatable("gtceu.part_sharing.disabled"))
                 .register();
     }
@@ -675,6 +696,7 @@ public class GTNAMachines2 {
                 })
                 .tooltips(
                         Component.translatable("gtna.machine.infinite_input_bus.tooltip"),
+                        Component.translatable("gtna.machine.restricted_part.tier_lock", GTValues.VNF[tier]),
                         Component.translatable("gtceu.part_sharing.disabled"))
                 .register();
     }
@@ -700,6 +722,7 @@ public class GTNAMachines2 {
                 })
                 .tooltips(
                         Component.translatable("gtna.machine.infinite_input_hatch.tooltip"),
+                        Component.translatable("gtna.machine.restricted_part.tier_lock", GTValues.VNF[tier]),
                         Component.translatable("gtceu.part_sharing.disabled"))
                 .register();
     }
@@ -727,6 +750,7 @@ public class GTNAMachines2 {
                 .tooltips(
                         Component.translatable("gtna.machine.output_boost_hatch.main_function"),
                         Component.translatable("gtna.machine.output_boost_bus.tooltip", multiplier),
+                        Component.translatable("gtna.machine.restricted_part.tier_lock", GTValues.VNF[tier]),
                         Component.translatable("gtceu.part_sharing.disabled"))
                 .register();
     }
@@ -755,6 +779,7 @@ public class GTNAMachines2 {
                 .tooltips(
                         Component.translatable("gtna.machine.output_boost_hatch.main_function"),
                         Component.translatable("gtna.machine.output_boost_hatch.multiplier", multiplier),
+                        Component.translatable("gtna.machine.restricted_part.tier_lock", GTValues.VNF[tier]),
                         Component.translatable("gtceu.part_sharing.disabled"))
                 .register();
     }

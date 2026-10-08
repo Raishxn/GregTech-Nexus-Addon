@@ -377,6 +377,21 @@ public class MaterialBuilder {
                 .iconSet(FLUID)
                 .buildAndRegister();
 
+        // GTOCore reagent chain for the collectors and the frother (G-0199): CS2, ethylates, turpentine stages.
+        CarbonDisulfide = new Material.Builder(GTNACORE.id("carbon_disulfide"))
+                .fluid().components(Carbon, 1, Sulfur, 2).color(0x8b8b00)
+                .flags(DISABLE_DECOMPOSITION).iconSet(FLUID).buildAndRegister();
+        SodiumEthylate = new Material.Builder(GTNACORE.id("sodium_ethylate"))
+                .dust().components(Carbon, 2, Hydrogen, 5, Oxygen, 1, Sodium, 1).color(0xe8e2c8)
+                .flags(DISABLE_DECOMPOSITION).iconSet(DULL).buildAndRegister();
+        PotassiumEthylate = new Material.Builder(GTNACORE.id("potassium_ethylate"))
+                .dust().components(Carbon, 2, Hydrogen, 5, Oxygen, 1, Potassium, 1).color(0xe2dccc)
+                .flags(DISABLE_DECOMPOSITION).iconSet(DULL).buildAndRegister();
+        LeachedTurpentine = new Material.Builder(GTNACORE.id("leached_turpentine"))
+                .fluid().color(0x6b8e23).flags(DISABLE_DECOMPOSITION).iconSet(FLUID).buildAndRegister();
+        SteamCrackedTurpentine = new Material.Builder(GTNACORE.id("steam_cracked_turpentine"))
+                .fluid().color(0x7fa52a).flags(DISABLE_DECOMPOSITION).iconSet(FLUID).buildAndRegister();
+
         // GTOCore ore foams (GTO MaterialB:2974-3070); every one has a drying consumer.
         PyropeFront = oreFront("pyrope_front", Pyrope, 0x8b0000);
         RedstoneFront = oreFront("redstone_front", Redstone, 0xee0000);

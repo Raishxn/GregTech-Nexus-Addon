@@ -12,7 +12,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.client.EyeOfHarmonyRecipePresentation;
-import com.raishxn.gtna.common.data.GTNAEyeOfHarmonyContent;
 import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyDisplay;
 import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyDisplay.Page;
 import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyDisplay.Product;
@@ -37,7 +36,8 @@ public record EyeOfHarmonyEMIRecipe(Page page) implements EmiRecipe {
 
     @Override
     public ResourceLocation getId() {
-        return GTNACORE.id("eye_of_harmony/overworld/page_" + page.number());
+        return GTNACORE
+                .id("eye_of_harmony/" + page.catalog().definition().planet().getPath() + "/page_" + page.number());
     }
 
     @Override
@@ -68,7 +68,7 @@ public record EyeOfHarmonyEMIRecipe(Page page) implements EmiRecipe {
 
     @Override
     public List<EmiIngredient> getCatalysts() {
-        return List.of(EmiStack.of(GTNAEyeOfHarmonyContent.OVERWORLD_PLANET.asStack()));
+        return List.of(EmiStack.of(page.catalog().definition().planetStack()));
     }
 
     @Override
@@ -90,9 +90,9 @@ public record EyeOfHarmonyEMIRecipe(Page page) implements EmiRecipe {
         int itemRows = Math.min(9, rows - fluidRows);
         var visible = EyeOfHarmonyDisplay.singlePreview(page, itemRows, fluidRows);
         widgets.addSlot(getCatalysts().get(0), 90, 3).catalyst(true);
-        widgets.add(productSlot(() -> new Product(com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyOverworld
+        widgets.add(productSlot(() -> new Product(com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyCatalog
                 .fluid(GTMaterials.Hydrogen.getFluid(), page.catalog().program().hydrogen()), true), 18, 3));
-        widgets.add(productSlot(() -> new Product(com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyOverworld
+        widgets.add(productSlot(() -> new Product(com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyCatalog
                 .fluid(GTMaterials.Helium.getFluid(), page.catalog().program().helium()), true), 162, 3));
         for (boolean fluid : new boolean[] { false, true }) {
             int capacity = (fluid ? fluidRows : itemRows) * 9;

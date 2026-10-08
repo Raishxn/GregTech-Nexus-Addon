@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gtna:item/nanites/generic",
+    "layer1": "gtna:item/nanites/generic_overlay"
+  }
+}

@@ -28,6 +28,7 @@ public class GTNAKubeJSPlugin extends KubeJSPlugin {
     public void registerEvents() {
         super.registerEvents();
         GTNAServerEvents.GROUP.register();
+        GTNAStartupEvents.GROUP.register();
     }
 
     @Override

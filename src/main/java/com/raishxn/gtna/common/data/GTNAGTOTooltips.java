@@ -16,13 +16,37 @@ final class GTNAGTOTooltips {
 
     static boolean handles(String path) {
         return switch (path) {
-            case "brick_kiln", "thermal_power_pump", "liquefaction_furnace", "generator_array", "fishing_ground", "evaporation_plant", "greenhouse", "component_assembler", "component_assembly_line", "large_greenhouse", "cold_ice_freezer", "chemical_plant", "mega_alloy_blast_smelter", "isa_mill", "rocket_large_turbine", "supercritical_steam_turbine", "industrial_flotation_cell", "vacuum_drying_furnace" -> true;
+            case "brick_kiln", "thermal_power_pump", "liquefaction_furnace", "generator_array", "fishing_ground", "evaporation_plant", "greenhouse", "component_assembler", "component_assembly_line", "large_greenhouse", "cold_ice_freezer", "chemical_plant", "mega_alloy_blast_smelter", "isa_mill", "rocket_large_turbine", "supercritical_steam_turbine", "industrial_flotation_cell", "vacuum_drying_furnace", "advanced_fusion_reactor" -> true;
             default -> false;
         };
     }
 
     static boolean append(MultiblockMachineDefinition definition, List<Component> lines) {
         switch (definition.getId().getPath()) {
+            case "advanced_fusion_reactor" -> {
+                story(lines,
+                        "§bIt simulates the eternal light",
+                        "Plasma spins at light speed within magnetic constraints recreating cosmic creation energy density",
+                        "Deuterium-tritium fusion generates enough energy to power entire cities yet remains silent as a sleeping infant",
+                        "Reactor core exceeds 100 million degrees Celsius humanity's closest creation to a star",
+                        "Millions of fusion reactions per second prove civilization's technological pinnacle to the cosmos",
+                        "§6Imprisoning stellar power within steel civilization");
+                section(lines, "Main Function");
+                info(lines, "There are two types of modules: high-energy modules and overclock modules");
+                item(lines, "For each additional high-energy module installed, the reactor's heat capacity is doubled");
+                item(lines,
+                        "High-energy modules must be installed in order and the same module cannot be installed repeatedly");
+                item(lines, "High-energy modules can increase heat capacity a total of four times");
+                item(lines, "Overclock modules allow the installation of Overclock/Thread Hatches");
+                item(lines, "Only one overclock module is allowed to be installed");
+                info(lines,
+                        "If a high-energy module conflicts with the overclock module, install the high-energy module first");
+                lines.add(Component.translatable("gtceu.machine.fusion_reactor.capacity",
+                        com.raishxn.gtna.common.machine.multiblock.electric.AdvancedFusionReactorMachine
+                                .bufferCapacity(com.gregtechceu.gtceu.api.GTValues.LuV, 16) / 1_000_000L)
+                        .append(Component.literal(" [can be expanded by installing modules]")
+                                .withStyle(ChatFormatting.LIGHT_PURPLE)));
+            }
             case "brick_kiln" -> {
                 section(lines, "Main Function");
                 item(lines, "Fires bricks and ceramics from compressed clay and coal");

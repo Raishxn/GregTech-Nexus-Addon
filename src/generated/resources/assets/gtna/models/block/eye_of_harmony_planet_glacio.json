@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gtna:block/eye_of_harmony/planet/glacio_bottom",
+    "east": "gtna:block/eye_of_harmony/planet/glacio_left",
+    "north": "gtna:block/eye_of_harmony/planet/glacio_back",
+    "particle": "gtna:block/eye_of_harmony/planet/glacio_front",
+    "south": "gtna:block/eye_of_harmony/planet/glacio_front",
+    "up": "gtna:block/eye_of_harmony/planet/glacio_top",
+    "west": "gtna:block/eye_of_harmony/planet/glacio_right"
+  }
+}

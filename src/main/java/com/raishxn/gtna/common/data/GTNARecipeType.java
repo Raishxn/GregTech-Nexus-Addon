@@ -339,6 +339,36 @@ public class GTNARecipeType {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.FURNACE);
 
+    /** GTNH nanoForgeRecipes: the required Nano Forge tier is recipe data {@code nano_forge_tier}. */
+    public static final GTRecipeType NANO_FORGE_RECIPES = register("nano_forge",
+            com.gregtechceu.gtceu.common.data.GTRecipeTypes.MULTIBLOCK)
+            .setMaxIOSize(6, 1, 3, 0)
+            .addDataInfo(data -> LocalizationUtils.format("gtna.recipe.nano_forge_tier",
+                    data.getInt("nano_forge_tier")))
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.ARC);
+
+    /** GTNH transcendentPlasmaMixerRecipes: up to 20 fluids; the EU cost is recipe data paid from the network. */
+    public static final GTRecipeType TRANSCENDENT_PLASMA_MIXER_RECIPES = register("transcendent_plasma_mixer",
+            com.gregtechceu.gtceu.common.data.GTRecipeTypes.MULTIBLOCK)
+            .setMaxIOSize(1, 0, 20, 1)
+            .addDataInfo(data -> LocalizationUtils.format("gtna.recipe.wireless_cost",
+                    FormattingUtil.formatNumbers(java.math.BigInteger.valueOf(
+                            data.contains("eu_multiplier") ? data.getLong("eu_multiplier") : 10)
+                            .multiply(java.math.BigInteger.valueOf(data.getLong("tpm_eut")))
+                            .multiply(java.math.BigInteger.valueOf(data.getInt("tpm_duration"))))))
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.MIXER);
+
+    /** GTNH plasmaForgeRecipes (Dimensionally Transcendent Plasma Forge); heat in {@code ebf_temp}. */
+    public static final GTRecipeType PLASMA_FORGE_RECIPES = register("plasma_forge",
+            com.gregtechceu.gtceu.common.data.GTRecipeTypes.MULTIBLOCK)
+            .setMaxIOSize(9, 2, 6, 2).setEUIO(IO.IN)
+            .addDataInfo(data -> LocalizationUtils.format("gtceu.recipe.temperature",
+                    FormattingUtil.formatTemperature(data.getInt("ebf_temp"))))
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.FURNACE);
+
     static {
         var blast = com.gregtechceu.gtceu.common.data.GTRecipeTypes.BLAST_RECIPES;
         var previous = blast.recipeBuilder("gtna_probe").onSave;
@@ -361,6 +391,10 @@ public class GTNARecipeType {
     }
 
     public static void init() {
+        // GTNH mixes the Dimensionally Transcendent catalysts from five fluids and laser-engraves them as fluids
+        // (G-0190); the GTCEu types are widened the way GTO does, so single blocks also get the extra tanks.
+        com.gregtechceu.gtceu.common.data.GTRecipeTypes.MIXER_RECIPES.setMaxIOSize(6, 1, 6, 1);
+        com.gregtechceu.gtceu.common.data.GTRecipeTypes.LASER_ENGRAVER_RECIPES.setMaxIOSize(2, 1, 1, 1);
         RANDOM_VOID_MINING_RECIPES.setRecipeUI(
                 new com.raishxn.gtna.api.machine.gui.ScrollableRecipeTypeUI(RANDOM_VOID_MINING_RECIPES));
     }

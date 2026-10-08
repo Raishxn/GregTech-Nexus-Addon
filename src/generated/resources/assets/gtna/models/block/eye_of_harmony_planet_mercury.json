@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gtna:block/eye_of_harmony/planet/mercury_bottom",
+    "east": "gtna:block/eye_of_harmony/planet/mercury_left",
+    "north": "gtna:block/eye_of_harmony/planet/mercury_back",
+    "particle": "gtna:block/eye_of_harmony/planet/mercury_front",
+    "south": "gtna:block/eye_of_harmony/planet/mercury_front",
+    "up": "gtna:block/eye_of_harmony/planet/mercury_top",
+    "west": "gtna:block/eye_of_harmony/planet/mercury_right"
+  }
+}

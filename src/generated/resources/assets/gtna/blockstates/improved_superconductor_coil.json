@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "gtna:block/improved_superconductor_coil"
+    }
+  }
+}

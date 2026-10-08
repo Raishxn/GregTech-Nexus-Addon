@@ -80,6 +80,44 @@ public final class GTNAFlotationDryingRecipes {
      * PortChainClosureTest scan and readability both rely on that).
      */
     private static void flotation(Consumer<FinishedRecipe> provider) {
+        // GTOCore reagent chain (AlloyBlast/Mixer/ChemicalReactor/ChemicalBath/Cracking/DigestionTreatment). GTO
+        // makes potassium ethylate from potash and quicklime with no ethanol; GTNA uses K + C2H5OH like sodium.
+        com.gregtechceu.gtceu.common.data.GCYMRecipeTypes.ALLOY_BLAST_RECIPES.recipeBuilder("carbon_disulfide")
+                .inputItems(TagPrefix.dust, GTMaterials.Carbon).inputItems(TagPrefix.dust, GTMaterials.Sulfur, 2)
+                .circuitMeta(8).outputFluids(GTNAMaterials.CarbonDisulfide.getFluid(1000))
+                .EUt(120).duration(350).blastFurnaceTemp(1200).save(provider);
+        GTRecipeTypes.MIXER_RECIPES.recipeBuilder("sodium_ethylate_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Sodium).inputFluids(GTMaterials.Ethanol.getFluid(1000))
+                .outputItems(TagPrefix.dust, GTNAMaterials.SodiumEthylate, 9)
+                .outputFluids(GTMaterials.Hydrogen.getFluid(1000)).EUt(120).duration(100).save(provider);
+        GTRecipeTypes.MIXER_RECIPES.recipeBuilder("potassium_ethylate_dust")
+                .inputItems(TagPrefix.dust, GTMaterials.Potassium).inputFluids(GTMaterials.Ethanol.getFluid(1000))
+                .outputItems(TagPrefix.dust, GTNAMaterials.PotassiumEthylate, 9)
+                .outputFluids(GTMaterials.Hydrogen.getFluid(1000)).EUt(120).duration(100).save(provider);
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("sodium_ethylxanthate_dust")
+                .inputItems(TagPrefix.dust, GTNAMaterials.SodiumEthylate, 9)
+                .inputFluids(GTNAMaterials.CarbonDisulfide.getFluid(1000))
+                .outputItems(TagPrefix.dust, GTNAMaterials.SodiumEthylxanthate, 12).EUt(480).duration(40)
+                .save(provider);
+        GTRecipeTypes.CHEMICAL_RECIPES.recipeBuilder("potassium_ethylxanthate_dust")
+                .inputItems(TagPrefix.dust, GTNAMaterials.PotassiumEthylate, 9)
+                .inputFluids(GTNAMaterials.CarbonDisulfide.getFluid(1000))
+                .outputItems(TagPrefix.dust, GTNAMaterials.PotassiumEthylxanthate, 12).EUt(480).duration(40)
+                .save(provider);
+        GTRecipeTypes.CHEMICAL_BATH_RECIPES.recipeBuilder("leached_turpentine")
+                .inputItems(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DARK_OAK_LOG, 16))
+                .inputFluids(GTMaterials.Naphtha.getFluid(1000))
+                .outputFluids(GTNAMaterials.LeachedTurpentine.getFluid(1000)).EUt(480).duration(80).save(provider);
+        GTRecipeTypes.CRACKING_RECIPES.recipeBuilder("steam_cracked_turpentine").circuitMeta(1)
+                .inputFluids(GTNAMaterials.LeachedTurpentine.getFluid(1000))
+                .inputFluids(GTMaterials.Steam.getFluid(1000))
+                .outputFluids(GTNAMaterials.SteamCrackedTurpentine.getFluid(1000)).EUt(480).duration(200)
+                .save(provider);
+        GTRecipeTypes.DISTILLATION_RECIPES.recipeBuilder("turpentine")
+                .inputFluids(GTNAMaterials.SteamCrackedTurpentine.getFluid(1000))
+                .outputFluids(GTNAMaterials.Turpentine.getFluid(1000)).outputFluids(GTMaterials.Naphtha.getFluid(900))
+                .EUt(1920).duration(400).save(provider);
+
         // Sodium ethylxanthate collector.
         GTNARecipeType.FLOTATING_BENEFICIATION_RECIPES.recipeBuilder("pyrope_front")
                 .inputItems(TagPrefix.dust, GTNAMaterials.SodiumEthylxanthate, 32)

@@ -8,7 +8,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import com.raishxn.gtna.common.data.GTNAEyeOfHarmonyContent;
 import com.raishxn.gtna.common.data.GTNAMachines;
 import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyDisplay.Page;
 import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyDisplay.Product;
@@ -69,7 +68,7 @@ public final class EyeOfHarmonyCategory implements IRecipeCategory<Page> {
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Page page, IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.CATALYST, 8, 4).setStandardSlotBackground()
-                .addItemStack(GTNAEyeOfHarmonyContent.OVERWORLD_PLANET.asStack());
+                .addItemStack(page.catalog().definition().planetStack());
         var program = page.catalog().program();
         builder.addSlot(RecipeIngredientRole.INPUT, 134, 4).setStandardSlotBackground()
                 .addFluidStack(GTMaterials.Hydrogen.getFluid(), program.hydrogen())

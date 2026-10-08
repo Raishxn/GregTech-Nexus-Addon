@@ -35,11 +35,6 @@ public final class ControllerRecipePolicyTest {
 
     /** Registry path → documented reason for omitting the controller recipe. */
     private static final Map<String, String> OMITTED = Map.of(
-            "chemical_plant",
-            "GTO's original is an Assembly Line recipe using GTO-only WatertightSteel and other resources",
-            "component_assembly_line",
-            "GTO's original Assembly Line recipe uses the GTO-only Advanced Assembly Line, Advanced Assembly Line " +
-                    "Unit and Mithril",
             "forge_of_gods",
             "GTNH's Research Station recipe needs UMV/UIV materials not yet ported; decided in the progression phase " +
                     "of docs/roadmap/forge-of-gods-port-audit.md",

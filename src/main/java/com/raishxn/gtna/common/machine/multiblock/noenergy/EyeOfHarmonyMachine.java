@@ -31,6 +31,7 @@ import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -48,9 +49,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 import com.raishxn.gtna.api.capability.WirelessEnergyManager;
 import com.raishxn.gtna.api.machine.feature.eyeofharmony.EyeOfHarmonyMath;
-import com.raishxn.gtna.common.data.GTNAEyeOfHarmonyContent;
 import com.raishxn.gtna.common.data.GTNAMaterials;
-import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyOverworld;
+import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyCatalog;
+import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyPrograms;
 import com.raishxn.gtna.utils.datastructure.Int128;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,8 +93,7 @@ public class EyeOfHarmonyMachine extends WorkableMultiblockMachine implements ID
 
     @Persisted
     private final NotifiableItemStackHandler planetInventory = new NotifiableItemStackHandler(this, 1, IO.NONE, IO.NONE)
-            .setFilter(stack -> stack.getItem() instanceof net.minecraft.world.item.BlockItem item &&
-                    item.getBlock() instanceof com.raishxn.gtna.common.block.EyeOfHarmonyPlanetBlock);
+            .setFilter(stack -> EyeOfHarmonyPrograms.forStack(stack) != null);
     @Persisted
     @DescSynced
     private int cycleState;
@@ -143,7 +143,10 @@ public class EyeOfHarmonyMachine extends WorkableMultiblockMachine implements ID
     private String previewReturn = "0";
     @DescSynced
     private String blockedReason = "planet";
-    private EyeOfHarmonyOverworld.Catalog catalog;
+    private EyeOfHarmonyCatalog.Catalog catalog;
+    /** Planet item of the slot, for the client renderer and display. */
+    @DescSynced
+    private String planetId = "";
 
     public NotifiableItemStackHandler getPlanetInventory() {
         return planetInventory;
@@ -279,18 +282,21 @@ public class EyeOfHarmonyMachine extends WorkableMultiblockMachine implements ID
         absorbGases();
         overclockLevel = circuit();
         quotedStartupEU = getStartupEnergy().toBigInteger().toString();
-        var previewCatalog = catalog(level);
-        if (previewCatalog != null && compressionTier >= 0 && accelerationTier >= 0 && stabilisationTier >= 0) {
-            var preview = EyeOfHarmonyMath.plan(previewCatalog.program(),
+        catalog(level);
+        var previewCatalog = quoteCatalog(level);
+        if (previewCatalog != null && compressionTier >= previewCatalog.program().requiredCompression() &&
+                accelerationTier >= 0 && stabilisationTier >= 0) {
+            var previewProgram = previewCatalog.program();
+            var preview = EyeOfHarmonyMath.plan(previewProgram,
                     new EyeOfHarmonyMath.Fields(compressionTier, accelerationTier, stabilisationTier), overclockLevel,
-                    Math.max(hydrogen, 1_000_000_000L), Math.max(helium, 1_000_000_000L),
+                    Math.max(hydrogen, previewProgram.hydrogen()), Math.max(helium, previewProgram.helium()),
                     new EyeOfHarmonyMath.History(lastChance, pity));
             previewDuration = preview.durationTicks();
             previewChance = preview.chance();
             previewYield = preview.yield();
             previewReturn = preview.creditEU().toString();
         }
-        if (!planetInventory.getStackInSlot(0).is(GTNAEyeOfHarmonyContent.OVERWORLD_PLANET.asItem())) {
+        if (EyeOfHarmonyPrograms.forStack(planetInventory.getStackInSlot(0)) == null) {
             blockedReason = "planet";
             return;
         }
@@ -298,14 +304,18 @@ public class EyeOfHarmonyMachine extends WorkableMultiblockMachine implements ID
             blockedReason = "owner";
             return;
         }
-        if (hydrogen < 1_000_000_000L || helium < 1_000_000_000L) {
-            blockedReason = "gas";
-            return;
-        }
         if (compressionTier < 0 || accelerationTier < 0 || stabilisationTier < 0) return;
         var outputs = catalog(level);
         if (outputs == null) {
             blockedReason = "catalog";
+            return;
+        }
+        if (hydrogen < outputs.program().hydrogen() || helium < outputs.program().helium()) {
+            blockedReason = "gas";
+            return;
+        }
+        if (compressionTier < outputs.program().requiredCompression()) {
+            blockedReason = "compression";
             return;
         }
         var plan = EyeOfHarmonyMath.plan(outputs.program(),
@@ -341,7 +351,7 @@ public class EyeOfHarmonyMachine extends WorkableMultiblockMachine implements ID
             }
         } else if (result.failedSpaceTime() > 0) {
             var fluids = new ListTag();
-            fluids.add(EyeOfHarmonyOverworld.fluid(GTNAMaterials.SpaceTime.getFluid(), result.failedSpaceTime()));
+            fluids.add(EyeOfHarmonyCatalog.fluid(GTNAMaterials.SpaceTime.getFluid(), result.failedSpaceTime()));
             pendingProducts.put("fluids", fluids);
         }
         cycleHydrogen = hydrogen;
@@ -352,15 +362,35 @@ public class EyeOfHarmonyMachine extends WorkableMultiblockMachine implements ID
         markDirty();
     }
 
-    private EyeOfHarmonyOverworld.Catalog catalog(ServerLevel level) {
-        if (catalog == null) {
+    private EyeOfHarmonyCatalog.Catalog catalog(ServerLevel level) {
+        var stack = planetInventory.getStackInSlot(0);
+        var definition = EyeOfHarmonyPrograms.forStack(stack);
+        String id = stack.isEmpty() ? "" : BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+        if (!id.equals(planetId)) planetId = id;
+        if (definition == null) return null;
+        return cachedCatalog(level, definition);
+    }
+
+    /** Quotes with an empty slot use the Overworld program, as before planets existed. */
+    private EyeOfHarmonyCatalog.Catalog quoteCatalog(ServerLevel level) {
+        var definition = EyeOfHarmonyPrograms.forStack(planetInventory.getStackInSlot(0));
+        return cachedCatalog(level, definition == null ? EyeOfHarmonyPrograms.overworld() : definition);
+    }
+
+    private EyeOfHarmonyCatalog.Catalog cachedCatalog(ServerLevel level, EyeOfHarmonyPrograms.Definition definition) {
+        if (catalog == null || !catalog.definition().equals(definition)) {
             try {
-                catalog = EyeOfHarmonyOverworld.build(level);
+                catalog = EyeOfHarmonyCatalog.build(level.getRecipeManager(), definition);
             } catch (IllegalStateException | ArithmeticException error) {
+                catalog = null;
                 return null;
             }
         }
         return catalog;
+    }
+
+    public String getPlanetId() {
+        return planetId;
     }
 
     private void absorbGases() {
@@ -401,7 +431,7 @@ public class EyeOfHarmonyMachine extends WorkableMultiblockMachine implements ID
     public Int128 getStartupEnergy() {
         if (cycleState != 0) return Int128.fromBigInteger(new BigInteger(cycleDebit));
         if (getLevel() instanceof ServerLevel level) {
-            var outputs = catalog(level);
+            var outputs = quoteCatalog(level);
             if (outputs != null)
                 return Int128.fromBigInteger(EyeOfHarmonyMath.startupDebit(outputs.program(), overclockLevel));
         }

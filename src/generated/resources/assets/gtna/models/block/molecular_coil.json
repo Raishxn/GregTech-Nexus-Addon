@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "gtna:block/casings/molecular_coil/top",
+    "side": "gtna:block/casings/molecular_coil/side"
+  }
+}

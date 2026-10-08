@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "gtna:block/casings/strontium_carbonate_ceramic_ray_absorbing_mechanical_cube"
+  }
+}

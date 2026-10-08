@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gtna:block/eye_of_harmony/planet/mars_bottom",
+    "east": "gtna:block/eye_of_harmony/planet/mars_left",
+    "north": "gtna:block/eye_of_harmony/planet/mars_back",
+    "particle": "gtna:block/eye_of_harmony/planet/mars_front",
+    "south": "gtna:block/eye_of_harmony/planet/mars_front",
+    "up": "gtna:block/eye_of_harmony/planet/mars_top",
+    "west": "gtna:block/eye_of_harmony/planet/mars_right"
+  }
+}

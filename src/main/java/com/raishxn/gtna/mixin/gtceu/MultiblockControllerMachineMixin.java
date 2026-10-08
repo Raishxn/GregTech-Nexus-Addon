@@ -73,6 +73,8 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
     @Unique
     private volatile int gtna$formedModuleCount = 0;
     @Unique
+    private volatile long gtna$formedModuleMask = 0L;
+    @Unique
     private double gtna$moduleSpeedBonus = 1.0;
     @Unique
     private boolean gtna$modulePerfectOverclock;
@@ -91,6 +93,11 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
     public void gtna$setModulePerformance(double speedBonus, boolean perfectOverclock) {
         gtna$moduleSpeedBonus = speedBonus;
         gtna$modulePerfectOverclock = perfectOverclock;
+    }
+
+    @Override
+    public long gtna$formedModuleMask() {
+        return gtna$formedModuleMask;
     }
 
     @Override
@@ -121,6 +128,7 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
         }
         subPatterns.addAll(GTNASubPatterns.get(self.getDefinition()));
         if (subPatterns.isEmpty()) {
+            gtna$formedModuleMask = 0L;
             gtna$setModuleCount(self, 0);
             gtna$setModulePerformance(1.0, false);
             return true;
@@ -147,9 +155,12 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
         }
 
         int matched = 0;
+        long mask = 0L;
+        int index = -1;
         double speedBonus = 1.0;
         boolean perfectOverclock = false;
         for (BlockPattern sub : subPatterns) {
+            index++;
             if (sub == null) {
                 continue;
             }
@@ -169,6 +180,7 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
                 if (!gtna$hasDuplicatePerformanceHatch(candidateParts)) {
                     parts = candidateParts;
                     matched++;
+                    if (index < 64) mask |= 1L << index;
                     var performance = GTNASubPatterns.performance(sub);
                     if (performance != null) {
                         speedBonus *= performance.speedBonus();
@@ -189,6 +201,7 @@ public abstract class MultiblockControllerMachineMixin implements IGTNAModuleHos
             }
             positionCache.addAll(state.cache);
         }
+        gtna$formedModuleMask = mask;
         gtna$setModuleCount(self, matched);
         gtna$setModulePerformance(Math.min(speedBonus, 1024.0), perfectOverclock);
 

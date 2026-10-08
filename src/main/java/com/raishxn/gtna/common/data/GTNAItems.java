@@ -72,6 +72,12 @@ public class GTNAItems {
     public static ItemEntry<ComponentItem> CELL_COMPONENT_64M;
     public static ItemEntry<ComponentItem> CELL_COMPONENT_256M;
     public static ItemEntry<ComponentItem> ANNIHILATION_CONSTRAINER;
+    /** GT++ Laser Lens Special (MetaGeneratedItem 105), Modernity-GTNH texture. */
+    public static ItemEntry<ComponentItem> LASER_LENS_SPECIAL;
+    /** GTNH Harmonic Compound (metaitem 03:762, GT5U texture). */
+    public static ItemEntry<ComponentItem> HARMONIC_COMPOUND;
+    /** GTNH Phononic Seed Crystal (metaitem 03:761, Modernity texture). */
+    public static ItemEntry<ComponentItem> PHONONIC_SEED_CRYSTAL;
     public static ItemEntry<ComponentItem> NEUTRONIUM_ANTIMATTER_FUEL_ROD;
     public static ItemEntry<ComponentItem> DRACONIUM_ANTIMATTER_FUEL_ROD;
     public static ItemEntry<ComponentItem> COSMIC_NEUTRONIUM_ANTIMATTER_FUEL_ROD;
@@ -346,6 +352,20 @@ public class GTNAItems {
                 .lang("Infinite Cell Component")
                 .properties(stack -> stack.stacksTo(64))
                 .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/infinite_cell_component")))
+                .register();
+
+        PHONONIC_SEED_CRYSTAL = REGISTRATE.item("phononic_seed_crystal", ComponentItem::create)
+                .lang("Phononic Seed Crystal")
+                .register();
+
+        HARMONIC_COMPOUND = REGISTRATE.item("harmonic_compound", ComponentItem::create)
+                .lang("Harmonic Compound")
+                .register();
+
+        LASER_LENS_SPECIAL = REGISTRATE.item("laser_lens_special", ComponentItem::create)
+                .lang("Special Laser Lens")
+                .properties(stack -> stack.stacksTo(64))
+                .model((ctx, provider) -> provider.generated(ctx, GTNACORE.id("item/laser_lens_special")))
                 .register();
 
         ANNIHILATION_CONSTRAINER = REGISTRATE.item("annihilation_constrainer", ComponentItem::create)

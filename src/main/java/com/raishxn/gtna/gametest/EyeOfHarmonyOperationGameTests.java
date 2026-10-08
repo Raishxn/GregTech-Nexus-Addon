@@ -26,7 +26,7 @@ import com.raishxn.gtna.api.capability.WirelessEnergyManager;
 import com.raishxn.gtna.api.machine.feature.eyeofharmony.EyeOfHarmonyMath;
 import com.raishxn.gtna.common.data.GTNAEyeOfHarmonyContent;
 import com.raishxn.gtna.common.data.NexusEnergyNetwork;
-import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyOverworld;
+import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyCatalog;
 import com.raishxn.gtna.common.machine.multiblock.noenergy.EyeOfHarmonyMachine;
 import com.raishxn.gtna.utils.datastructure.Int128;
 
@@ -39,7 +39,7 @@ public final class EyeOfHarmonyOperationGameTests {
 
     @GameTest(template = "empty_16", timeoutTicks = 40)
     public static void eyeOfHarmonyOverworldCatalogUsesRealDustsPlasmasAndFuelCost(GameTestHelper helper) {
-        var catalog = EyeOfHarmonyOverworld.build(helper.getLevel());
+        var catalog = EyeOfHarmonyCatalog.build(helper.getLevel());
         helper.assertTrue(catalog.program().startupEU() > 36_000_188_743_680_000L,
                 "real eligible plasmas must add a real fuel-derived cost");
         var products = catalog.products();
@@ -66,7 +66,7 @@ public final class EyeOfHarmonyOperationGameTests {
 
     @GameTest(template = "empty_16", timeoutTicks = 40)
     public static void eyeOfHarmonyDisplayKeepsEveryProductAndLongAmount(GameTestHelper helper) {
-        var catalog = EyeOfHarmonyOverworld.build(helper.getLevel().getRecipeManager());
+        var catalog = EyeOfHarmonyCatalog.build(helper.getLevel().getRecipeManager());
         var pages = com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyDisplay.pages(catalog);
         var expected = new java.util.ArrayList<CompoundTag>();
         for (String kind : java.util.List.of("items", "fluids")) {
@@ -148,7 +148,7 @@ public final class EyeOfHarmonyOperationGameTests {
         var copy = catalog.products().copy();
         copy.getList("items", 10).getCompound(0).putLong("remaining", 5_000_000_001L);
         var large = com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyDisplay.pages(
-                new EyeOfHarmonyOverworld.Catalog(catalog.program(), copy));
+                new EyeOfHarmonyCatalog.Catalog(catalog.program(), copy));
         copy.getList("items", 10).getCompound(0).putLong("remaining", 1);
         helper.assertTrue(large.get(0).products().get(0).amount() == 5_000_000_001L,
                 "display must preserve amounts above int and detach product tags from runtime mutations");
@@ -428,11 +428,11 @@ public final class EyeOfHarmonyOperationGameTests {
         item.putLong("remaining", 70);
         items.add(item);
         var fluids = new ListTag();
-        fluids.add(EyeOfHarmonyOverworld.fluid(GTMaterials.Hydrogen.getFluid(), 500));
+        fluids.add(EyeOfHarmonyCatalog.fluid(GTMaterials.Hydrogen.getFluid(), 500));
         var products = new CompoundTag();
         products.put("items", items);
         products.put("fluids", fluids);
-        set(machine, "catalog", new EyeOfHarmonyOverworld.Catalog(new EyeOfHarmonyMath.Program(0, 0, 3,
+        set(machine, "catalog", new EyeOfHarmonyCatalog.Catalog(new EyeOfHarmonyMath.Program(0, 0, 3,
                 1_000_000_000L, 1_000_000_000L, 1000, 600, 1), products));
         return new Fixture(machine, owner);
     }
@@ -442,8 +442,8 @@ public final class EyeOfHarmonyOperationGameTests {
                                                                                                              throws Exception {
         var fixture = fixture(helper);
         var machine = fixture.machine;
-        var original = (EyeOfHarmonyOverworld.Catalog) get(machine, "catalog");
-        set(machine, "catalog", new EyeOfHarmonyOverworld.Catalog(
+        var original = (EyeOfHarmonyCatalog.Catalog) get(machine, "catalog");
+        set(machine, "catalog", new EyeOfHarmonyCatalog.Catalog(
                 new EyeOfHarmonyMath.Program(0, 0, 360_000, 1_000_000_000L, 1_000_000_000L, 1000, 600, 1),
                 original.products()));
         var input = (ItemBusPartMachine) machine.getParts().stream()
@@ -508,7 +508,7 @@ public final class EyeOfHarmonyOperationGameTests {
         var combined = new com.gregtechceu.gtceu.api.misc.EnergyContainerList(containers);
         helper.assertTrue(combined.getOutputVoltage() * combined.getOutputAmperage() >= expectedVoltage[3],
                 "16 existing MAX dynamos must actually transport the buffed Infinity EU/t");
-        var catalog = EyeOfHarmonyOverworld.build(helper.getLevel().getRecipeManager());
+        var catalog = EyeOfHarmonyCatalog.build(helper.getLevel().getRecipeManager());
         var plan = EyeOfHarmonyMath.plan(catalog.program(), new EyeOfHarmonyMath.Fields(0, 0, 0), 24,
                 1_000_000_000L, 1_000_000_000L, EyeOfHarmonyMath.History.fresh());
         helper.assertTrue(plan.durationTicks() == 1 && plan.debitEU().equals(

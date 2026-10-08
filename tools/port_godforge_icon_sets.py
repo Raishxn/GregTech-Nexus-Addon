@@ -22,6 +22,8 @@ SETS = {  # GTNH folder -> GTCEu icon set name
     "MagnetohydrodynamicallyConstrainedStarMatter": "mhdcsm",
     "magmatter": "magmatter",
     "GravitonShard": "graviton_shard",
+    "hypogen": "hypogen",
+    "chromaticglass": "chromatic_glass",
 }
 MODERNITY_SETS = {**SETS, "infinity": "infinity", "eternity": "eternity"}
 ITEMS = {
@@ -30,6 +32,8 @@ ITEMS = {
     "gearGt": "gear", "gearGtSmall": "gear_small", "stick": "rod", "stickLong": "rod_long", "bolt": "bolt",
     "screw": "screw", "ring": "ring", "round": "round", "rotor": "rotor", "spring": "spring",
     "springSmall": "spring_small", "wireFine": "wire_fine", "gem": "gem", "turbineBlade": "turbine_blade",
+    "plateSuperdense": "plate_superdense", "plateTriple": "plate_triple", "plateQuadruple": "plate_quadruple",
+    "plateQuintuple": "plate_quintuple",
 }
 BLOCKS = {"frameGt": "frame_gt", "block1": "block"}
 FLUIDS = {  # GTNH fluid texture -> GTNA fluid registry name

@@ -100,6 +100,9 @@ public class CommonProxy {
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(GTNANetworkHandler::init);
         event.enqueueWork(com.raishxn.gtna.data.recipe.GTNAGodforgeProgression::registerExtraCosts);
+        if (ModList.get().isLoaded("kubejs")) {
+            event.enqueueWork(com.raishxn.gtna.integration.kubejs.GTNAStartupEvents::postEyeOfHarmony);
+        }
         if (ModList.get().isLoaded("ftbquests")) {
             event.enqueueWork(com.raishxn.gtna.integration.ftb.GTNAQuestTypes::init);
         }
@@ -112,7 +115,9 @@ public class CommonProxy {
 
         boolean server = event.includeServer();
         boolean client = event.includeClient();
-        generator.addProvider(client, new GTNALangProvider(packOutput));
+        // Single en_us writer: GTNA translations are merged into Registrate's lang provider.
+        com.raishxn.gtna.api.registry.GTNARegistry.REGISTRATE.addDataGenerator(
+                com.tterrag.registrate.providers.ProviderType.LANG, lang -> GTNALangProvider.feed(lang, packOutput));
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
@@ -128,6 +133,8 @@ public class CommonProxy {
         event.register(GTNACORE.id("obj/overworld"));
         event.register(GTNACORE.id("obj/the_nether"));
         event.register(GTNACORE.id("obj/the_end"));
+        for (String planet : new String[] { "moon", "mars", "venus", "mercury", "glacio" })
+            event.register(GTNACORE.id("obj/planet_" + planet));
         event.register(GTNACORE.id("obj/eye_of_wood_sweat"));
         event.register(GTNACORE.id("obj/eye_of_wood_thinking"));
     }
@@ -152,7 +159,9 @@ public class CommonProxy {
     }
 
     // This is optional, though.
-    private void modifyMaterials(PostMaterialEvent event) {}
+    private void modifyMaterials(PostMaterialEvent event) {
+        com.raishxn.gtna.common.data.worldgen.GTNAPlanetOres.modifyMaterials();
+    }
 
     private void registerRecipeTypes(GTCEuAPI.RegisterEvent<ResourceLocation, GTRecipeType> event) {
         GTNARecipeType.init();
@@ -166,6 +175,11 @@ public class CommonProxy {
         GTNAMachines.init();
         GTNAMachines2.init();
         GTNAMachines3.init();
+        GTNAAdvancedFusion.init();
+        com.raishxn.gtna.common.data.GTNAPlasmaForge.init();
+        com.raishxn.gtna.common.data.GTNATranscendentPlasmaMixer.init();
+        com.raishxn.gtna.common.data.GTNANanoForge.init();
+        com.raishxn.gtna.common.data.GTNAGodforgeComponents.init();
         GTNAEnergyHatches.init();
         // Append the shared high-pressure line before the source attribution, so the tooltip reads
         // stats -> high pressure -> Source.

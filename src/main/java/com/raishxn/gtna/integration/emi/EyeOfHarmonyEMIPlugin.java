@@ -3,8 +3,9 @@ package com.raishxn.gtna.integration.emi;
 import com.raishxn.gtna.GTNACORE;
 import com.raishxn.gtna.common.data.GTNAMachines;
 import com.raishxn.gtna.common.data.GTNARecipeType;
+import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyCatalog;
 import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyDisplay;
-import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyOverworld;
+import com.raishxn.gtna.common.data.multiblock.EyeOfHarmonyPrograms;
 import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
@@ -23,11 +24,13 @@ public final class EyeOfHarmonyEMIPlugin implements EmiPlugin {
         registry.addWorkstation(CATEGORY, EmiStack.of(GTNAMachines.EYE_OF_HARMONY.asStack()));
         registry.removeRecipes(recipe -> recipe.getCategory().getId().equals(
                 GTNARecipeType.COSMOS_SIMULATION_RECIPES.getCategory().registryKey));
-        try {
-            var catalog = EyeOfHarmonyOverworld.build(registry.getRecipeManager());
-            registry.addRecipe(new EyeOfHarmonyEMIRecipe(EyeOfHarmonyDisplay.singlePage(catalog)));
-        } catch (IllegalStateException unavailable) {
-            GTNACORE.LOGGER.warn("Eye of Harmony EMI catalog unavailable: {}", unavailable.getMessage());
+        for (var program : EyeOfHarmonyPrograms.all()) {
+            try {
+                var catalog = EyeOfHarmonyCatalog.build(registry.getRecipeManager(), program);
+                registry.addRecipe(new EyeOfHarmonyEMIRecipe(EyeOfHarmonyDisplay.singlePage(catalog)));
+            } catch (IllegalStateException | ArithmeticException unavailable) {
+                GTNACORE.LOGGER.debug("Eye of Harmony EMI catalog unavailable: {}", unavailable.getMessage());
+            }
         }
     }
 }

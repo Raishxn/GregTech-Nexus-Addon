@@ -1,0 +1,9 @@
+{
+  "flip_v": true,
+  "loader": "forge:obj",
+  "model": "gtna:models/obj/star.obj",
+  "textures": {
+    "texture0": "gtna:block/eye_of_harmony/planet/mercury_front",
+    "particle": "gtna:block/eye_of_harmony/planet/mercury_front"
+  }
+}

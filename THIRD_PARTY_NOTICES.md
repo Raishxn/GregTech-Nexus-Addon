@@ -215,7 +215,7 @@ are preserved in this foundation stage. No external source code was copied verba
   `EyeOfHarmonyRecipe.java` and `EyeOfHarmonyRecipeStorage.java`. This adaptation retains
   LGPL-3.0 attribution; it isolates pure calculations, uses immutable plans and an explicit
   supplied roll, and leaves the modern ore/plasma catalog and world transactions separate.
-  `EyeOfHarmonyOverworld.java` also adapts `processDimension`, `processHelper`, dust/plasma
+  `EyeOfHarmonyCatalog.java` (formerly `EyeOfHarmonyOverworld.java`) also adapts `processDimension`, `processHelper`, dust/plasma
   eligibility and plasma-energy calculation from `EyeOfHarmonyRecipe.java`. Modern GTCEu
   ore definitions, OreProperty values and loaded plasma fuel recipes replace the legacy wrappers;
   differences and the retained 2.25 normal-vein flow are documented in the operation audit.
@@ -233,6 +233,12 @@ Exact source paths, repository revisions, licenses, modifications and SHA-256 ha
 51 imported textures and their animation files are recorded in
 [`docs/roadmap/eye-of-harmony-assets.json`](docs/roadmap/eye-of-harmony-assets.json).
 The Modernity candidates matched the author's local `Modernity-GTNH-2026-09-07` files byte for byte.
+Moon, Mars, Venus and Mercury Planet Block faces (24 PNGs, `eye_of_harmony/planet/<planet>_<face>.png`)
+were added on 2026-10-07 from the same local Modernity-GTNH copy, `assets/gtneioreplugin/textures/blocks/`
+`Mo_`, `Ma_`, `Ve_`, `Me_` + face, bytes unchanged (CC BY-NC-SA 4.0). Planetary program parameters (rocket
+tiers, 18000 s x 1.4^tier, gas, chance, efficiency, special fluids) follow GT5-Unofficial
+`tectech/recipe/EyeOfHarmonyRecipeStorage.java`/`EyeOfHarmonyRecipe.java` and `gtneioreplugin` (LGPL-3.0).
+The Glacio Planet Block art is the GTNA author's own and is not part of these imports.
 Repository license texts are bundled in `META-INF/licenses/eye_of_harmony/` inside the jar.
 Attribution appears on the component tooltips through `GTNASources`.
 
@@ -356,3 +362,65 @@ metadata LGPL discrepancy remains documented. No special permission is claimed.
   those forms use the GTCEu parent set.
 - The new EOH construction recipes are a GTNA adaptation using GTCEu components.
   They do not reproduce GTNH's BEC material, nanite or condensate requirements.
+
+### ME Export Buffer (GTMThings role, no GTMThings code)
+
+`GTNAMEExportBufferPartMachine` fills the role of the GTMThings `me_export_buffer` (one part that is item
+bus and fluid hatch, outputs flushed to ME) because GTMThings is not in GT:IA. GTMThings source was not
+copied: its upstream declares no license and the permission request is pending (see table above). The
+implementation is written on GTCEu's LGPL-3.0 `MEOutputBusPartMachine`/`MEOutputHatchPartMachine`,
+`DualHatchPartMachine` and `KeyStorage`, with long fluid amounts. The overlay is GTCEu's
+`block/overlay/appeng/me_output_bus`. Tooltip attribution: `GTNASources` → `gtmthings` (concept origin).
+
+### Planet ore veins (GTOCore `GTOOres`, LGPL-3.0)
+
+`GTNAPlanetOres` ports the 33 GTOCore vein definitions that include the Moon, Mars, Venus, Mercury or Glacio
+(clusters, densities, weights, heights, layers and indicators), translated to the GTCEu 7.5.3 builder API and
+restricted to those five Ad Astra planets. GTO-only veins (Celestine, Desh, Calorite, Ostrum, Zircon) were not
+ported. Ore blocks use Ad Astra's own stone textures as base (`ad_astra:block/<planet>_stone`), referenced, not
+copied.
+
+### Advanced Fusion Reactor (GTOCore, LGPL-3.0 code / CC BY-NC-SA 4.0 assets)
+
+`AdvancedFusionReactorMachine` and `GTNAAdvancedFusion` port GTOCore's `luv_kuangbiao_one_giant_nuclear_fusion_reactor`
+(`AdvancedFusionReactorMachine`, `MultiBlockD`), with the structure files `pattern/kuangbiao1..5.mbs` and
+`kuangbiao_crossrecipe.mbs` copied unchanged into `pattern/gto/`. Thirty-four GTOCore casing/coil/glass textures
+(and their `.png.mcmeta`/`_bloom` layers) were copied from `assets/gtocore/textures/block/...` into
+`assets/gtna/textures/block/casings/`, bytes unchanged. GTO materials Platinum-Manganese-Antimony Heusler Alloy and
+Odyssey Nano Superalloy are re-registered in GTNA (Odyssey without GTO's nano-scale components). Recipes are
+GTO's where every input exists, otherwise adapted (documented in `GTNAAdvancedFusionRecipes`).
+
+### Dimensionally Transcendent Plasma Forge (GTNH GT5-Unofficial, LGPL-3.0)
+
+`PlasmaForgeMachine`/`GTNAPlasmaForge` port GT5-Unofficial `MTEPlasmaForge` (structure converted by
+`tools/convert_dtpf_structure.py` into `pattern/dtpf_gtnh.mbs`, catalyst discount and decay rules). Recipes follow
+`PlasmaForgeRecipes`/`ResearchStationAssemblyLine` with documented substitutions. Textures: Dimensional Bridge Casing
+from GTOCore (`dimensional_bridge_casing*`, CC BY-NC-SA 4.0), Eternal coil (`MACHINE_COIL_ETERNAL*`) and Special Laser
+Lens (`miscutils/.../MU-metaitem.01/105.png`) from the local Modernity-GTNH copy (CC BY-NC-SA 4.0); `.mcmeta`
+connection paths rewritten to the GTNA namespace, pixels unchanged.
+
+
+### Transcendent Plasma Mixer (GTNH GT5-Unofficial, LGPL-3.0)
+
+`TranscendentPlasmaMixerMachine`/`GTNATranscendentPlasmaMixer` port GT5-Unofficial `MTETranscendentPlasmaMixer`
+(structure strings, wireless cost rule `EU multiplier × EU/t × duration`). Recipes follow
+`TranscendentPlasmaMixerRecipes` and GoodGenerator/GT5U Mellion, Orundum, Atomic Separation Catalyst and Harmonic
+Compound recipes, with documented substitutions. Harmonic Compound texture: see the Nano Forge section.
+
+### Nano Forge and nanites (GTNH GT5-Unofficial, LGPL-3.0; Modernity-GTNH, CC BY-NC-SA 4.0)
+
+`NanoForgeMachine`/`GTNANanoForge` port GT5-Unofficial `MTENanoForge` (pieces converted by
+`tools/convert_nano_forge_structure.py`) and `NaniteChain` recipes with documented substitutions. Textures: Radiant
+Naquadah Alloy Casing (`MACHINE_CASING_RADIANT_NAQUADAH_ALLOY*`) and nanites (`materialicons/NANITES`, `CUSTOM/*`,
+taken from Modernity-GTNH when present, otherwise GT5-Unofficial), Phononic Seed Crystal (Modernity
+`gt.metaitem.03/761.png`) and Harmonic Compound (GT5-Unofficial `gt.metaitem.03/762.png`); `.mcmeta` connection paths
+rewritten to the GTNA namespace, pixels unchanged.
+
+### Forge of Gods components (GTNH GT5-Unofficial, LGPL-3.0; Modernity-GTNH, CC BY-NC-SA 4.0)
+
+`GTNAGodforgeComponents`, the Cosmic Fabric Manipulator / Force Field Glass / Field Restriction Coil blocks and the
+rewritten `GTNAGodforgeProgression` follow GT5-Unofficial `ResearchStationAssemblyLine.addGodforgeRecipes`,
+`Godforge.java`, `AssemblerRecipes`, GT++ `RecipesGregTech` / `RecipeLoaderChemicalSkips` and GoodGenerator
+`RecipeLoader`. Textures: `gt.metaitem.01/{349,415,428}`, `gt.metaitem.03/{759,760}`, `gt.neutroniumHeatCapacitor`,
+`gt.1080k_Space_Coolantcell`, `gt.metaitem.01/{609,594,145,146}/8`, `qft/CosmicFabricManipulator`, `qft/ForceFieldGlass*` (Modernity-GTNH) and
+`gt.metaitem.03/303`, `MU-metaitem.01/110`, `FRF_Coils/3` (GT5-Unofficial); pixels unchanged.

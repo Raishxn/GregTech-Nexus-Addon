@@ -236,24 +236,22 @@ public class GTNABlocks {
             "dimensionally_transcendent_casing");
     public static final BlockEntry<Block> DIMENSION_INJECTION_CASING = createCasingBlock(
             "dimension_injection_casing");
+    /**
+     * GTNH DTPF Dimensional Bridge Casing; GTO texture. New id: {@code dimensional_bridge_casing} is an EOH legacy
+     * remap.
+     */
+    public static final BlockEntry<Block> PLASMA_FORGE_BRIDGE_CASING = createTwoLayerCasingBlock(
+            "plasma_forge_bridge_casing");
+    /** GTNH Radiant Naquadah Alloy Casing (Nano Forge), Modernity-GTNH texture. */
+    public static final BlockEntry<Block> RADIANT_NAQUADAH_ALLOY_CASING = createCasingBlock(
+            "radiant_naquadah_alloy_casing");
+    /** GT++ Cosmic Fabric Manipulator, Force Field Glass and GoodGenerator Field Restriction Coil (T3). */
+    public static final BlockEntry<Block> COSMIC_FABRIC_MANIPULATOR = createCasingBlock("cosmic_fabric_manipulator");
+    public static final BlockEntry<Block> FORCE_FIELD_GLASS = createGlassCasingBlock("force_field_glass",
+            GTNACORE.id("block/casings/force_field_glass"), () -> RenderType::cutoutMipped);
+    public static final BlockEntry<Block> FIELD_RESTRICTION_COIL_T3 = createCasingBlock("field_restriction_coil_t3");
     /** Physical GTNH Eye of Harmony components, kept separate from the published legacy casings. */
     public static final BlockEntry<Block> EYE_OF_HARMONY_BOUNDARY_CASING = GTNAEyeOfHarmonyContent.BOUNDARY_CASING;
-
-    public static final BlockEntry<Block> NEXUS_HYPERCORE_CASING = createCasingBlock(
-            "nexus_hypercore_casing",
-            GTCEu.id("block/casings/gcym/nonconducting_casing"));
-    public static final BlockEntry<Block> MATRIX_MODULE_I = createCasingBlock(
-            "matrix_module_i",
-            GTNACORE.id("block/wireless_energy_unit/ev"));
-    public static final BlockEntry<Block> MATRIX_MODULE_II = createCasingBlock(
-            "matrix_module_ii",
-            GTNACORE.id("block/wireless_energy_unit/luv"));
-    public static final BlockEntry<Block> MATRIX_MODULE_III = createCasingBlock(
-            "matrix_module_iii",
-            GTNACORE.id("block/wireless_energy_unit/uv"));
-    public static final BlockEntry<Block> MATRIX_MODULE_IV = createCasingBlock(
-            "matrix_module_iv",
-            GTNACORE.id("block/wireless_energy_unit/uev"));
 
     /**
      * GTOCore {@code supercritical_turbine_casing} (CC BY-NC-SA 4.0): the wall of the non-mega
@@ -413,6 +411,63 @@ public class GTNABlocks {
     public static final BlockEntry<NexusCapacitorBlock> NEXUS_CAPACITOR_MAX = createCapacitorBlock(
             "nexus_capacitor_max", 14, 5_000_000_000_000_000_000L);
 
+    // GTOCore blocks of the Advanced Fusion Reactor and its four extensions (G-0191, CC BY-NC-SA 4.0 textures).
+    public static final BlockEntry<Block> ACCELERATED_PIPELINE = createCasingBlock("accelerated_pipeline");
+    public static final BlockEntry<Block> ACCELERATOR_MAGNETIC_CONSTRAINED_RAIL_CASING = createTwoLayerCasingBlock(
+            "accelerator_magnetic_constrained_rail_casing");
+    public static final BlockEntry<Block> ACCELERATOR_OBSERVATION_GLASS = createGlassCasingBlock(
+            "accelerator_observation_glass", GTNACORE.id("block/casings/accelerator_observation_glass"),
+            () -> RenderType::translucent);
+    public static final BlockEntry<Block> ACCELERATOR_PROTECTION_CASING = createCasingBlock(
+            "accelerator_protection_casing");
+    public static final BlockEntry<Block> ADVANCED_COMPRESSED_FUSION_COIL = createCasingBlock(
+            "advanced_compressed_fusion_coil");
+    public static final BlockEntry<Block> AMPROSIUM_PIPE_CASING = createCasingBlock("amprosium_pipe_casing");
+    public static final BlockEntry<Block> ANTIFREEZE_HEATPROOF_MACHINE_CASING = createCasingBlock(
+            "antifreeze_heatproof_machine_casing");
+    public static final BlockEntry<Block> COMPRESSED_FUSION_COIL = createCasingBlock("compressed_fusion_coil");
+    public static final BlockEntry<Block> COMPRESSED_FUSION_COIL_MK2 = createCasingBlock("compressed_fusion_coil_mk2");
+    public static final BlockEntry<Block> COMPRESSED_FUSION_COIL_MK2_PROTOTYPE = createCasingBlock(
+            "compressed_fusion_coil_mk2_prototype");
+    public static final BlockEntry<Block> CONTAINMENT_FIELD_GENERATOR = createCasingBlock(
+            "containment_field_generator");
+    public static final BlockEntry<Block> COOLANT_PIPE_CASING = createCasingBlock("coolant_pip_casing");
+    public static final BlockEntry<Block> ELECTRON_PERMEABLE_AMPROSIUM_COATED_GLASS = createGlassCasingBlock(
+            "electron_permeable_amprosium_coated_glass",
+            GTNACORE.id("block/casings/electron_permeable_amprosium_coated_glass"), () -> RenderType::translucent);
+    public static final BlockEntry<Block> FISSION_REACTOR_CASING = createCasingBlock("fission_reactor_casing");
+    public static final BlockEntry<Block> FUSION_CASING_MK4 = createCasingBlock("fusion_casing_mk4");
+    public static final BlockEntry<Block> FUSION_CASING_MK5 = createCasingBlock("fusion_casing_mk5");
+    public static final BlockEntry<Block> HERMETIC_CASING_UEV = createHermeticCasingBlock("uev_hermetic_casing", "uev");
+    public static final BlockEntry<Block> HIGH_PRESSURE_GAS_STORAGE_TANKS_CASING = createCasingBlock(
+            "high_pressure_gas_storage_tanks_casing");
+    public static final BlockEntry<Block> HIGH_PRESSURE_PIPE_CASING = createCasingBlock("high_pressure_pipe_casing");
+    public static final BlockEntry<Block> HIGH_STRENGTH_SUPPORT_MECHANICAL_CASING = createCasingBlock(
+            "high_strength_support_mechanical_casing");
+    public static final BlockEntry<Block> IMPROVED_SUPERCONDUCTOR_COIL = createCasingBlock(
+            "improved_superconductor_coil");
+    public static final BlockEntry<Block> LASER_CASING = createGlassCasingBlock("laser_casing",
+            GTNACORE.id("block/casings/laser_casing"), () -> RenderType::translucent);
+    public static final BlockEntry<Block> MACHINING_CONTROL_CASING_MK3 = createSidedCasingBlock(
+            "machining_control_casing_mk3");
+    public static final BlockEntry<Block> MAGNESIUM_OXIDE_CERAMIC_HIGH_TEMPERATURE_INSULATION_MECHANICAL_BLOCK = createCasingBlock(
+            "magnesium_oxide_ceramic_high_temperature_insulation_mechanical_block");
+    public static final BlockEntry<Block> MOLECULAR_COIL = createColumnCasingBlock("molecular_coil");
+    public static final BlockEntry<Block> NAQUADAH_REINFORCED_PLANT_CASING = createCasingBlock(
+            "naquadah_reinforced_plant_casing");
+    public static final BlockEntry<Block> NEUTRONIUM_STABLE_CASING = createCasingBlock("neutronium_stable_casing");
+    public static final BlockEntry<Block> OPTICAL_RESONANCE_CHAMBER = createTwoLayerCasingBlock(
+            "optical_resonance_chamber");
+    public static final BlockEntry<Block> PBI_RADIATION_RESISTANT_MECHANICAL_ENCLOSURE = createCasingBlock(
+            "pbi_radiation_resistant_mechanical_enclosure");
+    public static final BlockEntry<Block> PLASMA_FIELD_GLASS = createGlassCasingBlock("plasma_field_glass",
+            GTNACORE.id("block/casings/plasma_field_glass"), () -> RenderType::translucent);
+    public static final BlockEntry<Block> RADIATION_ABSORBENT_CASING = createCasingBlock("radiation_absorbent_casing");
+    public static final BlockEntry<Block> STRENGTHEN_THE_BASE_BLOCK = createCasingBlock("strengthen_the_base_block");
+    public static final BlockEntry<Block> STRONTIUM_CARBONATE_CERAMIC_RAY_ABSORBING_MECHANICAL_CUBE = createCasingBlock(
+            "strontium_carbonate_ceramic_ray_absorbing_mechanical_cube");
+    public static final BlockEntry<Block> VACUUM_CHAMBER_BEAM_BLOCK = createCasingBlock("vacuum_chamber_beam_block");
+
     public static BlockEntry<Block> createCasingBlock(String name) {
         return createCasingBlock(name, Block::new, GTNACORE.id("block/casings/" + name), () -> Blocks.IRON_BLOCK,
                 () -> RenderType::solid);
@@ -510,6 +565,43 @@ public class GTNABlocks {
                         prov.withExistingParent(ctx.getName(), prov.modLoc("block/" + ctx.getName()));
                     }
                 })
+                .build()
+                .register();
+    }
+
+    /** GTOCore cube-column casing: {@code block/casings/<name>/side} and {@code /top}. */
+    public static BlockEntry<Block> createColumnCasingBlock(String name) {
+        return REGISTRATE.block(name, Block::new)
+                .initialProperties(() -> Blocks.IRON_BLOCK)
+                .properties(p -> p.mapColor(MapColor.METAL).strength(5.0f, 6.0f).sound(SoundType.METAL)
+                        .requiresCorrectToolForDrops().isValidSpawn((state, level, pos, ent) -> false))
+                .addLayer(() -> RenderType::solid)
+                .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models().cubeColumn(ctx.getName(),
+                        GTNACORE.id("block/casings/" + name + "/side"), GTNACORE.id("block/casings/" + name + "/top"))))
+                .tag(GTToolType.WRENCH.harvestTags.get(0), BlockTags.MINEABLE_WITH_PICKAXE)
+                .item(GTNABlockItem::new)
+                .model((ctx, prov) -> prov.withExistingParent(ctx.getName(), prov.modLoc("block/" + ctx.getName())))
+                .build()
+                .register();
+    }
+
+    /** GTOCore hermetic casing above UHV: GTCEu's hermetic model over the tier's voltage casing. */
+    public static BlockEntry<Block> createHermeticCasingBlock(String name, String tier) {
+        return REGISTRATE.block(name, Block::new)
+                .initialProperties(() -> Blocks.IRON_BLOCK)
+                .properties(p -> p.mapColor(MapColor.METAL).strength(5.0f, 6.0f).sound(SoundType.METAL)
+                        .requiresCorrectToolForDrops().isValidSpawn((state, level, pos, ent) -> false))
+                .addLayer(() -> RenderType::cutoutMipped)
+                .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(),
+                        prov.models().withExistingParent(ctx.getName(), GTCEu.id("block/hermetic_casing"))
+                                .texture("bot_bottom", GTCEu.id("block/casings/voltage/" + tier + "/bottom"))
+                                .texture("bot_side", GTCEu.id("block/casings/voltage/" + tier + "/side"))
+                                .texture("bot_top", GTCEu.id("block/casings/voltage/" + tier + "/top"))
+                                .texture("top_side",
+                                        GTCEu.id("block/casings/hermetic_casing/hermetic_casing_overlay"))))
+                .tag(GTToolType.WRENCH.harvestTags.get(0), BlockTags.MINEABLE_WITH_PICKAXE)
+                .item(GTNABlockItem::new)
+                .model((ctx, prov) -> prov.withExistingParent(ctx.getName(), prov.modLoc("block/" + ctx.getName())))
                 .build()
                 .register();
     }

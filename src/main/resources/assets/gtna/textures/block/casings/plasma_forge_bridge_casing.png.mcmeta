@@ -1,0 +1,9 @@
+{
+  "animation": {
+    "interpolate": true,
+    "frametime": 8
+  },
+  "ldlib": {
+    "connection": "gtna:block/casings/plasma_forge_bridge_casing_ctm"
+  }
+}

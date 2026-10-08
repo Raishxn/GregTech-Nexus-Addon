@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gtna:item/nanites/white_dwarf_matter",
+    "layer1": "gtna:item/nanites/white_dwarf_matter_overlay"
+  }
+}
