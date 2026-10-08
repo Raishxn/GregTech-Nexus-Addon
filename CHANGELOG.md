@@ -1,5 +1,75 @@
 # Changelog
 
+## [0.5.2] - 2026-10-07
+
+Big endgame update. Changes below are relative to 0.5.1.
+
+### ⚠️ Dependencies
+
+- **New required dependency: [Infiniverse](https://www.curseforge.com/minecraft/mc-mods/infiniverse) 1.0.0.5 or newer** (used by Personal Space dimensions). It is not bundled; install it alongside GTNA.
+- Optional: **Ad Astra** (planet ores, planet simulations in the Eye of Harmony, planet dimension icons) and **SGJourney**.
+- Tested with GTCEu 7.5.3.
+
+### New multiblocks
+
+- **Forge of Gods** (GTNH): controller with ring sub-structures, upgrade tree, milestones, fuel and battery, cosmetics, star and beam rendering, and the **Smelting, Molten, Plasma and Exotic** modules. The Plasma Module now also covers the GT++ metals (Celestial Tungsten, Astral Titanium, Hypogen, Rhugnor, Six-Phased Copper…).
+- **Dimensionally Transcendent Plasma Forge** (GTNH): coil heat, EBF-style overclock and the catalyst discount after long continuous runs.
+- **Transcendent Plasma Mixer** (GTNH): powered only by the owner's wireless network; the full cost is paid when a recipe starts.
+- **Nano Forge** tiers 1–3 (GTNH) with 11 nanites. The tier nanite goes in an input bus (GTCEu controllers have no slot).
+- **Advanced Fusion Reactor** (GTO) with four tier extensions and an overclock extension. It replaces GTNH Fusion Mk4/Mk5.
+- **ME Export Buffer** (GTMThings style).
+
+### Eye of Harmony
+
+- **Planet simulations:** Nether, End and, with Ad Astra, Moon, Mars, Venus, Mercury and Glacio, each with its own Planet Block, rocket tier and ore catalogue.
+- **KubeJS support** for adding and editing simulation programs.
+- **Recipe viewers:** reworked JEI page that matches the EMI layout (separate item and fluid grids, one page per simulation, the window grows to fit).
+- **Recipes:** controller, casings and field generators now use fluids, as in GTNH.
+
+### Content
+
+- **Forge of Gods material chain** ported from GTNH: Creon, Mellion, Transcendent Metal, Six-Phased Copper, Hypogen, Rhugnor, Phonon Medium, Tengam, UIV/UMV superconductors, Infinity, Eternity, Shirabon, Dimensionally Shifted Superfluid, the Excited catalysts and more, with default recipes.
+- **GTNH Forge of Gods components:** Stable Boson Containment Unit, heat capacitors, Thermal Superconductor, Tengam Electromagnet, Graviton Anomaly, Cosmic Fabric Manipulator, Force Field Glass, Field Restriction Coil, Raw Tesseract, ZPM3–ZPM6 batteries. The Forge of Gods progression and upgrade costs now follow GTNH.
+- **New circuits:** Optical (UV–UIV) and Exotic (UHV–UXV) circuit families. OpV/MAX circuits are left to modpacks.
+- **Recipes GTCEu lacks:** default recipes for UHV–OpV components (motors, pistons, pumps, conveyors, robot arms, emitters, sensors, field generators), UEV–MAX machine casings and energy hatches, and UU Matter. All of them can be replaced with KubeJS.
+- **Ad Astra planets:** ore veins, and proper dimension icons in GTCEu dimension conditions (World Data Scanner, ore veins).
+- **Hatches:** high-tier module hatches and wireless hatch recipes.
+- **Restricted parts:** recipes for the output-boost and infinite-input parts. They only act on recipes of their own tier.
+- **Flotation line:** the full reagent chain (carbon disulfide, ethylates, xanthates, turpentine).
+- **Removed:** Matrix Modules I–IV and the Nexus Hypercore Casing.
+
+### Personal Space
+
+- Port of the GTNH PersonalSpace dimensions:
+  - configurable worldgen and sky;
+  - editor GUI;
+  - portal and portal book;
+  - `/pspace` commands.
+- The portal now appears in the creative tab and has an LV recipe made with normal obsidian.
+
+### GTO machinery and balance
+
+- **GTO machines:** Blaze Blast Furnace, Cold Ice Freezer, Chemical Plant, Mega Alloy Blast Smelter, ISA Mill, Rocket and Supercritical turbines, Industrial Flotation Cell, Vacuum Drying Furnace, Component Assembler and Component Assembly Line.
+- **Dehydrator family:** full LV–OpV set.
+- **Wireless:** energy HUD overlay.
+- **Balance profiles:** configurable profiles for the Universal Factory, Nexus wireless loss and ME Pattern Buffer capacity.
+
+### Fixes
+
+- **Missing names:** item and block names no longer disappear (two language generators were overwriting each other).
+- **Material textures:** icon sets for Hypogen, Chromatic Glass, Dragonblood and Black Dwarf Matter, plus extra plate forms for the custom sets.
+- **Fluid textures:** original textures for Infinity, Eternity, Hypogen, Chromatic Glass, Rhugnor, Dragonblood, Primordial Matter, the Phonon fluids and Stable Baryonic Matter. Fluids with no texture get their own colour instead of white.
+- **Item textures:** glowstone nanite animation fixed; ZPM4–ZPM6 batteries are now tinted per tier.
+- **Tooltips:** the new multiblocks use the standard tooltip format with source attribution.
+- **Nano Forge:** tier 2 and 3 extensions now use the Assembly Line Casing, as in GTNH.
+- **ME Pattern Buffer:** upgrades no longer spill stored patterns or render invisibly.
+- **Dead-end recipes:** several were found and fixed by a new recipe reachability check.
+
+### Known limitations
+
+- **Bose-Einstein Condensate machines** are not ported yet. Until then, the Singularity Shielding Casing and the Medial/Central Graviton Flow Modulators use provisional Assembly Line recipes, and the DTPF's Transdimensional Alignment Matrix / Convergence is unavailable.
+- **Nano Forge tier 4** is not ported yet.
+
 ## [0.5.1] - 2026-09-25
 
 ### Corrected JAR
