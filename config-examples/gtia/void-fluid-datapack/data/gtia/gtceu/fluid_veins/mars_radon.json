@@ -1,0 +1,14 @@
+{
+  "weight": 20,
+  "yield": {
+    "min": 50,
+    "max": 80
+  },
+  "depletion_amount": 1,
+  "depletion_chance": 100,
+  "depleted_yield": 40,
+  "fluid": "gtceu:radon",
+  "dimension_filter": [
+    "ad_astra:mars"
+  ]
+}

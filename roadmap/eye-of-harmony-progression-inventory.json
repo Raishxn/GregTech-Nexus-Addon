@@ -1,0 +1,286 @@
+{
+  "date": "2026-10-06",
+  "reference_commit": "a3e1e11241a814c9fa0dd0973d5699548428f689",
+  "scope": "Direct symbolic material dependencies plus BEC metamaterial loader. Presence is registration only, not proof of obtainable recipes. No claim of exhaustive recursive upstream closure.",
+  "groups": {
+    "controller": {
+      "materials": [
+        {
+          "source_symbol": "Space",
+          "gtceu_declared": false,
+          "gtna_declared": true
+        },
+        {
+          "source_symbol": "SuperconductorUMV",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "Time",
+          "gtceu_declared": false,
+          "gtna_declared": true
+        }
+      ],
+      "goodgenerator": [
+        "metastableOganesson",
+        "shirabon"
+      ],
+      "standalone": [],
+      "condensates": []
+    },
+    "fields_casings_array": {
+      "materials": [
+        {
+          "source_symbol": "Bedrockium",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "BlackDwarfMatter",
+          "gtceu_declared": false,
+          "gtna_declared": true
+        },
+        {
+          "source_symbol": "BlueTopaz",
+          "gtceu_declared": true,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "CallistoIce",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "CosmicNeutronium",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "Creon",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "Eternity",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "Hexanite",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "Infinity",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "Ledox",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "Mellion",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "Netherite",
+          "gtceu_declared": true,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "Neutronium",
+          "gtceu_declared": true,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "ProtoHalkonite",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "SixPhasedCopper",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "SpaceTime",
+          "gtceu_declared": false,
+          "gtna_declared": true
+        },
+        {
+          "source_symbol": "SuperconductorUEVBase",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "SuperconductorUHVBase",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "SuperconductorUIVBase",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "SuperconductorUMV",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "SuperconductorUMVBase",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "TranscendentMetal",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "WhiteDwarfMatter",
+          "gtceu_declared": false,
+          "gtna_declared": true
+        }
+      ],
+      "goodgenerator": [
+        "shirabon"
+      ],
+      "standalone": [],
+      "condensates": [
+        "Bedrockium",
+        "BoundlessCosmicSolder",
+        "CosmicNeutronium",
+        "Eternity",
+        "Neutronium",
+        "Space",
+        "SpaceTime",
+        "Time"
+      ]
+    },
+    "metamaterial_dependencies": {
+      "materials": [
+        {
+          "source_symbol": "BlackDwarfMatter",
+          "gtceu_declared": false,
+          "gtna_declared": true
+        },
+        {
+          "source_symbol": "Churitsu",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "Eternity",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "Hexanite",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "MHDCSM",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "MagMatter",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "ProtoHalkonite",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "Shijima",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "SpaceTime",
+          "gtceu_declared": false,
+          "gtna_declared": true
+        },
+        {
+          "source_symbol": "SuperconductorUIV",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "SuperconductorUMV",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "TranscendentMetal",
+          "gtceu_declared": false,
+          "gtna_declared": false
+        },
+        {
+          "source_symbol": "WhiteDwarfMatter",
+          "gtceu_declared": false,
+          "gtna_declared": true
+        }
+      ],
+      "goodgenerator": [
+        "shirabon",
+        "tairitsu"
+      ],
+      "standalone": [
+        "HYPOGEN"
+      ],
+      "condensates": [
+        "BoundlessCosmicSolder",
+        "ChromaticGlass",
+        "DimensionallyShiftedSuperfluid",
+        "Infinity",
+        "TranscendentMetal"
+      ]
+    }
+  },
+  "source_sha256": {
+    "BECFactoryNetwork.java": "7c5f4bc1f006fa4b86bb03b04978ffde72e015a597e7cda68c34cf98374b2ef1",
+    "MTEBECGenerator.java": "cc065cb14dd8a417a2dc4c0376781e8f97a2c0784a603cc6f78619fc719cc500",
+    "MTEBECAssembler.java": "062c34f94f60e3b929e24898652e9a20ad9aa3a5264de7523200260fe8dad78d",
+    "MTENanoForge.java": "631706cce0b1a17ba0a244077378c94e3ecae0975ec01d4c9e2d22158a17b518",
+    "Godforge.java": "630a59e1abc38323579a97e47d352708575cb22dc8b80f6bf7548aceb9f33a29",
+    "BECMetaMaterialRecipes.java": "93db86c9063cf97e29fc2d9963e1ecf95720c3dca6b0f0f6954dad289f391c2c",
+    "EyeOfHarmonyRecipeStorage.java": "017d6f5f477e85f32179749c7d44cc959fb8b409d8fa5718a1b4dc7967de9640",
+    "NaniteTier.java": "1bc0fa7e64354d97404a4528b660edaec65abcb5296958cbe00b03a540edd5d1",
+    "CondensateType.java": "6e867f421f4d5108ac0509944caaf35cdf9e4cf8edeefe42586f1d407e760f7a",
+    "ResearchStationAssemblyLine.java": "c855c01572445e9416e327c77da7e084cf095daa8e3e63e51c3667ff3fb7c351",
+    "BECRecipes.java": "ad3ede419dbbae8ab42ad45a21f451f39347ee8dd7d9b4817cd058d84c2c2c31"
+  },
+  "nanite_tiers": {
+    "Carbon": 1,
+    "Glowstone": 1,
+    "Silver": 2,
+    "Neutronium": 2,
+    "Gold": 3,
+    "Transcendent": 4,
+    "SixPhasedCopper": 5,
+    "WhiteDwarf": 6,
+    "BlackDwarf": 7,
+    "Universium": 8,
+    "Eternity": 9,
+    "MagMatter": 10
+  },
+  "field_tier_materials": [
+    "Netherite",
+    "ProtoHalkonite",
+    "SixPhasedCopper",
+    "TranscendentMetal",
+    "Mellion",
+    "Creon",
+    "SpaceTime",
+    "Hexanite",
+    "Eternity"
+  ]
+}
